@@ -50,7 +50,7 @@ class helpdesk_update(models.Model):
 
         # Diamel Luna Chavelas
         id_test = 826   #Id de Diamel Luna Chavelas
-        id_test_res_partner = 7804  #Id de res_partner.name = test
+        id_test_res_partner = 10528  #Id de res_partner.name = Test
 
 
         equipo_de_atencion_al_cliente = 1
