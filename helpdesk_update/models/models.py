@@ -20,7 +20,7 @@ class helpdesk_update(models.Model):
     @api.model
     @api.onchange('team_id', 'x_studio_responsable_de_equipo')
     def cambiar_seguidores(self):
-        _logger.info("cambiar_github porfin***********************************()")
+        _logger.info("cambiar_github porfinV2   ***********************************()")
         _logger.info("cambiar_seguidores()")
         _logger.info("self._origin: " + str(self._origin) + ' self._origin.id: ' + str(self._origin.id))
         
