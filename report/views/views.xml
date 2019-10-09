@@ -1,0 +1,66 @@
+<odoo>
+  <data>
+      <report id="report_custom" string="Reporte" model="stock.picking" report_type="qweb-pdf" name="report.report_custom_template"/>
+      <template id="report_custom_template">
+              <t t-call="web.html_container">
+                  <div class="header">
+                      <img t-if="res_company.logo" t-att-src="image_data_uri(res_company.logo)" style="max-height: 45px;" alt="Logo"></img>
+                      <p t-field="res_company.name"></p>
+                  </div>
+                  <div class="page">
+                      <head><style>table 
+                          {border-collapse: collapse;}
+                          table, td, th {border: 1px solid black;}
+                          </style>
+                      </head>
+                      <t t-foreach="docs" t-as="pick">
+                          <table t-if="pick.state=='done' and pick.value2 == 1" style="width:100%;border-collapse: collapse;">
+                          <tr >
+                              <th>Orden: <span style="font-size:16px" t-field="pick.name"/></th>
+                          </tr>
+                            <tr t-if="pick.value2 == 1" style="width:100%">
+                                <td style="width:25%"><strong>Producto</strong></td>
+                                  <td style="width:25%"><strong>Cantidad</strong></td>
+                                  <td style="width:20%"><strong>Ubicación</strong></td>
+                                  <td style="width:10%"><strong>Pasillo(x)</strong></td>
+                                  <td style="width:10%"><strong>Estantería(y)</strong></td>
+                                  <td style="width:10%"><strong>Altura(z)</strong></td>
+                              </tr>
+                              <t style="width:100%" t-foreach="pick.move_ids_without_package" t-as="move">
+                                  <tr t-if="pick.value2 == 1">
+                                      <td style="width:30%"><span t-field="move.product_id.name"/></td>
+                                      <td style="width:30%"> <span t-field="move.product_qty"/></td> 
+                                      <td style="width:30%"> <span t-field="move.location_id.name"/></td>
+                                      <td style="width:30%"> <span t-field="move.location_id.posx"/></td>
+                                      <td style="width:30%"> <span t-field="move.location_id.posy"/></td>
+                                      <td style="width:30%"> <span t-field="move.location_id.posz"/></td>
+                                  </tr>
+                              </t>
+                          </table>
+                          
+                          <table t-elif="pick.state=='done' and pick.value2 == 2" style="width:100%;border-collapse: collapse;">
+                            <tr t-if="pick.value2 == 2">
+                              <th>Orden: <span style="font-size:16px" t-field="pick.name"/></th>
+                            </tr>
+                              <tr t-if="pick.value2 == 2" style="width:100%">
+                                <td style="width:30%"><strong>Producto</strong></td>
+                                <td style="width:30%"><strong>Cantidad</strong></td>
+                                <td style="width:30%"><strong>Descripción</strong></td>
+                                <td style="width:10%"><strong>Validación</strong></td>
+                              </tr>
+                              <t style="width:100%" t-foreach="pick.move_ids_without_package" t-as="move">
+                                   <tr t-if="pick.value2 == 2">
+                                      <td style="width:30%"><span t-field="move.product_id.name"/></td>
+                                      <td style="width:30%"> <span t-field="move.product_qty"/></td>
+                                      <td style="width:30%"> <span t-field="move.product_id.description_sale"/></td>  
+                                      <td style="width:10%"></td>
+                                   </tr>
+                              </t>
+                          </table>
+                          <br/>
+                      </t>
+                  </div>
+              </t>
+      </template>
+  </data>
+</odoo>
