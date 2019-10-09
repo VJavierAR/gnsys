@@ -1,0 +1,4 @@
+[submodule "VJavierAR/reporte"]
+	path = VJavierAR/reporte
+	url = git@github.com:VJavierAR/reporte.git
+	branch = master
