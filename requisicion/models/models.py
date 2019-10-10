@@ -27,7 +27,7 @@ class requisicion(models.Model):
         self.write({'state':'done'})
     
     @api.model
-    def create(self):
+    def create(self,vals):
         vals['name'] = self.env['ir.sequence'].next_by_code('requisicion')
         result = super(requisicion, self).create(vals)
         return result
