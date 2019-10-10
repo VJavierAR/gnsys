@@ -15,7 +15,7 @@ class requisicion(models.Model):
     name = fields.Char()
     area = fields.Selection([('Ventas','Ventas'),('Almacen','Almacen'), ('Mesa de Ayuda','Mesa de Ayuda')])
     fecha_prevista=fields.Datetime()
-    justificacion=fields.Char()
+    justificacion=fields.Text()
     product_rel=fields.One2many('product.rel.requisicion','req_rel')
     state = fields.Selection([('draft','Nuevo'),('open','Proceso'), ('done','Hecho')],'State')
 
