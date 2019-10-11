@@ -14,7 +14,8 @@ class helpdesk_update(models.Model):
     priority = fields.Selection([('0','Todas'),('1','Baja'),('2','Media'),('3','Alta'),('4','Critica')], track_visibility='onchange')
     x_studio_equipo_por_nmero_de_serie = fields.Many2many('stock.production.lot', store=True)
     x_studio_empresas_relacionadas = fields.Many2one('res.partner', store=True, track_visibility='onchange', string='Localidad')
-    
+    historialCuatro = fields.One2many('x_historial_helpdesk','x_id_ticket',string='historial de ticket estados',store=True,track_visibility='onchange')
+
     #@api.one
     #@api.depends('team_id', 'x_studio_responsable_de_equipo')
     @api.model
