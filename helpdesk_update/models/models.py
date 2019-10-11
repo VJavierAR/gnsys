@@ -15,7 +15,35 @@ class helpdesk_update(models.Model):
     x_studio_equipo_por_nmero_de_serie = fields.Many2many('stock.production.lot', store=True)
     x_studio_empresas_relacionadas = fields.Many2one('res.partner', store=True, track_visibility='onchange', string='Localidad')
     historialCuatro = fields.One2many('x_historial_helpdesk','x_id_ticket',string='historial de ticket estados',store=True,track_visibility='onchange')
-
+    
+    @api.onchange('stage_id')
+    def actualiza_datos_estado(self):
+        _logger.info("alv : "+str(self.partner_id))
+        b=''
+        s=str(self.stage_id)
+        
+        if s =='helpdesk.stage(1,)':
+            b='Abierto'
+        if s =='helpdesk.stage(2,)':
+            b='Asignado'
+        if s =='helpdesk.stage(13,)':
+            b='Extension'
+        if s =='helpdesk.stage(14,)':
+            b='Suspendido'
+        if s =='helpdesk.stage(15,)':
+            b='Rechazado'
+        if s =='helpdesk.stage(17,)':
+            b='Resuleto'
+        if s =='helpdesk.stage(16,)':
+            b='Reabierto'
+        if s =='helpdesk.stage(18,)':
+            b='Cerrado'
+        if s =='helpdesk.stage(3,)':
+            b='Solver'
+        if s =='helpdesk.stage(4,)':
+            b='Cancelado'    
+        #if self.stage_id==''
+        self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': 'gerardo','x_estado': b})
     #@api.one
     #@api.depends('team_id', 'x_studio_responsable_de_equipo')
     @api.model
