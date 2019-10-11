@@ -33,7 +33,7 @@ class helpdesk_update(models.Model):
         if s =='helpdesk.stage(15,)':
             b='Rechazado'
         if s =='helpdesk.stage(17,)':
-            b='Resuleto'
+            b='Resuelto'
         if s =='helpdesk.stage(16,)':
             b='Reabierto'
         if s =='helpdesk.stage(18,)':
