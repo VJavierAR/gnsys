@@ -19,8 +19,9 @@ class helpdesk_update(models.Model):
     @api.onchange('stage_id')
     def actualiza_datos_estado(self):
         _logger.info("alv : "+str(self.partner_id))
-        b=''
-        s=str(self.stage_id)
+        _logger.info('Test id usuario login: ' + str(self._uid))
+        b = ''
+        s = str(self.stage_id)
         
         if s =='helpdesk.stage(1,)':
             b='Abierto'
