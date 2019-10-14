@@ -20,53 +20,92 @@ class helpdesk_update(models.Model):
     def actualiza_datos_estado(self):
         _logger.info("alv : "+str(self.partner_id))
         _logger.info('Test id usuario login: ' + str(self._uid))
-        #_logger.info('Estado previo: ' + 'estado: ' + str(self.historialCuatro[0].x_estado) + ' fecha: ' + str(self.historialCuatro[0].create_date))
+        
         #ID lester en res_user = 81
         #ID Administrator en res_user = 2
         #raise exceptions.Warning('Warning message')
         #raise exceptions.ValidationError('Not valid message') 
-        #estado_previo = str(self.historialCuatro[0].x_estado)
+        estado_previo = 'New'
+        if len(self.historialCuatro) > 0:
+            _logger.info('Estado previo: ' + 'estado: ' + str(self.historialCuatro[len(self.historialCuatro) - 1].x_estado) + ' fecha: ' + str(self.historialCuatro[len(self.historialCuatro) - 1].create_date))
+            estado_previo = str(self.historialCuatro[len(self.historialCuatro) - 1].x_estado)
+        id_usuario_login = self._uid
         b = ''
         s = str(self.stage_id)
         
         if s =='helpdesk.stage(1,)':
             b = 'Abierto'
+            if estado_previo == 'Asignado' or estado_previo == 'Extension' or estado_previo == 'Suspendido' or estado_previo == 'Rechazado' or estado_previo == 'Resuelto' or estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado' and id_usuario_login != 81:
+                _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
+                raise exceptions.ValidationError("Usuario no valido para realizar moviimento del estado " + estado_previo + " al estado " + b)
+            else: 
+                _logger.info("pasa =) ")
+                
         if s =='helpdesk.stage(2,)':
             b = 'Asignado'
-            #if estado_previo == 'Extension' or estado_previo == 'Suspendido' or estado_previo == 'Rechazado' or estado_previo == 'Resuelto' or estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado'
-            #    _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
+            if estado_previo == 'Extension' or estado_previo == 'Suspendido' or estado_previo == 'Rechazado' or estado_previo == 'Resuelto' or estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado' and id_usuario_login != 81:
+                _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
+                raise exceptions.ValidationError("Usuario no valido para realizar moviimento del estado " + estado_previo + " al estado " + b)
+            else: 
+                _logger.info("pasa =) ")
+                
         if s =='helpdesk.stage(13,)':
             b = 'Extension'
-            #if estado_previo == 'Suspendido' or estado_previo == 'Rechazado' or estado_previo == 'Resuelto' or estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado'
-            #    _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
+            if estado_previo == 'Suspendido' or estado_previo == 'Rechazado' or estado_previo == 'Resuelto' or estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado' and id_usuario_login != 81:
+                _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
+                raise exceptions.ValidationError("Usuario no valido para realizar moviimento del estado " + estado_previo + " al estado " + b)
+            else: 
+                _logger.info("pasa =) ")
+                
         if s =='helpdesk.stage(14,)':
             b = 'Suspendido'
-            #if estado_previo == 'Rechazado' or estado_previo == 'Resuelto' or estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado'
-            #    _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
+            if estado_previo == 'Rechazado' or estado_previo == 'Resuelto' or estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado' and id_usuario_login != 81:
+                _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
+                raise exceptions.ValidationError("Usuario no valido para realizar moviimento del estado " + estado_previo + " al estado " + b)
+            else: 
+                _logger.info("pasa =) ")
+                
         if s =='helpdesk.stage(15,)':
             b = 'Rechazado'
-            #if estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado'
-            #    _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
+            if estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado' and id_usuario_login != 81:
+                _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
+                raise exceptions.ValidationError("Usuario no valido para realizar moviimento del estado " + estado_previo + " al estado " + b)
+            else: 
+                _logger.info("pasa =) ")
+                
         if s =='helpdesk.stage(17,)':
             b = 'Resuelto'
-            #if estado_previo == 'Rechazado' or estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado'
-            #    _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
+            if estado_previo == 'Rechazado' or estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado' and id_usuario_login != 81:
+                _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
+                raise exceptions.ValidationError("Usuario no valido para realizar moviimento del estado " + estado_previo + " al estado " + b)
+            else: 
+                _logger.info("pasa =) ")
+                
         if s =='helpdesk.stage(16,)':
             b = 'Reabierto'
-            #if estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado'
-            #    _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
+            if estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado' and id_usuario_login != 81:
+                _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
+                raise exceptions.ValidationError("Usuario no valido para realizar moviimento del estado " + estado_previo + " al estado " + b)
+            else: 
+                _logger.info("pasa =) ")
+                
         if s =='helpdesk.stage(18,)':
             b = 'Cerrado'
-            #if estado_previo == 'Solver' or estado_previo == 'Cancelado'
-            #    _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
+            if estado_previo == 'Solver' or estado_previo == 'Cancelado' and id_usuario_login != 81:
+                _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
+                raise exceptions.ValidationError("Usuario no valido para realizar moviimento del estado " + estado_previo + " al estado " + b)
+            else: 
+                _logger.info("pasa =) ")
+                
         if s =='helpdesk.stage(3,)':
             b = 'Solver'
-            #if estado_previo == 'Solver' or estado_previo == 'Cancelado'
+            #if estado_previo == 'Solver' or estado_previo == 'Cancelado':
             #    _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
         if s =='helpdesk.stage(4,)':
             b = 'Cancelado'    
         #if self.stage_id==''
         self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.user_id.name,'x_estado': b})
+        
     #@api.one
     #@api.depends('team_id', 'x_studio_responsable_de_equipo')
     @api.model
