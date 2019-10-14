@@ -33,32 +33,32 @@ class helpdesk_update(models.Model):
             b = 'Abierto'
         if s =='helpdesk.stage(2,)':
             b = 'Asignado'
-            if estado_previo == 'Extension' or estado_previo == 'Suspendido' or estado_previo == 'Rechazado' or estado_previo == 'Resuelto' or estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado'
-                _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
+            #if estado_previo == 'Extension' or estado_previo == 'Suspendido' or estado_previo == 'Rechazado' or estado_previo == 'Resuelto' or estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado'
+            #    _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
         if s =='helpdesk.stage(13,)':
             b = 'Extension'
-            if estado_previo == 'Suspendido' or estado_previo == 'Rechazado' or estado_previo == 'Resuelto' or estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado'
-                _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
+            #if estado_previo == 'Suspendido' or estado_previo == 'Rechazado' or estado_previo == 'Resuelto' or estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado'
+            #    _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
         if s =='helpdesk.stage(14,)':
             b = 'Suspendido'
-            if estado_previo == 'Rechazado' or estado_previo == 'Resuelto' or estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado'
-                _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
+            #if estado_previo == 'Rechazado' or estado_previo == 'Resuelto' or estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado'
+            #    _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
         if s =='helpdesk.stage(15,)':
             b = 'Rechazado'
-            if estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado'
-                _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
+            #if estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado'
+            #    _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
         if s =='helpdesk.stage(17,)':
             b = 'Resuelto'
-            if estado_previo == 'Rechazado' or estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado'
-                _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
+            #if estado_previo == 'Rechazado' or estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado'
+            #    _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
         if s =='helpdesk.stage(16,)':
             b = 'Reabierto'
-            if estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado'
-                _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
+            #if estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado'
+            #    _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
         if s =='helpdesk.stage(18,)':
             b = 'Cerrado'
-            if estado_previo == 'Solver' or estado_previo == 'Cancelado'
-                _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
+            #if estado_previo == 'Solver' or estado_previo == 'Cancelado'
+            #    _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
         if s =='helpdesk.stage(3,)':
             b = 'Solver'
             #if estado_previo == 'Solver' or estado_previo == 'Cancelado'
