@@ -20,29 +20,51 @@ class helpdesk_update(models.Model):
     def actualiza_datos_estado(self):
         _logger.info("alv : "+str(self.partner_id))
         _logger.info('Test id usuario login: ' + str(self._uid))
+        _logger.info('Estado previo: ' + 'estado: ' + str(self.historialCuatro[0].x_estado) + ' fecha: ' + str(self.historialCuatro[0].create_date))
+        #ID lester en res_user = 81
+        #ID Administrator en res_user = 2
+        #raise exceptions.Warning('Warning message')
+        #raise exceptions.ValidationError('Not valid message') 
+        estado_previo = str(self.historialCuatro[0].x_estado)
         b = ''
         s = str(self.stage_id)
         
         if s =='helpdesk.stage(1,)':
-            b='Abierto'
+            b = 'Abierto'
         if s =='helpdesk.stage(2,)':
-            b='Asignado'
+            b = 'Asignado'
+            if estado_previo == 'Extension' || estado_previo == 'Suspendido' || estado_previo == 'Rechazado' || estado_previo == 'Resuelto' || estado_previo == 'Reabierto' || estado_previo == 'Cerrado' || estado_previo == 'Solver' || estado_previo == 'Cancelado'
+                _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
         if s =='helpdesk.stage(13,)':
-            b='Extension'
+            b = 'Extension'
+            if estado_previo == 'Suspendido' || estado_previo == 'Rechazado' || estado_previo == 'Resuelto' || estado_previo == 'Reabierto' || estado_previo == 'Cerrado' || estado_previo == 'Solver' || estado_previo == 'Cancelado'
+                _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
         if s =='helpdesk.stage(14,)':
-            b='Suspendido'
+            b = 'Suspendido'
+            if estado_previo == 'Rechazado' || estado_previo == 'Resuelto' || estado_previo == 'Reabierto' || estado_previo == 'Cerrado' || estado_previo == 'Solver' || estado_previo == 'Cancelado'
+                _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
         if s =='helpdesk.stage(15,)':
-            b='Rechazado'
+            b = 'Rechazado'
+            if estado_previo == 'Reabierto' || estado_previo == 'Cerrado' || estado_previo == 'Solver' || estado_previo == 'Cancelado'
+                _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
         if s =='helpdesk.stage(17,)':
-            b='Resuelto'
+            b = 'Resuelto'
+            if estado_previo == 'Rechazado' || estado_previo == 'Reabierto' || estado_previo == 'Cerrado' || estado_previo == 'Solver' || estado_previo == 'Cancelado'
+                _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
         if s =='helpdesk.stage(16,)':
-            b='Reabierto'
+            b = 'Reabierto'
+            if estado_previo == 'Cerrado' || estado_previo == 'Solver' || estado_previo == 'Cancelado'
+                _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
         if s =='helpdesk.stage(18,)':
-            b='Cerrado'
+            b = 'Cerrado'
+            if estado_previo == 'Solver' || estado_previo == 'Cancelado'
+                _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
         if s =='helpdesk.stage(3,)':
-            b='Solver'
+            b = 'Solver'
+            #if estado_previo == 'Solver' || estado_previo == 'Cancelado'
+            #    _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
         if s =='helpdesk.stage(4,)':
-            b='Cancelado'    
+            b = 'Cancelado'    
         #if self.stage_id==''
         self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.user_id.name,'x_estado': b})
     #@api.one
