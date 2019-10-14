@@ -25,7 +25,7 @@ class helpdesk_update(models.Model):
         #ID Administrator en res_user = 2
         #raise exceptions.Warning('Warning message')
         #raise exceptions.ValidationError('Not valid message') 
-        estado_previo = str(self.historialCuatro[0].x_estado)
+        #estado_previo = str(self.historialCuatro[0].x_estado)
         b = ''
         s = str(self.stage_id)
         
