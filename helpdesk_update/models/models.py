@@ -20,7 +20,7 @@ class helpdesk_update(models.Model):
     def actualiza_datos_estado(self):
         _logger.info("alv : "+str(self.partner_id))
         _logger.info('Test id usuario login: ' + str(self._uid))
-        _logger.info('Estado previo: ' + 'estado: ' + str(self.historialCuatro[0].x_estado) + ' fecha: ' + str(self.historialCuatro[0].create_date))
+        #_logger.info('Estado previo: ' + 'estado: ' + str(self.historialCuatro[0].x_estado) + ' fecha: ' + str(self.historialCuatro[0].create_date))
         #ID lester en res_user = 81
         #ID Administrator en res_user = 2
         #raise exceptions.Warning('Warning message')
