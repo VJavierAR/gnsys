@@ -504,7 +504,7 @@ class helpdesk_update(models.Model):
                         srtt="update helpdesk_ticket set x_studio_telefono = '" + str(cliente_telefono) + "' where  id = " + str(idM) + ";"
                         _logger.info("update gacho"+srtt)
                         #s=self.env.cr.execute("update helpdesk_ticket set x_studio_telefono = '" + str(cliente_telefono) + "' where  id = " + str(idM) + ";")
-                        _logger.info("update gacho 2 "+str(s))
+                        #_logger.info("update gacho 2 "+str(s))
                     v['x_studio_telefono'] = cliente_telefono
                     _logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.mobile)
                     cliente_movil = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.mobile
