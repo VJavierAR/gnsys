@@ -22,7 +22,9 @@ class helpdesk_update(models.Model):
         _logger.info('Test id usuario login: ' + str(self._uid))
         
         #ID lester en res_user = 81
+        #ID Alejandro en res_user = 85
         #ID Administrator en res_user = 2
+        
         #raise exceptions.Warning('Warning message')
         #raise exceptions.ValidationError('Not valid message') 
         estado_previo = 'New'
@@ -35,7 +37,7 @@ class helpdesk_update(models.Model):
         
         if s =='helpdesk.stage(1,)':
             b = 'Abierto'
-            if estado_previo == 'Asignado' or estado_previo == 'Extension' or estado_previo == 'Suspendido' or estado_previo == 'Rechazado' or estado_previo == 'Resuelto' or estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado' and id_usuario_login != 81:
+            if estado_previo == 'Asignado' or estado_previo == 'Extension' or estado_previo == 'Suspendido' or estado_previo == 'Rechazado' or estado_previo == 'Resuelto' or estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado' and (id_usuario_login != 81 or id_usuario_login != 85):
                 _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
                 raise exceptions.ValidationError("Usuario no valido para realizar moviimento del estado " + estado_previo + " al estado " + b)
             else: 
@@ -43,7 +45,7 @@ class helpdesk_update(models.Model):
                 
         if s =='helpdesk.stage(2,)':
             b = 'Asignado'
-            if estado_previo == 'Extension' or estado_previo == 'Suspendido' or estado_previo == 'Rechazado' or estado_previo == 'Resuelto' or estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado' and id_usuario_login != 81:
+            if estado_previo == 'Extension' or estado_previo == 'Suspendido' or estado_previo == 'Rechazado' or estado_previo == 'Resuelto' or estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado' and (id_usuario_login != 81 or id_usuario_login != 85):
                 _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
                 raise exceptions.ValidationError("Usuario no valido para realizar moviimento del estado " + estado_previo + " al estado " + b)
             else: 
@@ -51,7 +53,7 @@ class helpdesk_update(models.Model):
                 
         if s =='helpdesk.stage(13,)':
             b = 'Extension'
-            if estado_previo == 'Suspendido' or estado_previo == 'Rechazado' or estado_previo == 'Resuelto' or estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado' and id_usuario_login != 81:
+            if estado_previo == 'Suspendido' or estado_previo == 'Rechazado' or estado_previo == 'Resuelto' or estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado' and (id_usuario_login != 81 or id_usuario_login != 85):
                 _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
                 raise exceptions.ValidationError("Usuario no valido para realizar moviimento del estado " + estado_previo + " al estado " + b)
             else: 
@@ -59,7 +61,7 @@ class helpdesk_update(models.Model):
                 
         if s =='helpdesk.stage(14,)':
             b = 'Suspendido'
-            if estado_previo == 'Rechazado' or estado_previo == 'Resuelto' or estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado' and id_usuario_login != 81:
+            if estado_previo == 'Rechazado' or estado_previo == 'Resuelto' or estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado' and (id_usuario_login != 81 or id_usuario_login != 85):
                 _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
                 raise exceptions.ValidationError("Usuario no valido para realizar moviimento del estado " + estado_previo + " al estado " + b)
             else: 
@@ -67,7 +69,7 @@ class helpdesk_update(models.Model):
                 
         if s =='helpdesk.stage(15,)':
             b = 'Rechazado'
-            if estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado' and id_usuario_login != 81:
+            if estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado' and (id_usuario_login != 81 or id_usuario_login != 85):
                 _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
                 raise exceptions.ValidationError("Usuario no valido para realizar moviimento del estado " + estado_previo + " al estado " + b)
             else: 
@@ -75,7 +77,7 @@ class helpdesk_update(models.Model):
                 
         if s =='helpdesk.stage(17,)':
             b = 'Resuelto'
-            if estado_previo == 'Rechazado' or estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado' and id_usuario_login != 81:
+            if estado_previo == 'Rechazado' or estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado' and (id_usuario_login != 81 or id_usuario_login != 85):
                 _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
                 raise exceptions.ValidationError("Usuario no valido para realizar moviimento del estado " + estado_previo + " al estado " + b)
             else: 
@@ -83,7 +85,7 @@ class helpdesk_update(models.Model):
                 
         if s =='helpdesk.stage(16,)':
             b = 'Reabierto'
-            if estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado' and id_usuario_login != 81:
+            if estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado' and (id_usuario_login != 81 or id_usuario_login != 85):
                 _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
                 raise exceptions.ValidationError("Usuario no valido para realizar moviimento del estado " + estado_previo + " al estado " + b)
             else: 
@@ -91,7 +93,7 @@ class helpdesk_update(models.Model):
                 
         if s =='helpdesk.stage(18,)':
             b = 'Cerrado'
-            if estado_previo == 'Solver' or estado_previo == 'Cancelado' and id_usuario_login != 81:
+            if estado_previo == 'Solver' or estado_previo == 'Cancelado' and (id_usuario_login != 81 or id_usuario_login != 85):
                 _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
                 raise exceptions.ValidationError("Usuario no valido para realizar moviimento del estado " + estado_previo + " al estado " + b)
             else: 
