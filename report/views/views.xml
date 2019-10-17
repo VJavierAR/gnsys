@@ -33,8 +33,8 @@
                                       <td style="width:30%"> <span t-field="move.product_qty"/></td> 
                                       <td style="width:30%"> 
                                         <span t-foreach="move.product_id.stock_quant_ids" t-as="quant">
-                                        <p t-if="quant.location_id==13" t-field="quant.location_id.display_name"/>
-                                        <p t-elif="quant.location_id.location_id==13" t-field="quant.location_id.display_name"/>
+                                        <p t-if="quant.location_id.id==13" t-field="quant.location_id.display_name"/>
+                                        <p t-elif="quant.location_id.location_id.id==13" t-field="quant.location_id.display_name"/>
                                         </span>
                                     </td>
                                   </tr>
