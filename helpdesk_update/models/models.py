@@ -108,7 +108,22 @@ class helpdesk_update(models.Model):
             b = 'Cancelado'    
         #if self.stage_id==''
         self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.user_id.name,'x_estado': b})
-        
+    
+    
+    
+    @api.onchange('x_studio_responsable_de_equipo')
+    def actualiza_datos_zona(self):
+        s = self.stage_id.name
+        res = self.x_studio_responsable_de_equipo.name
+        team = self.team_id.name
+        #raise exceptions.ValidationError("No son vacios : "+str(self.x_studio_id_ticket))
+        if res and s and team :
+           query="update helpdesk_ticket set stage_id = 2 where id = " + str(self.x_studio_id_ticket) + ";" 
+           #raise exceptions.ValidationError("No son vacios : "+str(query))
+           ss=self.env.cr.execute(query) 
+           
+    
+    
     #@api.one
     #@api.depends('team_id', 'x_studio_responsable_de_equipo')
     @api.model
