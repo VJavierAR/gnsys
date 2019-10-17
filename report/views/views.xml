@@ -14,7 +14,7 @@
                           </style>
                       </head>
                       <t t-foreach="docs" t-as="pick">
-                          <table t-if="pick.state=='done' and pick.value2 == 1" style="width:100%;border-collapse: collapse;">
+                          <table t-if="pick.state=='done' or "pick.state=='assigned' and pick.value2 == 1" style="width:100%;border-collapse: collapse;">
                           <tr >
                               <th>Orden: <span style="font-size:16px" t-field="pick.name"/></th>
                           </tr>
