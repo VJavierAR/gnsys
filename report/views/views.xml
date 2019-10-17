@@ -31,7 +31,7 @@
                                       <td style="width:30%"><span t-field="move.product_id.default_code"/></td>
                                       <td style="width:30%"><span t-field="move.product_id.description"/></td>
                                       <td style="width:30%"> <span t-field="move.product_qty"/></td> 
-                                      <td style="width:30%"> <span t-field="move.product_id.stock_quant_ids.location_id.display_name"/></td>
+                                      <td style="width:30%"> <span t-field="move.product_id.stock_quant_ids[0].location_id.display_name"/></td>
                                   </tr>
                               </t>
                           </table>
