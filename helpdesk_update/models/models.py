@@ -116,7 +116,7 @@ class helpdesk_update(models.Model):
         s = self.stage_id.name
         res = self.x_studio_responsable_de_equipo.name
         team = self.team_id.name
-        #raise exceptions.ValidationError("No son vacios : "+str(self.x_studio_id_ticket))
+        raise exceptions.ValidationError("No son vacios : "+str(s))
         #if s=='Abierto' :
         if s == 'New' :
             if res and s and team :
