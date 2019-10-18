@@ -113,9 +113,9 @@ class helpdesk_update(models.Model):
     
     @api.onchange('x_studio_responsable_de_equipo')
     def actualiza_datos_zona_dos(self):
-        _logger.info("actualiza_datos_zona()  ***********************************")
-        raise exceptions.ValidationError("No son vacios : "+str(s))
         s = self.stage_id.name
+        #raise exceptions.ValidationError("No son vacios : "+str(s))
+        _logger.info("actualiza_datos_zona()  ***********************************"+str(s))
         res = self.x_studio_responsable_de_equipo.name
         team = self.team_id.name
         #if s=='Abierto' :
