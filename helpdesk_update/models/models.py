@@ -115,11 +115,11 @@ class helpdesk_update(models.Model):
     def actualiza_datos_zona_dos(self):
         s = self.stage_id.name
         #raise exceptions.ValidationError("No son vacios : "+str(s))
-        _logger.info("actualiza_datos_zona()  ***********************************"+str(s))
+        #_logger.info("actualiza_datos_zona()  ***********************************"+str(s))
         res = self.x_studio_responsable_de_equipo.name
         team = self.team_id.name
-        #if s=='Abierto' :
-        if s == 'New' :
+        if s=='Abierto' :
+        #if s == 'New' :
             if res and s and team :
                query="update helpdesk_ticket set stage_id = 2 where id = " + str(self.x_studio_id_ticket) + ";" 
                #raise exceptions.ValidationError("No son vacios : "+str(query))
