@@ -112,12 +112,12 @@ class helpdesk_update(models.Model):
     
     
     @api.onchange('x_studio_responsable_de_equipo')
-    def actualiza_datos_zona(self):
+    def actualiza_datos_zona_dos(self):
         _logger.info("actualiza_datos_zona()  ***********************************")
+        raise exceptions.ValidationError("No son vacios : "+str(s))
         s = self.stage_id.name
         res = self.x_studio_responsable_de_equipo.name
         team = self.team_id.name
-        raise exceptions.ValidationError("No son vacios : "+str(s))
         #if s=='Abierto' :
         if s == 'New' :
             if res and s and team :
@@ -125,9 +125,6 @@ class helpdesk_update(models.Model):
                #raise exceptions.ValidationError("No son vacios : "+str(query))
                ss=self.env.cr.execute(query) 
            
-    
-    
-    
     @api.onchange('x_studio_tcnico')
     def actualiza_datos_zona(self):
         s = self.x_studio_tcnico.name
