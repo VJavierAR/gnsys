@@ -475,7 +475,71 @@ class helpdesk_update(models.Model):
             
             self._origin.sudo().write({x_studio_responsable_de_equipo : responsable_equipo_de_almacen})
             _logger.info('Saliendo de if equipo_de_almacen................................................................................. unsubs = ' + str(unsubs))
-            
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    @api.onchange('partner_id', 'x_studio_empresas_relacionadas')
+    def actualiza_dominio_en_numeros_de_serie(self):
+        
+        for record in self:
+            zero = 0
+            dominio = []
+
+            #for record in self:
+            id_cliente = record.partner_id.id
+            #id_cliente = record.x_studio_id_cliente
+            id_localidad = record.x_studio_empresas_relacionadas.id
+
+            record['x_studio_id_cliente'] = id_cliente# + " , " + str(id_cliente)
+            record['x_studio_filtro_numeros_de_serie'] = id_localidad
+
+            if id_cliente != zero:
+              #raise Warning('entro1')
+              dominio = ['&', ('x_studio_categoria_de_producto_3.name','=','Equipo'), ('x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id', '=', id_cliente)]
+                
+            else:
+              #raise Warning('entro2')
+              dominio = [('x_studio_categoria_de_producto_3.name','=','Equipo')]
+              record['partner_name'] = ''
+              record['partner_email'] = ''
+              record['x_studio_nivel_del_cliente'] = ''
+              record['x_studio_telefono'] = ''
+              record['x_studio_movil'] = ''
+              record['x_studio_empresas_relacionadas'] = ''
+              record['x_studio_equipo_por_nmero_de_serie'] = ''
+
+            if id_cliente != zero  and id_localidad != zero:
+              #raise Warning('entro3')
+              dominio = ['&', '&', ('x_studio_categoria_de_producto_3.name','=','Equipo'), ('x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id', '=', id_cliente),('x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id','=',id_localidad)]
+
+            if id_localidad == zero and id_cliente != zero:
+              #raise Warning('entro4')
+              dominio = ['&', ('x_studio_categoria_de_producto_3.name','=','Equipo'), ('x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id', '=', id_cliente)]
+
+            if id_cliente == zero and id_localidad == zero:
+              #raise Warning('entro5')
+              dominio = [('x_studio_categoria_de_producto_3.name','=','Equipo')]
+              record['partner_name'] = ''
+              record['partner_email'] = ''
+              record['x_studio_nivel_del_cliente'] = ''
+              record['x_studio_telefono'] = ''
+              record['x_studio_movil'] = ''
+
+            action = {'domain':{'x_studio_equipo_por_nmero_de_serie':dominio}}
+            return action
     
     
     #@api.model
