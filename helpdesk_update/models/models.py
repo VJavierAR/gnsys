@@ -16,6 +16,25 @@ class helpdesk_update(models.Model):
     x_studio_empresas_relacionadas = fields.Many2one('res.partner', store=True, track_visibility='onchange', string='Localidad')
     historialCuatro = fields.One2many('x_historial_helpdesk','x_id_ticket',string='historial de ticket estados',store=True,track_visibility='onchange')
     
+    
+    
+    
+    @api.onchange('x_studio_desactivar_zona')
+    def desactivar_datos_zona(self):
+        res = {}
+        if self.x_studio_desactivar_zona :
+           res['domain']={'x_studio_responsable_de_equipo':[('x_studio_zona', '!=', False)]}
+        return res
+       
+                
+    
+    
+    @api.onchange('x_studio_zona')
+    def actualiza_datos_zona(self):
+        res = {}        
+        res['domain']={'x_studio_responsable_de_equipo':[('x_studio_zona', '=', self.x_studio_zona)]}
+        return res
+    
     @api.onchange('stage_id')
     def actualiza_datos_estado(self):
         _logger.info("alv : "+str(self.partner_id))
