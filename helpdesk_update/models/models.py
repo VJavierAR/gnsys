@@ -30,8 +30,9 @@ class helpdesk_update(models.Model):
     
     
     @api.onchange('x_studio_zona')
-    def actualiza_datos_zona(self):
+    def actualiza_datos_zona_responsable(self):
         res = {}
+        #raise exceptions.ValidationError("test " + self.x_studio_zona)
         if self.x_studio_zona :
             res['domain']={'x_studio_responsable_de_equipo':[('x_studio_zona', '=', self.x_studio_zona)]}
         return res
