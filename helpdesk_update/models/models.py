@@ -146,6 +146,14 @@ class helpdesk_update(models.Model):
                #raise exceptions.ValidationError("No son vacios : "+str(query))
                ss=self.env.cr.execute(query)
 
+    @api.onchange('x_studio_fecha_de_visita')
+    def actualiza_datos_tecnico(self):
+        s = self.stage_id.name
+        if s=='Asignado' :
+            if self.x_studio_tcnico :
+               query="update helpdesk_ticket set stage_id = 3 where id = " + str(self.x_studio_id_ticket) + ";" 
+               ss=self.env.cr.execute(query)
+            
            
     @api.onchange('x_studio_tcnico')
     def actualiza_datos_zona(self):
