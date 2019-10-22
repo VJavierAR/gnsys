@@ -16,8 +16,7 @@ class helpdesk_update(models.Model):
     x_studio_empresas_relacionadas = fields.Many2one('res.partner', store=True, track_visibility='onchange', string='Localidad')
     historialCuatro = fields.One2many('x_historial_helpdesk','x_id_ticket',string='historial de ticket estados',store=True,track_visibility='onchange')
     
-    
-    
+  
     
     @api.onchange('x_studio_desactivar_zona')
     def desactivar_datos_zona(self):
@@ -146,8 +145,7 @@ class helpdesk_update(models.Model):
                query="update helpdesk_ticket set stage_id = 2 where id = " + str(self.x_studio_id_ticket) + ";" 
                #raise exceptions.ValidationError("No son vacios : "+str(query))
                ss=self.env.cr.execute(query)
-            else :
-               raise exceptions.ValidationError("Asegurate de primero guardar el ticket")
+
            
     @api.onchange('x_studio_tcnico')
     def actualiza_datos_zona(self):
