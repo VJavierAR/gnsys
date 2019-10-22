@@ -142,10 +142,12 @@ class helpdesk_update(models.Model):
         _logger.info("actualiza_datos_zona()  **********************************#*"+str(s)+" "+str(res)+""+str(team))
         if s=='Abierto' :
         #if s == 'New' :
-            if res and s and team :
+            if self.x_studio_id_ticket :
                query="update helpdesk_ticket set stage_id = 2 where id = " + str(self.x_studio_id_ticket) + ";" 
                #raise exceptions.ValidationError("No son vacios : "+str(query))
-               ss=self.env.cr.execute(query) 
+               ss=self.env.cr.execute(query)
+            else :
+               raise exceptions.ValidationError("Asegurate de primero guardar el ticket")
            
     @api.onchange('x_studio_tcnico')
     def actualiza_datos_zona(self):
