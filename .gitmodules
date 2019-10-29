@@ -2,3 +2,8 @@
 	path = VJavierAR/reporte
 	url = git@github.com:VJavierAR/reporte.git
 	branch = master
+
+[submodule "guohuadeng/app-odoo"]
+	path = guohuadeng/app-odoo
+	url = git@github.com:guohuadeng/app-odoo.git
+	branch = 12.0
