@@ -16,6 +16,7 @@ class helpdesk_update(models.Model):
     x_studio_empresas_relacionadas = fields.Many2one('res.partner', store=True, track_visibility='onchange', string='Localidad')
     historialCuatro = fields.One2many('x_historial_helpdesk','x_id_ticket',string='historial de ticket estados',store=True,track_visibility='onchange')
     documentosTecnico = fields.Many2many('ir.attachment', string="Evidencias Técnico")
+    
   
     
     @api.onchange('x_studio_desactivar_zona')
@@ -161,6 +162,14 @@ class helpdesk_update(models.Model):
         s = self.x_studio_tcnico.name
         b = self.stage_id.name
         self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': s,'x_estado': b })
+    
+    
+    @api.depends('x_studio_equipo_por_nmero_de_serie.x_studio_field_B7uLt')
+    def obtener_contadores(self):        
+        for record in self.x_studio_equipo_por_nmero_de_serie:
+            if len(record)>0:
+                f = record.x_studio_dcas_ultimo
+                raise exceptions.ValidationError("No son vacios : "+str(f))
     
     
     #@api.one
