@@ -25,7 +25,7 @@ class dcas(models.Model):
     porcentajeAmarillo=fields.Integer(string='Amarillo')
     porcentajeCian=fields.Integer(string='Cian')
     porcentajeMagenta=fields.Integer(string='Magenta')
-    fuente=fields.Selection(selection=[('DCA', 'dcas.dcas'),('Mesa', 'helpdesk.ticket'),('Equipo','stock.production.lot'),('Tfs','tfs.tfs')],widget="statusbar", default='dcas.dcas')  
+    fuente=fields.Selection(selection=[('DCA', 'dcas.dcas'),('Mesa', 'helpdesk.ticket'),('Equipo','stock.production.lot'),('Tfs','tfs.tfs')],widget="statusbar", default='DCA')  
 
     
 
