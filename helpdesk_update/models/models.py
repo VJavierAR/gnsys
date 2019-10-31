@@ -14,12 +14,170 @@ class helpdesk_update(models.Model):
     priority = fields.Selection([('0','Todas'),('1','Baja'),('2','Media'),('3','Alta'),('4','Critica')], track_visibility='onchange')
     x_studio_equipo_por_nmero_de_serie = fields.Many2many('stock.production.lot', store=True)
     x_studio_empresas_relacionadas = fields.Many2one('res.partner', store=True, track_visibility='onchange', string='Localidad')
+    historialCuatro = fields.One2many('x_historial_helpdesk','x_id_ticket',string='historial de ticket estados',store=True,track_visibility='onchange')
+    documentosTecnico = fields.Many2many('ir.attachment', string="Evidencias Técnico")
+    
+  
+    
+    @api.onchange('x_studio_desactivar_zona')
+    def desactivar_datos_zona(self):
+        res = {}
+        if self.x_studio_desactivar_zona :
+           res['domain']={'x_studio_responsable_de_equipo':[('x_studio_zona', '!=', False)]}
+        return res
+       
+                
+    
+    
+    @api.onchange('x_studio_zona')
+    def actualiza_datos_zona_responsable(self):
+        res = {}
+        #raise exceptions.ValidationError("test " + self.x_studio_zona)
+        if self.x_studio_zona :
+            res['domain']={'x_studio_responsable_de_equipo':[('x_studio_zona', '=', self.x_studio_zona)]}
+        return res
+    
+    @api.onchange('stage_id')
+    def actualiza_datos_estado(self):
+        _logger.info("alv : "+str(self.partner_id))
+        _logger.info('Test id usuario login: ' + str(self._uid))
+        
+        #ID lester en res_user = 81
+        #ID Alejandro en res_user = 85
+        #ID Administrator en res_user = 2
+        
+        #raise exceptions.Warning('Warning message')
+        #raise exceptions.ValidationError('Not valid message') 
+        estado_previo = 'New'
+        if len(self.historialCuatro) > 0:
+            _logger.info('Estado previo: ' + 'estado: ' + str(self.historialCuatro[len(self.historialCuatro) - 1].x_estado) + ' fecha: ' + str(self.historialCuatro[len(self.historialCuatro) - 1].create_date))
+            estado_previo = str(self.historialCuatro[len(self.historialCuatro) - 1].x_estado)
+        id_usuario_login = self._uid
+        b = ''
+        s = str(self.stage_id)
+        
+        if s =='helpdesk.stage(1,)':
+            b = 'Abierto'
+            if estado_previo == 'Asignado' or estado_previo == 'Extension' or estado_previo == 'Suspendido' or estado_previo == 'Rechazado' or estado_previo == 'Resuelto' or estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado' and (id_usuario_login != 81 or id_usuario_login != 85):
+            #if estado_previo == 'Asignado' or estado_previo == 'Extension' or estado_previo == 'Suspendido' or estado_previo == 'Rechazado' or estado_previo == 'Resuelto' or estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado' or (id_usuario_login != 81) or (id_usuario_login != 85):
+                _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
+                raise exceptions.ValidationError("Usuario no valido para realizar moviimento del estado " + estado_previo + " al estado " + b)
+            else: 
+                _logger.info("pasa =) ")
+                
+        if s =='helpdesk.stage(2,)':
+            b = 'Asignado'
+            if estado_previo == 'Extension' or estado_previo == 'Suspendido' or estado_previo == 'Rechazado' or estado_previo == 'Resuelto' or estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado' and (id_usuario_login != 81 or id_usuario_login != 85):
+                _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
+                raise exceptions.ValidationError("Usuario no valido para realizar moviimento del estado " + estado_previo + " al estado " + b)
+            else: 
+                _logger.info("pasa =) ")
+                
+        if s =='helpdesk.stage(13,)':
+            b = 'Extension'
+            if estado_previo == 'Suspendido' or estado_previo == 'Rechazado' or estado_previo == 'Resuelto' or estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado' and (id_usuario_login != 81 or id_usuario_login != 85):
+                _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
+                raise exceptions.ValidationError("Usuario no valido para realizar moviimento del estado " + estado_previo + " al estado " + b)
+            else: 
+                _logger.info("pasa =) ")
+                
+        if s =='helpdesk.stage(14,)':
+            b = 'Suspendido'
+            if estado_previo == 'Rechazado' or estado_previo == 'Resuelto' or estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado' and (id_usuario_login != 81 or id_usuario_login != 85):
+                _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
+                raise exceptions.ValidationError("Usuario no valido para realizar moviimento del estado " + estado_previo + " al estado " + b)
+            else: 
+                _logger.info("pasa =) ")
+                
+        if s =='helpdesk.stage(15,)':
+            b = 'Rechazado'
+            if estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado' and (id_usuario_login != 81 or id_usuario_login != 85):
+                _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
+                raise exceptions.ValidationError("Usuario no valido para realizar moviimento del estado " + estado_previo + " al estado " + b)
+            else: 
+                _logger.info("pasa =) ")
+                
+        if s =='helpdesk.stage(17,)':
+            b = 'Resuelto'
+            if estado_previo == 'Rechazado' or estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado' and (id_usuario_login != 81 or id_usuario_login != 85):
+                _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
+                raise exceptions.ValidationError("Usuario no valido para realizar moviimento del estado " + estado_previo + " al estado " + b)
+            else: 
+                _logger.info("pasa =) ")
+                
+        if s =='helpdesk.stage(16,)':
+            b = 'Reabierto'
+            if estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado' and (id_usuario_login != 81 or id_usuario_login != 85):
+                _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
+                raise exceptions.ValidationError("Usuario no valido para realizar moviimento del estado " + estado_previo + " al estado " + b)
+            else: 
+                _logger.info("pasa =) ")
+                
+        if s =='helpdesk.stage(18,)':
+            b = 'Cerrado'
+            if estado_previo == 'Solver' or estado_previo == 'Cancelado' and (id_usuario_login != 81 or id_usuario_login != 85):
+                _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
+                raise exceptions.ValidationError("Usuario no valido para realizar moviimento del estado " + estado_previo + " al estado " + b)
+            else: 
+                _logger.info("pasa =) ")
+                
+        if s =='helpdesk.stage(3,)':
+            b = 'Solver'
+            #if estado_previo == 'Solver' or estado_previo == 'Cancelado':
+            #    _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
+        if s =='helpdesk.stage(4,)':
+            b = 'Cancelado'    
+        #if self.stage_id==''
+        self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.user_id.name,'x_estado': b})
+    
+    
+    
+    @api.onchange('x_studio_responsable_de_equipo')
+    def actualiza_datos_zona_dos(self):
+        s = self.stage_id.name
+        #raise exceptions.ValidationError("No son vacios : "+str(s))
+        res = self.x_studio_responsable_de_equipo.name
+        team = self.team_id.name
+        
+        _logger.info("actualiza_datos_zona()  **********************************#*"+str(s)+" "+str(res)+""+str(team))
+        if s=='Abierto' :
+        #if s == 'New' :
+            if self.x_studio_id_ticket :
+               query="update helpdesk_ticket set stage_id = 2 where id = " + str(self.x_studio_id_ticket) + ";" 
+               #raise exceptions.ValidationError("No son vacios : "+str(query))
+               ss=self.env.cr.execute(query)
+    """
+    @api.onchange('x_studio_fecha_de_visita')
+    def actualiza_datos_tecnico(self):
+        s = self.stage_id.name
+        #raise exceptions.ValidationError("No son vacios : "+str(s))
+        if s=='Asignado' :
+            if self.x_studio_tcnico :
+               query="update helpdesk_ticket set stage_id = 3 where id = " + str(self.x_studio_id_ticket) + ";" 
+               ss=self.env.cr.execute(query)
+    """     
+           
+    @api.onchange('x_studio_tcnico')
+    def actualiza_datos_zona(self):
+        s = self.x_studio_tcnico.name
+        b = self.stage_id.name
+        self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': s,'x_estado': b })
+    
+    
+    @api.depends('x_studio_equipo_por_nmero_de_serie.x_studio_field_B7uLt')
+    def obtener_contadores(self):        
+        for record in self.x_studio_equipo_por_nmero_de_serie:
+            if len(record)>0:
+                f = record.x_studio_dcas_ultimo
+                raise exceptions.ValidationError("No son vacios : "+str(f))
+    
     
     #@api.one
     #@api.depends('team_id', 'x_studio_responsable_de_equipo')
     @api.model
     @api.onchange('team_id', 'x_studio_responsable_de_equipo')
     def cambiar_seguidores(self):
+        _logger.info("cambiar_github porfinV2   ***********************************()")
         _logger.info("cambiar_seguidores()")
         _logger.info("self._origin: " + str(self._origin) + ' self._origin.id: ' + str(self._origin.id))
         
@@ -49,7 +207,7 @@ class helpdesk_update(models.Model):
 
         # Diamel Luna Chavelas
         id_test = 826   #Id de Diamel Luna Chavelas
-        id_test_res_partner = 7804  #Id de res_partner.name = test
+        id_test_res_partner = 10528  #Id de res_partner.name = Test
 
 
         equipo_de_atencion_al_cliente = 1
@@ -356,7 +514,71 @@ class helpdesk_update(models.Model):
             
             self._origin.sudo().write({x_studio_responsable_de_equipo : responsable_equipo_de_almacen})
             _logger.info('Saliendo de if equipo_de_almacen................................................................................. unsubs = ' + str(unsubs))
-            
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    @api.onchange('partner_id', 'x_studio_empresas_relacionadas')
+    def actualiza_dominio_en_numeros_de_serie(self):
+        
+        for record in self:
+            zero = 0
+            dominio = []
+
+            #for record in self:
+            id_cliente = record.partner_id.id
+            #id_cliente = record.x_studio_id_cliente
+            id_localidad = record.x_studio_empresas_relacionadas.id
+
+            record['x_studio_id_cliente'] = id_cliente# + " , " + str(id_cliente)
+            record['x_studio_filtro_numeros_de_serie'] = id_localidad
+
+            if id_cliente != zero:
+              #raise Warning('entro1')
+              dominio = ['&', ('x_studio_categoria_de_producto_3.name','=','Equipo'), ('x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id', '=', id_cliente)]
+                
+            else:
+              #raise Warning('entro2')
+              dominio = [('x_studio_categoria_de_producto_3.name','=','Equipo')]
+              record['partner_name'] = ''
+              record['partner_email'] = ''
+              record['x_studio_nivel_del_cliente'] = ''
+              record['x_studio_telefono'] = ''
+              record['x_studio_movil'] = ''
+              record['x_studio_empresas_relacionadas'] = ''
+              record['x_studio_equipo_por_nmero_de_serie'] = ''
+
+            if id_cliente != zero  and id_localidad != zero:
+              #raise Warning('entro3')
+              dominio = ['&', '&', ('x_studio_categoria_de_producto_3.name','=','Equipo'), ('x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id', '=', id_cliente),('x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id','=',id_localidad)]
+
+            if id_localidad == zero and id_cliente != zero:
+              #raise Warning('entro4')
+              dominio = ['&', ('x_studio_categoria_de_producto_3.name','=','Equipo'), ('x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id', '=', id_cliente)]
+
+            if id_cliente == zero and id_localidad == zero:
+              #raise Warning('entro5')
+              dominio = [('x_studio_categoria_de_producto_3.name','=','Equipo')]
+              record['partner_name'] = ''
+              record['partner_email'] = ''
+              record['x_studio_nivel_del_cliente'] = ''
+              record['x_studio_telefono'] = ''
+              record['x_studio_movil'] = ''
+
+            action = {'domain':{'x_studio_equipo_por_nmero_de_serie':dominio}}
+            return action
     
     
     #@api.model
@@ -411,8 +633,8 @@ class helpdesk_update(models.Model):
                     if cliente_telefono != []:
                         srtt="update helpdesk_ticket set x_studio_telefono = '" + str(cliente_telefono) + "' where  id = " + str(idM) + ";"
                         _logger.info("update gacho"+srtt)
-                        s=self.env.cr.execute("update helpdesk_ticket set x_studio_telefono = '" + str(cliente_telefono) + "' where  id = " + str(idM) + ";")
-                        _logger.info("update gacho 2 "+str(s))
+                        #s=self.env.cr.execute("update helpdesk_ticket set x_studio_telefono = '" + str(cliente_telefono) + "' where  id = " + str(idM) + ";")
+                        #_logger.info("update gacho 2 "+str(s))
                     v['x_studio_telefono'] = cliente_telefono
                     _logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.mobile)
                     cliente_movil = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.mobile
