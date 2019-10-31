@@ -40,7 +40,7 @@ class helpdesk_update(models.Model):
     @api.onchange('stage_id')
     def actualiza_datos_estado(self):
         _logger.info("alv : "+str(self.partner_id))
-        _logger.info('Test id usuario login: ' + str(self._uid))
+        _logger.info('Test id usuario login2: ' + str(self._uid))
         
         #ID lester en res_user = 81
         #ID Alejandro en res_user = 85
