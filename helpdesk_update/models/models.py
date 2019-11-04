@@ -532,11 +532,9 @@ class helpdesk_update(models.Model):
     
     @api.onchange('partner_id', 'x_studio_empresas_relacionadas')
     def actualiza_dominio_en_numeros_de_serie(self):
-        
         for record in self:
             zero = 0
             dominio = []
-
             #for record in self:
             id_cliente = record.partner_id.id
             #id_cliente = record.x_studio_id_cliente
