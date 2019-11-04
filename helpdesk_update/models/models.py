@@ -529,7 +529,7 @@ class helpdesk_update(models.Model):
     
     
     
-    """
+    
     @api.onchange('partner_id', 'x_studio_empresas_relacionadas')
     def actualiza_dominio_en_numeros_de_serie(self):
         for record in self:
@@ -577,7 +577,7 @@ class helpdesk_update(models.Model):
 
             action = {'domain':{'x_studio_equipo_por_nmero_de_serie':dominio}}
             return action
-    """
+    
     
     #@api.model
     #@api.multi
