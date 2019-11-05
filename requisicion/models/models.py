@@ -9,6 +9,7 @@ class product_requisicion(models.Model):
     product=fields.Many2one('product.product','id')
     req_rel=fields.Many2one('requisicion.requisicion','id')
     costo=fields.Float()
+
     
 class requisicion(models.Model):
     _name = 'requisicion.requisicion'
@@ -19,6 +20,7 @@ class requisicion(models.Model):
     justificacion=fields.Text()
     product_rel=fields.One2many('product.rel.requisicion','req_rel')
     state = fields.Selection([('draft','Nuevo'),('open','Proceso'), ('done','Hecho')],'State')
+    origen=fields.Char()
 
     @api.one
     def update_estado(self):
@@ -26,7 +28,12 @@ class requisicion(models.Model):
     @api.one
     def update_estado1(self):
         self.write({'state':'done'})
-    
+        ordenDCompra=self.env['purchase.order'].create({'partner_id':3})
+        for record in self:
+            for line in product_rel:
+                lineas=self.env['purchase.order.line'].create({'product_id':record.product.id,'product_qty':record.cantidad,'price_unit':record.costo,'taxes_id':[10],'order_id':ordenDCompra.id})
+            record['origen']=ordenDCompra.name
+
     @api.model
     def create(self,vals):
         vals['name'] = self.env['ir.sequence'].next_by_code('requisicion')
