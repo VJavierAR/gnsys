@@ -16,7 +16,7 @@ class helpdesk_update(models.Model):
     x_studio_empresas_relacionadas = fields.Many2one('res.partner', store=True, track_visibility='onchange', string='Localidad')
     historialCuatro = fields.One2many('x_historial_helpdesk','x_id_ticket',string='historial de ticket estados',store=True,track_visibility='onchange')
     documentosTecnico = fields.Many2many('ir.attachment', string="Evidencias Técnico")
-    
+    """
     @api.onchange('stage_id')
     def crear_solicitud_refaccion(self):
         for record in self:
@@ -44,7 +44,7 @@ class helpdesk_update(models.Model):
                                                   , 'product_id' : c.id
                                                   , 'product_uom_qty' : c.x_studio_cantidad_a_solicitar
                                                     })
-    
+    """
     @api.onchange('x_studio_verificacin_de_refaccin')
     def validar_solicitud_refaccion(self):
         for record in self:
@@ -90,6 +90,30 @@ class helpdesk_update(models.Model):
     
     @api.onchange('stage_id')
     def actualiza_datos_estado(self):
+        
+        for record in self:
+            if record.stage_id == 13 and record.icket_type_id == 2 and record.x_studio_tipo_de_incidencia == 'Solicitud de refacción':
+                sale = env['sale.order'].create({'partner_id' : record.partner_id.id
+                                    , 'origin' : "Ticket de refacción: " + str(record.ticket_type_id.id)
+                                    , 'x_studio_tipo_de_solicitud' : "Venta"
+                                    , 'x_studio_requiere_instalacin' : True
+                                    #, 'x_studio_fecha_y_hora_de_visita' : record.x_studio_rango_inicial_de_visita
+                                    #, 'x_studio_field_rrhrN' : record.x_studio_rango_final_de_visita
+                                    #, 'x_studio_comentarios_para_la_visita' : str(record.ticket_type_id.name)
+                                    #, 'x_studio_field_bAsX8' : record.x_studio_prioridad
+                                    #, 'commitment_date' : record.x_studio_rango_inicial_de_visita
+                                    #, 'x_studio_fecha_final' : record.x_studio_rango_final_de_visita
+                                    , 'user_id' : record.user_id.id
+                                    , 'x_studio_tcnico' : record.x_studio_tcnico.id
+                                    , 'warehouse_id' : 5865   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
+                                    , 'team_id' : 1
+                                  })
+                for c in record.x_studio_field_tLWzF:
+                    env['sale.order.line'].create({'order_id' : sale.id
+                                                  , 'product_id' : c.id
+                                                  , 'product_uom_qty' : c.x_studio_cantidad_a_solicitar
+                                                    })
+        
         _logger.info("alv : "+str(self.partner_id))
         _logger.info('Test id usuario login: ' + str(self._uid))
         
