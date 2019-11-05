@@ -22,9 +22,9 @@ class helpdesk_update(models.Model):
         for record in self:
             _logger.info("crear_solicitud_refaccion()")
             _logger.info("record.stage_id: " + str(record.stage_id.id))
-            _logger.info("record.ticket_type_id: " + str(record.ticket_type_id))
+            _logger.info("record.ticket_type_id: " + str(record.ticket_type_id.id))
             _logger.info("record.x_studio_tipo_de_incidencia: " + str(record.x_studio_tipo_de_incidencia))
-            if record.stage_id.id == 13 and record.ticket_type_id == 2 and record.x_studio_tipo_de_incidencia == 'Solicitud de refacción':
+            if record.stage_id.id == 13 and record.ticket_type_id.id == 2 and record.x_studio_tipo_de_incidencia == 'Solicitud de refacción':
                 _logger.info("entro: ****************************")
                 sale = env['sale.order'].create({'partner_id' : record.partner_id.id
                                     , 'origin' : "Ticket de refacción: " + str(record.ticket_type_id.id)
