@@ -16,7 +16,7 @@ class helpdesk_update(models.Model):
     x_studio_empresas_relacionadas = fields.Many2one('res.partner', store=True, track_visibility='onchange', string='Localidad')
     historialCuatro = fields.One2many('x_historial_helpdesk','x_id_ticket',string='historial de ticket estados',store=True,track_visibility='onchange')
     documentosTecnico = fields.Many2many('ir.attachment', string="Evidencias Técnico")
-    """
+    
     @api.onchange('stage_id')
     def crear_solicitud_refaccion(self):
         for record in self:
@@ -44,7 +44,9 @@ class helpdesk_update(models.Model):
                                                   , 'product_id' : c.id
                                                   , 'product_uom_qty' : c.x_studio_cantidad_a_solicitar
                                                     })
-    """
+                self.env.invalidate_all()
+                self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
+    
     @api.onchange('x_studio_verificacin_de_refaccin')
     def validar_solicitud_refaccion(self):
         for record in self:
@@ -90,7 +92,7 @@ class helpdesk_update(models.Model):
     
     @api.onchange('stage_id')
     def actualiza_datos_estado(self):
-        
+        """
         for record in self:
             if record.stage_id == 13 and record.icket_type_id == 2 and record.x_studio_tipo_de_incidencia == 'Solicitud de refacción':
                 sale = env['sale.order'].create({'partner_id' : record.partner_id.id
@@ -113,7 +115,7 @@ class helpdesk_update(models.Model):
                                                   , 'product_id' : c.id
                                                   , 'product_uom_qty' : c.x_studio_cantidad_a_solicitar
                                                     })
-        
+        """
         _logger.info("alv : "+str(self.partner_id))
         _logger.info('Test id usuario login: ' + str(self._uid))
         
