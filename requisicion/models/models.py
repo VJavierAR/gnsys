@@ -8,6 +8,7 @@ class product_requisicion(models.Model):
     cantidad=fields.Integer()
     product=fields.Many2one('product.product','id')
     req_rel=fields.Many2one('requisicion.requisicion','id')
+    costo=fields.Float()
     
 class requisicion(models.Model):
     _name = 'requisicion.requisicion'
