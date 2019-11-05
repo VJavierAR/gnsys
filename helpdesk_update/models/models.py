@@ -28,7 +28,7 @@ class helpdesk_update(models.Model):
                 _logger.info("entro: ****************************")
                 sale = self.env['sale.order'].create({'partner_id' : record.partner_id.id
                                     , 'origin' : "Ticket de refacción: " + str(record.ticket_type_id.id)
-                                    , 'x_studio_tipo_de_solicitud' : "Venta"
+                                    , 'x_studio_tipo_de_solicitud' : 'Venta'
                                     , 'x_studio_requiere_instalacin' : True
                                     #, 'x_studio_fecha_y_hora_de_visita' : record.x_studio_rango_inicial_de_visita
                                     #, 'x_studio_field_rrhrN' : record.x_studio_rango_final_de_visita
@@ -41,14 +41,16 @@ class helpdesk_update(models.Model):
                                     , 'warehouse_id' : 5865   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
                                     , 'team_id' : 1
                                   })
+                self.env.cr.commit()
                 for c in record.x_studio_field_tLWzF:
                     self.env['sale.order.line'].create({'order_id' : sale.id
                                                   , 'product_id' : c.id
                                                   , 'product_uom_qty' : c.x_studio_cantidad_a_solicitar
                                                     })
                 record['x_studio_field_nO7Xg'] = sale.id
-                #self.env.invalidate_all()
-                #self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
+                sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
+                self.env.invalidate_all()
+                self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
     
     @api.onchange('x_studio_verificacin_de_refaccin')
     def validar_solicitud_refaccion(self):
