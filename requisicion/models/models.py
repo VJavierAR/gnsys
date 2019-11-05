@@ -30,8 +30,8 @@ class requisicion(models.Model):
         self.write({'state':'done'})
         ordenDCompra=self.env['purchase.order'].create({'partner_id':3})
         for record in self:
-            for line in product_rel:
-                lineas=self.env['purchase.order.line'].create({'product_id':record.product.id,'product_qty':record.cantidad,'price_unit':record.costo,'taxes_id':[10],'order_id':ordenDCompra.id})
+            for line in record.product_rel:
+                lineas=self.env['purchase.order.line'].create({'product_id':line.product.id,'product_qty':line.cantidad,'price_unit':line.costo,'taxes_id':[10],'order_id':ordenDCompra.id})
             record['origen']=ordenDCompra.name
 
     @api.model
