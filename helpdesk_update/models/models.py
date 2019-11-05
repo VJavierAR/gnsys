@@ -44,6 +44,7 @@ class helpdesk_update(models.Model):
                                                   , 'product_id' : c.id
                                                   , 'product_uom_qty' : c.x_studio_cantidad_a_solicitar
                                                     })
+                record['x_studio_field_nO7Xg'] = sale.id
                 #self.env.invalidate_all()
                 #self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
     
