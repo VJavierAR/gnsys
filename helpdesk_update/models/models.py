@@ -22,7 +22,7 @@ class helpdesk_update(models.Model):
         for record in self:
             _logger.info("crear_solicitud_refaccion()")
             _logger.info("record.stage_id: " + str(record.stage_id))
-            if record.stage_id == 13 and record.icket_type_id == 2 and record.x_studio_tipo_de_incidencia == 'Solicitud de refacción':
+            if record.stage_id.id == 13 and record.icket_type_id == 2 and record.x_studio_tipo_de_incidencia == 'Solicitud de refacción':
                 _logger.info("entro:")
                 sale = env['sale.order'].create({'partner_id' : record.partner_id.id
                                     , 'origin' : "Ticket de refacción: " + str(record.ticket_type_id.id)
@@ -44,8 +44,8 @@ class helpdesk_update(models.Model):
                                                   , 'product_id' : c.id
                                                   , 'product_uom_qty' : c.x_studio_cantidad_a_solicitar
                                                     })
-                self.env.invalidate_all()
-                self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
+                #self.env.invalidate_all()
+                #self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
     
     @api.onchange('x_studio_verificacin_de_refaccin')
     def validar_solicitud_refaccion(self):
