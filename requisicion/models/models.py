@@ -28,8 +28,8 @@ class requisicion(models.Model):
     @api.one
     def update_estado1(self):
         self.write({'state':'done'})
-        ordenDCompra=self.env['purchase.order'].create({'partner_id':3,'date_planned':record.fecha_prevista})
         for record in self:
+            ordenDCompra=self.env['purchase.order'].create({'partner_id':3,'date_planned':record.fecha_prevista})
             for line in record.product_rel:
                 lineas=self.env['purchase.order.line'].create({'name':line.product.description,'product_id':line.product.id,'product_qty':line.cantidad,'price_unit':line.costo,'taxes_id':[10],'order_id':ordenDCompra.id,'date_planned':record.fecha_prevista})
             record['origen']=ordenDCompra.name
