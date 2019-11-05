@@ -25,7 +25,7 @@ class helpdesk_update(models.Model):
                 sale = record.x_studio_field_nO7Xg
                 #sale.x_studio_tipo_de_solicitud = 'Venta'
                 #env.cr.execute("update sale_order set team_id = '1' where  id = " + str(sale.id) + ";")
-                env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
+                self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
                 sale.action_confirm()
     
     @api.onchange('x_studio_desactivar_zona')
