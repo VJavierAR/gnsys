@@ -20,7 +20,10 @@ class helpdesk_update(models.Model):
     @api.onchange('stage_id')
     def crear_solicitud_refaccion(self):
         for record in self:
+            _logger.info("crear_solicitud_refaccion()")
+            _logger.info("record.stage_id: " + record.stage_id)
             if record.stage_id == 13 and record.icket_type_id == 2 and record.x_studio_tipo_de_incidencia == 'Solicitud de refacción':
+                _logger.info("entro:")
                 sale = env['sale.order'].create({'partner_id' : record.partner_id.id
                                     , 'origin' : "Ticket de refacción: " + str(record.ticket_type_id.id)
                                     , 'x_studio_tipo_de_solicitud' : "Venta"
