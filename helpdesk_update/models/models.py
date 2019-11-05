@@ -26,7 +26,7 @@ class helpdesk_update(models.Model):
             _logger.info("record.x_studio_tipo_de_incidencia: " + str(record.x_studio_tipo_de_incidencia))
             if record.stage_id.id == 13 and record.ticket_type_id.id == 2 and record.x_studio_tipo_de_incidencia == 'Solicitud de refacción':
                 _logger.info("entro: ****************************")
-                sale = env['sale.order'].create({'partner_id' : record.partner_id.id
+                sale = self.env['sale.order'].create({'partner_id' : record.partner_id.id
                                     , 'origin' : "Ticket de refacción: " + str(record.ticket_type_id.id)
                                     , 'x_studio_tipo_de_solicitud' : "Venta"
                                     , 'x_studio_requiere_instalacin' : True
@@ -42,7 +42,7 @@ class helpdesk_update(models.Model):
                                     , 'team_id' : 1
                                   })
                 for c in record.x_studio_field_tLWzF:
-                    env['sale.order.line'].create({'order_id' : sale.id
+                    self.env['sale.order.line'].create({'order_id' : sale.id
                                                   , 'product_id' : c.id
                                                   , 'product_uom_qty' : c.x_studio_cantidad_a_solicitar
                                                     })
