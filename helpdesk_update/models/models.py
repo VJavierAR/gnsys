@@ -59,6 +59,7 @@ class helpdesk_update(models.Model):
             if record.x_studio_verificacin_de_refaccin == True:
                 #sale = env['sale.order'].search([('origin', '=', 'Ticket de refacción: ' + str(record.ticket_type_id.id))])
                 sale = record.x_studio_field_nO7Xg
+                raise exceptions.ValidationError("test " + str(sale))
                 #sale.x_studio_tipo_de_solicitud = 'Venta'
                 #env.cr.execute("update sale_order set team_id = '1' where  id = " + str(sale.id) + ";")
                 self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
