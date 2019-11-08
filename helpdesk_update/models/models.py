@@ -41,7 +41,7 @@ class helpdesk_update(models.Model):
                                     , 'warehouse_id' : 5865   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
                                     , 'team_id' : 1
                                   })
-                self.env.cr.commit()
+                #self.env.cr.commit()
                 #for c in record.x_studio_field_tLWzF:
                 for c in record.x_studio_productos:
                     self.env['sale.order.line'].create({'order_id' : sale.id
