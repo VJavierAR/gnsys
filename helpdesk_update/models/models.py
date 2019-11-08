@@ -51,7 +51,8 @@ class helpdesk_update(models.Model):
                 record['x_studio_field_nO7Xg'] = sale.id
                 sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
                 #self.env.invalidate_all()
-                #self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
+                self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
+                self.env.cr.commit()
     
     @api.onchange('x_studio_verificacin_de_refaccin')
     def validar_solicitud_refaccion(self):
