@@ -72,7 +72,7 @@ class helpdesk_update(models.Model):
     def toner(self):
       for record in self:  
         if record.team_id.id == 8:
-            sale = env['sale.order'].create({'partner_id' : record.partner_id.id
+            sale = self.env['sale.order'].create({'partner_id' : record.partner_id.id
                                             , 'origin' : "Ticket de tóner: " + str(record.ticket_type_id.id)
                                             , 'x_studio_tipo_de_solicitud' : "Venta"
                                             , 'x_studio_requiere_instalacin' : True                                       
