@@ -139,6 +139,7 @@ class cont_suscripcion(models.Model):
                         }
                     }
         #Este es un comentario que voy a poner desde git
+        #otro coment
         #raise UserError(_(str(equipo)))
         
        
