@@ -98,7 +98,11 @@ class helpdesk_update(models.Model):
         return res
        
                 
-    
+    @api.onchange('x_studio_productos')
+    def productos_filtro(self):
+        res = {}        
+        res['domain']={'x_studio_productos':[('categ_id', '=', 7)]}
+        return res
     
     @api.onchange('x_studio_zona')
     def actualiza_datos_zona_responsable_tecnico(self):
