@@ -100,7 +100,9 @@ class helpdesk_update(models.Model):
                 
     @api.onchange('x_studio_productos')
     def productos_filtro(self):
-        res = {}        
+        res = {}     
+        #terminar al rato 
+        #[["x_studio_toner_compatible.id";,";=",x_studio_nombretmp]]"
         res['domain']={'x_studio_productos':[('categ_id', '=', 7)]}
         return res
     
