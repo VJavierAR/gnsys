@@ -6,6 +6,7 @@ from odoo import exceptions
 class SaleSubscription(models.Model):
     _inherit = ['sale.subscription']
     campo_prueba = fields.Char(string="Campo_prueba")
+    otro_campo = fields.Char(string="Otro campo")
     #series_lines_info = fields.one2Many
     
     
