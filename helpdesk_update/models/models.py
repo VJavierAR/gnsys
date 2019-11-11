@@ -77,6 +77,7 @@ class helpdesk_update(models.Model):
                                             , 'x_studio_tipo_de_solicitud' : "Venta"
                                             , 'x_studio_requiere_instalacin' : True                                       
                                             , 'user_id' : record.user_id.id
+                                            , 'team_id' : 8
                                             , 'x_studio_tcnico' : record.x_studio_tcnico.id
                                             , 'warehouse_id' : 5865   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
                                           })
