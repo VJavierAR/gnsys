@@ -71,7 +71,7 @@ class helpdesk_update(models.Model):
     @api.onchange('x_studio_tipo_de_requerimiento')
     def toner(self):
       for record in self:  
-        if record.team_id.id == 8:
+        if record.team_id.id == 8 and record.x_studio_tipo_de_requerimiento == 'Tóner':
             sale = self.env['sale.order'].create({'partner_id' : record.partner_id.id
                                             , 'origin' : "Ticket de tóner: " + str(record.ticket_type_id.id)
                                             , 'x_studio_tipo_de_solicitud' : "Venta"
