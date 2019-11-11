@@ -7,7 +7,7 @@
         subtitle on modules listing or apps.openerp.com""",
 
     'description': """
-        Long description of module's purpose
+        Modulo que contiene cosas utiles para contadores
     """,
 
     'author': "My Company",
