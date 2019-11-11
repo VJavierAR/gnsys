@@ -67,6 +67,28 @@ class helpdesk_update(models.Model):
                 sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
                 sale.action_confirm()
     
+    
+    @api.onchange('x_studio_tipo_de_requerimiento')
+    def toner(self):
+      for record in self:  
+        if record.team_id.id == 8:
+            sale = env['sale.order'].create({'partner_id' : record.partner_id.id
+                                            , 'origin' : "Ticket de tóner: " + str(record.ticket_type_id.id)
+                                            , 'x_studio_tipo_de_solicitud' : "Venta"
+                                            , 'x_studio_requiere_instalacin' : True                                       
+                                            , 'user_id' : record.user_id.id
+                                            , 'x_studio_tcnico' : record.x_studio_tcnico.id
+                                            , 'warehouse_id' : 5865   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
+                                          })
+            record['x_studio_field_nO7Xg'] = sale.id
+            for c in record.x_studio_productos:
+              env['sale.order.line'].create({'order_id' : sale.id
+                                            , 'product_id' : c.id
+                                            , 'product_uom_qty' : c.x_studio_cantidad_a_solicitar
+                                          })
+
+    
+    
     @api.onchange('x_studio_desactivar_zona')
     def desactivar_datos_zona(self):
         res = {}
