@@ -138,7 +138,7 @@ class cont_suscripcion(models.Model):
                         'message': 'No existe un equipo con el numero de serie ' + str(self.num_serie)
                         }
                     }
-        
+        #Este es un comentario que voy a poner desde git
         #raise UserError(_(str(equipo)))
         
        
