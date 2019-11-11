@@ -76,10 +76,10 @@ class helpdesk_update(models.Model):
                                             , 'origin' : "Ticket de tóner: " + str(record.ticket_type_id.id)
                                             , 'x_studio_tipo_de_solicitud' : "Venta"
                                             , 'x_studio_requiere_instalacin' : True                                       
-                                            , 'user_id' : record.user_id.id
-                                            , 'team_id' : 8
+                                            , 'user_id' : record.user_id.id                                           
                                             , 'x_studio_tcnico' : record.x_studio_tcnico.id
                                             , 'warehouse_id' : 5865   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
+                                            , 'team_id' : 8      
                                           })
             record['x_studio_field_nO7Xg'] = sale.id
             for c in record.x_studio_productos:
