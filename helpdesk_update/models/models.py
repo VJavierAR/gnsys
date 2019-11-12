@@ -83,7 +83,7 @@ class helpdesk_update(models.Model):
                                           })
             record['x_studio_field_nO7Xg'] = sale.id
             for c in record.x_studio_productos:
-              _logger.info('*************cantidad a solicitar: ' + strc.x_studio_cantidad_a_solicitar))
+              _logger.info('*************cantidad a solicitar: ' + str(c.x_studio_cantidad_a_solicitar))
               self.env['sale.order.line'].create({'order_id' : sale.id
                                             , 'product_id' : c.id
                                             , 'product_uom_qty' : c.x_studio_cantidad_a_solicitar
