@@ -87,8 +87,17 @@ class helpdesk_update(models.Model):
                                             , 'product_id' : c.id
                                             , 'product_uom_qty' : c.x_studio_cantidad_a_solicitar
                                           })
+            sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
+            self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
 
-    
+    @api.onchange('x_studio_verificacin_de_tner')
+    def validar_solicitud_toner(self):
+        for record in self:
+            if record.x_studio_verificacin_de_tner == True:
+                sale = record.x_studio_field_nO7Xg4
+                self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
+                sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
+                sale.action_confirm()
     
     @api.onchange('x_studio_desactivar_zona')
     def desactivar_datos_zona(self):
