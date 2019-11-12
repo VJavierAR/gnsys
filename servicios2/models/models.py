@@ -132,7 +132,7 @@ class cont_suscripcion(models.Model):
                 #raise exceptions.Warning(str(en_localidad))
                # if(equipo['ubicacion'] > )
             else:
-                raise exceptions.Warning( 'No existe un equipo con el numero de serie ' + str(self.num_serie))
+               # raise exceptions.Warning( 'No existe un equipo con el numero de serie ' + str(self.num_serie))
                 return {
                     'warning': {
                         'title': 'Warning!',
