@@ -113,7 +113,12 @@ class helpdesk_update(models.Model):
         res = {}     
         #terminar al rato 
         #[["x_studio_toner_compatible.id";,";=",x_studio_nombretmp]]"
-        res['domain']={'x_studio_productos':[('categ_id', '=', 5),('x_studio_toner_compatible.id','=',self.x_studio_nombretmp)]}
+        if self.team_id == 8:
+            res['domain']={'x_studio_productos':[('categ_id', '=', 5),('x_studio_toner_compatible.id','=',self.x_studio_nombretmp)]}
+        if self.team_id == 9:
+            res['domain']={'x_studio_productos':[('categ_id', '=', 7),('x_studio_toner_compatible.id','=',self.x_studio_nombretmp)]}
+        else:
+            res['domain']={'x_studio_productos':[('x_studio_toner_compatible.id','=',self.x_studio_nombretmp)]}
         return res
     
     @api.onchange('x_studio_zona')
