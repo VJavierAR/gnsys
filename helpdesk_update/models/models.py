@@ -113,13 +113,13 @@ class helpdesk_update(models.Model):
         res = {}     
         #terminar al rato 
         #[["x_studio_toner_compatible.id";,";=",x_studio_nombretmp]]"
-        _logger.info("crear_solicitud_refaccion()"+str(self.team_id))
-        if self.team_id == 8:
+        _logger.info("el id xD"+str(self.team_id.id))
+        if self.team_id.id == 8:
             res['domain']={'x_studio_productos':[('categ_id', '=', 5),('x_studio_toner_compatible.id','=',self.x_studio_nombretmp)]}
-        if self.team_id == 9:
+        if self.team_id.id == 9:
             res['domain']={'x_studio_productos':[('categ_id', '=', 7),('x_studio_toner_compatible.id','=',self.x_studio_nombretmp)]}
-        #else:
-        #    res['domain']={'x_studio_productos':[('x_studio_toner_compatible.id','=',self.x_studio_nombretmp)]}
+        else:
+            res['domain']={'x_studio_productos':[('x_studio_toner_compatible.id','=',self.x_studio_nombretmp)]}
         return res
     
     @api.onchange('x_studio_zona')
