@@ -114,13 +114,14 @@ class helpdesk_update(models.Model):
         #terminar al rato 
         #[["x_studio_toner_compatible.id";,";=",x_studio_nombretmp]]"
         _logger.info("el id xD"+str(self.team_id.id))
-        if self.team_id.id == 8:
+        idf = self.team_id.id
+        if idf == 8:
             _logger.info("el id xD Toner")
             res['domain']={'x_studio_productos':[('categ_id', '=', 5),('x_studio_toner_compatible.id','=',self.x_studio_nombretmp)]}
-        if self.team_id.id == 9:
+        if idf == 9:
             _logger.info("el id xD Reffacciones")
             res['domain']={'x_studio_productos':[('categ_id', '=', 7),('x_studio_toner_compatible.id','=',self.x_studio_nombretmp)]}
-        else:
+        if idf != 9 and idf != 8:
             _logger.info("Compatibles xD")
             res['domain']={'x_studio_productos':[('x_studio_toner_compatible.id','=',self.x_studio_nombretmp)]}
         return res
