@@ -113,7 +113,7 @@ class helpdesk_update(models.Model):
         res = {}     
         #terminar al rato 
         #[["x_studio_toner_compatible.id";,";=",x_studio_nombretmp]]"
-        _logger.info("el id xD"+str(self.x_studio_nombretmp[0]))
+        _logger.info("el id xD"+str(self.x_studio_nombretmp))
         idf = self.team_id.id
         if idf == 8:
             _logger.info("el id xD Toner")
