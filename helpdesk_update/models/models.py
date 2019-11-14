@@ -16,6 +16,8 @@ class helpdesk_update(models.Model):
     x_studio_empresas_relacionadas = fields.Many2one('res.partner', store=True, track_visibility='onchange', string='Localidad')
     historialCuatro = fields.One2many('x_historial_helpdesk','x_id_ticket',string='historial de ticket estados',store=True,track_visibility='onchange')
     documentosTecnico = fields.Many2many('ir.attachment', string="Evidencias Técnico")
+    _logger.info("el id xD Toner xD")            
+
     
     @api.onchange('stage_id')
     def crear_solicitud_refaccion(self):
@@ -108,7 +110,7 @@ class helpdesk_update(models.Model):
         return res
        
                 
-    @api.multi
+    @api.onchange('x_studio_productos')
     def productos_filtro(self):
         res = {}             
         g=str(self.x_studio_nombretmp)
