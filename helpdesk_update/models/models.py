@@ -4,7 +4,7 @@ from odoo import _, models, fields, api
 
 from odoo.exceptions import UserError
 from odoo import exceptions
-import logging
+import logging, ast
 _logger = logging.getLogger(__name__)
 
 class helpdesk_update(models.Model):
@@ -114,16 +114,19 @@ class helpdesk_update(models.Model):
         #terminar al rato 
         #[["x_studio_toner_compatible.id";,";=",x_studio_nombretmp]]"
         _logger.info("el id xD"+str(self.x_studio_nombretmp))
+        ast=self.x_studio_nombretmp
+        list = ast.literal_eval(ast)
         idf = self.team_id.id
         if idf == 8:
             _logger.info("el id xD Toner")
-            res['domain']={'x_studio_productos':[('categ_id', '=', 5),('x_studio_toner_compatible.id','=',self.x_studio_nombretmp)]}
+            
+            res['domain']={'x_studio_productos':[('categ_id', '=', 5),('x_studio_toner_compatible.id','in',list)]}
         if idf == 9:
             _logger.info("el id xD Reffacciones")
-            res['domain']={'x_studio_productos':[('categ_id', '=', 7),('x_studio_toner_compatible.id','=',self.x_studio_nombretmp)]}
+            res['domain']={'x_studio_productos':[('categ_id', '=', 7),('x_studio_toner_compatible.id','=',list[0])]}
         if idf != 9 and idf != 8:
             _logger.info("Compatibles xD")
-            res['domain']={'x_studio_productos':[('x_studio_toner_compatible.id','=',self.x_studio_nombretmp)]}
+            res['domain']={'x_studio_productos':[('x_studio_toner_compatible.id','=',list[0])]}
         return res
     
     @api.onchange('x_studio_zona')
