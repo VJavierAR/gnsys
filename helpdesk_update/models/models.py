@@ -108,12 +108,9 @@ class helpdesk_update(models.Model):
         return res
        
                 
-    @api.onchange('x_studio_productos')
+    @api.multi
     def productos_filtro(self):
-        for record in self:
-            _logger.info("probando si es esto : "+str(record.x_studio_nombretmp))
-            
-        """res = {}             
+        res = {}             
         g=str(self.x_studio_nombretmp)
         list = ast.literal_eval(g)
         idf = self.team_id.id
@@ -127,7 +124,7 @@ class helpdesk_update(models.Model):
             _logger.info("Compatibles xD"+g)
             res['domain']={'x_studio_productos':[('x_studio_toner_compatible.id','=',list[0])]}
         return res
-        """
+        
     @api.onchange('x_studio_zona')
     def actualiza_datos_zona_responsable_tecnico(self):
         res = {}
