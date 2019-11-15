@@ -109,8 +109,8 @@ class helpdesk_update(models.Model):
            res['domain']={'x_studio_responsable_de_equipo':[('x_studio_zona', '!=', False)]}
         return res
        
-    @api.multi            
-    @api.onchange('x_studio_productos')
+    @api.model            
+    #@api.onchange('x_studio_productos')
     def productos_filtro(self):
         res = {}             
         g=str(self.x_studio_nombretmp)
