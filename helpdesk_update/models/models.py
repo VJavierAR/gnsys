@@ -29,15 +29,15 @@ class helpdesk_update(models.Model):
         idf = self.team_id.id
         if idf == 8:
             _logger.info("el id xD Toner"+g)            
-            return [('categ_id', '=', 5),('x_studio_toner_compatible.id','in',list)]
+            e  = str([('categ_id', '=', 5),('x_studio_toner_compatible.id','in',list)])
         if idf == 9:
             _logger.info("el id xD Reffacciones"+g)
-            return [('categ_id', '=', 7),('x_studio_toner_compatible.id','=',list[0])]
+            e = str([('categ_id', '=', 7),('x_studio_toner_compatible.id','=',list[0])])
         #if idf != 9 and idf != 8:
         #    _logger.info("Compatibles xD"+g)
         #    res['domain']={'productosSolicitud':[('x_studio_toner_compatible.id','=',list[0])]}
-        #_logger.info(" res :"+str(res))    
-        #return res
+        _logger.info(" res :"+str(e))    
+        return e
 
     productosSolicitud = fields.Many2many('product.product', string="Productos Solicitados",domain=_productos_solicitud_filtro)
     
