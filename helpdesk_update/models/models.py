@@ -23,7 +23,8 @@ class helpdesk_update(models.Model):
     #@api.depends('productosSolicitud')
     #@api.one
     def _productos_solicitud_filtro(self):
-        res = {}           
+        res = {}    
+        e=''
         g=str(self.x_studio_nombretmp)
         list = ast.literal_eval(g)
         idf = self.team_id.id
