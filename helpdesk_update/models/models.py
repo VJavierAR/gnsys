@@ -20,7 +20,7 @@ class helpdesk_update(models.Model):
     _logger.info("el id xD Toner xD")            
 
     @api.model           
-    #@api.depends('productosSolicitud')
+    @api.depends('productosSolicitud')
     #@api.one
     def _productos_solicitud_filtro(self):
         res = {}             
@@ -38,7 +38,7 @@ class helpdesk_update(models.Model):
         #    res['domain']={'productosSolicitud':[('x_studio_toner_compatible.id','=',list[0])]}
         return res
 
-    productosSolicitud = fields.Many2many('product.product', string="Productos Solicitados",default=_productos_solicitud_filtro)
+    productosSolicitud = fields.Many2many('product.product', string="Productos Solicitados",domain=_productos_solicitud_filtro)
     
     
     @api.onchange('stage_id')
@@ -131,8 +131,8 @@ class helpdesk_update(models.Model):
            res['domain']={'x_studio_responsable_de_equipo':[('x_studio_zona', '!=', False)]}
         return res
        
-    @api.model            
-    #@api.onchange('x_studio_productos')
+    #@api.model            
+    @api.onchange('x_studio_productos')
     def productos_filtro(self):
         res = {}             
         g=str(self.x_studio_nombretmp)
