@@ -23,7 +23,7 @@ class helpdesk_update(models.Model):
     #@api.depends('productosSolicitud')
     #@api.one
     def _productos_solicitud_filtro(self):
-        res = {}             
+        res = False           
         g=str(self.x_studio_nombretmp)
         list = ast.literal_eval(g)
         idf = self.team_id.id
@@ -147,6 +147,7 @@ class helpdesk_update(models.Model):
         if idf != 9 and idf != 8:
             _logger.info("Compatibles xD"+g)
             res['domain']={'x_studio_productos':[('x_studio_toner_compatible.id','=',list[0])]}
+        _logger.info("res"+str(res))
         return res
         
     @api.onchange('x_studio_zona')
