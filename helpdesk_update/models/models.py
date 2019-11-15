@@ -16,12 +16,11 @@ class helpdesk_update(models.Model):
     x_studio_empresas_relacionadas = fields.Many2one('res.partner', store=True, track_visibility='onchange', string='Localidad')
     historialCuatro = fields.One2many('x_historial_helpdesk','x_id_ticket',string='historial de ticket estados',store=True,track_visibility='onchange')
     documentosTecnico = fields.Many2many('ir.attachment', string="Evidencias Técnico")
-    productosSolicitud = fields.Many2many('product.product', string="Productos Solicitados")
     
     _logger.info("el id xD Toner xD")            
 
-    #@api.multi            
-    @api.depends('productosSolicitud')
+    @api.model           
+    #@api.depends('productosSolicitud')
     #@api.one
     def productos_solicitud_filtro(self):
         res = {}             
@@ -38,6 +37,8 @@ class helpdesk_update(models.Model):
             _logger.info("Compatibles xD"+g)
             res['domain']={'productosSolicitud':[('x_studio_toner_compatible.id','=',list[0])]}
         return res
+
+    productosSolicitud = fields.Many2many('product.product', string="Productos Solicitados",domain=productos_solicitud_filtro)
     
     
     @api.onchange('stage_id')
