@@ -38,7 +38,7 @@ class helpdesk_update(models.Model):
         #    res['domain']={'productosSolicitud':[('x_studio_toner_compatible.id','=',list[0])]}
         return res
 
-    productosSolicitud = fields.Many2many('product.product', string="Productos Solicitados",domain='_productos_solicitud_filtro')
+    productosSolicitud = fields.Many2many('product.product', string="Productos Solicitados",default=_productos_solicitud_filtro)
     
     
     @api.onchange('stage_id')
