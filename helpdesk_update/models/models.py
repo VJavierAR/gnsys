@@ -16,8 +16,29 @@ class helpdesk_update(models.Model):
     x_studio_empresas_relacionadas = fields.Many2one('res.partner', store=True, track_visibility='onchange', string='Localidad')
     historialCuatro = fields.One2many('x_historial_helpdesk','x_id_ticket',string='historial de ticket estados',store=True,track_visibility='onchange')
     documentosTecnico = fields.Many2many('ir.attachment', string="Evidencias Técnico")
+    productosSolicitud = fields.Many2many('product.product', string="Productos Solicitados")
+    
     _logger.info("el id xD Toner xD")            
 
+    
+    @api.model            
+    #@api.onchange('x_studio_productos')
+    def productos_solicitud_filtro(self):
+        res = {}             
+        g=str(self.x_studio_nombretmp)
+        list = ast.literal_eval(g)
+        idf = self.team_id.id
+        if idf == 8:
+            _logger.info("el id xD Toner"+g)            
+            res['domain']={'productosSolicitud':[('categ_id', '=', 5),('x_studio_toner_compatible.id','in',list)]}
+        if idf == 9:
+            _logger.info("el id xD Reffacciones"+g)
+            res['domain']={'productosSolicitud':[('categ_id', '=', 7),('x_studio_toner_compatible.id','=',list[0])]}
+        if idf != 9 and idf != 8:
+            _logger.info("Compatibles xD"+g)
+            res['domain']={'productosSolicitud':[('x_studio_toner_compatible.id','=',list[0])]}
+        return res
+    
     
     @api.onchange('stage_id')
     def crear_solicitud_refaccion(self):
