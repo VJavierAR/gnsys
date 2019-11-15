@@ -21,8 +21,8 @@ class helpdesk_update(models.Model):
     _logger.info("el id xD Toner xD")            
 
     #@api.multi            
-    #@api.onchange('productosSolicitud')
-    @api.one
+    @api.depends('productosSolicitud')
+    #@api.one
     def productos_solicitud_filtro(self):
         res = {}             
         g=str(self.x_studio_nombretmp)
