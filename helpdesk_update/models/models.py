@@ -134,7 +134,7 @@ class helpdesk_update(models.Model):
         return res
        
     #@api.model            
-    @api.onchange('x_studio_productos')
+    @api.onchange('x_studio_productos','activar_compatibilidad')
     def productos_filtro(self):
         res = {}             
         g=str(self.x_studio_nombretmp)
