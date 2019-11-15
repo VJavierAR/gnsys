@@ -21,7 +21,7 @@ class helpdesk_update(models.Model):
     _logger.info("el id xD Toner xD")            
 
     
-    @api.model            
+    @api.multi            
     #@api.onchange('x_studio_productos')
     def productos_solicitud_filtro(self):
         res = {}             
