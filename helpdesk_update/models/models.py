@@ -140,16 +140,17 @@ class helpdesk_update(models.Model):
         g=str(self.x_studio_nombretmp)
         list = ast.literal_eval(g)
         idf = self.team_id.id
-        if idf == 8:
-            _logger.info("el id xD Toner"+g)            
-            res['domain']={'x_studio_productos':[('categ_id', '=', 5),('x_studio_toner_compatible.id','in',list)]}
-        if idf == 9:
-            _logger.info("el id xD Reffacciones"+g)
-            res['domain']={'x_studio_productos':[('categ_id', '=', 7),('x_studio_toner_compatible.id','=',list[0])]}
-        if idf != 9 and idf != 8:
-            _logger.info("Compatibles xD"+g)
-            res['domain']={'x_studio_productos':[('x_studio_toner_compatible.id','=',list[0])]}
-        _logger.info("res"+str(res))
+        if len(list)>0:
+            if idf == 8:
+                _logger.info("el id xD Toner"+g)            
+                res['domain']={'x_studio_productos':[('categ_id', '=', 5),('x_studio_toner_compatible.id','in',list)]}
+            if idf == 9:
+                _logger.info("el id xD Reffacciones"+g)
+                res['domain']={'x_studio_productos':[('categ_id', '=', 7),('x_studio_toner_compatible.id','=',list[0])]}
+            if idf != 9 and idf != 8:
+                _logger.info("Compatibles xD"+g)
+                res['domain']={'x_studio_productos':[('x_studio_toner_compatible.id','=',list[0])]}
+            _logger.info("res"+str(res))
         return res
         
     @api.onchange('x_studio_zona')
