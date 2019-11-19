@@ -139,6 +139,7 @@ class helpdesk_update(models.Model):
         res = {}             
         g=str(self.x_studio_nombretmp)
         list = ast.literal_eval(g)
+        raise exceptions.ValidationError("test " + str(list))
         idf = self.team_id.id
         tam = len(list) 
         if  tam > 0:
