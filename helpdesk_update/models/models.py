@@ -139,9 +139,10 @@ class helpdesk_update(models.Model):
         res = {}             
         g=str(self.x_studio_nombretmp)
         list = ast.literal_eval(g)
-        raise exceptions.ValidationError("test " + str(list))
+        
         idf = self.team_id.id
-        tam = len(list) 
+        tam = len(list)
+        raise exceptions.ValidationError("test " + str(tam))
         if  tam > 0:
             if idf == 8:
                 _logger.info("el id xD Toner"+g)            
