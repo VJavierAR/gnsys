@@ -43,7 +43,7 @@ class helpdesk_update(models.Model):
     productosSolicitud = fields.Many2many('product.product', string="Productos Solicitados",domain=_productos_solicitud_filtro)
     
     
-    @api.onchange('x_studio_tipo_de_requerimiento','x_studio_tipo_de_falla')
+    @api.onchange('x_studio_tipo_de_falla','x_studio_tipo_de_incidencia')
     def crear_solicitud_refaccion(self):
         for record in self:
             _logger.info("crear_solicitud_refaccion()")
