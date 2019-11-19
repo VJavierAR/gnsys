@@ -134,10 +134,10 @@ class helpdesk_update(models.Model):
         return res
        
     #@api.model            
-    @api.onchange('x_studio_productos','x_studio_activar_compatibilidad')
+    @api.onchange('x_studio_activar_compatibilidad')
     def productos_filtro(self):
         res = {}             
-        g=str(self.x_studio_nombretmp)
+        g = str(self.x_studio_nombretmp)
         
         if g !='False':
             list = ast.literal_eval(g)        
@@ -150,9 +150,13 @@ class helpdesk_update(models.Model):
                _logger.info("el id xD Reffacciones"+g)
                res['domain']={'x_studio_productos':[('categ_id', '=', 7),('x_studio_toner_compatible.id','=',list[0])]}
             if idf != 9 and idf != 8:
-               _logger.info("Compatibles xD"+g)
+               _logger.info("Compatibles xD" + g)
                res['domain']={'x_studio_productos':[('x_studio_toner_compatible.id','=',list[0])]}
                _logger.info("res"+str(res))
+            #if idf 55:
+            #   _logger.info("Cotizacion xD" + g)
+            #   res['domain'] = {'x_studio_productos':[('x_studio_toner_compatible.id', '=', list[0]),('x_studio_toner_compatible.property_stock_inventory.id', '=', 121),('x_studio_toner_compatible.id property_stock_inventory.id', '=', 121)] }
+            #   _logger.info("res"+str(res))
         return res
         
     @api.onchange('x_studio_zona')
