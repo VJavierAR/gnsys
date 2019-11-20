@@ -75,7 +75,7 @@ class helpdesk_update(models.Model):
                                                       , 'product_uom_qty' : c.x_studio_cantidad_pedida
                                                       })
                 record['x_studio_field_nO7Xg'] = sale.id
-                sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
+                sale.sudo().env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
                 #self.env.invalidate_all()
                 self.sudo().env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
                 #self.env.cr.commit()
