@@ -51,7 +51,7 @@ class helpdesk_update(models.Model):
             _logger.info("record.stage_id: " + str(record.stage_id.id))
             _logger.info("record.ticket_type_id: " + str(record.ticket_type_id.id))
             _logger.info("record.x_studio_tipo_de_incidencia: " + str(record.x_studio_tipo_de_incidencia))
-            if  (record.x_studio_tipo_de_falla == 'Solicitud de refacción' and record.ticket_type_id.id == 4) or (record.x_studio_tipo_de_incidencia == 'Solicitud de refacción' and record.ticket_type_id.id == 2) :
+            if  (record.x_studio_tipo_de_falla == 'Solicitud de refacción' ) or (record.x_studio_tipo_de_incidencia == 'Solicitud de refacción' ) :
                 _logger.info("entro: ****************************")
                 sale = self.sudo().env['sale.order'].create({'partner_id' : record.partner_id.id
                                     , 'origin' : "Ticket de refacción: " + str(record.ticket_type_id.id)
