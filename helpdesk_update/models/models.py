@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import _, models, fields, api
-
+from email.utils import formataddr
 from odoo.exceptions import UserError
 from odoo import exceptions
 import logging, ast
@@ -995,3 +995,21 @@ class helpdesk_update(models.Model):
         
         return ticket
     """
+    @api.model
+    def message_new(self, msg, custom_values=None):
+        values = dict(custom_values or {}, partner_email=msg.get('from'), partner_id=msg.get('author_id'))
+
+        _logger.info('************ticket: ' + str(msg.get('from')))
+        if(("gnsys.mx" in str(msg.get('from'))) or ("scgenesis.mx" in str(msg.get('from')))):
+            return 0
+        ticket = super(HelpdeskTicket, self).message_new(msg, custom_values=values)
+
+        partner_ids = [x for x in ticket._find_partner_from_emails(self._ticket_email_split(msg)) if x]
+        customer_ids = ticket._find_partner_from_emails(tools.email_split(values['partner_email']))
+        partner_ids += customer_ids
+
+        if customer_ids and not values.get('partner_id'):
+            ticket.partner_id = customer_ids[0]
+        if partner_ids:
+            ticket.message_subscribe(partner_ids)
+        return ticket
