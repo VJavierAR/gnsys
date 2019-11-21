@@ -1000,8 +1000,8 @@ class helpdesk_update(models.Model):
         values = dict(custom_values or {}, partner_email=msg.get('from'), partner_id=msg.get('author_id'))
 
         _logger.info('************ticket: ' + str(msg.get('from')))
-        if(("gnsys.mx" in str(msg.get('from'))) or ("scgenesis.mx" in str(msg.get('from')))):
-            return 0
+        #if(("gnsys.mx" in str(msg.get('from'))) or ("scgenesis.mx" in str(msg.get('from')))):
+        #    return 0
         ticket = super(HelpdeskTicket, self).message_new(msg, custom_values=values)
 
         partner_ids = [x for x in ticket._find_partner_from_emails(self._ticket_email_split(msg)) if x]
