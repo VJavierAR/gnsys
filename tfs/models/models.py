@@ -78,12 +78,28 @@ class tfs(models.Model):
                 record['domi']=record.almacen.lot_stock_id.id
                 #res['domain'] = {'serie': [('x_studio_ubicacion_id', '=', record.almacen.lot_stock_id.id)]}
         #return res
+    @api.multi
     @api.depends('serie')
     def ultimoContador(self):
+        i=0
+        res={}
         for record in self:
+            lista=[]
             if record.serie:
-                if(len(record.serie.dca)>0):
-                    record['contadorAnterior']=record.serie.dca[0]
+                for toner in record.serie.product_id.x_studio_toner_compatible:
+                    if('Toner' in toner.categ_id.name):
+                        lista.append(str(toner.id))
+                #record['name']=str(lista)
+                res['domain'] = {'producto': [('id', 'in', lista)]}
+                for move_line in record.serie.x_studio_move_line:
+                    if(i==0):
+                        cliente = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
+                        localidad=move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
+                        record['cliente'] = cliente
+                        record['localidad'] = localidad
+                        i=1
+        return res
+
 
 class evidencias(models.Model):
     _name='tfs.evidencia'
