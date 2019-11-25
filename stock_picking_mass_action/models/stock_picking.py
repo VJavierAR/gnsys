@@ -12,7 +12,8 @@ class StockPicking(Model):
     @api.onchange('ajusta')
     def ajus(self):
         for record in self:
-            pedido=record.sale_id
+            if(record.sale_id):
+                pedido=record.sale_id
             record['state']='draft'
             if(record.ajusta):
                 for s in record.move_ids_without_package:
