@@ -64,7 +64,7 @@ class StockPicking(Model):
         }
 class StockPicking(Model):
     _inherit = 'stock.move'
-    almacenOrigen=fields.Many2one('Almacen Origen')
+    almacenOrigen=fields.Many2one('stock.warehouse','Almacen Origen')
     
     @api.onchange('product_id')
     def chanProduct(self):
@@ -81,3 +81,7 @@ class StockPicking(Model):
             dic['price_unit']=0.00
             dic['order_id']=sale.id
             env['sale.order.line'].create(dic)
+            
+    @api.onchange('almacenOrigen')
+    def cambioOrigen(self):
+        self.location_id=self.almacenOrigen.lot_stock_id.id
