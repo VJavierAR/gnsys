@@ -68,19 +68,20 @@ class StockPicking(Model):
     
     @api.onchange('product_id')
     def chanProduct(self):
-        if('SU' in record.picking_id.name and record.origin!=False and record.product_id!=False and 'SO' in record.origin):
-            sale=env['sale.order'].search([['name','=',record.origin]])
-            moveAnterior=env['stock.move'].browse(record.x_studio_id)
-            #record['x_studio_anterior_product']=moveAnterior.product_id.id
-            #produc=record.product_id.id
-            dic={}
-            dic['product_uom']=record.product_uom.id
-            dic['product_uom_qty']=record.product_uom_qty
-            dic['product_id']=record.product_id.id
-            dic['name']=record.name
-            dic['price_unit']=0.00
-            dic['order_id']=sale.id
-            env['sale.order.line'].create(dic)
+        for record in self:
+            if('SU' in record.picking_id.name and record.origin!=False and record.product_id!=False and 'SO' in record.origin):
+                sale=env['sale.order'].search([['name','=',record.origin]])
+                moveAnterior=env['stock.move'].browse(record.x_studio_id)
+                #record['x_studio_anterior_product']=moveAnterior.product_id.id
+                #produc=record.product_id.id
+                dic={}
+                dic['product_uom']=record.product_uom.id
+                dic['product_uom_qty']=record.product_uom_qty
+                dic['product_id']=record.product_id.id
+                dic['name']=record.name
+                dic['price_unit']=0.00
+                dic['order_id']=sale.id
+                env['sale.order.line'].create(dic)
             
     @api.onchange('almacenOrigen')
     def cambioOrigen(self):
