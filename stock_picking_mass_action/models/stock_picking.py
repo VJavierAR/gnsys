@@ -1,14 +1,29 @@
-# Copyright 2014 Camptocamp SA - Guewen Baconnier
-# Copyright 2018 Tecnativa - Vicent Cubells
-# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-
-from odoo import _, api
+from odoo import _, fields, api
 from odoo.models import Model
 
 
 class StockPicking(Model):
     _inherit = 'stock.picking'
-
+    almacenOrigen=fields.Many2one('stock.warehouse','Almacen Origen')
+    almacenDestino=fields.Many2one('stock.warehouse','Almacen Destino')
+    hiden=fields.Integer(compute='hide')
+    
+    @api.depends('picking_type_id')
+    def hide(self):
+        for record in self:
+            if(record.picking_type_id):
+                if('internas' in record.picking_type_id.name or 'Internal' in record.picking_type_id.name):
+                    record['hiden']=1
+    
+    @api.onchange('almacenOrigen')
+    def cambioOrigen(self):
+        self.location_id=self.almacenOrigen.lot_stock_id.id
+    
+    @api.onchange('almacenDestino')
+    def cambioDestino(self):
+        self.location_dest_id=self.almacenDestino.lot_stock_id.id
+    
+    
     @api.model
     def check_assign_all(self):
         """ Try to assign confirmed pickings """
