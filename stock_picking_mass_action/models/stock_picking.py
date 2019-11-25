@@ -1,7 +1,6 @@
 from odoo import _, fields, api
 from odoo.models import Model
 
-
 class StockPicking(Model):
     _inherit = 'stock.picking'
     almacenOrigen=fields.Many2one('stock.warehouse','Almacen Origen')
@@ -22,8 +21,6 @@ class StockPicking(Model):
                         self.env.cr.execute("delete from stock_move where origin = '" + record.origin + "' and product_id="+str(s.x_studio_field_mpmwm)+";")
                         self.env.cr.execute("delete from sale_order_line where  order_id = " + str(pedido.id) + " and product_id="+str(s.x_studio_field_mpmwm)+";")
                         self.env.cr.execute("delete from stock_move where id =" + str(s.x_studio_id)+";")
-    
-    
     
     @api.depends('picking_type_id')
     def hide(self):
