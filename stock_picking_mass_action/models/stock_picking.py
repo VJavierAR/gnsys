@@ -71,7 +71,7 @@ class StockPicking(Model):
         for record in self:
             if('SU' in record.picking_id.name and record.origin!=False and record.product_id!=False and 'SO' in record.origin):
                 sale=self.sudo().env['sale.order'].search([['name','=',record.origin]])
-                moveAnterior=env['stock.move'].browse(record.x_studio_id)
+                moveAnterior=self.sudo().env['stock.move'].browse(record.x_studio_id)
                 #record['x_studio_anterior_product']=moveAnterior.product_id.id
                 #produc=record.product_id.id
                 dic={}
