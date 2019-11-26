@@ -762,7 +762,7 @@ class helpdesk_update(models.Model):
         localidad = []
         for record in self:
             _logger.info("******************len: "+ str(record.team_id.id)+" otro log "+ str(len(record.x_studio_equipo_por_nmero_de_serie)))
-            if len(record.x_studio_equipo_por_nmero_de_serie) < 2 and record.team_id.id != 8 :
+            if len(record.x_studio_equipo_por_nmero_de_serie) == 1 and record.team_id.id != 8 :
                 _logger.info('record_ 1: ' + str(self._origin.partner_id))
                 _logger.info('record_id 1: ' + str(self._origin.id))
                 _my_object = self.env['helpdesk.ticket']
