@@ -761,7 +761,7 @@ class helpdesk_update(models.Model):
         ids = []
         localidad = []
         for record in self:
-            _loggger.info("******************len: " + len(record.x_studio_equipo_por_nmero_de_serie))
+            _logger.info("******************len: " + len(record.x_studio_equipo_por_nmero_de_serie))
             if len(record.x_studio_equipo_por_nmero_de_serie) < 2 and (record.team_id.id == 9 or record.team_id.id == 5):
                 _logger.info('record_ 1: ' + str(self._origin.partner_id))
                 _logger.info('record_id 1: ' + str(self._origin.id))
