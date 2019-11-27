@@ -760,6 +760,7 @@ class helpdesk_update(models.Model):
         v = {}
         ids = []
         localidad = []
+        _logger.info("self el tamaño: "+self.x_studio_tamao_lista)
         for record in self:
             cantidad_numeros_serie = record.x_studio_tamao_lista
             _logger.info("******************team_id: "+ str(record.team_id.id) + " cantidad_numeros_serie: "+ str(cantidad_numeros_serie))
