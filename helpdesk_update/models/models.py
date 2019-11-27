@@ -762,9 +762,9 @@ class helpdesk_update(models.Model):
         localidad = []
         _logger.info("self el tamaño: "+str(self.x_studio_tamao_lista))
         for record in self:
-            cantidad_numeros_serie = record.x_studio_tamao_lista
-            _logger.info("******************team_id: "+ str(record.team_id.id) + " cantidad_numeros_serie: "+ str(cantidad_numeros_serie))
-            if  int(cantidad_numeros_serie) < 2 :
+           # cantidad_numeros_serie = record.x_studio_tamao_lista
+           # _logger.info("******************team_id: "+ str(record.team_id.id) + " cantidad_numeros_serie: "+ str(cantidad_numeros_serie))
+           # if  int(cantidad_numeros_serie) < 2 :
                 _logger.info('record_ 1: ' + str(self._origin.partner_id))
                 _logger.info('record_id 1: ' + str(self._origin.id))
                 _my_object = self.env['helpdesk.ticket']
@@ -876,8 +876,8 @@ class helpdesk_update(models.Model):
             #return res
             #return {'value': v}
         
-        else:
-            raise exceptions.ValidationError("No es posible registrar más de un número de serie")
+        #else:
+        #    raise exceptions.ValidationError("No es posible registrar más de un número de serie")
     
 
                 
