@@ -846,38 +846,37 @@ class helpdesk_update(models.Model):
 
                     #self._origin.sudo().write({x_studio_responsable_de_equipo : responsable_equipo_de_distribucion})
 
-                #_logger.info(record['x_studio_equipo_por_nmero_de_serie'])
-                _logger.info(ids)
-                #record['x_studio_equipo_por_nmero_de_serie'] = (6, 0, [ids])
-                #record.sudo().write({x_studio_equipo_por_nmero_de_serie : [(6, 0, [ids])] })
-            #self._origin.sudo().write({'x_studio_equipo_por_nmero_de_serie' : (4, ids) })
-            lista_ids = []
-            for id in ids:
-                lista_ids.append((4,id))
-            #v['x_studio_equipo_por_nmero_de_serie'] = [(4, ids[0]), (4, ids[1])]
-            v['x_studio_equipo_por_nmero_de_serie'] = lista_ids
-            self._origin.sudo().write({'x_studio_equipo_por_nmero_de_serie' : lista_ids})
-            record.x_studio_equipo_por_nmero_de_serie = lista_ids
-            """
-            if localidad != []:
-                srtt="update helpdesk_ticket set x_studio_empresas_relacionadas = " + str(localidad) + " where  id = " + str(idM )+ ";"
-                _logger.info("update gacho localidad " + srtt)
-                record.x_studio_empresas_relacionadas = localidad
-                record['x_studio_empresas_relacionadas'] = localidad
-                self.env.cr.execute(srtt)
-                #self.env.cr.commit()
-                v['x_studio_empresas_relacionadas'] = localidad        
-            """
-            _logger.info({'value': v})
-            _logger.info(v)
-            #self._origin.env['helpdesk.ticket'].sudo().write(v)
+                    #_logger.info(record['x_studio_equipo_por_nmero_de_serie'])
+                    _logger.info(ids)
+                    #record['x_studio_equipo_por_nmero_de_serie'] = (6, 0, [ids])
+                    #record.sudo().write({x_studio_equipo_por_nmero_de_serie : [(6, 0, [ids])] })
+                    #self._origin.sudo().write({'x_studio_equipo_por_nmero_de_serie' : (4, ids) })
+                    lista_ids = []
+                    for id in ids:
+                        lista_ids.append((4,id))
+                    #v['x_studio_equipo_por_nmero_de_serie'] = [(4, ids[0]), (4, ids[1])]
+                    v['x_studio_equipo_por_nmero_de_serie'] = lista_ids
+                    self._origin.sudo().write({'x_studio_equipo_por_nmero_de_serie' : lista_ids})
+                    record.x_studio_equipo_por_nmero_de_serie = lista_ids
+                    """
+                    if localidad != []:
+                        srtt="update helpdesk_ticket set x_studio_empresas_relacionadas = " + str(localidad) + " where  id = " + str(idM )+ ";"
+                        _logger.info("update gacho localidad " + srtt)
+                        record.x_studio_empresas_relacionadas = localidad
+                        record['x_studio_empresas_relacionadas'] = localidad
+                        self.env.cr.execute(srtt)
+                        #self.env.cr.commit()
+                        v['x_studio_empresas_relacionadas'] = localidad        
+                    """
+                    _logger.info({'value': v})
+                    _logger.info(v)
+                    #self._origin.env['helpdesk.ticket'].sudo().write(v)
 
-            #res = super(helpdesk_update, self).sudo().write(v)
-            #return res
-            #return {'value': v}
-        
-        else:
-            raise exceptions.ValidationError("No es posible registrar más de un número de serie")
+                    #res = super(helpdesk_update, self).sudo().write(v)
+                    #return res
+                    #return {'value': v}        
+            else:
+                raise exceptions.ValidationError("No es posible registrar más de un número de serie")
     
 
                 
