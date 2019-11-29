@@ -298,7 +298,7 @@ class helpdesk_update(models.Model):
         if s =='helpdesk.stage(4,)':
             b = 'Cancelado'    
         #if self.stage_id==''
-        self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.user_id.name,'x_estado': b})
+        self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.user_id.name,'x_estado': self.stage_id.name})
     
     
     
