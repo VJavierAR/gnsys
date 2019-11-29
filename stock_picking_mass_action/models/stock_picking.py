@@ -8,19 +8,35 @@ class StockPicking(Model):
     hiden=fields.Integer(compute='hide')
     ajusta=fields.Boolean('Ajusta')
     
-    @api.onchange('ajusta')
-    def ajus(self):
+    #@api.onchange('ajusta')
+    #def ajus(self):
+    #    for record in self:
+     #       if(record.sale_id):
+      #          pedido=record.sale_id
+       #     record['state']='draft'
+        #    if(record.ajusta):
+         #       for s in record.move_ids_without_package:
+          #          if (s.product_id.id!=s.x_studio_field_mpmwm):
+           #             self.env.cr.execute("delete from stock_move_line where move_id = "+str(s.x_studio_id)+";")
+            #            self.env.cr.execute("delete from stock_move where origin = '" + record.origin + "' and product_id="+str(s.x_studio_field_mpmwm)+";")
+             #           self.env.cr.execute("delete from sale_order_line where  order_id = " + str(pedido.id) + " and product_id="+str(s.x_studio_field_mpmwm)+";")
+              #          self.env.cr.execute("delete from stock_move where id =" + str(s.x_studio_id)+";")
+    
+    def action_toggle_is_locked(self):
+        self.ensure_one()
         for record in self:
             if(record.sale_id):
                 pedido=record.sale_id
-            record['state']='draft'
-            if(record.ajusta):
+                record['state']='draft'
+            if(self.is_locked==False):
                 for s in record.move_ids_without_package:
                     if (s.product_id.id!=s.x_studio_field_mpmwm):
                         self.env.cr.execute("delete from stock_move_line where move_id = "+str(s.x_studio_id)+";")
                         self.env.cr.execute("delete from stock_move where origin = '" + record.origin + "' and product_id="+str(s.x_studio_field_mpmwm)+";")
                         self.env.cr.execute("delete from sale_order_line where  order_id = " + str(pedido.id) + " and product_id="+str(s.x_studio_field_mpmwm)+";")
                         self.env.cr.execute("delete from stock_move where id =" + str(s.x_studio_id)+";")
+        self.is_locked = not self.is_locked
+        return True
     
     @api.depends('picking_type_id')
     def hide(self):
