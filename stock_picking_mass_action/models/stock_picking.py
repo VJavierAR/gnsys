@@ -27,7 +27,7 @@ class StockPicking(Model):
         for record in self:
             if(record.sale_id):
                 pedido=record.sale_id
-                record['state']='draft'
+            #    record['state']='draft'
             if(self.is_locked==False):
                 for s in record.move_ids_without_package:
                     if (s.product_id.id!=s.x_studio_field_mpmwm):
