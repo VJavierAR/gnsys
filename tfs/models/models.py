@@ -1,18 +1,19 @@
 # -*- coding: utf-8 -*-
 from odoo import models, fields, api
-
+from odoo.exceptions import UserError
+from odoo import exceptions
 class tfs(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']    
     _name = 'tfs.tfs'
     _description='tfs'
     name = fields.Char()
-    almacen = fields.Many2one('stock.warehouse', "Almacen",store='True')
+    almacen = fields.Many2one('stock.warehouse', "Almacen",store='True',compute='onchange_localidad')
     tipo = fields.Selection([('cian', 'cian'),('magenta','magenta'),('amarillo','amarillo'),('negro','negro')])
     usuario = fields.Many2one('res.partner')
     inventario = fields.One2many(comodel='stock.quant',related='almacen.lot_stock_id.quant_ids', string="Quants")
     cliente = fields.Many2one('res.partner', store=True,string='Cliente')
     localidad=fields.Many2one('res.partner',store='True',string='Localidad')
-    serie=fields.Many2one('stock.production.lot',string='Numero de Serie',compute='cambio',store='True')
+    serie=fields.Many2one('stock.production.lot',string='Numero de Serie',store='True')
     domi=fields.Integer()
     producto=fields.Many2one('product.product',string='Toner')
     contadorAnterior=fields.Many2one('dcas.dcas',string='Anterior',compute='ultimoContador')
@@ -29,16 +30,43 @@ class tfs(models.Model):
     actualporcentajeCian=fields.Integer(string='Toner Cian %')
     actualporcentajeMagenta=fields.Integer(string='Toner Magenta%')
     evidencias=fields.One2many('tfs.evidencia',string='Evidencias',inverse_name='tfs_id')
+    estado=fields.Selection([('borrador','Borrador'),('xValidar','Por Validar'),('Valido','Valido')])
     
-    
-    
-    @api.onchange('cliente')
-    def onchange_cliente(self):
-        res = {}
+    @api.one
+    def confirm(self):
         for record in self:
-            res['domain'] = {'localidad': ['&',('parent_id.id', '=', record.cliente.id),('type', '=', 'delivery')]}
-            record['usuario']=self.env.user.partner_id.id
-        return res
+            if(len(record.inventario)>0):
+                for qua in record.inventario:
+                    if(qua.product_id.id==self.producto.id):
+                        if(self.tipo=='negro'):
+                            rendimientoMono=self.actualMonocromatico-self.contadorAnteriorMono
+                            porcentaje=(100*rendimientoMono)/self.producto.x_rendimiento_mono
+                            if(porcentaje<60):
+                                self.write({'estado':'xValidar'})
+                            else:
+                                self.write({'estado':'Valido'})
+                        else:
+                            rendimientoColor=self.actualColor-self.contadorAnteriorColor
+                            porcentaje=(100*rendimientoColor)/self.producto.x_rendimiento_color
+                            if(porcentaje<60):
+                                self.write({'estado':'xValidar'})
+                            else:
+                                self.write({'estado':'Valido'})
+                    else:
+                        raise exceptions.UserError("No existen cantidades en el almacen para el producto " + self.producto.name)
+            else:
+                raise exceptions.UserError("No existen cantidades en el almacen para el producto " + self.producto.name)
+                
+    
+    
+    
+    #@api.onchange('cliente')
+    #def onchange_cliente(self):
+    #    res = {}
+    #    for record in self:
+     #       res['domain'] = {'localidad': ['&',('parent_id.id', '=', record.cliente.id),('type', '=', 'delivery')]}
+      #      record['usuario']=self.env.user.partner_id.id
+      #  return res
     
     #@api.model
     #def create(self, vals):
@@ -46,24 +74,24 @@ class tfs(models.Model):
       #  result = super(tfs, self).create(vals)
        # return result
     
-    @api.onchange('usuario')
-    def onchange_user(self):
-        res={}
-        cont=[]
-        condic=[]
-        for record in self:
-            almacenes=self.env['stock.warehouse'].search([['x_studio_tfs','=',record.usuario.id]])
-            for al in almacenes:
-                if(al.x_studio_field_E0H1Z.parent_id.id not in cont):
-                    cont.append(('id','=',al.x_studio_field_E0H1Z.parent_id.id))
-            tot=len(cont)-1
-            for i in range(tot):
-                condic.append('|')
-            condic.extend(cont)
-            res['domain'] = {'cliente': condic}
-        return res
+    #@api.onchange('usuario')
+    #def onchange_user(self):
+    #    res={}
+    #    cont=[]
+    #    condic=[]
+     #   for record in self:
+     #       almacenes=self.env['stock.warehouse'].search([['x_studio_tfs','=',record.usuario.id]])
+     #       for al in almacenes:
+     #           if(al.x_studio_field_E0H1Z.parent_id.id not in cont):
+     #               cont.append(('id','=',al.x_studio_field_E0H1Z.parent_id.id))
+     #       tot=len(cont)-1
+     #       for i in range(tot):
+     #           condic.append('|')
+     #       condic.extend(cont)
+     #       res['domain'] = {'cliente': condic}
+     #   return res
     
-    @api.onchange('localidad')
+    @api.depends('producto')
     def onchange_localidad(self):
         res={}
         for record in self:
@@ -98,6 +126,9 @@ class tfs(models.Model):
                         record['cliente'] = cliente
                         record['localidad'] = localidad
                         i=1
+            #if record.localidad:
+             #   record['almacen'] =self.env['stock.warehouse'].search([['x_studio_field_E0H1Z','=',record.localidad.id]])
+            #self.onchange_localidad()
         return res
 
 
