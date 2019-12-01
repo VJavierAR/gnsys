@@ -185,7 +185,7 @@ class helpdesk_update(models.Model):
     
     @api.onchange('stage_id')
     def actualiza_datos_estado(self):
-        _logger.info("stage()  **********************************#*"+str(self.x_studio_id_ticket))
+        _logger.info("staged()  **********************************#*"+str(self.x_studio_id_ticket))
         self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.user_id.name,'x_estado': self.stage_id.name})        
     
     
