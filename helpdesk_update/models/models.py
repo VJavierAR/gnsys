@@ -16,7 +16,7 @@ class helpdesk_update(models.Model):
     priority = fields.Selection([('0','Todas'),('1','Baja'),('2','Media'),('3','Alta'),('4','Critica')], track_visibility='onchange')
     x_studio_equipo_por_nmero_de_serie = fields.Many2many('stock.production.lot', store=True)
     x_studio_empresas_relacionadas = fields.Many2one('res.partner', store=True, track_visibility='onchange', string='Localidad')
-    historialCuatro = fields.One2many('x_historial_helpdesk','id',string='historial de ticket estados',store=True,track_visibility='onchange')
+    historialCuatro = fields.One2many('x_historial_helpdesk','x_studio_id_ticket',string='historial de ticket estados',store=True,track_visibility='onchange')
     documentosTecnico = fields.Many2many('ir.attachment', string="Evidencias Técnico")
     
     #_logger.info("el id xD Toner xD")            
@@ -185,8 +185,8 @@ class helpdesk_update(models.Model):
     
     @api.onchange('stage_id')
     def actualiza_datos_estado(self):
-        _logger.info("stage()  **********************************#*"+str(self.id.id))
-        self.env['x_historial_helpdesk'].create({'x_id_ticket':self.id.id ,'x_persona': self.user_id.name,'x_estado': self.stage_id.name})        
+        _logger.info("stage()  **********************************#*"+str(self.x_studio_id_ticket))
+        self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.user_id.name,'x_estado': self.stage_id.name})        
     
     
     
