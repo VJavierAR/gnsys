@@ -41,6 +41,13 @@ class contadores(models.Model):
     estado=fields.Selection(selection=[('Abierto', 'Abierto'),('Incompleto', 'Incompleto'),('Valido','Valido')],widget="statusbar", default='Abierto')  
     dom=fields.Char(readonly="1",invisible="1")
     
+    
+    @api.onchange('serie_aux')
+    def getid(self):
+        self.serie=self.env['stock.production.lot'].search([['name','=',self.serie_aux]]).id
+        
+    
+    
     @api.onchange('cliente')
     def onchange_place(self):
         res = {}
