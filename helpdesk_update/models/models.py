@@ -122,6 +122,7 @@ class helpdesk_update(models.Model):
 
     #@api.onchange('x_studio_verificacin_de_tner')
     def validar_solicitud_toner(self):
+        _logger.info("validar_solicitud_toner()")        
         for record in self:
             if record.x_studio_verificacin_de_tner == True:
                 sale = record.x_studio_field_nO7Xg
