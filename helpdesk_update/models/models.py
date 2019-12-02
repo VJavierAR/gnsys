@@ -83,7 +83,7 @@ class helpdesk_update(models.Model):
                 self.sudo().env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
                 #self.env.cr.commit()
     
-    @api.onchange('x_studio_verificacin_de_refaccin')
+    #@api.onchange('x_studio_verificacin_de_refaccin')
     def validar_solicitud_refaccion(self):
         for record in self:
             if record.x_studio_verificacin_de_refaccin == True:
@@ -107,7 +107,7 @@ class helpdesk_update(models.Model):
                                             , 'x_studio_requiere_instalacin' : True                                       
                                             , 'user_id' : record.user_id.id                                           
                                             , 'x_studio_tcnico' : record.x_studio_tcnico.id
-                                            , 'warehouse_id' : 5865   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
+                                            , 'warehouse_id' : 1   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
                                             , 'team_id' : 1      
                                           })
             record['x_studio_field_nO7Xg'] = sale.id
@@ -120,7 +120,7 @@ class helpdesk_update(models.Model):
             sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
             self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
 
-    @api.onchange('x_studio_verificacin_de_tner')
+    #@api.onchange('x_studio_verificacin_de_tner')
     def validar_solicitud_toner(self):
         for record in self:
             if record.x_studio_verificacin_de_tner == True:
