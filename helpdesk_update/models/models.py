@@ -86,15 +86,10 @@ class helpdesk_update(models.Model):
     #@api.onchange('x_studio_verificacin_de_refaccin')
     def validar_solicitud_refaccion(self):
         for record in self:
-            if record.x_studio_verificacin_de_refaccin == True:
-                #sale = env['sale.order'].search([('origin', '=', 'Ticket de refacción: ' + str(record.ticket_type_id.id))])
-                sale = record.x_studio_field_nO7Xg
-                #raise exceptions.ValidationError("test " + str(sale))
-                #sale.x_studio_tipo_de_solicitud = 'Venta'
-                #env.cr.execute("update sale_order set team_id = '1' where  id = " + str(sale.id) + ";")
-                self.sudo().env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
-                sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
-                sale.action_confirm()
+            sale = record.x_studio_field_nO7Xg
+            self.sudo().env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
+            sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
+            sale.action_confirm()
     
     
     @api.onchange('x_studio_tipo_de_requerimiento')
@@ -124,11 +119,12 @@ class helpdesk_update(models.Model):
     def validar_solicitud_toner(self):
         _logger.info("validar_solicitud_toner()")        
         for record in self:
-            if record.x_studio_verificacin_de_tner == True:
-                sale = record.x_studio_field_nO7Xg
-                self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
-                sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
-                sale.action_confirm()
+            sale = record.x_studio_field_nO7Xg
+            self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
+            sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
+            sale.action_confirm()
+            query="update helpdesk_ticket set stage_id = 92 where id = " + str(self.x_studio_id_ticket) + ";" 
+            ss=self.env.cr.execute(query)
     
     @api.onchange('x_studio_desactivar_zona')
     def desactivar_datos_zona(self):
