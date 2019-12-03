@@ -49,6 +49,7 @@ class helpdesk_update(models.Model):
     
     @api.onchange('x_studio_equipo_por_nmero_de_serie.x_studio_contador_color')
     def genera_registro_contadores(self):
+        _logger.info('Entrando a funcion genera_registro_contadores()')
         for record in self:
             contadorColor = record.x_studio_equipo_por_nmero_de_serie.x_studio_contador_color
             raise exceptions.ValidationError(str(contadorColor))
