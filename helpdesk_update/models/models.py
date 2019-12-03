@@ -51,7 +51,7 @@ class helpdesk_update(models.Model):
         self.ensure_one()
         if  (self.x_studio_tipo_de_falla == 'Solicitud de refacción' ) or (self.x_studio_tipo_de_incidencia == 'Solicitud de refacción' ) :                
             sale = self.sudo().env['sale.order'].create({'partner_id' : self.partner_id.id
-                                                         , 'origin' : "Ticket de refacción: " + str(self.ticket_type_id.id)
+                                                         , 'origin' : "Ticket de refacción: " + str(self.x_studio_id_ticket)
                                                          , 'x_studio_tipo_de_solicitud' : 'Venta'
                                                          , 'x_studio_requiere_instalacin' : True
                                                          #, 'x_studio_fecha_y_hora_de_visita' : self.x_studio_rango_inicial_de_visita
@@ -76,6 +76,10 @@ class helpdesk_update(models.Model):
                 #self.env.invalidate_all()
                 self.sudo().env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
                 #self.env.cr.commit()
+                
+                
+                
+                
     #@api.onchange('x_studio_verificacin_de_refaccin')
     def validar_solicitud_refaccion(self):
         for record in self:
@@ -90,7 +94,7 @@ class helpdesk_update(models.Model):
       for record in self:  
         if (record.team_id.id == 8 or record.team_id.id == 13) and record.x_studio_tipo_de_requerimiento == 'Tóner':
             sale = self.env['sale.order'].create({'partner_id' : record.partner_id.id
-                                            , 'origin' : "Ticket de tóner: " + str(record.ticket_type_id.id)
+                                            , 'origin' : "Ticket de tóner: " + str(record.x_studio_id_ticket)
                                             , 'x_studio_tipo_de_solicitud' : "Venta"
                                             , 'x_studio_requiere_instalacin' : True                                       
                                             , 'user_id' : record.user_id.id                                           
