@@ -40,14 +40,14 @@ class tfs(models.Model):
                     if(qua.product_id.id==self.producto.id):
                         if(self.tipo=='negro'):
                             rendimientoMono=self.actualMonocromatico-self.contadorAnteriorMono
-                            porcentaje=(100*rendimientoMono)/self.producto.x_rendimiento_mono
+                            porcentaje=(100*rendimientoMono)/self.producto.x_studio_rendimiento_toner
                             if(porcentaje<60):
                                 self.write({'estado':'xValidar'})
                             else:
                                 self.write({'estado':'Valido'})
                         else:
                             rendimientoColor=self.actualColor-self.contadorAnteriorColor
-                            porcentaje=(100*rendimientoColor)/self.producto.x_rendimiento_color
+                            porcentaje=(100*rendimientoColor)/self.producto.x_studio_rendimiento_toner
                             if(porcentaje<60):
                                 self.write({'estado':'xValidar'})
                             else:
@@ -134,6 +134,7 @@ class tfs(models.Model):
 
 class evidencias(models.Model):
     _name='tfs.evidencia'
+    _description='tfs evidencia'
     name=fields.Char(string='Descripcion')
     evidencia=fields.Binary(string='Archivo')
     tfs_id=fields.Many2one('tfs.tfs')
