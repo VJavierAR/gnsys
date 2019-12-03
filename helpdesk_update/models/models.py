@@ -46,6 +46,14 @@ class helpdesk_update(models.Model):
 
     productosSolicitud = fields.Many2many('product.product', string="Productos Solicitados",domain=_productos_solicitud_filtro)
     """
+    
+    @api.onchange('x_studio_equipo_por_nmero_de_serie.x_studio_contador_color')
+    def genera_registro_contadores(self):
+        for record in self:
+            contadorColor = record.x_studio_equipo_por_nmero_de_serie.x_studio_contador_color
+            raise exceptions.ValidationError(str(contadorColor))
+    
+    
     @api.onchange('x_studio_tipo_de_falla','x_studio_tipo_de_incidencia')
     def crear_solicitud_refaccion(self):
         self.ensure_one()
