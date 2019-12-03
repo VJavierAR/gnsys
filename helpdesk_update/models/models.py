@@ -46,44 +46,36 @@ class helpdesk_update(models.Model):
 
     productosSolicitud = fields.Many2many('product.product', string="Productos Solicitados",domain=_productos_solicitud_filtro)
     """
-    
     @api.onchange('x_studio_tipo_de_falla','x_studio_tipo_de_incidencia')
     def crear_solicitud_refaccion(self):
-        for record in self:
-            _logger.info("crear_solicitud_refaccion()")
-            _logger.info("record.stage_id: " + str(record.stage_id.id))
-            _logger.info("record.ticket_type_id: " + str(record.ticket_type_id.id))
-            _logger.info("record.x_studio_tipo_de_incidencia: " + str(record.x_studio_tipo_de_incidencia))
-            if  (record.x_studio_tipo_de_falla == 'Solicitud de refacción' ) or (record.x_studio_tipo_de_incidencia == 'Solicitud de refacción' ) :
-                _logger.info("entro: ****************************")
-                sale = self.sudo().env['sale.order'].create({'partner_id' : record.partner_id.id
-                                    , 'origin' : "Ticket de refacción: " + str(record.ticket_type_id.id)
-                                    , 'x_studio_tipo_de_solicitud' : 'Venta'
-                                    , 'x_studio_requiere_instalacin' : True
-                                    #, 'x_studio_fecha_y_hora_de_visita' : record.x_studio_rango_inicial_de_visita
-                                    #, 'x_studio_field_rrhrN' : record.x_studio_rango_final_de_visita
-                                    #, 'x_studio_comentarios_para_la_visita' : str(record.ticket_type_id.name)
-                                    #, 'x_studio_field_bAsX8' : record.x_studio_prioridad
-                                    #, 'commitment_date' : record.x_studio_rango_inicial_de_visita
-                                    #, 'x_studio_fecha_final' : record.x_studio_rango_final_de_visita
-                                    , 'user_id' : record.user_id.id
-                                    , 'x_studio_tcnico' : record.x_studio_tcnico.id
-                                    , 'warehouse_id' : 5865   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
-                                    , 'team_id' : 1
-                                  })
-                #self.env.cr.commit()
-                #for c in record.x_studio_field_tLWzF:
-                for c in record.x_studio_productos:
-                    self.sudo().env['sale.order.line'].create({'order_id' : sale.id
-                                                      , 'product_id' : c.id
-                                                      , 'product_uom_qty' : c.x_studio_cantidad_pedida
-                                                      })
-                record['x_studio_field_nO7Xg'] = sale.id
+        self.ensure_one()
+        if  (self.x_studio_tipo_de_falla == 'Solicitud de refacción' ) or (self.x_studio_tipo_de_incidencia == 'Solicitud de refacción' ) :                
+            sale = self.sudo().env['sale.order'].create({'partner_id' : self.partner_id.id
+                                                         , 'origin' : "Ticket de refacción: " + str(self.ticket_type_id.id)
+                                                         , 'x_studio_tipo_de_solicitud' : 'Venta'
+                                                         , 'x_studio_requiere_instalacin' : True
+                                                         #, 'x_studio_fecha_y_hora_de_visita' : self.x_studio_rango_inicial_de_visita
+                                                         #, 'x_studio_field_rrhrN' : self.x_studio_rango_final_de_visita
+                                                         #, 'x_studio_comentarios_para_la_visita' : str(self.ticket_type_id.name)
+                                                         #, 'x_studio_field_bAsX8' : self.x_studio_prioridad
+                                                         #, 'commitment_date' : self.x_studio_rango_inicial_de_visita
+                                                         #, 'x_studio_fecha_final' : self.x_studio_rango_final_de_visita
+                                                         , 'user_id' : self.user_id.id
+                                                         , 'x_studio_tcnico' : self.x_studio_tcnico.id
+                                                         , 'warehouse_id' : 5865   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
+                                                         , 'team_id' : 1})
+            #self.env.cr.commit()
+            #for c in self.x_studio_field_tLWzF:
+            for c in self.x_studio_productos:
+                self.sudo().env['sale.order.line'].create({'order_id' : sale.id
+                                                           , 'product_id' : c.id
+                                                           , 'product_uom_qty' : c.x_studio_cantidad_pedida
+                                                          })
+                self['x_studio_field_nO7Xg'] = sale.id
                 sale.sudo().env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
                 #self.env.invalidate_all()
                 self.sudo().env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
                 #self.env.cr.commit()
-    
     #@api.onchange('x_studio_verificacin_de_refaccin')
     def validar_solicitud_refaccion(self):
         for record in self:
