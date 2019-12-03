@@ -53,7 +53,9 @@ class helpdesk_update(models.Model):
         for record in self:
             contadorColor = record.x_studio_equipo_por_nmero_de_serie.x_studio_contador_color
             raise exceptions.ValidationError(str(contadorColor))
-    
+            
+            
+            
     
     @api.onchange('x_studio_tipo_de_falla','x_studio_tipo_de_incidencia')
     def crear_solicitud_refaccion(self):
