@@ -101,6 +101,46 @@ class helpdesk_update(models.Model):
             sale.action_confirm()
     
     
+    
+    
+    @api.onchange('x_studio_localidad_destino')
+    def cambio(self):
+      _logger.info('************* haciendo algo xD ' )
+      for record in self:  
+        if record.team_id.id == 76 :
+            sale = self.env['stock.picking'].create({'partner_id' : record.partner_id.id
+                                             #,'almacenOrigen':record.x_studio_empresas_relacionadas.id
+                                             #,'almacenDestino':record.x_studio_field_yPznZ.id        
+                                             ,'location_id':12
+                                             ,'location_dest_id':16
+                                             ,'scheduled_date': record.x_studio_fecha_prevista
+                                             ,'picking_type_id': 5
+                                            #, 'origin' : "Ticket de tóner: " + str(record.ticket_type_id.id)
+                                            #, 'x_studio_tipo_de_solicitud' : "Venta"
+                                            #, 'x_studio_requiere_instalacin' : True
+                                                     
+                                            #, 'user_id' : record.user_id.id                                           
+                                            #, 'x_studio_tcnico' : record.x_studio_tcnico.id
+                                            #, 'warehouse_id' : 1   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
+                                            #, 'team_id' : 1      
+                                          })
+            _logger.info('************* haciendo algo xD '+str(sale.id) )
+            record['x_studio_transferencia'] = sale.id
+            
+            for c in record.x_studio_equipo_por_nmero_de_serie:
+             # _logger.info('*************cantidad a solicitar: ' + str(c.x_studio_cantidad_a_solicitar))
+              self.env['stock.move'].create({'picking_id' : sale.id
+                                            , 'product_id' : c.product_id.id
+                                             ,'name':"test"
+                                             ,'product_uom':1
+                                             ,'location_id':1
+                                             ,'location_dest_id':1
+                                            #, 'product_uom_qty' : c.x_studio_cantidad_pedida
+                                          })
+            
+    
+    
+    
     @api.onchange('x_studio_tipo_de_requerimiento')
     def toner(self):
       for record in self:  
