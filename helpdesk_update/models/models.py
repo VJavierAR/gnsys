@@ -46,15 +46,21 @@ class helpdesk_update(models.Model):
 
     productosSolicitud = fields.Many2many('product.product', string="Productos Solicitados",domain=_productos_solicitud_filtro)
     """
-    """
-    @api.one
-    @api.depends('x_studio_equipo_por_nmero_de_serie.x_studio_contador_color')
+    
+    
+    
+    
+    @api.onchange('x_studio_generar_cambio')
     def genera_registro_contadores(self):
         _logger.info('Entrando a funcion genera_registro_contadores()')
         for record in self:
-            contadorColor = record.x_studio_equipo_por_nmero_de_serie.x_studio_contador_color
-            raise exceptions.ValidationError(str(contadorColor))
-    """     
+            if record.x_studio_generar_cambio == True:
+                listaDeSeries = record.x_studio_equipo_por_nmero_de_serie
+                for serie in listaDeSeries:
+                    if serie.x_studio_cambiar == True:
+                        contadorColor = serie.x_studio_contador_color
+                        raise exceptions.ValidationError(str(contadorColor))
+    
             
             
     
