@@ -1,23 +1,205 @@
 # -*- coding: utf-8 -*-
 
-from odoo import _, models, fields, api
-
+from odoo import _, models, fields, api, tools
+from email.utils import formataddr
 from odoo.exceptions import UserError
 from odoo import exceptions
-import logging
+import logging, ast
 _logger = logging.getLogger(__name__)
 
 class helpdesk_update(models.Model):
     #_inherit = ['mail.thread', 'helpdesk.ticket']
     _inherit = 'helpdesk.ticket'
     #priority = fields.Selection([('all','Todas'),('baja','Baja'),('media','Media'),('alta','Alta'),('critica','Critica')])
+    zona_estados = fields.Selection([('Estado de México','Estado de México'), ('Campeche','Campeche'), ('Ciudad de México','Ciudad de México'), ('Yucatán','Yucatán'), ('Guanajuato','Guanajuato'), ('Puebla','Puebla'), ('Coahuila','Coahuila'), ('Sonora','Sonora'), ('Tamaulipas','Tamaulipas'), ('Oaxaca','Oaxaca'), ('Tlaxcala','Tlaxcala'), ('Morelos','Morelos'), ('Jalisco','Jalisco'), ('Sinaloa','Sinaloa'), ('Nuevo León','Nuevo León'), ('Baja California','Baja California'), ('Nayarit','Nayarit'), ('Querétaro','Querétaro'), ('Tabasco','Tabasco'), ('Hidalgo','Hidalgo'), ('Chihuahua','Chihuahua'), ('Quintana Roo','Quintana Roo'), ('Chiapas','Chiapas'), ('Veracruz','Veracruz'), ('Michoacán','Michoacán'), ('Aguascalientes','Aguascalientes'), ('Guerrero','Guerrero'), ('San Luis Potosí', 'San Luis Potosí'), ('Colima','Colima'), ('Durango','Durango'), ('Baja California Sur','Baja California Sur'), ('Zacatecas','Zacatecas')], track_visibility='onchange', store=True)
+    estatus_techra = fields.Selection([('Cerrado','Cerrado'), ('Cancelado','Cancelado'), ('Cotización','Cotización'), ('Tiempo de espera','Tiempo de espera'), ('COTIZACION POR AUTORIZAR POR CLIENTE','COTIZACION POR AUTORIZAR POR CLIENTE'), ('Facturar','Facturar'), ('Refacción validada','Refacción validada'), ('Instalación','Instalación'), ('Taller','Taller'), ('En proceso de atención','En proceso de atención'), ('En Pedido','En Pedido'), ('Mensaje','Mensaje'), ('Resuelto','Resuelto'), ('Reasignación de área','Reasignación de área'), ('Diagnóstico de Técnico','Diagnóstico de Técnico'), ('Entregado','Entregado'), ('En Ruta','En Ruta'), ('Listo para entregar','Listo para entregar'), ('Espera de Resultados','Espera de Resultados'), ('Solicitud de refacción','Solicitud de refacción'), ('Abierto TFS','Abierto TFS'), ('Reparación en taller','Reparación en taller'), ('Abierto Mesa de Ayuda','Abierto Mesa de Ayuda'), ('Reabierto','Reabierto')], track_visibility='onchange', store=True)
     priority = fields.Selection([('0','Todas'),('1','Baja'),('2','Media'),('3','Alta'),('4','Critica')], track_visibility='onchange')
     x_studio_equipo_por_nmero_de_serie = fields.Many2many('stock.production.lot', store=True)
+    #x_studio_equipo_por_nmero_de_serieRel = fields.Many2one('stock.production.lot', store=True)
     x_studio_empresas_relacionadas = fields.Many2one('res.partner', store=True, track_visibility='onchange', string='Localidad')
     historialCuatro = fields.One2many('x_historial_helpdesk','x_id_ticket',string='historial de ticket estados',store=True,track_visibility='onchange')
-    documentosTecnico = fields.Many2many('ir.attachment', string="Evidencias Técnico") 
+    documentosTecnico = fields.Many2many('ir.attachment', string="Evidencias Técnico")
     
-  
+    #_logger.info("el id xD Toner xD")            
+
+    #@api.model           
+    #@api.depends('productosSolicitud')
+    #@api.one
+    """
+    def _productos_solicitud_filtro(self):
+        res = {}    
+        e=''
+        g=str(self.x_studio_nombretmp)
+        list = ast.literal_eval(g)
+        idf = self.team_id.id
+        if idf == 8:
+            _logger.info("el id xD Toner"+g)            
+            e  = str([('categ_id', '=', 5),('x_studio_toner_compatible.id','in',list)])
+        if idf == 9:
+            _logger.info("el id xD Reffacciones"+g)
+            e = str([('categ_id', '=', 7),('x_studio_toner_compatible.id','=',list[0])])
+        #if idf != 9 and idf != 8:
+        #    _logger.info("Compatibles xD"+g)
+        #    res['domain']={'productosSolicitud':[('x_studio_toner_compatible.id','=',list[0])]}
+        _logger.info(" res :"+str(e))    
+        return e
+
+    productosSolicitud = fields.Many2many('product.product', string="Productos Solicitados",domain=_productos_solicitud_filtro)
+    """
+    
+    
+    
+    
+    @api.onchange('x_studio_generar_cambio')
+    def genera_registro_contadores(self):
+        _logger.info('Entrando a funcion genera_registro_contadores()')
+        for record in self:
+            if record.x_studio_generar_cambio == True:
+                listaDeSeries = record.x_studio_equipo_por_nmero_de_serie
+                for serie in listaDeSeries:
+                    if serie.x_studio_cambiar == True:
+                        contadorColor = serie.x_studio_contador_color
+                        raise exceptions.ValidationError(str(contadorColor))
+    
+            
+            
+    
+    @api.onchange('x_studio_tipo_de_falla','x_studio_tipo_de_incidencia')
+    def crear_solicitud_refaccion(self):
+        self.ensure_one()
+        if  (self.x_studio_tipo_de_falla == 'Solicitud de refacción' ) or (self.x_studio_tipo_de_incidencia == 'Solicitud de refacción' ) :                
+            sale = self.sudo().env['sale.order'].create({'partner_id' : self.partner_id.id
+                                                         , 'origin' : "Ticket de refacción: " + str(self.x_studio_id_ticket)
+                                                         , 'x_studio_tipo_de_solicitud' : 'Venta'
+                                                         , 'x_studio_requiere_instalacin' : True
+                                                         #, 'x_studio_fecha_y_hora_de_visita' : self.x_studio_rango_inicial_de_visita
+                                                         #, 'x_studio_field_rrhrN' : self.x_studio_rango_final_de_visita
+                                                         #, 'x_studio_comentarios_para_la_visita' : str(self.ticket_type_id.name)
+                                                         #, 'x_studio_field_bAsX8' : self.x_studio_prioridad
+                                                         #, 'commitment_date' : self.x_studio_rango_inicial_de_visita
+                                                         #, 'x_studio_fecha_final' : self.x_studio_rango_final_de_visita
+                                                         , 'user_id' : self.user_id.id
+                                                         , 'x_studio_tcnico' : self.x_studio_tcnico.id
+                                                         , 'warehouse_id' : 5865   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
+                                                         , 'team_id' : 1})
+            #self.env.cr.commit()
+            #for c in self.x_studio_field_tLWzF:
+            for c in self.x_studio_productos:
+                self.sudo().env['sale.order.line'].create({'order_id' : sale.id
+                                                           , 'product_id' : c.id
+                                                           , 'product_uom_qty' : c.x_studio_cantidad_pedida
+                                                          })
+                self['x_studio_field_nO7Xg'] = sale.id
+                sale.sudo().env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
+                #self.env.invalidate_all()
+                self.sudo().env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
+                #self.env.cr.commit()
+                
+                
+                
+                
+    #@api.onchange('x_studio_verificacin_de_refaccin')
+    def validar_solicitud_refaccion(self):
+        for record in self:
+            sale = record.x_studio_field_nO7Xg
+            self.sudo().env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
+            sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
+            sale.action_confirm()
+    
+    
+    
+    
+    @api.onchange('x_studio_localidad_destino')
+    def cambio(self):
+      _logger.info('************* haciendo algo xD ' )
+      for record in self:  
+        if record.team_id.id == 76 :
+            sale = self.env['stock.picking'].create({'partner_id' : record.partner_id.id
+                                             #,'almacenOrigen':record.x_studio_empresas_relacionadas.id
+                                             #,'almacenDestino':record.x_studio_field_yPznZ.id        
+                                             ,'location_id':12
+                                             ,'location_dest_id':16
+                                             ,'scheduled_date': record.x_studio_fecha_prevista
+                                             ,'picking_type_id': 5
+                                            #, 'origin' : "Ticket de tóner: " + str(record.ticket_type_id.id)
+                                            #, 'x_studio_tipo_de_solicitud' : "Venta"
+                                            #, 'x_studio_requiere_instalacin' : True
+                                                     
+                                            #, 'user_id' : record.user_id.id                                           
+                                            #, 'x_studio_tcnico' : record.x_studio_tcnico.id
+                                            #, 'warehouse_id' : 1   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
+                                            #, 'team_id' : 1      
+                                          })
+            _logger.info('************* haciendo algo xD '+str(sale.id) )
+            record['x_studio_transferencia'] = sale.id
+            
+            for c in record.x_studio_equipo_por_nmero_de_serie:
+             # _logger.info('*************cantidad a solicitar: ' + str(c.x_studio_cantidad_a_solicitar))
+              self.env['stock.move'].create({'picking_id' : sale.id
+                                            , 'product_id' : c.product_id.id
+                                             ,'name':"test"
+                                             ,'product_uom':1
+                                             ,'location_id':1
+                                             ,'location_dest_id':1
+                                            #, 'product_uom_qty' : c.x_studio_cantidad_pedida
+                                          })
+            
+    
+    
+    
+    @api.onchange('x_studio_tipo_de_requerimiento')
+    def toner(self):
+      for record in self:  
+        if (record.team_id.id == 8 ) and record.x_studio_tipo_de_requerimiento == 'Tóner':
+            sale = self.env['sale.order'].create({'partner_id' : record.partner_id.id
+                                            , 'origin' : "Ticket de tóner: " + str(record.x_studio_id_ticket)
+                                            , 'x_studio_tipo_de_solicitud' : "Venta"
+                                            , 'x_studio_requiere_instalacin' : True                                       
+                                            , 'user_id' : record.user_id.id                                           
+                                            , 'x_studio_tcnico' : record.x_studio_tcnico.id
+                                            , 'warehouse_id' : 1   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
+                                            , 'team_id' : 1      
+                                          })
+            record['x_studio_field_nO7Xg'] = sale.id
+            for c in record.x_studio_productos:
+              _logger.info('*************cantidad a solicitar: ' + str(c.x_studio_cantidad_a_solicitar))
+              self.env['sale.order.line'].create({'order_id' : sale.id
+                                            , 'product_id' : c.id
+                                            , 'product_uom_qty' : c.x_studio_cantidad_pedida
+                                          })
+            sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
+            self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
+        if (record.team_id.id == 13 ) and record.x_studio_tipo_de_requerimiento == 'Tóner':
+            sale = self.env['sale.order'].create({'partner_id' : record.partner_id.id
+                                            , 'origin' : "Ticket de tfs: " + str(record.x_studio_id_ticket)
+                                            , 'x_studio_tipo_de_solicitud' : "Venta"
+                                            , 'x_studio_requiere_instalacin' : True                                       
+                                            , 'user_id' : record.user_id.id                                           
+                                            , 'x_studio_tcnico' : record.x_studio_tcnico.id
+                                            , 'warehouse_id' : 1   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
+                                            , 'team_id' : 1      
+                                          })
+            record['x_studio_field_nO7Xg'] = sale.id
+            for c in record.x_studio_productos:
+              _logger.info('*************cantidad a solicitar: ' + str(c.x_studio_cantidad_a_solicitar))
+              self.env['sale.order.line'].create({'order_id' : sale.id
+                                            , 'product_id' : c.id
+                                            , 'product_uom_qty' : c.x_studio_cantidad_pedida
+                                          })
+            sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
+            self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")    
+            
+
+    #@api.onchange('x_studio_verificacin_de_tner')
+    def validar_solicitud_toner(self):
+        _logger.info("validar_solicitud_toner()")        
+        for record in self:
+            sale = record.x_studio_field_nO7Xg
+            self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
+            sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
+            sale.action_confirm()
+            query="update helpdesk_ticket set stage_id = 92 where id = " + str(self.x_studio_id_ticket) + ";" 
+            ss=self.env.cr.execute(query)
     
     @api.onchange('x_studio_desactivar_zona')
     def desactivar_datos_zona(self):
@@ -26,8 +208,39 @@ class helpdesk_update(models.Model):
            res['domain']={'x_studio_responsable_de_equipo':[('x_studio_zona', '!=', False)]}
         return res
        
-                
-    
+    #@api.model            
+    @api.onchange('x_studio_activar_compatibilidad')
+    def productos_filtro(self):
+        res = {}             
+        g = str(self.x_studio_nombretmp)
+        
+        if g !='False':
+            list = ast.literal_eval(g)        
+            idf = self.team_id.id
+            tam = len(list)
+            if idf == 8 or idf == 13 :
+               _logger.info("el id xD Toner"+g)            
+               res['domain']={'x_studio_productos':[('categ_id', '=', 5),('x_studio_toner_compatible.id','in',list)]}
+            if idf == 9:
+               _logger.info("el id xD Reffacciones"+g)
+               res['domain']={'x_studio_productos':[('categ_id', '=', 7),('x_studio_toner_compatible.id','=',list[0])]}
+            if idf != 9 and idf != 8:
+               _logger.info("Compatibles xD" + g)
+               res['domain']={'x_studio_productos':[('x_studio_toner_compatible.id','=',list[0])]}
+               _logger.info("res"+str(res))
+            #if idf 55:
+            #   _logger.info("Cotizacion xD" + g)
+            #   res['domain'] = {'x_studio_productos':[('x_studio_toner_compatible.id', '=', list[0]),('x_studio_toner_compatible.property_stock_inventory.id', '=', 121),('x_studio_toner_compatible.id property_stock_inventory.id', '=', 121)] }
+            #   _logger.info("res"+str(res))
+        return res
+        
+    @api.onchange('x_studio_zona')
+    def actualiza_datos_zona_responsable_tecnico(self):
+        res = {}
+        #raise exceptions.ValidationError("test " + self.x_studio_zona)
+        if self.x_studio_zona :
+            res['domain']={'x_studio_tcnico':[('x_studio_zona', '=', self.x_studio_zona)]}
+        return res
     
     @api.onchange('x_studio_zona')
     def actualiza_datos_zona_responsable(self):
@@ -36,99 +249,16 @@ class helpdesk_update(models.Model):
         if self.x_studio_zona :
             res['domain']={'x_studio_responsable_de_equipo':[('x_studio_zona', '=', self.x_studio_zona)]}
         return res
+   
+   
+   
+    
+    
     
     @api.onchange('stage_id')
     def actualiza_datos_estado(self):
-        _logger.info("alv : "+str(self.partner_id))
-        _logger.info('Test id usuario logins2: ' + str(self._uid))
-        
-        #ID lester en res_user = 81
-        #ID Alejandro en res_user = 85
-        #ID Administrator en res_user = 2
-        
-        #raise exceptions.Warning('Warning message')
-        #raise exceptions.ValidationError('Not valid message') 
-        estado_previo = 'New'
-        if len(self.historialCuatro) > 0:
-            _logger.info('Estado previo: ' + 'estado: ' + str(self.historialCuatro[len(self.historialCuatro) - 1].x_estado) + ' fecha: ' + str(self.historialCuatro[len(self.historialCuatro) - 1].create_date))
-            estado_previo = str(self.historialCuatro[len(self.historialCuatro) - 1].x_estado)
-        id_usuario_login = self._uid
-        b = ''
-        s = str(self.stage_id)
-        
-        if s =='helpdesk.stage(1,)':
-            b = 'Abierto'
-            if estado_previo == 'Asignado' or estado_previo == 'Extension' or estado_previo == 'Suspendido' or estado_previo == 'Rechazado' or estado_previo == 'Resuelto' or estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado' and (id_usuario_login != 81 or id_usuario_login != 85):
-            #if estado_previo == 'Asignado' or estado_previo == 'Extension' or estado_previo == 'Suspendido' or estado_previo == 'Rechazado' or estado_previo == 'Resuelto' or estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado' or (id_usuario_login != 81) or (id_usuario_login != 85):
-                _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
-                raise exceptions.ValidationError("Usuario no valido para realizar moviimento del estado " + estado_previo + " al estado " + b)
-            else: 
-                _logger.info("pasa =) ")
-                
-        if s =='helpdesk.stage(2,)':
-            b = 'Asignado'
-            if estado_previo == 'Extension' or estado_previo == 'Suspendido' or estado_previo == 'Rechazado' or estado_previo == 'Resuelto' or estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado' and (id_usuario_login != 81 or id_usuario_login != 85):
-                _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
-                raise exceptions.ValidationError("Usuario no valido para realizar moviimento del estado " + estado_previo + " al estado " + b)
-            else: 
-                _logger.info("pasa =) ")
-                
-        if s =='helpdesk.stage(13,)':
-            b = 'Extension'
-            if estado_previo == 'Suspendido' or estado_previo == 'Rechazado' or estado_previo == 'Resuelto' or estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado' and (id_usuario_login != 81 or id_usuario_login != 85):
-                _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
-                raise exceptions.ValidationError("Usuario no valido para realizar moviimento del estado " + estado_previo + " al estado " + b)
-            else: 
-                _logger.info("pasa =) ")
-                
-        if s =='helpdesk.stage(14,)':
-            b = 'Suspendido'
-            if estado_previo == 'Rechazado' or estado_previo == 'Resuelto' or estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado' and (id_usuario_login != 81 or id_usuario_login != 85):
-                _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
-                raise exceptions.ValidationError("Usuario no valido para realizar moviimento del estado " + estado_previo + " al estado " + b)
-            else: 
-                _logger.info("pasa =) ")
-                
-        if s =='helpdesk.stage(15,)':
-            b = 'Rechazado'
-            if estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado' and (id_usuario_login != 81 or id_usuario_login != 85):
-                _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
-                raise exceptions.ValidationError("Usuario no valido para realizar moviimento del estado " + estado_previo + " al estado " + b)
-            else: 
-                _logger.info("pasa =) ")
-                
-        if s =='helpdesk.stage(17,)':
-            b = 'Resuelto'
-            if estado_previo == 'Rechazado' or estado_previo == 'Reabierto' or estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado' and (id_usuario_login != 81 or id_usuario_login != 85):
-                _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
-                raise exceptions.ValidationError("Usuario no valido para realizar moviimento del estado " + estado_previo + " al estado " + b)
-            else: 
-                _logger.info("pasa =) ")
-                
-        if s =='helpdesk.stage(16,)':
-            b = 'Reabierto'
-            if estado_previo == 'Cerrado' or estado_previo == 'Solver' or estado_previo == 'Cancelado' and (id_usuario_login != 81 or id_usuario_login != 85):
-                _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
-                raise exceptions.ValidationError("Usuario no valido para realizar moviimento del estado " + estado_previo + " al estado " + b)
-            else: 
-                _logger.info("pasa =) ")
-                
-        if s =='helpdesk.stage(18,)':
-            b = 'Cerrado'
-            if estado_previo == 'Solver' or estado_previo == 'Cancelado' and (id_usuario_login != 81 or id_usuario_login != 85):
-                _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
-                raise exceptions.ValidationError("Usuario no valido para realizar moviimento del estado " + estado_previo + " al estado " + b)
-            else: 
-                _logger.info("pasa =) ")
-                
-        if s =='helpdesk.stage(3,)':
-            b = 'Solver'
-            #if estado_previo == 'Solver' or estado_previo == 'Cancelado':
-            #    _logger.info("Del estado " + estado_previo + " quiso pasar al estado " + b)
-        if s =='helpdesk.stage(4,)':
-            b = 'Cancelado'    
-        #if self.stage_id==''
-        self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.user_id.name,'x_estado': b})
+        _logger.info("staged()  **********************************#*"+self.env.user.name)
+        self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})        
     
     
     
@@ -532,11 +662,9 @@ class helpdesk_update(models.Model):
     
     @api.onchange('partner_id', 'x_studio_empresas_relacionadas')
     def actualiza_dominio_en_numeros_de_serie(self):
-        
         for record in self:
             zero = 0
             dominio = []
-
             #for record in self:
             id_cliente = record.partner_id.id
             #id_cliente = record.x_studio_id_cliente
@@ -592,117 +720,236 @@ class helpdesk_update(models.Model):
         v = {}
         ids = []
         localidad = []
+        _logger.info("self el tamaño: "+str(self.x_studio_tamao_lista))
         for record in self:
-            _logger.info('record_ 1: ' + str(self._origin.partner_id))
-            _logger.info('record_id 1: ' + str(self._origin.id))
-            _my_object = self.env['helpdesk.ticket']
-            #v['x_studio_equipo_por_nmero_de_serie'] = {record.x_studio_equipo_por_nmero_de_serie.id}
-            
-            
-            #_logger.info('record_feliz : ' + str(record.x_studio_equipo_por_nmero_de_serie.id))
-            #ids.append(record.x_studio_equipo_por_nmero_de_serie.id)
-            
-            #record['x_studio_equipo_por_nmero_de_serie'] = [(4,record.x_studio_equipo_por_nmero_de_serie.id)]
-            
-            
-            _logger.info('*********x_studio_equipo_por_nmero_de_serie: ')
-            _logger.info(str(record.x_studio_equipo_por_nmero_de_serie))
-            for numeros_serie in record.x_studio_equipo_por_nmero_de_serie:
-                ids.append(numeros_serie.id)
-                _logger.info('record_ 2: ' + str(self._origin))
-                _logger.info("Numeros_serie")
-                _logger.info(numeros_serie.name)
-                for move_line in numeros_serie.x_studio_move_line:
-                    _logger.info('record_ 3: ' + str(self._origin))
-                    _logger.info("move line")
-                    #move_line.para.almacen.ubicacion.
-                    _logger.info('Cliente info***************************************************************************')
-                    _logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id)
-                    cliente = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
-                    self._origin.sudo().write({'partner_id' : cliente})
-                    record.partner_id = cliente
-                    idM=self._origin.id
-                    _logger.info("que show"+str(idM))
-                    if cliente == []:
-                        self.env.cr.execute("update helpdesk_ticket set partner_id = " + cliente + "  where  id = " + idM + ";")
-                    v['partner_id'] = cliente
-                    _logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.phone)
-                    cliente_telefono = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.phone
-                    self._origin.sudo().write({'x_studio_telefono' : cliente_telefono})
-                    record.x_studio_telefono = cliente_telefono
-                    if cliente_telefono != []:
-                        srtt="update helpdesk_ticket set x_studio_telefono = '" + str(cliente_telefono) + "' where  id = " + str(idM) + ";"
-                        _logger.info("update gacho"+srtt)
-                        #s=self.env.cr.execute("update helpdesk_ticket set x_studio_telefono = '" + str(cliente_telefono) + "' where  id = " + str(idM) + ";")
-                        #_logger.info("update gacho 2 "+str(s))
-                    v['x_studio_telefono'] = cliente_telefono
-                    _logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.mobile)
-                    cliente_movil = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.mobile
-                    self._origin.sudo().write({'x_studio_movil' : cliente_movil})
-                    record.x_studio_movil = cliente_movil
-                    if cliente_movil == []:
-                        self.env.cr.execute("update helpdesk_ticket set x_studio_movil = '" + str(cliente_movil) + "' where  id = " +idM + ";")
-                    v['x_studio_movil'] = cliente_movil
-                    _logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.x_studio_nivel_del_cliente)
-                    cliente_nivel = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.x_studio_nivel_del_cliente
-                    self._origin.sudo().write({'x_studio_nivel_del_cliente' : cliente_nivel})
-                    record.x_studio_nivel_del_cliente = cliente_nivel
-                    if cliente_nivel == []:
-                        self.env.cr.execute("update helpdesk_ticket set x_studio_nivel_del_cliente = '" + str(cliente_nivel) + "' where  id = " + idM + ";")
-                    v['x_studio_nivel_del_cliente'] = cliente_nivel
-                    
-                    #localidad datos
-                    _logger.info('Localidad info*************************************************************************')
-                    _logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z)
-                    localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
-                    _logger.info('localidad id: ' + str(localidad))
-                    self._origin.sudo().write({'x_studio_empresas_relacionadas' : localidad})
-                    record.x_studio_empresas_relacionadas = localidad
+            cantidad_numeros_serie = record.x_studio_tamao_lista
+           # _logger.info("******************team_id: "+ str(record.team_id.id) + " cantidad_numeros_serie: "+ str(cantidad_numeros_serie))
+            if record.team_id.id!=8:
+                    if  int(cantidad_numeros_serie) < 2 :
+                        _logger.info('record_ 1: ' + str(self._origin.partner_id))
+                        _logger.info('record_id 1: ' + str(self._origin.id))
+                        _my_object = self.env['helpdesk.ticket']
+                        #v['x_studio_equipo_por_nmero_de_serie'] = {record.x_studio_equipo_por_nmero_de_serie.id}
 
-                    _logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.phone)
-                    #telefono_localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.phone
-                    #self._origin.sudo().write({x_studio_telefono_localidad : telefono_localidad})
-                    _logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.mobile)
-                    #movil_localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.mobile
-                    #self._origin.sudo().write({x_studio_movil_localidad : movil_localidad})
-                    _logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.email)
-                    #email_localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.email
-                    #self._origin.sudo().write({x_studio_correo_electrnico_de_localidad : email_localidad})
-                    
-                    #
-                    #_logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.)
-                    
-                #self._origin.sudo().write({x_studio_responsable_de_equipo : responsable_equipo_de_distribucion})
-            
-            #_logger.info(record['x_studio_equipo_por_nmero_de_serie'])
-            _logger.info(ids)
-            #record['x_studio_equipo_por_nmero_de_serie'] = (6, 0, [ids])
-            #record.sudo().write({x_studio_equipo_por_nmero_de_serie : [(6, 0, [ids])] })
-        #self._origin.sudo().write({'x_studio_equipo_por_nmero_de_serie' : (4, ids) })
-        lista_ids = []
-        for id in ids:
-            lista_ids.append((4,id))
-        #v['x_studio_equipo_por_nmero_de_serie'] = [(4, ids[0]), (4, ids[1])]
-        v['x_studio_equipo_por_nmero_de_serie'] = lista_ids
-        self._origin.sudo().write({'x_studio_equipo_por_nmero_de_serie' : lista_ids})
-        record.x_studio_equipo_por_nmero_de_serie = lista_ids
-        """
-        if localidad != []:
-            srtt="update helpdesk_ticket set x_studio_empresas_relacionadas = " + str(localidad) + " where  id = " + str(idM )+ ";"
-            _logger.info("update gacho localidad " + srtt)
-            record.x_studio_empresas_relacionadas = localidad
-            record['x_studio_empresas_relacionadas'] = localidad
-            self.env.cr.execute(srtt)
-            #self.env.cr.commit()
-            v['x_studio_empresas_relacionadas'] = localidad        
-        """
-        _logger.info({'value': v})
-        _logger.info(v)
-        #self._origin.env['helpdesk.ticket'].sudo().write(v)
-        
-        #res = super(helpdesk_update, self).sudo().write(v)
-        #return res
-        #return {'value': v}
+
+                        #_logger.info('record_feliz : ' + str(record.x_studio_equipo_por_nmero_de_serie.id))
+                        #ids.append(record.x_studio_equipo_por_nmero_de_serie.id)
+
+                        #record['x_studio_equipo_por_nmero_de_serie'] = [(4,record.x_studio_equipo_por_nmero_de_serie.id)]
+
+
+                        _logger.info('*********x_studio_equipo_por_nmero_de_serie: ')
+                        _logger.info(str(record.x_studio_equipo_por_nmero_de_serie))
+                        for numeros_serie in record.x_studio_equipo_por_nmero_de_serie:
+                            ids.append(numeros_serie.id)
+                            _logger.info('record_ 2: ' + str(self._origin))
+                            _logger.info("Numeros_serie")
+                            _logger.info(numeros_serie.name)
+                            for move_line in numeros_serie.x_studio_move_line:
+                                _logger.info('record_ 3: ' + str(self._origin))
+                                _logger.info("move line")
+                                #move_line.para.almacen.ubicacion.
+                                _logger.info('Cliente info***************************************************************************')
+                                _logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id)
+                                cliente = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
+                                self._origin.sudo().write({'partner_id' : cliente})
+                                record.partner_id = cliente
+                                idM=self._origin.id
+                                _logger.info("que show"+str(idM))
+                                if cliente == []:
+                                    self.env.cr.execute("update helpdesk_ticket set partner_id = " + cliente + "  where  id = " + idM + ";")
+                                v['partner_id'] = cliente
+                                _logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.phone)
+                                cliente_telefono = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.phone
+                                self._origin.sudo().write({'x_studio_telefono' : cliente_telefono})
+                                record.x_studio_telefono = cliente_telefono
+                                if cliente_telefono != []:
+                                    srtt="update helpdesk_ticket set x_studio_telefono = '" + str(cliente_telefono) + "' where  id = " + str(idM) + ";"
+                                    _logger.info("update gacho"+srtt)
+                                    #s=self.env.cr.execute("update helpdesk_ticket set x_studio_telefono = '" + str(cliente_telefono) + "' where  id = " + str(idM) + ";")
+                                    #_logger.info("update gacho 2 "+str(s))
+                                v['x_studio_telefono'] = cliente_telefono
+                                _logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.mobile)
+                                cliente_movil = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.mobile
+                                self._origin.sudo().write({'x_studio_movil' : cliente_movil})
+                                record.x_studio_movil = cliente_movil
+                                if cliente_movil == []:
+                                    self.env.cr.execute("update helpdesk_ticket set x_studio_movil = '" + str(cliente_movil) + "' where  id = " +idM + ";")
+                                v['x_studio_movil'] = cliente_movil
+                                _logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.x_studio_nivel_del_cliente)
+                                cliente_nivel = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.x_studio_nivel_del_cliente
+                                self._origin.sudo().write({'x_studio_nivel_del_cliente' : cliente_nivel})
+                                record.x_studio_nivel_del_cliente = cliente_nivel
+                                if cliente_nivel == []:
+                                    self.env.cr.execute("update helpdesk_ticket set x_studio_nivel_del_cliente = '" + str(cliente_nivel) + "' where  id = " + idM + ";")
+                                v['x_studio_nivel_del_cliente'] = cliente_nivel
+
+                                #localidad datos
+                                _logger.info('Localidad info*************************************************************************')
+                                _logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z)
+                                localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
+                                _logger.info('localidad id: ' + str(localidad))
+                                self._origin.sudo().write({'x_studio_empresas_relacionadas' : localidad})
+                                record.x_studio_empresas_relacionadas = localidad
+
+                                _logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.phone)
+                                #telefono_localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.phone
+                                #self._origin.sudo().write({x_studio_telefono_localidad : telefono_localidad})
+                                _logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.mobile)
+                                #movil_localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.mobile
+                                #self._origin.sudo().write({x_studio_movil_localidad : movil_localidad})
+                                _logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.email)
+                                #email_localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.email
+                                #self._origin.sudo().write({x_studio_correo_electrnico_de_localidad : email_localidad})
+
+                                #
+                                #_logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.)
+
+                            #self._origin.sudo().write({x_studio_responsable_de_equipo : responsable_equipo_de_distribucion})
+
+                            #_logger.info(record['x_studio_equipo_por_nmero_de_serie'])
+                            _logger.info(ids)
+                            #record['x_studio_equipo_por_nmero_de_serie'] = (6, 0, [ids])
+                            #record.sudo().write({x_studio_equipo_por_nmero_de_serie : [(6, 0, [ids])] })
+                            #self._origin.sudo().write({'x_studio_equipo_por_nmero_de_serie' : (4, ids) })
+                            lista_ids = []
+                            for id in ids:
+                                lista_ids.append((4,id))
+                            #v['x_studio_equipo_por_nmero_de_serie'] = [(4, ids[0]), (4, ids[1])]
+                            v['x_studio_equipo_por_nmero_de_serie'] = lista_ids
+                            self._origin.sudo().write({'x_studio_equipo_por_nmero_de_serie' : lista_ids})
+                            record.x_studio_equipo_por_nmero_de_serie = lista_ids
+                            """
+                            if localidad != []:
+                                srtt="update helpdesk_ticket set x_studio_empresas_relacionadas = " + str(localidad) + " where  id = " + str(idM )+ ";"
+                                _logger.info("update gacho localidad " + srtt)
+                                record.x_studio_empresas_relacionadas = localidad
+                                record['x_studio_empresas_relacionadas'] = localidad
+                                self.env.cr.execute(srtt)
+                                #self.env.cr.commit()
+                                v['x_studio_empresas_relacionadas'] = localidad        
+                            """
+                            _logger.info({'value': v})
+                            _logger.info(v)
+                            #self._origin.env['helpdesk.ticket'].sudo().write(v)
+
+                            #res = super(helpdesk_update, self).sudo().write(v)
+                            #return res
+                            #return {'value': v}        
+                    else:
+                        raise exceptions.ValidationError("No es posible registrar más de un número de serie")
+            if record.team_id.id==8:
+                _logger.info('record_ 1: ' + str(self._origin.partner_id))
+                _logger.info('record_id 1: ' + str(self._origin.id))
+                _my_object = self.env['helpdesk.ticket']
+                #v['x_studio_equipo_por_nmero_de_serie'] = {record.x_studio_equipo_por_nmero_de_serie.id}
+
+
+                #_logger.info('record_feliz : ' + str(record.x_studio_equipo_por_nmero_de_serie.id))
+                #ids.append(record.x_studio_equipo_por_nmero_de_serie.id)
+
+                #record['x_studio_equipo_por_nmero_de_serie'] = [(4,record.x_studio_equipo_por_nmero_de_serie.id)]
+
+
+                _logger.info('*********x_studio_equipo_por_nmero_de_serie: ')
+                _logger.info(str(record.x_studio_equipo_por_nmero_de_serie))
+                for numeros_serie in record.x_studio_equipo_por_nmero_de_serie:
+                    ids.append(numeros_serie.id)
+                    _logger.info('record_ 2: ' + str(self._origin))
+                    _logger.info("Numeros_serie")
+                    _logger.info(numeros_serie.name)
+                    for move_line in numeros_serie.x_studio_move_line:
+                        _logger.info('record_ 3: ' + str(self._origin))
+                        _logger.info("move line")
+                        #move_line.para.almacen.ubicacion.
+                        _logger.info('Cliente info***************************************************************************')
+                        _logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id)
+                        cliente = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
+                        self._origin.sudo().write({'partner_id' : cliente})
+                        record.partner_id = cliente
+                        idM=self._origin.id
+                        _logger.info("que show"+str(idM))
+                        if cliente == []:
+                            self.env.cr.execute("update helpdesk_ticket set partner_id = " + cliente + "  where  id = " + idM + ";")
+                        v['partner_id'] = cliente
+                        _logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.phone)
+                        cliente_telefono = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.phone
+                        self._origin.sudo().write({'x_studio_telefono' : cliente_telefono})
+                        record.x_studio_telefono = cliente_telefono
+                        if cliente_telefono != []:
+                            srtt="update helpdesk_ticket set x_studio_telefono = '" + str(cliente_telefono) + "' where  id = " + str(idM) + ";"
+                            _logger.info("update gacho"+srtt)
+                            #s=self.env.cr.execute("update helpdesk_ticket set x_studio_telefono = '" + str(cliente_telefono) + "' where  id = " + str(idM) + ";")
+                            #_logger.info("update gacho 2 "+str(s))
+                        v['x_studio_telefono'] = cliente_telefono
+                        _logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.mobile)
+                        cliente_movil = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.mobile
+                        self._origin.sudo().write({'x_studio_movil' : cliente_movil})
+                        record.x_studio_movil = cliente_movil
+                        if cliente_movil == []:
+                            self.env.cr.execute("update helpdesk_ticket set x_studio_movil = '" + str(cliente_movil) + "' where  id = " +idM + ";")
+                        v['x_studio_movil'] = cliente_movil
+                        _logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.x_studio_nivel_del_cliente)
+                        cliente_nivel = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.x_studio_nivel_del_cliente
+                        self._origin.sudo().write({'x_studio_nivel_del_cliente' : cliente_nivel})
+                        record.x_studio_nivel_del_cliente = cliente_nivel
+                        if cliente_nivel == []:
+                            self.env.cr.execute("update helpdesk_ticket set x_studio_nivel_del_cliente = '" + str(cliente_nivel) + "' where  id = " + idM + ";")
+                        v['x_studio_nivel_del_cliente'] = cliente_nivel
+
+                        #localidad datos
+                        _logger.info('Localidad info*************************************************************************')
+                        _logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z)
+                        localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
+                        _logger.info('localidad id: ' + str(localidad))
+                        self._origin.sudo().write({'x_studio_empresas_relacionadas' : localidad})
+                        record.x_studio_empresas_relacionadas = localidad
+
+                        _logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.phone)
+                        #telefono_localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.phone
+                        #self._origin.sudo().write({x_studio_telefono_localidad : telefono_localidad})
+                        _logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.mobile)
+                        #movil_localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.mobile
+                        #self._origin.sudo().write({x_studio_movil_localidad : movil_localidad})
+                        _logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.email)
+                        #email_localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.email
+                        #self._origin.sudo().write({x_studio_correo_electrnico_de_localidad : email_localidad})
+
+                        #
+                        #_logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.)
+
+                    #self._origin.sudo().write({x_studio_responsable_de_equipo : responsable_equipo_de_distribucion})
+
+                    #_logger.info(record['x_studio_equipo_por_nmero_de_serie'])
+                    _logger.info(ids)
+                    #record['x_studio_equipo_por_nmero_de_serie'] = (6, 0, [ids])
+                    #record.sudo().write({x_studio_equipo_por_nmero_de_serie : [(6, 0, [ids])] })
+                    #self._origin.sudo().write({'x_studio_equipo_por_nmero_de_serie' : (4, ids) })
+                    lista_ids = []
+                    for id in ids:
+                        lista_ids.append((4,id))
+                    #v['x_studio_equipo_por_nmero_de_serie'] = [(4, ids[0]), (4, ids[1])]
+                    v['x_studio_equipo_por_nmero_de_serie'] = lista_ids
+                    self._origin.sudo().write({'x_studio_equipo_por_nmero_de_serie' : lista_ids})
+                    record.x_studio_equipo_por_nmero_de_serie = lista_ids
+                    """
+                    if localidad != []:
+                        srtt="update helpdesk_ticket set x_studio_empresas_relacionadas = " + str(localidad) + " where  id = " + str(idM )+ ";"
+                        _logger.info("update gacho localidad " + srtt)
+                        record.x_studio_empresas_relacionadas = localidad
+                        record['x_studio_empresas_relacionadas'] = localidad
+                        self.env.cr.execute(srtt)
+                        #self.env.cr.commit()
+                        v['x_studio_empresas_relacionadas'] = localidad        
+                    """
+                    _logger.info({'value': v})
+                    _logger.info(v)
+                    #self._origin.env['helpdesk.ticket'].sudo().write(v)
+
+                    #res = super(helpdesk_update, self).sudo().write(v)
+                    #return res
+                    #return {'value': v}
+                
             
     
 
@@ -829,3 +1076,21 @@ class helpdesk_update(models.Model):
         
         return ticket
     """
+    @api.model
+    def message_new(self, msg, custom_values=None):
+        values = dict(custom_values or {}, partner_email=msg.get('from'), partner_id=msg.get('author_id'))
+
+        _logger.info('************ticket: ' + str(msg.get('from')))
+        if(("gnsys.mx" in str(msg.get('from'))) or ("scgenesis.mx" in str(msg.get('from')))):
+            return 0
+        ticket = super(helpdesk_update, self).message_new(msg, custom_values=values)
+
+        partner_ids = [x for x in ticket._find_partner_from_emails(self._ticket_email_split(msg)) if x]
+        customer_ids = ticket._find_partner_from_emails(tools.email_split(values['partner_email']))
+        partner_ids += customer_ids
+
+        if customer_ids and not values.get('partner_id'):
+            ticket.partner_id = customer_ids[0]
+        if partner_ids:
+            ticket.message_subscribe(partner_ids)
+        return ticket

@@ -25,6 +25,8 @@ class dcas(models.Model):
     porcentajeAmarillo=fields.Integer(string='Amarillo')
     porcentajeCian=fields.Integer(string='Cian')
     porcentajeMagenta=fields.Integer(string='Magenta')
+    fuente=fields.Selection(selection=[('dcas.dcas', 'DCA'),('helpdesk.ticket', 'Mesa'),('stock.production.lot','Equipo'),('tfs.tfs','Tfs')], default='dcas.dcas')  
+
     
 
 class contadores(models.Model):
@@ -38,6 +40,13 @@ class contadores(models.Model):
     archivo=fields.Binary(store='True',string='Archivo')
     estado=fields.Selection(selection=[('Abierto', 'Abierto'),('Incompleto', 'Incompleto'),('Valido','Valido')],widget="statusbar", default='Abierto')  
     dom=fields.Char(readonly="1",invisible="1")
+    
+    
+    @api.onchange('serie_aux')
+    def getid(self):
+        self.serie=self.env['stock.production.lot'].search([['name','=',self.serie_aux]]).id
+        
+    
     
     @api.onchange('cliente')
     def onchange_place(self):

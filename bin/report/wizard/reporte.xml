@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_stock_picking_mass_action_form" model="ir.ui.view">
+        <field name="model">stock.picking.mass.action</field>
+        <field name="arch" type="xml">
+            <form string="Reporte">
+                <h2>Se generara una agrupación</h2>
+                <footer>
+                    <button name="generar_report" string="Aceptar" type="object" class="oe_highlight"/>
+                    or
+                    <button string="Cancelar" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Transfer Action -->
+    <record id="action_transfer" model="ir.actions.act_window">
+        <field name="name">Agrupar</field>
+        <field name="res_model">stock.picking.mass.action</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{'check_availability': 1, 'transfer': 1,}</field>
+        <field name="binding_model_id" ref="stock.model_stock_picking" />
+    </record>
+
+</odoo>
