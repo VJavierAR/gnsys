@@ -161,11 +161,11 @@ class helpdesk_update(models.Model):
                                             , 'team_id' : 1      
                                           })
             record['x_studio_field_nO7Xg'] = sale.id
-            for c in record.x_studio_productos:
-              _logger.info('*************cantidad a solicitar: ' + str(c.x_studio_cantidad_a_solicitar))
+            for c in record.x_studio_seriestoner:
+              #_logger.info('*************cantidad a solicitar: ' + str(c.x_studio_cantidad_a_solicitar))
               self.env['sale.order.line'].create({'order_id' : sale.id
                                             , 'product_id' : c.id
-                                            , 'product_uom_qty' : c.x_studio_cantidad_pedida
+                                            , 'product_uom_qty' : 1
                                           })
             sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
             self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
@@ -180,11 +180,11 @@ class helpdesk_update(models.Model):
                                             , 'team_id' : 1      
                                           })
             record['x_studio_field_nO7Xg'] = sale.id
-            for c in record.x_studio_productos:
-              _logger.info('*************cantidad a solicitar: ' + str(c.x_studio_cantidad_a_solicitar))
+            for c in record.x_studio_seriestoner:
+              #_logger.info('*************cantidad a solicitar: ' + str(c.x_studio_cantidad_a_solicitar))
               self.env['sale.order.line'].create({'order_id' : sale.id
                                             , 'product_id' : c.id
-                                            , 'product_uom_qty' : c.x_studio_cantidad_pedida
+                                            , 'product_uom_qty' : 1
                                           })
             sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
             self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")    
