@@ -686,9 +686,9 @@ class helpdesk_update(models.Model):
               record['x_studio_telefono'] = ''
               record['x_studio_movil'] = ''
               record['x_studio_empresas_relacionadas'] = ''
-              if team_id.id==8:
+              if self.team_id.id==8:
                  record['x_studio_seriestoner'] = ''
-              if team_id.id!=8:
+              if self.team_id.id!=8:
                  record['x_studio_equipo_por_nmero_de_serie'] = ''   
 
             if id_cliente != zero  and id_localidad != zero:
@@ -707,9 +707,9 @@ class helpdesk_update(models.Model):
               record['x_studio_nivel_del_cliente'] = ''
               record['x_studio_telefono'] = ''
               record['x_studio_movil'] = ''
-            if team_id.id==8:
+            if self.team_id.id==8:
                action = {'domain':{'x_studio_seriestoner':dominio}}
-            if team_id.id!=8:
+            if self.team_id.id!=8:
                action = {'domain':{'x_studio_equipo_por_nmero_de_serie':dominio}}    
             return action
     
