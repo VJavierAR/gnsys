@@ -304,6 +304,7 @@ class helpdesk_update(models.Model):
     
     #@api.one
     #@api.depends('team_id', 'x_studio_responsable_de_equipo')
+    """
     @api.model
     @api.onchange('team_id', 'x_studio_responsable_de_equipo')
     def cambiar_seguidores(self):
@@ -644,7 +645,7 @@ class helpdesk_update(models.Model):
             
             self._origin.sudo().write({x_studio_responsable_de_equipo : responsable_equipo_de_almacen})
             _logger.info('Saliendo de if equipo_de_almacen................................................................................. unsubs = ' + str(unsubs))
-    
+    """
     
     
     
