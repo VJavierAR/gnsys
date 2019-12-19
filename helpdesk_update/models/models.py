@@ -686,7 +686,10 @@ class helpdesk_update(models.Model):
               record['x_studio_telefono'] = ''
               record['x_studio_movil'] = ''
               record['x_studio_empresas_relacionadas'] = ''
-              record['x_studio_equipo_por_nmero_de_serie'] = ''
+              if team_id.id==8:
+                 record['x_studio_seriestoner'] = ''
+              if team_id.id!=8:
+                 record['x_studio_equipo_por_nmero_de_serie'] = ''   
 
             if id_cliente != zero  and id_localidad != zero:
               #raise Warning('entro3')
@@ -704,8 +707,10 @@ class helpdesk_update(models.Model):
               record['x_studio_nivel_del_cliente'] = ''
               record['x_studio_telefono'] = ''
               record['x_studio_movil'] = ''
-
-            action = {'domain':{'x_studio_equipo_por_nmero_de_serie':dominio}}
+            if team_id.id==8
+               action = {'domain':{'x_studio_seriestoner':dominio}}
+            if team_id.id!=8
+               action = {'domain':{'x_studio_equipo_por_nmero_de_serie':dominio}}    
             return action
     
     
@@ -851,9 +856,9 @@ class helpdesk_update(models.Model):
                 #record['x_studio_equipo_por_nmero_de_serie'] = [(4,record.x_studio_equipo_por_nmero_de_serie.id)]
 
 
-                _logger.info('*********x_studio_equipo_por_nmero_de_serie: ')
-                _logger.info(str(record.x_studio_equipo_por_nmero_de_serie))
-                for numeros_serie in record.x_studio_equipo_por_nmero_de_serie:
+                _logger.info('*********x_studio_seriestoner: ')
+                _logger.info(str(record.x_studio_seriestoner))
+                for numeros_serie in record.x_studio_seriestoner:
                     ids.append(numeros_serie.id)
                     _logger.info('record_ 2: ' + str(self._origin))
                     _logger.info("Numeros_serie")
@@ -929,9 +934,9 @@ class helpdesk_update(models.Model):
                     for id in ids:
                         lista_ids.append((4,id))
                     #v['x_studio_equipo_por_nmero_de_serie'] = [(4, ids[0]), (4, ids[1])]
-                    v['x_studio_equipo_por_nmero_de_serie'] = lista_ids
-                    self._origin.sudo().write({'x_studio_equipo_por_nmero_de_serie' : lista_ids})
-                    record.x_studio_equipo_por_nmero_de_serie = lista_ids
+                    v['x_studio_seriestoner'] = lista_ids
+                    self._origin.sudo().write({'x_studio_seriestoner' : lista_ids})
+                    record.x_studio_seriestoner = lista_ids
                     """
                     if localidad != []:
                         srtt="update helpdesk_ticket set x_studio_empresas_relacionadas = " + str(localidad) + " where  id = " + str(idM )+ ";"
