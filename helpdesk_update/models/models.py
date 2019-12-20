@@ -21,9 +21,6 @@ class helpdesk_update(models.Model):
     documentosTecnico = fields.Many2many('ir.attachment', string="Evidencias Técnico")
     
     
-class Followers(models.Model):
-    _inherit = 'mail.followers'
-
     @api.model
     def create(self, vals):
         if 'res_model' in vals and 'res_id' in vals and 'partner_id' in vals:
