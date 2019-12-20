@@ -20,20 +20,6 @@ class helpdesk_update(models.Model):
     historialCuatro = fields.One2many('x_historial_helpdesk','x_id_ticket',string='historial de ticket estados',store=True,track_visibility='onchange')
     documentosTecnico = fields.Many2many('ir.attachment', string="Evidencias Técnico")
     
-    
-    @api.model
-    def create(self, vals):
-        if 'res_model' in vals and 'res_id' in vals and 'partner_id' in vals:
-            dups = self.env['mail.followers'].search([('res_model', '=',vals.get('res_model')),
-                                               ('res_id', '=', vals.get('res_id')),
-                                               ('partner_id', '=', vals.get('partner_id'))])
-            if len(dups):
-                for p in dups:
-                    p.unlink()
-        res = super(Followers, self).create(vals)
-        return res
-    
-    
     #_logger.info("el id xD Toner xD")            
 
     #@api.model           
@@ -179,9 +165,9 @@ class helpdesk_update(models.Model):
             for c in record.x_studio_seriestoner:
               _logger.info('*************cantidad a solicitar: ' + str(c.product_id.id))
               self.env['sale.order.line'].create({'order_id' : sale.id
-                                            , 'product_id' : c.product_id.id
+                                            , 'product_id' : c.x_studio_toner_compatible.id
                                             , 'product_uom_qty' : 1.0
-                                            ,'x_studio_field_9nQhR':c.name      
+                                            ,'x_studio_field_9nQhR':c.product_id.id      
                                           })
             sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
             self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
