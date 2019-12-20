@@ -1102,3 +1102,28 @@ class helpdesk_update(models.Model):
         if partner_ids:
             ticket.message_subscribe(partner_ids)
         return ticket
+
+    
+    
+   
+    order_line = fields.One2many('helpdesk.lines','ticket',string='Order Lines')
+class helpdesk_lines(models.Model):
+    _name="helpdesk.lines"
+    _description = "Ticket Order"
+    producto=fields.Many2one('product.product')
+    cantidad=fields.Integer(string='Cantidad')
+    serie=fields.Many2one('stock.production.lot')
+    ticket=fields.Many2one('helpdesk.ticket',string='Order Reference')
+    contadorAnterior=fields.Many2one('dcas.dcas',string='Anterior',compute='ultimoContador')
+    contadorColor=fields.Integer(string='Contador Color')
+    contadorNegro=fields.Integer(string='Contador Monocromatico')
+    contadorAnteriorMono=fields.Integer(related='contadorAnterior.contadorMono',string='Anterior Monocromatico')
+    contadorAnteriorColor=fields.Integer(related='contadorAnterior.contadorColor',string='Anterior Color')
+    @api.depends('serie')
+    def ultimoContador(self):
+        for record in self:
+            j=0
+            for dc in record.serie.dca:
+                if(j==0):
+                    record['contadorAnterior']=dc.id
+                    j=j+1
