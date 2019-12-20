@@ -165,7 +165,7 @@ class helpdesk_update(models.Model):
             for c in record.x_studio_seriestoner:
               _logger.info('*************cantidad a solicitar: ' + str(c.product_id.id))
               self.env['sale.order.line'].create({'order_id' : sale.id
-                                            , 'product_id' : c.x_studio_toner_compatible.id
+                                            , 'product_id' : c.x_studio_toner_compatible.product_id
                                             , 'product_uom_qty' : 1.0
                                             ,'x_studio_field_9nQhR':c.id      
                                           })
@@ -1119,8 +1119,6 @@ class helpdesk_lines(models.Model):
     contadorNegro=fields.Integer(string='Contador Monocromatico')
     contadorAnteriorMono=fields.Integer(related='contadorAnterior.contadorMono',string='Anterior Monocromatico')
     contadorAnteriorColor=fields.Integer(related='contadorAnterior.contadorColor',string='Anterior Color')
-    area=fields.Integer()
-    
     @api.depends('serie')
     def ultimoContador(self):
         for record in self:
@@ -1129,20 +1127,3 @@ class helpdesk_lines(models.Model):
                 if(j==0):
                     record['contadorAnterior']=dc.id
                     j=j+1
-
-                    
-    @api.onchange('serie')
-    def productos_filtro(self):
-        res = {}
-        d=[]
-        for p in self.serie.product_id.x_studio_toner_compatible:
-            d.append(p.id)
-        if self.serie !='False':   
-            idf = self.area
-            if idf == 8 or idf == 13 :          
-               res['domain']={'producto':[('categ_id', '=', 5),('id','in',d)]}
-            if idf == 9:
-               res['domain']={'producto':[('categ_id', '=', 7),('id','in',d)]}
-            if idf != 9 and idf != 8:
-               res['domain']={'producto':[('id','in',d)]}
-        return res
