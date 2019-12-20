@@ -88,7 +88,7 @@ class helpdesk_update(models.Model):
                 self.sudo().env['sale.order.line'].create({'order_id' : sale.id
                                                            , 'product_id' : c.id
                                                            , 'product_uom_qty' : c.x_studio_cantidad_pedida
-                                                           #,'x_studio_field_9nQhR':self.x_studio_equipo_por_nmero_de_serie[0].id
+                                                           ,'x_studio_field_9nQhR':self.x_studio_equipo_por_nmero_de_serie[0].id
                                                           })
                 self['x_studio_field_nO7Xg'] = sale.id
                 sale.sudo().env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
