@@ -167,7 +167,7 @@ class helpdesk_update(models.Model):
               self.env['sale.order.line'].create({'order_id' : sale.id
                                             , 'product_id' : c.x_studio_toner_compatible.id
                                             , 'product_uom_qty' : 1.0
-                                            #,'x_studio_field_9nQhR':c.product_id.id      
+                                            ,'x_studio_field_9nQhR':c.id      
                                           })
             sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
             self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
