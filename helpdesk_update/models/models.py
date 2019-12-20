@@ -167,7 +167,7 @@ class helpdesk_update(models.Model):
               self.env['sale.order.line'].create({'order_id' : sale.id
                                             , 'product_id' : c.x_studio_toner_compatible.id
                                             , 'product_uom_qty' : 1.0
-                                            ,'x_studio_field_9nQhR':c.id      
+                                            ,'x_studio_field_9nQhR':c.product_id.id      
                                           })
             sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
             self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
@@ -1127,18 +1127,3 @@ class helpdesk_lines(models.Model):
                 if(j==0):
                     record['contadorAnterior']=dc.id
                     j=j+1
-    @api.onchange('serie')
-    def productos_filtro(self):
-        res = {}
-        d=[]
-        for p in self.serie.product_id.x_studio_toner_compatible:
-            d.append(p.id)
-        if self.serie !='False':   
-            idf = self.area
-            if idf == 8 or idf == 13 :          
-               res['domain']={'producto':[('categ_id', '=', 5),('id','in',d)]}
-            if idf == 9:
-               res['domain']={'producto':[('categ_id', '=', 7),('id','in',d)]}
-            if idf != 9 and idf != 8:
-               res['domain']={'producto':[('id','in',d)]}
-        return res
