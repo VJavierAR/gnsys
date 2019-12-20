@@ -21,7 +21,7 @@ class helpdesk_update(models.Model):
     documentosTecnico = fields.Many2many('ir.attachment', string="Evidencias Técnico")
     
     
-    class Followers(models.Model):
+class Followers(models.Model):
     _inherit = 'mail.followers'
 
     @api.model
