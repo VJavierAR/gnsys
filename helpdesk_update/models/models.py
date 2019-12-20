@@ -165,7 +165,7 @@ class helpdesk_update(models.Model):
             for c in record.x_studio_seriestoner:
               _logger.info('*************cantidad a solicitar: ' + str(c.product_id.id))
               self.env['sale.order.line'].create({'order_id' : sale.id
-                                            , 'product_id' : c.x_studio_toner_compatible.product_id
+                                            , 'product_id' : c.x_studio_toner_compatible.id
                                             , 'product_uom_qty' : 1.0
                                             ,'x_studio_field_9nQhR':c.id      
                                           })
