@@ -20,6 +20,23 @@ class helpdesk_update(models.Model):
     historialCuatro = fields.One2many('x_historial_helpdesk','x_id_ticket',string='historial de ticket estados',store=True,track_visibility='onchange')
     documentosTecnico = fields.Many2many('ir.attachment', string="Evidencias Técnico")
     
+    
+    class Followers(models.Model):
+    _inherit = 'mail.followers'
+
+    @api.model
+    def create(self, vals):
+        if 'res_model' in vals and 'res_id' in vals and 'partner_id' in vals:
+            dups = self.env['mail.followers'].search([('res_model', '=',vals.get('res_model')),
+                                               ('res_id', '=', vals.get('res_id')),
+                                               ('partner_id', '=', vals.get('partner_id'))])
+            if len(dups):
+                for p in dups:
+                    p.unlink()
+        res = super(Followers, self).create(vals)
+        return res
+    
+    
     #_logger.info("el id xD Toner xD")            
 
     #@api.model           
