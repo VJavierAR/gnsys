@@ -62,8 +62,110 @@ class helpdesk_update(models.Model):
                         contadorColor = serie.x_studio_contador_color
                         raise exceptions.ValidationError(str(contadorColor))
     
+    
+    @api.onchange('x_studio_equipo_por_nmero_de_serie')
+    def abierto(self):
+        if self.x_studio_id_ticket:
+            #raise exceptions.ValidationError("error gerardo")
+            if self.stage_id.name != 'Abierto':
+                query = "update helpdesk_ticket set stage_id = 89 where id = " + str(self.x_studio_id_ticket) + ";"
+                _logger.info("lol: " + query)
+                ss = self.env.cr.execute(query)
+                self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
+
+    
+    @api.onchange('team_id')
+    def asignacion(self):
+        if self.x_studio_id_ticket:
+            #raise exceptions.ValidationError("error gerardo")
+            if self.stage_id.name != 'Asignado':
+                query = "update helpdesk_ticket set stage_id = 2 where id = " + str(self.x_studio_id_ticket) + ";"
+                _logger.info("lol: " + query)
+                ss = self.env.cr.execute(query)
+                self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
+    
+    
+    @api.onchange('x_studio_tcnico')
+    def cambioEstadoAtencion(self):
+        if self.x_studio_id_ticket:
+            #raise exceptions.ValidationError("error gerardo: " + str(self.stage_id.name))
+            if self.stage_id.name == 'Asignado' and self.stage_id.name != 'Atención':
+                query = "update helpdesk_ticket set stage_id = 13 where id = " + str(self.x_studio_id_ticket) + ";"
+                _logger.info("lol: " + query)
+                ss = self.env.cr.execute(query)
+                self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
+        
+    
+    @api.onchange('stage_id')
+    def cambioResuelto(self):
+        #_logger.info("update current mode......................................")
+        if self.stage_id.name == 'Atención' and self.x_studio_productos != []:
+            #raise exceptions.ValidationError("error gerardo: " + str(self.stage_id.name))
+            query = "update helpdesk_ticket set stage_id = 3 where id = " + str(self.x_studio_id_ticket) + ";"
+            _logger.info("lol: " + query)
+            ss = self.env.cr.execute(query)
+            self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
+    
+
+    
+    @api.onchange('stage_id')
+    def cambioCotizacion(self):
+        if self.stage_id.name == 'Cotización' and str(self.env.user.id) == str(self.x_studio_tcnico.user_id.id):
+            query = "update helpdesk_ticket set stage_id = 101 where id = " + str(self.x_studio_id_ticket) + ";"
+            _logger.info("lol: " + query)
+            ss = self.env.cr.execute(query)
+            self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
+    
+    #Falta comprobar
+    """
+    @api.onchange('x_studio_prueba')
+    def cambioRefaccionParaEntregar(self):
+        _logger.info("************x_studio_prueba: " + str(self.x_studio_prueba))
+        if self.x_studio_prueba == 'distribución':
+            query = "update helpdesk_ticket set stage_id = 103 where id = " + str(self.x_studio_id_ticket) + ";"
+            _logger.info("lol: " + query)
+            ss = self.env.cr.execute(query)
+            self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
+    """
+    
+    #Falta comprobar
+    @api.onchange('documentosTecnico')
+    def cambioResueltoPorDocTecnico(self):
+        #_logger.info("********************self.documentosTecnico.id: " + str(self.documentosTecnico.id))
+        if self.documentosTecnico.id != False and str(self.env.user.id) == str(self.x_studio_tcnico.user_id.id):
+            query = "update helpdesk_ticket set stage_id = 3 where id = " + str(self.x_studio_id_ticket) + ";"
+            _logger.info("lol: " + query)
+            ss = self.env.cr.execute(query)
+            self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
+        
+    #Falta comprobar
+    @api.onchange('stage_id')
+    def cambioCerrado(self):
+        #_logger.info("********************self.stage_id: " + str(self.stage_id))
+        if self.stage_id.name == 'Cerrado':
+            query = "update helpdesk_ticket set stage_id = 18 where id = " + str(self.x_studio_id_ticket) + ";"
+            _logger.info("lol: " + query)
+            ss = self.env.cr.execute(query)
+            self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
+    
+    #Falta comprobar
+    @api.onchange('stage_id')
+    def cambioCancelado(self):
+        #_logger.info("********************self.documentosTecnico.id: " + str(self.documentosTecnico.id))
+        if self.stage_id.name == 'Cancelado':
+            query = "update helpdesk_ticket set stage_id = 4 where id = " + str(self.x_studio_id_ticket) + ";"
+            _logger.info("lol: " + query)
+            ss = self.env.cr.execute(query)
+            self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
+    
+    
+    
+    
+    
             
-            
+    
+    
+    
     
     @api.onchange('x_studio_tipo_de_falla','x_studio_tipo_de_incidencia')
     def crear_solicitud_refaccion(self):
