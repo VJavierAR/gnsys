@@ -1,5 +1,7 @@
 from odoo import _, fields, api
 from odoo.models import Model
+import logging, ast
+_logger = logging.getLogger(__name__)
 
 class StockPicking(Model):
     _inherit = 'stock.picking'
@@ -7,6 +9,33 @@ class StockPicking(Model):
     almacenDestino=fields.Many2one('stock.warehouse','Almacen Destino')
     hiden=fields.Integer(compute='hide')
     ajusta=fields.Boolean('Ajusta')
+    ticketOrigenEnVenta = fields.Char(string='Documento de origen en venta', store=True, related='sale_id.origin')
+    estado = fields.Text(compute = 'x_historial_ticket_actualiza')
+    
+    @api.multi
+    @api.depends('state')
+    def x_historial_ticket_actualiza(self):
+        for record in self:
+            estadoActual = str(record.state)
+            record['estado'] = estadoActual
+            nombreStock = record.name
+            dis = "DIS"
+            ticketDeRefaccion = "Ticket de refacción"
+            cadena = str(record.ticketOrigenEnVenta)
+            
+            if dis in nombreStock and ticketDeRefaccion in cadena and ('assigned' in estadoActual or 'done' in estadoActual):
+                numTicket = cadena.split(': ')[1]
+                if 'assigned' in estadoActual:
+                    self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : numTicket
+                                                                   , 'x_persona' : str(self.env.user.name)
+                                                                   , 'x_estado' : "Refacción Para Entregar"
+                                                                  })
+
+                elif 'done' in estadoActual:
+                    self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : numTicket
+                                                                   , 'x_persona' : str(self.env.user.name)
+                                                                   , 'x_estado' : "Refacción Entregada"
+                                                                  })
     
     #@api.onchange('ajusta')
     #def ajus(self):
