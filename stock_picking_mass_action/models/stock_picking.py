@@ -9,10 +9,10 @@ class StockPicking(Model):
     almacenDestino=fields.Many2one('stock.warehouse','Almacen Destino')
     hiden=fields.Integer(compute='hide')
     ajusta=fields.Boolean('Ajusta')
-    ticketOrigenEnVenta = fields.Char(string='Documento de origen en venta', store=True, related='sale_id.origin')
+    #ticketOrigenEnVenta = fields.Char(string='Documento de origen en venta', store=True, related='sale_id.origin')
     estado = fields.Text(compute = 'x_historial_ticket_actualiza')
     
-    
+    """
     @api.multi
     @api.depends('state')
     def x_historial_ticket_actualiza(self):
@@ -37,7 +37,7 @@ class StockPicking(Model):
                                                                    , 'x_persona' : str(self.env.user.name)
                                                                    , 'x_estado' : "Refacción Entregada"
                                                                   })
-    
+    """
     
     
     #@api.onchange('ajusta')
