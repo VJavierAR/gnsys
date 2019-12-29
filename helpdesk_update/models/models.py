@@ -137,7 +137,7 @@ class helpdesk_update(models.Model):
             self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
     
     #Falta comprobar
-    @api.onchange('stage_id')
+    #@api.onchange('stage_id')
     def cambioCancelado(self):
         #_logger.info("********************self.documentosTecnico.id: " + str(self.documentosTecnico.id))
         #if self.stage_id.name == 'Cancelado':
