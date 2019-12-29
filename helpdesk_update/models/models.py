@@ -96,7 +96,7 @@ class helpdesk_update(models.Model):
                 self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
         
     
-    @api.onchange('stage_id')
+    #@api.onchange('stage_id')
     def cambioResuelto(self):
         #_logger.info("update current mode......................................")
         if self.stage_id.name == 'Atención' and self.x_studio_productos != []:
@@ -108,25 +108,13 @@ class helpdesk_update(models.Model):
     
 
     
-    @api.onchange('stage_id')
+    #@api.onchange('stage_id')
     def cambioCotizacion(self):
         if self.stage_id.name == 'Cotización' and str(self.env.user.id) == str(self.x_studio_tcnico.user_id.id):
             query = "update helpdesk_ticket set stage_id = 101 where id = " + str(self.x_studio_id_ticket) + ";"
             _logger.info("lol: " + query)
             ss = self.env.cr.execute(query)
             self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
-    
-    #Falta comprobar
-    """
-    @api.onchange('x_studio_prueba')
-    def cambioRefaccionParaEntregar(self):
-        _logger.info("************x_studio_prueba: " + str(self.x_studio_prueba))
-        if self.x_studio_prueba == 'distribución':
-            query = "update helpdesk_ticket set stage_id = 103 where id = " + str(self.x_studio_id_ticket) + ";"
-            _logger.info("lol: " + query)
-            ss = self.env.cr.execute(query)
-            self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
-    """
     
     #Falta comprobar
     @api.onchange('documentosTecnico')
@@ -139,10 +127,10 @@ class helpdesk_update(models.Model):
             self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
         
     #Falta comprobar
-    @api.onchange('stage_id')
+    #@api.onchange('stage_id')
     def cambioCerrado(self):
         #_logger.info("********************self.stage_id: " + str(self.stage_id))
-        if self.stage_id.name == 'Cerrado':
+        if self.stage_id.name == 'Resuelto':
             query = "update helpdesk_ticket set stage_id = 18 where id = " + str(self.x_studio_id_ticket) + ";"
             _logger.info("lol: " + query)
             ss = self.env.cr.execute(query)
@@ -152,11 +140,11 @@ class helpdesk_update(models.Model):
     @api.onchange('stage_id')
     def cambioCancelado(self):
         #_logger.info("********************self.documentosTecnico.id: " + str(self.documentosTecnico.id))
-        if self.stage_id.name == 'Cancelado':
-            query = "update helpdesk_ticket set stage_id = 4 where id = " + str(self.x_studio_id_ticket) + ";"
-            _logger.info("lol: " + query)
-            ss = self.env.cr.execute(query)
-            self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
+        #if self.stage_id.name == 'Cancelado':
+        query = "update helpdesk_ticket set stage_id = 4 where id = " + str(self.x_studio_id_ticket) + ";"
+        _logger.info("lol: " + query)
+        ss = self.env.cr.execute(query)
+        self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
     
     
     
@@ -199,15 +187,16 @@ class helpdesk_update(models.Model):
                 self.sudo().env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
                 #self.env.cr.commit()
                 
-                if sale.id:
-                    if self.x_studio_id_ticket:
-                        #raise exceptions.ValidationError("error gerardo")
-                        if self.stage_id.name == 'Atención' and self.team_id.name == 'Equipo de hardware':
-                            query = "update helpdesk_ticket set stage_id = 100 where id = " + str(self.x_studio_id_ticket) + ";"
-                            _logger.info("lol: " + query)
-                            ss = self.env.cr.execute(query)
-                            self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado':
-                                                                     self.stage_id.name})
+            if sale.id:
+                if self.x_studio_id_ticket:
+                    #raise exceptions.ValidationError("error gerardo")
+                    #if self.stage_id.name == 'Atención' and self.team_id.name == 'Equipo de hardware':
+                    if self.team_id.name == 'Equipo de hardware':
+                        query = "update helpdesk_ticket set stage_id = 100 where id = " + str(self.x_studio_id_ticket) + ";"
+                        _logger.info("lol: " + query)
+                        ss = self.env.cr.execute(query)
+                        self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado':
+                                                                 self.stage_id.name})
                 
                 
                 
