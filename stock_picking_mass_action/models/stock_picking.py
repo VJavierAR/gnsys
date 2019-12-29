@@ -12,7 +12,7 @@ class StockPicking(Model):
     #ticketOrigenEnVenta = fields.Char(string='Documento de origen en venta', store=True, related='sale_id.origin')
     estado = fields.Text(compute = 'x_historial_ticket_actualiza')
     
-    """
+    
     @api.multi
     @api.depends('state')
     def x_historial_ticket_actualiza(self):
@@ -22,7 +22,7 @@ class StockPicking(Model):
             nombreStock = record.name
             dis = "DIS"
             ticketDeRefaccion = "Ticket de refacción"
-            cadena = str(record.ticketOrigenEnVenta)
+            cadena = str(record.x_studio_documento_de_origen_en_venta)
             
             if dis in nombreStock and ticketDeRefaccion in cadena and ('assigned' in estadoActual or 'done' in estadoActual):
                 numTicket = cadena.split(': ')[1]
@@ -37,7 +37,7 @@ class StockPicking(Model):
                                                                    , 'x_persona' : str(self.env.user.name)
                                                                    , 'x_estado' : "Refacción Entregada"
                                                                   })
-    """
+    
     
     
     #@api.onchange('ajusta')
