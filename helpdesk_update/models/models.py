@@ -85,7 +85,7 @@ class helpdesk_update(models.Model):
                 _logger.info("lol: " + query)
                 ss = self.env.cr.execute(query)             
                 _logger.info("**********fun: asignacion(), estado: " + str(self.stage_id.name))                
-                self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona':self.x_studio_tcnico.name ,'x_estado': "Asignado"})
+                self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona':self.env.user.name ,'x_estado': "Asignado"})
     
     
     @api.onchange('x_studio_tcnico')
@@ -98,7 +98,7 @@ class helpdesk_update(models.Model):
                 ss = self.env.cr.execute(query)
                 _logger.info("**********fun: cambioEstadoAtencion(), estado: " + str(self.stage_id.name))
                 #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
-                self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Atención"})
+                self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.x_studio_tcnico.name,'x_estado': "Atención"})
         
     
     #@api.onchange('stage_id')
