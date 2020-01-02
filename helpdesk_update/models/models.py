@@ -72,7 +72,8 @@ class helpdesk_update(models.Model):
                 _logger.info("lol: " + query)
                 ss = self.env.cr.execute(query)
                 _logger.info("**********fun: abierto(), estado: " + str(self.stage_id.name))
-                self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
+                #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
+                self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Abierto"})
 
     
     @api.onchange('team_id')
@@ -84,7 +85,8 @@ class helpdesk_update(models.Model):
                 _logger.info("lol: " + query)
                 ss = self.env.cr.execute(query)
                 _logger.info("**********fun: asignacion(), estado: " + str(self.stage_id.name))
-                self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
+                #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
+                self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Asignado"})
     
     
     @api.onchange('x_studio_tcnico')
@@ -96,7 +98,8 @@ class helpdesk_update(models.Model):
                 _logger.info("lol: " + query)
                 ss = self.env.cr.execute(query)
                 _logger.info("**********fun: cambioEstadoAtencion(), estado: " + str(self.stage_id.name))
-                self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
+                #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
+                self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Atención"})
         
     
     #@api.onchange('stage_id')
@@ -108,7 +111,8 @@ class helpdesk_update(models.Model):
             _logger.info("lol: " + query)
             ss = self.env.cr.execute(query)
             _logger.info("**********fun: cambioResuelto(), estado: " + str(self.stage_id.name))
-            self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
+            #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
+            self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Resuelto"})
     
 
     
@@ -119,7 +123,8 @@ class helpdesk_update(models.Model):
             _logger.info("lol: " + query)
             ss = self.env.cr.execute(query)
             _logger.info("**********fun: cambioCotizacion(), estado: " + str(self.stage_id.name))
-            self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
+            #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
+            self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Cotización"})
     
     #Falta comprobar
     @api.onchange('documentosTecnico')
@@ -131,6 +136,7 @@ class helpdesk_update(models.Model):
             ss = self.env.cr.execute(query)
             _logger.info("**********fun: cambioResueltoPorDocTecnico(), estado: " + str(self.stage_id.name))
             self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
+            self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Resuelto"})
         
     #Falta comprobar
     #@api.onchange('stage_id')
@@ -141,7 +147,8 @@ class helpdesk_update(models.Model):
             _logger.info("lol: " + query)
             ss = self.env.cr.execute(query)
             _logger.info("**********fun: cambioCerrado(), estado: " + str(self.stage_id.name))
-            self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
+            #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
+            self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Cerrado"})
     
     #Falta comprobar
     #@api.onchange('stage_id')
@@ -152,7 +159,8 @@ class helpdesk_update(models.Model):
         _logger.info("lol: " + query)
         ss = self.env.cr.execute(query)
         _logger.info("**********fun: cambioCancelado(), estado: " + str(self.stage_id.name))
-        self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
+        #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
+        self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Cancelado"})
     
     
     
@@ -204,8 +212,8 @@ class helpdesk_update(models.Model):
                         _logger.info("lol: " + query)
                         ss = self.env.cr.execute(query)
                         _logger.info("**********fun: crear_solicitud_refaccion(), estado: " + str(self.stage_id.name))
-                        self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado':
-                                                                 self.stage_id.name})
+                        #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
+                        self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Solicitud de refacción"})
                 
                 
                 
