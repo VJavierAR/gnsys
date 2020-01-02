@@ -83,10 +83,9 @@ class helpdesk_update(models.Model):
             if self.stage_id.name != 'Asignado':
                 query = "update helpdesk_ticket set stage_id = 2 where id = " + str(self.x_studio_id_ticket) + ";"
                 _logger.info("lol: " + query)
-                ss = self.env.cr.execute(query)
-                _logger.info("**********fun: asignacion(), estado: " + str(self.stage_id.name))
-                #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
-                self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Asignado"})
+                ss = self.env.cr.execute(query)             
+                _logger.info("**********fun: asignacion(), estado: " + str(self.stage_id.name))                
+                self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona':self.x_studio_tcnico.name ,'x_estado': "Asignado"})
     
     
     @api.onchange('x_studio_tcnico')
@@ -135,7 +134,7 @@ class helpdesk_update(models.Model):
             _logger.info("lol: " + query)
             ss = self.env.cr.execute(query)
             _logger.info("**********fun: cambioResueltoPorDocTecnico(), estado: " + str(self.stage_id.name))
-            self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
+            #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
             self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Resuelto"})
         
     #Falta comprobar
@@ -407,13 +406,13 @@ class helpdesk_update(models.Model):
                query="update helpdesk_ticket set stage_id = 3 where id = " + str(self.x_studio_id_ticket) + ";" 
                ss=self.env.cr.execute(query)
     """     
-           
+    """       
     @api.onchange('x_studio_tcnico')
     def actualiza_datos_zona(self):
         s = self.x_studio_tcnico.name
         b = self.stage_id.name
         self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': s,'x_estado': b })
-    
+    """
     
     @api.depends('x_studio_equipo_por_nmero_de_serie.x_studio_field_B7uLt')
     def obtener_contadores(self):        
