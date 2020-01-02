@@ -202,17 +202,17 @@ class helpdesk_update(models.Model):
                 self.sudo().env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
                 #self.env.cr.commit()
                 
-            if sale.id:
-                if self.x_studio_id_ticket:
+            #if sale.id:
+            #    if self.x_studio_id_ticket:
                     #raise exceptions.ValidationError("error gerardo")
                     #if self.stage_id.name == 'Atención' and self.team_id.name == 'Equipo de hardware':
-                    if self.team_id.name == 'Equipo de hardware':
-                        query = "update helpdesk_ticket set stage_id = 100 where id = " + str(self.x_studio_id_ticket) + ";"
-                        _logger.info("lol: " + query)
-                        ss = self.env.cr.execute(query)
-                        _logger.info("**********fun: crear_solicitud_refaccion(), estado: " + str(self.stage_id.name))
-                        #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
-                        self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Solicitud de refacción"})
+            if self.team_id.name == 'Equipo de hardware':
+                query = "update helpdesk_ticket set stage_id = 100 where id = " + str(self.x_studio_id_ticket) + ";"
+                _logger.info("lol: " + query)
+                ss = self.env.cr.execute(query)
+                _logger.info("**********fun: crear_solicitud_refaccion(), estado: " + str(self.stage_id.name))
+                #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
+                self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Solicitud de refacción"})
                 
                 
                 
