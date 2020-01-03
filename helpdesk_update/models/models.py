@@ -128,7 +128,8 @@ class helpdesk_update(models.Model):
     #Falta comprobar
     @api.onchange('documentosTecnico')
     def cambioResueltoPorDocTecnico(self):
-        #_logger.info("********************self.documentosTecnico.id: " + str(self.documentosTecnico.id))
+        _logger.info("********************self.documentosTecnico.id: " + str(self.documentosTecnico.id))
+        _logger.info("********************self.env.user.id: " + str(self.env.user.id) + " **** self.x_studio_tcnico.user_id.id: " + str(self.x_studio_tcnico.user_id.id))
         if self.documentosTecnico.id != False and str(self.env.user.id) == str(self.x_studio_tcnico.user_id.id):
             query = "update helpdesk_ticket set stage_id = 3 where id = " + str(self.x_studio_id_ticket) + ";"
             _logger.info("lol: " + query)
