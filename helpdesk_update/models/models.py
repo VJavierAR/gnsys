@@ -92,13 +92,13 @@ class helpdesk_update(models.Model):
     def cambioEstadoAtencion(self):
         if self.x_studio_id_ticket:
             #raise exceptions.ValidationError("error gerardo: " + str(self.stage_id.name))
-            if self.stage_id.name == 'Asignado' and self.stage_id.name != 'Atención':
-                query = "update helpdesk_ticket set stage_id = 13 where id = " + str(self.x_studio_id_ticket) + ";"
-                _logger.info("lol: " + query)
-                ss = self.env.cr.execute(query)
-                _logger.info("**********fun: cambioEstadoAtencion(), estado: " + str(self.stage_id.name))
-                #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
-                self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.x_studio_tcnico.name,'x_estado': "Atención"})
+            #if self.stage_id.name == 'Asignado' and self.stage_id.name != 'Atención':
+            query = "update helpdesk_ticket set stage_id = 13 where id = " + str(self.x_studio_id_ticket) + ";"
+            _logger.info("lol: " + query)
+            ss = self.env.cr.execute(query)
+            _logger.info("**********fun: cambioEstadoAtencion(), estado: " + str(self.stage_id.name))
+            #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
+            self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.x_studio_tcnico.name,'x_estado': "Atención"})
         
     
     #@api.onchange('stage_id')
@@ -188,6 +188,7 @@ class helpdesk_update(models.Model):
                                                          , 'x_studio_tcnico' : self.x_studio_tcnico.id
                                                          , 'warehouse_id' : 5865   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
                                                          , 'team_id' : 1})
+            _logger.info("********Venta creada, id: " + str(sale.id))
             #self.env.cr.commit()
             #for c in self.x_studio_field_tLWzF:
             for c in self.x_studio_productos:
