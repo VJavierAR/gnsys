@@ -16,23 +16,27 @@ class StockPicking(Model):
     @api.multi
     @api.depends('state')
     def x_historial_ticket_actualiza(self):
+        _logger.info("********entro stock_picking.x_historial_ticket_actualiza()")
         for record in self:
             estadoActual = str(record.state)
             record['estado'] = estadoActual
             nombreStock = record.name
-            dis = "DIS"
+            #dis = "DIS"
+            dis = "OUT"
             ticketDeRefaccion = "Ticket de refacción"
             cadena = str(record.x_studio_documento_de_origen_en_venta)
             
             if dis in nombreStock and ticketDeRefaccion in cadena and ('assigned' in estadoActual or 'done' in estadoActual):
                 numTicket = cadena.split(': ')[1]
                 if 'assigned' in estadoActual:
+                    _logger.info("********entro Refacción Para Entregar")
                     self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : numTicket
                                                                    , 'x_persona' : str(self.env.user.name)
                                                                    , 'x_estado' : "Refacción Para Entregar"
                                                                   })
 
                 elif 'done' in estadoActual:
+                    _logger.info("********entro Refacción Entregada")
                     self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : numTicket
                                                                    , 'x_persona' : str(self.env.user.name)
                                                                    , 'x_estado' : "Refacción Entregada"
