@@ -831,7 +831,7 @@ class helpdesk_update(models.Model):
               record['x_studio_movil'] = ''
               record['x_studio_empresas_relacionadas'] = ''
               if self.team_id.id==8:
-                 record['x_studio_seriestoner'] = ''
+                 record['order_line'] = ''
               if self.team_id.id!=8:
                  record['x_studio_equipo_por_nmero_de_serie'] = ''   
 
@@ -852,7 +852,7 @@ class helpdesk_update(models.Model):
               record['x_studio_telefono'] = ''
               record['x_studio_movil'] = ''
             if self.team_id.id==8:
-               action = {'domain':{'x_studio_seriestoner':dominio}}
+               action = {'domain':{'order_line':dominio}}
             if self.team_id.id!=8:
                action = {'domain':{'x_studio_equipo_por_nmero_de_serie':dominio}}    
             return action
@@ -860,7 +860,7 @@ class helpdesk_update(models.Model):
     
     #@api.model
     #@api.multi
-    @api.onchange('x_studio_equipo_por_nmero_de_serie','x_studio_seriestoner','order_line')
+    @api.onchange('x_studio_equipo_por_nmero_de_serie','order_line','order_line')
     #@api.depends('x_studio_equipo_por_nmero_de_serie')
     def actualiza_datos_cliente(self):
         _logger.info("actualiza_datos_cliente()")
