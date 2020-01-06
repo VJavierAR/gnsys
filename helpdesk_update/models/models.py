@@ -1249,8 +1249,10 @@ class helpdesk_lines(models.Model):
     contadorAnteriorMono=fields.Integer(related='contadorAnterior.contadorMono',string='Anterior Monocromatico')
     contadorAnteriorColor=fields.Integer(related='contadorAnterior.contadorColor',string='Anterior Color')
     impresiones=fields.Integer(related='serie.x_studio_impresiones',string='Impresiones B/N')
-    #impresionesColor=fields.Integer(related='contadorAnterior.contadorColor',string='Impresiones Color')
+    impresionesColor=fields.Integer(related='serie.x_studio_impresiones_color',string='Impresiones Color')
+    colorToner=fields.Char(related='serie.x_studio_field_A6PR9',string='Color Toner')
     area=fields.Integer()
+    
 
     @api.depends('serie')
     def ultimoContador(self):
