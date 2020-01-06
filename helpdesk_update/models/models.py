@@ -291,13 +291,22 @@ class helpdesk_update(models.Model):
                                             , 'team_id' : 1      
                                           })
             record['x_studio_field_nO7Xg'] = sale.id
-            for c in record.x_studio_seriestoner:
-              _logger.info('*************cantidad a solicitar: ' + str(c.product_id.id))
+            for c in record.order_line:
+              _logger.info('*************cantidad a solicitar: ' + str(c.producto.id))
               self.env['sale.order.line'].create({'order_id' : sale.id
-                                            , 'product_id' : c.x_studio_toner_compatible.id
-                                            , 'product_uom_qty' : 1.0
-                                            ,'x_studio_field_9nQhR':c.id      
+                                            , 'product_id' : c.producto.id
+                                            , 'product_uom_qty' :c.cantidad
+                                            ,'x_studio_field_9nQhR':c.serie.id      
                                           })
+              self.env['dcas.dcas'].create({'serie' : c.serie.id
+                                            , 'contadorMono' : c.contadorNegro
+                                            , 'contadorColor' :c.contadorColor
+                                            ,'porcentajeNegro':c.n
+                                            ,'porcentajeCian':c.c      
+                                            ,'porcentajeAmarillo':c.a      
+                                            ,'porcentajeMagenta':c.m     
+                                          })  
+                
             sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
             self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
         if (record.team_id.id == 13 ) and record.x_studio_tipo_de_requerimiento == 'Tóner':
