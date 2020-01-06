@@ -304,7 +304,7 @@ class helpdesk_update(models.Model):
                                             ,'porcentajeNegro':c.n
                                             ,'porcentajeCian':c.c      
                                             ,'porcentajeAmarillo':c.a      
-                                            ,'porcentajeMagenta':c.m,
+                                            ,'porcentajeMagenta':c.m
                                             ,'x_studio_descripcion':self.name
                                             ,'x_studio_ticket':self.x_studio_id_ticket
                                             
