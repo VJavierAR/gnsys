@@ -1248,6 +1248,8 @@ class helpdesk_lines(models.Model):
     contadorNegro=fields.Integer(string='Contador Monocromatico')
     contadorAnteriorMono=fields.Integer(related='contadorAnterior.contadorMono',string='Anterior Monocromatico')
     contadorAnteriorColor=fields.Integer(related='contadorAnterior.contadorColor',string='Anterior Color')
+    impresiones=fields.Integer(related='serie.x_studio_impresiones',string='Impresiones B/N')
+    #impresionesColor=fields.Integer(related='contadorAnterior.contadorColor',string='Impresiones Color')
     area=fields.Integer()
 
     @api.depends('serie')
