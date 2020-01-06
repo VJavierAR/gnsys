@@ -860,7 +860,7 @@ class helpdesk_update(models.Model):
     
     #@api.model
     #@api.multi
-    @api.onchange('x_studio_equipo_por_nmero_de_serie','x_studio_seriestoner')
+    @api.onchange('x_studio_equipo_por_nmero_de_serie','x_studio_seriestoner','order_line')
     #@api.depends('x_studio_equipo_por_nmero_de_serie')
     def actualiza_datos_cliente(self):
         _logger.info("actualiza_datos_cliente()")
@@ -1000,13 +1000,13 @@ class helpdesk_update(models.Model):
                 #record['x_studio_equipo_por_nmero_de_serie'] = [(4,record.x_studio_equipo_por_nmero_de_serie.id)]
 
 
-                _logger.info('*********x_studio_seriestoner: ')
-                _logger.info(str(record.x_studio_seriestoner))
-                for numeros_serie in record.x_studio_seriestoner:
-                    ids.append(numeros_serie.id)
+                _logger.info('*********order_line: ')
+                _logger.info(str(record.order_line))
+                for numeros_serie in record.order_line:
+                    ids.append(numeros_serie.serie.id)
                     _logger.info('record_ 2: ' + str(self._origin))
                     _logger.info("Numeros_serie")
-                    _logger.info(numeros_serie.name)
+                    _logger.info(numeros_serie.serie.name)
                     for move_line in numeros_serie.x_studio_move_line:
                         _logger.info('record_ 3: ' + str(self._origin))
                         _logger.info("move line")
@@ -1078,9 +1078,9 @@ class helpdesk_update(models.Model):
                     for id in ids:
                         lista_ids.append((4,id))
                     #v['x_studio_equipo_por_nmero_de_serie'] = [(4, ids[0]), (4, ids[1])]
-                    v['x_studio_seriestoner'] = lista_ids
-                    self._origin.sudo().write({'x_studio_seriestoner' : lista_ids})
-                    record.x_studio_seriestoner = lista_ids
+                    v['order_line'] = lista_ids
+                    self._origin.sudo().write({'order_line' : lista_ids})
+                    record.order_line = lista_ids
                     """
                     if localidad != []:
                         srtt="update helpdesk_ticket set x_studio_empresas_relacionadas = " + str(localidad) + " where  id = " + str(idM )+ ";"
