@@ -291,20 +291,20 @@ class helpdesk_update(models.Model):
                                             , 'team_id' : 1      
                                           })
             record['x_studio_field_nO7Xg'] = sale.id
-            for c in record.order_line:
-              _logger.info('*************cantidad a solicitar: ' + str(c.producto.id))
+            for c in record.x_studio_equipo_por_nmero_de_serie:
+              _logger.info('*************cantidad a solicitar: ' + str(c.producto_id.id))
               self.env['sale.order.line'].create({'order_id' : sale.id
-                                            , 'product_id' : c.producto.id
-                                            , 'product_uom_qty' :c.cantidad
-                                            ,'x_studio_field_9nQhR':c.serie.id      
+                                            , 'product_id' : c.x_studio_toner_compatible.id
+                                            , 'product_uom_qty' :1
+                                            ,'x_studio_field_9nQhR':c.id      
                                           })
-              self.env['dcas.dcas'].create({'serie' : c.serie.id
-                                            , 'contadorMono' : c.contadorNegro
-                                            , 'contadorColor' :c.contadorColor
-                                            ,'porcentajeNegro':c.n
-                                            ,'porcentajeCian':c.c      
-                                            ,'porcentajeAmarillo':c.a      
-                                            ,'porcentajeMagenta':c.m
+              self.env['dcas.dcas'].create({'serie' : c.id
+                                            , 'contadorMono' : c.x_studio_contador_bn_a_capturar
+                                            , 'contadorColor' :c.x_studio_contador_color_a_capturar
+                                            ,'porcentajeNegro':c.x_studio__negro
+                                            ,'porcentajeCian':c.x_studio__cian      
+                                            ,'porcentajeAmarillo':c.x_studio__amarrillo      
+                                            ,'porcentajeMagenta':c.x_studio__magenta
                                             ,'x_studio_descripcion':self.name
                                             ,'x_studio_tickett':self.x_studio_id_ticket
                                             
@@ -831,7 +831,7 @@ class helpdesk_update(models.Model):
               record['x_studio_movil'] = ''
               record['x_studio_empresas_relacionadas'] = ''
               if self.team_id.id==8:
-                 record['order_line'] = ''
+                 record['x_studio_equipo_por_nmero_de_serie'] = ''
               if self.team_id.id!=8:
                  record['x_studio_equipo_por_nmero_de_serie'] = ''   
 
@@ -852,7 +852,7 @@ class helpdesk_update(models.Model):
               record['x_studio_telefono'] = ''
               record['x_studio_movil'] = ''
             if self.team_id.id==8:
-               action = {'domain':{'order_line':dominio}}
+               action = {'domain':{'x_studio_equipo_por_nmero_de_serie':dominio}}
             if self.team_id.id!=8:
                action = {'domain':{'x_studio_equipo_por_nmero_de_serie':dominio}}    
             return action
@@ -860,7 +860,7 @@ class helpdesk_update(models.Model):
     
     #@api.model
     #@api.multi
-    @api.onchange('x_studio_equipo_por_nmero_de_serie','serie')
+    @api.onchange('x_studio_equipo_por_nmero_de_serie')
     #@api.depends('x_studio_equipo_por_nmero_de_serie')
     def actualiza_datos_cliente(self):
         _logger.info("actualiza_datos_cliente()")
@@ -1001,13 +1001,13 @@ class helpdesk_update(models.Model):
 
 
                 _logger.info('*********order_line: ')
-                _logger.info(str(record.order_line))
-                for numeros_serie in record.order_line:
-                    ids.append(numeros_serie.serie.id)
+                _logger.info(str(record.x_studio_equipo_por_nmero_de_serie))
+                for numeros_serie in record.x_studio_equipo_por_nmero_de_serie:
+                    ids.append(numeros_serie.id)
                     _logger.info('record_ 2: ' + str(self._origin))
-                    _logger.info("Numeros_serie "+str(numeros_serie.serie.id))
+                    _logger.info("Numeros_serie "+str(numeros_serie.id))
                     _logger.info(numeros_serie.name)
-                    for move_line in numeros_serie.serie.x_studio_move_line:
+                    for move_line in numeros_serie.x_studio_move_line:
                         _logger.info('record_ 3: ' + str(self._origin))
                         _logger.info("move line")
                         #move_line.para.almacen.ubicacion.
@@ -1078,9 +1078,9 @@ class helpdesk_update(models.Model):
                     for id in ids:
                         lista_ids.append((4,id))
                     #v['x_studio_equipo_por_nmero_de_serie'] = [(4, ids[0]), (4, ids[1])]
-                    v['order_line'] = lista_ids
-                    self._origin.sudo().write({'order_line' : lista_ids})
-                    record.order_line = lista_ids
+                    v['x_studio_equipo_por_nmero_de_serie'] = lista_ids
+                    self._origin.sudo().write({'x_studio_equipo_por_nmero_de_serie' : lista_ids})
+                    record.x_studio_equipo_por_nmero_de_serie = lista_ids
                     """
                     if localidad != []:
                         srtt="update helpdesk_ticket set x_studio_empresas_relacionadas = " + str(localidad) + " where  id = " + str(idM )+ ";"
