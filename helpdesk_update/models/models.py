@@ -307,6 +307,7 @@ class helpdesk_update(models.Model):
                                             ,'porcentajeMagenta':c.x_studio__magenta
                                             ,'x_studio_descripcion':self.name
                                             ,'x_studio_tickett':self.x_studio_id_ticket
+                                            ,'x_studio_hoja_de_estado':c.x_studio_evidencias
                                             
                                           })  
                 
