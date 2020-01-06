@@ -1248,6 +1248,9 @@ class helpdesk_lines(models.Model):
     contadorNegro=fields.Integer(string='Contador Monocromatico')
     usuarioCaptura=fields.Char(string='Capturado por:') 
     current_user = fields.Many2one('res.users','Current User', default=lambda self: self.env.user)
+    
+    
+    """
     aA=fields.Integer(related='contadorAnterior.porcentajeAmarillo',string='%A Amarillo')
     a=fields.Integer(string='%Amarillo')
     c==fields.Integer(string='%Cian')
@@ -1256,6 +1259,9 @@ class helpdesk_lines(models.Model):
     n=fields.Integer(string='% Negro')
     m=fields.Integer(string='% Magenta')
     mA=fields.Integer(related='contadorAnterior.porcentajeMagenta',string='%A Magenta')
+    """
+    
+    
     contadorAnteriorMono=fields.Integer(related='contadorAnterior.contadorMono',string='Anterior Monocromatico')
     contadorAnteriorColor=fields.Integer(related='contadorAnterior.contadorColor',string='Anterior Color')
     impresiones=fields.Integer(related='serie.x_studio_impresiones',string='Impresiones B/N')
