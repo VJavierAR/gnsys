@@ -1005,7 +1005,7 @@ class helpdesk_update(models.Model):
                 for numeros_serie in record.order_line:
                     ids.append(numeros_serie.serie.id)
                     _logger.info('record_ 2: ' + str(self._origin))
-                    _logger.info("Numeros_serie")
+                    _logger.info("Numeros_serie "+str(numeros_serie.serie.id))
                     _logger.info(numeros_serie.serie.name)
                     for move_line in numeros_serie.serie.x_studio_move_line:
                         _logger.info('record_ 3: ' + str(self._origin))
