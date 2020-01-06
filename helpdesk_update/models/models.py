@@ -1250,16 +1250,16 @@ class helpdesk_lines(models.Model):
     current_user = fields.Many2one('res.users','Current User', default=lambda self: self.env.user)
     
     
-    """
-    aA=fields.Integer(related='contadorAnterior.porcentajeAmarillo',string='%A Amarillo')
-    a=fields.Integer(string='%Amarillo')
-    c==fields.Integer(string='%Cian')
-    cA=fields.Integer(related='contadorAnterior.porcentajeCian',string='%A Cian')
-    nA=fields.Integer(related='contadorAnterior.porcentajeNegro',string='%A Negro')
-    n=fields.Integer(string='% Negro')
-    m=fields.Integer(string='% Magenta')
-    mA=fields.Integer(related='contadorAnterior.porcentajeMagenta',string='%A Magenta')
-    """
+    
+    aA=fields.Integer(related='contadorAnterior.porcentajeAmarillo',string='Porcentaje A Amarillo')
+    a=fields.Integer(string=' Porcentaje Amarillo')
+    c=fields.Integer(string='Porcentaje Cian')
+    cA=fields.Integer(related='contadorAnterior.porcentajeCian',string='Porcentaje A Cian')
+    nA=fields.Integer(related='contadorAnterior.porcentajeNegro',string='Porcentaje A Negro')
+    n=fields.Integer(string='Porcentaje Negro')
+    m=fields.Integer(string='Porcentaje Magenta')
+    mA=fields.Integer(related='contadorAnterior.porcentajeMagenta',string='Porcentaje A Magenta')
+    
     
     
     contadorAnteriorMono=fields.Integer(related='contadorAnterior.contadorMono',string='Anterior Monocromatico')
