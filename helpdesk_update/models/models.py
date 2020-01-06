@@ -1247,7 +1247,7 @@ class helpdesk_lines(models.Model):
     contadorColor=fields.Integer(string='Contador Color')
     contadorNegro=fields.Integer(string='Contador Monocromatico')
     usuarioCaptura=fields.Char(string='Capturado por:') 
-    current_user = fields.Many2one('res.users','Current User', default=lambda self: self.env.user)
+    current_user = fields.Many2one('res.users','Current User', default=lambda self: self.env.user.name)
     contadorAnteriorMono=fields.Integer(related='contadorAnterior.contadorMono',string='Anterior Monocromatico')
     contadorAnteriorColor=fields.Integer(related='contadorAnterior.contadorColor',string='Anterior Color')
     impresiones=fields.Integer(related='serie.x_studio_impresiones',string='Impresiones B/N')
