@@ -292,7 +292,7 @@ class helpdesk_update(models.Model):
                                           })
             record['x_studio_field_nO7Xg'] = sale.id
             for c in record.x_studio_equipo_por_nmero_de_serie:
-              _logger.info('*************cantidad a solicitar: ' + str(c.producto_id.id))
+              _logger.info('*************cantidad a solicitar: ' + str(c.id))
               self.env['sale.order.line'].create({'order_id' : sale.id
                                             , 'product_id' : c.x_studio_toner_compatible.id
                                             , 'product_uom_qty' :1
