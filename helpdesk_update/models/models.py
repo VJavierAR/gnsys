@@ -332,7 +332,12 @@ class helpdesk_update(models.Model):
                                           })
             sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
             self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")    
-            
+        
+        query = "update helpdesk_ticket set stage_id = 91 where id = " + str(self.x_studio_id_ticket) + ";"
+        _logger.info("lol: " + query)
+        ss = self.env.cr.execute(query)
+        self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Pendiente por autorizar solicitud"})
+        
 
     #@api.onchange('x_studio_verificacin_de_tner')
     def validar_solicitud_toner(self):
@@ -342,8 +347,10 @@ class helpdesk_update(models.Model):
             self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
             sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
             sale.action_confirm()
-            query="update helpdesk_ticket set stage_id = 92 where id = " + str(self.x_studio_id_ticket) + ";" 
+            query="update helpdesk_ticket set stage_id = 95 where id = " + str(self.x_studio_id_ticket) + ";" 
+            _logger.info("lol: " + query)
             ss=self.env.cr.execute(query)
+            self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Autorizado"})
     
     @api.onchange('x_studio_desactivar_zona')
     def desactivar_datos_zona(self):
