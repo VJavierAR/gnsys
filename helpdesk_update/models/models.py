@@ -860,7 +860,7 @@ class helpdesk_update(models.Model):
     
     #@api.model
     #@api.multi
-    @api.onchange('x_studio_equipo_por_nmero_de_serie','order_line')
+    @api.onchange('x_studio_equipo_por_nmero_de_serie')
     #@api.depends('x_studio_equipo_por_nmero_de_serie')
     def actualiza_datos_cliente(self):
         _logger.info("actualiza_datos_cliente()")
@@ -1003,11 +1003,11 @@ class helpdesk_update(models.Model):
                 _logger.info('*********order_line: ')
                 _logger.info(str(record.order_line))
                 for numeros_serie in record.order_line:
-                    ids.append(numeros_serie.id)
+                    ids.append(numeros_serie.serie.id)
                     _logger.info('record_ 2: ' + str(self._origin))
-                    _logger.info("Numeros_serie "+str(numeros_serie.id))
+                    _logger.info("Numeros_serie "+str(numeros_serie.serie.id))
                     _logger.info(numeros_serie.name)
-                    for move_line in numeros_serie.x_studio_move_line:
+                    for move_line in numeros_serie.serie.x_studio_move_line:
                         _logger.info('record_ 3: ' + str(self._origin))
                         _logger.info("move line")
                         #move_line.para.almacen.ubicacion.
