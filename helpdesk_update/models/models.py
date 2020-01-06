@@ -1246,7 +1246,7 @@ class helpdesk_lines(models.Model):
     contadorAnterior=fields.Many2one('dcas.dcas',string='Anterior',compute='ultimoContador')
     contadorColor=fields.Integer(string='Contador Color')
     contadorNegro=fields.Integer(string='Contador Monocromatico')
-    contadorNegro=fields.Char(string='Capturado por:')
+    user=fields.Char(string='Capturado por:')
     contadorAnteriorMono=fields.Integer(related='contadorAnterior.contadorMono',string='Anterior Monocromatico')
     contadorAnteriorColor=fields.Integer(related='contadorAnterior.contadorColor',string='Anterior Color')
     impresiones=fields.Integer(related='serie.x_studio_impresiones',string='Impresiones B/N')
