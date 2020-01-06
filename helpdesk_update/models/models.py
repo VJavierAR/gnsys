@@ -860,7 +860,7 @@ class helpdesk_update(models.Model):
     
     #@api.model
     #@api.multi
-    @api.onchange('x_studio_equipo_por_nmero_de_serie','order_line','order_line')
+    @api.onchange('x_studio_equipo_por_nmero_de_serie','order_line')
     #@api.depends('x_studio_equipo_por_nmero_de_serie')
     def actualiza_datos_cliente(self):
         _logger.info("actualiza_datos_cliente()")
