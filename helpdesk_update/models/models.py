@@ -49,7 +49,7 @@ class helpdesk_update(models.Model):
     productosSolicitud = fields.Many2many('product.product', string="Productos Solicitados",domain=_productos_solicitud_filtro)
     """
     
-    
+    """
     #@api.depends('historialCuatro')
     @api.onchange('historialCuatro')
     def recuperaUltimaNota(self):
@@ -60,7 +60,7 @@ class helpdesk_update(models.Model):
             self.x_studio_ultima_nota = str(historial[ultimaFila].x_disgnostico)
             self.x_studio_fecha_nota = str(historial[ultimaFila].create_date)
             self.x_studio_tecnico = str(historial[ultimaFila].x_persona)
-    
+    """
     
     """
     #@api.depends('historialCuatro')
