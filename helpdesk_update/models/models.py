@@ -50,6 +50,18 @@ class helpdesk_update(models.Model):
     """
     
     
+    #@api.depends('historialCuatro')
+    @api.onchage('historialCuatro')
+    def recuperaUltimaNota(self):
+        for record in self:
+            historial = record.historialCuatro
+            ultimaFila = len(historial) - 1
+            if ultimaFila >= 0:
+                record['x_studio_ultima_nota'] = str(historial[ultimaFila].x_disgnostico)
+                record['x_studio_fecha_nota'] = str(historial[ultimaFila].create_date)
+                record['x_studio_tecnico'] = str(historial[ultimaFila].x_persona)
+                
+    
     
     
     @api.onchange('x_studio_generar_cambio')
