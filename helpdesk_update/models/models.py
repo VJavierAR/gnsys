@@ -51,7 +51,7 @@ class helpdesk_update(models.Model):
     
     
     #@api.depends('historialCuatro')
-    @api.onchage('historialCuatro')
+    @api.onchange('historialCuatro')
     def recuperaUltimaNota(self):
         for record in self:
             historial = record.historialCuatro
