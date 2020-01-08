@@ -119,21 +119,6 @@ class contadores_lines(models.Model):
                     record['contadorAnterior']=dc.id
                     j=j+1
                     
-    @api.onchange('serie')
-    def productos_filtro(self):
-        res = {}
-        d=[]
-        for p in self.serie.product_id.x_studio_toner_compatible:
-            d.append(p.id)
-        if self.serie !='False':   
-            idf = self.area
-            if idf == 8 or idf == 13 :          
-               res['domain']={'producto':[('categ_id', '=', 5),('id','in',d)]}
-            if idf == 9:
-               res['domain']={'producto':[('categ_id', '=', 7),('id','in',d)]}
-            if idf != 9 and idf != 8:
-               res['domain']={'producto':[('id','in',d)]}
-        return res
     
     
 class lor(models.Model):
