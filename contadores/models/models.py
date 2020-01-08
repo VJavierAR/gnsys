@@ -56,7 +56,7 @@ class contadores(models.Model):
         d=[]
         for record in self:
             res['domain'] = {'localidad': ['&',('parent_id.id', '=', record.cliente.id),('type', '=', 'delivery')]}
-            for l in self.env['stock.production.lot'].search([['x_studio_ultima_ubicacin','in',cliente]]):
+            for l in self.env['stock.production.lot'].search([['x_studio_ultima_ubicacin','in',record.cliente]]):
                 datos={}
                 datos['serie']=l.id
                 d.append(datos)
