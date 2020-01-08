@@ -54,7 +54,7 @@ class contadores(models.Model):
         
     
     
-    @api.onchange('mes')
+    @api.onchange('cliente')
     def onchange_place(self):
         self.order_line=[(5,0,0)]
         res = {}
