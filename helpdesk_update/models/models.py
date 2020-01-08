@@ -1276,6 +1276,29 @@ class helpdesk_update(models.Model):
         if partner_ids:
             ticket.message_subscribe(partner_ids)
         return ticket
+    
+    @api.model
+    @api.depends('create_date')
+    def calcularDiasAtraso(self):
+        for record in self:
+            if record.create_date:
+                d = 0
+                fe = ''
+                t = str(r.create_date).split(' ')
+                fe = t[0].split('-')
+
+                x = datetime.datetime(2020, 1, 8)
+                y = datetime.datetime(int(fe[0]), int(fe[1]), int(fe[2]))
+
+                z = x - y
+
+                z = str(z).split(' days')
+
+                d = int(z[0])
+
+                r['x_studio_das_de_atraso'] = fe
+    
+    
     """
     @api.onchange('historialCuatro')
     def recuperaUltimaNota(self):
