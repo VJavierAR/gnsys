@@ -137,10 +137,10 @@ class contadores_lines(models.Model):
         for record in self:
             j=0
             dc=record.serie.dca.search([('fuente','=','dcas.dcas')])
-                if(record.mes==1):
-                    record['contadorAnterior']=list(filter(lambda:contador['x_studio_fecha'].month==12 and contador['x_studio_fecha'].year==fecha.year,dc))[0]['id']
-                else:
-                    record['contadorAnterior']=list(filter(lambda:contador['x_studio_fecha'].month==mes-1 and contador['x_studio_fecha'].year==fecha.year,dc))[0]['id']
+            if(record.mes==1):
+                record['contadorAnterior']=list(filter(lambda:contador['x_studio_fecha'].month==12 and contador['x_studio_fecha'].year==fecha.year,dc))[0]['id']
+            else:
+                record['contadorAnterior']=list(filter(lambda:contador['x_studio_fecha'].month==mes-1 and contador['x_studio_fecha'].year==fecha.year,dc))[0]['id']
 
     @api.onchange('cliente')
     def pr_filtro(self):
