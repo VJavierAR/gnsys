@@ -59,8 +59,12 @@ class contadores(models.Model):
             #lotes=self.env['stock.production.lot'].search([['x_studio_ubicaciontest','=',record.cliente.name]])
             #for l in lotes:
             datos={}
-            datos['serie']=12000
+            datos['serie']=31902
+            d.append(datos)            
+            datos={}
+            datos['serie']=31910
             d.append(datos)
+            
             record['order_line']=d
         return res
     
