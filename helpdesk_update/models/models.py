@@ -122,9 +122,9 @@ class helpdesk_update(models.Model):
         listaUsuarios = []
         for idUsuario in informacion:
             _logger.info("*********idUsuario: " + str(idUsuario))
-            listaUsuarios.append(str(idUsuario[1]))
+            listaUsuarios.append(idUsuario[1])
         _logger.info(str(listaUsuarios))
-        dominio = str([('res_user.id', 'in', listaUsuarios)])
+        dominio = [('res_user.id', 'in', listaUsuarios)]
         res['domain'] = {'member_ids': dominio}
         return dominio
         
