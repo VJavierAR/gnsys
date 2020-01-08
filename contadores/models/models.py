@@ -60,7 +60,7 @@ class contadores(models.Model):
             #for l in lotes:
             datos={}
             datos['serie']=12000
-            #    d.append(datos)
+            d.append(datos)
             record['order_line']=d
         return res
     
