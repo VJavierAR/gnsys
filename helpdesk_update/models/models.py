@@ -1280,23 +1280,28 @@ class helpdesk_update(models.Model):
     @api.model
     @api.depends('create_date')
     def calcularDiasAtraso(self):
+        _logger.info("***************calcularDiasAtraso()")
         for record in self:
+            _logger.info("***************record.create_date: " + str(record.create_date))
             if record.create_date:
                 d = 0
                 fe = ''
                 t = str(r.create_date).split(' ')
+                _logger.info("***************t: " + str(t))
                 fe = t[0].split('-')
-
+                _logger.info("***************fe: " + str(fe))
                 x = datetime.datetime(2020, 1, 8)
+                _logger.info("***************x: " + str(x))
                 y = datetime.datetime(int(fe[0]), int(fe[1]), int(fe[2]))
-
+                _logger.info("***************y: " + str(y))
                 z = x - y
-
+                _logger.info("***************z: " + str(z))
                 z = str(z).split(' days')
-
+                _logger.info("***************z: " + str(z))
                 d = int(z[0])
-
+                _logger.info("***************d: " + str(d))
                 r['x_studio_das_de_atraso'] = fe
+                
     
     
     """
