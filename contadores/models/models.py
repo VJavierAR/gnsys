@@ -119,6 +119,8 @@ class contadores_lines(models.Model):
     contadorAnteriorMono=fields.Integer(related='contadorAnterior.contadorMono',string='Anterior Monocromatico')
     contadorAnteriorColor=fields.Integer(related='contadorAnterior.contadorColor',string='Anterior Color')
     cliente=fields.Many2one('res.partner')
+    nombre=fields.Char(related='cliente.name',string='Nombre Cliente')
+
     @api.depends('serie')
     def ultimoContador(self):
         for record in self:
