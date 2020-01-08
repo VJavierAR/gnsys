@@ -130,7 +130,13 @@ class contadores_lines(models.Model):
                 if(j==0):
                     record['contadorAnterior']=dc.id
                     j=j+1
-                    
+    @api.onchange('cliente')
+    def pr_filtro(self):
+        res = {}
+        d=[]
+        if self.cliente !='False':
+            res['domain']={'serie':[('x_studio_ubicaciontest','ilike',self.cliente.name)]}
+        return res
     
     
 class lor(models.Model):
