@@ -104,6 +104,13 @@ class helpdesk_update(models.Model):
     
     @api.onchange('team_id')
     def asignacion(self):
+        
+        query = "select * from helpdesk_team_res_users_rel where helpdesk_team_id = 8;"
+        self.env.cr.execute(query)
+        informacion = self.cr.fetchall()
+        _logger.info("*********lol: " + informacion)
+        
+        
         if self.x_studio_id_ticket:
             #raise exceptions.ValidationError("error gerardo")
             if self.stage_id.name != 'Asignado':
@@ -1276,8 +1283,9 @@ class helpdesk_update(models.Model):
         if partner_ids:
             ticket.message_subscribe(partner_ids)
         return ticket
+   
     
-    @api.model
+    @api.multi
     @api.depends('create_date')
     def calcularDiasAtraso(self):
         _logger.info("***************calcularDiasAtraso()")
