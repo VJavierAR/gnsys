@@ -133,17 +133,14 @@ class contadores_lines(models.Model):
     nombre=fields.Char(related='cliente.name',string='Nombre Cliente')
     mes=fields.Integer()
     
-    @api.depends('mes')
+    @api.depends('serie')
     def ultimoContador(self):
         fecha=datetime.datetime.now()
         for record in self:
-            if(record.mes):
+            if(record.serie):
                 dc=record.serie.dca.search([('fuente','=','dcas.dcas')])
-                if(record.mes==1):
-                    record['contadorAnterior']=list(filter(lambda contador:contador['x_studio_fecha'].month==12 and contador['x_studio_fecha'].year==fecha.year,dc))[0]['id']
-                else:
-                    record['contadorAnterior']=list(filter(lambda contador:contador['x_studio_fecha'].month==mes-1 and contador['x_studio_fecha'].year==fecha.year,dc))[0]['id']
-
+                if(len(dc)>1):
+                    record['contadorAnterior']=d[0].id
     @api.onchange('cliente')
     def pr_filtro(self):
         res = {}
