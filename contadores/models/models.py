@@ -132,13 +132,14 @@ class contadores_lines(models.Model):
     cliente=fields.Many2one('res.partner')
     nombre=fields.Char(related='cliente.name',string='Nombre Cliente')
     mes=fields.Integer()
+    pagina=fields.Binary('Pagina de Estado')
     
     @api.depends('serie')
     def ultimoContador(self):
         fecha=datetime.datetime.now()
         for record in self:
             if(record.serie):
-                dc=record.serie.dca.search([('fuente','=','dcas.dcas')])
+                dc=record.serie.dca.search([('fuente','=','dcas.dcas'),('serie','=',record.serie.id)])
                 if(len(dc)>1):
                     record['contadorAnterior']=dc[0].id
     @api.onchange('cliente')
