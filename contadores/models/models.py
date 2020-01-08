@@ -104,7 +104,7 @@ class helpdesk_lines(models.Model):
     producto=fields.Many2one('product.product')
     cantidad=fields.Integer(string='Cantidad')
     serie=fields.Many2one('stock.production.lot')
-    ticket=fields.Many2one('helpdesk.ticket',string='Order Reference')
+    ticket=fields.Many2one('contadores.contadores',string='Order Reference')
     contadorAnterior=fields.Many2one('dcas.dcas',string='Anterior',compute='ultimoContador')
     contadorColor=fields.Integer(string='Contador Color')
     contadorNegro=fields.Integer(string='Contador Monocromatico')
