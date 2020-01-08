@@ -54,11 +54,13 @@ class contadores(models.Model):
         
     
     
-    @api.onchange('cliente')
+    @api.onchange('mes')
     def onchange_place(self):
         self.order_line=[(5,0,0)]
         res = {}
         d=[]
+        _logger.info("Contadores"+self.mes)
+
         if(self.cliente):
             #lotes=self.env['stock.production.lot'].search([['x_studio_ubicaciontest', '=' ,self.cliente.name]])
             self.env.cr.execute("Select id from stock_production_lot where x_studio_ultima_ubicacin like'"+self.cliente.name+"%';")
