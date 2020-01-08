@@ -59,13 +59,14 @@ class contadores(models.Model):
         res = {}
         d=[]
         if(self.cliente):
-            lotes=self.env['stock.production.lot'].search([['x_studio_ubicaciontest', '=' ,self.cliente.name]])
+            #lotes=self.env['stock.production.lot'].search([['x_studio_ubicaciontest', '=' ,self.cliente.name]])
+            lotes=self.env.cr.execute("Select id from stock_production_lot where x_studio_ubicaciontest='"+self.cliente.name+"';")
             _logger.info("Contadores"+self.cliente.name)
             _logger.info("Contadores"+str(len(lotes)))
             for l in lotes:
                 #if(l.x_studio_ultima_ubicacin == self.cliente.name):
                 datos={}
-                datos['serie']=l.id
+                datos['serie']=l
                 d.append(datos)            
             self.order_line=d
         #return res
