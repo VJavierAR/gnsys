@@ -1276,7 +1276,7 @@ class helpdesk_update(models.Model):
         if partner_ids:
             ticket.message_subscribe(partner_ids)
         return ticket
-
+    """
     @api.onchange('historialCuatro')
     def recuperaUltimaNota(self):
         _logger.info("*****************recuperaUltimaNota()")
@@ -1292,8 +1292,8 @@ class helpdesk_update(models.Model):
             self.x_studio_fecha_nota = str(historial[ultimaFila].create_date)
             _logger.info("*****************self.x_studio_fecha_nota: " + str(self.x_studio_fecha_nota))
             self.x_studio_tecnico = str(historial[ultimaFila].x_persona)
-            _logger.info("*****************self.x_studio_tecnico: " + str(self.x_studio_tecnico))
-    
+            _logger.info("*****************self.x_studio_tecnico: " + str(self.x_studio_tecnico)
+    """
    
     order_line = fields.One2many('helpdesk.lines','ticket',string='Order Lines')
 class helpdesk_lines(models.Model):
