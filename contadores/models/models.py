@@ -59,7 +59,7 @@ class contadores(models.Model):
         self.order_line=[(5,0,0)]
         res = {}
         d=[]
-        _logger.info("Contadores"+self.mes)
+        _logger.info("Contadores"+str(self.mes))
 
         if(self.cliente):
             #lotes=self.env['stock.production.lot'].search([['x_studio_ubicaciontest', '=' ,self.cliente.name]])
