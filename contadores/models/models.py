@@ -34,6 +34,7 @@ class contadores(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _description = 'Contadores Cliente'
     name = fields.Char()
+    mes=fields.Selection(selection=[('1','Enero'),('2','Febrero'),('3','Marzo'),('4','Abril'),('5','Mayo'),('6','Junio'),('7','Julio'),('8','Agosto'),('9','Septiembre'),('10','Octubre'),('11','Noviembre'),('12','Diciembre')])
     dca = fields.One2many('dcas.dcas',inverse_name='contador_id',string='DCAS')
     cliente = fields.Many2one('res.partner', store=True,string='Cliente')
     localidad=fields.Many2one('res.partner',store='True',string='Localidad')
@@ -52,9 +53,17 @@ class contadores(models.Model):
     @api.onchange('cliente')
     def onchange_place(self):
         res = {}
+        d=[]
         for record in self:
             res['domain'] = {'localidad': ['&',('parent_id.id', '=', record.cliente.id),('type', '=', 'delivery')]}
+            for l in self.env['stock.production.lot'].search([['x_studio_ultima_ubicacin','in',cliente]]):
+                datos={}
+                datos['serie']=l.id
+                d.append(datos)
+            record['order_line']=d
         return res
+    
+    
 
     @api.onchange('localidad')
     def onchange_localidad(self):
