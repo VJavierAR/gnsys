@@ -59,9 +59,9 @@ class contadores(models.Model):
             lotes=self.env['stock.production.lot'].search([[]])
             for l in lotes:
                 if(l.x_studio_ultima_ubicacin==self.cliente.name):
-                datos={}
-                datos['serie']=l.id
-                d.append(datos)            
+                    datos={}
+                    datos['serie']=l.id
+                    d.append(datos)            
             self.order_line=d
         return res
     
