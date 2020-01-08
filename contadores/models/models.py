@@ -98,31 +98,23 @@ class contadores(models.Model):
 
        
     
-class helpdesk_lines(models.Model):
+class contadores_lines(models.Model):
     _name="contadores.lines"
     _description = "lineas contadores"
-    producto=fields.Many2one('product.product')
-    cantidad=fields.Integer(string='Cantidad')
     serie=fields.Many2one('stock.production.lot')
-    ticket=fields.Many2one('contadores.contadores',string='Order Reference')
+    contador=fields.Many2one('contadores.contadores',string='Order Reference')
     contadorAnterior=fields.Many2one('dcas.dcas',string='Anterior',compute='ultimoContador')
     contadorColor=fields.Integer(string='Contador Color')
     contadorNegro=fields.Integer(string='Contador Monocromatico')
-    usuarioCaptura=fields.Char(string='Capturado por:') 
-    current_user = fields.Many2one('res.users','Current User', default=lambda self: self.env.user)
     contadorAnteriorMono=fields.Integer(related='contadorAnterior.contadorMono',string='Anterior Monocromatico')
     contadorAnteriorColor=fields.Integer(related='contadorAnterior.contadorColor',string='Anterior Color')
-    impresiones=fields.Integer(related='serie.x_studio_impresiones',string='Impresiones B/N')
-    impresionesColor=fields.Integer(related='serie.x_studio_impresiones_color',string='Impresiones Color')
-    colorToner=fields.Char(related='serie.x_studio_field_A6PR9',string='Color Toner')
-    area=fields.Integer()
     
-
     @api.depends('serie')
     def ultimoContador(self):
         for record in self:
             j=0
-            for dc in record.serie.dca:
+            
+            for dc in record.serie.dca.search([('fuente','=','dcas.dcas')]):
                 if(j==0):
                     record['contadorAnterior']=dc.id
                     j=j+1
