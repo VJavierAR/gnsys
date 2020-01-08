@@ -120,13 +120,14 @@ class helpdesk_update(models.Model):
         informacion = self.env.cr.fetchall()
         _logger.info("*********lol: " + str(informacion))
         listaUsuarios = []
+        #res['domain']={'x_studio_productos':[('categ_id', '=', 5),('x_studio_toner_compatible.id','in',list)]}
         for idUsuario in informacion:
             _logger.info("*********idUsuario: " + str(idUsuario))
             listaUsuarios.append(idUsuario[1])
         _logger.info(str(listaUsuarios))
         dominio = [('member_ids.id', 'in', listaUsuarios)]
-        res['domain'] = {'team_id': dominio}
-        return dominio
+        res['domain'] = {'user_id': dominio}
+        return res
         
         
     
