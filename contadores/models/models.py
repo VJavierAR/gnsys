@@ -52,16 +52,16 @@ class contadores(models.Model):
     
     @api.onchange('cliente')
     def onchange_place(self):
+        self.order_line=[(5,0,0)]
         res = {}
         d=[]
-        for record in self:
-            res['domain'] = {'order_line.serie': [('x_studio_ubicaciontest','=',record.cliente.name)]}
+        if(self.cliente):
             lotes=self.env['stock.production.lot'].search([['x_studio_ubicaciontest','=',record.cliente.name]])
             for l in lotes:
                 datos={}
                 datos['serie']=l.id
                 d.append(datos)            
-            record['order_line']=d
+            self.order_line=d
         return res
     
     
