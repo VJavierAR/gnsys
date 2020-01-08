@@ -104,13 +104,6 @@ class helpdesk_update(models.Model):
     
     @api.onchange('team_id')
     def asignacion(self):
-        
-        query = "select * from helpdesk_team_res_users_rel where helpdesk_team_id = 8;"
-        self.env.cr.execute(query)
-        informacion = self.env.cr.fetchall()
-        _logger.info("*********lol: " + str(informacion))
-        
-        
         if self.x_studio_id_ticket:
             #raise exceptions.ValidationError("error gerardo")
             if self.stage_id.name != 'Asignado':
@@ -119,6 +112,22 @@ class helpdesk_update(models.Model):
                 ss = self.env.cr.execute(query)             
                 _logger.info("**********fun: asignacion(), estado: " + str(self.stage_id.name))                
                 self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona':self.env.user.name ,'x_estado': "Asignado"})
+        
+        idEquipoDeAsistencia = self.team_id
+        query = "select * from helpdesk_team_res_users_rel where helpdesk_team_id = " + str(idEquipoDeAsistencia) + ";"
+        self.env.cr.execute(query)
+        informacion = self.env.cr.fetchall()
+        _logger.info("*********lol: " + str(informacion))
+        listaUsuarios = []
+        for idUsuario in informacion:
+            _logger.info("*********idUsuario: " + str(idUsuario))
+            listaUsuarios.append(str(idUsuario[1]))
+        _logger.info(str(listaUsuarios))
+        dominio = str([('res_user.id', 'in', listaUsuarios)])
+        res['domain'] = {'member_ids': dominio}
+        return dominio
+        
+        
     
     
     @api.onchange('x_studio_tcnico')
