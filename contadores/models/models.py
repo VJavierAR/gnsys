@@ -56,7 +56,7 @@ class contadores(models.Model):
         res = {}
         d=[]
         if(self.cliente):
-            lotes=self.env['stock.production.lot'].search([['x_studio_ubicaciontest','=',record.cliente.name]])
+            lotes=self.env['stock.production.lot'].search([['x_studio_ubicaciontest','=',self.cliente.name]])
             for l in lotes:
                 datos={}
                 datos['serie']=l.id
