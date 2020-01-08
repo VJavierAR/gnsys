@@ -60,6 +60,7 @@ class contadores(models.Model):
         d=[]
         if(self.cliente):
             lotes=self.env['stock.production.lot'].search([['x_studio_ubicaciontest', '=' ,self.cliente.name]])
+            _logger.info("Contadores"+self.cliente.name)
             _logger.info("Contadores"+str(len(lotes)))
             for l in lotes:
                 #if(l.x_studio_ultima_ubicacin == self.cliente.name):
