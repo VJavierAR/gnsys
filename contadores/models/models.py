@@ -139,7 +139,7 @@ class contadores_lines(models.Model):
         fecha=datetime.datetime.now()
         for record in self:
             if(record.serie):
-                dc=record.serie.dca.search([('fuente','=','dcas.dcas'),('serie','=',record.serie.id)])
+                dc=record.serie.dca.search([('fuente','=','dcas.dcas'),('serie','=',record.serie.id)]).sort(key='x_studio_fecha_techra')
                 if(len(dc)>1):
                     record['contadorAnterior']=dc[0].id
     @api.onchange('cliente')
