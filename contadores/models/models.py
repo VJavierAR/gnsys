@@ -2,6 +2,9 @@
 
 from odoo import models, fields, api
 import base64,io,csv
+import logging, ast
+_logger = logging.getLogger(__name__)
+
 class dcas(models.Model):
     _name = 'dcas.dcas'
     _description ='DCAS'
@@ -57,6 +60,7 @@ class contadores(models.Model):
         d=[]
         if(self.cliente):
             lotes=self.env['stock.production.lot'].search([['x_studio_ultima_ubicacin', '=' ,self.cliente.name]])
+            _logger.info("Contadores"+str(len(lotes)))
             for l in lotes:
                 #if(l.x_studio_ultima_ubicacin == self.cliente.name):
                 datos={}
