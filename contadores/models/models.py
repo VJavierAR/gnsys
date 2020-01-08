@@ -56,15 +56,11 @@ class contadores(models.Model):
         d=[]
         for record in self:
             res['domain'] = {'order_line.serie': [('x_studio_ubicaciontest','=',record.cliente.name)]}
-            #lotes=self.env['stock.production.lot'].search([['x_studio_ubicaciontest','=',record.cliente.name]])
-            #for l in lotes:
-            datos={}
-            datos['serie']=31902
-            d.append(datos)            
-            datos={}
-            datos['serie']=31910
-            d.append(datos)
-            
+            lotes=self.env['stock.production.lot'].search([['x_studio_ubicaciontest','=',record.cliente.name]])
+            for l in lotes:
+                datos={}
+                datos['serie']=l.id
+                d.append(datos)            
             record['order_line']=d
         return res
     
