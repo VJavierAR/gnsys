@@ -140,7 +140,7 @@ class contadores_lines(models.Model):
             if(record.serie):
                 dc=record.serie.dca.search([('fuente','=','dcas.dcas')])
                 if(len(dc)>1):
-                    record['contadorAnterior']=d[0].id
+                    record['contadorAnterior']=dc[0].id
     @api.onchange('cliente')
     def pr_filtro(self):
         res = {}
