@@ -60,8 +60,8 @@ class contadores(models.Model):
         d=[]
         if(self.cliente):
             #lotes=self.env['stock.production.lot'].search([['x_studio_ubicaciontest', '=' ,self.cliente.name]])
-            self.env.cr.execute("Select id from stock_production_lot where x_studio_ubicaciontest='"+self.cliente.name+"';")
-            lotes= self.env.cr.fetchall()
+            self.env._cr.execute("Select id from stock_production_lot where x_studio_ubicaciontest='"+self.cliente.name+"';")
+            lotes= self.env._cr.fetchall()
             _logger.info("Contadores"+self.cliente.name)
             _logger.info("Contadores"+str(len(lotes)))
             for l in lotes:
