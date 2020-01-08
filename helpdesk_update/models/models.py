@@ -1277,7 +1277,15 @@ class helpdesk_update(models.Model):
             ticket.message_subscribe(partner_ids)
         return ticket
 
-    
+    @api.onchange('historialCuatro')
+    def recuperaUltimaNota(self):
+        #for record in self:
+        historial = self.historialCuatro
+        ultimaFila = len(historial) - 1
+        if ultimaFila >= 0:
+            self.x_studio_ultima_nota = str(historial[ultimaFila].x_disgnostico)
+            self.x_studio_fecha_nota = str(historial[ultimaFila].create_date)
+            self.x_studio_tecnico = str(historial[ultimaFila].x_persona)
     
    
     order_line = fields.One2many('helpdesk.lines','ticket',string='Order Lines')
@@ -1339,3 +1347,8 @@ class helpdesk_lines(models.Model):
             if idf != 9 and idf != 8:
                res['domain']={'producto':[('id','in',d)]}
         return res
+
+    
+    
+    
+    
