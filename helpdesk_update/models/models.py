@@ -1279,13 +1279,20 @@ class helpdesk_update(models.Model):
 
     @api.onchange('historialCuatro')
     def recuperaUltimaNota(self):
+        _logger.info("*****************recuperaUltimaNota()")
         #for record in self:
         historial = self.historialCuatro
+        _logger.info("*****************historial: " + str(historial))
         ultimaFila = len(historial) - 1
+        _logger.info("*****************ultimaFila: " + str(ultimaFila))
         if ultimaFila >= 0:
+            _logger.info("*****************Entre if ultimaFila >= 0:")
             self.x_studio_ultima_nota = str(historial[ultimaFila].x_disgnostico)
+            _logger.info("*****************self.x_studio_ultima_nota: " + str(self.x_studio_ultima_nota))
             self.x_studio_fecha_nota = str(historial[ultimaFila].create_date)
+            _logger.info("*****************self.x_studio_fecha_nota: " + str(self.x_studio_fecha_nota))
             self.x_studio_tecnico = str(historial[ultimaFila].x_persona)
+            _logger.info("*****************self.x_studio_tecnico: " + str(self.x_studio_tecnico))
     
    
     order_line = fields.One2many('helpdesk.lines','ticket',string='Order Lines')
