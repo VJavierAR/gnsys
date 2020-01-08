@@ -40,7 +40,8 @@ class contadores(models.Model):
     archivo=fields.Binary(store='True',string='Archivo')
     estado=fields.Selection(selection=[('Abierto', 'Abierto'),('Incompleto', 'Incompleto'),('Valido','Valido')],widget="statusbar", default='Abierto')  
     dom=fields.Char(readonly="1",invisible="1")
-    
+    order_line = fields.One2many('contadores.lines','ticket',string='Order Lines')
+
     
     @api.onchange('serie_aux')
     def getid(self):
@@ -95,6 +96,54 @@ class contadores(models.Model):
         f.close()
                         #record.dca.search([['serial.name','=',dat[3]]])
 
+       
+    
+class helpdesk_lines(models.Model):
+    _name="contadores.lines"
+    _description = "lineas contadores"
+    producto=fields.Many2one('product.product')
+    cantidad=fields.Integer(string='Cantidad')
+    serie=fields.Many2one('stock.production.lot')
+    ticket=fields.Many2one('helpdesk.ticket',string='Order Reference')
+    contadorAnterior=fields.Many2one('dcas.dcas',string='Anterior',compute='ultimoContador')
+    contadorColor=fields.Integer(string='Contador Color')
+    contadorNegro=fields.Integer(string='Contador Monocromatico')
+    usuarioCaptura=fields.Char(string='Capturado por:') 
+    current_user = fields.Many2one('res.users','Current User', default=lambda self: self.env.user)
+    contadorAnteriorMono=fields.Integer(related='contadorAnterior.contadorMono',string='Anterior Monocromatico')
+    contadorAnteriorColor=fields.Integer(related='contadorAnterior.contadorColor',string='Anterior Color')
+    impresiones=fields.Integer(related='serie.x_studio_impresiones',string='Impresiones B/N')
+    impresionesColor=fields.Integer(related='serie.x_studio_impresiones_color',string='Impresiones Color')
+    colorToner=fields.Char(related='serie.x_studio_field_A6PR9',string='Color Toner')
+    area=fields.Integer()
+    
+
+    @api.depends('serie')
+    def ultimoContador(self):
+        for record in self:
+            j=0
+            for dc in record.serie.dca:
+                if(j==0):
+                    record['contadorAnterior']=dc.id
+                    j=j+1
+                    
+    @api.onchange('serie')
+    def productos_filtro(self):
+        res = {}
+        d=[]
+        for p in self.serie.product_id.x_studio_toner_compatible:
+            d.append(p.id)
+        if self.serie !='False':   
+            idf = self.area
+            if idf == 8 or idf == 13 :          
+               res['domain']={'producto':[('categ_id', '=', 5),('id','in',d)]}
+            if idf == 9:
+               res['domain']={'producto':[('categ_id', '=', 7),('id','in',d)]}
+            if idf != 9 and idf != 8:
+               res['domain']={'producto':[('id','in',d)]}
+        return res
+    
+    
 class lor(models.Model):
     _inherit = 'stock.production.lot'
     dca=fields.One2many('dcas.dcas',inverse_name='serie')
