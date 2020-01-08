@@ -112,7 +112,7 @@ class helpdesk_update(models.Model):
                 ss = self.env.cr.execute(query)             
                 _logger.info("**********fun: asignacion(), estado: " + str(self.stage_id.name))                
                 self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona':self.env.user.name ,'x_estado': "Asignado"})
-        
+        """
         res = {}
         idEquipoDeAsistencia = self.team_id.id
         query = "select * from helpdesk_team_res_users_rel where helpdesk_team_id = " + str(idEquipoDeAsistencia) + ";"
@@ -128,7 +128,7 @@ class helpdesk_update(models.Model):
         dominio = [('res_users.id', 'in', listaUsuarios)]
         res['domain'] = {'user_id': dominio}
         return res
-        
+        """
         
     
     
