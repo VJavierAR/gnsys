@@ -102,7 +102,7 @@ class contadores_lines(models.Model):
     _name="contadores.lines"
     _description = "lineas contadores"
     serie=fields.Many2one('stock.production.lot')
-    contador=fields.Many2one('contadores.contadores',string='Order Reference')
+    ticket=fields.Many2one('contadores.contadores',string='Order Reference')
     contadorAnterior=fields.Many2one('dcas.dcas',string='Anterior',compute='ultimoContador')
     contadorColor=fields.Integer(string='Contador Color')
     contadorNegro=fields.Integer(string='Contador Monocromatico')
