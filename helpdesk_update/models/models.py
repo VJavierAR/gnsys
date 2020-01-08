@@ -108,7 +108,7 @@ class helpdesk_update(models.Model):
         query = "select * from helpdesk_team_res_users_rel where helpdesk_team_id = 8;"
         self.env.cr.execute(query)
         informacion = self.env.cr.fetchall()
-        _logger.info("*********lol: " + informacion)
+        _logger.info("*********lol: " + str(informacion))
         
         
         if self.x_studio_id_ticket:
