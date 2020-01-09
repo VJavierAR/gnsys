@@ -5,6 +5,7 @@ from email.utils import formataddr
 from odoo.exceptions import UserError
 from odoo import exceptions, _
 import logging, ast
+import datetime, time
 _logger = logging.getLogger(__name__)
 
 class helpdesk_update(models.Model):
