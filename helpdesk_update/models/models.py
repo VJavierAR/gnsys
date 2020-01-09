@@ -28,7 +28,12 @@ class helpdesk_update(models.Model):
     def _compute_difference(self):
         for rec in self:
             #rec.days_difference = (datetime.date.today()- rec.create_date).days   
-            converted_date = datetime.datetime.strptime(str(rec.create_date), '%Y-%m-%d').date()
+            #fe = ''
+            fecha = str(r.create_date).split(' ')[0]
+            _logger.info("***************t: " + str(t))
+            #fe = t[0]
+            converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
+            #converted_date = datetime.datetime.strptime(str(rec.create_date), '%Y-%m-%d').date()
             rec.days_difference = (datetime.date.today() - converted_date).days
     
     
