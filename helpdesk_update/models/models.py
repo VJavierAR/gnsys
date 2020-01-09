@@ -4,6 +4,7 @@ from odoo import _, models, fields, api, tools
 from email.utils import formataddr
 from odoo.exceptions import UserError
 from odoo import exceptions
+from openerp.osv.orm import except_orm
 import logging, ast
 _logger = logging.getLogger(__name__)
 
@@ -388,13 +389,17 @@ class helpdesk_update(models.Model):
         for record in self:
             sale = record.x_studio_field_nO7Xg
             _logger.info("*******sale.id: " + str(sale.id))
-            self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
-            sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
-            sale.action_confirm()
-            query="update helpdesk_ticket set stage_id = 95 where id = " + str(self.x_studio_id_ticket) + ";" 
-            _logger.info("lol: " + query)
-            ss=self.env.cr.execute(query)
-            self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Autorizado"})
+            if sale.id != 0:
+                self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
+                sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
+                sale.action_confirm()
+                query="update helpdesk_ticket set stage_id = 95 where id = " + str(self.x_studio_id_ticket) + ";" 
+                _logger.info("lol: " + query)
+                ss=self.env.cr.execute(query)
+                self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Autorizado"})
+            else:
+                mensajeSolicitudTonerNoValida = "No es posible valida una solicitud en el estado actual"
+                raise osv.except_osv(('Error'), (mensajeSolicitudTonerNoValida))
     
     @api.onchange('x_studio_desactivar_zona')
     def desactivar_datos_zona(self):
