@@ -126,3 +126,5 @@ class contadores_lines(models.Model):
 class lor(models.Model):
     _inherit = 'stock.production.lot'
     dca=fields.One2many('dcas.dcas',inverse_name='serie')
+
+    
