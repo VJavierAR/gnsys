@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from odoo import _, models, fields, api, tools, osv
+from odoo import _, models, fields, api, tools
 from email.utils import formataddr
 from odoo.exceptions import UserError
-from odoo import exceptions
-#from openerp.osv import osv
+from odoo import exceptions, _
 import logging, ast
 _logger = logging.getLogger(__name__)
 
@@ -398,8 +397,9 @@ class helpdesk_update(models.Model):
                 ss=self.env.cr.execute(query)
                 self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Autorizado"})
             else:
+                errorTonerNoValidado = "Toner no validado"
                 mensajeSolicitudTonerNoValida = "No es posible valida una solicitud en el estado actual"
-                raise osv.except_osv(('Error'), (mensajeSolicitudTonerNoValida))
+                raise exceptions.except_orm(_(errorTonerNoValidado), _(mensajeSolicitudTonerNoValida))
     
     @api.onchange('x_studio_desactivar_zona')
     def desactivar_datos_zona(self):
