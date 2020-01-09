@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from odoo import _, models, fields, api, tools
+from odoo import _, models, fields, api, tools, osv
 from email.utils import formataddr
 from odoo.exceptions import UserError
 from odoo import exceptions
-from openerp.osv.orm import except_orm
+#from openerp.osv import osv
 import logging, ast
 _logger = logging.getLogger(__name__)
 
