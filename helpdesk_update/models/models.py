@@ -108,7 +108,8 @@ class helpdesk_update(models.Model):
     def abierto(self):
         if self.x_studio_id_ticket:
             #raise exceptions.ValidationError("error gerardo")
-            if self.stage_id.name != 'Abierto':
+            #if self.stage_id.name != 'Abierto':
+            if self.stage_id.name == 'Pre-ticket':
                 query = "update helpdesk_ticket set stage_id = 89 where id = " + str(self.x_studio_id_ticket) + ";"
                 _logger.info("lol: " + query)
                 ss = self.env.cr.execute(query)
@@ -229,11 +230,11 @@ class helpdesk_update(models.Model):
     
     
     
-    
+    #@api.oncgange()
     @api.onchange('x_studio_tipo_de_falla','x_studio_tipo_de_incidencia')
     def crear_solicitud_refaccion(self):
         if len(self.x_studio_productos) > 0:
-            if  (self.x_studio_tipo_de_falla == 'Solicitud de refacción' ) or (self.x_studio_tipo_de_incidencia == 'Solicitud de refacción' ) :                
+            if (self.x_studio_tipo_de_falla == 'Solicitud de refacción' ) or (self.x_studio_tipo_de_incidencia == 'Solicitud de refacción' ) or self.:
                 
                 sale = self.env['sale.order'].create({'partner_id' : self.partner_id.id
                                                              , 'origin' : "Ticket de refacción: " + str(self.x_studio_id_ticket)
