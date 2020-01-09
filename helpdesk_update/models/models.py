@@ -372,6 +372,7 @@ class helpdesk_update(models.Model):
                                             ,'x_studio_descripcion':self.name
                                             ,'x_studio_tickett':self.x_studio_id_ticket
                                             ,'x_studio_hoja_de_estado':c.x_studio_evidencias
+                                            ,'x_studio_usuariocaptura',self.env.user.name
                                             
                                           })  
                 
