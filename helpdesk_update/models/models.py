@@ -21,7 +21,14 @@ class helpdesk_update(models.Model):
     documentosTecnico = fields.Many2many('ir.attachment', string="Evidencias Técnico")
     stage_id = fields.Many2one('helpdesk.stage', string='Stage', ondelete='restrict', track_visibility='onchange',group_expand='_read_group_stage_ids',readonly=True,copy=False,index=True, domain="[('team_ids', '=', team_id)]")
     #seriesLastoner = fields.One2many('stock.production.lot','x_studio_tickttmp',string='Toner a solicitar',store=True,track_visibility='onchange')
-
+    
+    days_difference = fields.Integer(compute='_compute_difference')
+    
+    def _compute_difference(self):
+        for rec in self:
+            rec.days_difference = (date time.today()- rec.created_date).days   
+    
+    
     #_logger.info("el id xD Toner xD")            
 
     #@api.model           
@@ -1308,7 +1315,7 @@ class helpdesk_update(models.Model):
             ticket.message_subscribe(partner_ids)
         return ticket
    
-    
+    """
     @api.multi
     @api.depends('create_date')
     def calcularDiasAtraso(self):
@@ -1333,7 +1340,7 @@ class helpdesk_update(models.Model):
                 d = int(z[0])
                 _logger.info("***************d: " + str(d))
                 r['x_studio_das_de_atraso'] = fe
-                
+    """            
     
     
     """
