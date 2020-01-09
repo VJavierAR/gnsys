@@ -280,8 +280,8 @@ class helpdesk_update(models.Model):
                 ss = self.env.cr.execute(query)
                 self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Refacción Autorizada"})
             else:
-                errorRefaccionNoValidada = "Toner no validado"
-                mensajeSolicitudRefaccionNoValida = "No es posible valida una solicitud de tóner en el estado actual."
+                errorRefaccionNoValidada = "Solicitud de refacción no validada"
+                mensajeSolicitudRefaccionNoValida = "No es posible validar una solicitud de refacción en el estado actual."
                 estadoActual = str(record.stage_id.name)
                 raise exceptions.except_orm(_(errorRefaccionNoValidada), _(mensajeSolicitudRefaccionNoValida + " Estado: " + estadoActual))
     
@@ -403,8 +403,8 @@ class helpdesk_update(models.Model):
                 ss=self.env.cr.execute(query)
                 self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Autorizado"})
             else:
-                errorTonerNoValidado = "Toner no validado"
-                mensajeSolicitudTonerNoValida = "No es posible valida una solicitud de tóner en el estado actual."
+                errorTonerNoValidado = "Solicitud de tóner no validada"
+                mensajeSolicitudTonerNoValida = "No es posible validar una solicitud de tóner en el estado actual."
                 estadoActual = str(record.stage_id.name)
                 raise exceptions.except_orm(_(errorTonerNoValidado), _(mensajeSolicitudTonerNoValida + " Estado: " + estadoActual))
     
