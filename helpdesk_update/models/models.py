@@ -231,14 +231,11 @@ class helpdesk_update(models.Model):
     
     
     @api.onchange('x_studio_tipo_de_falla','x_studio_tipo_de_incidencia')
-    #@api.onchange('x_studio_productos')
     def crear_solicitud_refaccion(self):
-        _logger.info("***********entrando a crear_solicitud_refaccion()")
-        self.ensure_one()
         if len(self.x_studio_productos) > 0:
             if  (self.x_studio_tipo_de_falla == 'Solicitud de refacción' ) or (self.x_studio_tipo_de_incidencia == 'Solicitud de refacción' ) :                
-                _logger.info("**********Entre a if porque len es mayor a cero")
-                sale = self.sudo().env['sale.order'].create({'partner_id' : self.partner_id.id
+                
+                sale = self.env['sale.order'].create({'partner_id' : self.partner_id.id
                                                              , 'origin' : "Ticket de refacción: " + str(self.x_studio_id_ticket)
                                                              , 'x_studio_tipo_de_solicitud' : 'Venta'
                                                              , 'x_studio_requiere_instalacin' : True
@@ -256,21 +253,30 @@ class helpdesk_update(models.Model):
                 #self.env.cr.commit()
                 #for c in self.x_studio_field_tLWzF:
                 for c in self.x_studio_productos:
-                    self.sudo().env['sale.order.line'].create({'order_id' : sale.id
+                    self.env['sale.order.line'].create({'order_id' : sale.id
                                                                , 'product_id' : c.id
                                                                , 'product_uom_qty' : c.x_studio_cantidad_pedida
                                                                ,'x_studio_field_9nQhR':self.x_studio_equipo_por_nmero_de_serie[0].id
                                                               })
                     self['x_studio_field_nO7Xg'] = sale.id
-                    sale.sudo().env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
+                    sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
                     #self.env.invalidate_all()
-                    self.sudo().env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
+                    self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
                     #self.env.cr.commit()
+                
+                
 
                 #if sale.id:
                 #    if self.x_studio_id_ticket:
                         #raise exceptions.ValidationError("error gerardo")
                         #if self.stage_id.name == 'Atención' and self.team_id.name == 'Equipo de hardware':
+                query = "update helpdesk_ticket set stage_id = 100 where id = " + str(self.x_studio_id_ticket) + ";"
+                _logger.info("lol: " + query)
+                ss = self.env.cr.execute(query)
+                _logger.info("**********fun: crear_solicitud_refaccion(), estado: " + str(self.stage_id.name))
+                    #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
+                self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Solicitud de refacción"})
+                """
                 if self.team_id.name == 'Equipo de hardware':
                     query = "update helpdesk_ticket set stage_id = 100 where id = " + str(self.x_studio_id_ticket) + ";"
                     _logger.info("lol: " + query)
@@ -278,7 +284,7 @@ class helpdesk_update(models.Model):
                     _logger.info("**********fun: crear_solicitud_refaccion(), estado: " + str(self.stage_id.name))
                     #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
                     self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Solicitud de refacción"})
-                
+                """
                 
                 
                 
