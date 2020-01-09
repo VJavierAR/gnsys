@@ -418,6 +418,13 @@ class helpdesk_update(models.Model):
                 _logger.info("lol: " + query)
                 ss=self.env.cr.execute(query)
                 self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Autorizado"})
+                
+                #En almacen
+                query="update helpdesk_ticket set stage_id = 93 where id = " + str(self.x_studio_id_ticket) + ";" 
+                _logger.info("lol: " + query)
+                ss=self.env.cr.execute(query)
+                self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "En almacén"})
+                
             else:
                 errorTonerNoValidado = "Solicitud de tóner no validada"
                 mensajeSolicitudTonerNoValida = "No es posible validar una solicitud de tóner en el estado actual."
