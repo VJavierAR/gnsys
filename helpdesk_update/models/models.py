@@ -387,6 +387,7 @@ class helpdesk_update(models.Model):
         _logger.info("validar_solicitud_toner()")        
         for record in self:
             sale = record.x_studio_field_nO7Xg
+            _logger.info("*******sale: " + str(sale))
             self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
             sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
             sale.action_confirm()
