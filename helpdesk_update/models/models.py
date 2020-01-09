@@ -270,14 +270,20 @@ class helpdesk_update(models.Model):
     def validar_solicitud_refaccion(self):
         for record in self:
             sale = record.x_studio_field_nO7Xg
-            self.sudo().env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
-            sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
-            sale.action_confirm()
-            
-            query = "update helpdesk_ticket set stage_id = 102 where id = " + str(self.x_studio_id_ticket) + ";"
-            _logger.info("lol: " + query)
-            ss = self.env.cr.execute(query)
-            self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Refacción Autorizada"})
+            if sale.id != 0:
+                self.sudo().env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
+                sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
+                sale.action_confirm()
+
+                query = "update helpdesk_ticket set stage_id = 102 where id = " + str(self.x_studio_id_ticket) + ";"
+                _logger.info("lol: " + query)
+                ss = self.env.cr.execute(query)
+                self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Refacción Autorizada"})
+            else:
+                errorRefaccionNoValidada = "Toner no validado"
+                mensajeSolicitudRefaccionNoValida = "No es posible valida una solicitud de tóner en el estado actual."
+                estadoActual = str(record.stage_id.name)
+                raise exceptions.except_orm(_(errorRefaccionNoValidada), _(mensajeSolicitudRefaccionNoValida + " Estado: " + estadoActual))
     
     
     
@@ -398,8 +404,9 @@ class helpdesk_update(models.Model):
                 self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Autorizado"})
             else:
                 errorTonerNoValidado = "Toner no validado"
-                mensajeSolicitudTonerNoValida = "No es posible valida una solicitud en el estado actual"
-                raise exceptions.except_orm(_(errorTonerNoValidado), _(mensajeSolicitudTonerNoValida))
+                mensajeSolicitudTonerNoValida = "No es posible valida una solicitud de tóner en el estado actual."
+                estadoActual = str(record.stage_id.name)
+                raise exceptions.except_orm(_(errorTonerNoValidado), _(mensajeSolicitudTonerNoValida + " Estado: " + estadoActual))
     
     @api.onchange('x_studio_desactivar_zona')
     def desactivar_datos_zona(self):
