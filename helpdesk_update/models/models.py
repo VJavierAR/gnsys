@@ -201,7 +201,7 @@ class helpdesk_update(models.Model):
     #@api.onchange('stage_id')
     def cambioCerrado(self):
         #_logger.info("********************self.stage_id: " + str(self.stage_id))
-        if self.stage_id.name == 'Resuelto':
+        if self.stage_id.name == 'Resuelto' or self.stage_id.name == 'Abierto' or self.stage_id.name == 'Asignado' or self.stage_id.name == 'Atención':
             query = "update helpdesk_ticket set stage_id = 18 where id = " + str(self.x_studio_id_ticket) + ";"
             _logger.info("lol: " + query)
             ss = self.env.cr.execute(query)
