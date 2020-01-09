@@ -237,6 +237,7 @@ class helpdesk_update(models.Model):
         self.ensure_one()
         if len(self.x_studio_productos) > 0:
             #if  (self.x_studio_tipo_de_falla == 'Solicitud de refacción' ) or (self.x_studio_tipo_de_incidencia == 'Solicitud de refacción' ) :                
+            _logger.info("**********Entre a if porque len es mayor a cero")
             sale = self.sudo().env['sale.order'].create({'partner_id' : self.partner_id.id
                                                          , 'origin' : "Ticket de refacción: " + str(self.x_studio_id_ticket)
                                                          , 'x_studio_tipo_de_solicitud' : 'Venta'
@@ -302,7 +303,7 @@ class helpdesk_update(models.Model):
     
     
     
-    
+    """
     @api.onchange('x_studio_localidad_destino')
     def cambio(self):
       _logger.info('************* haciendo algo xD ' )
@@ -337,7 +338,7 @@ class helpdesk_update(models.Model):
                                              ,'location_dest_id':1
                                             #, 'product_uom_qty' : c.x_studio_cantidad_pedida
                                           })
-            
+    """        
     
     
     
