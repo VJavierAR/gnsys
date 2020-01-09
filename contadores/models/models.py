@@ -59,14 +59,10 @@ class contadores(models.Model):
         self.order_line=[(5,0,0)]
         res = {}
         d=[]
-        _logger.info("Contadores"+str(self.mes))
-
         if(self.cliente):
             #lotes=self.env['stock.production.lot'].search([['x_studio_ubicaciontest', '=' ,self.cliente.name]])
             self.env.cr.execute("Select id from stock_production_lot where x_studio_ultima_ubicacin like'"+self.cliente.name+"%';")
             lotes= self.env.cr.fetchall()
-            _logger.info("Contadores"+self.cliente.name)
-            _logger.info("Contadores"+str(len(lotes)))
             for l in lotes:
                 #if(l.x_studio_ultima_ubicacin == self.cliente.name):
                 datos={}
@@ -77,22 +73,6 @@ class contadores(models.Model):
     
     
 
-    @api.onchange('localidad')
-    def onchange_localidad(self):
-        stock=0
-        for record in self:
-            quants=[]
-            record['dca']=[(5,0,0)]
-            if(len(record.localidad)==1):
-                stock=self.env['stock.warehouse'].search([['x_studio_field_E0H1Z','=',record.localidad.id]]).lot_stock_id.id
-                lotes=self.env['stock.production.lot'].search([['x_studio_ubicacion_id','=',stock]])
-                b=[]
-                c={}
-                for f in lotes:
-                    c['serie']=f
-                    b.append(c)
-                record['dom']=stock
-                record['dca']=b
 
     @api.onchange('archivo')
     def onchange_archiv(self):
@@ -139,18 +119,10 @@ class contadores_lines(models.Model):
         fecha=datetime.datetime.now()
         for record in self:
             if(record.serie):
-                dc=self.env['dcas.dcas'].search([('fuente','=','dcas.dcas'),('serie','=',record.serie.id)]).sorted(key='x_studio_fecha_techra')
+                dc=self.env['dcas.dcas'].search([('fuente','=','dcas.dcas'),('x_studio_fecha_techra',' !=',False),('serie','=',record.serie.id)]).sorted(key='x_studio_fecha_techra')
                 if(len(dc)>1):
                     record['contadorAnterior']=dc[0].id
-    @api.onchange('cliente')
-    def pr_filtro(self):
-        res = {}
-        d=[]
-        if self.cliente !='False':
-            res['domain']={'serie':[('x_studio_ubicaciontest','ilike',self.cliente.name)]}
-        return res
-    
-    
+        
 class lor(models.Model):
     _inherit = 'stock.production.lot'
     dca=fields.One2many('dcas.dcas',inverse_name='serie')
