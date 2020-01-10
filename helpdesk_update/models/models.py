@@ -345,6 +345,7 @@ class helpdesk_update(models.Model):
     
     
     #@api.onchange('x_studio_captura_c')
+    @api.multi
     def capturandoMesa(self):
       for record in self:  
             for c in record.x_studio_equipo_por_nmero_de_serie:
