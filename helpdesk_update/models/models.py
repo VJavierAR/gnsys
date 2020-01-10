@@ -497,7 +497,8 @@ class helpdesk_update(models.Model):
         return res
        
     #@api.model            
-    @api.onchange('x_studio_equipo_por_nmero_de_serie')
+    #@api.onchange('x_studio_equipo_por_nmero_de_serie')
+    @api.multi
     def productos_filtro(self):
         res = {}             
         g = str(self.x_studio_nombretmp)
