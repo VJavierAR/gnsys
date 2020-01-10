@@ -380,7 +380,7 @@ class helpdesk_update(models.Model):
                                                 ,'fuente':'stock.production.lot'                                            
                                               })                  
                   self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': 'captura ','x_disgnostico':'capturas :' + str('Mono'+str(c.x_studio_contador_bn_a_capturar)+', Color '+str(c.x_studio_contador_color_a_capturar)+', Amarillo '+str(c.x_studio__amarrillo)+', Cian '+str(c.x_studio__cian)+', Negro '+str(c.x_studio__negro)+', Magenta '+str(c.x_studio__magenta))})
-                else:
+                else :
                   raise exceptions.ValidationError("Error al capturar debe ser mayor")
 
                     
