@@ -352,6 +352,7 @@ class helpdesk_update(models.Model):
               _logger.info("lol: " + str(c.x_studio_field_A6PR9))
               if str(c.x_studio_field_A6PR9) =='Negro':
                   if int(c.x_studio_contador_bn_a_capturar) > int(c.x_studio_contador_bn)  :
+                      
                       self.env['dcas.dcas'].create({'serie' : c.id
                                                     , 'contadorMono' : c.x_studio_contador_bn_a_capturar
                                                     , 'contadorColor' :c.x_studio_contador_color_a_capturar
@@ -363,7 +364,7 @@ class helpdesk_update(models.Model):
                                                     ,'x_studio_tickett':self.x_studio_id_ticket
                                                     ,'x_studio_hoja_de_estado':c.x_studio_evidencias
                                                     ,'x_studio_usuariocaptura':self.env.user.name
-                                                    ,'fuente':'stock.production.lot'                                            
+                                                    ,'fuente':'helpdesk.ticket'                                            
                                                   })                  
                       self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': 'captura ','x_disgnostico':'capturas :' + str('Mono'+str(c.x_studio_contador_bn_a_capturar)+', Color '+str(c.x_studio_contador_color_a_capturar)+', Amarillo '+str(c.x_studio__amarrillo)+', Cian '+str(c.x_studio__cian)+', Negro '+str(c.x_studio__negro)+', Magenta '+str(c.x_studio__magenta))})
                   else :
@@ -381,7 +382,7 @@ class helpdesk_update(models.Model):
                                                     ,'x_studio_tickett':self.x_studio_id_ticket
                                                     ,'x_studio_hoja_de_estado':c.x_studio_evidencias
                                                     ,'x_studio_usuariocaptura':self.env.user.name
-                                                    ,'fuente':'stock.production.lot'                                            
+                                                    ,'fuente':'helpdesk.ticket'                                            
                                                   })                  
                       self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': 'captura ','x_disgnostico':'capturas :' + str('Mono'+str(c.x_studio_contador_bn_a_capturar)+', Color '+str(c.x_studio_contador_color_a_capturar)+', Amarillo '+str(c.x_studio__amarrillo)+', Cian '+str(c.x_studio__cian)+', Negro '+str(c.x_studio__negro)+', Magenta '+str(c.x_studio__magenta))})
                   else :
