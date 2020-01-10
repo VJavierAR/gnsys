@@ -365,8 +365,9 @@ class helpdesk_update(models.Model):
                                               })                  
                   self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': 'captura ','x_disgnostico':'capturas :' + str('Mono'+str(c.x_studio_contador_bn_a_capturar)+', Color '+str(c.x_studio_contador_color_a_capturar)+', Amarillo '+str(c.x_studio__amarrillo)+', Cian '+str(c.x_studio__cian)+', Negro '+str(c.x_studio__negro)+', Magenta '+str(c.x_studio__magenta))})
               else :
-                raise exceptions.ValidationError("Contador Monocromatico Menor")                
-              if int(c.x_studio_contador_bn_a_capturar) > int(c.x_studio_contador_color) and int(c.x_studio_contador_bn_a_capturar) > int(c.x_studio_contador_bn)  and str(c.x_studio_field_A6PR9) != 'Negro':
+                raise exceptions.ValidationError("Contador Monocromatico Menor")     
+                
+              if int(c.x_studio_contador_color_a_capturar) > int(c.x_studio_contador_color) and int(c.x_studio_contador_bn_a_capturar) > int(c.x_studio_contador_bn)  and str(c.x_studio_field_A6PR9) != 'Negro':
                   self.env['dcas.dcas'].create({'serie' : c.id
                                                 , 'contadorMono' : c.x_studio_contador_bn_a_capturar
                                                 , 'contadorColor' :c.x_studio_contador_color_a_capturar
@@ -381,12 +382,8 @@ class helpdesk_update(models.Model):
                                                 ,'fuente':'stock.production.lot'                                            
                                               })                  
                   self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': 'captura ','x_disgnostico':'capturas :' + str('Mono'+str(c.x_studio_contador_bn_a_capturar)+', Color '+str(c.x_studio_contador_color_a_capturar)+', Amarillo '+str(c.x_studio__amarrillo)+', Cian '+str(c.x_studio__cian)+', Negro '+str(c.x_studio__negro)+', Magenta '+str(c.x_studio__magenta))})
-                else :
-                  raise exceptions.ValidationError("Error al capturar debe ser mayor")
-             
-
-                    
-                
+              else :
+                raise exceptions.ValidationError("Error al capturar debe ser mayor")                                                 
        
     
     @api.onchange('x_studio_tipo_de_requerimiento')
