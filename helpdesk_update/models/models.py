@@ -410,7 +410,7 @@ class helpdesk_update(models.Model):
                                             
                                           })
             
-              self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': 'captura ','x_disgnostico':'capturas :' + str('Mono'+c.x_studio_contador_bn_a_capturar+', Color '+c.x_studio_contador_color_a_capturar+', Amarillo '+c.x_studio__amarrillo+', Cian '+c.x_studio__cian+', Negro '+c.x_studio__negro+', Magenta '+c.x_studio__magenta)})
+              self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': 'captura ','x_disgnostico':'capturas :' + str('Mono'+str(c.x_studio_contador_bn_a_capturar)+', Color '+str(c.x_studio_contador_color_a_capturar)+', Amarillo '+str(c.x_studio__amarrillo)+', Cian '+str(c.x_studio__cian)+', Negro '+str(c.x_studio__negro)+', Magenta '+str(c.x_studio__magenta))})
 
                 
             sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
