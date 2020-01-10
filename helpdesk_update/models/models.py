@@ -235,7 +235,7 @@ class helpdesk_update(models.Model):
     def crear_solicitud_refaccion(self):
         for record in self:  
             if len(record.x_studio_productos) > 0:
-                if (record.x_studio_tipo_de_falla == 'Solicitud de refacción' ) or (record.x_studio_tipo_de_incidencia == 'Solicitud de refacción' ):                
+                #if (record.x_studio_tipo_de_falla == 'Solicitud de refacción' ) or (record.x_studio_tipo_de_incidencia == 'Solicitud de refacción' ):                
                     sale = self.env['sale.order'].create({'partner_id' : record.partner_id.id
                                                                  , 'origin' : "Ticket de refacción: " + str(record.x_studio_id_ticket)
                                                                  , 'x_studio_tipo_de_solicitud' : 'Venta'
