@@ -368,7 +368,7 @@ class helpdesk_update(models.Model):
                       self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': 'captura ','x_disgnostico':'capturas :' + str('Mono'+str(c.x_studio_contador_bn_a_capturar)+', Color '+str(c.x_studio_contador_color_a_capturar)+', Amarillo '+str(c.x_studio__amarrillo)+', Cian '+str(c.x_studio__cian)+', Negro '+str(c.x_studio__negro)+', Magenta '+str(c.x_studio__magenta))})
                   else :
                     raise exceptions.ValidationError("Contador Monocromatico Menor")                     
-              if str(c.x_studio_field_A6PR9) != 'Negro'       
+              if str(c.x_studio_field_A6PR9) != 'Negro':       
                   if int(c.x_studio_contador_color_a_capturar) > int(c.x_studio_contador_color) and int(c.x_studio_contador_bn_a_capturar) > int(c.x_studio_contador_bn):
                       self.env['dcas.dcas'].create({'serie' : c.id
                                                     , 'contadorMono' : c.x_studio_contador_bn_a_capturar
