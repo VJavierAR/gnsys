@@ -126,6 +126,11 @@ class tfs(models.Model):
                         record['cliente'] = cliente
                         record['localidad'] = localidad
                         i=1
+                j=0
+                for dc in record.serie.dca:
+                   if(j==0):
+                    record['contadorAnterior']=dc.id
+                    j=j+1
             #if record.localidad:
              #   record['almacen'] =self.env['stock.warehouse'].search([['x_studio_field_E0H1Z','=',record.localidad.id]])
             #self.onchange_localidad()
