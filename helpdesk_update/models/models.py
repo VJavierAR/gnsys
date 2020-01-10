@@ -253,13 +253,13 @@ class helpdesk_update(models.Model):
                 _logger.info("********Venta creada, id: " + str(sale.id))
                 #self.env.cr.commit()
                 #for c in self.x_studio_field_tLWzF:
+                record['x_studio_field_nO7Xg'] = sale.id
                 for c in self.x_studio_productos:
                     self.env['sale.order.line'].create({'order_id' : sale.id
                                                                , 'product_id' : c.id
                                                                , 'product_uom_qty' : c.x_studio_cantidad_pedida
                                                                ,'x_studio_field_9nQhR':self.x_studio_equipo_por_nmero_de_serie[0].id
                                                               })
-                    self['x_studio_field_nO7Xg'] = sale.id
                     sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
                     #self.env.invalidate_all()
                     self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
@@ -348,6 +348,31 @@ class helpdesk_update(models.Model):
     """        
     
     
+    @api.onchange('x_studio_captura_c')
+    def capturandoMesa(self):
+      for record in self:  
+            for c in record.x_studio_equipo_por_nmero_de_serie:
+              self.env['sale.order.line'].create({'order_id' : sale.id
+                                            , 'product_id' : c.x_studio_toner_compatible.id
+                                            , 'product_uom_qty' :1
+                                            ,'x_studio_field_9nQhR':c.id      
+                                          })
+              self.env['dcas.dcas'].create({'serie' : c.id
+                                            , 'contadorMono' : c.x_studio_contador_bn_a_capturar
+                                            , 'contadorColor' :c.x_studio_contador_color_a_capturar
+                                            ,'porcentajeNegro':c.x_studio__negro
+                                            ,'porcentajeCian':c.x_studio__cian      
+                                            ,'porcentajeAmarillo':c.x_studio__amarrillo      
+                                            ,'porcentajeMagenta':c.x_studio__magenta
+                                            ,'x_studio_descripcion':self.name
+                                            ,'x_studio_tickett':self.x_studio_id_ticket
+                                            ,'x_studio_hoja_de_estado':c.x_studio_evidencias
+                                            ,'x_studio_usuariocaptura':self.env.user.name
+                                            ,'fuente':'stock.production.lot'
+                                            
+                                          })                  
+              self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "captura",'x_disgnostico':'capturas : Mono'+c.x_studio_contador_bn_a_capturar+', Color '+c.x_studio_contador_color_a_capturar+', Amarillo '+c.x_studio__amarrillo+', Cian '+c.x_studio__cian+', Negro '+c.x_studio__negro+', Magenta '+c.x_studio__magenta})
+       
     
     @api.onchange('x_studio_tipo_de_requerimiento')
     def toner(self):
@@ -381,8 +406,11 @@ class helpdesk_update(models.Model):
                                             ,'x_studio_tickett':self.x_studio_id_ticket
                                             ,'x_studio_hoja_de_estado':c.x_studio_evidencias
                                             ,'x_studio_usuariocaptura':self.env.user.name
+                                            ,'fuente':'helpdesk.ticket'
                                             
-                                          })  
+                                          })
+              self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "captura",'x_disgnostico':'capturas : Mono'+c.x_studio_contador_bn_a_capturar+', Color '+c.x_studio_contador_color_a_capturar+', Amarillo '+c.x_studio__amarrillo+', Cian '+c.x_studio__cian+', Negro '+c.x_studio__negro+', Magenta '+c.x_studio__magenta})
+
                 
             sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
             self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
