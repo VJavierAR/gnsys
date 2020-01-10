@@ -349,6 +349,7 @@ class helpdesk_update(models.Model):
     def capturandoMesa(self):
       for record in self:  
             for c in record.x_studio_equipo_por_nmero_de_serie:
+              _logger.info("lol: " + str(c.x_studio_field_A6PR9))                                                   
               if int(c.x_studio_contador_bn_a_capturar) > int(c.x_studio_contador_bn)  and str(c.x_studio_field_A6PR9) =='Negro':
                   self.env['dcas.dcas'].create({'serie' : c.id
                                                 , 'contadorMono' : c.x_studio_contador_bn_a_capturar
