@@ -350,6 +350,10 @@ class helpdesk_update(models.Model):
       for record in self:  
             for c in record.x_studio_equipo_por_nmero_de_serie:
               _logger.info("lol: " + str(c.x_studio_field_A6PR9))
+              if self.team_id.id==8:
+                q='helpdesk.ticket'
+              else:
+                q='stock.production.lot'
               if str(c.x_studio_field_A6PR9) =='Negro':
                   if int(c.x_studio_contador_bn_a_capturar) > int(c.x_studio_contador_bn)  :
                       
@@ -364,7 +368,7 @@ class helpdesk_update(models.Model):
                                                     ,'x_studio_tickett':self.x_studio_id_ticket
                                                     ,'x_studio_hoja_de_estado':c.x_studio_evidencias
                                                     ,'x_studio_usuariocaptura':self.env.user.name
-                                                    ,'fuente':'helpdesk.ticket'                                            
+                                                    ,'fuente':q                                            
                                                   })                  
                       self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': 'captura ','x_disgnostico':'capturas :' + str('Mono'+str(c.x_studio_contador_bn_a_capturar)+', Color '+str(c.x_studio_contador_color_a_capturar)+', Amarillo '+str(c.x_studio__amarrillo)+', Cian '+str(c.x_studio__cian)+', Negro '+str(c.x_studio__negro)+', Magenta '+str(c.x_studio__magenta))})
                   else :
@@ -382,7 +386,7 @@ class helpdesk_update(models.Model):
                                                     ,'x_studio_tickett':self.x_studio_id_ticket
                                                     ,'x_studio_hoja_de_estado':c.x_studio_evidencias
                                                     ,'x_studio_usuariocaptura':self.env.user.name
-                                                    ,'fuente':'helpdesk.ticket'                                            
+                                                    ,'fuente':q                                            
                                                   })                  
                       self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': 'captura ','x_disgnostico':'capturas :' + str('Mono'+str(c.x_studio_contador_bn_a_capturar)+', Color '+str(c.x_studio_contador_color_a_capturar)+', Amarillo '+str(c.x_studio__amarrillo)+', Cian '+str(c.x_studio__cian)+', Negro '+str(c.x_studio__negro)+', Magenta '+str(c.x_studio__magenta))})
                   else :
@@ -410,6 +414,7 @@ class helpdesk_update(models.Model):
                                             , 'product_uom_qty' :1
                                             ,'x_studio_field_9nQhR':c.id      
                                           })
+              """  
               self.env['dcas.dcas'].create({'serie' : c.id
                                             , 'contadorMono' : c.x_studio_contador_bn_a_capturar
                                             , 'contadorColor' :c.x_studio_contador_color_a_capturar
@@ -424,9 +429,10 @@ class helpdesk_update(models.Model):
                                             ,'fuente':'helpdesk.ticket'
                                             
                                           })
+                                        
             
               self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': 'captura ','x_disgnostico':'capturas :' + str('Mono'+str(c.x_studio_contador_bn_a_capturar)+', Color '+str(c.x_studio_contador_color_a_capturar)+', Amarillo '+str(c.x_studio__amarrillo)+', Cian '+str(c.x_studio__cian)+', Negro '+str(c.x_studio__negro)+', Magenta '+str(c.x_studio__magenta))})
-
+              """ 
                 
             sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
             self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
