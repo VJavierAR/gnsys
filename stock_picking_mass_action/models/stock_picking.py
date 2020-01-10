@@ -74,6 +74,7 @@ class StockPicking(Model):
         self.is_locked = not self.is_locked
         return True
     
+    
     @api.depends('picking_type_id')
     def hide(self):
         for record in self:
