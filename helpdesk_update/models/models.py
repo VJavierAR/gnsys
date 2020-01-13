@@ -237,56 +237,61 @@ class helpdesk_update(models.Model):
     #@api.oncgange()
     @api.multi
     def crear_solicitud_refaccion(self):
-        for record in self:  
-            if len(record.x_studio_productos) > 0:
-                #if (record.x_studio_tipo_de_falla == 'Solicitud de refacción' ) or (record.x_studio_tipo_de_incidencia == 'Solicitud de refacción' ):                
-                    sale = self.env['sale.order'].create({'partner_id' : record.partner_id.id
-                                                                 , 'origin' : "Ticket de refacción: " + str(record.x_studio_id_ticket)
-                                                                 , 'x_studio_tipo_de_solicitud' : 'Venta'
-                                                                 , 'x_studio_requiere_instalacin' : True
-                                                                 #, 'x_studio_fecha_y_hora_de_visita' : self.x_studio_rango_inicial_de_visita
-                                                                 #, 'x_studio_field_rrhrN' : self.x_studio_rango_final_de_visita
-                                                                 #, 'x_studio_comentarios_para_la_visita' : str(self.ticket_type_id.name)
-                                                                 #, 'x_studio_field_bAsX8' : self.x_studio_prioridad
-                                                                 #, 'commitment_date' : self.x_studio_rango_inicial_de_visita
-                                                                 #, 'x_studio_fecha_final' : self.x_studio_rango_final_de_visita
-                                                                 , 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id
-                                                                 , 'user_id' : record.user_id.id
-                                                                 , 'x_studio_tcnico' : record.x_studio_tcnico.id
-                                                                 , 'warehouse_id' : 5865   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
-                                                                 , 'team_id' : 1})
-                    _logger.info("********Venta creada, id: " + str(sale.id))
-                    record['x_studio_field_nO7Xg'] = sale.id
-                    for c in record.x_studio_productos:
-                        self.env['sale.order.line'].create({'order_id' : sale.id
-                                                                   , 'product_id' : c.id
-                                                                   , 'product_uom_qty' : c.x_studio_cantidad_pedida
-                                                                   ,'x_studio_field_9nQhR':self.x_studio_equipo_por_nmero_de_serie[0].id
-                                                                  })
-                        sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
-                        self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
+        for record in self:
+            if record.x_studio_id_ticket != 0:
+                if len(record.x_studio_productos) > 0:
+                    #if (record.x_studio_tipo_de_falla == 'Solicitud de refacción' ) or (record.x_studio_tipo_de_incidencia == 'Solicitud de refacción' ):
+                        sale = self.env['sale.order'].create({'partner_id' : record.partner_id.id
+                                                                     , 'origin' : "Ticket de refacción: " + str(record.x_studio_id_ticket)
+                                                                     , 'x_studio_tipo_de_solicitud' : 'Venta'
+                                                                     , 'x_studio_requiere_instalacin' : True
+                                                                     #, 'x_studio_fecha_y_hora_de_visita' : self.x_studio_rango_inicial_de_visita
+                                                                     #, 'x_studio_field_rrhrN' : self.x_studio_rango_final_de_visita
+                                                                     #, 'x_studio_comentarios_para_la_visita' : str(self.ticket_type_id.name)
+                                                                     #, 'x_studio_field_bAsX8' : self.x_studio_prioridad
+                                                                     #, 'commitment_date' : self.x_studio_rango_inicial_de_visita
+                                                                     #, 'x_studio_fecha_final' : self.x_studio_rango_final_de_visita
+                                                                     , 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id
+                                                                     , 'user_id' : record.user_id.id
+                                                                     , 'x_studio_tcnico' : record.x_studio_tcnico.id
+                                                                     , 'warehouse_id' : 5865   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
+                                                                     , 'team_id' : 1})
+                        _logger.info("********Venta creada, id: " + str(sale.id))
+                        record['x_studio_field_nO7Xg'] = sale.id
+                        for c in record.x_studio_productos:
+                            self.env['sale.order.line'].create({'order_id' : sale.id
+                                                                       , 'product_id' : c.id
+                                                                       , 'product_uom_qty' : c.x_studio_cantidad_pedida
+                                                                       ,'x_studio_field_9nQhR':self.x_studio_equipo_por_nmero_de_serie[0].id
+                                                                      })
+                            sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
+                            self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
 
 
 
-                    #if sale.id:
-                    #    if self.x_studio_id_ticket:
-                            #raise exceptions.ValidationError("error gerardo")
-                            #if self.stage_id.name == 'Atención' and self.team_id.name == 'Equipo de hardware':
-                    query = "update helpdesk_ticket set stage_id = 100 where id = " + str(self.x_studio_id_ticket) + ";"
-                    _logger.info("lol: " + query)
-                    ss = self.env.cr.execute(query)
-                    _logger.info("**********fun: crear_solicitud_refaccion(), estado: " + str(self.stage_id.name))
-                        #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
-                    self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Solicitud de refacción"})
-                    """
-                    if self.team_id.name == 'Equipo de hardware':
+                        #if sale.id:
+                        #    if self.x_studio_id_ticket:
+                                #raise exceptions.ValidationError("error gerardo")
+                                #if self.stage_id.name == 'Atención' and self.team_id.name == 'Equipo de hardware':
                         query = "update helpdesk_ticket set stage_id = 100 where id = " + str(self.x_studio_id_ticket) + ";"
                         _logger.info("lol: " + query)
                         ss = self.env.cr.execute(query)
                         _logger.info("**********fun: crear_solicitud_refaccion(), estado: " + str(self.stage_id.name))
-                        #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
+                            #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
                         self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Solicitud de refacción"})
-                    """
+                        """
+                        if self.team_id.name == 'Equipo de hardware':
+                            query = "update helpdesk_ticket set stage_id = 100 where id = " + str(self.x_studio_id_ticket) + ";"
+                            _logger.info("lol: " + query)
+                            ss = self.env.cr.execute(query)
+                            _logger.info("**********fun: crear_solicitud_refaccion(), estado: " + str(self.stage_id.name))
+                            #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
+                            self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Solicitud de refacción"})
+                        """
+            else:
+                errorRefaccionNoGenerada = "Solicitud de refacción no generada"
+                mensajeSolicitudRefaccionNoGenerada = "No es posible crear una solicitud de refacción sin guardar antes el ticket. Favor de guardar el ticket y posteriormente generar la solicitud"
+                raise exceptions.except_orm(_(errorRefaccionNoGenerada), _(mensajeSolicitudRefaccionNoGenerada))
                 
                 
                 
@@ -400,72 +405,76 @@ class helpdesk_update(models.Model):
     
     @api.onchange('x_studio_tipo_de_requerimiento')
     def toner(self):
-      for record in self:  
-        if (record.team_id.id == 8 ) and record.x_studio_tipo_de_requerimiento == 'Tóner':
-            sale = self.env['sale.order'].create({'partner_id' : record.partner_id.id
-                                            , 'origin' : "Ticket de tóner: " + str(record.x_studio_id_ticket)
-                                            , 'x_studio_tipo_de_solicitud' : "Venta"
-                                            , 'x_studio_requiere_instalacin' : True                                       
-                                            , 'user_id' : record.user_id.id                                           
-                                            , 'x_studio_tcnico' : record.x_studio_tcnico.id
-                                            , 'warehouse_id' : 1   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
-                                            , 'team_id' : 1      
-                                          })
-            record['x_studio_field_nO7Xg'] = sale.id
-            for c in record.x_studio_equipo_por_nmero_de_serie:
-              _logger.info('*************cantidad a solicitar: ' + str(c.id))
-              self.env['sale.order.line'].create({'order_id' : sale.id
-                                            , 'product_id' : c.x_studio_toner_compatible.id
-                                            , 'product_uom_qty' :1
-                                            ,'x_studio_field_9nQhR':c.id      
-                                          })
-              """  
-              self.env['dcas.dcas'].create({'serie' : c.id
-                                            , 'contadorMono' : c.x_studio_contador_bn_a_capturar
-                                            , 'contadorColor' :c.x_studio_contador_color_a_capturar
-                                            ,'porcentajeNegro':c.x_studio__negro
-                                            ,'porcentajeCian':c.x_studio__cian      
-                                            ,'porcentajeAmarillo':c.x_studio__amarrillo      
-                                            ,'porcentajeMagenta':c.x_studio__magenta
-                                            ,'x_studio_descripcion':self.name
-                                            ,'x_studio_tickett':self.x_studio_id_ticket
-                                            ,'x_studio_hoja_de_estado':c.x_studio_evidencias
-                                            ,'x_studio_usuariocaptura':self.env.user.name
-                                            ,'fuente':'helpdesk.ticket'
-                                            
-                                          })
-                                        
-            
-              self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': 'captura ','x_disgnostico':'capturas :' + str('Mono'+str(c.x_studio_contador_bn_a_capturar)+', Color '+str(c.x_studio_contador_color_a_capturar)+', Amarillo '+str(c.x_studio__amarrillo)+', Cian '+str(c.x_studio__cian)+', Negro '+str(c.x_studio__negro)+', Magenta '+str(c.x_studio__magenta))})
-              """ 
-                
-            sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
-            self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
-        if (record.team_id.id == 13 ) and record.x_studio_tipo_de_requerimiento == 'Tóner':
-            sale = self.env['sale.order'].create({'partner_id' : record.partner_id.id
-                                            , 'origin' : "Ticket de tfs: " + str(record.x_studio_id_ticket)
-                                            , 'x_studio_tipo_de_solicitud' : "Venta"
-                                            , 'x_studio_requiere_instalacin' : True                                       
-                                            , 'user_id' : record.user_id.id                                           
-                                            , 'x_studio_tcnico' : record.x_studio_tcnico.id
-                                            , 'warehouse_id' : 1   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
-                                            , 'team_id' : 1      
-                                          })
-            record['x_studio_field_nO7Xg'] = sale.id
-            for c in record.x_studio_seriestoner:
-              #_logger.info('*************cantidad a solicitar: ' + str(c.x_studio_cantidad_a_solicitar))
-              self.env['sale.order.line'].create({'order_id' : sale.id
-                                            , 'product_id' : c.id
-                                            , 'product_uom_qty' : 1.0
-                                          })
-            sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
-            self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")    
-        
-        query = "update helpdesk_ticket set stage_id = 91 where id = " + str(self.x_studio_id_ticket) + ";"
-        _logger.info("lol: " + query)
-        ss = self.env.cr.execute(query)
-        self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Pendiente por autorizar solicitud"})
-        
+      for record in self:
+        if record.x_studio_id_ticket != 0:
+            if (record.team_id.id == 8 ) and record.x_studio_tipo_de_requerimiento == 'Tóner':
+                sale = self.env['sale.order'].create({'partner_id' : record.partner_id.id
+                                                , 'origin' : "Ticket de tóner: " + str(record.x_studio_id_ticket)
+                                                , 'x_studio_tipo_de_solicitud' : "Venta"
+                                                , 'x_studio_requiere_instalacin' : True                                       
+                                                , 'user_id' : record.user_id.id                                           
+                                                , 'x_studio_tcnico' : record.x_studio_tcnico.id
+                                                , 'warehouse_id' : 1   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
+                                                , 'team_id' : 1      
+                                              })
+                record['x_studio_field_nO7Xg'] = sale.id
+                for c in record.x_studio_equipo_por_nmero_de_serie:
+                  _logger.info('*************cantidad a solicitar: ' + str(c.id))
+                  self.env['sale.order.line'].create({'order_id' : sale.id
+                                                , 'product_id' : c.x_studio_toner_compatible.id
+                                                , 'product_uom_qty' :1
+                                                ,'x_studio_field_9nQhR':c.id      
+                                              })
+                  """  
+                  self.env['dcas.dcas'].create({'serie' : c.id
+                                                , 'contadorMono' : c.x_studio_contador_bn_a_capturar
+                                                , 'contadorColor' :c.x_studio_contador_color_a_capturar
+                                                ,'porcentajeNegro':c.x_studio__negro
+                                                ,'porcentajeCian':c.x_studio__cian      
+                                                ,'porcentajeAmarillo':c.x_studio__amarrillo      
+                                                ,'porcentajeMagenta':c.x_studio__magenta
+                                                ,'x_studio_descripcion':self.name
+                                                ,'x_studio_tickett':self.x_studio_id_ticket
+                                                ,'x_studio_hoja_de_estado':c.x_studio_evidencias
+                                                ,'x_studio_usuariocaptura':self.env.user.name
+                                                ,'fuente':'helpdesk.ticket'
+
+                                              })
+
+
+                  self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': 'captura ','x_disgnostico':'capturas :' + str('Mono'+str(c.x_studio_contador_bn_a_capturar)+', Color '+str(c.x_studio_contador_color_a_capturar)+', Amarillo '+str(c.x_studio__amarrillo)+', Cian '+str(c.x_studio__cian)+', Negro '+str(c.x_studio__negro)+', Magenta '+str(c.x_studio__magenta))})
+                  """ 
+
+                sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
+                self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
+            if (record.team_id.id == 13 ) and record.x_studio_tipo_de_requerimiento == 'Tóner':
+                sale = self.env['sale.order'].create({'partner_id' : record.partner_id.id
+                                                , 'origin' : "Ticket de tfs: " + str(record.x_studio_id_ticket)
+                                                , 'x_studio_tipo_de_solicitud' : "Venta"
+                                                , 'x_studio_requiere_instalacin' : True                                       
+                                                , 'user_id' : record.user_id.id                                           
+                                                , 'x_studio_tcnico' : record.x_studio_tcnico.id
+                                                , 'warehouse_id' : 1   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
+                                                , 'team_id' : 1      
+                                              })
+                record['x_studio_field_nO7Xg'] = sale.id
+                for c in record.x_studio_seriestoner:
+                  #_logger.info('*************cantidad a solicitar: ' + str(c.x_studio_cantidad_a_solicitar))
+                  self.env['sale.order.line'].create({'order_id' : sale.id
+                                                , 'product_id' : c.id
+                                                , 'product_uom_qty' : 1.0
+                                              })
+                sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
+                self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")    
+
+            query = "update helpdesk_ticket set stage_id = 91 where id = " + str(self.x_studio_id_ticket) + ";"
+            _logger.info("lol: " + query)
+            ss = self.env.cr.execute(query)
+            self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Pendiente por autorizar solicitud"})
+        else:
+            errorTonerNoGenerada = "Solicitud de tóner no generada"
+            mensajeSolicitudTonerNoGenerada = "No es posible crear una solicitud de tóner sin guardar antes el ticket. Favor de guardar el ticket y posteriormente generar la solicitud"
+            raise exceptions.except_orm(_(errorTonerNoGenerada), _(mensajeSolicitudTonerNoGenerada))
 
     #@api.onchange('x_studio_verificacin_de_tner')
     def validar_solicitud_toner(self):
