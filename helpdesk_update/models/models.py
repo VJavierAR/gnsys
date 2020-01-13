@@ -1016,10 +1016,10 @@ class helpdesk_update(models.Model):
         
         if int(self.x_studio_tamao_lista)>0 and team_id.id !=8:
            _logger.info("actualiza_datos_cliente()"+str(self.x_studio_equipo_por_nmero_de_serie[0].id))
-            query = "select * from helpdesk_ticket_stock_production_lot_rel where stock_production_lot_id  = " + str(self.x_studio_equipo_por_nmero_de_serie[0].id) + ";"
-            self.env.cr.execute(query)
-            informacion = self.env.cr.fetchall()
-            _logger.info("actualiza_datos_cliente()2"+str(self.x_studio_equipo_por_nmero_de_serie[0].id) + str(informacion))
+           query = "select * from helpdesk_ticket_stock_production_lot_rel where stock_production_lot_id  = " + str(self.x_studio_equipo_por_nmero_de_serie[0].id) + ";"
+           self.env.cr.execute(query)
+           informacion = self.env.cr.fetchall()
+           _logger.info("actualiza_datos_cliente()2"+str(self.x_studio_equipo_por_nmero_de_serie[0].id) + str(informacion))
         
         _logger.info("self._origin: " + str(self._origin) + ' self._origin.id: ' + str(self._origin.id))
         
