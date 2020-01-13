@@ -21,7 +21,7 @@ class helpdesk_update(models.Model):
     historialCuatro = fields.One2many('x_historial_helpdesk','x_id_ticket',string='historial de ticket estados',store=True,track_visibility='onchange')
     documentosTecnico = fields.Many2many('ir.attachment', string="Evidencias Técnico")
     stage_id = fields.Many2one('helpdesk.stage', string='Stage', ondelete='restrict', track_visibility='onchange',group_expand='_read_group_stage_ids',readonly=True,copy=False,index=True, domain="[('team_ids', '=', team_id)]")
-    productos = fields.One2many('product.product',string='Solicitudes',store=True)
+    productos = fields.One2many('product.product','x_id_ticket',string='Solicitudes',store=True)
     
     days_difference = fields.Integer(compute='_compute_difference')
     
