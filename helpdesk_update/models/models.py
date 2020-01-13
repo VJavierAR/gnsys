@@ -250,6 +250,7 @@ class helpdesk_update(models.Model):
                                                                  #, 'x_studio_field_bAsX8' : self.x_studio_prioridad
                                                                  #, 'commitment_date' : self.x_studio_rango_inicial_de_visita
                                                                  #, 'x_studio_fecha_final' : self.x_studio_rango_final_de_visita
+                                                                 , 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id
                                                                  , 'user_id' : record.user_id.id
                                                                  , 'x_studio_tcnico' : record.x_studio_tcnico.id
                                                                  , 'warehouse_id' : 5865   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
