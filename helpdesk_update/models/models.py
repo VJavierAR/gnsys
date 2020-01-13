@@ -1019,9 +1019,12 @@ class helpdesk_update(models.Model):
            query = "select * from helpdesk_ticket_stock_production_lot_rel where stock_production_lot_id  = " + str(self.x_studio_equipo_por_nmero_de_serie[0].id) + "limit 1 ;"
            self.env.cr.execute(query)
            informacion = self.env.cr.fetchall()
-           _logger.info("actualiza_datos_cliente()2"+str(self.x_studio_equipo_por_nmero_de_serie[0].id) + str(informacion[0][1]))
+           queryD = "select stage_id from helpdesk_ticket where id  = " + str(informacion[0][0]) + "limit 1;"
+           self.env.cr.execute(queryD)
+           informacionD = self.env.cr.fetchall()                                    
+           _logger.info("actualiza_datos_cliente2()  "+str(self.x_studio_equipo_por_nmero_de_serie[0].id) +'18=='+ str(informacionD))
            if int(self.x_studio_equipo_por_nmero_de_serie[0].id)==int(informacion[0][1]):
-              raise exceptions.ValidationError("No es posible registrar más de un número de serie")
+              raise exceptions.ValidationError("No es posible registrar número de serie ")
 
         
         _logger.info("self._origin: " + str(self._origin) + ' self._origin.id: ' + str(self._origin.id))
