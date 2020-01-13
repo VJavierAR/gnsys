@@ -1013,7 +1013,7 @@ class helpdesk_update(models.Model):
     @api.onchange('x_studio_equipo_por_nmero_de_serie')
     #@api.depends('x_studio_equipo_por_nmero_de_serie')
     def actualiza_datos_cliente(self):
-        _logger.info("actualiza_datos_cliente()")
+        _logger.info("actualiza_datos_cliente()"+self.x_studio_equipo_por_nmero_de_serie[0].id)
         _logger.info("self._origin: " + str(self._origin) + ' self._origin.id: ' + str(self._origin.id))
         
         v = {}
