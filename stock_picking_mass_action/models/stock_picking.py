@@ -138,6 +138,7 @@ class StockPickingMoveTemp(Model):
     
     @api.onchange('ubicacion','producto')
     def quant(self):
+        self.disponible=0
         h=self.env['stock.quant'].search([['product_id','=',self.producto.id],['location_id','=',self.ubicacion.id],['quantity','>',0]])
         if(len(h)>0):
             self.stock=h.id
