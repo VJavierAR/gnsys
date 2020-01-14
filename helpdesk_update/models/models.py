@@ -93,10 +93,10 @@ class helpdesk_update(models.Model):
     """
     @api.onchange('x_studio_equipo_por_nmero_de_serie')
     def anadirProductosATabla(self):
-        """
+        
             Añade productos y el numero de serie que se agregaron al equipor 
             numero de serie a la tabla de productos. 
-        """
+        
         _logger.info("anadirProductosATabla")
         if len(self.x_studio_equipo_por_nmero_de_serie) > 0:
             data = []
