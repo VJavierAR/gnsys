@@ -136,7 +136,7 @@ class StockPickingMoveTemp(Model):
     unidad=fields.Many2one('uom.uom',related='producto.uom_id')
     lock=fields.Boolean('lock')
     
-    @api.onchange('ubicacion')
+    @api.onchange('ubicacion','producto')
     def quant(self):
         h=self.env['stock.quant'].search([['product_id','=',self.producto.id],['location_id','=',self.ubicacion.id],['quantity','>',0]])
         if(len(h)>0):
