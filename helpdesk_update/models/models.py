@@ -166,14 +166,16 @@ class helpdesk_update(models.Model):
     #@api.onchange('stage_id')
     def cambioResuelto(self):
         #_logger.info("update current mode......................................")
-        if self.stage_id.name == 'Atención' and self.x_studio_productos != []:
-            #raise exceptions.ValidationError("error gerardo: " + str(self.stage_id.name))
-            query = "update helpdesk_ticket set stage_id = 3 where id = " + str(self.x_studio_id_ticket) + ";"
-            _logger.info("lol: " + query)
-            ss = self.env.cr.execute(query)
-            _logger.info("**********fun: cambioResuelto(), estado: " + str(self.stage_id.name))
-            #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
-            self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Resuelto"})
+        #if self.team_id == 8:
+        #    if len(self.documentosTecnico)
+        #if self.stage_id.name == 'Atención' and self.x_studio_productos != []:
+        #raise exceptions.ValidationError("error gerardo: " + str(self.stage_id.name))
+        query = "update helpdesk_ticket set stage_id = 3 where id = " + str(self.x_studio_id_ticket) + ";"
+        _logger.info("lol: " + query)
+        ss = self.env.cr.execute(query)
+        _logger.info("**********fun: cambioResuelto(), estado: " + str(self.stage_id.name))
+        #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
+        self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Resuelto"})
     
 
     
