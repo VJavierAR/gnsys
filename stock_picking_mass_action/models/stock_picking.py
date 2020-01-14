@@ -52,7 +52,7 @@ class StockPicking(Model):
             dat=[]
             for m in self.move_ids_without_package:
                 dat.append({'producto':m.product_id.id,'cantidad':m.product_uom_qty,'ubicacion':self.location_id.id})
-            self.lineTemp=dat
+            self.sudo().lineTemp=dat
             for s in self.sale_id.order_line:
                 self.env.cr.execute("delete from stock_move_line where reference='"+self.name+"';")
                 self.env.cr.execute("delete from stock_move where origin='"+self.sale_id.name+"';")
