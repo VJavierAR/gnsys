@@ -90,6 +90,26 @@ class helpdesk_update(models.Model):
                 record['x_studio_tecnico'] = str(historial[ultimaFila].x_persona)
     """                
     
+    """
+    @api.onchange('x_studio_equipo_por_nmero_de_serie')
+    def anadirProductosATabla(self):
+        """
+            Añade productos y el numero de serie que se agregaron al equipor 
+            numero de serie a la tabla de productos. 
+        """
+        _logger.info("anadirProductosATabla")
+        if len(self.x_studio_equipo_por_nmero_de_serie) > 0:
+            data = []
+            for numeroDeSerie in self.x_studio_equipo_por_nmero_de_serie:
+                data.append({'x_studio_currentuser': 
+                           , 'categ_id': 
+                           , '':
+                            })
+                str(numeroDeSerie.name)
+                numeroDeSerie.x_studio_field_lMCjm.id
+    """                
+    
+    
     
     
     @api.onchange('x_studio_generar_cambio')
@@ -267,6 +287,7 @@ class helpdesk_update(models.Model):
                                                                    , 'product_id' : c.id
                                                                    , 'product_uom_qty' : c.x_studio_cantidad_pedida
                                                                    ,'x_studio_field_9nQhR':self.x_studio_equipo_por_nmero_de_serie[0].id
+                                                                   , 'price_unit': 0
                                                                   })
                         sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
                         self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
