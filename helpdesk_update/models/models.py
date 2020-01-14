@@ -23,7 +23,7 @@ class helpdesk_update(models.Model):
     stage_id = fields.Many2one('helpdesk.stage', string='Stage', ondelete='restrict', track_visibility='onchange',group_expand='_read_group_stage_ids',readonly=True,copy=False,index=True, domain="[('team_ids', '=', team_id)]")
     productos = fields.One2many('product.product','id',string='Solicitudes',store=True)
     
-    days_difference = fields.Integer(compute='_compute_difference')
+    days_difference = fields.Integer(compute='_compute_difference',string='días de atraso')
     
     def _compute_difference(self):
         for rec in self:
