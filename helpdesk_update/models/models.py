@@ -449,7 +449,8 @@ class helpdesk_update(models.Model):
               self.env['sale.order.line'].create({'order_id' : sale.id
                                             , 'product_id' : c.x_studio_toner_compatible.id
                                             , 'product_uom_qty' :1
-                                            ,'x_studio_field_9nQhR':c.id      
+                                            , 'x_studio_field_9nQhR': c.id      
+                                            , 'price_unit': 0
                                           })
               """  
               self.env['dcas.dcas'].create({'serie' : c.id
