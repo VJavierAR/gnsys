@@ -11,7 +11,7 @@ class StockPicking(Model):
     ajusta=fields.Boolean('Ajusta')
     #ticketOrigenEnVenta = fields.Char(string='Documento de origen en venta', store=True, related='sale_id.origin')
     estado = fields.Text(compute = 'x_historial_ticket_actualiza')
-    
+    lineTemp=fields.One2many('stock.pick.temp','picking')
     
     @api.multi
     @api.depends('state')
@@ -60,17 +60,25 @@ class StockPicking(Model):
     
     def action_toggle_is_locked(self):
         self.ensure_one()
-        for record in self:
-            if(record.sale_id):
-                pedido=record.sale_id
-            #    record['state']='draft'
-            if(self.is_locked==False):
-                for s in record.move_ids_without_package:
-                    if (s.product_id.id!=s.x_studio_field_mpmwm):
-                        self.env.cr.execute("delete from stock_move_line where move_id = "+str(s.x_studio_id)+";")
-                        self.env.cr.execute("delete from stock_move where origin = '" + record.origin + "' and product_id="+str(s.x_studio_field_mpmwm)+";")
-                        self.env.cr.execute("delete from sale_order_line where  order_id = " + str(pedido.id) + " and product_id="+str(s.x_studio_field_mpmwm)+";")
-                        self.env.cr.execute("delete from stock_move where id =" + str(s.x_studio_id)+";")
+        if(self.is_locked==True):
+            #borrado
+            dat=[]
+            for m in self.move_ids_without_package:
+                dat.append({'producto':m.product_id.id,'cantidad':m.product_uom_qty})
+            self.lineTemp=dat
+            for s in self.sale_id.order_line:
+                self.env.cr.execute("delete from stock_move_line where reference='"+self.name+"';")
+                self.env.cr.execute("delete from stock_move where origin='"+self.sale_id.name+"';")
+                self.env.cr.execute("delete from sale_order_line where id="+str(s.id)+";")
+        if(self.is_locked==False):
+            self.env.cr.execute("update stock_picking set state='draft' where sale_id="+str(self.sale_id.id)+";")
+            self.env.cr.execute("select id from stock_picking where sale_id="+str(self.sale_id.id)+";")
+            pickis=self.env.cr.fetchall()
+            pick=self.env['stock.picking'].search([['id','in',pickis]])
+            for li in self.lineTemp:
+                ss=self.env['sale.order.line'].create({'order_id':self.sale_id.id,'product_id':li.producto.id,'product_uom':li.producto.uom_id.id,'product_uom_qty':li.cantidad,'name':li.producto.description,'price_unit':0.00})
+            for p in pick:
+                p.action_confirm()
         self.is_locked = not self.is_locked
         return True
     
@@ -119,23 +127,35 @@ class StockPicking(Model):
     _inherit = 'stock.move'
     almacenOrigen=fields.Many2one('stock.warehouse','Almacen Origen')
     
-    @api.onchange('product_id')
-    def chanProduct(self):
-        for record in self:
-            if('SU' in record.picking_id.name and record.origin!=False and record.product_id!=False and 'SO' in record.origin):
-                sale=self.sudo().env['sale.order'].search([['name','=',record.origin]])
-                moveAnterior=self.sudo().env['stock.move'].browse(record.x_studio_id)
+    #@api.onchange('product_id')
+    #def chanProduct(self):
+    #    for record in self:
+    #        if('SU' in record.picking_id.name and record.origin!=False and record.product_id!=False and 'SO' in record.origin):
+     #           sale=self.sudo().env['sale.order'].search([['name','=',record.origin]])
+      #          moveAnterior=self.sudo().env['stock.move'].browse(record.x_studio_id)
                 #record['x_studio_anterior_product']=moveAnterior.product_id.id
                 #produc=record.product_id.id
-                dic={}
-                dic['product_uom']=record.product_uom.id
-                dic['product_uom_qty']=record.product_uom_qty
-                dic['product_id']=record.product_id.id
-                dic['name']=record.name
-                dic['price_unit']=0.00
-                dic['order_id']=sale.id
-                self.sudo().env['sale.order.line'].create(dic)
+      #          dic={}
+       #         dic['product_uom']=record.product_uom.id
+        #        dic['product_uom_qty']=record.product_uom_qty
+         #       dic['product_id']=record.product_id.id
+          #      dic['name']=record.name
+           #     dic['price_unit']=0.00
+            #    dic['order_id']=sale.id
+             #   self.sudo().env['sale.order.line'].create(dic)
             
     @api.onchange('almacenOrigen')
     def cambioOrigen(self):
-        self.location_id=self.almacenOrigen.lot_stock_id.id
+        if(self.almacenOrigen):
+            self.location_id=self.almacenOrigen.lot_stock_id.id
+        
+class StockPickingMoveTemp(Model):
+    _name='stock.pick.temp'
+    _description='Lineas Temporales'
+    producto=fields.Many2one('product.product')
+    modelo=fields.Char(related='producto.name',string='Modelo')
+    descripcion=fields.Text(related='producto.description',string='Descripción')
+    stock=fields.Many2one('stock.quant',string='Existencia')
+    cantidad=fields.Integer('Cantidad Pedida')
+    almacen=fields.Many2one('stock.warehouse')
+    picking=fields.Many2one('stock.picking')
