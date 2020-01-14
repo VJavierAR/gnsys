@@ -51,7 +51,7 @@ class StockPicking(Model):
             self.lineTemp=[(5,0,0)]
             dat=[]
             for m in self.move_ids_without_package:
-                dat.append({'producto':m.product_id.id,'cantidad':m.product_uom_qty})
+                dat.append({'producto':m.product_id.id,'cantidad':m.product_uom_qty,'ubicacion':self.location_id.id})
             self.lineTemp=dat
             for s in self.sale_id.order_line:
                 self.env.cr.execute("delete from stock_move_line where reference='"+self.name+"';")
@@ -135,3 +135,15 @@ class StockPickingMoveTemp(Model):
     picking=fields.Many2one('stock.picking')
     unidad=fields.Many2one('uom.uom',related='producto.uom_id')
     lock=fields.Boolean('lock')
+    
+    @api.onchange('ubicacion')
+    def quant(self):
+        h=self.env['stock.quant'].search([['product_id','=',self.producto.id],['location_id','=',self.ubicacion.id],['quantity','>',0]])
+        if(len(h)>0):
+            self.stock=h.id
+        if(len(h)==0):
+            d=self.env['stock.location'].search([['location_id','=',self.ubicacion.id]])
+            for di in d:
+                i=self.env['stock.quant'].search([['product_id','=',self.producto.id],['location_id','=',di.id],['quantity','>',0]])
+                if(len(i)>0):
+                    self.stock=i.id
