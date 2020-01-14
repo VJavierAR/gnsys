@@ -160,6 +160,6 @@ class StockPickingMoveTemp(Model):
     cantidad=fields.Integer('Demanda Inicial')
     almacen=fields.Many2one('stock.warehouse','Almacén Origen')
     ubicacion=fields.Many2one('stock.location','Ubicación')
-    disponible=fields.float(related='stock.quantity')
+    #disponible=fields.float(related='stock.quantity')
     picking=fields.Many2one('stock.picking')
     unidad=fields.Many2one('uom.uom',related='producto.uom_id')
