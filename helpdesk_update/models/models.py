@@ -111,13 +111,13 @@ class helpdesk_update(models.Model):
             #if self.stage_id.name != 'Abierto':
             if self.stage_id.name == 'Pre-ticket':
                 _logger.info("Id ticket: " + str(self.id))
-                query = "update helpdesk_ticket set stage_id = 89 where id = " + str(self.id) + ";"
-                #query = "update helpdesk_ticket set stage_id = 89 where id = " + str(self.x_studio_id_ticket) + ";"
+                #query = "update helpdesk_ticket set stage_id = 89 where id = " + str(self.id) + ";"
+                query = "update helpdesk_ticket set stage_id = 89 where id = " + str(self.x_studio_id_ticket) + ";"
                 _logger.info("lol: " + query)
                 ss = self.env.cr.execute(query)
                 _logger.info("**********fun: abierto(), estado: " + str(self.stage_id.name))
-                #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
-                self.env['x_historial_helpdesk'].create({'x_id_ticket':self.id ,'x_persona': self.env.user.name,'x_estado': "Abierto"})
+                self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
+                #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.id ,'x_persona': self.env.user.name,'x_estado': "Abierto"})
 
     
     @api.onchange('team_id')
