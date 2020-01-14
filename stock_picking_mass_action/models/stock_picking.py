@@ -163,3 +163,4 @@ class StockPickingMoveTemp(Model):
     disponible=fields.Float(related='stock.quantity')
     picking=fields.Many2one('stock.picking')
     unidad=fields.Many2one('uom.uom',related='producto.uom_id')
+    lock=fields.Boolean('lock')
