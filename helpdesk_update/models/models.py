@@ -1033,14 +1033,16 @@ class helpdesk_update(models.Model):
            query = "select * from helpdesk_ticket_stock_production_lot_rel where stock_production_lot_id  = " + str(self.x_studio_equipo_por_nmero_de_serie[0].id) + "limit 1 ;"
            self.env.cr.execute(query)
            informacion = self.env.cr.fetchall()
-           queryD = "select stage_id,id from helpdesk_ticket where id  = " + str(informacion[0][0]) + "and active != 'f'  limit 1;"
-           self.env.cr.execute(queryD)
-           informacionD = self.env.cr.fetchall()
-           _logger.info("actualiza_datos_cliente2()  "+str(informacionD) +'  '+ str(informacion))
-           _logger.info("actualiza_datos_cliente3()  "+str(self.x_studio_equipo_por_nmero_de_serie[0].id) +'18=='+ str(informacionD[0][0]))
-           _logger.info("aaa"+' '+str(self.x_studio_equipo_por_nmero_de_serie[0].id)+'=='+str(informacion[0][1]) +'and'+ str(informacionD[0][0]) +'==18')
-           if int(self.x_studio_equipo_por_nmero_de_serie[0].id) == int(informacion[0][1]) and int(informacionD[0][0]) != 18 :
-              raise exceptions.ValidationError("No es posible registrar número de serie, primero cerrar el ticket con el id  "+str(informacionD[0][1]))
+           if len(informacion) > 0:
+               queryD = "select stage_id,id from helpdesk_ticket where id  = " + str(informacion[0][0]) + "and active != 'f'  limit 1;"
+               self.env.cr.execute(queryD)
+               informacionD = self.env.cr.fetchall()
+               _logger.info("actualiza_datos_cliente2()  "+str(informacionD) +'  '+ str(informacion))
+               _logger.info("actualiza_datos_cliente3()  "+str(self.x_studio_equipo_por_nmero_de_serie[0].id) +'18=='+ str(informacionD[0][0]))
+               _logger.info("aaa"+' '+str(self.x_studio_equipo_por_nmero_de_serie[0].id)+'=='+str(informacion[0][1]) +'and'+ str(informacionD[0][0]) +'==18')
+               if int(self.x_studio_equipo_por_nmero_de_serie[0].id) == int(informacion[0][1]) and int(informacionD[0][0]) != 18 :
+                  raise exceptions.ValidationError("No es posible registrar número de serie, primero cerrar el ticket con el id  "+str(informacionD[0][1]))
+           
 
         
         _logger.info("self._origin: " + str(self._origin) + ' self._origin.id: ' + str(self._origin.id))
