@@ -1033,7 +1033,7 @@ class helpdesk_update(models.Model):
            query = "select * from helpdesk_ticket_stock_production_lot_rel where stock_production_lot_id  = " + str(self.x_studio_equipo_por_nmero_de_serie[0].id) + "limit 1 ;"
            self.env.cr.execute(query)
            informacion = self.env.cr.fetchall()
-           queryD = "select stage_id,id from helpdesk_ticket where id  = " + str(informacion[0][0]) + "and active is not null  limit 1;"
+           queryD = "select stage_id,id from helpdesk_ticket where id  = " + str(informacion[0][0]) + "and active != 'f'  limit 1;"
            self.env.cr.execute(queryD)
            informacionD = self.env.cr.fetchall()
            _logger.info("actualiza_datos_cliente2()  "+str(informacionD) +'  '+ str(informacion))
