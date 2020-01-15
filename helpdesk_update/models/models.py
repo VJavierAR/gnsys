@@ -26,7 +26,7 @@ class helpdesk_update(models.Model):
     days_difference = fields.Integer(compute='_compute_difference',string='días de atraso')
     
     
-        tipoDeDireccion = fields.Selection([('contact','Contacto'),('invoice','Dirección de facturación'),('delivery','Dirección de envío'),('other','Otra dirección'),('private','Dirección Privada')])
+    tipoDeDireccion = fields.Selection([('contact','Contacto'),('invoice','Dirección de facturación'),('delivery','Dirección de envío'),('other','Otra dirección'),('private','Dirección Privada')])
     subtipo = fields.Selection([('Contacto comercial','Contacto comercial'),('Contacto sistemas','Contacto sistemas'),('Contacto para pagos','Contacto parra pagos'),('Contacto para compras','Contacto para compras'),('private','Dirección Privada')])
     nombreDelContacto = fields.Char(string='Nombre de contacto')
     titulo = fields.Many2one('res.partner.title', store=True, string='Titulo')
