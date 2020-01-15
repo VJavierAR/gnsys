@@ -25,6 +25,7 @@ class helpdesk_update(models.Model):
     
     days_difference = fields.Integer(compute='_compute_difference',string='días de atraso')
     
+    localidadContacto = fields.Many2one('res.partner', store=True, track_visibility='onchange', string='Localidad contacto', domain="['&',('parent_id.id','=',idLocalidadAyuda),('type','=','contact')]")
     
     tipoDeDireccion = fields.Selection([('contact','Contacto'),('invoice','Dirección de facturación'),('delivery','Dirección de envío'),('other','Otra dirección'),('private','Dirección Privada')])
     subtipo = fields.Selection([('Contacto comercial','Contacto comercial'),('Contacto sistemas','Contacto sistemas'),('Contacto para pagos','Contacto parra pagos'),('Contacto para compras','Contacto para compras'),('private','Dirección Privada')])
@@ -50,6 +51,12 @@ class helpdesk_update(models.Model):
     
     agregarContactoCheck = fields.Boolean(string="Añadir contacto", default=False)
     
+    idLocalidadAyuda = fields.Integer(compute='_compute_id_localidad',string='Id Localidad Ayuda', store=False) 
+    
+    @api.depends('x_studio_empresas_relacionadas')
+    def _compute_id_localidad(self):
+        for record in self:
+            record['idLocalidadAyuda'] = record.x_studio_empresas_relacionadas.id
     
     def agregarContactoALocalidad(self):
         _logger.info("*****self.x_studio_empresas_relacionadas.id: " + str(self.x_studio_empresas_relacionadas.id))
