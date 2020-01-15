@@ -53,6 +53,17 @@ class helpdesk_update(models.Model):
     
     idLocalidadAyuda = fields.Integer(compute='_compute_id_localidad',string='Id Localidad Ayuda', store=False) 
     
+    seriesDeEquipoPorNumeroDeSerie = fields.Selection(compute='_compute_series',string='Series agregadas', store=False)
+    
+    @api.depends('x_studio_equipo_por_nmero_de_serie')
+    def _compute_series(self):
+        listaDeSeries = []
+        for record in self:
+            if len(record.x_studio_equipo_por_nmero_de_serie) > 0:
+                for serie in record.x_studio_equipo_por_nmero_de_serie:
+                    listaDeSerie.append((str(serie.name),str(serie.name)))
+        return listaDeSerie
+    
     @api.depends('x_studio_empresas_relacionadas')
     def _compute_id_localidad(self):
         for record in self:
