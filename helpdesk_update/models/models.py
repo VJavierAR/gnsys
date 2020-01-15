@@ -1197,7 +1197,7 @@ class helpdesk_update(models.Model):
            informacion = self.env.cr.fetchall()
            if len(informacion) > 0:
                 _logger.info("************************ticketTemporalInformacion: " + str(informacion))
-                ticketTemporal = self.env['helpdesk.ticket'].search(['id', '=', str(informacion[0][0]]))
+                ticketTemporal = self.env['helpdesk.ticket'].search(['id', '=', str(informacion[0][0])])
                 _logger.info("************************ticketTemporal: " + str(ticketTemporal))
                 _logger.info("************************ticketTemporal.x_studio_nmero_de_serie: " + str(ticketTemporal.x_studio_nmero_de_serie))
                 
