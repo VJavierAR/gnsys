@@ -1199,7 +1199,7 @@ class helpdesk_update(models.Model):
                 ticketTemporal = self.env['helpdes.ticket'].search(['id', '=', informacion[0][0]])
                 _logger.info("************************ticketTemporal: " + str(ticketTemporal))
                 
-                if ticketTemporal.x_studio_nmero_de_serie
+                #if ticketTemporal.x_studio_nmero_de_serie:
                 queryD = "select stage_id,id from helpdesk_ticket where id = " + str(informacion[0][0]) + " and active != 'f' and team_id = " + str(self.team_id.id) +" limit 1;"
                 self.env.cr.execute(queryD)
                 informacionD = self.env.cr.fetchall()
