@@ -25,6 +25,123 @@ class helpdesk_update(models.Model):
     
     days_difference = fields.Integer(compute='_compute_difference',string='días de atraso')
     
+    
+        tipoDeDireccion = fields.Selection([('contact','Contacto'),('invoice','Dirección de facturación'),('delivery','Dirección de envío'),('other','Otra dirección'),('private','Dirección Privada')])
+    subtipo = fields.Selection([('Contacto comercial','Contacto comercial'),('Contacto sistemas','Contacto sistemas'),('Contacto para pagos','Contacto parra pagos'),('Contacto para compras','Contacto para compras'),('private','Dirección Privada')])
+    nombreDelContacto = fields.Char(string='Nombre de contacto')
+    titulo = fields.Many2one('res.partner.title', store=True, string='Titulo')
+    puestoDeTrabajo = fields.Char(string='Puesto de trabajo')
+    correoElectronico = fields.Char(string='Correo electrónico')
+    telefono = fields.Char(string='Teléfono')
+    movil = fields.Char(string='Móvil')
+    notas = fields.Text(string="Notas")
+    
+    direccionNombreCalle = fields.Char(string='Nombre de la calle')
+    direccionNumeroExterior = fields.Char(string='Número exterior')
+    direccionNumeroInterior = fields.Char(string='Número interior')
+    direccionColonia = fields.Char(string='Colonia')
+    direccionLocalidad = fields.Char(string='Localidad')
+    direccionCiudad = fields.Char(string='Ciudad')
+    direccionCodigoPostal = fields.Char(string='Código postal')
+    direccionPais = fields.Many2one('res.country', store=True, string='País')
+    direccionEstado = fields.Many2one('res.country.state', store=True, string='Estado', domain="[('country_id', '=?', direccionPais)]")
+    
+    direccionZona = fields.Selection([('SUR','SUR'),('NORTE','NORTE'),('PONIENTE','PONIENTE'),('ORIENTE','ORIENTE'),('CENTRO','CENTRO'),('DISTRIBUIDOR','DISTRIBUIDOR'),('MONTERREY','MONTERREY'),('CUERNAVACA','CUERNAVACA'),('GUADALAJARA','GUADALAJARA'),('QUERETARO','QUERETARO'),('CANCUN','CANCUN'),('VERACRUZ','VERACRUZ'),('PUEBLA','PUEBLA'),('TOLUCA','TOLUCA'),('LEON','LEON'),('COMODIN','COMODIN'),('VILLAHERMOSA','VILLAHERMOSA'),('MERIDA','MERIDA'),('ALTAMIRA','ALTAMIRA')])
+    
+    agregarContactoCheck = fields.Boolean(string="Añadir contacto", default=False)
+    
+    
+    def agregarContactoALocalidad(self):
+        _logger.info("*****self.x_studio_empresas_relacionadas.id: " + str(self.x_studio_empresas_relacionadas.id))
+        
+        if self.x_studio_empresas_relacionadas.id != 0:
+            contactoId = 0;
+            #_logger.info("*******************************************self.nombreDelContacto: " + str(self.nombreDelContacto))
+            if self.tipoDeDireccion == "contact" and self.nombreDelContacto != False:
+                contacto = self.sudo().env['res.partner'].create({'parent_id' : self.x_studio_empresas_relacionadas.id
+                                                                 , 'type' : self.tipoDeDireccion
+                                                                 , 'x_studio_subtipo' : self.subtipo
+                                                                 , 'name' : self.nombreDelContacto
+                                                                 , 'title' : self.titulo
+                                                                 , 'function' : self.puestoDeTrabajo
+                                                                 , 'email' : self.correoElectronico
+                                                                 , 'phone' : self.telefono
+                                                                 , 'mobile' : self.movil
+                                                                 , 'comment' : self.notas
+                                                                })
+                contactoId = contacto.id
+            elif self.tipoDeDireccion == "delivery" and self.nombreDelContacto != False:
+                contacto = self.sudo().env['res.partner'].create({'parent_id' : self.x_studio_empresas_relacionadas.id
+                                                                 , 'type' : self.tipoDeDireccion
+                                                                 , 'x_studio_subtipo' : self.subtipo
+                                                                 , 'name' : self.nombreDelContacto
+                                                                 , 'title' : self.titulo
+                                                                 , 'function' : self.puestoDeTrabajo
+                                                                 , 'email' : self.correoElectronico
+                                                                 , 'phone' : self.telefono
+                                                                 , 'mobile' : self.movil
+                                                                 , 'comment' : self.notas
+                                                                  
+                                                                 , 'street_name' : self.direccionNombreCalle
+                                                                 , 'street_number' : self.direccionNumeroExterior
+                                                                 , 'street_number2' : self.direccionNumeroInterior
+                                                                 , 'l10n_mx_edi_colony' : self.direccionColonia
+                                                                 , 'l10n_mx_edi_locality' : self.direccionLocalidad
+                                                                 , 'city' : self.direccionCiudad
+                                                                 , 'state_id' : self.direccionEstado.id
+                                                                 , 'zip' : self.direccionCodigoPostal
+                                                                 , 'country_id' : self.direccionPais.id
+                                                                  
+                                                                 , 'x_studio_field_SqU5B' : self.direccionZona
+                                                                })
+                contactoId = contacto.id
+            #elif self.tipoDeDireccion != "delivery" or self.tipoDeDireccion != "contact":
+            elif self.nombreDelContacto != False:
+                contacto = self.sudo().env['res.partner'].create({'parent_id' : self.x_studio_empresas_relacionadas.id
+                                                                 , 'type' : self.tipoDeDireccion
+                                                                 , 'x_studio_subtipo' : self.subtipo
+                                                                 , 'name' : self.nombreDelContacto
+                                                                 , 'title' : self.titulo
+                                                                 , 'function' : self.puestoDeTrabajo
+                                                                 , 'email' : self.correoElectronico
+                                                                 , 'phone' : self.telefono
+                                                                 , 'mobile' : self.movil
+                                                                 , 'comment' : self.notas
+                                                                  
+                                                                 , 'street_name' : self.direccionNombreCalle
+                                                                 , 'street_number' : self.direccionNumeroExterior
+                                                                 , 'street_number2' : self.direccionNumeroInterior
+                                                                 , 'l10n_mx_edi_colony' : self.direccionColonia
+                                                                 , 'l10n_mx_edi_locality' : self.direccionLocalidad
+                                                                 , 'city' : self.direccionCiudad
+                                                                 , 'state_id' : self.direccionEstado.id
+                                                                 , 'zip' : self.direccionCodigoPostal
+                                                                 , 'country_id' : self.direccionPais.id
+                                                                })
+                contactoId = contacto.id
+            else:
+                errorContactoSinNombre = "Contacto sin nombre"
+                mensajeContactoSinNombre = "No es posible añadir un contacto sin nombre. Favor de indicar el nombre primero."
+                raise exceptions.except_orm(_(errorContactoSinNombre), _(mensajeContactoSinNombre))
+                
+            self.env.cr.commit()
+            if contactoId > 0:
+                errorContactoGenerado = "Contacto agregado"
+                mensajeContactoGenerado = "Contacto " + str(self.nombreDelContacto) + " agregado a la localidad " + str(self.x_studio_empresas_relacionadas.name)
+                raise exceptions.except_orm(_(errorContactoGenerado), _(mensajeContactoGenerado))
+            else:
+                errorContactoNoGenerado = "Contacto no agregado"
+                mensajeContactoNoGenerado = "Contacto no agregado. Favor de verificar la información ingresada."
+                raise exceptions.except_orm(_(errorContactoNoGenerado), _(mensajeContactoNoGenerado))
+        else:
+            errorContactoSinLocalidad = "Contacto sin localidad"
+            mensajeContactoSinLocalidad = "No es posible añadir un contacto sin primero indicar la localidad. Favor de indicar la localidad primero."
+            raise exceptions.except_orm(_(errorContactoSinLocalidad), _(mensajeContactoSinLocalidad))
+    
+    
+    
+    
+    
     def _compute_difference(self):
         for rec in self:
             #rec.days_difference = (datetime.date.today()- rec.create_date).days   
