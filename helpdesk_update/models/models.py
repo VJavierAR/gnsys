@@ -1183,7 +1183,7 @@ class helpdesk_update(models.Model):
            self.env.cr.execute(query)
            informacion = self.env.cr.fetchall()
            if len(informacion) > 0:
-               queryD = "select stage_id,id from helpdesk_ticket where id  = " + str(informacion[0][0]) + "and active != 'f' and team_id" + str(self.team_id.id) +" limit 1;"
+               queryD = "select stage_id,id from helpdesk_ticket where id  = " + str(informacion[0][0]) + " and active != 'f' and team_id = " + str(self.team_id.id) +" limit 1;"
                self.env.cr.execute(queryD)
                informacionD = self.env.cr.fetchall()
                if len(informacionD) > 0:
