@@ -54,7 +54,7 @@ class helpdesk_update(models.Model):
     idLocalidadAyuda = fields.Integer(compute='_compute_id_localidad',string='Id Localidad Ayuda', store=False) 
     
     """
-    seriesDeEquipoPorNumeroDeSerie = fields.Selection(compute='_compute_series',string='Series agregadas', store=False)
+    seriesDeEquipoPorNumeroDeSerie = fields.Selection(_compute_series,compute='_compute_series',string='Series agregadas', store=False)
     
     @api.depends('x_studio_equipo_por_nmero_de_serie')
     def _compute_series(self):
@@ -65,6 +65,7 @@ class helpdesk_update(models.Model):
                     listaDeSerie.append((str(serie.name),str(serie.name)))
         return listaDeSerie
     """
+    
     @api.depends('x_studio_empresas_relacionadas')
     def _compute_id_localidad(self):
         for record in self:
@@ -527,7 +528,7 @@ class helpdesk_update(models.Model):
               else:
                 q='stock.production.lot'
               if str(c.x_studio_field_A6PR9) =='Negro':
-                  if int(c.x_studio_contador_bn_a_capturar) > int(c.x_studio_contador_bn)  :
+                  if int(c.x_studio_contador_bn_a_capturar) > int(c.x_studio_contador_bn):
                       
                       self.env['dcas.dcas'].create({'serie' : c.id
                                                     , 'contadorMono' : c.x_studio_contador_bn_a_capturar
@@ -1191,19 +1192,23 @@ class helpdesk_update(models.Model):
         
         if int(self.x_studio_tamao_lista) > 0 and self.team_id.id != 8:
            _logger.info("actualiza_datos_cliente()"+str(self.x_studio_equipo_por_nmero_de_serie[0].id))
-           query = "select * from helpdesk_ticket_stock_production_lot_rel where stock_production_lot_id  = " + str(self.x_studio_equipo_por_nmero_de_serie[0].id) + "limit 1 ;"
+           query = "select * from helpdesk_ticket_stock_production_lot_rel where stock_production_lot_id  = " + str(self.x_studio_equipo_por_nmero_de_serie[0].id) + " limit 1;"
            self.env.cr.execute(query)
            informacion = self.env.cr.fetchall()
            if len(informacion) > 0:
-               queryD = "select stage_id,id from helpdesk_ticket where id  = " + str(informacion[0][0]) + " and active != 'f' and team_id = " + str(self.team_id.id) +" limit 1;"
-               self.env.cr.execute(queryD)
-               informacionD = self.env.cr.fetchall()
-               if len(informacionD) > 0:
-                   _logger.info("actualiza_datos_cliente2()  "+str(informacionD) +'  '+ str(informacion))
-                   _logger.info("actualiza_datos_cliente3()  "+str(self.x_studio_equipo_por_nmero_de_serie[0].id) +'18=='+ str(informacionD[0][0]))
-                   _logger.info("aaa"+' '+str(self.x_studio_equipo_por_nmero_de_serie[0].id)+'=='+str(informacion[0][1]) +'and'+ str(informacionD[0][0]) +'==18')
-                   if int(self.x_studio_equipo_por_nmero_de_serie[0].id) == int(informacion[0][1]) and int(informacionD[0][0]) != 18 :
-                      raise exceptions.ValidationError("No es posible registrar número de serie, primero cerrar el ticket con el id  "+str(informacionD[0][1]))
+                ticketTemporal = self.env['helpdes.ticket'].search(['id', '=', informacion[0][0]])
+                _logger.info("************************ticketTemporal: " + str(ticketTemporal))
+                
+                if ticketTemporal.x_studio_nmero_de_serie
+                queryD = "select stage_id,id from helpdesk_ticket where id = " + str(informacion[0][0]) + " and active != 'f' and team_id = " + str(self.team_id.id) +" limit 1;"
+                self.env.cr.execute(queryD)
+                informacionD = self.env.cr.fetchall()
+                if len(informacionD) > 0:
+                    _logger.info("actualiza_datos_cliente2()  "+str(informacionD) +'  '+ str(informacion))
+                    _logger.info("actualiza_datos_cliente3()  "+str(self.x_studio_equipo_por_nmero_de_serie[0].id) +'18=='+ str(informacionD[0][0]))
+                    _logger.info("aaa"+' '+str(self.x_studio_equipo_por_nmero_de_serie[0].id)+'=='+str(informacion[0][1]) +'and'+ str(informacionD[0][0]) +'==18')
+                    if int(self.x_studio_equipo_por_nmero_de_serie[0].id) == int(informacion[0][1]) and int(informacionD[0][0]) != 18 :
+                        raise exceptions.ValidationError("No es posible registrar número de serie, primero cerrar el ticket con el id  "+str(informacionD[0][1]))
                         
            
 
