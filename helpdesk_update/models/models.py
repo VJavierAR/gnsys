@@ -1207,7 +1207,8 @@ class helpdesk_update(models.Model):
                 queryD = "select stage_id,id from helpdesk_ticket where id = " + str(informacion[0][0]) + " and active != 'f' and team_id = " + str(self.team_id.id) +" limit 1;"
                 self.env.cr.execute(queryD)
                 informacionD = self.env.cr.fetchall()
-                if len(informacionD) > 0 and str(informacionD[0][1]) != str(self.id):
+                _logger.info()
+                if len(informacionD) > 0 and str(informacionD[0][1]) != str(self.x_studio_id_ticket):
                     _logger.info("actualiza_datos_cliente2()  "+str(informacionD) +'  '+ str(informacion))
                     _logger.info("actualiza_datos_cliente3()  "+str(self.x_studio_equipo_por_nmero_de_serie[0].id) +'18=='+ str(informacionD[0][0]))
                     _logger.info("aaa"+' '+str(self.x_studio_equipo_por_nmero_de_serie[0].id)+'=='+str(informacion[0][1]) +'and'+ str(informacionD[0][0]) +'==18')
