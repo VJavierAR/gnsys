@@ -1177,13 +1177,13 @@ class helpdesk_update(models.Model):
     #@api.depends('x_studio_equipo_por_nmero_de_serie')
     def actualiza_datos_cliente(self):
         
-        if int(self.x_studio_tamao_lista)>0 and self.team_id.id !=8 :
+        if int(self.x_studio_tamao_lista) > 0 and self.team_id.id != 8:
            _logger.info("actualiza_datos_cliente()"+str(self.x_studio_equipo_por_nmero_de_serie[0].id))
            query = "select * from helpdesk_ticket_stock_production_lot_rel where stock_production_lot_id  = " + str(self.x_studio_equipo_por_nmero_de_serie[0].id) + "limit 1 ;"
            self.env.cr.execute(query)
            informacion = self.env.cr.fetchall()
            if len(informacion) > 0:
-               queryD = "select stage_id,id from helpdesk_ticket where id  = " + str(informacion[0][0]) + "and active != 'f'  limit 1;"
+               queryD = "select stage_id,id from helpdesk_ticket where id  = " + str(informacion[0][0]) + "and active != 'f' and team_id" + str(self.team_id.id) +" limit 1;"
                self.env.cr.execute(queryD)
                informacionD = self.env.cr.fetchall()
                if len(informacionD) > 0:
