@@ -585,12 +585,12 @@ class helpdesk_update(models.Model):
             record['x_studio_field_nO7Xg'] = sale.id
             for c in record.x_studio_equipo_por_nmero_de_serie:
                 pro=self.env['product.product'].search([['name','=',c.x_studio_toner_compatible.name],['categ_id','=',5]])
-                gen=pro.sorted(key='qty_available',reverse=True)[0].id
+                gen=pro.sorted(key='qty_available',reverse=True)[0]
                 _logger.info('*************cantidad a solicitar: ' + str(c.id))
                 self.env['sale.order.line'].create({'order_id' : sale.id
                                             , 'product_id' : c.x_studio_toner_compatible.id
                                             , 'product_uom_qty' :1
-                                            , 'x_studio_field_9nQhR': c.id if(len(gen)==0) else gen      
+                                            , 'x_studio_field_9nQhR': c.id if(len(gen)==0) else gen.id      
                                             , 'price_unit': 0
                                           })
                 """  
