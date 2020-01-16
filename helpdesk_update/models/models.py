@@ -72,7 +72,7 @@ class helpdesk_update(models.Model):
             record['idLocalidadAyuda'] = record.x_studio_empresas_relacionadas.id
         
         
-    
+    """
     @api.onchange('x_studio_empresas_relacionadas')
     def cambiar_direccion_entrega(self):
         _logger.info("***************Que tiene en pedido de venta: " + str(self.x_studio_field_nO7Xg))
@@ -93,7 +93,7 @@ class helpdesk_update(models.Model):
             return {'warning': mess}
         else: 
             raise exceptions.Warning('No se pudo actualizar la dirreción de la solicitud: ' + str(sale.name) + ' del ticket: ' + str(self.x_studio_id_ticket) + " debido a que ya fue validada la solicitud. \nIntento actualizar el campo 'Localidad' con la dirección: " + str(self.x_studio_empresas_relacionadas.parent_id.name) + " " + str(self.x_studio_empresas_relacionadas.name))
-            
+    """ 
     
     def agregarContactoALocalidad(self):
         _logger.info("*****self.x_studio_empresas_relacionadas.id: " + str(self.x_studio_empresas_relacionadas.id))
