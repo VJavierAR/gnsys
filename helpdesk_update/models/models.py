@@ -426,6 +426,7 @@ class helpdesk_update(models.Model):
                                                                    ,'x_studio_field_9nQhR':self.x_studio_equipo_por_nmero_de_serie[0].id
                                                                    , 'price_unit': 0
                                                                   })
+                        _logger.info("*****************solicitud id: " + str(sale.id) + " name solicitud: " + str(sale.name) + " cantidad pedida: " + str(c.x_studio_cantidad_pedida) + " Producto pedido: " + str(c.id) + " numero de serie: " + str(self.x_studio_equipo_por_nmero_de_serie[0].id) + " price unit: " + str(0))
                         sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
                         self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
 
@@ -579,8 +580,9 @@ class helpdesk_update(models.Model):
                                             , 'x_studio_requiere_instalacin' : True                                       
                                             , 'user_id' : record.user_id.id                                           
                                             , 'x_studio_tcnico' : record.x_studio_tcnico.id
+                                            , 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id
                                             , 'warehouse_id' : 1   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
-                                            , 'team_id' : 1      
+                                            , 'team_id' : 1
                                           })
             record['x_studio_field_nO7Xg'] = sale.id
             for c in record.x_studio_equipo_por_nmero_de_serie:
@@ -593,6 +595,7 @@ class helpdesk_update(models.Model):
                                             , 'x_studio_field_9nQhR': c.id      
                                             , 'price_unit': 0
                                           })
+                _logger.info("*****************solicitud id: " + str(sale.id) + " name solicitud: " + str(sale.name) + " cantidad pedida: " + str(1) + " Producto pedido: " + str(c.x_studio_toner_compatible.id if(len(gen)==0) else gen.id) + " price unit: " + str(0))
                 """  
                   self.env['dcas.dcas'].create({'serie' : c.id
                                                 , 'contadorMono' : c.x_studio_contador_bn_a_capturar
@@ -713,6 +716,7 @@ class helpdesk_update(models.Model):
         #raise exceptions.ValidationError("test " + self.x_studio_zona)
         if self.x_studio_zona :
             res['domain']={'x_studio_tcnico':[('x_studio_zona', '=', self.x_studio_zona)]}
+            #res['domain'] = {'x_studio_tcnico':['|',('x_studio_zona', '=', self.x_studio_zona),('x_studio_zona', '=', self.zona_estados)]}
         return res
     
     @api.onchange('x_studio_zona')
