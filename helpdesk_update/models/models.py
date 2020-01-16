@@ -586,7 +586,7 @@ class helpdesk_update(models.Model):
             for c in record.x_studio_equipo_por_nmero_de_serie:
                 pro=self.env['product.product'].search([['name','=',c.x_studio_toner_compatible.name],['categ_id','=',5]])
                 gen=pro.sorted(key='qty_available',reverse=True)[0].id
-              _logger.info('*************cantidad a solicitar: ' + str(c.id))
+                _logger.info('*************cantidad a solicitar: ' + str(c.id))
               self.env['sale.order.line'].create({'order_id' : sale.id
                                             , 'product_id' : c.x_studio_toner_compatible.id
                                             , 'product_uom_qty' :1
