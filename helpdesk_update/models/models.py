@@ -71,11 +71,28 @@ class helpdesk_update(models.Model):
         for record in self:
             record['idLocalidadAyuda'] = record.x_studio_empresas_relacionadas.id
         
-        #if self.x_studio_field_nO7Xg != False:
-        #    _logger.info("solicitud: " + str(self.x_studio_field_nO7Xg.id))
-        #    sale = self.x_studio_field_nO7Xg.id
+        
+    
+    @api.onchange('x_studio_empresas_relacionadas')
+    def cambiar_direccion_entrega(self):
+        _logger.info("***************Que tiene en pedido de venta: " + str(self.x_studio_field_nO7Xg))
+        sale = self.x_studio_field_nO7Xg
+        if self.x_studio_field_nO7Xg != False and self.x_studio_empresas_relacionadas and self.x_studio_field_nO7Xg.state != 'sale':
+            _logger.info("****************solicitud: " + str(self.x_studio_field_nO7Xg.id))
+            _logger.info("****************localidad: " + str(self.x_studio_empresas_relacionadas.id))
             #self.env['sale.order'].write(['partner_shipping_id','=',''])
-            #self.env.cr.execute("update sale_order set partner_shipping_id = " + str(self.x_studio_empresas_relacionadas.id) + " where  id = " + str(sale.id) + ";")
+            self.env.cr.execute("update sale_order set partner_shipping_id = " + str(self.x_studio_empresas_relacionadas.id) + " where  id = " + str(sale.id) + ";")
+            #raise Warning('Se cambio la dirreción de entrega del ticket: ' + str(self.id) + " dirección actualizada a: " + str(self.x_studio_empresas_relacionadas.name))
+            #raise exceptions.Warning('Se cambio la dirreción de entrega del ticket: ' + str(self.x_studio_id_ticket) + " dirección actualizada a: " + str(self.x_studio_empresas_relacionadas.parent_id.name) + " " + str(self.x_studio_empresas_relacionadas.name))
+            message = ('Se cambio la dirreción de entrega de la solicitud: ' + str(sale.name) + '  del ticket: ' + str(self.x_studio_id_ticket) + ". \nSe produjo el cambio al actualizar el campo 'Localidad'. \nLa dirección fue actualizada a: " + str(self.x_studio_empresas_relacionadas.parent_id.name) + " " + str(self.x_studio_empresas_relacionadas.name))
+            mess = {
+                    'title': _('Dirreción Actualizada!!!'),
+                    'message': message
+                   }
+            return {'warning': mess}
+        else: 
+            raise exceptions.Warning('No se pudo actualizar la dirreción de la solicitud: ' + str(sale.name) + ' del ticket: ' + str(self.x_studio_id_ticket) + " debido a que ya fue validada la solicitud. \nIntento actualizar el campo 'Localidad' con la dirección: " + str(self.x_studio_empresas_relacionadas.parent_id.name) + " " + str(self.x_studio_empresas_relacionadas.name))
+            
     
     def agregarContactoALocalidad(self):
         _logger.info("*****self.x_studio_empresas_relacionadas.id: " + str(self.x_studio_empresas_relacionadas.id))
