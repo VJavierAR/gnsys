@@ -70,6 +70,12 @@ class helpdesk_update(models.Model):
     def _compute_id_localidad(self):
         for record in self:
             record['idLocalidadAyuda'] = record.x_studio_empresas_relacionadas.id
+        
+        if self.x_studio_field_nO7Xg != False:
+            _logger.info("solicitud: " + str(self.x_studio_field_nO7Xg.id))
+            sale = self.x_studio_field_nO7Xg.id
+            #self.env['sale.order'].write(['partner_shipping_id','=',''])
+            self.env.cr.execute("update sale_order set partner_shipping_id = " + str(self.x_studio_empresas_relacionadas.id) + " where  id = " + str(sale.id) + ";")
     
     def agregarContactoALocalidad(self):
         _logger.info("*****self.x_studio_empresas_relacionadas.id: " + str(self.x_studio_empresas_relacionadas.id))
