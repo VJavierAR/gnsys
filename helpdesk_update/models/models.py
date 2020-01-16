@@ -78,7 +78,7 @@ class helpdesk_update(models.Model):
         _logger.info("***************Que tiene en pedido de venta: " + str(self.x_studio_field_nO7Xg))
         _logger.info("***************Que tiene en pedido de venta: " + str(self.x_studio_empresas_relacionadas))
         sale = self.x_studio_field_nO7Xg
-        if self.x_studio_field_nO7Xg != False and (self.x_studio_empresas_relacionadas != False or self.x_studio_empresas_relacionadas != "") and self.x_studio_field_nO7Xg.state != 'sale':
+        if self.x_studio_field_nO7Xg != False and (self.x_studio_empresas_relacionadas != False or self.x_studio_empresas_relacionadas != None) and self.x_studio_field_nO7Xg.state != 'sale':
             _logger.info("****************solicitud: " + str(self.x_studio_field_nO7Xg.id))
             _logger.info("****************localidad: " + str(self.x_studio_empresas_relacionadas.id))
             #self.env['sale.order'].write(['partner_shipping_id','=',''])
