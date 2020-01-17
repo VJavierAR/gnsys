@@ -78,7 +78,10 @@ class StockPicking(Model):
             pickis=self.env.cr.fetchall()
             pick=self.env['stock.picking'].search([['id','in',pickis]])
             for li in self.lineTemp:
-                ss=self.env['sale.order.line'].sudo().create({'x_studio_field_9nQhR':li.serieDestino.id,'order_id':self.sale_id.id,'product_id':li.producto.id,'product_uom':li.producto.uom_id.id,'product_uom_qty':li.cantidad,'name':li.producto.description,'price_unit':0.00})
+                datos={'order_id':self.sale_id.id,'product_id':li.producto.id,'product_uom':li.producto.uom_id.id,'product_uom_qty':li.cantidad,'name':li.producto.description,'price_unit':0.00}
+                if(li.serieDestino):
+                    datos['x_studio_field_9nQhR']=li.serieDestino.id,
+                ss=self.env['sale.order.line'].sudo().create(datos)
             for p in pick:
                 p.action_confirm()
         self.is_locked = not self.is_locked
