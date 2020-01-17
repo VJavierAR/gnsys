@@ -72,28 +72,36 @@ class helpdesk_update(models.Model):
             record['idLocalidadAyuda'] = record.x_studio_empresas_relacionadas.id
         
         
-    """
     @api.onchange('x_studio_empresas_relacionadas')
     def cambiar_direccion_entrega(self):
-        _logger.info("***************Que tiene en pedido de venta: " + str(self.x_studio_field_nO7Xg))
-        _logger.info("***************Que tiene en pedido de venta: " + str(self.x_studio_empresas_relacionadas))
+        
+        _logger.info("***************Que tiene en pedido de venta: " + str(self.x_studio_field_nO7Xg.id))
+        _logger.info("**************** necesito ver que tiene =(" + str(self.x_studio_empresas_relacionadas.id))
+        _logger.info("**************** self.id: " + str(self.id))
+        _logger.info("**************** self.x_studio_ticket: " + str(self.x_studio_id_ticket))
         sale = self.x_studio_field_nO7Xg
-        if self.x_studio_field_nO7Xg != False and (self.x_studio_empresas_relacionadas != False or self.x_studio_empresas_relacionadas != None) and self.x_studio_field_nO7Xg.state != 'sale':
+        #if self.x_studio_field_nO7Xg != False and (self.x_studio_empresas_relacionadas.id == False or self.x_studio_empresas_relacionadas.id != None or len(str(self.x_studio_empresas_relacionadas.id)) != 0 or str(self.x_studio_empresas_relacionadas.id) is 0 or not str(self.x_studio_empresas_relacionadas.id) or self.x_studio_empresas_relacionadas.id != []) and self.x_studio_field_nO7Xg.state != 'sale':
+        if self.x_studio_field_nO7Xg.id != False and self.x_studio_id_ticket != 0 and self.x_studio_field_nO7Xg.state != 'sale':
             _logger.info("****************solicitud: " + str(self.x_studio_field_nO7Xg.id))
             _logger.info("****************localidad: " + str(self.x_studio_empresas_relacionadas.id))
-            #self.env['sale.order'].write(['partner_shipping_id','=',''])
-            self.env.cr.execute("update sale_order set partner_shipping_id = " + str(self.x_studio_empresas_relacionadas.id) + " where  id = " + str(sale.id) + ";")
-            #raise Warning('Se cambio la dirreción de entrega del ticket: ' + str(self.id) + " dirección actualizada a: " + str(self.x_studio_empresas_relacionadas.name))
-            #raise exceptions.Warning('Se cambio la dirreción de entrega del ticket: ' + str(self.x_studio_id_ticket) + " dirección actualizada a: " + str(self.x_studio_empresas_relacionadas.parent_id.name) + " " + str(self.x_studio_empresas_relacionadas.name))
-            message = ('Se cambio la dirreción de entrega de la solicitud: ' + str(sale.name) + '  del ticket: ' + str(self.x_studio_id_ticket) + ". \nSe produjo el cambio al actualizar el campo 'Localidad'. \nLa dirección fue actualizada a: " + str(self.x_studio_empresas_relacionadas.parent_id.name) + " " + str(self.x_studio_empresas_relacionadas.name))
-            mess = {
-                    'title': _('Dirreción Actualizada!!!'),
-                    'message': message
-                   }
-            return {'warning': mess}
-        else: 
-            raise exceptions.Warning('No se pudo actualizar la dirreción de la solicitud: ' + str(sale.name) + ' del ticket: ' + str(self.x_studio_id_ticket) + " debido a que ya fue validada la solicitud. \nIntento actualizar el campo 'Localidad' con la dirección: " + str(self.x_studio_empresas_relacionadas.parent_id.name) + " " + str(self.x_studio_empresas_relacionadas.name))
-    """ 
+            
+            if self.x_studio_field_nO7Xg.id != False:
+                #self.env['sale.order'].write(['partner_shipping_id','=',''])
+                self.env.cr.execute("update sale_order set partner_shipping_id = " + str(self.x_studio_empresas_relacionadas.id) + " where  id = " + str(sale.id) + ";")
+                #raise Warning('Se cambio la dirreción de entrega del ticket: ' + str(self.id) + " dirección actualizada a: " + str(self.x_studio_empresas_relacionadas.name))
+                #raise exceptions.Warning('Se cambio la dirreción de entrega del ticket: ' + str(self.x_studio_id_ticket) + " dirección actualizada a: " + str(self.x_studio_empresas_relacionadas.parent_id.name) + " " + str(self.x_studio_empresas_relacionadas.name))
+                message = ('Se cambio la dirreción de entrega de la solicitud: ' + str(sale.name) + '  del ticket: ' + str(self.x_studio_id_ticket) + ". \nSe produjo el cambio al actualizar el campo 'Localidad'. \nLa dirección fue actualizada a: " + str(self.x_studio_empresas_relacionadas.parent_id.name) + " " + str(self.x_studio_empresas_relacionadas.name))
+                mess= {
+                        'title': _('Dirreción Actualizada!!!'),
+                        'message' : message
+                    }
+                return {'warning': mess}
+        else:
+            if self.x_studio_id_ticket != 0 and self.x_studio_field_nO7Xg.id != False:
+                raise exceptions.Warning('No se pudo actualizar la dirreción de la solicitud: ' + str(sale.name) + ' del ticket: ' + str(self.x_studio_id_ticket) + " debido a que ya fue validada la solicitud. \nIntento actualizar el campo 'Localidad' con la dirección: " + str(self.x_studio_empresas_relacionadas.parent_id.name) + " " + str(self.x_studio_empresas_relacionadas.name))
+                
+                
+                
     
     def agregarContactoALocalidad(self):
         _logger.info("*****self.x_studio_empresas_relacionadas.id: " + str(self.x_studio_empresas_relacionadas.id))
@@ -173,6 +181,7 @@ class helpdesk_update(models.Model):
                 errorContactoGenerado = "Contacto agregado"
                 mensajeContactoGenerado = "Contacto " + str(self.nombreDelContacto) + " agregado a la localidad " + str(self.x_studio_empresas_relacionadas.name)
                 raise exceptions.except_orm(_(errorContactoGenerado), _(mensajeContactoGenerado))
+                self.agregarContactoCheck = False
             else:
                 errorContactoNoGenerado = "Contacto no agregado"
                 mensajeContactoNoGenerado = "Contacto no agregado. Favor de verificar la información ingresada."
@@ -284,7 +293,7 @@ class helpdesk_update(models.Model):
                         contadorColor = serie.x_studio_contador_color
                         raise exceptions.ValidationError(str(contadorColor))
     
-    
+    """
     @api.onchange('x_studio_equipo_por_nmero_de_serie')
     def abierto(self):
         if self.x_studio_id_ticket:
@@ -299,8 +308,34 @@ class helpdesk_update(models.Model):
                 _logger.info("**********fun: abierto(), estado: " + str(self.stage_id.name))
                 self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
                 #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.id ,'x_persona': self.env.user.name,'x_estado': "Abierto"})
-
+    """
     
+    @api.onchange('x_studio_equipo_por_nmero_de_serie')
+    def abierto(self):
+        if self.x_studio_id_ticket:
+            _logger.info("------------------------self.stage_id.name: " + str(self.stage_id.name))
+            _logger.info("------------------------self.x_studio_equipo_por_nmero_de_serie.id: " + str(self.x_studio_equipo_por_nmero_de_serie.id))
+            estadoAntes = str(self.stage_id.name)
+            if self.stage_id.name == 'Pre-ticket' and self.x_studio_equipo_por_nmero_de_serie.id != False:
+                query = "update helpdesk_ticket set stage_id = 89 where id = " + str(self.x_studio_id_ticket) + ";"
+                _logger.info("lol: " + query)
+                ss = self.env.cr.execute(query)
+                _logger.info("**********fun: abierto(), estado: " + str(self.stage_id.name))
+                #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
+                self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Abierto"})
+                message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Abierto' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
+                mess= {
+                        'title': _('Estado de ticket actualizado!!!'),
+                        'message' : message
+                    }
+                return {'warning': mess}
+    
+    
+    
+    
+    
+    
+    """
     @api.onchange('team_id')
     def asignacion(self):
         if self.x_studio_id_ticket:
@@ -327,10 +362,68 @@ class helpdesk_update(models.Model):
         dominio = [('id', 'in', listaUsuarios)]
         res['domain'] = {'user_id': dominio}
         return res
+    """
+    #Añadir al XML 
+    estadoAsignacion = fields.Boolean(string="Paso por estado asignación", default=False)
+    
+    @api.onchange('team_id')
+    def asignacion(self):
+        _logger.info("-------------------------------------------------------------self.stage_id.name: " + str(self.stage_id.name))
+        _logger.info("-------------------------------------------------------------team_id: " + str(self.team_id.id))
+        if self.x_studio_id_ticket:
+            estadoAntes = str(self.stage_id.name)
+            if self.stage_id.name == 'Abierto' and self.estadoAsignacion == False and self.team_id.id != False:
+                query = "update helpdesk_ticket set stage_id = 2 where id = " + str(self.x_studio_id_ticket) + ";"
+                _logger.info("lol: " + query)
+                ss = self.env.cr.execute(query)             
+                _logger.info("**********fun: asignacion(), estado: " + str(self.stage_id.name))                
+                self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona':self.env.user.name ,'x_estado': "Asignado"})
+                self.estadoAsignacion = True
+                message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Asignado' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
+                mess= {
+                        'title': _('Estado de ticket actualizado!!!'),
+                        'message' : message
+                    }
+                
+                res = {}
+                idEquipoDeAsistencia = self.team_id.id
+                query = "select * from helpdesk_team_res_users_rel where helpdesk_team_id = " + str(idEquipoDeAsistencia) + ";"
+                self.env.cr.execute(query)
+                informacion = self.env.cr.fetchall()
+                _logger.info("*********lol: " + str(informacion))
+                listaUsuarios = []
+                #res['domain']={'x_studio_productos':[('categ_id', '=', 5),('x_studio_toner_compatible.id','in',list)]}
+                for idUsuario in informacion:
+                    _logger.info("*********idUsuario: " + str(idUsuario))
+                    listaUsuarios.append(idUsuario[1])
+                _logger.info(str(listaUsuarios))
+                dominio = [('id', 'in', listaUsuarios)]
+                
+                return {'warning': mess, 'domain': {'user_id': dominio}}
+            #else:
+                #reasingado
+                
         
-        
+        if self.team_id.id != False:
+            res = {}
+            idEquipoDeAsistencia = self.team_id.id
+            query = "select * from helpdesk_team_res_users_rel where helpdesk_team_id = " + str(idEquipoDeAsistencia) + ";"
+            self.env.cr.execute(query)
+            informacion = self.env.cr.fetchall()
+            _logger.info("*********lol: " + str(informacion))
+            listaUsuarios = []
+            #res['domain']={'x_studio_productos':[('categ_id', '=', 5),('x_studio_toner_compatible.id','in',list)]}
+            for idUsuario in informacion:
+                _logger.info("*********idUsuario: " + str(idUsuario))
+                listaUsuarios.append(idUsuario[1])
+            _logger.info(str(listaUsuarios))
+            dominio = [('id', 'in', listaUsuarios)]
+            res['domain'] = {'user_id': dominio}
+            return res
     
     
+    
+    """
     @api.onchange('x_studio_tcnico')
     def cambioEstadoAtencion(self):
         if self.x_studio_id_ticket:
@@ -342,7 +435,36 @@ class helpdesk_update(models.Model):
             _logger.info("**********fun: cambioEstadoAtencion(), estado: " + str(self.stage_id.name))
             #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
             self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.x_studio_tcnico.name,'x_estado': "Atención"})
-        
+    """
+    
+    
+    #Añadir al XML 
+    estadoAtencion = fields.Boolean(string="Paso por estado atención", default=False)
+    
+    @api.onchange('x_studio_tcnico')
+    def cambioEstadoAtencion(self):
+        _logger.info("-------------------------------------------------------------self.stage_id.name: " + str(self.stage_id.name))
+        _logger.info("-------------------------------------------------------------self.x_studio_tcnico.id: " + str(self.x_studio_tcnico.id))
+        if self.x_studio_id_ticket:
+            estadoAntes = str(self.stage_id.name)
+            if self.stage_id.name == 'Asignado' and self.x_studio_tcnico.id != False and self.estadoAtencion == False:
+                query = "update helpdesk_ticket set stage_id = 13 where id = " + str(self.x_studio_id_ticket) + ";"
+                _logger.info("lol: " + query)
+                ss = self.env.cr.execute(query)
+                _logger.info("**********fun: cambioEstadoAtencion(), estado: " + str(self.stage_id.name))
+                #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
+                self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.x_studio_tcnico.name,'x_estado': "Atención"})
+                message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Atención' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
+                mess= {
+                        'title': _('Estado de ticket actualizado!!!'),
+                        'message' : message
+                    }
+                self.estadoAtencion = True
+                return {'warning': mess}
+    
+    
+    
+    estadoResuelto = fields.Boolean(string="Paso por estado resuelto", default=False)
     
     #@api.onchange('stage_id')
     def cambioResuelto(self):
@@ -351,25 +473,42 @@ class helpdesk_update(models.Model):
         #    if len(self.documentosTecnico)
         #if self.stage_id.name == 'Atención' and self.x_studio_productos != []:
         #raise exceptions.ValidationError("error gerardo: " + str(self.stage_id.name))
-        query = "update helpdesk_ticket set stage_id = 3 where id = " + str(self.x_studio_id_ticket) + ";"
-        _logger.info("lol: " + query)
-        ss = self.env.cr.execute(query)
-        _logger.info("**********fun: cambioResuelto(), estado: " + str(self.stage_id.name))
-        #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
-        self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Resuelto"})
-    
+        if self.estadoResuelto == False:
+            query = "update helpdesk_ticket set stage_id = 3 where id = " + str(self.x_studio_id_ticket) + ";"
+            _logger.info("lol: " + query)
+            ss = self.env.cr.execute(query)
+            _logger.info("**********fun: cambioResuelto(), estado: " + str(self.stage_id.name))
+            #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
+            self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Resuelto"})
+            message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Resuelto' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
+            mess= {
+                    'title': _('Estado de ticket actualizado!!!'),
+                    'message' : message
+                }
+            self.estadoResuelto = True
+            return {'warning': mess}
 
+    estadoCotizacion = fields.Boolean(string="Paso por estado cotizacion", default=False)
     
     #@api.onchange('stage_id')
     def cambioCotizacion(self):
-        if self.stage_id.name == 'Cotización' and str(self.env.user.id) == str(self.x_studio_tcnico.user_id.id):
+        if self.stage_id.name == 'Cotización' and str(self.env.user.id) == str(self.x_studio_tcnico.user_id.id) and self.estadoCotizacion == False:
             query = "update helpdesk_ticket set stage_id = 101 where id = " + str(self.x_studio_id_ticket) + ";"
             _logger.info("lol: " + query)
             ss = self.env.cr.execute(query)
             _logger.info("**********fun: cambioCotizacion(), estado: " + str(self.stage_id.name))
             #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
             self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Cotización"})
-    
+            message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Cotización' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
+            mess= {
+                    'title': _('Estado de ticket actualizado!!!'),
+                    'message' : message
+                }
+            self.estadoCotizacion = True
+            return {'warning': mess}
+            
+     
+    estadoResueltoPorDocTecnico = fields.Boolean(string="Paso por estado resuelto", default=False)
     #Falta comprobar
     @api.onchange('documentosTecnico')
     def cambioResueltoPorDocTecnico(self):
@@ -379,37 +518,63 @@ class helpdesk_update(models.Model):
         #_logger.info("******************** type self.documentosTecnico.id: " + str(type(self.documentosTecnico)))
         
         #if self.documentosTecnico.id != False and str(self.env.user.id) == str(self.x_studio_tcnico.user_id.id):
-        if str(self.env.user.id) == str(self.x_studio_tcnico.user_id.id):
+        if str(self.env.user.id) == str(self.x_studio_tcnico.user_id.id) and self.estadoResueltoPorDocTecnico == False:
             query = "update helpdesk_ticket set stage_id = 3 where id = " + str(self.x_studio_id_ticket) + ";"
             _logger.info("lol: " + query)
             ss = self.env.cr.execute(query)
             _logger.info("**********fun: cambioResueltoPorDocTecnico(), estado: " + str(self.stage_id.name))
             #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
             self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Resuelto"})
-        
+            message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Resuelto' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
+            mess= {
+                    'title': _('Estado de ticket actualizado!!!'),
+                    'message' : message
+                }
+            self.estadoResueltoPorDocTecnico = True
+            return {'warning': mess}
+            
+            
+    estadoCerrado = fields.Boolean(string="Paso por estado cerrado", default=False)
     #Falta comprobar
     #@api.onchange('stage_id')
     def cambioCerrado(self):
         #_logger.info("********************self.stage_id: " + str(self.stage_id))
-        if self.stage_id.name == 'Resuelto' or self.stage_id.name == 'Abierto' or self.stage_id.name == 'Asignado' or self.stage_id.name == 'Atención':
+        if self.stage_id.name == 'Resuelto' or self.stage_id.name == 'Abierto' or self.stage_id.name == 'Asignado' or self.stage_id.name == 'Atención' and self.estadoCerrado == False:
             query = "update helpdesk_ticket set stage_id = 18 where id = " + str(self.x_studio_id_ticket) + ";"
             _logger.info("lol: " + query)
             ss = self.env.cr.execute(query)
             _logger.info("**********fun: cambioCerrado(), estado: " + str(self.stage_id.name))
             #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
             self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Cerrado"})
+            message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Cerrado' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
+            mess= {
+                    'title': _('Estado de ticket actualizado!!!'),
+                    'message' : message
+                }
+            self.estadoResueltoPorDocTecnico = True
+            return {'warning': mess}
     
+    
+    estadoCancelado = fields.Boolean(string="Paso por estado cancelado", default=False)
     #Falta comprobar
     #@api.onchange('stage_id')
     def cambioCancelado(self):
         #_logger.info("********************self.documentosTecnico.id: " + str(self.documentosTecnico.id))
         #if self.stage_id.name == 'Cancelado':
-        query = "update helpdesk_ticket set stage_id = 4 where id = " + str(self.x_studio_id_ticket) + ";"
-        _logger.info("lol: " + query)
-        ss = self.env.cr.execute(query)
-        _logger.info("**********fun: cambioCancelado(), estado: " + str(self.stage_id.name))
-        #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
-        self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Cancelado"})
+        if self.estadoCancelado == False:
+            query = "update helpdesk_ticket set stage_id = 4 where id = " + str(self.x_studio_id_ticket) + ";"
+            _logger.info("lol: " + query)
+            ss = self.env.cr.execute(query)
+            _logger.info("**********fun: cambioCancelado(), estado: " + str(self.stage_id.name))
+            #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
+            self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Cancelado"})
+            message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Cancelado' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
+            mess= {
+                    'title': _('Estado de ticket actualizado!!!'),
+                    'message' : message
+                }
+            self.estadoCancelado = True
+            return {'warning': mess}
     
     
     
@@ -417,7 +582,7 @@ class helpdesk_update(models.Model):
     
             
     
-    
+    estadoSolicitudDeRefaccion = fields.Boolean(string="Paso por estado solicitud de refaccion", default=False)
     
     #@api.oncgange()
     @api.multi
@@ -425,6 +590,19 @@ class helpdesk_update(models.Model):
         for record in self:
             #if record.x_studio_id_ticket != 0:
             if len(record.x_studio_productos) > 0:
+                _logger.info("***********************************************************************************************" + str(self.x_studio_field_nO7Xg.state))
+                if self.x_studio_field_nO7Xg.id != False and self.x_studio_field_nO7Xg.state != 'sale':
+                    sale = self.x_studio_field_nO7Xg
+                    self.env.cr.execute("delete from sale_order_line where order_id = " + str(sale.id) +";")
+                    for c in self.x_studio_productos:
+                        self.env['sale.order.line'].create({'order_id' : sale.id
+                                                          , 'product_id' : c.id
+                                                          , 'product_uom_qty' : c.x_studio_cantidad_pedida
+                                                          , 'x_studio_field_9nQhR':self.x_studio_equipo_por_nmero_de_serie[0].id
+                                                          })
+                        self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
+                        #self.env.cr.commit()
+                else:
                 #if (record.x_studio_tipo_de_falla == 'Solicitud de refacción' ) or (record.x_studio_tipo_de_incidencia == 'Solicitud de refacción' ):
                     sale = self.env['sale.order'].create({'partner_id' : record.partner_id.id
                                                                  , 'origin' : "Ticket de refacción: " + str(record.x_studio_id_ticket)
@@ -461,12 +639,36 @@ class helpdesk_update(models.Model):
                     #    if self.x_studio_id_ticket:
                             #raise exceptions.ValidationError("error gerardo")
                             #if self.stage_id.name == 'Atención' and self.team_id.name == 'Equipo de hardware':
+                    """
                     query = "update helpdesk_ticket set stage_id = 100 where id = " + str(self.x_studio_id_ticket) + ";"
                     _logger.info("lol: " + query)
                     ss = self.env.cr.execute(query)
                     _logger.info("**********fun: crear_solicitud_refaccion(), estado: " + str(self.stage_id.name))
                         #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
                     self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Solicitud de refacción"})
+                    """
+                    
+                    saleTemp = self.x_studio_field_nO7Xg
+                    if saleTemp.id != False:
+                        if self.x_studio_id_ticket:
+                            estadoAntes = str(self.stage_id.name)
+                            if self.stage_id.name == 'Atención' and self.estadoSolicitudDeRefaccion == False:
+                                query = "update helpdesk_ticket set stage_id = 100 where id = " + str(self.x_studio_id_ticket) + ";"
+                                _logger.info("lol: " + query)
+                                ss = self.env.cr.execute(query)
+                                _logger.info("**********fun: crear_solicitud_refaccion(), estado: " + str(self.stage_id.name))
+                                    #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
+                                self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Solicitud de refacción"})
+                                message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Solicitud de refacción' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
+                                mess= {
+                                        'title': _('Estado de ticket actualizado!!!'),
+                                        'message' : message
+                                      }
+                                self.estadoSolicitudDeRefaccion = True
+                                return {'warning': mess}
+                    
+                    
+                    
                     """
                     if self.team_id.name == 'Equipo de hardware':
                         query = "update helpdesk_ticket set stage_id = 100 where id = " + str(self.x_studio_id_ticket) + ";"
@@ -483,7 +685,9 @@ class helpdesk_update(models.Model):
             #    raise exceptions.except_orm(_(errorRefaccionNoGenerada), _(mensajeSolicitudRefaccionNoGenerada))
                 
                 
-                
+    #añadir XML
+    estadoSolicitudDeRefaccionValidada = fields.Boolean(string="Paso por estado refaccion autorixada", default=False)
+    
     #@api.onchange('x_studio_verificacin_de_refaccin')
     def validar_solicitud_refaccion(self):
         for record in self:
@@ -492,11 +696,23 @@ class helpdesk_update(models.Model):
                 self.sudo().env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
                 sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
                 sale.action_confirm()
-
-                query = "update helpdesk_ticket set stage_id = 102 where id = " + str(self.x_studio_id_ticket) + ";"
-                _logger.info("lol: " + query)
-                ss = self.env.cr.execute(query)
-                self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Refacción Autorizada"})
+                
+                
+                estadoAntes = str(self.stage_id.name)
+                if self.stage_id.name == 'Solicitud de refacción' and self.estadoSolicitudDeRefaccionValidada == False:
+                    query = "update helpdesk_ticket set stage_id = 102 where id = " + str(self.x_studio_id_ticket) + ";"
+                    _logger.info("lol: " + query)
+                    ss = self.env.cr.execute(query)
+                    self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Refacción Autorizada"})
+                    
+                    message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Refacción Autorizada' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
+                    mess= {
+                            'title': _('Estado de ticket actualizado!!!'),
+                            'message' : message
+                          }
+                    self.estadoSolicitudDeRefaccionValidada = True
+                    return {'warning': mess}
+                
             else:
                 errorRefaccionNoValidada = "Solicitud de refacción no validada"
                 mensajeSolicitudRefaccionNoValida = "No es posible validar una solicitud de refacción en el estado actual."
@@ -593,90 +809,128 @@ class helpdesk_update(models.Model):
                   else :
                     raise exceptions.ValidationError("Error al capturar debe ser mayor")                                                 
 
+                    
+    estadoSolicitudDeToner = fields.Boolean(string="Paso por estado pendiente por autorizar solicitud", default=False)
     
     @api.onchange('x_studio_tipo_de_requerimiento')
     def toner(self):
       for record in self:
-        #if record.x_studio_id_ticket != 0:
-        if (record.team_id.id == 8 ) and record.x_studio_tipo_de_requerimiento == 'Tóner':
-            sale = self.env['sale.order'].create({'partner_id' : record.partner_id.id
-                                            , 'origin' : "Ticket de tóner: " + str(record.x_studio_id_ticket)
-                                            , 'x_studio_tipo_de_solicitud' : "Venta"
-                                            , 'x_studio_requiere_instalacin' : True                                       
-                                            , 'user_id' : record.user_id.id                                           
-                                            , 'x_studio_tcnico' : record.x_studio_tcnico.id
-                                            , 'x_studio_field_RnhKr': localidadContacto.id
-                                            , 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id
-                                            , 'warehouse_id' : 1   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
-                                            , 'team_id' : 1
-                                          })
-            record['x_studio_field_nO7Xg'] = sale.id
-            for c in record.x_studio_equipo_por_nmero_de_serie:
-                pro=self.env['product.product'].search([['name','=',c.x_studio_toner_compatible.name],['categ_id','=',5]])
-                gen=pro.sorted(key='qty_available',reverse=True)[0]
-                _logger.info('*************cantidad a solicitar: ' + str(c.id))
+        _logger.info("***********************************************************************************************" + str(self.x_studio_field_nO7Xg.state))
+        _logger.info("***********************************************************************************************" + str(self.x_studio_field_nO7Xg.id))
+        if self.x_studio_field_nO7Xg.id != False and self.x_studio_field_nO7Xg.state != 'sale':
+            sale = self.x_studio_field_nO7Xg
+            self.env.cr.execute("delete from sale_order_line where order_id = " + str(sale.id) +";")
+            for c in self.x_studio_productos:
                 self.env['sale.order.line'].create({'order_id' : sale.id
-                                            , 'product_id' : c.x_studio_toner_compatible.id if(len(gen)==0) else gen.id
-                                            , 'product_uom_qty' :1
-                                            , 'x_studio_field_9nQhR': c.id      
-                                            , 'price_unit': 0
-                                          })
-                _logger.info("*****************solicitud id: " + str(sale.id) + " name solicitud: " + str(sale.name) + " cantidad pedida: " + str(1) + " Producto pedido: " + str(c.x_studio_toner_compatible.id if(len(gen)==0) else gen.id) + " price unit: " + str(0))
-                """  
-                  self.env['dcas.dcas'].create({'serie' : c.id
-                                                , 'contadorMono' : c.x_studio_contador_bn_a_capturar
-                                                , 'contadorColor' :c.x_studio_contador_color_a_capturar
-                                                ,'porcentajeNegro':c.x_studio__negro
-                                                ,'porcentajeCian':c.x_studio__cian      
-                                                ,'porcentajeAmarillo':c.x_studio__amarrillo      
-                                                ,'porcentajeMagenta':c.x_studio__magenta
-                                                ,'x_studio_descripcion':self.name
-                                                ,'x_studio_tickett':self.x_studio_id_ticket
-                                                ,'x_studio_hoja_de_estado':c.x_studio_evidencias
-                                                ,'x_studio_usuariocaptura':self.env.user.name
-                                                ,'fuente':'helpdesk.ticket'
-
+                                                      , 'product_id' : c.id
+                                                      , 'product_uom_qty' : c.x_studio_cantidad_pedida
+                                                      , 'x_studio_field_9nQhR':self.x_studio_equipo_por_nmero_de_serie[0].id
+                                                      })
+                self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
+                #self.env.cr.commit()
+        else:
+            #if record.x_studio_id_ticket != 0:
+            if (record.team_id.id == 8 ) and record.x_studio_tipo_de_requerimiento == 'Tóner':
+                sale = self.env['sale.order'].create({'partner_id' : record.partner_id.id
+                                                , 'origin' : "Ticket de tóner: " + str(record.x_studio_id_ticket)
+                                                , 'x_studio_tipo_de_solicitud' : "Venta"
+                                                , 'x_studio_requiere_instalacin' : True                                       
+                                                , 'user_id' : record.user_id.id                                           
+                                                , 'x_studio_tcnico' : record.x_studio_tcnico.id
+                                                , 'x_studio_field_RnhKr': localidadContacto.id
+                                                , 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id
+                                                , 'warehouse_id' : 1   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
+                                                , 'team_id' : 1
                                               })
+                record['x_studio_field_nO7Xg'] = sale.id
+                for c in record.x_studio_equipo_por_nmero_de_serie:
+                    pro=self.env['product.product'].search([['name','=',c.x_studio_toner_compatible.name],['categ_id','=',5]])
+                    gen=pro.sorted(key='qty_available',reverse=True)[0]
+                    _logger.info('*************cantidad a solicitar: ' + str(c.id))
+                    self.env['sale.order.line'].create({'order_id' : sale.id
+                                                , 'product_id' : c.x_studio_toner_compatible.id if(len(gen)==0) else gen.id
+                                                , 'product_uom_qty' :1
+                                                , 'x_studio_field_9nQhR': c.id      
+                                                , 'price_unit': 0
+                                              })
+                    _logger.info("*****************solicitud id: " + str(sale.id) + " name solicitud: " + str(sale.name) + " cantidad pedida: " + str(1) + " Producto pedido: " + str(c.x_studio_toner_compatible.id if(len(gen)==0) else gen.id) + " price unit: " + str(0))
+                    """  
+                      self.env['dcas.dcas'].create({'serie' : c.id
+                                                    , 'contadorMono' : c.x_studio_contador_bn_a_capturar
+                                                    , 'contadorColor' :c.x_studio_contador_color_a_capturar
+                                                    ,'porcentajeNegro':c.x_studio__negro
+                                                    ,'porcentajeCian':c.x_studio__cian      
+                                                    ,'porcentajeAmarillo':c.x_studio__amarrillo      
+                                                    ,'porcentajeMagenta':c.x_studio__magenta
+                                                    ,'x_studio_descripcion':self.name
+                                                    ,'x_studio_tickett':self.x_studio_id_ticket
+                                                    ,'x_studio_hoja_de_estado':c.x_studio_evidencias
+                                                    ,'x_studio_usuariocaptura':self.env.user.name
+                                                    ,'fuente':'helpdesk.ticket'
+
+                                                  })
 
 
-                  self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': 'captura ','x_disgnostico':'capturas :' + str('Mono'+str(c.x_studio_contador_bn_a_capturar)+', Color '+str(c.x_studio_contador_color_a_capturar)+', Amarillo '+str(c.x_studio__amarrillo)+', Cian '+str(c.x_studio__cian)+', Negro '+str(c.x_studio__negro)+', Magenta '+str(c.x_studio__magenta))})
-                  """ 
+                      self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': 'captura ','x_disgnostico':'capturas :' + str('Mono'+str(c.x_studio_contador_bn_a_capturar)+', Color '+str(c.x_studio_contador_color_a_capturar)+', Amarillo '+str(c.x_studio__amarrillo)+', Cian '+str(c.x_studio__cian)+', Negro '+str(c.x_studio__negro)+', Magenta '+str(c.x_studio__magenta))})
+                      """ 
 
-            sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
-            self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
-        if (record.team_id.id == 13 ) and record.x_studio_tipo_de_requerimiento == 'Tóner':
-            sale = self.env['sale.order'].create({'partner_id' : record.partner_id.id
-                                            , 'origin' : "Ticket de tfs: " + str(record.x_studio_id_ticket)
-                                            , 'x_studio_tipo_de_solicitud' : "Venta"
-                                            , 'x_studio_requiere_instalacin' : True                                       
-                                            , 'user_id' : record.user_id.id                                           
-                                            , 'x_studio_tcnico' : record.x_studio_tcnico.id
-                                            , 'x_studio_field_RnhKr': localidadContacto.id
-                                            , 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id
-                                            , 'warehouse_id' : 1   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
-                                            , 'team_id' : 1      
-                                          })
-            record['x_studio_field_nO7Xg'] = sale.id
-            for c in record.x_studio_seriestoner:
-              #_logger.info('*************cantidad a solicitar: ' + str(c.x_studio_cantidad_a_solicitar))
-              self.env['sale.order.line'].create({'order_id' : sale.id
-                                            , 'product_id' : c.id
-                                            , 'product_uom_qty' : 1.0
-                                            , 'x_studio_field_9nQhR' : self.env['stock.production.lot'].search([['name', '=', str(c.name)]]).id
-                                          })
-            sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
-            self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")    
+                sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
+                self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
+            if (record.team_id.id == 13 ) and record.x_studio_tipo_de_requerimiento == 'Tóner':
+                sale = self.env['sale.order'].create({'partner_id' : record.partner_id.id
+                                                , 'origin' : "Ticket de tfs: " + str(record.x_studio_id_ticket)
+                                                , 'x_studio_tipo_de_solicitud' : "Venta"
+                                                , 'x_studio_requiere_instalacin' : True                                       
+                                                , 'user_id' : record.user_id.id                                           
+                                                , 'x_studio_tcnico' : record.x_studio_tcnico.id
+                                                , 'x_studio_field_RnhKr': localidadContacto.id
+                                                , 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id
+                                                , 'warehouse_id' : 1   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
+                                                , 'team_id' : 1      
+                                              })
+                record['x_studio_field_nO7Xg'] = sale.id
+                for c in record.x_studio_seriestoner:
+                  #_logger.info('*************cantidad a solicitar: ' + str(c.x_studio_cantidad_a_solicitar))
+                  self.env['sale.order.line'].create({'order_id' : sale.id
+                                                , 'product_id' : c.id
+                                                , 'product_uom_qty' : 1.0
+                                                , 'x_studio_field_9nQhR' : self.env['stock.production.lot'].search([['name', '=', str(c.name)]]).id
+                                              })
+                sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
+                self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")    
 
-        query = "update helpdesk_ticket set stage_id = 91 where id = " + str(self.x_studio_id_ticket) + ";"
-        _logger.info("lol: " + query)
-        ss = self.env.cr.execute(query)
-        self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Pendiente por autorizar solicitud"})
+            saleTemp = self.x_studio_field_nO7Xg
+            if saleTemp.id != False:
+                if self.x_studio_id_ticket:
+                    estadoAntes = str(self.stage_id.name)
+                    #if self.stage_id.name == 'Atención' and self.estadoSolicitudDeToner == False:
+                    if self.estadoSolicitudDeToner == False:    
+                        query = "update helpdesk_ticket set stage_id = 91 where id = " + str(self.x_studio_id_ticket) + ";"
+                        _logger.info("lol: " + query)
+                        ss = self.env.cr.execute(query)
+                        self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Pendiente por autorizar solicitud"})
+                        message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Pendiente por autorizar solicitud' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
+                        mess= {
+                                'title': _('Estado de ticket actualizado!!!'),
+                                'message' : message
+                              }
+                        self.estadoSolicitudDeToner = True
+                        return {'warning': mess}
+
+
+            #else:
+            #    errorTonerNoGenerada = "Solicitud de tóner no generada"
+            #    mensajeSolicitudTonerNoGenerada = "No es posible crear una solicitud de tóner sin guardar antes el ticket. Favor de guardar el ticket y posteriormente generar la solicitud"
+            #    raise exceptions.except_orm(_(errorTonerNoGenerada), _(mensajeSolicitudTonerNoGenerada))
+
         
-        #else:
-        #    errorTonerNoGenerada = "Solicitud de tóner no generada"
-        #    mensajeSolicitudTonerNoGenerada = "No es posible crear una solicitud de tóner sin guardar antes el ticket. Favor de guardar el ticket y posteriormente generar la solicitud"
-        #    raise exceptions.except_orm(_(errorTonerNoGenerada), _(mensajeSolicitudTonerNoGenerada))
-
+        
+        
+        
+    estadoSolicitudDeTonerValidar = fields.Boolean(string="Paso por estado autorizado y almacen", default=False)    
+        
+        
+        
     #@api.onchange('x_studio_verificacin_de_tner')
     def validar_solicitud_toner(self):
         _logger.info("validar_solicitud_toner()")        
@@ -687,16 +941,27 @@ class helpdesk_update(models.Model):
                 self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
                 sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
                 sale.action_confirm()
-                query="update helpdesk_ticket set stage_id = 95 where id = " + str(self.x_studio_id_ticket) + ";" 
-                _logger.info("lol: " + query)
-                ss=self.env.cr.execute(query)
-                self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Autorizado"})
                 
-                #En almacen
-                query="update helpdesk_ticket set stage_id = 93 where id = " + str(self.x_studio_id_ticket) + ";" 
-                _logger.info("lol: " + query)
-                ss=self.env.cr.execute(query)
-                self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "En almacén"})
+                if self.estadoSolicitudDeTonerValidar == False:
+                    query="update helpdesk_ticket set stage_id = 95 where id = " + str(self.x_studio_id_ticket) + ";" 
+                    _logger.info("lol: " + query)
+                    ss=self.env.cr.execute(query)
+                    self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Autorizado"})
+
+                    #En almacen
+                    query="update helpdesk_ticket set stage_id = 93 where id = " + str(self.x_studio_id_ticket) + ";" 
+                    _logger.info("lol: " + query)
+                    ss=self.env.cr.execute(query)
+                    self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "En almacén"})
+
+                    estadoAntes = str(self.stage_id.name)
+                    message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Almacen' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
+                    mess= {
+                            'title': _('Estado de ticket actualizado!!!'),
+                            'message' : message
+                          }
+                    self.estadoSolicitudDeTonerValidar = True
+                    return {'warning': mess}
                 
             else:
                 errorTonerNoValidado = "Solicitud de tóner no validada"
