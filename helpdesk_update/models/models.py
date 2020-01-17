@@ -126,6 +126,7 @@ class helpdesk_update(models.Model):
                                                                  , 'phone' : self.telefono
                                                                  , 'mobile' : self.movil
                                                                  , 'comment' : self.notas
+                                                                 , 'team_id': 1
                                                                 })
                 contactoId = contacto.id
             elif self.tipoDeDireccion == "delivery" and self.nombreDelContacto != False:
@@ -139,6 +140,7 @@ class helpdesk_update(models.Model):
                                                                  , 'phone' : self.telefono
                                                                  , 'mobile' : self.movil
                                                                  , 'comment' : self.notas
+                                                                 , 'team_id': 1
                                                                   
                                                                  , 'street_name' : self.direccionNombreCalle
                                                                  , 'street_number' : self.direccionNumeroExterior
@@ -165,6 +167,7 @@ class helpdesk_update(models.Model):
                                                                  , 'phone' : self.telefono
                                                                  , 'mobile' : self.movil
                                                                  , 'comment' : self.notas
+                                                                 , 'team_id': 1
                                                                   
                                                                  , 'street_name' : self.direccionNombreCalle
                                                                  , 'street_number' : self.direccionNumeroExterior
