@@ -113,7 +113,7 @@ class helpdesk_update(models.Model):
             if len(self.titulo) == 0: 
                 titulo = '' 
             else: 
-                titulo = str(self.titulo)
+                titulo = self.titulo.id
                 
             if self.tipoDeDireccion == "contact" and self.nombreDelContacto != False:
                 contacto = self.sudo().env['res.partner'].create({'parent_id' : self.x_studio_empresas_relacionadas.id
