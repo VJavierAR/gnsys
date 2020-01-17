@@ -109,12 +109,18 @@ class helpdesk_update(models.Model):
         if self.x_studio_empresas_relacionadas.id != 0:
             contactoId = 0;
             #_logger.info("*******************************************self.nombreDelContacto: " + str(self.nombreDelContacto))
+            titulo = ''
+            if len(self.titulo) == 0: 
+                titulo = '' 
+            else: 
+                titulo = str(self.titulo)
+                
             if self.tipoDeDireccion == "contact" and self.nombreDelContacto != False:
                 contacto = self.sudo().env['res.partner'].create({'parent_id' : self.x_studio_empresas_relacionadas.id
                                                                  , 'type' : self.tipoDeDireccion
                                                                  , 'x_studio_subtipo' : self.subtipo
                                                                  , 'name' : self.nombreDelContacto
-                                                                 , 'title' : if len(self.titulo) == 0: return None else: return self.titulo
+                                                                 , 'title' : titulo
                                                                  , 'function' : self.puestoDeTrabajo
                                                                  , 'email' : self.correoElectronico
                                                                  , 'phone' : self.telefono
@@ -127,7 +133,7 @@ class helpdesk_update(models.Model):
                                                                  , 'type' : self.tipoDeDireccion
                                                                  , 'x_studio_subtipo' : self.subtipo
                                                                  , 'name' : self.nombreDelContacto
-                                                                 , 'title' : if len(self.titulo) == 0: return None else: return self.titulo
+                                                                 , 'title' : titulo
                                                                  , 'function' : self.puestoDeTrabajo
                                                                  , 'email' : self.correoElectronico
                                                                  , 'phone' : self.telefono
@@ -153,7 +159,7 @@ class helpdesk_update(models.Model):
                                                                  , 'type' : self.tipoDeDireccion
                                                                  , 'x_studio_subtipo' : self.subtipo
                                                                  , 'name' : self.nombreDelContacto
-                                                                 , 'title' : if len(self.titulo) == 0: return None else: return self.titulo
+                                                                 , 'title' : titulo
                                                                  , 'function' : self.puestoDeTrabajo
                                                                  , 'email' : self.correoElectronico
                                                                  , 'phone' : self.telefono
