@@ -114,7 +114,7 @@ class helpdesk_update(models.Model):
                                                                  , 'type' : self.tipoDeDireccion
                                                                  , 'x_studio_subtipo' : self.subtipo
                                                                  , 'name' : self.nombreDelContacto
-                                                                 , 'title' : if len(self.titulo) == 0: None else: self.titulo
+                                                                 , 'title' : if len(self.titulo) == 0: return None else: return self.titulo
                                                                  , 'function' : self.puestoDeTrabajo
                                                                  , 'email' : self.correoElectronico
                                                                  , 'phone' : self.telefono
@@ -127,7 +127,7 @@ class helpdesk_update(models.Model):
                                                                  , 'type' : self.tipoDeDireccion
                                                                  , 'x_studio_subtipo' : self.subtipo
                                                                  , 'name' : self.nombreDelContacto
-                                                                 , 'title' : if len(self.titulo) == 0: None else: self.titulo
+                                                                 , 'title' : if len(self.titulo) == 0: return None else: return self.titulo
                                                                  , 'function' : self.puestoDeTrabajo
                                                                  , 'email' : self.correoElectronico
                                                                  , 'phone' : self.telefono
@@ -153,7 +153,7 @@ class helpdesk_update(models.Model):
                                                                  , 'type' : self.tipoDeDireccion
                                                                  , 'x_studio_subtipo' : self.subtipo
                                                                  , 'name' : self.nombreDelContacto
-                                                                 , 'title' : if len(self.titulo) == 0: None else: self.titulo
+                                                                 , 'title' : if len(self.titulo) == 0: return None else: return self.titulo
                                                                  , 'function' : self.puestoDeTrabajo
                                                                  , 'email' : self.correoElectronico
                                                                  , 'phone' : self.telefono
