@@ -114,7 +114,7 @@ class helpdesk_update(models.Model):
                                                                  , 'type' : self.tipoDeDireccion
                                                                  , 'x_studio_subtipo' : self.subtipo
                                                                  , 'name' : self.nombreDelContacto
-                                                                 , 'title' : self.titulo
+                                                                 , 'title' : if len(self.titulo) == 0: None else: self.titulo
                                                                  , 'function' : self.puestoDeTrabajo
                                                                  , 'email' : self.correoElectronico
                                                                  , 'phone' : self.telefono
@@ -127,7 +127,7 @@ class helpdesk_update(models.Model):
                                                                  , 'type' : self.tipoDeDireccion
                                                                  , 'x_studio_subtipo' : self.subtipo
                                                                  , 'name' : self.nombreDelContacto
-                                                                 , 'title' : self.titulo
+                                                                 , 'title' : if len(self.titulo) == 0: None else: self.titulo
                                                                  , 'function' : self.puestoDeTrabajo
                                                                  , 'email' : self.correoElectronico
                                                                  , 'phone' : self.telefono
@@ -153,7 +153,7 @@ class helpdesk_update(models.Model):
                                                                  , 'type' : self.tipoDeDireccion
                                                                  , 'x_studio_subtipo' : self.subtipo
                                                                  , 'name' : self.nombreDelContacto
-                                                                 , 'title' : self.titulo
+                                                                 , 'title' : if len(self.titulo) == 0: None else: self.titulo
                                                                  , 'function' : self.puestoDeTrabajo
                                                                  , 'email' : self.correoElectronico
                                                                  , 'phone' : self.telefono
@@ -372,7 +372,8 @@ class helpdesk_update(models.Model):
         _logger.info("-------------------------------------------------------------team_id: " + str(self.team_id.id))
         if self.x_studio_id_ticket:
             estadoAntes = str(self.stage_id.name)
-            if self.stage_id.name == 'Abierto' and self.estadoAsignacion == False and self.team_id.id != False:
+            #if self.stage_id.name == 'Abierto' and self.estadoAsignacion == False and self.team_id.id != False:
+            if self.estadoAsignacion == False and self.team_id.id != False:
                 query = "update helpdesk_ticket set stage_id = 2 where id = " + str(self.x_studio_id_ticket) + ";"
                 _logger.info("lol: " + query)
                 ss = self.env.cr.execute(query)             
