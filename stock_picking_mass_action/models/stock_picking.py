@@ -51,7 +51,7 @@ class StockPicking(Model):
             self.lineTemp=[(5,0,0)]
             dat=[]
             for m in self.move_ids_without_package:
-                dat.append({'producto':m.product_id.id,'cantidad':m.product_uom_qty,'ubicacion':self.location_id.id})
+                dat.append({'producto':m.product_id.id,'cantidad':m.product_uom_qty,'ubicacion':self.location_id.id,'serieDestino':m.x_studio_serie_destino.id})
             self.sudo().lineTemp=dat
             for s in self.sale_id.order_line:
                 self.env.cr.execute("delete from stock_move_line where reference='"+self.name+"';")
@@ -63,7 +63,7 @@ class StockPicking(Model):
             pickis=self.env.cr.fetchall()
             pick=self.env['stock.picking'].search([['id','in',pickis]])
             for li in self.lineTemp:
-                ss=self.env['sale.order.line'].sudo().create({'order_id':self.sale_id.id,'product_id':li.producto.id,'product_uom':li.producto.uom_id.id,'product_uom_qty':li.cantidad,'name':li.producto.description,'price_unit':0.00})
+                ss=self.env['sale.order.line'].sudo().create({'x_studio_field_9nQhR':li.serieDestino.id,'order_id':self.sale_id.id,'product_id':li.producto.id,'product_uom':li.producto.uom_id.id,'product_uom_qty':li.cantidad,'name':li.producto.description,'price_unit':0.00})
             for p in pick:
                 p.action_confirm()
         self.is_locked = not self.is_locked
@@ -135,6 +135,7 @@ class StockPickingMoveTemp(Model):
     picking=fields.Many2one('stock.picking')
     unidad=fields.Many2one('uom.uom',related='producto.uom_id')
     lock=fields.Boolean('lock')
+    serieDestino=fields.Many2one('stock.production.lot')
     
     @api.onchange('ubicacion','producto')
     def quant(self):
