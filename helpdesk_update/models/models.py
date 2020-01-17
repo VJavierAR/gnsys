@@ -319,13 +319,16 @@ class helpdesk_update(models.Model):
                 #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.id ,'x_persona': self.env.user.name,'x_estado': "Abierto"})
     """
     
+    estadoAbierto = fields.Boolean(string="Paso por estado abierto", default=False)
+    
     @api.onchange('x_studio_equipo_por_nmero_de_serie')
     def abierto(self):
         if self.x_studio_id_ticket:
             _logger.info("------------------------self.stage_id.name: " + str(self.stage_id.name))
             _logger.info("------------------------self.x_studio_equipo_por_nmero_de_serie.id: " + str(self.x_studio_equipo_por_nmero_de_serie.id))
             estadoAntes = str(self.stage_id.name)
-            if self.stage_id.name == 'Pre-ticket' and self.x_studio_equipo_por_nmero_de_serie.id != False:
+            if self.stage_id.name == 'Pre-ticket' and self.x_studio_equipo_por_nmero_de_serie.id != False and self.estadoAbierto == False:
+            #if self.stage_id.name == 'Pre-ticket' and self.x_studio_equipo_por_nmero_de_serie.id != False and self.estadoAbierto == False:
                 query = "update helpdesk_ticket set stage_id = 89 where id = " + str(self.x_studio_id_ticket) + ";"
                 _logger.info("lol: " + query)
                 ss = self.env.cr.execute(query)
@@ -337,6 +340,7 @@ class helpdesk_update(models.Model):
                         'title': _('Estado de ticket actualizado!!!'),
                         'message' : message
                     }
+                self.estadoAbierto = True
                 return {'warning': mess}
     
     
