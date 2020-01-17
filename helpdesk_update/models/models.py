@@ -473,7 +473,7 @@ class helpdesk_update(models.Model):
         #    if len(self.documentosTecnico)
         #if self.stage_id.name == 'Atención' and self.x_studio_productos != []:
         #raise exceptions.ValidationError("error gerardo: " + str(self.stage_id.name))
-        estadoAntes = self.stage_id.name
+        estadoAntes = str(self.stage_id.name)
         if self.estadoResuelto == False:
             query = "update helpdesk_ticket set stage_id = 3 where id = " + str(self.x_studio_id_ticket) + ";"
             _logger.info("lol: " + query)
@@ -493,6 +493,7 @@ class helpdesk_update(models.Model):
     
     #@api.onchange('stage_id')
     def cambioCotizacion(self):
+        estadoAntes = str(self.stage_id.name)
         if self.stage_id.name == 'Cotización' and str(self.env.user.id) == str(self.x_studio_tcnico.user_id.id) and self.estadoCotizacion == False:
             query = "update helpdesk_ticket set stage_id = 101 where id = " + str(self.x_studio_id_ticket) + ";"
             _logger.info("lol: " + query)
@@ -517,7 +518,7 @@ class helpdesk_update(models.Model):
         #_logger.info("********************self.documentosTecnico.id: " + str(self.documentosTecnico[0].id))
         _logger.info("********************self.env.user.id: " + str(self.env.user.id) + " **** self.x_studio_tcnico.user_id.id: " + str(self.x_studio_tcnico.user_id.id))
         #_logger.info("******************** type self.documentosTecnico.id: " + str(type(self.documentosTecnico)))
-        
+        estadoAntes = str(self.stage_id.name)
         #if self.documentosTecnico.id != False and str(self.env.user.id) == str(self.x_studio_tcnico.user_id.id):
         if str(self.env.user.id) == str(self.x_studio_tcnico.user_id.id) and self.estadoResueltoPorDocTecnico == False:
             query = "update helpdesk_ticket set stage_id = 3 where id = " + str(self.x_studio_id_ticket) + ";"
@@ -539,6 +540,7 @@ class helpdesk_update(models.Model):
     #Falta comprobar
     #@api.onchange('stage_id')
     def cambioCerrado(self):
+        estadoAntes = str(self.stage_id.name)
         #_logger.info("********************self.stage_id: " + str(self.stage_id))
         if self.stage_id.name == 'Resuelto' or self.stage_id.name == 'Abierto' or self.stage_id.name == 'Asignado' or self.stage_id.name == 'Atención' and self.estadoCerrado == False:
             query = "update helpdesk_ticket set stage_id = 18 where id = " + str(self.x_studio_id_ticket) + ";"
@@ -560,6 +562,7 @@ class helpdesk_update(models.Model):
     #Falta comprobar
     #@api.onchange('stage_id')
     def cambioCancelado(self):
+        estadoAntes = str(self.stage_id.name)
         #_logger.info("********************self.documentosTecnico.id: " + str(self.documentosTecnico.id))
         #if self.stage_id.name == 'Cancelado':
         if self.estadoCancelado == False:
