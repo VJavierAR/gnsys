@@ -678,7 +678,8 @@ class helpdesk_update(models.Model):
                     if saleTemp.id != False:
                         if self.x_studio_id_ticket:
                             estadoAntes = str(self.stage_id.name)
-                            if self.stage_id.name == 'Atención' and self.estadoSolicitudDeRefaccion == False:
+                            foraneoDistribuidor = 11
+                            if (self.stage_id.name == 'Atención' or self.team_id.id == foraneoDistribuidor) and self.estadoSolicitudDeRefaccion == False:
                                 query = "update helpdesk_ticket set stage_id = 100 where id = " + str(self.x_studio_id_ticket) + ";"
                                 _logger.info("lol: " + query)
                                 ss = self.env.cr.execute(query)
