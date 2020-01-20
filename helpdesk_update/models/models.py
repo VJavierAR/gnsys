@@ -511,7 +511,8 @@ class helpdesk_update(models.Model):
     def cambioCotizacion(self):
         estadoAntes = str(self.stage_id.name)
         #if self.stage_id.name == 'Cotización' and str(self.env.user.id) == str(self.x_studio_tcnico.user_id.id) and self.estadoCotizacion == False:
-        if str(self.env.user.id) == str(self.x_studio_tcnico.user_id.id) and self.estadoCotizacion == False:
+        #if str(self.env.user.id) == str(self.x_studio_tcnico.user_id.id) and self.estadoCotizacion == False:
+        if self.estadoCotizacion == False:
             query = "update helpdesk_ticket set stage_id = 101 where id = " + str(self.x_studio_id_ticket) + ";"
             _logger.info("lol: " + query)
             ss = self.env.cr.execute(query)
