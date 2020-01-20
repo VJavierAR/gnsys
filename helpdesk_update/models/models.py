@@ -842,8 +842,10 @@ class helpdesk_update(models.Model):
             sale = self.x_studio_field_nO7Xg
             self.env.cr.execute("delete from sale_order_line where order_id = " + str(sale.id) +";")
             for c in self.x_studio_productos:
+                pro=self.env['product.product'].search([['name','=',c.id.name],['categ_id','=',5]])
+                gen=pro.sorted(key='qty_available',reverse=True)[0]
                 self.env['sale.order.line'].create({'order_id' : sale.id
-                                                      , 'product_id' : c.id
+                                                      , 'product_id' : gen.id
                                                       , 'product_uom_qty' : c.x_studio_cantidad_pedida
                                                       , 'x_studio_field_9nQhR':self.x_studio_equipo_por_nmero_de_serie[0].id
                                                       })
