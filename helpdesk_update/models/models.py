@@ -694,8 +694,6 @@ class helpdesk_update(models.Model):
                             self.estadoSolicitudDeRefaccion = True
                             return {'warning': mess}
                     
-                    
-                    
                     """
                     if self.team_id.name == 'Equipo de hardware':
                         query = "update helpdesk_ticket set stage_id = 100 where id = " + str(self.x_studio_id_ticket) + ";"
