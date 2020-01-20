@@ -474,6 +474,7 @@ class helpdesk_update(models.Model):
                         'message' : message
                     }
                 self.estadoAtencion = True
+                self.estadoResuelto = False
                 return {'warning': mess}
     
     
@@ -501,6 +502,7 @@ class helpdesk_update(models.Model):
                     'message' : message
                 }
             self.estadoResuelto = True
+            self.estadoAtencion = False
             return {'warning': mess}
 
     estadoCotizacion = fields.Boolean(string="Paso por estado cotizacion", default=False)
@@ -508,7 +510,8 @@ class helpdesk_update(models.Model):
     #@api.onchange('stage_id')
     def cambioCotizacion(self):
         estadoAntes = str(self.stage_id.name)
-        if self.stage_id.name == 'Cotización' and str(self.env.user.id) == str(self.x_studio_tcnico.user_id.id) and self.estadoCotizacion == False:
+        #if self.stage_id.name == 'Cotización' and str(self.env.user.id) == str(self.x_studio_tcnico.user_id.id) and self.estadoCotizacion == False:
+        if str(self.env.user.id) == str(self.x_studio_tcnico.user_id.id) and self.estadoCotizacion == False:
             query = "update helpdesk_ticket set stage_id = 101 where id = " + str(self.x_studio_id_ticket) + ";"
             _logger.info("lol: " + query)
             ss = self.env.cr.execute(query)
@@ -547,6 +550,7 @@ class helpdesk_update(models.Model):
                     'message' : message
                 }
             self.estadoResueltoPorDocTecnico = True
+            self.estadoAtencion = False
             return {'warning': mess}
             
             
@@ -569,6 +573,7 @@ class helpdesk_update(models.Model):
                     'message' : message
                 }
             self.estadoResueltoPorDocTecnico = True
+            self.estadoAtencion = True
             return {'warning': mess}
     
     
