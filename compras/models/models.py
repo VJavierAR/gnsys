@@ -12,7 +12,7 @@ import re
 class compras(models.Model):
     _inherit = 'purchase.order'
     archivo=fields.Binary(store=True,readonly=False)
-    nam=fields.Char(compute='_value_pc')
+    nam=fields.Char()
     
     
     @api.multi
