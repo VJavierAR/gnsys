@@ -16,7 +16,7 @@ class StockPicking(Model):
     ('draft', 'Draft'),
     ('waiting', 'Waiting Another Operation'),
     ('confirmed', 'Waiting'),
-    ('assigned', 'Ready'),
+    ('assigned', 'Por Validar'),
     ('done', 'Validado'),('distribucion', 'Distribución'),('cancel', 'Cancelled'),
 ], string='Status', compute='_compute_state',
     copy=False, index=True, readonly=True, store=True, track_visibility='onchange',
