@@ -1518,8 +1518,28 @@ class helpdesk_update(models.Model):
     #@api.multi
     @api.onchange('x_studio_equipo_por_nmero_de_serie')
     #@api.depends('x_studio_equipo_por_nmero_de_serie')
-    def actualiza_datos_cliente(self):
-        
+    def actualiza_datos_cliente(self):        
+        if int(self.x_studio_tamao_lista) > 0 and self.team_id.id != 8:
+            _logger.info("actualiza_datos_cliente()" + str(self.x_studio_equipo_por_nmero_de_serie[0].id))
+            query="select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!="+str(self.x_studio_id_ticket)+"  and h.stage_id!=18 and h.team_id!=8 and  h.active='t' and stock_production_lot_id = "+str(self.x_studio_equipo_por_nmero_de_serie[0].id)+" limit 1;"            
+            _logger.info("primera query s "+str(query))
+            self.env.cr.execute(query)                        
+            informacion = self.env.cr.fetchall()
+            if len(informacion) > 0:
+                raise exceptions.ValidationError("No es posible registrar número de serie, primero cerrar el ticket con el id  "+str(informacion[0][0]))
+        if int(self.x_studio_tamao_lista) > 0 and self.team_id.id == 8:
+            _logger.info("actualiza_datos_cliente()" + str(self.x_studio_equipo_por_nmero_de_serie[0].id))
+            queryt="select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!="+str(self.x_studio_id_ticket)+"  and h.stage_id!=18 and h.team_id=8 and  h.active='t' and stock_production_lot_id = "+str(self.x_studio_equipo_por_nmero_de_serie[0].id)+" limit 1;"            
+            _logger.info("primera query st "+str(queryt))
+            self.env.cr.execute(queryt)                        
+            informaciont = self.env.cr.fetchall()
+            if len(informaciont) > 0:
+                message = ('Estas agregando una serie de un ticket ya en proceso en equipo de toner. \n Ticket: '+str(informaciont[0][0]))
+                mess= {
+                        'title': _('Alerta!!!'),
+                        'message' : message
+                              }
+                return {'warning': mess}                                        
         """
         if int(self.x_studio_tamao_lista) > 0 and self.team_id.id != 8:
            _logger.info("actualiza_datos_cliente()"+str(self.x_studio_equipo_por_nmero_de_serie[0].id))
