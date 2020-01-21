@@ -36,26 +36,28 @@ class tfs(models.Model):
     def confirm(self):
         for record in self:
             if(len(record.inventario)>0):
-                for qua in record.inventario:
-                    if(qua.product_id.id==self.producto.id):
-                        if(self.tipo=='negro'):
-                            rendimientoMono=self.actualMonocromatico-self.contadorAnteriorMono
-                            porcentaje=(100*rendimientoMono)/self.producto.x_studio_rendimiento_toner
-                            if(porcentaje<60):
-                                self.write({'estado':'xValidar'})
-                            else:
-                                self.write({'estado':'Valido'})
+                In=self.inventario.search([['product_id.name','=',self.producto.name]]).sorted(key='quantity',reverse=True)
+                #for qua in record.inventario:
+                #    qua.product_id.id==self.producto.id
+                #    if(qua.product_id.id==self.producto.id):
+                if(len(In)>0):
+                    if(self.tipo=='negro'):
+                        rendimientoMono=self.actualMonocromatico-self.contadorAnteriorMono
+                        porcentaje=(100*rendimientoMono)/self.producto.x_studio_rendimiento_toner if self.producto.x_studio_rendimiento_toner>0 else 1
+                        if(porcentaje<60):
+                            self.write({'estado':'xValidar'})
                         else:
-                            rendimientoColor=self.actualColor-self.contadorAnteriorColor
-                            porcentaje=(100*rendimientoColor)/self.producto.x_studio_rendimiento_toner
-                            if(porcentaje<60):
-                                self.write({'estado':'xValidar'})
-                            else:
-                                self.write({'estado':'Valido'})
+                            self.write({'estado':'Valido'})
+                            In.write({'quantity':In.quantity-1})
                     else:
-                        raise exceptions.UserError("No existen cantidades en el almacen para el producto " + self.producto.name)
-            else:
-                raise exceptions.UserError("No existen cantidades en el almacen para el producto " + self.producto.name)
+                        rendimientoColor=self.actualColor-self.contadorAnteriorColor
+                        porcentaje=(100*rendimientoColor)/self.producto.x_studio_rendimiento_toner if self.producto.x_studio_rendimiento_toner>0 else 1
+                        if(porcentaje<60):
+                            self.write({'estado':'xValidar'})
+                        else:
+                            self.write({'estado':'Valido'})
+                else:
+                    raise exceptions.UserError("No existen cantidades en el almacen para el producto " + self.producto.name)
                 
     
     
@@ -96,14 +98,17 @@ class tfs(models.Model):
         res={}
         for record in self:
             if record.localidad:
-                record['almacen'] =self.env['stock.warehouse'].search([['x_studio_field_E0H1Z','=',record.localidad.id]])
+                record['almacen'] =self.env['stock.warehouse'].search([['x_studio_field_E0H1Z','=',record.localidad.id]]).lot_stock_id.x_studio_almacn_padre
+                
     
     @api.depends('almacen')
     def cambio(self):
         res={}
         for record in self:
             if record.almacen:
-                record['domi']=record.almacen.lot_stock_id.id
+                record['domi']=0
+                #record.almacenlot_stock_id.id
+                
                 #res['domain'] = {'serie': [('x_studio_ubicacion_id', '=', record.almacen.lot_stock_id.id)]}
         #return res
     @api.multi
@@ -126,11 +131,6 @@ class tfs(models.Model):
                         record['cliente'] = cliente
                         record['localidad'] = localidad
                         i=1
-                j=0
-                for dc in record.serie.dca:
-                   if(j==0):
-                    record['contadorAnterior']=dc.id
-                    j=j+1
             #if record.localidad:
              #   record['almacen'] =self.env['stock.warehouse'].search([['x_studio_field_E0H1Z','=',record.localidad.id]])
             #self.onchange_localidad()
