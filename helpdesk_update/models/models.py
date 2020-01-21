@@ -642,7 +642,7 @@ class helpdesk_update(models.Model):
                                                                  #, 'x_studio_fecha_final' : self.x_studio_rango_final_de_visita
                                                                  , 'x_studio_field_RnhKr': self.localidadContacto.id
                                                                  , 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id
-                                                                 , 'user_id' : record.partner_id.x_studio_ejecutivo.id 
+                                                                 #, 'user_id' : record.partner_id.x_studio_ejecutivo.id 
                                                                  , 'x_studio_tcnico' : record.x_studio_tcnico.id
                                                                  , 'warehouse_id' : 5865   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
                                                                  , 'team_id' : 1
