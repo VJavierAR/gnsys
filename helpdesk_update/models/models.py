@@ -461,7 +461,7 @@ class helpdesk_update(models.Model):
         _logger.info("-------------------------------------------------------------self.x_studio_tcnico.id: " + str(self.x_studio_tcnico.id))
         if self.x_studio_id_ticket:
             estadoAntes = str(self.stage_id.name)
-            if self.stage_id.name == 'Asignado' and self.x_studio_tcnico.id != False and self.estadoAtencion == False:
+            if (self.stage_id.name == 'Asignado' or self.stage_id.name == 'Resuelto') and self.x_studio_tcnico.id != False and self.estadoAtencion == False:
                 query = "update helpdesk_ticket set stage_id = 13 where id = " + str(self.x_studio_id_ticket) + ";"
                 _logger.info("lol: " + query)
                 ss = self.env.cr.execute(query)
@@ -642,10 +642,11 @@ class helpdesk_update(models.Model):
                                                                  #, 'x_studio_fecha_final' : self.x_studio_rango_final_de_visita
                                                                  , 'x_studio_field_RnhKr': self.localidadContacto.id
                                                                  , 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id
-                                                                 , 'user_id' : record.user_id.id
+                                                                 , 'user_id' : record.partner_id.x_studio_ejecutivo.id 
                                                                  , 'x_studio_tcnico' : record.x_studio_tcnico.id
                                                                  , 'warehouse_id' : 5865   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
-                                                                 , 'team_id' : 1})
+                                                                 , 'team_id' : 1
+                                                                })
                     _logger.info("********Venta creada, id: " + str(sale.id))
                     record['x_studio_field_nO7Xg'] = sale.id
                     for c in record.x_studio_productos:
@@ -657,6 +658,7 @@ class helpdesk_update(models.Model):
                                                                   })
                         _logger.info("*****************solicitud id: " + str(sale.id) + " name solicitud: " + str(sale.name) + " cantidad pedida: " + str(c.x_studio_cantidad_pedida) + " Producto pedido: " + str(c.id) + " numero de serie: " + str(self.x_studio_equipo_por_nmero_de_serie[0].id) + " price unit: " + str(0))
                         sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
+                        #sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta', 'validity_date' : sale.date_order + datetime.timedelta(days=30)})
                         self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
 
 
@@ -901,8 +903,8 @@ class helpdesk_update(models.Model):
 
                       self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': 'captura ','x_disgnostico':'capturas :' + str('Mono'+str(c.x_studio_contador_bn_a_capturar)+', Color '+str(c.x_studio_contador_color_a_capturar)+', Amarillo '+str(c.x_studio__amarrillo)+', Cian '+str(c.x_studio__cian)+', Negro '+str(c.x_studio__negro)+', Magenta '+str(c.x_studio__magenta))})
                       """ 
-
                 sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
+                #sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta', 'validity_date' : sale.date_order + datetime.timedelta(days=30)})
                 self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
             if (record.team_id.id == 13 ) and record.x_studio_tipo_de_requerimiento == 'Tóner':
                 sale = self.env['sale.order'].create({'partner_id' : record.partner_id.id
