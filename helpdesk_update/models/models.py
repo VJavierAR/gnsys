@@ -849,11 +849,11 @@ class helpdesk_update(models.Model):
             for c in self.x_studio_productos:
                 pro=self.env['product.product'].search([['name','=',c.id.name],['categ_id','=',5]])
                 gen=pro.sorted(key='qty_available',reverse=True)[0]
-                self.env['sale.order.line'].create({'order_id' : sale.id
-                                                      , 'product_id' : gen.id
-                                                      , 'product_uom_qty' : c.x_studio_cantidad_pedida
-                                                      , 'x_studio_field_9nQhR':self.x_studio_equipo_por_nmero_de_serie[0].id
-                                                      })
+                datos={'order_id' : sale.id, 'product_id' : gen.id, 'product_uom_qty' : c.x_studio_cantidad_pedida, 'x_studio_field_9nQhR':self.x_studio_equipo_por_nmero_de_serie[0].id}
+                if(gen['qty_available']<=0):
+                    datos['route_id']=1
+                    datos['product_id']=c.id            
+                self.env['sale.order.line'].create(datos)
                 self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
                 #self.env.cr.commit()
         else:
@@ -875,13 +875,12 @@ class helpdesk_update(models.Model):
                 for c in record.x_studio_equipo_por_nmero_de_serie:
                     pro=self.env['product.product'].search([['name','=',c.x_studio_toner_compatible.name],['categ_id','=',5]])
                     gen=pro.sorted(key='qty_available',reverse=True)[0]
+                    datos={'order_id' : sale.id, 'product_id' : c.x_studio_toner_compatible.id if(len(gen)==0) else gen.id, 'product_uom_qty' :1, 'x_studio_field_9nQhR': c.id , 'price_unit': 0}
+                    if(gen['qty_available']<=0):
+                        datos['route_id']=1
+                        datos['product_id']=c.x_studio_toner_compatible.id
                     _logger.info('*************cantidad a solicitar: ' + str(c.id))
-                    self.env['sale.order.line'].create({'order_id' : sale.id
-                                                , 'product_id' : c.x_studio_toner_compatible.id if(len(gen)==0) else gen.id
-                                                , 'product_uom_qty' :1
-                                                , 'x_studio_field_9nQhR': c.id      
-                                                , 'price_unit': 0
-                                              })
+                    self.env['sale.order.line'].create(datos)
                     _logger.info("*****************solicitud id: " + str(sale.id) + " name solicitud: " + str(sale.name) + " cantidad pedida: " + str(1) + " Producto pedido: " + str(c.x_studio_toner_compatible.id if(len(gen)==0) else gen.id) + " price unit: " + str(0))
                     """  
                       self.env['dcas.dcas'].create({'serie' : c.id
