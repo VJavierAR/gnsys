@@ -13,9 +13,9 @@ class StockPicking(Model):
     estado = fields.Text(compute = 'x_historial_ticket_actualiza')
     lineTemp=fields.One2many('stock.pick.temp','picking')
     state = fields.Selection([
-    ('draft', 'Draft'),
+    ('draft', 'Draft'),('compras', 'Solicitud de Compra'),
     ('waiting', 'Waiting Another Operation'),
-    ('confirmed', 'Waiting'),
+    ('confirmed', 'Sin Stock'),
     ('assigned', 'Por Validar'),
     ('done', 'Validado'),('distribucion', 'Distribución'),('cancel', 'Cancelled'),
 ], string='Status', compute='_compute_state',
