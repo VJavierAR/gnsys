@@ -683,7 +683,8 @@ class helpdesk_update(models.Model):
                         
                     estadoAntes = str(self.stage_id.name)
                     foraneoDistribuidor = 11
-                    if (self.stage_id.name == 'Atención' or self.stage_id.name == 'Solicitud de Refacción' or self.team_id.id == foraneoDistribuidor) and self.estadoSolicitudDeRefaccion == False:
+                    #if (self.stage_id.name == 'Atención' or self.stage_id.name == 'Solicitud de Refacción' or self.team_id.id == foraneoDistribuidor) and self.estadoSolicitudDeRefaccion == False:
+                    if self.estadoSolicitudDeRefaccion == False:
                         _logger.info("Entre porfin *****************************")
                         query = "update helpdesk_ticket set stage_id = 100 where id = " + str(self.x_studio_id_ticket) + ";"
                         _logger.info("lol: " + query)
