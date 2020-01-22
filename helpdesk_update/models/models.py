@@ -101,7 +101,20 @@ class helpdesk_update(models.Model):
                 raise exceptions.Warning('No se pudo actualizar la dirreción de la solicitud: ' + str(sale.name) + ' del ticket: ' + str(self.x_studio_id_ticket) + " debido a que ya fue validada la solicitud. \nIntento actualizar el campo 'Localidad' con la dirección: " + str(self.x_studio_empresas_relacionadas.parent_id.name) + " " + str(self.x_studio_empresas_relacionadas.name))
                 
                 
-                
+    @api.multi
+    def regresarAte(self):
+        estado = self.stage_id.name
+        #if estado == 'Atención':
+        query="update helpdesk_ticket set stage_id = 13 where id = '" + str(self.x_studio_id_ticket) + "';" 
+        self.env.cr.execute(query)
+        self.env.cr.commit()
+        message = ('Se cambio el estado ')
+        mess= {
+                'title': _('Estado  Actualizado a Atencion!!!'),
+                'message' : message
+              }
+        return {'warning': mess}              
+            
     
     def agregarContactoALocalidad(self):
         _logger.info("*****self.x_studio_empresas_relacionadas.id: " + str(self.x_studio_empresas_relacionadas.id))
