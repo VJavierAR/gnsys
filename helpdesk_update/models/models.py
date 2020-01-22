@@ -678,23 +678,26 @@ class helpdesk_update(models.Model):
                     
                 saleTemp = self.x_studio_field_nO7Xg
                 if saleTemp.id != False:
-                    if self.x_studio_id_ticket:
-                        estadoAntes = str(self.stage_id.name)
-                        foraneoDistribuidor = 11
-                        if (self.stage_id.name == 'Atención' or self.team_id.id == foraneoDistribuidor) and self.estadoSolicitudDeRefaccion == False:
-                            query = "update helpdesk_ticket set stage_id = 100 where id = " + str(self.x_studio_id_ticket) + ";"
-                            _logger.info("lol: " + query)
-                            ss = self.env.cr.execute(query)
-                            _logger.info("**********fun: crear_solicitud_refaccion(), estado: " + str(self.stage_id.name))
-                                #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
-                            self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Solicitud de refacción"})
-                            message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Solicitud de refacción' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
-                            mess= {
-                                    'title': _('Estado de ticket actualizado!!!'),
-                                    'message' : message
-                                  }
-                            self.estadoSolicitudDeRefaccion = True
-                            return {'warning': mess}
+                    _logger.info("Entre*************************************")
+                    #if self.x_studio_id_ticket:
+                        
+                    estadoAntes = str(self.stage_id.name)
+                    foraneoDistribuidor = 11
+                    if (self.stage_id.name == 'Atención' or self.stage_id.name == 'Solicitud de Refacción' or self.team_id.id == foraneoDistribuidor) and self.estadoSolicitudDeRefaccion == False:
+                        _logger.info("Entre porfin *****************************")
+                        query = "update helpdesk_ticket set stage_id = 100 where id = " + str(self.x_studio_id_ticket) + ";"
+                        _logger.info("lol: " + query)
+                        ss = self.env.cr.execute(query)
+                        _logger.info("**********fun: crear_solicitud_refaccion(), estado: " + str(self.stage_id.name))
+                            #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
+                        self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Solicitud de refacción"})
+                        message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Solicitud de refacción' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
+                        mess= {
+                                'title': _('Estado de ticket actualizado!!!'),
+                                'message' : message
+                              }
+                        self.estadoSolicitudDeRefaccion = True
+                        return {'warning': mess}
                     
                     """
                     if self.team_id.name == 'Equipo de hardware':
