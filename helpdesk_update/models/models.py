@@ -644,6 +644,7 @@ class helpdesk_update(models.Model):
                 else:
                 #if (record.x_studio_tipo_de_falla == 'Solicitud de refacción' ) or (record.x_studio_tipo_de_incidencia == 'Solicitud de refacción' ):
                     _logger.info("Entre en caso que no existe una solicitud y aun no ha sido validada")
+
                     sale = self.env['sale.order'].create({'partner_id' : record.partner_id.id
                                                                  , 'origin' : "Ticket de refacción: " + str(record.x_studio_id_ticket)
                                                                  , 'x_studio_tipo_de_solicitud' : 'Venta'
@@ -660,6 +661,7 @@ class helpdesk_update(models.Model):
                                                                  , 'x_studio_tcnico' : record.x_studio_tcnico.id
                                                                  , 'warehouse_id' : 5865   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
                                                                  , 'team_id' : 1
+                                                                 ,'x_studio_field_bxHgp': int(record.x_studio_id_ticket) 
                                                                 })
                     _logger.info("********Venta creada, id: " + str(sale.id))
                     record['x_studio_field_nO7Xg'] = sale.id
