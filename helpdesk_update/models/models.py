@@ -861,6 +861,7 @@ class helpdesk_update(models.Model):
     @api.onchange('x_studio_tipo_de_requerimiento')
     def toner(self):
       for record in self:
+         
         _logger.info("***********************************************************************************************" + str(self.x_studio_field_nO7Xg.state))
         _logger.info("***********************************************************************************************" + str(self.x_studio_field_nO7Xg.id))
         if self.x_studio_field_nO7Xg.id != False and self.x_studio_field_nO7Xg.state != 'sale':
@@ -881,6 +882,7 @@ class helpdesk_update(models.Model):
             #if record.x_studio_id_ticket != 0:
             _logger.info("Entre en caso que no existe una solicitud y aun no ha sido validada")
             if (record.team_id.id == 8 ) and record.x_studio_tipo_de_requerimiento == 'Tóner':
+                
                 sale = self.env['sale.order'].create({'partner_id' : record.partner_id.id
                                                 , 'origin' : "Ticket de tóner: " + str(record.x_studio_id_ticket)
                                                 , 'x_studio_tipo_de_solicitud' : "Venta"
@@ -891,6 +893,7 @@ class helpdesk_update(models.Model):
                                                 , 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id
                                                 , 'warehouse_id' : 1   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
                                                 , 'team_id' : 1
+                                                , 'x_studio_comentario_adicional':self.x_studio_comentarios_de_localidad      
                                               })
                 record['x_studio_field_nO7Xg'] = sale.id
                 for c in record.x_studio_equipo_por_nmero_de_serie:
