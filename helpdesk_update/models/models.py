@@ -1593,7 +1593,11 @@ class helpdesk_update(models.Model):
                             self._origin.sudo().write({'x_studio_empresas_relacionadas' : localidad})
                             record.x_studio_empresas_relacionadas = localidad
 
-
+                            if record.x_studio_empresas_relacionadas.id != False:
+                                self.env.cr.execute("select * from res_partner where id = " + str(record.x_studio_empresas_relacionadas.id) + ";")
+                                localidad_tempo = self.env.cr.fetchall()
+                                if str(localidad_tempo[0][80]) != 'None':
+                                    record.x_studio_field_29UYL = str(localidad_tempo[0][80])
 
                             #self._origin.sudo().write({'x_studio_field_6furK' : self._origin.sudo().write({'x_studio_field_6furK' : move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.x_studio_field_SqU5B})})
                         lista_ids = []
