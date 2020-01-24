@@ -138,9 +138,9 @@ class contadores_lines(models.Model):
     @api.onchange('serie')
     def ubicacion(self):
         if(self.serie.x_studio_move_line):
-            if(self.serie.x_studio_move_line.location_des_id.x_studio_field_JoD2k):
-                if(self.serie.x_studio_move_line.location_des_id.x_studio_field_JoD2k.x_studio_field_E0H1Z):
-                    self.origen=self.serie.x_studio_move_line.location_des_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
+            if(self.serie.x_studio_move_line.location_dest_id.x_studio_field_JoD2k):
+                if(self.serie.x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z):
+                    self.origen=self.serie.x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
                     
     def cambio(self):
         if(self.destino):
