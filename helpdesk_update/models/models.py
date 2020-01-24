@@ -336,7 +336,7 @@ class helpdesk_update(models.Model):
     
     @api.onchange('x_studio_equipo_por_nmero_de_serie')
     def abierto(self):
-        if self.x_studio_id_ticket and int(self.x_studio_tamao_lista) < 1:
+        if self.x_studio_id_ticket and int(self.x_studio_tamao_lista) < 2:
            # _logger.info("------------------------self.stage_id.name: " + str(self.stage_id.name))
            # _logger.info("------------------------self.x_studio_equipo_por_nmero_de_serie.id: " + str(self.x_studio_equipo_por_nmero_de_serie.id))
             estadoAntes = str(self.stage_id.name)
