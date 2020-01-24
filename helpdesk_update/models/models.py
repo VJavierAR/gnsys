@@ -1658,7 +1658,7 @@ class helpdesk_update(models.Model):
                                 
                                 _logger.info("No queda :( *******************************: " + str(self._origin.sudo().write({'x_studio_field_6furK' : move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.x_studio_field_SqU5B})))
                                 self._origin.sudo().write({'x_studio_field_6furK' : self._origin.sudo().write({'x_studio_field_6furK' : move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.x_studio_field_SqU5B})
-                                record.x_studio_field_6furK = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.x_studio_field_SqU5B
+                                #record.x_studio_field_6furK = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.x_studio_field_SqU5B
                                 
                                 
                                 
