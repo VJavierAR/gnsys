@@ -1662,13 +1662,13 @@ class helpdesk_update(models.Model):
                                 
                                 
                                 
-                                _logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.phone)
+                                  # _logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.phone)
                                 #telefono_localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.phone
                                 #self._origin.sudo().write({x_studio_telefono_localidad : telefono_localidad})
-                                _logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.mobile)
+                                  # _logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.mobile)
                                 #movil_localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.mobile
                                 #self._origin.sudo().write({x_studio_movil_localidad : movil_localidad})
-                                _logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.email)
+                                 # _logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.email)
                                 #email_localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.email
                                 #self._origin.sudo().write({x_studio_correo_electrnico_de_localidad : email_localidad})
 
