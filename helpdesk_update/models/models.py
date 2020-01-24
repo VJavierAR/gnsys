@@ -1678,7 +1678,7 @@ class helpdesk_update(models.Model):
                             #self._origin.sudo().write({x_studio_responsable_de_equipo : responsable_equipo_de_distribucion})
 
                             #_logger.info(record['x_studio_equipo_por_nmero_de_serie'])
-                            _logger.info(ids)
+                            #_logger.info(ids)
                             #record['x_studio_equipo_por_nmero_de_serie'] = (6, 0, [ids])
                             #record.sudo().write({x_studio_equipo_por_nmero_de_serie : [(6, 0, [ids])] })
                             #self._origin.sudo().write({'x_studio_equipo_por_nmero_de_serie' : (4, ids) })
