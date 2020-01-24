@@ -70,8 +70,6 @@ class contadores(models.Model):
                 d.append(datos)            
             self.order_line=d
         #return res
-    
-    
 
 
     @api.onchange('archivo')
@@ -128,3 +126,24 @@ class lor(models.Model):
     dca=fields.One2many('dcas.dcas',inverse_name='serie')
 
     
+    
+    
+class contadores_lines(models.Model):
+    _name="cambios.localidad"
+    _description = "Cambios de Localidad"
+    serie=fields.Many2one('stock.production.lot')
+    origen=fields.Many2one('res.partner')
+    destino=fields.Many2one('res.partner')
+    
+    @api.onchange('serie')
+    def ubicacion(self):
+        if(self.serie.x_studio_move_line):
+            if(self.serie.x_studio_move_line.location_des_id.x_studio_field_JoD2k):
+                if(self.serie.x_studio_move_line.location_des_id.x_studio_field_JoD2k.x_studio_field_E0H1Z):
+                    self.origen=self.serie.x_studio_move_line.location_des_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
+                    
+    def cambio(self):
+        if(self.destino):
+            origen2=self.env['stock.warehouse'].search([('x_studio_field_E0H1Z','=',self.origen.id)])
+            destino2=self.env['stock.warehouse'].search([('x_studio_field_E0H1Z','=',self.destino.id)])
+            self.env['stock.move.line'].create({'product_id':serie.product_id.id, 'product_uom_id':1,'location_id':origen2.lot_stock_id.id,'product_uom_qty':1,'lot_id':self.serie.id,'date':datetime.datetime.now(),'location_dest_id':destino2.lot_stock_id.id})
