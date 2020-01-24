@@ -1648,7 +1648,13 @@ class helpdesk_update(models.Model):
                                 _logger.info('localidad id: ' + str(localidad))
                                 self._origin.sudo().write({'x_studio_empresas_relacionadas' : localidad})
                                 record.x_studio_empresas_relacionadas = localidad
-
+                                
+                                
+                                #record.x_studio_field_6furK = localidad.x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.x_studio_field_SqU5B
+                                record.x_studio_field_6furK = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.x_studio_field_SqU5B
+                                
+                                
+                                
                                 _logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.phone)
                                 #telefono_localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.phone
                                 #self._origin.sudo().write({x_studio_telefono_localidad : telefono_localidad})
