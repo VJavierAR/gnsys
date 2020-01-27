@@ -903,11 +903,12 @@ class helpdesk_update(models.Model):
                     _logger.info("-------------------------c.id: " + str(c.id) + " c.name: " + str(c.name))
                     _logger.info("-------------------------c.x_studio_toner_compatible.id: " + str(c.x_studio_toner_compatible.id))
                     _logger.info("-------------------------c.x_studio_toner_compatible.name: " + str(c.x_studio_toner_compatible.name))
-                    pro=self.env['product.product'].search([['name','ilike',c.x_studio_toner_compatible.name.replace(' ','').replace('-','')],['categ_id','=',5]])
-                    gen=pro.sorted(key='qty_available',reverse=True)
+                    #pro=self.env['product.product'].search([['name','ilike',c.x_studio_toner_compatible.name.replace(' ','').replace('-','')],['categ_id','=',5]])
+                    #gen=pro.sorted(key='qty_available',reverse=True)
                     datos={'name': ' '
                            ,'order_id' : sale.id
-                           , 'product_id' : c.x_studio_toner_compatible.id if(len(gen)==0) else gen[0].id
+                           #, 'product_id' : c.x_studio_toner_compatible.id if(len(gen)==0) else gen[0].id
+                           , 'product_id' : c.x_studio_toner_compatible.id
                            , 'product_uom_qty' :1
                            , 'x_studio_field_9nQhR': c.id 
                            , 'price_unit': 0 
