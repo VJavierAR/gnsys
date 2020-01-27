@@ -896,13 +896,12 @@ class helpdesk_update(models.Model):
                                                 , 'warehouse_id' : 1   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
                                                 , 'team_id' : 1
                                                 , 'x_studio_comentario_adicional':self.x_studio_comentarios_de_localidad      
-                                                , 'customer_lead' : 0
                                               })
                 record['x_studio_field_nO7Xg'] = sale.id
                 for c in record.x_studio_equipo_por_nmero_de_serie:
                     pro=self.env['product.product'].search([['name','=',c.x_studio_toner_compatible.name],['categ_id','=',5]])
                     gen=pro.sorted(key='qty_available',reverse=True)
-                    datos={'name':c.x_studio_toner_compatible.description if(len(gen)==0 and c.x_studio_toner_compatible.description!=False) else '/','order_id' : sale.id, 'product_id' : c.x_studio_toner_compatible.id if(len(gen)==0) else gen[0].id, 'product_uom_qty' :1, 'x_studio_field_9nQhR': c.id , 'price_unit': 0}
+                    datos={'name':c.x_studio_toner_compatible.description if(len(gen)==0 and c.x_studio_toner_compatible.description!=False) else '/','order_id' : sale.id, 'product_id' : c.x_studio_toner_compatible.id if(len(gen)==0) else gen[0].id, 'product_uom_qty' :1, 'x_studio_field_9nQhR': c.id , 'price_unit': 0 , 'customer_lead' : 0}
                     if(gen['qty_available']<=0):
                         datos['route_id']=1
                         datos['product_id']=c.x_studio_toner_compatible.id
@@ -924,7 +923,6 @@ class helpdesk_update(models.Model):
                                                 , 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id
                                                 , 'warehouse_id' : 1   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
                                                 , 'team_id' : 1   
-                                                , 'customer_lead' : 0
                                               })
                 record['x_studio_field_nO7Xg'] = sale.id
                 for c in record.x_studio_seriestoner:
@@ -933,6 +931,7 @@ class helpdesk_update(models.Model):
                                                 , 'product_id' : c.id
                                                 , 'product_uom_qty' : 1.0
                                                 , 'x_studio_field_9nQhR' : self.env['stock.production.lot'].search([['name', '=', str(c.name)]]).id
+                                                , 'customer_lead' : 0
                                               })
                 sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
                 self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")    
