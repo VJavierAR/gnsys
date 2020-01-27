@@ -882,7 +882,7 @@ class helpdesk_update(models.Model):
                 #self.env.cr.commit()
         else:
             #if record.x_studio_id_ticket != 0:
-            _logger.info("Entre en caso que no existe una solicitud y aun no ha sido validada")
+            _logger.info("Entre en caso que no existe una solicitud toneeeeeerrrrrrr y aun no ha sido validada")
             if (record.team_id.id == 8 ) and record.x_studio_tipo_de_requerimiento == 'Tóner':
                 
                 sale = self.env['sale.order'].sudo().create({'partner_id' : record.partner_id.id
@@ -895,13 +895,20 @@ class helpdesk_update(models.Model):
                                                 , 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id
                                                 , 'warehouse_id' : 1   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
                                                 , 'team_id' : 1
-                                                , 'x_studio_comentario_adicional':self.x_studio_comentarios_de_localidad      
+                                                , 'x_studio_comentario_adicional':self.x_studio_comentarios_de_localidad
                                               })
                 record['x_studio_field_nO7Xg'] = sale.id
+                _logger.info("-----------------------------------------sale.id: " + str(sale.id))
                 for c in record.x_studio_equipo_por_nmero_de_serie:
                     pro=self.env['product.product'].search([['name','=',c.x_studio_toner_compatible.name],['categ_id','=',5]])
                     gen=pro.sorted(key='qty_available',reverse=True)
-                    datos={'name':c.x_studio_toner_compatible.description if(len(gen)==0 and c.x_studio_toner_compatible.description!=False) else '/','order_id' : sale.id, 'product_id' : c.x_studio_toner_compatible.id if(len(gen)==0) else gen[0].id, 'product_uom_qty' :1, 'x_studio_field_9nQhR': c.id , 'price_unit': 0 , 'customer_lead' : 0}
+                    datos={'name': ' '
+                           ,'order_id' : sale.id
+                           , 'product_id' : c.x_studio_toner_compatible.id if(len(gen)==0) else gen[0].id
+                           , 'product_uom_qty' :1
+                           , 'x_studio_field_9nQhR': c.id 
+                           , 'price_unit': 0 
+                           , 'customer_lead' : 0}
                     if(gen['qty_available']<=0):
                         datos['route_id']=1
                         datos['product_id']=c.x_studio_toner_compatible.id
