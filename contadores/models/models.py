@@ -131,6 +131,7 @@ class lor(models.Model):
 class contadores_lines(models.Model):
     _name="cambios.localidad"
     _description = "Cambios de Localidad"
+    estado=fields.Selection(selection=[('1','Por Confirma'),('2','Confirmado')])
     serie=fields.Many2one('stock.production.lot')
     origen=fields.Many2one('res.partner')
     destino=fields.Many2one('res.partner')
