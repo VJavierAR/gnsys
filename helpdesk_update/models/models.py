@@ -896,6 +896,7 @@ class helpdesk_update(models.Model):
                                                 , 'warehouse_id' : 1   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
                                                 , 'team_id' : 1
                                                 , 'x_studio_comentario_adicional':self.x_studio_comentarios_de_localidad      
+                                                , 'customer_lead' : 0
                                               })
                 record['x_studio_field_nO7Xg'] = sale.id
                 for c in record.x_studio_equipo_por_nmero_de_serie:
@@ -908,25 +909,7 @@ class helpdesk_update(models.Model):
                     _logger.info('*************cantidad a solicitar: ' + str(c.id))
                     self.env['sale.order.line'].create(datos)
                     _logger.info("*****************solicitud id: " + str(sale.id) + " name solicitud: " + str(sale.name) + " cantidad pedida: " + str(1) + " Producto pedido: " + str(c.x_studio_toner_compatible.id if(len(gen)==0) else gen.id) + " price unit: " + str(0))
-                    """  
-                      self.env['dcas.dcas'].create({'serie' : c.id
-                                                    , 'contadorMono' : c.x_studio_contador_bn_a_capturar
-                                                    , 'contadorColor' :c.x_studio_contador_color_a_capturar
-                                                    ,'porcentajeNegro':c.x_studio__negro
-                                                    ,'porcentajeCian':c.x_studio__cian      
-                                                    ,'porcentajeAmarillo':c.x_studio__amarrillo      
-                                                    ,'porcentajeMagenta':c.x_studio__magenta
-                                                    ,'x_studio_descripcion':self.name
-                                                    ,'x_studio_tickett':self.x_studio_id_ticket
-                                                    ,'x_studio_hoja_de_estado':c.x_studio_evidencias
-                                                    ,'x_studio_usuariocaptura':self.env.user.name
-                                                    ,'fuente':'helpdesk.ticket'
-
-                                                  })
-
-
-                      self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': 'captura ','x_disgnostico':'capturas :' + str('Mono'+str(c.x_studio_contador_bn_a_capturar)+', Color '+str(c.x_studio_contador_color_a_capturar)+', Amarillo '+str(c.x_studio__amarrillo)+', Cian '+str(c.x_studio__cian)+', Negro '+str(c.x_studio__negro)+', Magenta '+str(c.x_studio__magenta))})
-                      """ 
+                    
                 sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
                 #sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta', 'validity_date' : sale.date_order + datetime.timedelta(days=30)})
                 self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
@@ -940,7 +923,8 @@ class helpdesk_update(models.Model):
                                                 , 'x_studio_field_RnhKr': self.localidadContacto.id
                                                 , 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id
                                                 , 'warehouse_id' : 1   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
-                                                , 'team_id' : 1      
+                                                , 'team_id' : 1   
+                                                , 'customer_lead' : 0
                                               })
                 record['x_studio_field_nO7Xg'] = sale.id
                 for c in record.x_studio_seriestoner:
