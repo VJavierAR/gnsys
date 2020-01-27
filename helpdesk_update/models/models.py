@@ -900,6 +900,7 @@ class helpdesk_update(models.Model):
                 record['x_studio_field_nO7Xg'] = sale.id
                 _logger.info("-----------------------------------------sale.id: " + str(sale.id))
                 for c in record.x_studio_equipo_por_nmero_de_serie:
+                    _logger.info("-------------------------c.x_studio_toner_compatible.name: " + str(c.x_studio_toner_compatible.name))
                     pro=self.env['product.product'].search([['name','ilike',c.x_studio_toner_compatible.name.replace(' ','').replace('-','')],['categ_id','=',5]])
                     gen=pro.sorted(key='qty_available',reverse=True)
                     datos={'name': ' '
