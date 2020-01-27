@@ -873,7 +873,7 @@ class helpdesk_update(models.Model):
             for c in self.x_studio_productos:
                 pro=self.env['product.product'].search([['name','=',c.id.name],['categ_id','=',5]])
                 gen=pro.sorted(key='qty_available',reverse=True)
-                datos={'order_id' : sale.id, 'product_id' : gen[0].id if(len(gen)>0), 'product_uom_qty' : c.x_studio_cantidad_pedida, 'x_studio_field_9nQhR':self.x_studio_equipo_por_nmero_de_serie[0].id}
+                datos={'order_id' : sale.id, 'product_id' : gen[0].id if(len(gen)>0) else c.id, 'product_uom_qty' : c.x_studio_cantidad_pedida, 'x_studio_field_9nQhR':self.x_studio_equipo_por_nmero_de_serie[0].id}
                 if(gen['qty_available']<=0):
                     datos['route_id']=1
                     datos['product_id']=c.id            
