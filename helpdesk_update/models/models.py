@@ -873,7 +873,7 @@ class helpdesk_update(models.Model):
             for c in self.x_studio_productos:
                 pro=self.env['product.product'].search([['name','=',c.id.name],['categ_id','=',5]])
                 gen=pro.sorted(key='qty_available',reverse=True)
-                datos={'order_id' : sale.id, 'product_id' : gen[0].id if(len(gen)>0) else c.id, 'product_uom_qty' : c.x_studio_cantidad_pedida, 'x_studio_field_9nQhR':self.x_studio_equipo_por_nmero_de_serie[0].id}
+                datos={'name':c.x_studio_toner_compatible.description if(len(gen)==0 and c.x_studio_toner_compatible.description!=False) else '/','order_id' : sale.id, 'product_id' : gen[0].id if(len(gen)>0) else c.id, 'product_uom_qty' : c.x_studio_cantidad_pedida, 'x_studio_field_9nQhR':self.x_studio_equipo_por_nmero_de_serie[0].id}
                 if(gen['qty_available']<=0):
                     datos['route_id']=1
                     datos['product_id']=c.id            
@@ -901,7 +901,7 @@ class helpdesk_update(models.Model):
                 for c in record.x_studio_equipo_por_nmero_de_serie:
                     pro=self.env['product.product'].search([['name','=',c.x_studio_toner_compatible.name],['categ_id','=',5]])
                     gen=pro.sorted(key='qty_available',reverse=True)
-                    datos={'order_id' : sale.id, 'product_id' : c.x_studio_toner_compatible.id if(len(gen)==0) else gen[0].id, 'product_uom_qty' :1, 'x_studio_field_9nQhR': c.id , 'price_unit': 0}
+                    datos={'name':c.x_studio_toner_compatible.description if(len(gen)==0 and c.x_studio_toner_compatible.description!=False) else '/','order_id' : sale.id, 'product_id' : c.x_studio_toner_compatible.id if(len(gen)==0) else gen[0].id, 'product_uom_qty' :1, 'x_studio_field_9nQhR': c.id , 'price_unit': 0}
                     if(gen['qty_available']<=0):
                         datos['route_id']=1
                         datos['product_id']=c.x_studio_toner_compatible.id
