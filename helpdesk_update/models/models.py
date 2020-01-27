@@ -872,8 +872,8 @@ class helpdesk_update(models.Model):
             self.env.cr.execute("delete from sale_order_line where order_id = " + str(sale.id) +";")
             for c in self.x_studio_productos:
                 pro=self.env['product.product'].search([['name','=',c.id.name],['categ_id','=',5]])
-                gen=pro.sorted(key='qty_available',reverse=True)[0]
-                datos={'order_id' : sale.id, 'product_id' : gen.id, 'product_uom_qty' : c.x_studio_cantidad_pedida, 'x_studio_field_9nQhR':self.x_studio_equipo_por_nmero_de_serie[0].id}
+                gen=pro.sorted(key='qty_available',reverse=True)
+                datos={'order_id' : sale.id, 'product_id' : gen[0].id if(len(gen)>0), 'product_uom_qty' : c.x_studio_cantidad_pedida, 'x_studio_field_9nQhR':self.x_studio_equipo_por_nmero_de_serie[0].id}
                 if(gen['qty_available']<=0):
                     datos['route_id']=1
                     datos['product_id']=c.id            
@@ -900,8 +900,8 @@ class helpdesk_update(models.Model):
                 record['x_studio_field_nO7Xg'] = sale.id
                 for c in record.x_studio_equipo_por_nmero_de_serie:
                     pro=self.env['product.product'].search([['name','=',c.x_studio_toner_compatible.name],['categ_id','=',5]])
-                    gen=pro.sorted(key='qty_available',reverse=True)[0]
-                    datos={'order_id' : sale.id, 'product_id' : c.x_studio_toner_compatible.id if(len(gen)==0) else gen.id, 'product_uom_qty' :1, 'x_studio_field_9nQhR': c.id , 'price_unit': 0}
+                    gen=pro.sorted(key='qty_available',reverse=True)
+                    datos={'order_id' : sale.id, 'product_id' : c.x_studio_toner_compatible.id if(len(gen)==0) else gen[0].id, 'product_uom_qty' :1, 'x_studio_field_9nQhR': c.id , 'price_unit': 0}
                     if(gen['qty_available']<=0):
                         datos['route_id']=1
                         datos['product_id']=c.x_studio_toner_compatible.id
