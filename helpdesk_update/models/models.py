@@ -885,7 +885,7 @@ class helpdesk_update(models.Model):
             _logger.info("Entre en caso que no existe una solicitud y aun no ha sido validada")
             if (record.team_id.id == 8 ) and record.x_studio_tipo_de_requerimiento == 'Tóner':
                 
-                sale = self.env['sale.order'].create({'partner_id' : record.partner_id.id
+                sale = self.env['sale.order'].sudo().create({'partner_id' : record.partner_id.id
                                                 , 'origin' : "Ticket de tóner: " + str(record.x_studio_id_ticket)
                                                 , 'x_studio_tipo_de_solicitud' : "Venta"
                                                 , 'x_studio_requiere_instalacin' : True                                       
@@ -914,7 +914,7 @@ class helpdesk_update(models.Model):
                 #sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta', 'validity_date' : sale.date_order + datetime.timedelta(days=30)})
                 self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
             if (record.team_id.id == 13 ) and record.x_studio_tipo_de_requerimiento == 'Tóner':
-                sale = self.env['sale.order'].create({'partner_id' : record.partner_id.id
+                sale = self.env['sale.order'].sudo().create({'partner_id' : record.partner_id.id
                                                 , 'origin' : "Ticket de tfs: " + str(record.x_studio_id_ticket)
                                                 , 'x_studio_tipo_de_solicitud' : "Venta"
                                                 , 'x_studio_requiere_instalacin' : True                                       
