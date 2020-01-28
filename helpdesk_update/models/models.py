@@ -905,6 +905,7 @@ class helpdesk_update(models.Model):
                     _logger.info("-------------------------c.x_studio_toner_compatible: " + str(c.x_studio_toner_compatible))
                     _logger.info("-------------------------c.x_studio_toner_compatible.id: " + str(c.x_studio_toner_compatible.id))
                     _logger.info("-------------------------c.x_studio_toner_compatible.name: " + str(c.x_studio_toner_compatible.name))
+                    _logger.info("------------------------- referencia : " + str(c.x_studio_reftoner))
                     #pro = self.env['product.product'].search([['name','ilike',c.x_studio_toner_compatible.name.replace(' ','').replace('-','')],['categ_id','=',5]])
                     pro = self.env['product.product'].search([['name','=',c.x_studio_reftoner],['categ_id','=',5]])
                     gen = pro.sorted(key='qty_available',reverse=True)[0]
