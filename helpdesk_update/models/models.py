@@ -908,6 +908,7 @@ class helpdesk_update(models.Model):
                     _logger.info("------------------------- referencia : " + str(c.x_studio_reftoner))
                     #pro = self.env['product.product'].search([['name','ilike',c.x_studio_toner_compatible.name.replace(' ','').replace('-','')],['categ_id','=',5]])
                     pro = self.env['product.product'].search([['name','=',c.x_studio_reftoner],['categ_id','=',5]])
+                    _logger.info("------------------------- pro : " + str(pro))
                     gen = pro.sorted(key='qty_available',reverse=True)[0]
                     datos={'name': ' '
                            ,'order_id' : sale.id
