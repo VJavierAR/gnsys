@@ -41,7 +41,7 @@ class StockPicking(Model):
             ticketDeRefaccion = "Ticket de refacción"
             cadena = str(record.x_studio_documento_de_origen_en_venta)
             
-            if dis in nombreStock and ticketDeRefaccion in cadena and ('assigned' in estadoActual or 'done' in estadoActual):
+            if dis in nombreStock and ticketDeRefaccion in cadena and ('assigned' in estadoActual or 'done' in estadoActual) and self.env.user.id != 1:
                 numTicket = cadena.split(': ')[1]
                 if 'assigned' in estadoActual:
                     _logger.info("********entro Refacción Para Entregar")
