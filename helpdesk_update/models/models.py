@@ -883,7 +883,7 @@ class helpdesk_update(models.Model):
         else:
             #if record.x_studio_id_ticket != 0:
             _logger.info("Entre en caso que no existe una solicitud toneeeeeerrrrrrr y aun no ha sido validada")
-             raise exceptions.ValidationError(" valor  : "+str(c.x_studio_solicitar_tner_bn)) 
+            raise exceptions.ValidationError(" valor  : "+str(c.x_studio_solicitar_tner_bn)) 
             if (record.team_id.id == 8 ) and record.x_studio_tipo_de_requerimiento == 'Tóner':
                 
                 sale = self.env['sale.order'].sudo().create({'partner_id' : record.partner_id.id
