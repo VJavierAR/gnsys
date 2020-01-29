@@ -985,7 +985,7 @@ class helpdesk_update(models.Model):
                         self.env['sale.order.line'].create(datos)
                         magen=str(c.x_studio_tner_compatible_magenta.name)
                         
-                jalaSolicitudes='solicitud de toner para :'+serieaca +' '+bn+' '+amar+' '+cian+' '+magen
+                jalaSolicitudes='solicitud de toner '+sale.name+' para la serie :'+serieaca +' '+bn+' '+amar+' '+cian+' '+magen
                 sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
                 
                 #sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta', 'validity_date' : sale.date_order + datetime.timedelta(days=30)})
