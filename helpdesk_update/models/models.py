@@ -863,6 +863,7 @@ class helpdesk_update(models.Model):
     @api.onchange('x_studio_tipo_de_requerimiento')
     def toner(self):
       for record in self:
+        jalaSolicitudes=''
         _logger.info("***********************************************************************************************" + str(self.x_studio_field_nO7Xg.state))
         _logger.info("***********************************************************************************************" + str(self.x_studio_field_nO7Xg.id))
         if self.x_studio_field_nO7Xg.id != False and self.x_studio_field_nO7Xg.state != 'sale':
@@ -883,6 +884,7 @@ class helpdesk_update(models.Model):
             #if record.x_studio_id_ticket != 0:
             _logger.info("Entre en caso que no existe una solicitud toneeeeeerrrrrrr y aun no ha sido validada")
             
+            
             if (record.team_id.id == 8 ) and record.x_studio_tipo_de_requerimiento == 'Tóner':
                 
                 sale = self.env['sale.order'].sudo().create({'partner_id' : record.partner_id.id
@@ -898,8 +900,14 @@ class helpdesk_update(models.Model):
                                                 , 'x_studio_comentario_adicional':self.x_studio_comentarios_de_localidad
                                               })
                 record['x_studio_field_nO7Xg'] = sale.id
-                _logger.info("-----------------------------------------sale.id: " + str(sale.id))
+                _logger.info("-----------------------------------------sale.id: " + str(sale.id))                
+                bn=''
+                amar=''
+                cian=''
+                magen=''
+                serieaca=''
                 for c in record.x_studio_equipo_por_nmero_de_serie:
+                    serieaca=c.name
                     #Toner BN
                     if c.x_studio_solicitar_tner_bn:                      
                         pro = self.env['product.product'].search([['name','=',c.x_studio_reftoner],['categ_id','=',5]])
@@ -918,6 +926,7 @@ class helpdesk_update(models.Model):
                             datos['product_id']=c.x_studio_toner_compatible.id
                         
                         self.env['sale.order.line'].create(datos)
+                        bn=str(c.x_studio_toner_compatible.name)
                     #Toner Ama
                     if c.x_studio_solicitar_tner_amarillo:                      
                         pro = self.env['product.product'].search([['name','=',c.x_studio_reftonera],['categ_id','=',5]])
@@ -935,7 +944,8 @@ class helpdesk_update(models.Model):
                             datos['route_id']=1
                             datos['product_id']=c.x_studio_tner_compatible_amarrillo.id
                         
-                        self.env['sale.order.line'].create(datos)    
+                        self.env['sale.order.line'].create(datos)
+                        amar=str(c.x_studio_tner_compatible_amarrillo.name)
                     #Toner cian
                     if c.x_studio_solicitar_tner_cian_1:                      
                         pro = self.env['product.product'].search([['name','=',c.x_studio_field_nXQHF],['categ_id','=',5]])
@@ -954,6 +964,7 @@ class helpdesk_update(models.Model):
                             datos['product_id']=c.x_studio_toner_compatible_cian.id
                         
                         self.env['sale.order.line'].create(datos)
+                        cian=str(c.x_studio_toner_compatible_cian.name)
                     #Toner mage
                     if c.x_studio_solicitar_tner_magenta:                      
                         pro = self.env['product.product'].search([['name','=',c.x_studio_reftonerm],['categ_id','=',5]])
@@ -971,9 +982,12 @@ class helpdesk_update(models.Model):
                             datos['route_id']=1
                             datos['product_id']=c.x_studio_tner_compatible_magenta.id
                         
-                        self.env['sale.order.line'].create(datos)                        
+                        self.env['sale.order.line'].create(datos)
+                        magen=str(c.x_studio_tner_compatible_magenta.name)
                         
+                jalaSolicitudes='solicitud de toner para :'+serieaca +' '+bn+' '+amar+' '+cian+' '+magen
                 sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
+                
                 #sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta', 'validity_date' : sale.date_order + datetime.timedelta(days=30)})
                 self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
             if (record.team_id.id == 13 ) and record.x_studio_tipo_de_requerimiento == 'Tóner':
@@ -1009,7 +1023,7 @@ class helpdesk_update(models.Model):
                         query = "update helpdesk_ticket set stage_id = 91 where id = " + str(self.x_studio_id_ticket) + ";"
                         _logger.info("lol: " + query)
                         ss = self.env.cr.execute(query)
-                        self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Pendiente por autorizar solicitud"})
+                        self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_disgnostico':jalaSolicitudes,'x_persona': self.env.user.name,'x_estado': "Pendiente por autorizar solicitud"})
                         message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Pendiente por autorizar solicitud' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
                         mess= {
                                 'title': _('Estado de ticket actualizado!!!'),
