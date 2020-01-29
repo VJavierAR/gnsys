@@ -945,7 +945,7 @@ class helpdesk_update(models.Model):
                             datos['product_id']=c.x_studio_tner_compatible_amarrillo.id
                         
                         self.env['sale.order.line'].create(datos)
-                        amar=str(c.x_studio_tner_compatible_amarrillo.name)+', '
+                        amar=str(c.x_studio_reftonera)+', '
                     #Toner cian
                     if c.x_studio_solicitar_tner_cian_1:                      
                         pro = self.env['product.product'].search([['name','=',c.x_studio_field_nXQHF],['categ_id','=',5]])
@@ -964,7 +964,7 @@ class helpdesk_update(models.Model):
                             datos['product_id']=c.x_studio_toner_compatible_cian.id
                         
                         self.env['sale.order.line'].create(datos)
-                        cian=str(c.x_studio_toner_compatible_cian.name)+', '
+                        cian=str(c.x_studio_field_nXQHF)+', '
                     #Toner mage
                     if c.x_studio_solicitar_tner_magenta:                      
                         pro = self.env['product.product'].search([['name','=',c.x_studio_reftonerm],['categ_id','=',5]])
@@ -983,7 +983,7 @@ class helpdesk_update(models.Model):
                             datos['product_id']=c.x_studio_tner_compatible_magenta.id
                         
                         self.env['sale.order.line'].create(datos)
-                        magen=str(c.x_studio_tner_compatible_magenta.name)
+                        magen=str(c.x_studio_reftonerm)
                         
                 jalaSolicitudes='solicitud de toner '+sale.name+' para la serie :'+serieaca +' '+bn+' '+amar+' '+cian+' '+magen
                 sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
