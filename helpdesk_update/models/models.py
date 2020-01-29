@@ -926,7 +926,7 @@ class helpdesk_update(models.Model):
                             datos['product_id']=c.x_studio_toner_compatible.id
                         
                         self.env['sale.order.line'].create(datos)
-                        bn=str(c.x_studio_toner_compatible.name)+', '
+                        bn=str(c.x_studio_reftoner)+', '
                     #Toner Ama
                     if c.x_studio_solicitar_tner_amarillo:                      
                         pro = self.env['product.product'].search([['name','=',c.x_studio_reftonera],['categ_id','=',5]])
