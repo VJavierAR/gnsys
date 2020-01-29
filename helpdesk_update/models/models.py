@@ -870,7 +870,6 @@ class helpdesk_update(models.Model):
             sale = self.x_studio_field_nO7Xg
             self.env.cr.execute("delete from sale_order_line where order_id = " + str(sale.id) +";")
             for c in self.x_studio_productos:
-                raise exceptions.ValidationError(" valor  : "+str(c.x_studio_solicitar_tner_bn)) 
                 pro=self.env['product.product'].search([['name','=',c.id.name],['categ_id','=',5]])
                 gen=pro.sorted(key='qty_available',reverse=True)
                 datos={'name':c.x_studio_toner_compatible.description if(len(gen)==0 and c.x_studio_toner_compatible.description!=False) else '/','order_id' : sale.id, 'product_id' : gen[0].id if(len(gen)>0) else c.id, 'product_uom_qty' : c.x_studio_cantidad_pedida, 'x_studio_field_9nQhR':self.x_studio_equipo_por_nmero_de_serie[0].id}
@@ -883,7 +882,7 @@ class helpdesk_update(models.Model):
         else:
             #if record.x_studio_id_ticket != 0:
             _logger.info("Entre en caso que no existe una solicitud toneeeeeerrrrrrr y aun no ha sido validada")
-            raise exceptions.ValidationError(" valor  : "+str(c.x_studio_solicitar_tner_bn)) 
+            
             if (record.team_id.id == 8 ) and record.x_studio_tipo_de_requerimiento == 'Tóner':
                 
                 sale = self.env['sale.order'].sudo().create({'partner_id' : record.partner_id.id
@@ -901,6 +900,7 @@ class helpdesk_update(models.Model):
                 record['x_studio_field_nO7Xg'] = sale.id
                 _logger.info("-----------------------------------------sale.id: " + str(sale.id))
                 for c in record.x_studio_equipo_por_nmero_de_serie:
+                    raise exceptions.ValidationError(" valor  : "+str(c.x_studio_solicitar_tner_bn)) 
                     _logger.info("-------------------------c.x_studio_toner_compatible_nombre: " + str(c.x_studio_toner_compatible_nombre))
                     _logger.info("-------------------------c.id: " + str(c.id) + " c.name: " + str(c.name))
                     _logger.info("-------------------------c.x_studio_toner_compatible: " + str(c.x_studio_toner_compatible))
