@@ -863,7 +863,7 @@ class helpdesk_update(models.Model):
     @api.onchange('x_studio_tipo_de_requerimiento')
     def toner(self):
       for record in self:
-         
+        raise exceptions.ValidationError(" valor  : "+str(self.x_studio_solicitar_tner_bn)) 
         _logger.info("***********************************************************************************************" + str(self.x_studio_field_nO7Xg.state))
         _logger.info("***********************************************************************************************" + str(self.x_studio_field_nO7Xg.id))
         if self.x_studio_field_nO7Xg.id != False and self.x_studio_field_nO7Xg.state != 'sale':
