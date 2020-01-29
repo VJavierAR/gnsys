@@ -863,7 +863,6 @@ class helpdesk_update(models.Model):
     @api.onchange('x_studio_tipo_de_requerimiento')
     def toner(self):
       for record in self:
-        raise exceptions.ValidationError(" valor  : "+str(self.x_studio_solicitar_tner_bn)) 
         _logger.info("***********************************************************************************************" + str(self.x_studio_field_nO7Xg.state))
         _logger.info("***********************************************************************************************" + str(self.x_studio_field_nO7Xg.id))
         if self.x_studio_field_nO7Xg.id != False and self.x_studio_field_nO7Xg.state != 'sale':
@@ -871,6 +870,7 @@ class helpdesk_update(models.Model):
             sale = self.x_studio_field_nO7Xg
             self.env.cr.execute("delete from sale_order_line where order_id = " + str(sale.id) +";")
             for c in self.x_studio_productos:
+                raise exceptions.ValidationError(" valor  : "+str(c.x_studio_solicitar_tner_bn)) 
                 pro=self.env['product.product'].search([['name','=',c.id.name],['categ_id','=',5]])
                 gen=pro.sorted(key='qty_available',reverse=True)
                 datos={'name':c.x_studio_toner_compatible.description if(len(gen)==0 and c.x_studio_toner_compatible.description!=False) else '/','order_id' : sale.id, 'product_id' : gen[0].id if(len(gen)>0) else c.id, 'product_uom_qty' : c.x_studio_cantidad_pedida, 'x_studio_field_9nQhR':self.x_studio_equipo_por_nmero_de_serie[0].id}
