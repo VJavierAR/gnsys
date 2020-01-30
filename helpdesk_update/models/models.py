@@ -887,8 +887,7 @@ class helpdesk_update(models.Model):
             _logger.info("Entre en caso que no existe una solicitud toneeeeeerrrrrrr y aun no ha sido validada")
             
             
-            if (record.team_id.id == 8 ) and record.x_studio_tipo_de_requerimiento == 'Tóner':
-                
+            if (record.team_id.id == 8 ) and record.x_studio_tipo_de_requerimiento == 'Tóner':                
                 sale = self.env['sale.order'].sudo().create({'partner_id' : record.partner_id.id
                                                 , 'origin' : "Ticket de tóner: " + str(record.x_studio_id_ticket)
                                                 , 'x_studio_tipo_de_solicitud' : "Venta"
@@ -988,9 +987,11 @@ class helpdesk_update(models.Model):
                         self.env['sale.order.line'].create(datos)
                         magen=str(c.x_studio_reftonerm)
                         
-                jalaSolicitudes='solicitud de toner '+sale.name+' para la serie :'+serieaca +' '+bn+' '+amar+' '+cian+' '+magen
+                    jalaSolicitudes='solicitud de toner '+sale.name+' para la serie :'+serieaca +' '+bn+' '+amar+' '+cian+' '+magen
+                    self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_disgnostico':jalaSolicitudes,'x_persona': self.env.user.name,'x_estado': "solicitud por serie"})
+                    
                 sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
-                
+                jalaSolicitudess='solicitud de toner '+sale.name+' para la serie :'+serieaca
                 #sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta', 'validity_date' : sale.date_order + datetime.timedelta(days=30)})
                 self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
             if (record.team_id.id == 13 ) and record.x_studio_tipo_de_requerimiento == 'Tóner':
@@ -1027,7 +1028,7 @@ class helpdesk_update(models.Model):
                         query = "update helpdesk_ticket set stage_id = 91 where id = " + str(self.x_studio_id_ticket) + ";"
                         _logger.info("lol: " + query)
                         ss = self.env.cr.execute(query)
-                        self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_disgnostico':jalaSolicitudes,'x_persona': self.env.user.name,'x_estado': "Pendiente por autorizar solicitud"})
+                        self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_disgnostico':jalaSolicitudess,'x_persona': self.env.user.name,'x_estado': "Pendiente por autorizar solicitud"})
                         message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Pendiente por autorizar solicitud' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
                         mess= {
                                 'title': _('Estado de ticket actualizado!!!'),
