@@ -903,12 +903,13 @@ class helpdesk_update(models.Model):
                                               })
                 record['x_studio_field_nO7Xg'] = sale.id
                 _logger.info("-----------------------------------------sale.id: " + str(sale.id))                
-                bn=''
-                amar=''
-                cian=''
-                magen=''
+            
                 serieaca=''
                 for c in record.x_studio_equipo_por_nmero_de_serie:
+                    bn=''
+                    amar=''
+                    cian=''
+                    magen=''
                     serieaca=c.name
                     #Toner BN
                     if c.x_studio_solicitar_tner_bn:                      
