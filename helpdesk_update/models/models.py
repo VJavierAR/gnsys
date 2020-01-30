@@ -53,6 +53,8 @@ class helpdesk_update(models.Model):
     
     idLocalidadAyuda = fields.Integer(compute='_compute_id_localidad',string='Id Localidad Ayuda', store=False) 
     
+    #numeroDeGuiaDistribucion = fields.Char(string='Número de guía generado por distribución', store=True)
+    
     """
     seriesDeEquipoPorNumeroDeSerie = fields.Selection(_compute_series,compute='_compute_series',string='Series agregadas', store=False)
     
@@ -661,7 +663,7 @@ class helpdesk_update(models.Model):
                                                                  , 'x_studio_tcnico' : record.x_studio_tcnico.id
                                                                  , 'warehouse_id' : 5865   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
                                                                  , 'team_id' : 1
-                                                                 ,'x_studio_field_bxHgp': int(record.x_studio_id_ticket) 
+                                                                 , 'x_studio_field_bxHgp': int(record.x_studio_id_ticket) 
                                                                 })
                     _logger.info("********Venta creada, id: " + str(sale.id))
                     record['x_studio_field_nO7Xg'] = sale.id
@@ -898,6 +900,7 @@ class helpdesk_update(models.Model):
                                                 , 'warehouse_id' : 1   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
                                                 , 'team_id' : 1
                                                 , 'x_studio_comentario_adicional':self.x_studio_comentarios_de_localidad
+                                                , 'x_studio_field_bxHgp': int(record.x_studio_id_ticket)
                                               })
                 record['x_studio_field_nO7Xg'] = sale.id
                 _logger.info("-----------------------------------------sale.id: " + str(sale.id))                
@@ -1000,7 +1003,8 @@ class helpdesk_update(models.Model):
                                                 , 'x_studio_field_RnhKr': self.localidadContacto.id
                                                 , 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id
                                                 , 'warehouse_id' : 1   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
-                                                , 'team_id' : 1   
+                                                , 'team_id' : 1
+                                                , 'x_studio_field_bxHgp': int(record.x_studio_id_ticket)
                                               })
                 record['x_studio_field_nO7Xg'] = sale.id
                 for c in record.x_studio_seriestoner:
