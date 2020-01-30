@@ -26,7 +26,23 @@ class StockPicking(Model):
          " * Ready: products are reserved and ready to be sent. If the shipping policy is 'As soon as possible' this happens as soon as anything is reserved.\n"
          " * Done: has been processed, can't be modified or cancelled anymore.\n"
          " * Cancelled: has been cancelled, can't be confirmed anymore.")
-
+    """
+    @api.onchange('carrier_tracking_ref')
+    def agregarNumeroGuiaATicketOSolicitud(self):
+        #Funcion que agrega numero de guia a ticket y refaccion
+        ticketDeRefaccion = "Ticket de refacción"
+        cadena = str(record.x_studio_documento_de_origen_en_venta)
+        if ticketDeRefaccion in cadena:
+            numeroDeGuia = str(self.carrier_tracking_ref)
+            
+        else:
+            numeroDeGuia = str(self.carrier_tracking_ref)
+            solicitudDeVenta = self.group_id
+            solicitudDeVenta.env['sale.order'].sudo().write({'numeroDeGuiaDistribucion': numeroDeGuia})
+            solicitudDeVenta.env['sale.order'].sudo().write({'comentarioDeDistribucion': self.x_studio_comentario})
+    """
+            
+    
     
     @api.multi
     @api.depends('state')
