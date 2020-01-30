@@ -60,28 +60,28 @@ class StockPicking(Model):
             
             if dis in nombreStock and (ticketDeRefaccion in cadena or ticketDeToner in cadena) and ('assigned' in estadoActual or 'done' in estadoActual) and self.env.user.id != 1:
                 numTicket = cadena.split(': ')[1]
-                ticket = self.env['helpdesk.ticket'].search({'id': numTicket})
-                historialNotas = ticket.historialCuatro
+                #ticket = self.env['helpdesk.ticket'].search({'id': numTicket})
+                #historialNotas = ticket.historialCuatro
                 if 'assigned' in estadoActual:
                     _logger.info("********entro Refacción Para Entregar")
-                    existe = False
-                    for nota in historialNotas:
-                        if str(nota.x_estado) == 'Refacción Para Entregar':
-                            existe = True
-                    if existe == False:
-                        self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : numTicket
+                    #existe = False
+                    #for nota in historialNotas:
+                    #    if str(nota.x_estado) == 'Refacción Para Entregar':
+                    #        existe = True
+                    #if existe == False:
+                    self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : numTicket
                                                                        , 'x_persona' : str(self.env.user.name)
                                                                        , 'x_estado' : "Refacción Para Entregar"
                                                                       })
 
                 elif 'done' in estadoActual:
                     _logger.info("********entro Refacción Entregada")
-                    existe = False
-                    for nota in historialNotas:
-                        if str(nota.x_estado) == 'Refacción Entregada':
-                            existe = True
-                    if existe == False:
-                        self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : numTicket
+                    #existe = False
+                    #for nota in historialNotas:
+                    #    if str(nota.x_estado) == 'Refacción Entregada':
+                    #        existe = True
+                    #if existe == False:
+                    self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : numTicket
                                                                        , 'x_persona' : str(self.env.user.name)
                                                                        , 'x_estado' : "Refacción Entregada"
                                                                       })
