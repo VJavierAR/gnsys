@@ -992,7 +992,7 @@ class helpdesk_update(models.Model):
                     self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_disgnostico':jalaSolicitudes,'x_persona': self.env.user.name,'x_estado': "solicitud por serie"})
                     
                 sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
-                jalaSolicitudess='solicitud de toner '+sale.name+' para la serie :'+serieaca
+                jalaSolicitudess='solicitud de toner '+sale.name+' para la serie :'+serieaca+' en el ticket: '+self.x_studio_id_ticket
                 #sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta', 'validity_date' : sale.date_order + datetime.timedelta(days=30)})
                 self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
             if (record.team_id.id == 13 ) and record.x_studio_tipo_de_requerimiento == 'Tóner':
