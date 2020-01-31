@@ -48,7 +48,7 @@ class tfs(models.Model):
                             self.write({'estado':'xValidar'})
                         else:
                             self.write({'estado':'Valido'})
-                            In.write({'quantity':In.quantity-1})
+                            In.write({'quantity':In[0].quantity-1})
                     else:
                         rendimientoColor=self.actualColor-self.contadorAnteriorColor
                         porcentaje=(100*rendimientoColor)/self.producto.x_studio_rendimiento_toner if self.producto.x_studio_rendimiento_toner>0 else 1
@@ -56,6 +56,7 @@ class tfs(models.Model):
                             self.write({'estado':'xValidar'})
                         else:
                             self.write({'estado':'Valido'})
+                            In.write({'quantity':In[0].quantity-1})
                 else:
                     raise exceptions.UserError("No existen cantidades en el almacen para el producto " + self.producto.name)
                 
