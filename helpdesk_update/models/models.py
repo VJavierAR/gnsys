@@ -614,6 +614,13 @@ class helpdesk_update(models.Model):
                     'message' : message
                 }
             self.estadoCancelado = True
+            pedidoDeVentaACancelar = self.x_studio_field_nO7Xg
+            regresa = self.env['stock.picking'].search([[['sale_id', '=', int(pedidoDeVentaACancelar.id)], ['state', '=', 'done']]])
+            
+            if len(regresa) == 0:
+                pedidoDeVentaACancelar.action_cancel()
+            
+            
             return {'warning': mess}
     
     
