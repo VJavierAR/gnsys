@@ -828,7 +828,7 @@ class helpdesk_update(models.Model):
                 q='stock.production.lot'
               #if str(c.x_studio_field_A6PR9) =='Negro':
               if str(c.x_studio_color_bn) == 'B/N':
-                  if int(c.x_studio_contador_bn_a_capturar) > int(c.x_studio_contador_bn):
+                  if int(c.x_studio_contador_bn_a_capturar) >= int(c.x_studio_contador_bn):
                       
                       self.env['dcas.dcas'].create({'serie' : c.id
                                                     , 'contadorMono' : c.x_studio_contador_bn_a_capturar
@@ -848,7 +848,7 @@ class helpdesk_update(models.Model):
                     raise exceptions.ValidationError("Contador Monocromatico Menor")                     
               #if str(c.x_studio_field_A6PR9) != 'Negro':       
               if str(c.x_studio_color_bn) != 'B/N':
-                  if int(c.x_studio_contador_color_a_capturar) > int(c.x_studio_contador_color) and int(c.x_studio_contador_bn_a_capturar) > int(c.x_studio_contador_bn):
+                  if int(c.x_studio_contador_color_a_capturar) >= int(c.x_studio_contador_color) and int(c.x_studio_contador_bn_a_capturar) >= int(c.x_studio_contador_bn):
                       self.env['dcas.dcas'].create({'serie' : c.id
                                                     , 'contadorMono' : c.x_studio_contador_bn_a_capturar
                                                     , 'contadorColor' :c.x_studio_contador_color_a_capturar
