@@ -908,6 +908,7 @@ class helpdesk_update(models.Model):
                                                 , 'team_id' : 1
                                                 , 'x_studio_comentario_adicional':self.x_studio_comentarios_de_localidad
                                                 , 'x_studio_field_bxHgp': int(record.x_studio_id_ticket)
+                                                ,'x_studio_corte':self.x_studio_corte     
                                               })
                 record['x_studio_field_nO7Xg'] = sale.id
                 _logger.info("-----------------------------------------sale.id: " + str(sale.id))                
