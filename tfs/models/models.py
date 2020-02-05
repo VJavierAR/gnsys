@@ -11,7 +11,7 @@ class tfs(models.Model):
     _description='tfs'
     name = fields.Char()
     almacen = fields.Many2one('stock.warehouse', "Almacen",store='True',compute='onchange_localidad')
-    tipo = fields.Selection([('cian', 'cian'),('magenta','magenta'),('amarillo','amarillo'),('negro','negro')])
+    tipo = fields.Selection([('Cian', 'Cian'),('Magenta','Magenta'),('Amarillo','Amarillo'),('Negro','Negro')])
     usuario = fields.Many2one('res.partner')
     inventario = fields.One2many(comodel='stock.quant',related='almacen.lot_stock_id.quant_ids', string="Quants")
     cliente = fields.Many2one('res.partner', store=True,string='Cliente')
@@ -75,11 +75,11 @@ class tfs(models.Model):
       #      record['usuario']=self.env.user.partner_id.id
       #  return res
     
-    #@api.model
-    #def create(self, vals):
-     #   vals['name'] = self.env['ir.sequence'].next_by_code('tfs')
-      #  result = super(tfs, self).create(vals)
-       # return result
+    @api.model
+    def create(self, vals):
+        vals['name'] = self.env['ir.sequence'].next_by_code('tfs')
+        result = super(tfs, self).create(vals)
+        return result
     
     #@api.onchange('usuario')
     #def onchange_user(self):
@@ -104,7 +104,7 @@ class tfs(models.Model):
         for record in self:
             if record.localidad:
                 record['almacen'] =self.env['stock.warehouse'].search([['x_studio_field_E0H1Z','=',record.localidad.id]]).lot_stock_id.x_studio_almacn_padre
-                
+                record['tipo']=record.producto.x_studio_color
     
     @api.depends('almacen')
     def cambio(self):
