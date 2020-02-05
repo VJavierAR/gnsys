@@ -136,7 +136,9 @@ class tfs(models.Model):
                         record['cliente'] = cliente
                         record['localidad'] = localidad
                         i=1
-            record['contadorAnterior']=self.env['dcas.dcas'].search([['serie','=',record.serie.id],['fuente','=','tfs.tfs']]).sorted(key='create_date',reverse=True)[0]['id']     
+            dc=self.env['dcas.dcas'].search([['serie','=',record.serie.id],['fuente','=','tfs.tfs']]).sorted(key='create_date',reverse=True)[0].id
+            if(dc):
+                record['contadorAnterior']=dc     
             #if record.localidad:
              #   record['almacen'] =self.env['stock.warehouse'].search([['x_studio_field_E0H1Z','=',record.localidad.id]])
             #self.onchange_localidad()
