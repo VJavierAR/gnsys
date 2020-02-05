@@ -67,7 +67,7 @@ class tfs(models.Model):
     @api.one
     def valida(self):
         self.write({'estado':'Valido'})
-        self.env['dcas.dcas'].create({'serie':record.serie.id,'contadorMono':record.actualMonocromatico,'contadorColor':record.actualColor,'fuente':'tfs.tfs'})
+        self.env['dcas.dcas'].create({'serie':self.serie.id,'contadorMono':self.actualMonocromatico,'contadorColor':self.actualColor,'fuente':'tfs.tfs'})
 
     
     
