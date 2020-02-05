@@ -2,6 +2,9 @@
 from odoo import models, fields, api
 from odoo.exceptions import UserError
 from odoo import exceptions
+import logging, ast
+_logger = logging.getLogger(__name__)
+
 class tfs(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']    
     _name = 'tfs.tfs'
@@ -36,11 +39,11 @@ class tfs(models.Model):
     def confirm(self):
         for record in self:
             if(len(record.inventario)>0):
-                In=self.inventario.search([['product_id.name','=',self.producto.name]]).sorted(key='quantity',reverse=True)
+                In=self.inventario.search([['product_id.name','=',self.producto.name],['location_id','=',self.almacen.lot_stock_id.id]]).sorted(key='quantity',reverse=True)
                 #for qua in record.inventario:
                 #    qua.product_id.id==self.producto.id
                 #    if(qua.product_id.id==self.producto.id):
-                if(len(In)>0):
+                if(len(In)>0 and In[0].quantity>0):
                     if(self.tipo=='negro'):
                         rendimientoMono=self.actualMonocromatico-self.contadorAnteriorMono
                         porcentaje=(100*rendimientoMono)/self.producto.x_studio_rendimiento_toner if self.producto.x_studio_rendimiento_toner>0 else 1
@@ -48,7 +51,7 @@ class tfs(models.Model):
                             self.write({'estado':'xValidar'})
                         else:
                             self.write({'estado':'Valido'})
-                            In.write({'quantity':In[0].quantity-1})
+                            In[0].write({'quantity':In[0].quantity-1})
                     else:
                         rendimientoColor=self.actualColor-self.contadorAnteriorColor
                         porcentaje=(100*rendimientoColor)/self.producto.x_studio_rendimiento_toner if self.producto.x_studio_rendimiento_toner>0 else 1
@@ -56,7 +59,8 @@ class tfs(models.Model):
                             self.write({'estado':'xValidar'})
                         else:
                             self.write({'estado':'Valido'})
-                            In.write({'quantity':In[0].quantity-1})
+                            _logger.info(In[0])
+                            In[0].write({'quantity':In[0].quantity-1})
                 else:
                     raise exceptions.UserError("No existen cantidades en el almacen para el producto " + self.producto.name)
                 
