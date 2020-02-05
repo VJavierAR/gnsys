@@ -61,10 +61,14 @@ class tfs(models.Model):
                             self.write({'estado':'Valido'})
                             _logger.info(In[0])
                             In[0].write({'quantity':In[0].quantity-1})
+                            self.env['dcas.dcas'].create({'serie':record.serie.id,'contadorMono':record.actualMonocromatico,'contadorColor':record.actualColor,'fuente':'tfs.tfs'})
                 else:
                     raise exceptions.UserError("No existen cantidades en el almacen para el producto " + self.producto.name)
-                
-    
+    @api.one
+    def valida(self):
+        self.write({'estado':'Valido'})
+        self.env['dcas.dcas'].create({'serie':record.serie.id,'contadorMono':record.actualMonocromatico,'contadorColor':record.actualColor,'fuente':'tfs.tfs'})
+
     
     
     #@api.onchange('cliente')
