@@ -1070,7 +1070,7 @@ class helpdesk_update(models.Model):
             if sale.id != 0:
                 self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
                 sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
-                sle.write({'x_studio_corte':self.x_studio_corte})
+                sale.write({'x_studio_corte':self.x_studio_corte})
                 sale.action_confirm()
                 
                 if self.estadoSolicitudDeTonerValidar == False:
