@@ -477,7 +477,7 @@ class helpdesk_update(models.Model):
         _logger.info("-------------------------------------------------------------self.x_studio_tcnico.id: " + str(self.x_studio_tcnico.id))
         if self.x_studio_id_ticket:
             estadoAntes = str(self.stage_id.name)
-            if (self.stage_id.name == 'Asignado' or self.stage_id.name == 'Resuelto') and self.x_studio_tcnico.id != False and self.estadoAtencion == False:
+            if (self.stage_id.name == 'Asignado' or self.stage_id.name == 'Resuelto' or self.stage_id.name == 'Cerrado') and self.x_studio_tcnico.id != False and self.estadoAtencion == False:
                 query = "update helpdesk_ticket set stage_id = 13 where id = " + str(self.x_studio_id_ticket) + ";"
                 _logger.info("lol: " + query)
                 ss = self.env.cr.execute(query)
