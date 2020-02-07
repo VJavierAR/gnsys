@@ -93,27 +93,29 @@ class StockPicking(Model):
         self.ensure_one()
         if(self.is_locked==True):
             #borrado
-            self.lineTemp=[(5,0,0)]
-            dat=[]
-            for m in self.move_ids_without_package:
-                dat.append({'producto':m.product_id.id,'cantidad':m.product_uom_qty,'ubicacion':self.location_id.id,'serieDestino':m.x_studio_serie_destino.id})
-            self.sudo().lineTemp=dat
-            for s in self.sale_id.order_line:
-                self.env.cr.execute("delete from stock_move_line where reference='"+self.name+"';")
-                self.env.cr.execute("delete from stock_move where origin='"+self.sale_id.name+"';")
-                self.env.cr.execute("delete from sale_order_line where id="+str(s.id)+";")
+            if(self.sale_id):
+                self.lineTemp=[(5,0,0)]
+                dat=[]
+                for m in self.move_ids_without_package:
+                    dat.append({'producto':m.product_id.id,'cantidad':m.product_uom_qty,'ubicacion':self.location_id.id,'serieDestino':m.x_studio_serie_destino.id})
+                self.sudo().lineTemp=dat
+                for s in self.sale_id.order_line:
+                    self.env.cr.execute("delete from stock_move_line where reference='"+self.name+"';")
+                    self.env.cr.execute("delete from stock_move where origin='"+self.sale_id.name+"';")
+                    self.env.cr.execute("delete from sale_order_line where id="+str(s.id)+";")
         if(self.is_locked==False):
-            self.env.cr.execute("update stock_picking set state='draft' where sale_id="+str(self.sale_id.id)+";")
-            self.env.cr.execute("select id from stock_picking where sale_id="+str(self.sale_id.id)+";")
-            pickis=self.env.cr.fetchall()
-            pick=self.env['stock.picking'].search([['id','in',pickis]])
-            for li in self.lineTemp:
-                datos={'order_id':self.sale_id.id,'product_id':li.producto.id,'product_uom':li.producto.uom_id.id,'product_uom_qty':li.cantidad,'name':li.producto.description if(li.producto.description) else '/','price_unit':0.00}
-                if(li.serieDestino):
-                    datos['x_studio_field_9nQhR']=li.serieDestino.id,
-                ss=self.env['sale.order.line'].sudo().create(datos)
-            for p in pick:
-                p.action_confirm()
+            if(self.sale_id):
+                self.env.cr.execute("update stock_picking set state='draft' where sale_id="+str(self.sale_id.id)+";")
+                self.env.cr.execute("select id from stock_picking where sale_id="+str(self.sale_id.id)+";")
+                pickis=self.env.cr.fetchall()
+                pick=self.env['stock.picking'].search([['id','in',pickis]])
+                for li in self.lineTemp:
+                    datos={'order_id':self.sale_id.id,'product_id':li.producto.id,'product_uom':li.producto.uom_id.id,'product_uom_qty':li.cantidad,'name':li.producto.description if(li.producto.description) else '/','price_unit':0.00}
+                    if(li.serieDestino):
+                        datos['x_studio_field_9nQhR']=li.serieDestino.id,
+                    ss=self.env['sale.order.line'].sudo().create(datos)
+                for p in pick:
+                    p.action_confirm()
         self.is_locked = not self.is_locked
         return True
     
