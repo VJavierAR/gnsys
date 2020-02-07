@@ -76,11 +76,11 @@ class StockPicking(Model):
             if(self.sale_id.x_studio_field_bxHgp):
                 self.sale_id.x_studio_field_bxHgp.write({'stage_id':18})
                 for ev in self.x_studio_evidencia:
-                    self.sale_id.x_studio_field_bxHgp.write({'documentosTecnico':ev.x_foto})
+                    self.sale_id.x_studio_field_bxHgp.write({'documentosTecnico':[ev.x_foto]})
                     self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : self.sale_id.x_studio_field_bxHgp.id
                                                                        , 'x_persona' : str(self.env.user.name)
                                                                        , 'x_estado' : "Cierre"
-                                                                       , 'x_diagnostico':ev.x_comentario                                                                   
+                                                                       , 'x_disgnostico':ev.x_comentario                                                                   
                                                                       })
                     
 
