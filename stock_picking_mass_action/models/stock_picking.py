@@ -17,7 +17,7 @@ class StockPicking(Model):
     ('waiting', 'Waiting Another Operation'),
     ('confirmed', 'Sin Stock'),
     ('assigned', 'Por Validar'),
-    ('done', 'Validado'),('distribucion', 'Distribución'),('cancel', 'Cancelled'),
+    ('done', 'Validado'),('distribucion', 'Distribución'),('cancel', 'Cancelled'),('aDistribucion', 'A Distribución')
 ], string='Status', compute='_compute_state',
     copy=False, index=True, readonly=True, store=True, track_visibility='onchange',
     help=" * Draft: not confirmed yet and will not be scheduled until confirmed.\n"
