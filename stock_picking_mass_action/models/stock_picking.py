@@ -13,6 +13,7 @@ class StockPicking(Model):
     ajusta=fields.Boolean('Ajusta')
     #ticketOrigenEnVenta = fields.Char(string='Documento de origen en venta', store=True, related='sale_id.origin')
     estado = fields.Text(compute = 'x_historial_ticket_actualiza')
+    backorder=fields.Char('Backorder')
     lineTemp=fields.One2many('stock.pick.temp','picking')
     state = fields.Selection([
     ('draft', 'Draft'),('compras', 'Solicitud de Compra'),
@@ -131,6 +132,10 @@ class StockPicking(Model):
 
         # Check backorder should check for other barcodes
         if self._check_backorder():
+            self.backorder="Parcial"
+            if(self.picking_type_id.id==3 or self.picking_type_id.id==29314):
+                if(self.sale_id.x_studio_field_bxHgp):
+                    self.sale_id.x_studio_field_bxHgp.write({'stage_id':109})
             return self.action_generate_backorder_wizard()
         self.action_done()
         return            
