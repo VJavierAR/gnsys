@@ -477,7 +477,7 @@ class helpdesk_update(models.Model):
         _logger.info("-------------------------------------------------------------self.x_studio_tcnico.id: " + str(self.x_studio_tcnico.id))
         if self.x_studio_id_ticket:
             estadoAntes = str(self.stage_id.name)
-            if (self.stage_id.name == 'Asignado' or self.stage_id.name == 'Resuelto' or self.stage_id.name == 'Cerrado' or self.stage_id.name == 'Cotización') and self.x_studio_tcnico.id != False and self.estadoAtencion == False:
+            if (self.stage_id.name == 'Asignado' or self.stage_id.name == 'Resuelto' or self.stage_id.name == 'Cerrado') and self.x_studio_tcnico.id != False and self.estadoAtencion == False:
                 query = "update helpdesk_ticket set stage_id = 13 where id = " + str(self.x_studio_id_ticket) + ";"
                 _logger.info("lol: " + query)
                 ss = self.env.cr.execute(query)
@@ -1073,7 +1073,12 @@ class helpdesk_update(models.Model):
                 self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
                 sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
                 sale.write({'x_studio_corte':self.x_studio_corte})
-                sale.write({'x_studio_comentario_adicional':self.x_studio_comentarios_de_localidad})
+                sale.write({'x_studio_comentario_adicional':self.x_studio_comentarios_de_localidad})      
+                if self.x_studio_almacen_1=='Agricola':
+                   sale.write({'warehouse_id':1})
+                if self.x_studio_almacen_1=='Queretaro':
+                   sale.write({'warehouse_id':18})
+      
                 sale.action_confirm()
                 
                 if self.estadoSolicitudDeTonerValidar == False:
