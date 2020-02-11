@@ -12,7 +12,7 @@ class StockPicking(Model):
     hiden=fields.Integer(compute='hide')
     ajusta=fields.Boolean('Ajusta')
     #ticketOrigenEnVenta = fields.Char(string='Documento de origen en venta', store=True, related='sale_id.origin')
-    estado = fields.Text(compute = 'x_historial_ticket_actualiza')
+    #estado = fields.Text(compute = 'x_historial_ticket_actualiza')
     backorder=fields.Char('Backorder')
     lineTemp=fields.One2many('stock.pick.temp','picking')
     state = fields.Selection([
@@ -29,21 +29,13 @@ class StockPicking(Model):
          " * Ready: products are reserved and ready to be sent. If the shipping policy is 'As soon as possible' this happens as soon as anything is reserved.\n"
          " * Done: has been processed, can't be modified or cancelled anymore.\n"
          " * Cancelled: has been cancelled, can't be confirmed anymore.")
-    """
-    @api.onchange('carrier_tracking_ref')
-    def agregarNumeroGuiaATicketOSolicitud(self):
-        #Funcion que agrega numero de guia a ticket y refaccion
-        ticketDeRefaccion = "Ticket de refacción"
-        cadena = str(record.x_studio_documento_de_origen_en_venta)
-        if ticketDeRefaccion in cadena:
-            numeroDeGuia = str(self.carrier_tracking_ref)
-            
-        else:
-            numeroDeGuia = str(self.carrier_tracking_ref)
-            solicitudDeVenta = self.group_id
-            solicitudDeVenta.env['sale.order'].sudo().write({'numeroDeGuiaDistribucion': numeroDeGuia})
-            solicitudDeVenta.env['sale.order'].sudo().write({'comentarioDeDistribucion': self.x_studio_comentario})
-    """
+    estado = fields.Selection([
+    ('draft', 'Draft'),('compras', 'Solicitud de Compra'),
+    ('waiting', 'Waiting Another Operation'),
+    ('confirmed', 'Sin Stock'),
+    ('assigned', 'Por Validar'),
+    ('done', 'Validado'),('distribucion', 'Distribución'),('cancel', 'Cancelled'),('aDistribucion', 'A Distribución')])
+    
     @api.multi
     def button_validate(self):
         self.ensure_one()
@@ -141,47 +133,17 @@ class StockPicking(Model):
         return            
     
     
-    @api.multi
-    @api.depends('state')
+    @api.onchange('state')
     def x_historial_ticket_actualiza(self):
-        _logger.info("********entro stock_picking.x_historial_ticket_actualiza()")
         for record in self:
-            estadoActual = str(record.state)
-            record['estado'] = estadoActual
-            nombreStock = record.name
-            #dis = "DIS"
-            dis = "OUT"
-            ticketDeRefaccion = "Ticket de refacción"
-            ticketDeToner = "Ticket de tóner"
-            cadena = str(record.x_studio_documento_de_origen_en_venta)
-            
-            if dis in nombreStock and (ticketDeRefaccion in cadena or ticketDeToner in cadena) and ('assigned' in estadoActual or 'done' in estadoActual) and self.env.user.id != 1:
-                numTicket = cadena.split(': ')[1]
-                #ticket = self.env['helpdesk.ticket'].search({'id': numTicket})
-                #historialNotas = ticket.historialCuatro
-                if 'assigned' in estadoActual:
-                    _logger.info("********entro Refacción Para Entregar")
-                    #existe = False
-                    #for nota in historialNotas:
-                    #    if str(nota.x_estado) == 'Refacción Para Entregar':
-                    #        existe = True
-                    #if existe == False:
-                    self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : numTicket
-                                                                       , 'x_persona' : str(self.env.user.name)
-                                                                       , 'x_estado' : "Refacción Para Entregar"
-                                                                      })
-
-                elif 'done' in estadoActual:
-                    _logger.info("********entro Refacción Entregada")
-                    #existe = False
-                    #for nota in historialNotas:
-                    #    if str(nota.x_estado) == 'Refacción Entregada':
-                    #        existe = True
-                    #if existe == False:
-                    self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : numTicket
-                                                                       , 'x_persona' : str(self.env.user.name)
-                                                                       , 'x_estado' : "Refacción Entregada"
-                                                                      })
+            #if('done' in record.state and record.picking_type_id==3):
+            #    record.write({'state':'aDistribucion'})
+            #if('done' in record.state and record.picking_type_id==29302):
+            #    record.write({'state':'distribucion'})
+            if 'assigned' in record.state and record.location_dest_id==9 and record.write_uid>2:
+                self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : numTicket, 'x_persona' : str(self.env.user.name), 'x_estado' : "Refacción Para Entregar"})
+            if 'done' in record.state and record.location_dest_id==9 and record.write_uid>2:
+                self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : numTicket, 'x_persona' : str(self.env.user.name), 'x_estado' : "Refacción Entregada"})                    
                     
     
     
