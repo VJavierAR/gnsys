@@ -52,6 +52,7 @@ class helpdesk_update(models.Model):
     agregarContactoCheck = fields.Boolean(string="Añadir contacto", default=False)
     
     idLocalidadAyuda = fields.Integer(compute='_compute_id_localidad',string='Id Localidad Ayuda', store=False) 
+    user_id = fields.Many2one('res.users','Ejecutivo', default=lambda self: self.env.user)
     
     #numeroDeGuiaDistribucion = fields.Char(string='Número de guía generado por distribución', store=True)
     
