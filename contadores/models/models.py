@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
-
 from odoo import models, fields, api
 import base64,io,csv
+import logging, ast
+import datetime
+_logger = logging.getLogger(__name__)
 class dcas(models.Model):
     _name = 'dcas.dcas'
     _description ='DCAS'
@@ -34,13 +36,15 @@ class contadores(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _description = 'Contadores Cliente'
     name = fields.Char()
+    mes=fields.Selection(selection=[('1','Enero'),('2','Febrero'),('3','Marzo'),('4','Abril'),('5','Mayo'),('6','Junio'),('7','Julio'),('8','Agosto'),('9','Septiembre'),('10','Octubre'),('11','Noviembre'),('12','Diciembre')])
     dca = fields.One2many('dcas.dcas',inverse_name='contador_id',string='DCAS')
     cliente = fields.Many2one('res.partner', store=True,string='Cliente')
     localidad=fields.Many2one('res.partner',store='True',string='Localidad')
     archivo=fields.Binary(store='True',string='Archivo')
     estado=fields.Selection(selection=[('Abierto', 'Abierto'),('Incompleto', 'Incompleto'),('Valido','Valido')],widget="statusbar", default='Abierto')  
     dom=fields.Char(readonly="1",invisible="1")
-    
+    order_line = fields.One2many('contadores.lines','ticket',string='Order Lines')
+
     
     @api.onchange('serie_aux')
     def getid(self):
@@ -50,27 +54,21 @@ class contadores(models.Model):
     
     @api.onchange('cliente')
     def onchange_place(self):
+        self.order_line=[(5,0,0)]
         res = {}
-        for record in self:
-            res['domain'] = {'localidad': ['&',('parent_id.id', '=', record.cliente.id),('type', '=', 'delivery')]}
-        return res
+        d=[]
+        if(self.cliente):
+            #lotes=self.env['stock.production.lot'].search([['x_studio_ubicaciontest', '=' ,self.cliente.name]])
+            self.env.cr.execute("Select id from stock_production_lot where x_studio_ultima_ubicacin like'"+self.cliente.name+"%';")
+            lotes= self.env.cr.fetchall()
+            for l in lotes:
+                #if(l.x_studio_ultima_ubicacin == self.cliente.name):
+                datos={}
+                datos['serie']=l
+                d.append(datos)            
+            self.order_line=d
+        #return res
 
-    @api.onchange('localidad')
-    def onchange_localidad(self):
-        stock=0
-        for record in self:
-            quants=[]
-            record['dca']=[(5,0,0)]
-            if(len(record.localidad)==1):
-                stock=self.env['stock.warehouse'].search([['x_studio_field_E0H1Z','=',record.localidad.id]]).lot_stock_id.id
-                lotes=self.env['stock.production.lot'].search([['x_studio_ubicacion_id','=',stock]])
-                b=[]
-                c={}
-                for f in lotes:
-                    c['serie']=f
-                    b.append(c)
-                record['dom']=stock
-                record['dca']=b
 
     @api.onchange('archivo')
     def onchange_archiv(self):
@@ -95,6 +93,62 @@ class contadores(models.Model):
         f.close()
                         #record.dca.search([['serial.name','=',dat[3]]])
 
+       
+    
+class contadores_lines(models.Model):
+    _name="contadores.lines"
+    _description = "lineas contadores"
+    serie=fields.Many2one('stock.production.lot')
+    ticket=fields.Many2one('contadores.contadores',string='Order Reference')
+    contadorAnterior=fields.Many2one('dcas.dcas',string='Anterior',compute='ultimoContador')
+    contadorColor=fields.Integer(string='Contador Color')
+    contadorNegro=fields.Integer(string='Contador Monocromatico')
+    contadorAnteriorMono=fields.Integer(related='contadorAnterior.contadorMono',string='Anterior Monocromatico')
+    contadorAnteriorColor=fields.Integer(related='contadorAnterior.contadorColor',string='Anterior Color')
+    cliente=fields.Many2one('res.partner')
+    nombre=fields.Char(related='cliente.name',string='Nombre Cliente')
+    mes=fields.Integer()
+    pagina=fields.Binary('Pagina de Estado')
+    
+    @api.depends('serie')
+    def ultimoContador(self):
+        fecha=datetime.datetime.now()
+        for record in self:
+            if(record.serie):
+                dc=self.env['dcas.dcas'].search([('fuente','=','dcas.dcas'),('x_studio_fecha_techra','!=',False),('serie','=',record.serie.id)]).sorted(key='x_studio_fecha_techra')
+                if(len(dc)>1):
+                    record['contadorAnterior']=dc[0].id
+        
 class lor(models.Model):
     _inherit = 'stock.production.lot'
     dca=fields.One2many('dcas.dcas',inverse_name='serie')
+
+    
+    
+    
+class contadores_lines(models.Model):
+    _name="cambios.localidad"
+    _description = "Cambios de Localidad"
+    estado=fields.Selection(selection=[('1','Por Confirma'),('2','Confirmado')])
+    serie=fields.Many2one('stock.production.lot')
+    origen=fields.Many2one('res.partner')
+    destino=fields.Many2one('res.partner')
+    
+    @api.onchange('serie')
+    def ubicacion(self):
+        if(self.serie.x_studio_move_line):
+            if(self.serie.x_studio_move_line.location_dest_id.x_studio_field_JoD2k):
+                if(self.serie.x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z):
+                    self.origen=self.serie.x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
+                    
+    def cambio(self):
+        if(self.destino):
+            origen2=self.env['stock.warehouse'].search([('x_studio_field_E0H1Z','=',self.origen.id)])
+            destino2=self.env['stock.warehouse'].search([('x_studio_field_E0H1Z','=',self.destino.id)])
+            self.env['stock.move.line'].create({'product_id':self.serie.product_id.id, 'product_uom_id':1,'location_id':origen2.lot_stock_id.id,'product_uom_qty':1,'lot_id':self.serie.id
+                                                ,'date':datetime.datetime.now(),'location_dest_id':destino2.lot_stock_id.id})
+            self.serie.x_studio_cambio = not self.serie.x_studio_cambio
+            self.estado='2'
+
+            
+            
