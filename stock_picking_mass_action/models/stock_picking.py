@@ -10,25 +10,13 @@ class StockPicking(Model):
     almacenOrigen=fields.Many2one('stock.warehouse','Almacen Origen')
     almacenDestino=fields.Many2one('stock.warehouse','Almacen Destino')
     hiden=fields.Integer(compute='hide')
-    ajusta=fields.Boolean('Ajusta')
-    #ticketOrigenEnVenta = fields.Char(string='Documento de origen en venta', store=True, related='sale_id.origin')
-    estado = fields.Text(compute = 'x_historial_ticket_actualiza')
+    est = fields.Text(compute = 'x_historial_ticket_actualiza')
     backorder=fields.Char('Backorder')
     lineTemp=fields.One2many('stock.pick.temp','picking')
-    state = fields.Selection([
-    ('draft', 'Draft'),('compras', 'Solicitud de Compra'),
-    ('waiting', 'Waiting Another Operation'),
-    ('confirmed', 'Sin Stock'),
-    ('assigned', 'Por Validar'),
-    ('done', 'Validado'),('distribucion', 'Distribución'),('cancel', 'Cancelled'),('aDistribucion', 'A Distribución')
-], string='Status', compute='_compute_state',
-    copy=False, index=True, readonly=True, store=True, track_visibility='onchange',
-    help=" * Draft: not confirmed yet and will not be scheduled until confirmed.\n"
-         " * Waiting Another Operation: waiting for another move to proceed before it becomes automatically available (e.g. in Make-To-Order flows).\n"
-         " * Waiting: if it is not ready to be sent because the required products could not be reserved.\n"
-         " * Ready: products are reserved and ready to be sent. If the shipping policy is 'As soon as possible' this happens as soon as anything is reserved.\n"
-         " * Done: has been processed, can't be modified or cancelled anymore.\n"
-         " * Cancelled: has been cancelled, can't be confirmed anymore.")
+    estado = fields.Selection([('draft', 'Draft'),('compras', 'Solicitud de Compra'),('waiting', 'Waiting Another Operation'),('confirmed', 'Sin Stock'),('assigned', 'Por Validar'),('done', 'Validado'),('distribucion', 'Distribución'),('cancel', 'Cancelled'),('aDistribucion', 'A Distribución'),('Xenrutar', 'Por en Rutar'),('ruta', 'En Ruta'),('entregado', 'Entregado')])
+    value2 = fields.Integer(store=True)
+    lineasBack = fields.One2many(related='backorder_ids.move_ids_without_package')
+    
     """
     @api.onchange('carrier_tracking_ref')
     def agregarNumeroGuiaATicketOSolicitud(self):
@@ -144,44 +132,16 @@ class StockPicking(Model):
     @api.multi
     @api.depends('state')
     def x_historial_ticket_actualiza(self):
-        _logger.info("********entro stock_picking.x_historial_ticket_actualiza()")
-        for record in self:
-            estadoActual = str(record.state)
-            record['estado'] = estadoActual
-            nombreStock = record.name
-            #dis = "DIS"
-            dis = "OUT"
-            ticketDeRefaccion = "Ticket de refacción"
-            ticketDeToner = "Ticket de tóner"
-            cadena = str(record.x_studio_documento_de_origen_en_venta)
-            
-            if dis in nombreStock and (ticketDeRefaccion in cadena or ticketDeToner in cadena) and ('assigned' in estadoActual or 'done' in estadoActual) and self.env.user.id != 1:
-                numTicket = cadena.split(': ')[1]
-                #ticket = self.env['helpdesk.ticket'].search({'id': numTicket})
-                #historialNotas = ticket.historialCuatro
-                if 'assigned' in estadoActual:
-                    _logger.info("********entro Refacción Para Entregar")
-                    #existe = False
-                    #for nota in historialNotas:
-                    #    if str(nota.x_estado) == 'Refacción Para Entregar':
-                    #        existe = True
-                    #if existe == False:
-                    self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : numTicket
-                                                                       , 'x_persona' : str(self.env.user.name)
-                                                                       , 'x_estado' : "Refacción Para Entregar"
-                                                                      })
-
-                elif 'done' in estadoActual:
-                    _logger.info("********entro Refacción Entregada")
-                    #existe = False
-                    #for nota in historialNotas:
-                    #    if str(nota.x_estado) == 'Refacción Entregada':
-                    #        existe = True
-                    #if existe == False:
-                    self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : numTicket
-                                                                       , 'x_persona' : str(self.env.user.name)
-                                                                       , 'x_estado' : "Refacción Entregada"
-                                                                      })
+        if(self.picking_type_id.id==3 and self.state=="assigned"):
+            self.value2= 1
+            #if('done' in record.state and record.picking_type_id==3):
+            #    record.write({'state':'aDistribucion'})
+            #if('done' in record.state and record.picking_type_id==29302):
+            #    record.write({'state':'distribucion'})
+        if 'assigned' in self.state and self.location_dest_id.id==9 and record.write_uid.id>2:
+            self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : numTicket, 'x_persona' : str(self.env.user.name), 'x_estado' : "Refacción Para Entregar"})
+        if 'done' in self.state and self.location_dest_id.id==9 and record.write_uid.id>2:
+            self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : numTicket, 'x_persona' : str(self.env.user.name), 'x_estado' : "Refacción Entregada"})                    
                     
     
     
