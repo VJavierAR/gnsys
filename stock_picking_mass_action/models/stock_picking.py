@@ -133,22 +133,23 @@ class StockPicking(Model):
     @api.multi
     @api.depends('state')
     def x_historial_ticket_actualiza(self):
-        _logger.info("*****holaaaaaa" + str(self.state))
-        if(self.picking_type_id.id==3 and self.state=="assigned"):
-            self.value2= 1
-            self.write({'estado':'assigned'})
-        if(self.picking_type_id.id==3 and self.state=="confirmed"):
-            self.write({'estado':'confirmed'})
-        if("done"==self.state and self.picking_type_id.id==3):
-            self.write({'estado':'aDistribucion'})
-        if('done' in self.state and self.picking_type_id.id==29302):
-            d=self.env['stock.picking'].search([['sale_id','=',self.sale_id.id],['picking_type_id','=',3]])
-            d.write({'estado':'distribucion'})
-        if 'assigned' in self.state and self.location_dest_id.id==9 and self.write_uid.id>2:
-            self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : numTicket, 'x_persona' : str(self.env.user.name), 'x_estado' : "Refacción Para Entregar"})
-        if 'done' in self.state and self.location_dest_id.id==9 and self.write_uid.id>2:
-            self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : numTicket, 'x_persona' : str(self.env.user.name), 'x_estado' : "Refacción Entregada"})                    
-    
+        for record in self:
+            _logger.info("*****holaaaaaa" + str(record.state))
+            if(record.picking_type_id.id==3 and record.state=="assigned"):
+                record['value2']= 1
+                record.write({'estado':'assigned'})
+            if(record.picking_type_id.id==3 and record.state=="confirmed"):
+                record.write({'estado':'confirmed'})
+            if("done"==record.state and record.picking_type_id.id==3):
+                record.write({'estado':'aDistribucion'})
+            if('done' in record.state and record.picking_type_id.id==29302):
+                d=record.env['stock.picking'].search([['sale_id','=',record.sale_id.id],['picking_type_id','=',3]])
+                d.write({'estado':'distribucion'})
+            if 'assigned' in record.state and record.location_dest_id.id==9 and record.write_uid.id>2:
+                self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : numTicket, 'x_persona' : str(self.env.user.name), 'x_estado' : "Refacción Para Entregar"})
+            if 'done' in record.state and record.location_dest_id.id==9 and record.write_uid.id>2:
+                self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : numTicket, 'x_persona' : str(self.env.user.name), 'x_estado' : "Refacción Entregada"})                    
+        
     def action_toggle_is_locked(self):
         self.ensure_one()
         if(self.is_locked==True):
