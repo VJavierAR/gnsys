@@ -140,8 +140,9 @@ class StockPicking(Model):
                 record.write({'estado':'assigned'})
             if(record.picking_type_id.id==3 and record.state=="confirmed"):
                 record.write({'estado':'confirmed'})
-            if("done"==record.state and record.picking_type_id.id==3):
+            if("done"==record.state and record.picking_type_id.id==3 and record.ajusta!=True):
                 record.write({'estado':'aDistribucion'})
+                record['ajusta']=True
             if('done' in record.state and record.picking_type_id.id==29302):
                 d=record.env['stock.picking'].search([['sale_id','=',record.sale_id.id],['picking_type_id','=',3]])
                 d.write({'estado':'distribucion'})
