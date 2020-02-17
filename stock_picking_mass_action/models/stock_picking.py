@@ -136,11 +136,11 @@ class StockPicking(Model):
         _logger.info("*****holaaaaaa" + str(self.state))
         if(self.picking_type_id.id==3 and self.state=="assigned"):
             self.value2= 1
-            self.estado='assigned'
+            self.write({'estado':'assigned'})
         if(self.picking_type_id.id==3 and self.state=="confirmed"):
-            self.estado='confirmed'
+            self.write({'estado':'confirmed'})
         if("done"==self.state and self.picking_type_id.id==3):
-            self.estado='aDistribucion'
+            self.write({'estado':'aDistribucion'})
         if('done' in self.state and self.picking_type_id.id==29302):
             d=self.env['stock.picking'].search([['sale_id','=',self.sale_id.id],['picking_type_id','=',3]])
             d.write({'estado':'distribucion'})
