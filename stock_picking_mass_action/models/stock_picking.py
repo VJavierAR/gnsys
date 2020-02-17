@@ -14,25 +14,10 @@ class StockPicking(Model):
     est = fields.Text(compute = 'x_historial_ticket_actualiza')
     backorder=fields.Char('Backorder')
     lineTemp=fields.One2many('stock.pick.temp','picking')
-    estado = fields.Selection([('draft', 'Draft'),('compras', 'Solicitud de Compra'),('waiting', 'Waiting Another Operation'),('confirmed', 'Sin Stock'),('assigned', 'Por Validar'),('done', 'Validado'),('distribucion', 'Distribución'),('cancel', 'Cancelled'),('aDistribucion', 'A Distribución'),('Xenrutar', 'Por en Rutar'),('ruta', 'En Ruta'),('entregado', 'Entregado')],store=True)
+    estado = fields.Selection([('draft', 'Draft'),('compras', 'Solicitud de Compra'),('waiting', 'Esperando otra operación'),('confirmed', 'Sin Stock'),('assigned', 'Por Validar'),('done', 'Validado'),('distribucion', 'Distribución'),('cancel', 'Cancelled'),('aDistribucion', 'A Distribución'),('Xenrutar', 'Por en Rutar'),('ruta', 'En Ruta'),('entregado', 'Entregado')],store=True)
     value2 = fields.Integer(store=True)
-    lineasBack = fields.One2many(related='backorder_ids.move_ids_without_package')
+    lineasBack = fields.One2many(related='backorder_ids.move_ids_without_package',store=True)
     
-    """
-    @api.onchange('carrier_tracking_ref')
-    def agregarNumeroGuiaATicketOSolicitud(self):
-        #Funcion que agrega numero de guia a ticket y refaccion
-        ticketDeRefaccion = "Ticket de refacción"
-        cadena = str(record.x_studio_documento_de_origen_en_venta)
-        if ticketDeRefaccion in cadena:
-            numeroDeGuia = str(self.carrier_tracking_ref)
-            
-        else:
-            numeroDeGuia = str(self.carrier_tracking_ref)
-            solicitudDeVenta = self.group_id
-            solicitudDeVenta.env['sale.order'].sudo().write({'numeroDeGuiaDistribucion': numeroDeGuia})
-            solicitudDeVenta.env['sale.order'].sudo().write({'comentarioDeDistribucion': self.x_studio_comentario})
-    """
     @api.multi
     def button_validate(self):
         self.ensure_one()
