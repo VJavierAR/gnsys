@@ -139,9 +139,9 @@ class StockPicking(Model):
             self.estado='assigned'
         if(self.picking_type_id.id==3 and self.state=="confirmed"):
             self.estado='confirmed'
-        if("done"==self.state and self.picking_type_id==3):
+        if("done"==self.state and self.picking_type_id.id==3):
             self.estado='aDistribucion'
-        if('done' in self.state and self.picking_type_id==29302):
+        if('done' in self.state and self.picking_type_id.id==29302):
             d=self.env['stock.picking'].search([['sale_id','=',self.sale_id.id],['picking_type_id','=',3]])
             d.write({'estado':'distribucion'})
         if 'assigned' in self.state and self.location_dest_id.id==9 and self.write_uid.id>2:
