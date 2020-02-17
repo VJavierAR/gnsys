@@ -137,6 +137,8 @@ class StockPicking(Model):
             if(record.state!=False and record.picking_type_id!=False):
                 if(record.picking_type_id.id!=3 and record.state=="assigned"):
                     record.write({'estado':'assigned'})
+                if(record.state=="cancel"):
+                    record.write({'estado':'cancel'})
                 if(record.state=="draft"):
                     record.write({'estado':'draft'})
                 if(record.state=="waiting"):
