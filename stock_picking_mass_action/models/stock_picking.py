@@ -136,11 +136,11 @@ class StockPicking(Model):
         for record in self:
             if(record.picking_type_id.id==3 and record.state=="assigned"):
                 record['value2']= 1
-                record['estado']="assigned"
+                record['estado']='assigned'
             if(record.picking_type_id.id==3 and record.state=="confirmed"):
-                record['estado']="confirmed"
+                record['estado']='confirmed'
             if("done"==record.state and record.picking_type_id==3):
-                record['estado']="aDistribucion"
+                record['estado']='aDistribucion'
             if('done' in record.state and record.picking_type_id==29302):
                 d=self.env['stock.picking'].search([['sale_id','=',record.sale_id.id],['picking_type_id','=',3]])
                 d.write({'estado':'distribucion'})
