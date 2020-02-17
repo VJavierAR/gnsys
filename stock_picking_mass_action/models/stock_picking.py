@@ -18,6 +18,12 @@ class StockPicking(Model):
     value2 = fields.Integer(store=True)
     lineasBack = fields.One2many(related='backorder_ids.move_ids_without_package')
    
+
+    @api.onchange('carrier_tracking_ref')
+    def agregarNumeroGuiaATicketOSolicitud(self):
+        if(self.sale_id.x_studio_field_bxHgp):
+            self.sale_id.x_studio_field_bxHgp.sudo().write({'x_studio_nmero_de_guia_1': self.carrier_tracking_ref})
+            
     @api.multi
     def button_validate(self):
         self.ensure_one()
