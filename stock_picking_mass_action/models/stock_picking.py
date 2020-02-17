@@ -151,8 +151,9 @@ class StockPicking(Model):
                 record.write({'ajusta':True})
             if('done' in record.state and record.picking_type_id.id==29302):
                 record.write({'estado':'Xenrutar'})
-                d=record.env['stock.picking'].search([['sale_id','=',record.sale_id.id],['picking_type_id','=',3]])
-                d.write({'estado':'distribucion'})
+                if(record.sale_id):
+                    d=record.env['stock.picking'].search([['sale_id','=',record.sale_id.id],['picking_type_id','=',3]])
+                    d.write({'estado':'distribucion'})
             if('done' in record.state and record.picking_type_id.id==2):
                 record.write({'estado':'entregado'})
 
