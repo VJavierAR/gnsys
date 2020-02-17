@@ -133,17 +133,18 @@ class StockPicking(Model):
     @api.multi
     @api.depends('state')
     def x_historial_ticket_actualiza(self):
-        if(self.picking_type_id.id==3 and self.state=="assigned"):
-            self.value2= 1
+        for record in self:
+            if(record.picking_type_id.id==3 and record.state=="assigned"):
+                record['value2']= 1
             #if('done' in record.state and record.picking_type_id==3):
             #    record.write({'state':'aDistribucion'})
             #if('done' in record.state and record.picking_type_id==29302):
             #    record.write({'state':'distribucion'})
-        if 'assigned' in self.state and self.location_dest_id.id==9 and record.write_uid.id>2:
-            self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : numTicket, 'x_persona' : str(self.env.user.name), 'x_estado' : "Refacción Para Entregar"})
-        if 'done' in self.state and self.location_dest_id.id==9 and record.write_uid.id>2:
-            self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : numTicket, 'x_persona' : str(self.env.user.name), 'x_estado' : "Refacción Entregada"})                    
-                    
+            if 'assigned' in record.state and record.location_dest_id.id==9 and record.write_uid.id>2:
+                self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : numTicket, 'x_persona' : str(self.env.user.name), 'x_estado' : "Refacción Para Entregar"})
+            if 'done' in record.state and record.location_dest_id.id==9 and record.write_uid.id>2:
+                self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : numTicket, 'x_persona' : str(self.env.user.name), 'x_estado' : "Refacción Entregada"})                    
+
     
     
     
