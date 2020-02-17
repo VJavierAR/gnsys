@@ -135,7 +135,7 @@
             
                                     Equipos sin repetir : ) <t t-esc="chidos"/>  
             -->
-            <table id="customers" class="table" style="width:100%;">
+            <table t-if="name==False" id="customers" class="table" style="width:100%;">
                 <thead>
                     <tr >
                         <th>
