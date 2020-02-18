@@ -18,7 +18,7 @@ class StockPicking(Model):
     value2 = fields.Integer(store=True)
     lineasBack = fields.One2many(related='backorder_ids.move_ids_without_package')
     ruta_id=fields.Many2one('creacion.ruta')
-    documentosDistro = fields.Many2many('ir.attachment', string="Evidencias ")
+    #documentosDistro = fields.Many2many('ir.attachment', string="Evidencias ")
     #historialTicket = fields.One2many('ir.attachment','res_id',string='Evidencias al ticket',store=True,track_visibility='onchange')
 
     @api.onchange('carrier_tracking_ref')
