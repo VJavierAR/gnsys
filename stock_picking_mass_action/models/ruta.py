@@ -10,4 +10,4 @@ class StockPicking(Model):
 	name=fields.Char()
 	chofer=fields.Many2one('hr.employee')
 	vehiculo=fields.Many2one('fleet.vehicle')
-	ordenes=fields.One2many('stock.picking','ruta_id')
+	ordenes=fields.Many2many('stock.picking')
