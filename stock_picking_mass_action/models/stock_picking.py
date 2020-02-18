@@ -134,7 +134,11 @@ class StockPicking(Model):
                     record.write({'estado':'draft'})
                 if(record.state=="waiting"):
                     record.write({'estado':'waiting'})
+                    if(record.sale_id.x_studio_field_bxHgp):
+                        record.sale_id.x_studio_field_bxHgp.write({'stage_id':93})                    
                 if(record.picking_type_id.id==3 and record.state=="assigned"):
+                    if(record.sale_id.x_studio_field_bxHgp):
+                        record.sale_id.x_studio_field_bxHgp.write({'stage_id':93})
                     record['value2']= 1
                     record.write({'estado':'assigned'})
                     #record.sale_id.x_studio_field_bxHgp.write({'stage_id':18})
@@ -145,6 +149,8 @@ class StockPicking(Model):
                     record.write({'ajusta':True})
                 if('done' in record.state and record.picking_type_id.id==29302):
                     record.write({'estado':'Xenrutar'})
+                    if(record.sale_id.x_studio_field_bxHgp):
+                        record.sale_id.x_studio_field_bxHgp.write({'stage_id':94}) 
                     if(record.sale_id):
                         d=record.env['stock.picking'].search([['sale_id','=',record.sale_id.id],['picking_type_id','=',3]])
                         d.write({'estado':'distribucion'})
