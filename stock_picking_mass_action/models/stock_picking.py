@@ -126,7 +126,7 @@ class StockPicking(Model):
     def x_historial_ticket_actualiza(self):
         for record in self:
             if(record.state!=False and record.picking_type_id!=False):
-                if(record.picking_type_id.id!=3 and record.state=="assigned"):
+                if(record.picking_type_id.id!=3 and record.state=="assigned" and record.ajusta!=True):
                     record.write({'estado':'assigned'})
                 if(record.state=="cancel"):
                     record.write({'estado':'cancel'})
