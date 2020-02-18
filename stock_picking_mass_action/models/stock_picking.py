@@ -154,9 +154,12 @@ class StockPicking(Model):
                     if(record.sale_id):
                         d=record.env['stock.picking'].search([['sale_id','=',record.sale_id.id],['picking_type_id','=',3]])
                         d.write({'estado':'distribucion'})
-                if('done' in record.state and record.picking_type_id.id==2):
+                if('done' in record.state and (record.picking_type_id.id==2 or record.picking_type_id.id==29314) and len(record.backorder_ids)==0):
                     record.write({'estado':'entregado'})
-
+                if('done' in record.state and (record.picking_type_id.id==2 or record.picking_type_id.id==29314) and len(record.backorder_ids)>0):
+                    record.write({'estado':'entregado'})
+                    if(record.sale_id.x_studio_field_bxHgp):
+                        record.sale_id.x_studio_field_bxHgp.write({'stage_id':109}) 
 
                 #if 'assigned' in record.state and record.location_dest_id.id==9 and record.write_uid.id>2:
                 #    self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : numTicket, 'x_persona' : str(self.env.user.name), 'x_estado' : "Refacción Para Entregar"})
