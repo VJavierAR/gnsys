@@ -16,6 +16,7 @@ class CreacionRuta(Model):
 
 	def confirmar(self):
 		self.estado="valido"
+		self.ordenes.write({'ruta_id':self.id})
 
 	@api.model
     def create(self, vals):
