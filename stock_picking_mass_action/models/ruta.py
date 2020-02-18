@@ -15,7 +15,7 @@ class CreacionRuta(Model):
 	estado=fields.Selection([["borrador","Borrador"],["valido","Confirmado"]])
 
 	def confirmar(self):
-		self.estado="valido"
+		#self.estado="valido"
 		self.ordenes.write({'ruta_id':self.id})
 		self.ordenes.write({'estado':'ruta'})
 		self.ordenes.write({'ajusta':True})
