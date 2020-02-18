@@ -158,6 +158,8 @@ class StockPicking(Model):
                         d.write({'estado':'distribucion'})
                 if('done' in record.state and (record.picking_type_id.id==2 or record.picking_type_id.id==29314) and len(record.backorder_ids)==0):
                     record.write({'estado':'entregado'})
+                    if(record.sale_id.x_studio_field_bxHgp):
+                        record.sale_id.x_studio_field_bxHgp.write({'stage_id':18})
                 if('done' in record.state and (record.picking_type_id.id==2 or record.picking_type_id.id==29314) and len(record.backorder_ids)>0):
                     record.write({'estado':'entregado'})
                     if(record.sale_id.x_studio_field_bxHgp):
