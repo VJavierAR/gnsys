@@ -17,6 +17,7 @@ class CreacionRuta(Model):
 	def confirmar(self):
 		self.estado="valido"
 		self.ordenes.write({'ruta_id':self.id})
+		self.ordenes.write({'estado':'ruta'})
 	@api.model
 	def create(self, vals):
 		vals['name'] = self.env['ir.sequence'].next_by_code('ruta') or _('New')
