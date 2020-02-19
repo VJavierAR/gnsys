@@ -49,7 +49,7 @@ class StockPicking(Model):
 
         # If no lots when needed, raise error
         picking_type = self.picking_type_id
-        if(picking_type_id.id==2 and len(self.x_studio_evidencia)<1):
+        if(picking_type.id==2 and len(self.x_studio_evidencia)<1):
             raise UserError(_('Se requiere la Evidencia.'))
             
         precision_digits = self.env['decimal.precision'].precision_get('Product Unit of Measure')
