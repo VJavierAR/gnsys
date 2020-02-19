@@ -28,10 +28,10 @@ class StockPicking(Model):
             self.sale_id.x_studio_field_bxHgp.sudo().write({'x_studio_nmero_de_guia_1': self.carrier_tracking_ref})
       
     
-    @api.onchange('x_studio_evidencia_a_ticket')
-    def mandarTicket(self):
-        c = self.env['helpdesk.ticket'].search([('id','=',self.x_studio_idtempticket)]) 
-        c.write({'x_studio_evidencia_distribuidor': self.x_studio_evidencia_a_ticket})
+    #@api.onchange('x_studio_evidencia_a_ticket')
+    #def mandarTicket(self):
+    #    c = self.env['helpdesk.ticket'].search([('id','=',self.x_studio_idtempticket)]) 
+    #    c.write({'x_studio_evidencia_distribuidor': self.x_studio_evidencia_a_ticket})
 
         
     #@api.onchange('carrier_tracking_ref')
