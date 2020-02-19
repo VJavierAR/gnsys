@@ -5,7 +5,9 @@
 
 from odoo import fields, api
 from odoo.models import TransientModel
-
+import logging, ast
+import datetime, time
+_logger = logging.getLogger(__name__)
 
 class StockPickingMassAction(TransientModel):
     _name = 'stock.picking.mass.action'
@@ -85,6 +87,7 @@ class StockPickingMassAction(TransientModel):
                 return assigned_picking_lst.action_immediate_transfer_wizard()
             if assigned_picking_lst._check_backorder():
                 return assigned_picking_lst.action_generate_backorder_wizard()
+            _logger.info("***************lista " + str(len(assigned_picking_lst)))
             assigned_picking_lst.write({'concentrado':str(self.env['ir.sequence'].next_by_code('concentrado'))})
             assigned_picking_lst.action_done()
 
