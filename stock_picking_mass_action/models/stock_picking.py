@@ -18,6 +18,7 @@ class StockPicking(Model):
     value2 = fields.Integer(store=True)
     lineasBack = fields.One2many(related='backorder_ids.move_ids_without_package')
     ruta_id=fields.Many2one('creacion.ruta')
+    concentrado=fields.Char()
     #documentosDistro = fields.Many2many('ir.attachment', string="Evidencias ")
     #historialTicket = fields.One2many('ir.attachment','res_id',string='Evidencias al ticket',store=True,track_visibility='onchange')
 
@@ -33,10 +34,10 @@ class StockPicking(Model):
         c.write({'x_studio_evidencia_distribuidor': self.x_studio_evidencia_a_ticket})
 
         
-    @api.onchange('carrier_tracking_ref')
-    def mandarTicketGuia(self):
-        c = self.env['helpdesk.ticket'].search([('id','=',self.x_studio_idtempticket)]) 
-        c.write({'x_studio_nmero_de_guia_1': self.carrier_tracking_ref})        
+    #@api.onchange('carrier_tracking_ref')
+    #def mandarTicketGuia(self):
+    #    c = self.env['helpdesk.ticket'].search([('id','=',self.x_studio_idtempticket)]) 
+    #    c.write({'x_studio_nmero_de_guia_1': self.carrier_tracking_ref})        
     
     
     
@@ -56,19 +57,7 @@ class StockPicking(Model):
         no_reserved_quantities = all(float_is_zero(move_line.product_qty, precision_rounding=move_line.product_uom_id.rounding) for move_line in self.move_line_ids)
         if no_reserved_quantities and no_quantities_done:
             raise UserError(_('You cannot validate a transfer if no quantites are reserved nor done. To force the transfer, switch in edit more and encode the done quantities.'))
-        #refaccion
-        #if(self.picking_type_id.id==29314):
-        #    if(self.sale_id.x_studio_field_bxHgp):
-        #        self.sale_id.x_studio_field_bxHgp.write({'stage_id':104})
-        #almacen
-        #if(self.picking_type_id.id==3):
-        #    if(self.sale_id.x_studio_field_bxHgp):
-         #       self.sale_id.x_studio_field_bxHgp.write({'stage_id':93})
-        #distribucion
-        #if(self.picking_type_id.id==29302):
-         #   if(self.sale_id.x_studio_field_bxHgp):
-         #       self.sale_id.x_studio_field_bxHgp.write({'stage_id':94})
-        #transito        
+   
         if(self.picking_type_id.id==2 and len(self.x_studio_evidencia)>0):
             if(self.sale_id.x_studio_field_bxHgp):
                 self.sale_id.x_studio_field_bxHgp.write({'stage_id':18})

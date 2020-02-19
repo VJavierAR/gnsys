@@ -86,3 +86,4 @@ class StockPickingMassAction(TransientModel):
             if assigned_picking_lst._check_backorder():
                 return assigned_picking_lst.action_generate_backorder_wizard()
             assigned_picking_lst.action_done()
+            assigned_picking_lst.write({'concentrado':str(self.env['ir.sequence'].next_by_code('concentrado'))})
