@@ -32,6 +32,11 @@ class StockPicking(Model):
         c = self.env['helpdesk.ticket'].search([('id','=',self.x_studio_idtempticket)]) 
         c.write({'x_studio_evidencia_distribuidor': self.x_studio_evidencia_a_ticket})
 
+        
+    @api.onchange('carrier_tracking_ref')
+    def mandarTicketGuia(self):
+        c = self.env['helpdesk.ticket'].search([('id','=',self.x_studio_idtempticket)]) 
+        c.write({'x_studio_nmero_de_guia_1': self.carrier_tracking_ref})        
     
     
     
