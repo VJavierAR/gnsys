@@ -506,7 +506,7 @@ class helpdesk_update(models.Model):
         #if self.stage_id.name == 'Atención' and self.x_studio_productos != []:
         #raise exceptions.ValidationError("error gerardo: " + str(self.stage_id.name))
         estadoAntes = str(self.stage_id.name)
-        if self.estadoResuelto == False:
+        if self.estadoResuelto == False or self.estadoResuelto == True :
             query = "update helpdesk_ticket set stage_id = 3 where id = " + str(self.x_studio_id_ticket) + ";"
             _logger.info("lol: " + query)
             ss = self.env.cr.execute(query)
