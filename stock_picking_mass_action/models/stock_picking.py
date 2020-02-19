@@ -287,7 +287,7 @@ class StockPicking(Model):
             if relevant_move_state == 'partially_available':
                 self.state = 'assigned'
                 if(self.picking_type_id.id!=3 and self.ajusta!=True):
-                    record.write({'estado':'assigned'})
+                    self.estado='assigned'
                 if(self.picking_type_id.id==3):
                     if(self.sale_id.x_studio_field_bxHgp):
                         self.sale_id.x_studio_field_bxHgp.stage_id=93
