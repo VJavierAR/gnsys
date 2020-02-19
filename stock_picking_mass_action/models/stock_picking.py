@@ -263,7 +263,7 @@ class StockPicking(Model):
             self.estado='cancel'
         elif all(move.state in ['cancel', 'done'] for move in self.move_lines):
             self.state = 'done'
-            if(self.state='done'):
+            if(self.state=='done'):
                 if(self.picking_type_id.id==3 and self.ajusta!=True):
                     self.estado='aDistribucion'
                     self.ajusta=True
