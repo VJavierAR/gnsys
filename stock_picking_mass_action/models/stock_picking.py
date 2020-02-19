@@ -11,7 +11,7 @@ class StockPicking(Model):
     almacenDestino=fields.Many2one('stock.warehouse','Almacen Destino')
     hiden=fields.Integer(compute='hide')
     ajusta=fields.Boolean('Ajusta')
-    est = fields.Text(compute = 'x_historial_ticket_actualiza')
+    #est = fields.Text(compute = 'x_historial_ticket_actualiza')
     backorder=fields.Char('Backorder')
     lineTemp=fields.One2many('stock.pick.temp','picking')
     estado = fields.Selection([('draft', 'Draft'),('compras', 'Solicitud de Compra'),('waiting', 'Esperando otra operación'),('confirmed', 'Sin Stock'),('assigned', 'Por Validar'),('done', 'Validado'),('distribucion', 'Distribución'),('cancel', 'Cancelled'),('aDistribucion', 'A Distribución'),('Xenrutar', 'Por en Rutar'),('ruta', 'En Ruta'),('entregado', 'Entregado')],store=True)
@@ -49,7 +49,7 @@ class StockPicking(Model):
 
         # If no lots when needed, raise error
         picking_type = self.picking_type_id
-        if(picking_type.id==2 and len(self.x_studio_evidencia)<1):
+        if(picking_type_id.id==2 and len(self.x_studio_evidencia)<1):
             raise UserError(_('Se requiere la Evidencia.'))
             
         precision_digits = self.env['decimal.precision'].precision_get('Product Unit of Measure')
@@ -126,48 +126,48 @@ class StockPicking(Model):
         return            
     
     
-    @api.multi
-    @api.depends('state')
-    def x_historial_ticket_actualiza(self):
-        for record in self:
-            if(record.state!=False and record.picking_type_id!=False):
-                if(record.picking_type_id.id!=3 and record.state=="assigned" and record.ajusta!=True):
-                    record.write({'estado':'assigned'})
-                if(record.state=="cancel"):
-                    record.write({'estado':'cancel'})
-                if(record.state=="draft"):
-                    record.write({'estado':'draft'})
-                if(record.state=="waiting"):
-                    record.write({'estado':'waiting'})
-                    if(record.sale_id.x_studio_field_bxHgp):
-                        record.sale_id.x_studio_field_bxHgp.write({'stage_id':93})                    
-                if(record.picking_type_id.id==3 and record.state=="assigned"):
-                    if(record.sale_id.x_studio_field_bxHgp):
-                        record.sale_id.x_studio_field_bxHgp.write({'stage_id':93})
-                    self.env.cr.execute("update stock_picking set estado='assigned';")
-                    record['value2']= 1
+    #@api.multi
+    #@api.depends('state')
+    #def x_historial_ticket_actualiza(self):
+        #for record in self:
+            #if(record.state!=False and record.picking_type_id!=False):
+                #if(record.picking_type_id.id!=3 and record.state=="assigned" and record.ajusta!=True):
+                #    record.write({'estado':'assigned'})
+                #if(record.state=="cancel"):
+                #    record.write({'estado':'cancel'})
+                #if(record.state=="draft"):
+                #    record.write({'estado':'draft'})
+                #if(record.state=="waiting"):
+                #    record.write({'estado':'waiting'})
+                #    if(record.sale_id.x_studio_field_bxHgp):
+                #        record.sale_id.x_studio_field_bxHgp.write({'stage_id':93})                    
+                #if(record.picking_type_id.id==3 and record.state=="assigned"):
+                #    if(record.sale_id.x_studio_field_bxHgp):
+                #        record.sale_id.x_studio_field_bxHgp.write({'stage_id':93})
+                #    self.env.cr.execute("update stock_picking set estado='assigned';")
+                #    record['value2']= 1
                     #record.write({'estado':'assigned'})
                     #record.sale_id.x_studio_field_bxHgp.write({'stage_id':18})
-                if(record.picking_type_id.id==3 and record.state=="confirmed"):
-                    record.write({'estado':'confirmed'})
-                if("done"==record.state and record.picking_type_id.id==3 and record.ajusta!=True):
-                    record.write({'estado':'aDistribucion'})
-                    record.write({'ajusta':True})
-                if('done' in record.state and record.picking_type_id.id==29302):
-                    record.write({'estado':'Xenrutar'})
-                    if(record.sale_id.x_studio_field_bxHgp):
-                        record.sale_id.x_studio_field_bxHgp.write({'stage_id':94}) 
-                    if(record.sale_id):
-                        d=record.env['stock.picking'].search([['sale_id','=',record.sale_id.id],['picking_type_id','=',3]])
-                        d.write({'estado':'distribucion'})
-                if('done' in record.state and (record.picking_type_id.id==2 or record.picking_type_id.id==29314) and len(record.backorder_ids)==0):
-                    record.write({'estado':'entregado'})
-                    if(record.sale_id.x_studio_field_bxHgp):
-                        record.sale_id.x_studio_field_bxHgp.write({'stage_id':18})
-                if('done' in record.state and (record.picking_type_id.id==2 or record.picking_type_id.id==29314) and len(record.backorder_ids)>0):
-                    record.write({'estado':'entregado'})
-                    if(record.sale_id.x_studio_field_bxHgp):
-                        record.sale_id.x_studio_field_bxHgp.write({'stage_id':109}) 
+                #if(record.picking_type_id.id==3 and record.state=="confirmed"):
+                #    record.write({'estado':'confirmed'})
+                #if("done"==record.state and record.picking_type_id.id==3 and record.ajusta!=True):
+                #    record.write({'estado':'aDistribucion'})
+                #    record.write({'ajusta':True})
+                # if('done' in record.state and record.picking_type_id.id==29302):
+                #     record.write({'estado':'Xenrutar'})
+                #     if(record.sale_id.x_studio_field_bxHgp):
+                #         record.sale_id.x_studio_field_bxHgp.write({'stage_id':94}) 
+                #     if(record.sale_id):
+                #         d=record.env['stock.picking'].search([['sale_id','=',record.sale_id.id],['picking_type_id','=',3]])
+                #         d.write({'estado':'distribucion'})
+                # if('done' in record.state and (record.picking_type_id.id==2 or record.picking_type_id.id==29314) and len(record.backorder_ids)==0):
+                #     record.write({'estado':'entregado'})
+                #     if(record.sale_id.x_studio_field_bxHgp):
+                #         record.sale_id.x_studio_field_bxHgp.write({'stage_id':18})
+                # if('done' in record.state and (record.picking_type_id.id==2 or record.picking_type_id.id==29314) and len(record.backorder_ids)>0):
+                #     record.write({'estado':'entregado'})
+                #     if(record.sale_id.x_studio_field_bxHgp):
+                #         record.sale_id.x_studio_field_bxHgp.write({'stage_id':109}) 
 
                 #if 'assigned' in record.state and record.location_dest_id.id==9 and record.write_uid.id>2:
                 #    self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : numTicket, 'x_persona' : str(self.env.user.name), 'x_estado' : "Refacción Para Entregar"})
@@ -245,6 +245,65 @@ class StockPicking(Model):
             'res_id': wiz.id,
             'context': self.env.context,
         }
+
+
+
+    @api.depends('move_type', 'move_lines.state', 'move_lines.picking_id')
+    @api.one
+    def _compute_state(self):
+        if not self.move_lines:
+            self.state = 'draft'
+            self.estado='draft'
+        elif any(move.state == 'draft' for move in self.move_lines):  # TDE FIXME: should be all ?
+            self.state = 'draft'
+            self.estado='draft'
+
+        elif all(move.state == 'cancel' for move in self.move_lines):
+            self.state = 'cancel'
+            self.estado='cancel'
+        elif all(move.state in ['cancel', 'done'] for move in self.move_lines):
+            self.state = 'done'
+            if(self.state='done'):
+                if(self.picking_type_id.id==3 and self.ajusta!=True):
+                    self.estado='aDistribucion'
+                    self.ajusta=True
+                if(self.picking_type_id.id==29302):
+                    self.estado='Xenrutar'
+                    if(record.sale_id):
+                        d=self.env['stock.picking'].search([['sale_id','=',self.sale_id.id],['picking_type_id','=',3]])
+                        d.write({'estado':'distribucion'})
+                        if(self.sale_id.x_studio_field_bxHgp):
+                            self.sale_id.x_studio_field_bxHgp.stage_id=94 
+                if((self.picking_type_id.id==2 or self.picking_type_id.id==29314) and len(self.backorder_ids)==0):
+                    self.estado='entregado'
+                    if(self.sale_id.x_studio_field_bxHgp):
+                        self.sale_id.x_studio_field_bxHgp.'stage_id'=18
+                if((self.picking_type_id.id==2 or record.picking_type_id.id==29314) and len(self.backorder_ids)>0):
+                    self.estado='entregado'
+                    if(self.sale_id.x_studio_field_bxHgp):
+                        self.sale_id.x_studio_field_bxHgp.stage_id=109 
+        else:
+            relevant_move_state = self.move_lines._get_relevant_state_among_moves()
+            if relevant_move_state == 'partially_available':
+                self.state = 'assigned'
+                if(self.picking_type_id.id!=3 and self.ajusta!=True):
+                    record.write({'estado':'assigned'})
+                if(self.picking_type_id.id==3):
+                    if(self.sale_id.x_studio_field_bxHgp):
+                        self.sale_id.x_studio_field_bxHgp.stage_id=93
+                    self.value2= 1
+                    self.estado='assigned'
+
+
+            else:
+                self.state = relevant_move_state
+                self.estado=relevant_move_state
+                if(self.sale_id.x_studio_field_bxHgp and relevant_move_state=='waiting' and (self.picking_type_id.id==3 or self.picking_type_id.id==29314)):
+                    self.sale_id.x_studio_field_bxHgp.stage_id=93
+                if(self.state=="confirmed"):
+                    self.estado='confirmed'
+
+
 class StockPicking(Model):
     _inherit = 'stock.move'
     almacenOrigen=fields.Many2one('stock.warehouse','Almacen Origen')
