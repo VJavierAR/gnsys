@@ -278,7 +278,7 @@ class StockPicking(Model):
                     self.estado='entregado'
                     if(self.sale_id.x_studio_field_bxHgp):
                         self.sale_id.x_studio_field_bxHgp.stage_id=18
-                if((self.picking_type_id.id==2 or record.picking_type_id.id==29314) and len(self.backorder_ids)>0):
+                if((self.picking_type_id.id==2 or self.picking_type_id.id==29314) and len(self.backorder_ids)>0):
                     self.estado='entregado'
                     if(self.sale_id.x_studio_field_bxHgp):
                         self.sale_id.x_studio_field_bxHgp.stage_id=109 
