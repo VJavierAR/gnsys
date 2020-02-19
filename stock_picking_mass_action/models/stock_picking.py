@@ -269,7 +269,7 @@ class StockPicking(Model):
                     self.ajusta=True
                 if(self.picking_type_id.id==29302):
                     self.estado='Xenrutar'
-                    if(record.sale_id):
+                    if(self.sale_id):
                         d=self.env['stock.picking'].search([['sale_id','=',self.sale_id.id],['picking_type_id','=',3]])
                         d.write({'estado':'distribucion'})
                         if(self.sale_id.x_studio_field_bxHgp):
