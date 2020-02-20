@@ -248,60 +248,60 @@ class StockPicking(Model):
 
 
 
-    @api.depends('move_type', 'move_lines.state', 'move_lines.picking_id')
-    @api.one
-    def _compute_state(self):
-        if not self.move_lines:
-            self.state = 'draft'
-            self.estado='draft'
-        elif any(move.state == 'draft' for move in self.move_lines):  # TDE FIXME: should be all ?
-            self.state = 'draft'
-            self.estado='draft'
+    # @api.depends('move_type', 'move_lines.state', 'move_lines.picking_id')
+    # @api.one
+    # def _compute_state(self):
+    #     if not self.move_lines:
+    #         self.state = 'draft'
+    #         self.estado='draft'
+    #     elif any(move.state == 'draft' for move in self.move_lines):  # TDE FIXME: should be all ?
+    #         self.state = 'draft'
+    #         self.estado='draft'
 
-        elif all(move.state == 'cancel' for move in self.move_lines):
-            self.state = 'cancel'
-            self.estado='cancel'
-        elif all(move.state in ['cancel', 'done'] for move in self.move_lines):
-            self.state = 'done'
-            if(self.state=='done'):
-                if(self.picking_type_id.id==3 and self.ajusta!=True):
-                    self.estado='aDistribucion'
-                    self.ajusta=True
-                if(self.picking_type_id.id==29302):
-                    self.estado='Xenrutar'
-                    if(self.sale_id):
-                        d=self.env['stock.picking'].search([['sale_id','=',self.sale_id.id],['picking_type_id','=',3]])
-                        d.write({'estado':'distribucion'})
-                        if(self.sale_id.x_studio_field_bxHgp):
-                            self.sale_id.x_studio_field_bxHgp.stage_id=94 
-                if((self.picking_type_id.id==2 or self.picking_type_id.id==29314) and len(self.backorder_ids)==0):
-                    self.estado='entregado'
-                    if(self.sale_id.x_studio_field_bxHgp):
-                        self.sale_id.x_studio_field_bxHgp.stage_id=18
-                if((self.picking_type_id.id==2 or self.picking_type_id.id==29314) and len(self.backorder_ids)>0):
-                    self.estado='entregado'
-                    if(self.sale_id.x_studio_field_bxHgp):
-                        self.sale_id.x_studio_field_bxHgp.stage_id=109 
-        else:
-            relevant_move_state = self.move_lines._get_relevant_state_among_moves()
-            if relevant_move_state == 'partially_available':
-                self.state = 'assigned'
-                if(self.picking_type_id.id!=3 and self.ajusta!=True):
-                    self.estado='assigned'
-                if(self.picking_type_id.id==3):
-                    if(self.sale_id.x_studio_field_bxHgp):
-                        self.sale_id.x_studio_field_bxHgp.stage_id=93
-                    self.value2= 1
-                    self.estado='assigned'
+    #     elif all(move.state == 'cancel' for move in self.move_lines):
+    #         self.state = 'cancel'
+    #         self.estado='cancel'
+    #     elif all(move.state in ['cancel', 'done'] for move in self.move_lines):
+    #         self.state = 'done'
+    #         if(self.state=='done'):
+    #             if(self.picking_type_id.id==3 and self.ajusta!=True):
+    #                 self.estado='aDistribucion'
+    #                 self.ajusta=True
+    #             if(self.picking_type_id.id==29302):
+    #                 self.estado='Xenrutar'
+    #                 if(self.sale_id):
+    #                     d=self.env['stock.picking'].search([['sale_id','=',self.sale_id.id],['picking_type_id','=',3]])
+    #                     d.write({'estado':'distribucion'})
+    #                     if(self.sale_id.x_studio_field_bxHgp):
+    #                         self.sale_id.x_studio_field_bxHgp.stage_id=94 
+    #             if((self.picking_type_id.id==2 or self.picking_type_id.id==29314) and len(self.backorder_ids)==0):
+    #                 self.estado='entregado'
+    #                 if(self.sale_id.x_studio_field_bxHgp):
+    #                     self.sale_id.x_studio_field_bxHgp.stage_id=18
+    #             if((self.picking_type_id.id==2 or self.picking_type_id.id==29314) and len(self.backorder_ids)>0):
+    #                 self.estado='entregado'
+    #                 if(self.sale_id.x_studio_field_bxHgp):
+    #                     self.sale_id.x_studio_field_bxHgp.stage_id=109 
+    #     else:
+    #         relevant_move_state = self.move_lines._get_relevant_state_among_moves()
+    #         if relevant_move_state == 'partially_available':
+    #             self.state = 'assigned'
+    #             if(self.picking_type_id.id!=3 and self.ajusta!=True):
+    #                 self.estado='assigned'
+    #             if(self.picking_type_id.id==3):
+    #                 if(self.sale_id.x_studio_field_bxHgp):
+    #                     self.sale_id.x_studio_field_bxHgp.stage_id=93
+    #                 self.value2= 1
+    #                 self.estado='assigned'
 
 
-            else:
-                self.state = relevant_move_state
-                self.estado=relevant_move_state
-                if(self.sale_id.x_studio_field_bxHgp and relevant_move_state=='waiting' and (self.picking_type_id.id==3 or self.picking_type_id.id==29314)):
-                    self.sale_id.x_studio_field_bxHgp.stage_id=93
-                if(self.state=="confirmed"):
-                    self.estado='confirmed'
+    #         else:
+    #             self.state = relevant_move_state
+    #             self.estado=relevant_move_state
+    #             if(self.sale_id.x_studio_field_bxHgp and relevant_move_state=='waiting' and (self.picking_type_id.id==3 or self.picking_type_id.id==29314)):
+    #                 self.sale_id.x_studio_field_bxHgp.stage_id=93
+    #             if(self.state=="confirmed"):
+    #                 self.estado='confirmed'
 
 
 class StockPicking(Model):
