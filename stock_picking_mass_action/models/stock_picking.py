@@ -130,6 +130,8 @@ class StockPicking(Model):
     @api.depends('state')
     def x_historial_ticket_actualiza(self):
         for record in self:
+            if(record.est==False):
+                record['est']=''
             if(record.state!=False and record.picking_type_id!=False):
                 if('assigned' not in record.est and record.picking_type_id.id!=3 and record.state=='assigned' and record.ajusta!=True):
                    record.write({'estado':'assigned'})
