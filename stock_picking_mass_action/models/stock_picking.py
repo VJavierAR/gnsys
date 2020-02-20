@@ -11,7 +11,7 @@ class StockPicking(Model):
     almacenDestino=fields.Many2one('stock.warehouse','Almacen Destino')
     hiden=fields.Integer(compute='hide')
     ajusta=fields.Boolean('Ajusta')
-    est = fields.Text(compute = 'x_historial_ticket_actualiza',store=True)
+    est = fields.Text(compute = 'x_historial_ticket_actualiza')
     backorder=fields.Char('Backorder')
     lineTemp=fields.One2many('stock.pick.temp','picking')
     estado = fields.Selection([('draft', 'Draft'),('compras', 'Solicitud de Compra'),('waiting', 'Esperando otra operación'),('confirmed', 'Sin Stock'),('assigned', 'Por Validar'),('done', 'Validado'),('distribucion', 'Distribución'),('cancel', 'Cancelled'),('aDistribucion', 'A Distribución'),('Xenrutar', 'Por en Rutar'),('ruta', 'En Ruta'),('entregado', 'Entregado')],store=True)
