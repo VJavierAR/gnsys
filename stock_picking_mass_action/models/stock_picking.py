@@ -146,8 +146,8 @@ class StockPicking(Model):
                        record.sale_id.x_studio_field_bxHgp.write({'stage_id':93})
                    self.env.cr.execute("update stock_picking set estado='assigned';")
                    record['value2']= 1
-                    record.write({'estado':'assigned'})
-                    record.sale_id.x_studio_field_bxHgp.write({'stage_id':18})
+                   record.write({'estado':'assigned'})
+                   record.sale_id.x_studio_field_bxHgp.write({'stage_id':18})
                 if(record.picking_type_id.id==3 and record.state=="confirmed"):
                    record.write({'estado':'confirmed'})
                 if("done"==record.state and record.picking_type_id.id==3 and record.ajusta!=True):
