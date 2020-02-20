@@ -131,48 +131,67 @@ class StockPicking(Model):
     def x_historial_ticket_actualiza(self):
         for record in self:
             if(record.state!=False and record.picking_type_id!=False):
-                if(record.picking_type_id.id!=3 and record.state=="assigned" and record.ajusta!=True):
+                if('assigned' not in record.est and record.picking_type_id.id!=3 and record.state=='assigned' and record.ajusta!=True):
                    record.write({'estado':'assigned'})
-                if(record.state=="cancel"):
+                   tmp=record.est+'assigned'
+                   record.write({'est':tmp})
+                if('cancel' not in record.est  record.state=="cancel"):
                    record.write({'estado':'cancel'})
-                if(record.state=="draft"):
+                   tmp=record.est+'cancel'
+                   record.write({'est':tmp})
+                if('draft' not in record.est  record.state=="draft"):
                    record.write({'estado':'draft'})
-                if(record.state=="waiting"):
-                   record.write({'estado':'waiting'})
+                   tmp=record.est+'cancel'
+                   record.write({'est':tmp})
+                if('waiting' not in record.est  record.state=="waiting"):
+                    record.write({'estado':'waiting'})
                    if(record.sale_id.x_studio_field_bxHgp):
-                       record.sale_id.x_studio_field_bxHgp.write({'stage_id':93})                    
-                if(record.picking_type_id.id==3 and record.state=="assigned"):
+                       record.sale_id.x_studio_field_bxHgp.write({'stage_id':93})
+                    tmp=record.est+'waiting'
+                    record.write({'est':tmp})                    
+                if('assigned' not in record.est record.picking_type_id.id==3 and record.state=="assigned"):
                    if(record.sale_id.x_studio_field_bxHgp):
                        record.sale_id.x_studio_field_bxHgp.write({'stage_id':93})
                    self.env.cr.execute("update stock_picking set estado='assigned';")
                    record['value2']= 1
                    record.write({'estado':'assigned'})
                    record.sale_id.x_studio_field_bxHgp.write({'stage_id':18})
-                if(record.picking_type_id.id==3 and record.state=="confirmed"):
+                   tmp=record.est+'assigned'
+                   record.write({'est':tmp})                    
+                if('confirmed' not in record.est record.picking_type_id.id==3 and record.state=="confirmed"):
                    record.write({'estado':'confirmed'})
-                if("done"==record.state and record.picking_type_id.id==3 and record.ajusta!=True):
+                   tmp=record.est+'confirmed'
+                   record.write({'est':tmp})                    
+                if('aDistribucion' not in record.est "done"==record.state and record.picking_type_id.id==3 and record.ajusta!=True):
                    record.write({'estado':'aDistribucion'})
                    record.write({'ajusta':True})
-                if('done' in record.state and record.picking_type_id.id==29302):
+                   tmp=record.est+'aDistribucion'
+                    record.write({'est':tmp})                    
+                if('Xenrutar' not in record.est 'done' in record.state and record.picking_type_id.id==29302):
                     record.write({'estado':'Xenrutar'})
+                    tmp=record.est+'Xenrutar'
+                    record.write({'est':tmp})                    
                     if(record.sale_id.x_studio_field_bxHgp):
                         record.sale_id.x_studio_field_bxHgp.write({'stage_id':94}) 
                     if(record.sale_id):
                         d=record.env['stock.picking'].search([['sale_id','=',record.sale_id.id],['picking_type_id','=',3]])
                         d.write({'estado':'distribucion'})
-                if('done' in record.state and (record.picking_type_id.id==2 or record.picking_type_id.id==29314) and len(record.backorder_ids)==0):
+                if('entregado' not in record.est 'done' in record.state and (record.picking_type_id.id==2 or record.picking_type_id.id==29314) and len(record.backorder_ids)==0):
                     record.write({'estado':'entregado'})
                     if(record.sale_id.x_studio_field_bxHgp):
                         record.sale_id.x_studio_field_bxHgp.write({'stage_id':18})
-                if('done' in record.state and (record.picking_type_id.id==2 or record.picking_type_id.id==29314) and len(record.backorder_ids)>0):
+                    tmp=record.est+'entregado'
+                    record.write({'est':tmp})                    
+                if('entregado' not in record.est 'done' in record.state and (record.picking_type_id.id==2 or record.picking_type_id.id==29314) and len(record.backorder_ids)>0):
                     record.write({'estado':'entregado'})
                     if(record.sale_id.x_studio_field_bxHgp):
-                        record.sale_id.x_studio_field_bxHgp.write({'stage_id':109}) 
-
-                if 'assigned' in record.state and record.location_dest_id.id==9 and record.write_uid.id>2:
-                   self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : numTicket, 'x_persona' : str(self.env.user.name), 'x_estado' : "Refacción Para Entregar"})
-                if 'done' in record.state and record.location_dest_id.id==9 and record.write_uid.id>2:
-                   self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : numTicket, 'x_persona' : str(self.env.user.name), 'x_estado' : "Refacción Entregada"})                    
+                        record.sale_id.x_studio_field_bxHgp.write({'stage_id':109})
+                    tmp=record.est+'entregado'
+                    record.write({'est':tmp})                    
+                #if 'assigned' in record.state and record.location_dest_id.id==9 and record.write_uid.id>2:
+                #   self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : numTicket, 'x_persona' : str(self.env.user.name), 'x_estado' : "Refacción Para Entregar"})
+                #if 'done' in record.state and record.location_dest_id.id==9 and record.write_uid.id>2:
+                #   self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : numTicket, 'x_persona' : str(self.env.user.name), 'x_estado' : "Refacción Entregada"})                    
             
     def action_toggle_is_locked(self):
         self.ensure_one()
