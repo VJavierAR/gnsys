@@ -166,7 +166,7 @@ class StockPicking(Model):
                    record.write({'estado':'aDistribucion'})
                    record.write({'ajusta':True})
                    tmp=record.est+'aDistribucion'
-                    record.write({'est':tmp})                    
+                   record.write({'est':tmp})                    
                 if('Xenrutar' not in record.est and 'done' in record.state and record.picking_type_id.id==29302):
                     record.write({'estado':'Xenrutar'})
                     tmp=record.est+'Xenrutar'
