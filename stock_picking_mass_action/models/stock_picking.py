@@ -145,7 +145,7 @@ class StockPicking(Model):
                    record.write({'est':tmp})
                 if('waiting' not in record.est and record.state=="waiting"):
                     record.write({'estado':'waiting'})
-                   if(record.sale_id.x_studio_field_bxHgp):
+                    if(record.sale_id.x_studio_field_bxHgp):
                        record.sale_id.x_studio_field_bxHgp.write({'stage_id':93})
                     tmp=record.est+'waiting'
                     record.write({'est':tmp})                    
