@@ -129,7 +129,7 @@ class StockPicking(Model):
     
     
     @api.multi
-    @api.onchange('write_date')
+    @api.onchange('ajusta2')
     def x_historial_ticket_actualiza(self):
         for record in self:
             if(record.backorder==False):
@@ -159,7 +159,7 @@ class StockPicking(Model):
                     if(record.sale_id.x_studio_field_bxHgp):
                         record.sale_id.x_studio_field_bxHgp.write({'stage_id':93})
                         self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : record.sale_id.x_studio_field_bxHgp.id, 'x_persona' : str(self.env.user.name), 'x_estado' : "Almacen", 'x_disgnostico':''})
-                    self.env.cr.execute("update stock_picking set estado='assigned' where id ="+str(record.id)+";")
+                    #self.env.cr.execute("update stock_picking set estado='assigned' where id ="+str(record.id)+";")
                     if(record.picking_type_id==3):
                         record['value2']= 1
                     record.write({'estado':'assigned'})
