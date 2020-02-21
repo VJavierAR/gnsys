@@ -13,6 +13,7 @@ class StockPicking(Model):
     ajusta=fields.Boolean('Ajusta',store=True)
     ajusta2=fields.Boolean('Ajusta')
     #est = fields.Text(compute = 'x_historial_ticket_actualiza')
+    est = fields.Text()
     backorder=fields.Char('Backorder',store=True)
     lineTemp=fields.One2many('stock.pick.temp','picking')
     estado = fields.Selection([('draft', 'Draft'),('compras', 'Solicitud de Compra'),('waiting', 'Esperando otra operación'),('confirmed', 'Sin Stock'),('assigned', 'Por Validar'),('done', 'Validado'),('distribucion', 'Distribución'),('cancel', 'Cancelled'),('aDistribucion', 'A Distribución'),('Xenrutar', 'Por en Rutar'),('ruta', 'En Ruta'),('entregado', 'Entregado')],store=True)
