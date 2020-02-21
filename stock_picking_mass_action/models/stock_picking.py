@@ -122,7 +122,7 @@ class StockPicking(Model):
                 if(self.sale_id.x_studio_field_bxHgp):
                     self.sale_id.x_studio_field_bxHgp.write({'stage_id':109})
             return self.action_generate_backorder_wizard()
-        self.action_done()
+        self.sudo().action_done()
         return            
     
     
