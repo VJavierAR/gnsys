@@ -11,9 +11,7 @@ class StockPicking(Model):
     almacenDestino=fields.Many2one('stock.warehouse','Almacen Destino')
     hiden=fields.Integer(compute='hide')
     ajusta=fields.Boolean('Ajusta',store=True)
-    ajusta2=fields.Boolean('Ajusta')
-    #est = fields.Text(compute = 'x_historial_ticket_actualiza')
-    est = fields.Text()
+    est = fields.Text(compute = 'x_historial_ticket_actualiza')
     backorder=fields.Char('Backorder',store=True)
     lineTemp=fields.One2many('stock.pick.temp','picking')
     estado = fields.Selection([('draft', 'Draft'),('compras', 'Solicitud de Compra'),('waiting', 'Esperando otra operación'),('confirmed', 'Sin Stock'),('assigned', 'Por Validar'),('done', 'Validado'),('distribucion', 'Distribución'),('cancel', 'Cancelled'),('aDistribucion', 'A Distribución'),('Xenrutar', 'Por en Rutar'),('ruta', 'En Ruta'),('entregado', 'Entregado')],store=True)
@@ -129,12 +127,12 @@ class StockPicking(Model):
     
     
     @api.multi
-    @api.onchange('ajusta2')
+    @api.depends('state')
     def x_historial_ticket_actualiza(self):
         for record in self:
             if(record.backorder==False):
                 record['backorder']=''
-                #self.env.cr.execute("update stock_picking set backorder='' where id ="+str(record.id)+";")
+                self.env.cr.execute("update stock_picking set backorder='' where id ="+str(record.id)+";")
             if(record.state!=False and record.picking_type_id!=False):
                 if('assigned' not in record.backorder and (record.picking_type_id.id!=3 and record.picking_type_id.id!=29314) and record.state=='assigned'):
                    record.write({'estado':'assigned'})
@@ -159,7 +157,7 @@ class StockPicking(Model):
                     if(record.sale_id.x_studio_field_bxHgp):
                         record.sale_id.x_studio_field_bxHgp.write({'stage_id':93})
                         self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : record.sale_id.x_studio_field_bxHgp.id, 'x_persona' : str(self.env.user.name), 'x_estado' : "Almacen", 'x_disgnostico':''})
-                    #self.env.cr.execute("update stock_picking set estado='assigned' where id ="+str(record.id)+";")
+                    self.env.cr.execute("update stock_picking set estado='assigned' where id ="+str(record.id)+";")
                     if(record.picking_type_id==3):
                         record['value2']= 1
                     record.write({'estado':'assigned'})
