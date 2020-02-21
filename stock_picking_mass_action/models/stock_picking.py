@@ -163,7 +163,7 @@ class StockPicking(Model):
                    record.write({'backorder':tmp})                    
                 if('confirmed' not in record.backorder and record.picking_type_id.id==3 and record.state=="confirmed"):
                    record.write({'estado':'confirmed'})
-                   tmp=record.est+'confirmed'
+                   tmp=record.backorder+'confirmed'
                    record.write({'backorder':tmp})                    
                 if('aDistribucion' not in record.backorder and "done"==record.state and record.picking_type_id.id==3 and record.ajusta!=True):
                    record.write({'estado':'aDistribucion'})
