@@ -127,7 +127,7 @@ class StockPicking(Model):
     
     
     @api.multi
-    @api.depends('state')
+    @api.depends('ajusta')
     def x_historial_ticket_actualiza(self):
         for record in self:
             if(record.backorder==False):
