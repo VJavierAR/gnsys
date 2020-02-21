@@ -178,7 +178,7 @@ class StockPicking(Model):
                     record.write({'backorder':tmp})                    
                     if(record.sale_id.x_studio_field_bxHgp):
                         record.sale_id.x_studio_field_bxHgp.write({'stage_id':94})
-                        self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : self.sale_id.x_studio_field_bxHgp.id, 'x_persona' : str(self.env.user.name), 'x_estado' : "Distribución", 'x_disgnostico':''}) 
+                        self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : record.sale_id.x_studio_field_bxHgp.id, 'x_persona' : str(self.env.user.name), 'x_estado' : "Distribución", 'x_disgnostico':''}) 
                     if(record.sale_id):
                         d=record.env['stock.picking'].search([['sale_id','=',record.sale_id.id],['picking_type_id','=',3]])
                         d.write({'estado':'distribucion'})
