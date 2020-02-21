@@ -129,7 +129,7 @@ class StockPicking(Model):
     
     
     @api.multi
-    @api.onchange('ajusta2')
+    @api.onchange('write_date')
     def x_historial_ticket_actualiza(self):
         for record in self:
             if(record.backorder==False):
