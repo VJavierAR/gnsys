@@ -150,13 +150,13 @@ class StockPicking(Model):
                     record.write({'estado':'waiting'})
                     if(record.sale_id.x_studio_field_bxHgp):
                        record.sale_id.x_studio_field_bxHgp.write({'stage_id':93})
-                       self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : self.sale_id.x_studio_field_bxHgp.id, 'x_persona' : str(self.env.user.name), 'x_estado' : "Almacen", 'x_disgnostico':''})
+                       self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : record.sale_id.x_studio_field_bxHgp.id, 'x_persona' : str(self.env.user.name), 'x_estado' : "Almacen", 'x_disgnostico':''})
                     tmp=record.backorder+'waiting'
                     record.write({'backorder':tmp})                    
                 if('assigned' not in record.backorder and (record.picking_type_id.id==3 and record.picking_type_id.id==29314) and record.state=="assigned"):
                     if(record.sale_id.x_studio_field_bxHgp):
                         record.sale_id.x_studio_field_bxHgp.write({'stage_id':93})
-                        self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : self.sale_id.x_studio_field_bxHgp.id, 'x_persona' : str(self.env.user.name), 'x_estado' : "Almacen", 'x_disgnostico':''})
+                        self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : record.sale_id.x_studio_field_bxHgp.id, 'x_persona' : str(self.env.user.name), 'x_estado' : "Almacen", 'x_disgnostico':''})
                     self.env.cr.execute("update stock_picking set estado='assigned' where id ="+str(record.id)+";")
                     if(record.picking_type_id==3):
                         record['value2']= 1
@@ -186,14 +186,14 @@ class StockPicking(Model):
                     record.write({'estado':'entregado'})
                     if(record.sale_id.x_studio_field_bxHgp):
                         record.sale_id.x_studio_field_bxHgp.write({'stage_id':18})
-                        self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : self.sale_id.x_studio_field_bxHgp.id, 'x_persona' : str(self.env.user.name), 'x_estado' : "Entregado", 'x_disgnostico':''})
+                        self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : record.sale_id.x_studio_field_bxHgp.id, 'x_persona' : str(self.env.user.name), 'x_estado' : "Entregado", 'x_disgnostico':''})
                     tmp=record.backorder+'entregado'
                     record.write({'backorder':tmp})                    
                 if('entregado' not in record.backorder and 'done' in record.state and (record.picking_type_id.id==2 or record.picking_type_id.id==29314) and len(record.backorder_ids)>0):
                     record.write({'estado':'entregado'})
                     if(record.sale_id.x_studio_field_bxHgp):
                         record.sale_id.x_studio_field_bxHgp.write({'stage_id':109})
-                        self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : self.sale_id.x_studio_field_bxHgp.id, 'x_persona' : str(self.env.user.name), 'x_estado' : "Parcial", 'x_disgnostico':''})
+                        self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : record.sale_id.x_studio_field_bxHgp.id, 'x_persona' : str(self.env.user.name), 'x_estado' : "Parcial", 'x_disgnostico':''})
                     tmp=record.backorder+'entregado'
                     record.write({'backorder':tmp})                    
                 #if 'assigned' in record.state and record.location_dest_id.id==9 and record.write_uid.id>2:
