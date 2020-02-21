@@ -10,7 +10,7 @@ class StockPicking(Model):
     almacenOrigen=fields.Many2one('stock.warehouse','Almacen Origen')
     almacenDestino=fields.Many2one('stock.warehouse','Almacen Destino')
     hiden=fields.Integer(compute='hide')
-    ajusta=fields.Boolean('Ajusta')
+    ajusta=fields.Boolean('Ajusta',store=True)
     est = fields.Text(compute = 'x_historial_ticket_actualiza')
     backorder=fields.Char('Backorder',store=True)
     lineTemp=fields.One2many('stock.pick.temp','picking')
