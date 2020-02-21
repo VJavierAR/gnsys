@@ -154,7 +154,7 @@ class StockPicking(Model):
                 if('assigned' not in record.backorder and record.picking_type_id.id==3 and record.state=="assigned"):
                    if(record.sale_id.x_studio_field_bxHgp):
                        record.sale_id.x_studio_field_bxHgp.write({'stage_id':93})
-                   self.env.cr.execute("update stock_picking set estado='assigned' where id ="+record.id+";")
+                   self.env.cr.execute("update stock_picking set estado='assigned' where id ="+str(record.id)+";")
                    record['value2']= 1
                    record.write({'estado':'assigned'})
                    record.sale_id.x_studio_field_bxHgp.write({'stage_id':18})
