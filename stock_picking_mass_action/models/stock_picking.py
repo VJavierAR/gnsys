@@ -271,7 +271,7 @@ class StockPicking(Model):
             'views': [(view.id, 'form')],
             'view_id': view.id,
             'target': 'new',
-            'res_id': wiz.id,
+            'res_id': wiz.sudo().id,
             'context': self.env.context,
         }
 
