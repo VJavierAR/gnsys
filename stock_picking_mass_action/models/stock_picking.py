@@ -261,7 +261,7 @@ class StockPicking(Model):
     def action_immediate_transfer_wizard(self):
         view = self.sudo().env.ref('stock.view_immediate_transfer')
         wiz = self.sudo().env['stock.immediate.transfer'].create(
-            {'pick_ids': [(4, p.sudo().id) for p.sudo() in self]})
+            {'pick_ids': [(4, p.sudo().id) for p in self]})
         return {
             'name': _('Immediate Transfer?'),
             'type': 'ir.actions.act_window',
