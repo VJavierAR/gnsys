@@ -7,6 +7,7 @@ _logger = logging.getLogger(__name__)
 
 class StockPicking(Model):
     _inherit = 'stock.picking'
+    active=fields.Boolean()
     almacenOrigen=fields.Many2one('stock.warehouse','Almacen Origen')
     almacenDestino=fields.Many2one('stock.warehouse','Almacen Destino')
     hiden=fields.Integer(compute='hide')
