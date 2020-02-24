@@ -255,24 +255,24 @@ class StockPicking(Model):
         """ Try to assign confirmed pickings """
         domain = [('picking_type_code', '=', 'outgoing'),
                   ('state', '=', 'confirmed')]
-        records = self.search(domain, order='scheduled_date')
+        records = self.sudo().search(domain, order='scheduled_date')
         records.action_assign()
 
     def action_immediate_transfer_wizard(self):
-        view = self.env.ref('stock.view_immediate_transfer')
-        wiz = self.env['stock.immediate.transfer'].sudo().create(
-            {'pick_ids': [(4, p.id) for p in self]})
+        view = self.sudo().env.ref('stock.view_immediate_transfer')
+        wiz = self.sudo().env['stock.immediate.transfer'].create(
+            {'pick_ids': [(4, p.sudo().id) for p.sudo() in self]})
         return {
             'name': _('Immediate Transfer?'),
             'type': 'ir.actions.act_window',
             'view_type': 'form',
             'view_mode': 'form',
             'res_model': 'stock.immediate.transfer',
-            'views': [(view.id, 'form')],
-            'view_id': view.id,
+            'views': [(view.sudo().id, 'form')],
+            'view_id': view.sudo().id,
             'target': 'new',
             'res_id': wiz.sudo().id,
-            'context': self.env.context,
+            'context': self.sudo().env.context,
         }
 
 
