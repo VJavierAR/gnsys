@@ -76,12 +76,12 @@ class StockPickingMassAction(TransientModel):
 
         # Get all pickings ready to transfer and transfer them if asked
         if self.transfer:
-            assigned_picking_lst = self.picking_ids.\
+            assigned_picking_lst = self.sudo().picking_ids.\
                 filtered(lambda x: x.state == 'assigned').\
                 sorted(key=lambda r: r.scheduled_date)
             quantities_done = sum(
                 move_line.qty_done for move_line in
-                assigned_picking_lst.mapped('move_line_ids').filtered(
+                assigned_picking_lst.sudo().mapped('move_line_ids').filtered(
                     lambda m: m.state not in ('done', 'cancel')))
             if not quantities_done:
                 _logger.info("***************lista " + str(len(assigned_picking_lst)))
