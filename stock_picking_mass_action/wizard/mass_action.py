@@ -76,7 +76,7 @@ class StockPickingMassAction(TransientModel):
 
         # Get all pickings ready to transfer and transfer them if asked
         if self.transfer:
-            assigned_picking_lst = self.sudo().picking_ids.\
+            assigned_picking_lst = self.picking_ids.\
                 filtered(lambda x: x.state == 'assigned').\
                 sorted(key=lambda r: r.scheduled_date)
             quantities_done = sum(
@@ -86,9 +86,9 @@ class StockPickingMassAction(TransientModel):
             if not quantities_done:
                 _logger.info("***************lista " + str(len(assigned_picking_lst)))
                 assigned_picking_lst.sudo().write({'concentrado':str(self.env['ir.sequence'].next_by_code('concentrado'))})
-                return assigned_picking_lst.action_immediate_transfer_wizard()
+                return assigned_picking_lst.sudo().action_immediate_transfer_wizard()
 
             if assigned_picking_lst._check_backorder():
-                return assigned_picking_lst.action_generate_backorder_wizard()
+                return assigned_picking_lst.sudo().action_generate_backorder_wizard()
             assigned_picking_lst.sudo().action_done()
 
