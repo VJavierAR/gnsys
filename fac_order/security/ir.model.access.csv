@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_fac_order_fac_order,fac_order.fac_order,model_fac_order_fac_order,,1,0,0,0
