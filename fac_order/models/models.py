@@ -30,4 +30,7 @@ class fac_order(models.Model):
             #for t in g:
             #    self.env['sale.order.line'].create({'order_id': sale.id,'product_id':t.product_id.id})
             for h in p:
-                self.env['sale.order.line'].create({'order_id': sale.id,'product_id':h.product_id.id,'x_studio_field_9nQhR':h.id,'product_uom_qty':h.x_studio_pg_proc,'price_unit':1.12})            
+                if h.x_studio_color_bn=='B/N':  
+                   self.env['sale.order.line'].create({'order_id': sale.id,'product_id':h.product_id.id,'x_studio_field_9nQhR':h.id,'product_uom_qty':h.x_studio_pg_proc,'price_unit':1.12})            
+                if h.x_studio_color_bn=='Color':  
+                   self.env['sale.order.line'].create({'order_id': sale.id,'product_id':h.product_id.id,'x_studio_field_9nQhR':h.id,'product_uom_qty':h.x_studio_pg_proc_color,'price_unit':2.12})            
