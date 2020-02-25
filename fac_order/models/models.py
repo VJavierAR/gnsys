@@ -13,6 +13,6 @@ class fac_order(models.Model):
 
       nameDos = fields.Char()
       
-     @api.multi 
-     def llamado_boton(self):
-         raise exceptions.Warning('No se pudo actualizar la dirreción de la solicitud: ')
+      @api.multi 
+      def llamado_boton(self):
+          raise exceptions.Warning('No se pudo actualizar la dirreción de la solicitud: ')
