@@ -15,4 +15,20 @@ class fac_order(models.Model):
       
       @api.multi 
       def llamado_boton(self):
-          raise exceptions.Warning('No se pudo actualizar la dirreción de la solicitud: ')
+        for r in self:                    
+          f=len(r.x_studio_servicios_contratos)
+          ff=r.x_studio_servicios_contratos
+          if f>0:
+            h=[]
+            g=[]
+            p=[]
+            for m in ff:
+              h.append(m.id)
+            g=self.env['sale.subscription.line'].search([('analytic_account_id', '=', int(h[0]))])
+            p=self.env['stock.production.lot'].search([('x_studio_suscripcion', '=', int(h[0]))])
+            sale=self.env['sale.order'].search([('name', '=', self.name)])
+            r['x_studio_llenado_de_info_xd']=str(p)+"olo"
+            for t in g:
+                self.env['sale.order.line'].create({'order_id': sale.id,'product_id':t.product_id.id})
+            for h in p:
+                self.env['sale.order.line'].create({'order_id': sale.id,'product_id':h.product_id.id})            
