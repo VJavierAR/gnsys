@@ -37,6 +37,7 @@ class fac_order(models.Model):
                   procesadasColorBN=h.x_studio_pg_proc+procesadasColorBN
                    #self.env['sale.order.line'].create({'order_id': sale.id,'product_id':h.product_id.id,'x_studio_field_9nQhR':h.id,'product_uom_qty':h.x_studio_pg_proc_color,'price_unit':eColor})
                    #self.env['sale.order.line'].create({'order_id': sale.id,'product_id':h.product_id.id,'x_studio_field_9nQhR':h.id,'product_uom_qty':h.x_studio_pg_proc,'price_unit':eBN})
+                raise exceptions.ValidationError( str(h[0]) )                               
                 g=self.env['sale.subscription.line'].search([('analytic_account_id', '=', int(h[0]))])
                 serUNO=0
                 serDOS=0
