@@ -50,7 +50,7 @@ class fac_order(models.Model):
                    if pp=='Clic color':
                       bolsabn=s.quantity
                       serDOS=s.product_id.id
-                self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serUno,'product_uom_qty':procesadasColorBN,'price_unit':eColor})      
+                self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serUNO,'product_uom_qty':procesadasColorBN,'price_unit':eColor})      
                 self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serDOS,'product_uom_qty':procesadasColorTotal,'price_unit':eColor})
                 #self.env['sale.order.line'].create({'order_id': sale.id,'product_id':h.product_id.id,'x_studio_field_9nQhR':h.id,'product_uom_qty':h.x_studio_pg_proc_color,'price_unit':eColor})
 
