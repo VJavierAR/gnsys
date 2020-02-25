@@ -38,6 +38,8 @@ class fac_order(models.Model):
                    #self.env['sale.order.line'].create({'order_id': sale.id,'product_id':h.product_id.id,'x_studio_field_9nQhR':h.id,'product_uom_qty':h.x_studio_pg_proc_color,'price_unit':eColor})
                    #self.env['sale.order.line'].create({'order_id': sale.id,'product_id':h.product_id.id,'x_studio_field_9nQhR':h.id,'product_uom_qty':h.x_studio_pg_proc,'price_unit':eBN})
                 g=self.env['sale.subscription.line'].search([('analytic_account_id', '=', int(h[0]))])
+                serUNO=0
+                serDOS=0  
                 for s in g:
                    pp=s.product_id.name
                    if pp=='Clic excedente monocromático':    
