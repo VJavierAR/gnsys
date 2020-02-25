@@ -5,6 +5,8 @@ from odoo import models, fields, api
 class saleSub(models.Model):
     _inherit = "sale.order"
     
+    notasxD = fields.Text(string="Notas")
+    
     """
     def _prepare_invoice_lines(self, fiscal_position):
         self.ensure_one()
