@@ -16,5 +16,5 @@ class StockPicking(Model):
         self.write({'state': 'done'})
         self.post_inventory()
         for r in self.mapped('line_ids'):
-            log(str(r.id), level='info')
+            _logger.info("HOLLLLLLLLAAAAAAAAAAA"+str(r.id))
         return True
