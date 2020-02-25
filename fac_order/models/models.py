@@ -9,7 +9,8 @@ class fac_order(models.Model):
 
       nameDos = fields.Char()
       
-     def facturar_a(self):
+     @api.multi 
+     def llamado(self):
        for r in self:
           r['x_studio_llenado_de_info_xd']="olo"        
           """ 
@@ -30,17 +31,3 @@ class fac_order(models.Model):
             for h in p:
                 self.env['sale.order.line'].create({'order_id': sale.id,'product_id':h.product_id.id})
           """     
-
-            
-      
-      
-      
-      
-      
-#     value = fields.Integer()
-#     value2 = fields.Float(compute="_value_pc", store=True)
-#     description = fields.Text()
-#
-#     @api.depends('value')
-#     def _value_pc(self):
-#         self.value2 = float(self.value) / 100
