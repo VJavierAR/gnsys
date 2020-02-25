@@ -28,13 +28,13 @@ class fac_order(models.Model):
             for s in g:
               pp=s.product_id.name
               if pp=='Clic excedente monocromático':    
-                 eBN=pp
+                 eBN=s.price_unit
               if pp=='Clic excedente color':    
-                 eColor=pp
+                 eColor=s.price_unit
               if pp=='Clic monocromática':
-                 bolsabn=pp  
+                 bolsabn=s.quantity  
               if pp=='Clic color':
-                 bolsabn=pp               
+                 bolsabn=s.quantity               
                #eBN=g.
                #bolsabn=g[0].
                #bolsacolor=g[0].
