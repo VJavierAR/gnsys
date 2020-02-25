@@ -3,7 +3,7 @@
 from odoo import models, fields, api
 
 class saleSub(models.Model):
-    _inherit = "sale.order"
+    _inherit = "sale.subscription"
     
     notasxD = fields.Text(string="Notas")
     
