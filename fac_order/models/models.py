@@ -30,11 +30,11 @@ class fac_order(models.Model):
             procesadasColorBN=0
             for h in p:                  
                 if h.x_studio_color_bn=='B/N':
-                   procesadasColorTotal=+h.x_studio_pg_proc_color
+                   procesadasColorTotal=h.x_studio_pg_proc_color+procesadasColorTotal
                   # self.env['sale.order.line'].create({'order_id': sale.id,'product_id':h.product_id.id,'x_studio_field_9nQhR':h.id,'product_uom_qty':h.x_studio_pg_proc,'price_unit':eBN})            
                 if h.x_studio_color_bn=='Color':
-                  procesadasColorTotal=+h.x_studio_pg_proc_color
-                  procesadasColorBN=+h.x_studio_pg_proc
+                  procesadasColorTotal=h.x_studio_pg_proc_color+procesadasColorTotal
+                  procesadasColorBN=h.x_studio_pg_proc+procesadasColorBN
                    #self.env['sale.order.line'].create({'order_id': sale.id,'product_id':h.product_id.id,'x_studio_field_9nQhR':h.id,'product_uom_qty':h.x_studio_pg_proc_color,'price_unit':eColor})
                    #self.env['sale.order.line'].create({'order_id': sale.id,'product_id':h.product_id.id,'x_studio_field_9nQhR':h.id,'product_uom_qty':h.x_studio_pg_proc,'price_unit':eBN})
                 g=self.env['sale.subscription.line'].search([('analytic_account_id', '=', int(h[0]))])
@@ -56,7 +56,7 @@ class fac_order(models.Model):
                    if pp=='Clic color':
                       bolsacolor=s.quantity
                       serDOS=s.product_id.id
-                raise exceptions.ValidationError( str(serUNO)+" , "+str(sale.id)+",  "+ str(procesadasColorBN)+",  "+str(eBN))                             
+                raise exceptions.ValidationError( str(g)+" "+str(serUNO)+" , "+str(sale.id)+",  "+ str(procesadasColorBN)+",  "+str(eBN))                             
                 self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serUNO,'product_uom_qty':procesadasColorBN,'price_unit':eBN})      
                 self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serDOS,'product_uom_qty':procesadasColorTotal,'price_unit':eColor})
                 #self.env['sale.order.line'].create({'order_id': sale.id,'product_id':h.product_id.id,'x_studio_field_9nQhR':h.id,'product_uom_qty':h.x_studio_pg_proc_color,'price_unit':eColor})
