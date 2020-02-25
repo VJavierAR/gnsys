@@ -18,5 +18,5 @@ class StockPicking(Model):
         for r in self.mapped('line_ids'):
             if(r.x_studio_field_yVDjd):
                 i=self.env['stock.quant'].search([['product_id','=',r.product_id.id],['location_id','=',r.location_id.id]])
-                i.write({'x_studio_field_kUc4x':r.x_studio_field_yVDjd.id})
+                i.sudo().write({'x_studio_field_kUc4x':r.x_studio_field_yVDjd.id})
         return True
