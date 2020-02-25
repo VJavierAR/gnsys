@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-#from odoo import models, fields, api
 from odoo import _, models, fields, api, tools
 from email.utils import formataddr
 from odoo.exceptions import UserError
@@ -11,7 +10,6 @@ _logger = logging.getLogger(__name__)
 
 class fac_order(models.Model):
       _inherit = 'sale.order'
-#     _name = 'fac_order.fac_order'
 
       nameDos = fields.Char()
       
