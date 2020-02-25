@@ -10,7 +10,7 @@ class fac_order(models.Model):
       nameDos = fields.Char()
       
      @api.multi 
-     def facturar(self):
+     def facturar_a(self):
           for r in self:
           f=len(r.x_studio_servicios_contratos)
           ff=r.x_studio_servicios_contratos
