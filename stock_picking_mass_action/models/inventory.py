@@ -16,5 +16,6 @@ class StockPicking(Model):
         self.write({'state': 'done'})
         self.post_inventory()
         for r in self.mapped('line_ids'):
-            _logger.info("HOLLLLLLLLAAAAAAAAAAA"+str(r.id))
+            i=self.env['stock.quant'].search([['product_id','=',r.product_id.id],['location_id','=',r.location_id.id]])
+            _logger.info("HOLLLLLLLLAAAAAAAAAAA"+str(i.id))
         return True
