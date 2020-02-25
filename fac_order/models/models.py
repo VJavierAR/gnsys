@@ -27,8 +27,7 @@ class fac_order(models.Model):
             g=self.env['sale.subscription.line'].search([('analytic_account_id', '=', int(h[0]))])
             p=self.env['stock.production.lot'].search([('x_studio_suscripcion', '=', int(h[0]))])
             sale=self.env['sale.order'].search([('name', '=', self.name)])
-            r['x_studio_llenado_de_info_xd']=str(p)+"olo"
-            for t in g:
-                self.env['sale.order.line'].create({'order_id': sale.id,'product_id':t.product_id.id})
+            #for t in g:
+            #    self.env['sale.order.line'].create({'order_id': sale.id,'product_id':t.product_id.id})
             for h in p:
-                self.env['sale.order.line'].create({'order_id': sale.id,'product_id':h.product_id.id})            
+                self.env['sale.order.line'].create({'order_id': sale.id,'product_id':h.product_id.id,'x_studio_serietexto':h.name,'product_uom_qty':h.x_studio_pg_proc,'price_unit':1.12})            
