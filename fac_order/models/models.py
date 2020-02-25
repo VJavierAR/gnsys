@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api
-
+#from odoo import models, fields, api
+from odoo import _, models, fields, api, tools
 
 class fac_order(models.Model):
       _inherit = 'sale.order'
