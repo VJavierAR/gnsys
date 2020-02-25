@@ -19,8 +19,7 @@
 
     # any module necessary for this one to work correctly
     'depends': ['base','sale_management'],
- 
-    
+#va de nuevo
     # always loaded
     'data': [
         # 'security/ir.model.access.csv',
