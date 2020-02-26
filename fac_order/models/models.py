@@ -42,21 +42,21 @@ class fac_order(models.Model):
                 eColor=0
                 bolsabn=0
                 bolsacolor=0  
-                for s in g:
-                   pp=s.product_id.name
-                   if pp=='Clic excedente monocromático':    
-                      eBN=s.price_unit
-                   if pp=='Clic excedente color':    
-                      eColor=s.price_unit
-                   if pp=='Clic monocromática':
-                      bolsabn=s.quantity
-                      serUNO=s.product_id.id
-                   if pp=='Clic color':
-                      bolsacolor=s.quantity
-                      serDOS=s.product_id.id
+            for s in g:
+                pp=s.product_id.name
+                if pp=='Clic excedente monocromático':    
+                   eBN=s.price_unit
+                if pp=='Clic excedente color':    
+                   eColor=s.price_unit
+                if pp=='Clic monocromática':
+                   bolsabn=s.quantity
+                   serUNO=s.product_id.id
+                if pp=='Clic color':
+                   bolsacolor=s.quantity
+                   serDOS=s.product_id.id
                 #raise exceptions.ValidationError( str(g)+" "+str(serUNO)+" , "+str(sale.id)+",  "+ str(procesadasColorBN)+",  "+str(eBN))                             
-                self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serUNO,'product_uom_qty':procesadasColorBN,'price_unit':eBN})      
-                self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serDOS,'product_uom_qty':procesadasColorTotal,'price_unit':eColor})
+            self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serUNO,'product_uom_qty':procesadasColorBN,'price_unit':eBN})      
+            self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serDOS,'product_uom_qty':procesadasColorTotal,'price_unit':eColor})
                 #self.env['sale.order.line'].create({'order_id': sale.id,'product_id':h.product_id.id,'x_studio_field_9nQhR':h.id,'product_uom_qty':h.x_studio_pg_proc_color,'price_unit':eColor})
 
             
