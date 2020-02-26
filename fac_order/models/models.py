@@ -28,16 +28,12 @@ class fac_order(models.Model):
             sale=self.env['sale.order'].search([('name', '=', self.name)])
             procesadasColorTotal=0
             procesadasColorBN=0
-            for h in p:                  
-                if h.x_studio_color_bn=='B/N':
-                   procesadasColorTotal=h.x_studio_pg_proc_color+procesadasColorTotal
-                  # self.env['sale.order.line'].create({'order_id': sale.id,'product_id':h.product_id.id,'x_studio_field_9nQhR':h.id,'product_uom_qty':h.x_studio_pg_proc,'price_unit':eBN})            
-                if h.x_studio_color_bn=='Color':
-                  procesadasColorTotal=h.x_studio_pg_proc_color+procesadasColorTotal
-                  procesadasColorBN=h.x_studio_pg_proc+procesadasColorBN
-                   #self.env['sale.order.line'].create({'order_id': sale.id,'product_id':h.product_id.id,'x_studio_field_9nQhR':h.id,'product_uom_qty':h.x_studio_pg_proc_color,'price_unit':eColor})
-                   #self.env['sale.order.line'].create({'order_id': sale.id,'product_id':h.product_id.id,'x_studio_field_9nQhR':h.id,'product_uom_qty':h.x_studio_pg_proc,'price_unit':eBN})
-                
+            for k in p:                  
+                if k.x_studio_color_bn=='B/N':
+                   procesadasColorTotal=k.x_studio_pg_proc_color+procesadasColorTotal                  
+                if k.x_studio_color_bn=='Color':
+                  procesadasColorTotal=k.x_studio_pg_proc_color+procesadasColorTotal
+                  procesadasColorBN=k.x_studio_pg_proc+procesadasColorBN                                  
                 g=self.env['sale.subscription.line'].search([('analytic_account_id', '=', int(h[0]))])
                 raise exceptions.ValidationError( str(g) )                                 
                 serUNO=0
