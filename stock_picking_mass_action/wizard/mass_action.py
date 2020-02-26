@@ -86,7 +86,9 @@ class StockPickingMassAction(TransientModel):
             if not quantities_done:
                 _logger.info("***************lista " + str(len(assigned_picking_lst)))
                 if(assigned_picking_lst.picking_type_id.id==3):
-                    assigned_picking_lst.sudo().write({'concentrado':str(self.env['ir.sequence'].next_by_code('concentrado'))})
+                    CON=str(self.env['ir.sequence'].next_by_code('concentrado'))
+                    for l in assigned_picking_lst:
+                        self.env['stock.picking'].search([['sale_id','=',l.sale_id.id]]).write({'concentrado':CON})
                 return assigned_picking_lst.action_immediate_transfer_wizard()
 
             if assigned_picking_lst._check_backorder():
