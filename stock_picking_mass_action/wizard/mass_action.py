@@ -87,7 +87,7 @@ class StockPickingMassAction(TransientModel):
                 _logger.info("***************lista " + str(len(assigned_picking_lst)))
                 CON=str(self.env['ir.sequence'].next_by_code('concentrado'))
                 for l in assigned_picking_lst:
-                    if(assigned_picking_lst.picking_type_id.id==3):
+                    if(l.picking_type_id.id==3):
                         l.sudo().write({'concentrado':CON})
                         self.env['stock.picking'].search([['sale_id','=',l.sale_id.id]]).write({'concentrado':CON})
                 return assigned_picking_lst.action_immediate_transfer_wizard()
