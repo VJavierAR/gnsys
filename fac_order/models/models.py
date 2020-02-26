@@ -68,7 +68,7 @@ class fac_order(models.Model):
                 if pp=='Clic color':
                    bolsacolor=s.quantity
                    serDOS=s.product_id.id
-                if s.price_subtotal>3.0
+                if s.price_subtotal>3.0:
                    serTRES=s.product_id.id
                    serTRESp=s.price_unit
                    self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serTRES,'product_uom_qty':1.0,'price_unit':serTRESp})
