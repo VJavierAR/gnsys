@@ -28,7 +28,19 @@ class fac_order(models.Model):
             sale=self.env['sale.order'].search([('name', '=', self.name)])
             procesadasColorTotal=0
             procesadasColorBN=0
-            for k in p:                  
+            for k in p:
+                self.env['sale.order.detalle'].create({'saleOrder': sale.id
+                                                        , 'producto': k.product_id.display_name
+                                                         , 'serieEquipo': k.name
+                                                         
+                                                         , 'ultimaLecturaBN': k.x_studio_ultimalecturam
+                                                         , 'lecturaAnteriorBN': k.x_studio_lec_ant_bn
+                                                         , 'paginasProcesadasBN': k.x_studio_pg_proc
+                                                         
+                                                         , 'ultimaLecturaColor': k.x_studio_ultimalecturacolor
+                                                         , 'lecturaAnteriorColor': k.x_studio_lec_ant_color
+                                                         , 'paginasProcesadasColor': k.x_studio_pg_proc_color
+                                                        })                                     
                 if k.x_studio_color_bn=='B/N':
                    procesadasColorTotal=k.x_studio_pg_proc_color+procesadasColorTotal                  
                 if k.x_studio_color_bn=='Color':
