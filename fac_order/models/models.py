@@ -35,7 +35,7 @@ class fac_order(models.Model):
                   procesadasColorTotal=k.x_studio_pg_proc_color+procesadasColorTotal
                   procesadasColorBN=k.x_studio_pg_proc+procesadasColorBN                                  
                 g=self.env['sale.subscription.line'].search([('analytic_account_id', '=', int(h[0]))])
-                raise exceptions.ValidationError( str(g) )                                 
+                #raise exceptions.ValidationError( str(g) )                                 
                 serUNO=0
                 serDOS=0
                 eBN=0
