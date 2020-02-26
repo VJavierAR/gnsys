@@ -68,13 +68,14 @@ class fac_order(models.Model):
                 if pp=='Clic color':
                    bolsacolor=s.quantity
                    serDOS=s.product_id.id
-                if pp=='Renta global con páginas incluidas BN o color + pag. Excedentes'
+                if s.price_subtotal>3.0
                    serTRES=s.product_id.id
                    serTRESp=s.price_unit
+                   self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serTRES,'product_uom_qty':1.0,'price_unit':serTRESp})
+     
                 #raise exceptions.ValidationError( str(g)+" "+str(serUNO)+" , "+str(sale.id)+",  "+ str(procesadasColorBN)+",  "+str(eBN))                             
             self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serUNO,'product_uom_qty':procesadasColorBN,'price_unit':eBN})      
             self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serDOS,'product_uom_qty':procesadasColorTotal,'price_unit':eColor})
-            self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serTRES,'product_uom_qty':1.0,'price_unit':serTRESp})
 
             
             
