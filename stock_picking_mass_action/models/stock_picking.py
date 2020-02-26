@@ -137,7 +137,7 @@ class StockPicking(Model):
                 record['backorder']=''
                 self.env.cr.execute("update stock_picking set backorder='' where id ="+str(record.id)+";")
             if(record.state!=False and record.picking_type_id!=False):
-                if('assigned' not in record.backorder and (record.picking_type_id.id!=3 and record.picking_type_id.id!=29314) and record.state=='assigned'):
+                if('assigned' not in record.backorder and (record.picking_type_id.id!=3 or record.picking_type_id.id!=29314) and record.state=='assigned'):
                    record.write({'estado':'assigned'})
                    tmp=record.backorder+'assigned'
                    record.write({'backorder':tmp})
@@ -157,7 +157,7 @@ class StockPicking(Model):
                            self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : record.sale_id.x_studio_field_bxHgp.id, 'x_persona' : str(self.env.user.name), 'x_estado' : "Almacen", 'x_disgnostico':''})
                     tmp=record.backorder+'waiting'
                     record.write({'backorder':tmp})                    
-                if('assigned' not in record.backorder and (record.picking_type_id.id==3 and record.picking_type_id.id==29314) and record.state=="assigned"):
+                if('assigned' not in record.backorder and (record.picking_type_id.id==3 or record.picking_type_id.id==29314) and record.state=="assigned"):
                     if(record.sale_id.x_studio_field_bxHgp):
                         record.sale_id.x_studio_field_bxHgp.write({'stage_id':93})
                         self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : record.sale_id.x_studio_field_bxHgp.id, 'x_persona' : str(self.env.user.name), 'x_estado' : "Almacen", 'x_disgnostico':''})
