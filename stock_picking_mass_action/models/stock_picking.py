@@ -120,7 +120,7 @@ class StockPicking(Model):
 
         # Check backorder should check for other barcodes
         if self._check_backorder():
-            self.backorder="Parcial"
+            #self.backorder="Parcial"
             if(self.picking_type_id.id==3 or self.picking_type_id.id==29314):
                 if(self.sale_id.x_studio_field_bxHgp):
                     self.sale_id.x_studio_field_bxHgp.write({'stage_id':109})
