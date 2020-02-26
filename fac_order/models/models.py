@@ -73,9 +73,15 @@ class fac_order(models.Model):
                    serTRESp=s.price_unit
                    self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serTRES,'product_uom_qty':1.0,'price_unit':serTRESp})
      
-                #raise exceptions.ValidationError( str(g)+" "+str(serUNO)+" , "+str(sale.id)+",  "+ str(procesadasColorBN)+",  "+str(eBN))                             
-            self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serUNO,'product_uom_qty':procesadasColorBN,'price_unit':eBN})      
-            self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serDOS,'product_uom_qty':procesadasColorTotal,'price_unit':eColor})
+                #raise exceptions.ValidationError( str(g)+" "+str(serUNO)+" , "+str(sale.id)+",  "+ str(procesadasColorBN)+",  "+str(eBN))
+            if bolsabn<procesadasColorBN:
+               self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serUNO,'product_uom_qty':0.0,'price_unit':eBN})
+            if procesadasColorBN>bolsabn:
+               self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serUNO,'product_uom_qty':procesadasColorBN-bolsabn,'price_unit':eBN})
+            if bolsacolor<procesadasColorTotal:            
+               self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serDOS,'product_uom_qty':0.0,'price_unit':eColor})
+            if procesadasColorTotal>bolsacolor:
+               self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serDOS,'product_uom_qty':procesadasColorTotal-bolsacolor,'price_unit':eColor})   
 
             
             
