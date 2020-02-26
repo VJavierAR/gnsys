@@ -42,7 +42,7 @@ class fac_order(models.Model):
                                                          , 'paginasProcesadasColor': k.x_studio_pg_proc_color
                                                         })                                     
                 if k.x_studio_color_bn=='B/N':
-                   procesadasColorTotal=k.x_studio_pg_proc_color+procesadasColorTotal                  
+                   procesadasColorBN=k.x_studio_pg_proc+procesadasColorBN                  
                 if k.x_studio_color_bn=='Color':
                   procesadasColorTotal=k.x_studio_pg_proc_color+procesadasColorTotal
                   procesadasColorBN=k.x_studio_pg_proc+procesadasColorBN                                  
