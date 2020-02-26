@@ -93,6 +93,7 @@ class StockPickingMassAction(TransientModel):
                 return assigned_picking_lst.action_immediate_transfer_wizard()
 
             if assigned_picking_lst._check_backorder():
+                assigned_picking_lst.write({'backorder':''})
                 return assigned_picking_lst.action_generate_backorder_wizard()
             assigned_picking_lst.sudo().action_done()
 
