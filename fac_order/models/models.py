@@ -32,7 +32,7 @@ class fac_order(models.Model):
                 self.env['sale.order.detalle'].create({'saleOrder': sale.id
                                                         , 'producto': k.product_id.display_name
                                                          , 'serieEquipo': k.name
-                                                         
+                                                         ,'locacion':k.x_studio_locacion_recortada
                                                          , 'ultimaLecturaBN': k.x_studio_ultimalecturam
                                                          , 'lecturaAnteriorBN': k.x_studio_lec_ant_bn
                                                          , 'paginasProcesadasBN': k.x_studio_pg_proc
@@ -50,6 +50,8 @@ class fac_order(models.Model):
                 #raise exceptions.ValidationError( str(g) )                                 
                 serUNO=0
                 serDOS=0
+                serTRES=0
+                serTRESp=0
                 eBN=0
                 eColor=0
                 bolsabn=0
@@ -66,10 +68,13 @@ class fac_order(models.Model):
                 if pp=='Clic color':
                    bolsacolor=s.quantity
                    serDOS=s.product_id.id
+                if pp=='Renta global con páginas incluidas BN o color + pag. Excedentes'
+                   serTRES=s.product_id.id
+                   serTRESp=s.price_unit
                 #raise exceptions.ValidationError( str(g)+" "+str(serUNO)+" , "+str(sale.id)+",  "+ str(procesadasColorBN)+",  "+str(eBN))                             
             self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serUNO,'product_uom_qty':procesadasColorBN,'price_unit':eBN})      
             self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serDOS,'product_uom_qty':procesadasColorTotal,'price_unit':eColor})
-                #self.env['sale.order.line'].create({'order_id': sale.id,'product_id':h.product_id.id,'x_studio_field_9nQhR':h.id,'product_uom_qty':h.x_studio_pg_proc_color,'price_unit':eColor})
+            self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serTRES,'product_uom_qty':1.0,'price_unit':serTRESp})
 
             
             
