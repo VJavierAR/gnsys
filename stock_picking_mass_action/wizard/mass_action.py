@@ -85,7 +85,8 @@ class StockPickingMassAction(TransientModel):
                     lambda m: m.state not in ('done', 'cancel')))
             if not quantities_done:
                 _logger.info("***************lista " + str(len(assigned_picking_lst)))
-                assigned_picking_lst.sudo().write({'concentrado':str(self.env['ir.sequence'].next_by_code('concentrado'))})
+                if(3 in picking_type_id.id):
+                    assigned_picking_lst.sudo().write({'concentrado':str(self.env['ir.sequence'].next_by_code('concentrado'))})
                 return assigned_picking_lst.action_immediate_transfer_wizard()
 
             if assigned_picking_lst._check_backorder():
