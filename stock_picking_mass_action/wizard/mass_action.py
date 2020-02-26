@@ -85,7 +85,7 @@ class StockPickingMassAction(TransientModel):
                     lambda m: m.state not in ('done', 'cancel')))
             if not quantities_done:
                 _logger.info("***************lista " + str(len(assigned_picking_lst)))
-                if(3 in assigned_picking_lst.picking_type_id.id):
+                if(assigned_picking_lst.picking_type_id.id==3):
                     assigned_picking_lst.sudo().write({'concentrado':str(self.env['ir.sequence'].next_by_code('concentrado'))})
                 return assigned_picking_lst.action_immediate_transfer_wizard()
 
