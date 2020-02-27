@@ -12,7 +12,7 @@ class StockPicking(Model):
     almacenDestino=fields.Many2one('stock.warehouse','Almacen Destino')
     hiden=fields.Integer(compute='hide')
     ajusta=fields.Boolean('Ajusta',store=True)
-    ajusta2=fields.Boolean()
+    ajusta2=fields.Boolean(store=True)
     est = fields.Text(compute = 'x_historial_ticket_actualiza')
     backorder=fields.Char('Backorder',store=True)
     lineTemp=fields.One2many('stock.pick.temp','picking')
@@ -128,7 +128,7 @@ class StockPicking(Model):
     
     
     @api.multi
-    @api.depends('state')
+    @api.depends('state','ajusta2')
     def x_historial_ticket_actualiza(self):
         for record in self:
             if(record.backorder==False):
