@@ -66,7 +66,7 @@ class StockPicking(Model):
         #_logger.info("HOLAAaaaaa++++++++"+str(vals))
         #self.estado=self.state
         #self.backorder=self.state
-        res = super(Picking, self).create(vals)
+        res = super(StockPicking, self).create(vals)
         res._autoconfirm_picking()
         _logger.info("HOLAAaaaaa++++++++"+str(res))
         return res
