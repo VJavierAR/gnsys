@@ -56,7 +56,7 @@ class StockPicking(Model):
                 if len(move) == 3 and move[0] == 0:
                     move[2]['location_id'] = vals['location_id']
                     move[2]['location_dest_id'] = vals['location_dest_id']
-        if(vals['picking_type_id']['id']==3 or vals['picking_type_id']['id']==3):
+        if(vals['picking_type_id']==3 or vals['picking_type_id']==29314):
             if(vals['sale_id']['x_studio_field_bxHgp']):
                 ti=self.env['helpdesk.ticket'].browse(vals['sale_id'].get('x_studio_field_bxHgp', defaults.get('x_studio_field_bxHgp')))
                 ti.write({'stage_id':93})
