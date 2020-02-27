@@ -1100,7 +1100,7 @@ class helpdesk_update(models.Model):
                    sale.write({'warehouse_id':18})
                    x=115
                 for lineas in sale.sale_order_line:
-                    st=self.env['stock.quant'].search([['location_id','=' x],['product_id','=',lineas.product_id.id]]).sorted(key='quantity',reverse=True)
+                    st=self.env['stock.quant'].search([['location_id','=',x],['product_id','=',lineas.product_id.id]]).sorted(key='quantity',reverse=True)
                     requisicion=False
                     if(len(st)>0):
                         if(st[0].quantity==0):
