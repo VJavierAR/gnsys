@@ -41,36 +41,6 @@ class StockPicking(Model):
     #def mandarTicketGuia(self):
     #    c = self.env['helpdesk.ticket'].search([('id','=',self.x_studio_idtempticket)]) 
     #    c.write({'x_studio_nmero_de_guia_1': self.carrier_tracking_ref})        
-    @api.multi
-    def action_confirm(self):
-        self.mapped('package_level_ids').filtered(lambda pl: pl.state == 'draft' and not pl.move_ids)._generate_moves()
-        # call `_action_confirm` on every draft move
-        self.mapped('move_lines')\
-            .filtered(lambda move: move.state == 'draft')\
-            ._action_confirm()
-        # call `_action_assign` on every confirmed move which location_id bypasses the reservation
-        self.filtered(lambda picking: picking.location_id.usage in ('supplier', 'inventory', 'production') and picking.state == 'confirmed')\
-            .mapped('move_lines')._action_assign()
-        _logger.info('HOLAAAA++++'+str(self[0].state))
-        return True
-
-
-
-
-
-    #@api.multi
-    #def _autoconfirm_picking(self):
-#
- #       for picking in self.filtered(lambda picking: picking.immediate_transfer and picking.state not in ('done', 'cancel') and (picking.move_lines or picking.package_level_ids)):
-  #          if(picking.picking_type_id.id==3 or picking.picking_type_id.id==29314):
-   #             picking.estado=picking.state
-    #            picking.backorder=picking.state
-    #            if(picking.sale_id.x_studio_field_bxHgp):
-    #                picking.sale_id.x_studio_field_bxHgp.write({'stage_id':93})
-     #               self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : picking.sale_id.x_studio_field_bxHgp.id, 'x_persona' : str(self.env.user.name), 'x_estado' : "Almacen", 'x_disgnostico':''})
-     #       picking.action_confirm()
-     #   _logger.info('HOLAAAA++++'+str(self[0].state))
-    
     
     @api.multi
     def button_validate(self):
