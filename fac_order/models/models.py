@@ -122,9 +122,9 @@ class fac_order(models.Model):
 
                   #raise exceptions.ValidationError(str(sale.id)+",  "+ str(procesadasColorBN)+",  "+str(procesadasColorTotal))
                   if procesadasColorBN>0:
-                     self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serUNO,'product_uom_qty':procesadasColorBN,'price_unit':unidadpreciobn,'x_studio_bolsa':bolsabn})
+                     self.env['sale.order.line'].create({'order_id': sale.id,'product_id':10742,'product_uom_qty':procesadasColorBN,'price_unit':unidadpreciobn,'x_studio_bolsa':bolsabn})
                   if procesadasColorTotal>0:
-                     self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serDOS,'product_uom_qty':procesadasColorTotal,'price_unit':unidadprecioColor,'x_studio_bolsa':bolsacolor})                  
+                     self.env['sale.order.line'].create({'order_id': sale.id,'product_id':10742,'product_uom_qty':procesadasColorTotal,'price_unit':unidadprecioColor,'x_studio_bolsa':bolsacolor})                  
 
             
             
