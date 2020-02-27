@@ -757,7 +757,7 @@ class helpdesk_update(models.Model):
                 sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
                 sale.action_confirm()
                 for lineas in sale.sale_order_line:
-                    st=self.env['stock.quant'].search([['location_id','in' (35204,12)],['product_id','=',lineas.product_id.id]]).sorted(key='quantity',reverse=True)
+                    st=self.env['stock.quant'].search([['location_id','in',(35204,12)],['product_id','=',lineas.product_id.id]]).sorted(key='quantity',reverse=True)
                     requisicion=False
                     if(len(st)>0):
                         if(st[0].quantity==0):
