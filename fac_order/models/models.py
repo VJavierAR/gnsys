@@ -62,6 +62,7 @@ class fac_order(models.Model):
                 proColor=0
                 proBNS=0
                 proColorS=0
+                clickColor=0  
             #Costo por página procesada BN o color 10742 o 10743             
             #Renta base con páginas incluidas BN o color + pag. excedentes 10744 o 10745
             #renta base + costo de página procesada BN o color 10756 o 10757
@@ -202,6 +203,32 @@ class fac_order(models.Model):
                      self.env['sale.order.line'].create({'order_id': sale.id,'product_id':proBNS,'product_uom_qty':procesadasColorBN,'price_unit':proBN,'x_studio_bolsa':0.0})
                   if procesadasColorTotal>0:            
                      self.env['sale.order.line'].create({'order_id': sale.id,'product_id':proColorS,'product_uom_qty':procesadasColorTotal,'price_unit':proColor,'x_studio_bolsa':0.0})
+                  
+            if 10759 in vv:                           
+                  for s in g:
+                      pp=s.product_id.name
+                      if pp=='Clic excedente monocromático':    
+                         eBN=s.price_unit
+                      if pp=='Clic excedente color':    
+                         eColor=s.price_unit
+                      if pp=='Clic monocromática':
+                         bolsabn=s.quantity
+                         serUNO=s.product_id.id
+                      if pp=='Clic color':
+                         bolsacolor=s.quantity
+                         serDOS=s.product_id.id
+                         clickColor=s.price_unit
+                         
+                      if s.price_subtotal>3.0:
+                         serTRES=s.product_id.id
+                         serTRESp=s.price_unit
+                         self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serTRES,'product_uom_qty':1.0,'price_unit':serTRESp})
+                  if bolsabn<procesadasColorBN:
+                     self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serUNO,'product_uom_qty':0.0,'price_unit':eBN,'x_studio_bolsa':bolsabn})
+                  if procesadasColorBN > bolsabn:
+                     self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serUNO,'product_uom_qty':abs(bolsabn-procesadasColorBN),'price_unit':eBN,'x_studio_bolsa':bolsabn})                  
+                  if procesadasColorTotal>0:            
+                     self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serDOS,'product_uom_qty':procesadasColorTotal,'price_unit':clickColor,'x_studio_bolsa':0.0})                  
                           
                         
                         
