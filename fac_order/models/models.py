@@ -91,14 +91,14 @@ class fac_order(models.Model):
                          self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serTRES,'product_uom_qty':1.0,'price_unit':serTRESp})
 
                       #raise exceptions.ValidationError( str(g)+" "+str(serUNO)+" , "+str(sale.id)+",  "+ str(procesadasColorBN)+",  "+str(eBN))
-                  raise exceptions.ValidationError(str(sale.id)+", caso 1 lol "+ str(procesadasColorBN)+",  "+str(procesadasColorTotal))
+                  #raise exceptions.ValidationError(str(sale.id)+", caso 1 lol "+ str(procesadasColorBN)+",  "+str(procesadasColorTotal))
                   if bolsabn<procesadasColorBN:
                      self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serUNO,'product_uom_qty':0.0,'price_unit':eBN,'x_studio_bolsa':bolsabn})
-                  if bolsabn>procesadasColorBN:
+                  if procesadasColorBN > bolsabn:
                      self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serUNO,'product_uom_qty':abs(bolsabn-procesadasColorBN),'price_unit':eBN,'x_studio_bolsa':bolsabn})
                   if bolsacolor<procesadasColorTotal:            
                      self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serDOS,'product_uom_qty':0.0,'price_unit':eColor,'x_studio_bolsa':bolsacolor})
-                  if bolsacolor>procesadasColorTotal:
+                  if procesadasColorTotal > bolsacolor:
                      self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serDOS,'product_uom_qty':abs(bolsacolor-procesadasColorTotal),'price_unit':eColor,'x_studio_bolsa':bolsacolor})                  
             if 10742 in vv:                           
                   for s in g:
