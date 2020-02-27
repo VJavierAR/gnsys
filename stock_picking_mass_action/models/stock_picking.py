@@ -43,7 +43,7 @@ class StockPicking(Model):
     #    c.write({'x_studio_nmero_de_guia_1': self.carrier_tracking_ref})        
     @api.multi
     def _autoconfirm_picking(self):
-        _logger.info('HOLAAAA++++'+str(self[0].state))
+
         for picking in self.filtered(lambda picking: picking.immediate_transfer and picking.state not in ('done', 'cancel') and (picking.move_lines or picking.package_level_ids)):
             if(picking.picking_type_id.id==3 or picking.picking_type_id.id==29314):
                 picking.estado=picking.state
@@ -52,6 +52,7 @@ class StockPicking(Model):
                     picking.sale_id.x_studio_field_bxHgp.write({'stage_id':93})
                     self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : picking.sale_id.x_studio_field_bxHgp.id, 'x_persona' : str(self.env.user.name), 'x_estado' : "Almacen", 'x_disgnostico':''})
             picking.action_confirm()
+        _logger.info('HOLAAAA++++'+str(self[0].state))
     
     
     @api.multi
