@@ -156,10 +156,10 @@ class fac_order(models.Model):
                       if pp=='Clic excedente color':    
                          eColor=s.price_unit
                       if pp=='Clic monocromática':
-                         bolsabn=s.quantity
+                         bolsabn=s.price_unit
                          serUNO=s.product_id.id
                       if pp=='Clic color':
-                         bolsacolor=s.quantity
+                         bolsacolor=s.price_unit
                          serDOS=s.product_id.id
                       if s.price_subtotal>3.0:                         
                          serTRES=s.product_id.id
