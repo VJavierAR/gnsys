@@ -1092,12 +1092,14 @@ class helpdesk_update(models.Model):
                 sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
                 sale.write({'x_studio_corte':self.x_studio_corte})
                 sale.write({'x_studio_comentario_adicional':self.x_studio_comentarios_de_localidad})      
+                x=0
                 if self.x_studio_almacen_1=='Agricola':
                    sale.write({'warehouse_id':1})
+                   x=12
                 if self.x_studio_almacen_1=='Queretaro':
                    sale.write({'warehouse_id':18})
+                   x=115
                 for lineas in sale.sale_order_line:
-                    x=12 if self.x_studio_almacen_1=='Agricola' else 115
                     st=self.env['stock.quant'].search([['location_id','=' x],['product_id','=',lineas.product_id.id]]).sorted(key='quantity',reverse=True)
                     requisicion=False
                     if(len(st)>0):
