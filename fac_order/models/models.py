@@ -55,7 +55,24 @@ class fac_order(models.Model):
                 eBN=0
                 eColor=0
                 bolsabn=0
-                bolsacolor=0  
+                bolsacolor=0
+            #Costo por página procesada BN o color 10742 o 10743             
+            #Renta base con páginas incluidas BN o color + pag. excedentes 10744 o 10745
+            #renta base + costo de página procesada BN o color 10756 o 10757
+            #Renta base + costo de página procesada BN o color  10748 o 10748
+            #Renta base mas costo de pagina procesada BN o color 10754 o 10755
+            #Renta base con páginas incluidas BN + clic de color + excedentes BN 10758 o 10759                        
+            #Renta global + costo de página procesada BN o color 10750 o 10751
+            
+            #Renta global con páginas incluidas BN o color + pag. Excedentes caso 1 ids 10740 o 10741
+            v=[]
+            for j in g:
+                v.append(j.product_id.id)
+            
+            vv=set(v)
+            if 10740 in vv:
+               raise exceptions.ValidationError( "caso 1")   
+            
             for s in g:
                 pp=s.product_id.name
                 if pp=='Clic excedente monocromático':    
