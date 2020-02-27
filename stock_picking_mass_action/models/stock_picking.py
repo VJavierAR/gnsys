@@ -56,14 +56,16 @@ class StockPicking(Model):
                 if len(move) == 3 and move[0] == 0:
                     move[2]['location_id'] = vals['location_id']
                     move[2]['location_dest_id'] = vals['location_dest_id']
-        #if(vals['picking_type_id']==3 or vals['picking_type_id']==29314):
-        #    if(vals['group_id']['sale_id']):
+        if(vals['picking_type_id']==3 or vals['picking_type_id']==29314):
+            if(self.sale_id.x_studio_field_bxHgp):
+                self.sale_id.x_studio_field_bxHgp.write({'stage_id':93})
+                self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : self.sale_id.x_studio_field_bxHgp.id, 'x_persona' : str(self.env.user.name), 'x_estado' : "Almacen", 'x_disgnostico':''})
         #        ti=self.env['helpdesk.ticket'].browse(vals['group_id']['sale_id'].get('x_studio_field_bxHgp', defaults.get('x_studio_field_bxHgp')))
         #        ti.write({'stage_id':93})
         #        self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : ti.id, 'x_persona' : str(self.env.user.name), 'x_estado' : "Almacen", 'x_disgnostico':''})
-        _logger.info("HOLAAaaaaa++++++++"+str(vals))
-        vals['estado']=vals['state']
-        vals['backorder']=vals['state']
+        #_logger.info("HOLAAaaaaa++++++++"+str(vals))
+        self.estado=self.state
+        self.backorder=self.state
         res = super(Picking, self).create(vals)
         res._autoconfirm_picking()
         return res
