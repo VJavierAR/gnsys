@@ -45,6 +45,7 @@ class StockPicking(Model):
     def _autoconfirm_picking(self):
         for picking in self.filtered(lambda picking: picking.immediate_transfer and picking.state not in ('done', 'cancel') and (picking.move_lines or picking.package_level_ids)):
             if(picking.picking_type_id.id==3 or picking.picking_type_id.id==29314):
+                _logger.info('HOLAAAA++++'+str(picking.estado))
                 picking.estado=picking.state
                 picking.backorder=picking.state
                 if(picking.sale_id.x_studio_field_bxHgp):
