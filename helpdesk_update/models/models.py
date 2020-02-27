@@ -766,9 +766,9 @@ class helpdesk_update(models.Model):
                         requisicion=self.env['requisicion.requisicion'].search([['state','!=','done'],['create_date','<=',datetime.datetime.now()],['origen','=','Refacción']]).sorted(key='create_date',reverse=True)
                     if(len(requisicion)==0):
                         re=self.env['requisicion.requisicion'].create({'origen':'Refacción','area':'Almacen','state':'draft'})
-                        re.product_rel=[{'cantidad':int(lineas.product_uom_qty),'producto':lineas.product_id.id,'costo':0.00}]
+                        re.product_rel=[{'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
                     if(len(requisicion)>0):
-                        requisicion[0].product_rel=[{'cantidad':int(lineas.product_uom_qty),'producto':lineas.product_id.id,'costo':0.00}]
+                        requisicion[0].product_rel=[{'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
 
                 
                 
@@ -1109,9 +1109,9 @@ class helpdesk_update(models.Model):
                         requisicion=self.env['requisicion.requisicion'].search([['state','!=','done'],['create_date','<=',datetime.datetime.now()],['origen','=','Toner']]).sorted(key='create_date',reverse=True)
                     if(len(requisicion)==0):
                         re=self.env['requisicion.requisicion'].create({'origen':'Tóner','area':'Almacen','state':'draft'})
-                        re.product_rel=[{'cantidad':int(lineas.product_uom_qty),'producto':lineas.product_id.id,'costo':0.00}]
+                        re.product_rel=[{'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
                     if(len(requisicion)>0):
-                        requisicion[0].product_rel=[{'cantidad':int(lineas.product_uom_qty),'producto':lineas.product_id.id,'costo':0.00}]
+                        requisicion[0].product_rel=[{'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
 
                 sale.action_confirm()
                 
