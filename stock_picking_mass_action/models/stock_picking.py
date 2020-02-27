@@ -64,10 +64,11 @@ class StockPicking(Model):
         #        ti.write({'stage_id':93})
         #        self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : ti.id, 'x_persona' : str(self.env.user.name), 'x_estado' : "Almacen", 'x_disgnostico':''})
         #_logger.info("HOLAAaaaaa++++++++"+str(vals))
-        self.estado=self.state
-        self.backorder=self.state
+        #self.estado=self.state
+        #self.backorder=self.state
         res = super(Picking, self).create(vals)
         res._autoconfirm_picking()
+        _logger.info("HOLAAaaaaa++++++++"+str(res))
         return res
     
     
