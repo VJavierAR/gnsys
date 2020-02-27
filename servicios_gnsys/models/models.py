@@ -12,8 +12,8 @@ class servicios_gnsys(models.Model):
     _name = 'servicios'
     _description = 'Servicios GNSYS'
 
-
-    productos = fields.One2many('product.product', string="Productos")
+    productos = fields.One2many('product.product', 'servicio', string="Productos")
+    
     descripcion = fields.Text(string="Descripción")
     rentaMensual = fields.Text(string="Renta mensual")
 
@@ -26,7 +26,7 @@ class servicios_gnsys(models.Model):
     procesadoColor = fields.Integer(string="Procesado color")
     
     
-    series = fields.One2many('stock.production.lot', string="Series")
+    series = fields.One2many('stock.production.lot', 'servicio', string="Series")
     
     color_bn = fields.Integer(string="Color - B/N")
 
@@ -39,3 +39,12 @@ class servicios_gnsys(models.Model):
     procesadoColor = fields.Integer(string="Procesado color")
 
     modelo = fields.Text(string="Modelo")
+
+
+class productos_en_servicios(models.Model):
+    _inherit = 'product.product'
+    servicio = fields.Many2one('servicios', string="Servicio")
+    
+class equipo_series(models.Model):
+    _inherit = 'stock.production.lot'
+    servicio = fields.Many2one('servicios', string="Servicio")
