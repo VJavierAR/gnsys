@@ -148,7 +148,7 @@ class fac_order(models.Model):
                            self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serUNO,'product_uom_qty':abs(bolsabn-procesadasColorBN),'price_unit':eBN,'x_studio_bolsa':bolsabn})
                         if j.x_studio_pg_proc_color > bolsacolor:
                            self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serDOS,'product_uom_qty':abs(bolsacolor-procesadasColorTotal),'price_unit':eColor,'x_studio_bolsa':bolsacolor})
-            if 10749 in vv:                           
+            if 10749 in vv or 10748 in vv :                           
                   for s in g:
                       pp=s.product_id.name
                       if pp=='Clic excedente monocromático':    
