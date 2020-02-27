@@ -13,6 +13,7 @@ class product_requisicion(models.Model):
     
 class requisicion(models.Model):
     _name = 'requisicion.requisicion'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
     _description='Requisicion'
     name = fields.Char()
     area = fields.Selection([('Ventas','Ventas'),('Almacen','Almacen'), ('Mesa de Ayuda','Mesa de Ayuda')])

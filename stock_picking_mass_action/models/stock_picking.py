@@ -41,7 +41,31 @@ class StockPicking(Model):
     #def mandarTicketGuia(self):
     #    c = self.env['helpdesk.ticket'].search([('id','=',self.x_studio_idtempticket)]) 
     #    c.write({'x_studio_nmero_de_guia_1': self.carrier_tracking_ref})        
-    
+    @api.model
+    def create(self, vals):
+        # TDE FIXME: clean that brol
+        defaults = self.default_get(['name', 'picking_type_id'])
+        if vals.get('name', '/') == '/' and defaults.get('name', '/') == '/' and vals.get('picking_type_id', defaults.get('picking_type_id')):
+            vals['name'] = self.env['stock.picking.type'].browse(vals.get('picking_type_id', defaults.get('picking_type_id'))).sequence_id.next_by_id()
+
+        # TDE FIXME: what ?
+        # As the on_change in one2many list is WIP, we will overwrite the locations on the stock moves here
+        # As it is a create the format will be a list of (0, 0, dict)
+        if vals.get('location_id') and vals.get('location_dest_id'):
+            for move in vals.get('move_lines', []) + vals.get('move_ids_without_package', []):
+                if len(move) == 3 and move[0] == 0:
+                    move[2]['location_id'] = vals['location_id']
+                    move[2]['location_dest_id'] = vals['location_dest_id']
+        if(vals['picking_type_id']['id']==3 or vals['picking_type_id']['id']==3):
+            if(vals['sale_id']['x_studio_field_bxHgp']):
+                ti=self.env['helpdesk.ticket'].browse(vals['sale_id'].get('x_studio_field_bxHgp', defaults.get('x_studio_field_bxHgp')))
+                ti.write({'stage_id':93})
+                self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : ti.id, 'x_persona' : str(self.env.user.name), 'x_estado' : "Almacen", 'x_disgnostico':''})
+        vals['estado']=vals['state']
+        vals['backorder']=vals['state']
+        res = super(Picking, self).create(vals)
+        res._autoconfirm_picking()
+        return res
     
     
     @api.multi
