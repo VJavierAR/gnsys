@@ -61,7 +61,7 @@ class fac_order(models.Model):
             #Costo por página procesada BN o color 10742 o 10743             
             #Renta base con páginas incluidas BN o color + pag. excedentes 10744 o 10745
             #renta base + costo de página procesada BN o color 10756 o 10757
-            #Renta base + costo de página procesada BN o color  10748 o 10748
+            #Renta base + costo de página procesada BN o color  10748 o 10749
             #Renta base mas costo de pagina procesada BN o color 10754 o 10755
             #Renta base con páginas incluidas BN + clic de color + excedentes BN 10758 o 10759                        
             #Renta global + costo de página procesada BN o color 10750 o 10751
@@ -147,7 +147,30 @@ class fac_order(models.Model):
                         if j.x_studio_pg_proc > bolsabn:
                            self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serUNO,'product_uom_qty':abs(bolsabn-procesadasColorBN),'price_unit':eBN,'x_studio_bolsa':bolsabn})
                         if j.x_studio_pg_proc_color > bolsacolor:
-                           self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serDOS,'product_uom_qty':abs(bolsacolor-procesadasColorTotal),'price_unit':eColor,'x_studio_bolsa':bolsacolor})                  
+                           self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serDOS,'product_uom_qty':abs(bolsacolor-procesadasColorTotal),'price_unit':eColor,'x_studio_bolsa':bolsacolor})
+
+            if 10749 in vv:                           
+                  for s in g:
+                      pp=s.product_id.name
+                      if pp=='Clic excedente monocromático':    
+                         eBN=s.price_unit
+                      if pp=='Clic excedente color':    
+                         eColor=s.price_unit
+                      if pp=='Clic monocromática':
+                         bolsabn=s.quantity
+                         serUNO=s.product_id.id
+                      if pp=='Clic color':
+                         bolsacolor=s.quantity
+                         serDOS=s.product_id.id
+                      if s.price_subtotal>3.0:                         
+                         serTRES=s.product_id.id
+                         serTRESp=s.price_unit                                              
+                  for j in p:
+                        self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serTRES,'x_studio_field_9nQhR':j.id,'product_uom_qty':1.0,'price_unit':serTRESp})                      
+                        if j.x_studio_pg_proc > 0:
+                           self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serUNO,'product_uom_qty':,'price_unit':bolsabn,'x_studio_bolsa':0.0})
+                        if j.x_studio_pg_proc_color > 0:
+                           self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serDOS,'product_uom_qty':,'price_unit':bolsacolor,'x_studio_bolsa':0.0})                        
 
                   
 
