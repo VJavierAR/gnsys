@@ -768,7 +768,11 @@ class helpdesk_update(models.Model):
                         re=self.env['requisicion.requisicion'].create({'origen':'Refacción','area':'Almacen','state':'draft'})
                         re.product_rel=[{'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
                     if(len(requisicion)>0):
-                        requisicion[0].product_rel=[{'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
+                        prd=requisicion[0].product_rel.search([['product_id','=',lineas.product_id.id]])
+                        if(len(prd)>0):
+                            prd.cantidad=prd.cantidad+lineas.product_uom_qty
+                        if(len(prd)==0):
+                            requisicion[0].product_rel=[{'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
 
                 
                 
@@ -1112,6 +1116,12 @@ class helpdesk_update(models.Model):
                         re.product_rel=[{'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
                     if(len(requisicion)>0):
                         requisicion[0].product_rel=[{'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
+                        prd=requisicion[0].product_rel.search([['product_id','=',lineas.product_id.id]])
+                        if(len(prd)>0):
+                            prd.cantidad=prd.cantidad+lineas.product_uom_qty
+                        if(len(prd)==0):
+                            requisicion[0].product_rel=[{'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
+
 
                 sale.action_confirm()
                 
