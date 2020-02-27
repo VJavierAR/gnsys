@@ -756,7 +756,7 @@ class helpdesk_update(models.Model):
                 self.sudo().env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
                 sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
                 sale.action_confirm()
-                for lineas in sale.sale_order_line:
+                for lineas in sale.order_line:
                     st=self.env['stock.quant'].search([['location_id','in',(35204,12)],['product_id','=',lineas.product_id.id]]).sorted(key='quantity',reverse=True)
                     requisicion=False
                     if(len(st)>0):
@@ -1099,7 +1099,7 @@ class helpdesk_update(models.Model):
                 if self.x_studio_almacen_1=='Queretaro':
                    sale.write({'warehouse_id':18})
                    x=115
-                for lineas in sale.sale_order_line:
+                for lineas in sale.order_line:
                     st=self.env['stock.quant'].search([['location_id','=',x],['product_id','=',lineas.product_id.id]]).sorted(key='quantity',reverse=True)
                     requisicion=False
                     if(len(st)>0):
