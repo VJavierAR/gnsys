@@ -41,35 +41,16 @@ class StockPicking(Model):
     #def mandarTicketGuia(self):
     #    c = self.env['helpdesk.ticket'].search([('id','=',self.x_studio_idtempticket)]) 
     #    c.write({'x_studio_nmero_de_guia_1': self.carrier_tracking_ref})        
-    @api.model
-    def create(self, vals):
-        # TDE FIXME: clean that brol
-        defaults = self.default_get(['name', 'picking_type_id'])
-        if vals.get('name', '/') == '/' and defaults.get('name', '/') == '/' and vals.get('picking_type_id', defaults.get('picking_type_id')):
-            vals['name'] = self.env['stock.picking.type'].browse(vals.get('picking_type_id', defaults.get('picking_type_id'))).sequence_id.next_by_id()
-
-        # TDE FIXME: what ?
-        # As the on_change in one2many list is WIP, we will overwrite the locations on the stock moves here
-        # As it is a create the format will be a list of (0, 0, dict)
-        if vals.get('location_id') and vals.get('location_dest_id'):
-            for move in vals.get('move_lines', []) + vals.get('move_ids_without_package', []):
-                if len(move) == 3 and move[0] == 0:
-                    move[2]['location_id'] = vals['location_id']
-                    move[2]['location_dest_id'] = vals['location_dest_id']
-        #if(vals['picking_type_id']==3 or vals['picking_type_id']==29314):
-        #    if(self.sale_id.x_studio_field_bxHgp):
-        #        self.sale_id.x_studio_field_bxHgp.write({'stage_id':93})
-        #        self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : self.sale_id.x_studio_field_bxHgp.id, 'x_persona' : str(self.env.user.name), 'x_estado' : "Almacen", 'x_disgnostico':''})
-        #        ti=self.env['helpdesk.ticket'].browse(vals['group_id']['sale_id'].get('x_studio_field_bxHgp', defaults.get('x_studio_field_bxHgp')))
-        #        ti.write({'stage_id':93})
-        #        self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : ti.id, 'x_persona' : str(self.env.user.name), 'x_estado' : "Almacen", 'x_disgnostico':''})
-        #_logger.info("HOLAAaaaaa++++++++"+str(vals))
-        #self.estado=self.state
-        #self.backorder=self.state
-        res = super(StockPicking, self).create(vals)
-        res._autoconfirm_picking()
-        _logger.info("HOLAAaaaaa++++++++"+str(res))
-        return res
+    @api.multi
+    def _autoconfirm_picking(self):
+        for picking in self.filtered(lambda picking: picking.immediate_transfer and picking.state not in ('done', 'cancel') and (picking.move_lines or picking.package_level_ids)):
+            if(picking.picking_type_id.id==3 or picking.picking_type_id.id==29314):
+                picking.estado=picking.state
+                picking.backorder=picking.state
+                if(picking.sale_id.x_studio_field_bxHgp):
+                    picking.sale_id.x_studio_field_bxHgp.write({'stage_id':93})
+                    self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : picking.sale_id.x_studio_field_bxHgp.id, 'x_persona' : str(self.env.user.name), 'x_estado' : "Almacen", 'x_disgnostico':''})
+            picking.action_confirm()
     
     
     @api.multi
