@@ -3,10 +3,10 @@
     'name': "servicios_gnsys",
 
     'summary': """
-        subscripciones tipo gnsys""",
+        Servicios tipo gnsys""",
 
     'description': """
-        Modelo de susbcripciones tipo gnsys
+        Modelo de servicios tipo gnsys
     """,
 
     'author': "GNSYS",
@@ -19,8 +19,7 @@
   'version': '12.0.1.0.0',
     # any module necessary for this one to work correctly
     'depends': [
-        'product.product',
-        'stock.production.lot',
+        
         'mail'
     ],
 
