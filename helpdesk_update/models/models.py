@@ -756,6 +756,20 @@ class helpdesk_update(models.Model):
                 self.sudo().env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
                 sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
                 sale.action_confirm()
+                for lineas in sale.sale_order_line:
+                    st=self.env['stock.quant'].search([['location_id','in' (35204,12)],['product_id','=',lineas.product_id.id]]).sorted(key='quantity',reverse=True)
+                    requisicion=False
+                    if(len(st)>0):
+                        if(st[0].quantity==0):
+                            requisicion=self.env['requisicion.requisicion'].search([['state','!=','done'],['create_date','<=',datetime.datetime.now()],['origen','=','Refacción']]).sorted(key='create_date',reverse=True)
+                    else:
+                        requisicion=self.env['requisicion.requisicion'].search([['state','!=','done'],['create_date','<=',datetime.datetime.now()],['origen','=','Refacción']]).sorted(key='create_date',reverse=True)
+                    if(len(requisicion)==0):
+                        re=self.env['requisicion.requisicion'].create({'origen':'Refacción','area':'Almacen','state':'draft'})
+                        re.product_rel=[{'cantidad':int(lineas.product_uom_qty),'producto':lineas.product_id.id,'costo':0.00}]
+                    if(len(requisicion)>0):
+                        requisicion[0].product_rel=[{'cantidad':int(lineas.product_uom_qty),'producto':lineas.product_id.id,'costo':0.00}]
+
                 
                 
                 estadoAntes = str(self.stage_id.name)
@@ -1082,7 +1096,21 @@ class helpdesk_update(models.Model):
                    sale.write({'warehouse_id':1})
                 if self.x_studio_almacen_1=='Queretaro':
                    sale.write({'warehouse_id':18})
-      
+                for lineas in sale.sale_order_line:
+                    x=12 if self.x_studio_almacen_1=='Agricola' else 115
+                    st=self.env['stock.quant'].search([['location_id','=' x],['product_id','=',lineas.product_id.id]]).sorted(key='quantity',reverse=True)
+                    requisicion=False
+                    if(len(st)>0):
+                        if(st[0].quantity==0):
+                            requisicion=self.env['requisicion.requisicion'].search([['state','!=','done'],['create_date','<=',datetime.datetime.now()],['origen','=','Toner']]).sorted(key='create_date',reverse=True)
+                    else:
+                        requisicion=self.env['requisicion.requisicion'].search([['state','!=','done'],['create_date','<=',datetime.datetime.now()],['origen','=','Toner']]).sorted(key='create_date',reverse=True)
+                    if(len(requisicion)==0):
+                        re=self.env['requisicion.requisicion'].create({'origen':'Tóner','area':'Almacen','state':'draft'})
+                        re.product_rel=[{'cantidad':int(lineas.product_uom_qty),'producto':lineas.product_id.id,'costo':0.00}]
+                    if(len(requisicion)>0):
+                        requisicion[0].product_rel=[{'cantidad':int(lineas.product_uom_qty),'producto':lineas.product_id.id,'costo':0.00}]
+
                 sale.action_confirm()
                 
                 if self.estadoSolicitudDeTonerValidar == False:
