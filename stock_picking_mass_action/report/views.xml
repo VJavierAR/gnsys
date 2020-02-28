@@ -241,7 +241,6 @@
                                     <t t-if="x==move.product_id.product_tmpl_id.name">
                                         <t  t-set="counter" t-value="counter + int(move.product_qty)"/>
                                         <t t-set="total" t-value="total + move.product_qty"/>
-                                    </t>
                                         <t t-foreach="move.product_id.stock_quant_ids" t-as="quant">
                                             <t t-if="quant.location_id.id==12">
                                                 <t t-if="quant.x_studio_field_kUc4x!=False"> 
@@ -253,6 +252,7 @@
 
                                             </t>
                                         </t>
+                                    </t>
                                 </t>
                             </t>
                             <td>
