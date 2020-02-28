@@ -14,13 +14,15 @@ class CreacionRuta(Model):
 	zona=fields.Selection([["SUR","SUR"],["NORTE","NORTE"],["PONIENTE","PONIENTE"],["ORIENTE","ORIENTE"],["CENTRO","CENTRO"],["DISTRIBUIDOR","DISTRIBUIDOR"],["MONTERREY","MONTERREY"],["CUERNAVACA","CUERNAVACA"],["GUADALAJARA","GUADALAJARA"],["QUERETARO","QUERETARO"],["CANCUN","CANCUN"],["VERACRUZ","VERACRUZ"],["PUEBLA","PUEBLA"],["TOLUCA","TOLUCA"],["LEON","LEON"],["COMODIN","COMODIN"],["VILLAHERMOSA","VILLAHERMOSA"],["MERIDA","MERIDA"],["VERACRUZ","VERACRUZ"],["ALTAMIRA","ALTAMIRA"]])
 	estado=fields.Selection([["borrador","Borrador"],["valido","Confirmado"]])
 
+	@api.multi
 	def confirmar(self):
 		#self.estado="valido"
 		self.ordenes.write({'ruta_id':self.id})
 		self.ordenes.write({'estado':'ruta'})
 		self.ordenes.write({'ajusta':True})
-		if(self.ordenes.sale_id.x_studio_field_bxHgp):
-			self.ordenes.sale_id.x_studio_field_bxHgp.write({'stage_id':108}) 
+		for or in self.ordenes:
+			if(self.or.sale_id.x_studio_field_bxHgp):
+				self.or.sale_id.x_studio_field_bxHgp.write({'stage_id':108}) 
 	@api.model
 	def create(self, vals):
 		vals['name'] = self.env['ir.sequence'].next_by_code('ruta') or _('New')
