@@ -24,6 +24,7 @@ class fac_order(models.Model):
             p=[]
             #h.append(m.id)
             sale=self.env['sale.order'].search([('name', '=', self.name)])
+            raise exceptions.ValidationError( str(ff) )
             for m in ff:              
                   p=self.env['stock.production.lot'].search([('x_studio_suscripcion', '=', m.id)])                  
                   procesadasColorTotal=0
