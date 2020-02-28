@@ -203,14 +203,14 @@
             </br>
             <table class="table table-sm" style="width:100%;border-collapse: collapse;">
                 <thead>
-                    <tr style="width:100%">
-                        <th style="width:50%">
+                    <tr>
+                        <th >
                             <span>Modelo</span>
                         </th>
-                        <th style="width:50%">
+                        <th >
                             <strong>Cantidad</strong>
                         </th>
-                        <th style="width:50%">
+                        <th >
                             <strong>Ubicación</strong>
                         </th>
                     </tr>
@@ -218,7 +218,7 @@
             <!--</table>-->
             <t t-set="norep" t-value="[]"/>
             <t t-foreach="docs" t-as="n">
-                <t style="width:100%" t-foreach="n.move_ids_without_package" t-as="move">
+                <t t-foreach="n.move_ids_without_package" t-as="move">
                     <t t-esc="norep.append(move.product_id.product_tmpl_id.name)"/></t>
             </t>
             <t t-set="chidos" t-value="list(set(norep))"/>
@@ -232,12 +232,12 @@
                 <t t-set="ubicac" t-value="stock"/>
                 <!--<table class="table table-sm" style="width:100%;border-collapse: collapse;">-->
                     <tbody>
-                        <tr style="width:25%">
-                            <td style="width:50%">
+                        <tr>
+                            <td >
                                 <t t-esc="x"></t>
                             </td>
                             <t t-foreach="docs" t-as="comp">
-                                <t style="width:100%" t-foreach="comp.move_ids_without_package" t-as="move">
+                                <t t-foreach="comp.move_ids_without_package" t-as="move">
                                     <t t-if="x==move.product_id.product_tmpl_id.name">
                                         <t  t-set="counter" t-value="counter + int(move.product_qty)"/>
                                         <t t-set="total" t-value="total + move.product_qty"/>
@@ -251,7 +251,7 @@
                                         </t>
                                 </t>
                             </t>
-                            <td style="width:50%">
+                            <td>
                                 <t t-esc="counter"></t>
                             </td>
                             <td>
