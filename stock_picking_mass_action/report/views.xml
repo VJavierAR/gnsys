@@ -226,6 +226,7 @@
             <t t-set="total" t-value="0"/>
             <t t-foreach="chidos" t-as="x">
                 <t t-set="counter" t-value="0"/>
+                <t t-set="ubicac" t-value="stock"/>
                 <table class="table table-sm" style="width:100%;border-collapse: collapse;">
                     <thead>
                         <tr style="width:25%">
@@ -237,10 +238,17 @@
                                     <t t-if="x==move.product_id.product_tmpl_id.name">
                                         <t  t-set="counter" t-value="counter + int(move.product_qty)"/>
                                         <t t-set="total" t-value="total + move.product_qty"/></t>
+                                        <t t-foreach="move.product_id.stock_quant_ids" t-as="quant">
+                                            <t t-if="quant.location_id.id==12">
+                                                <t  t-set="ubicac" t-value="quant.x_studio_field_kUc4x.name"/></t>
+                                            </t>
                                 </t>
                             </t>
                             <th style="width:50%">
                                 <t t-esc="counter"></t>
+                            </th>
+                            <th>
+                                <t t-esc="ubicac"></t>
                             </th>
                         </tr>
                     </thead>
