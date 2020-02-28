@@ -28,6 +28,21 @@ class fac_order(models.Model):
                   p=self.env['stock.production.lot'].search([('x_studio_suscripcion', '=', m.id)])                  
                   procesadasColorTotal=0
                   procesadasColorBN=0
+                  serUNO=0
+                  serDOS=0
+                  serTRES=0
+                  serTRESp=0
+                  eBN=0
+                  eColor=0
+                  bolsabn=0
+                  bolsacolor=0
+                  unidadpreciobn=0
+                  unidadprecioColor=0
+                  proBN=0
+                  proColor=0
+                  proBNS=0
+                  proColorS=0
+                  clickColor=0                  
                   for k in p:
                       self.env['sale.order.detalle'].create({'saleOrder': sale.id
                                                               , 'producto': k.product_id.display_name
@@ -47,22 +62,7 @@ class fac_order(models.Model):
                         procesadasColorTotal=k.x_studio_pg_proc_color+procesadasColorTotal
                         procesadasColorBN=k.x_studio_pg_proc+procesadasColorBN                                  
                       g=self.env['sale.subscription.line'].search([('analytic_account_id', '=', m.id)])
-                      #raise exceptions.ValidationError( str(g) )                                 
-                      serUNO=0
-                      serDOS=0
-                      serTRES=0
-                      serTRESp=0
-                      eBN=0
-                      eColor=0
-                      bolsabn=0
-                      bolsacolor=0
-                      unidadpreciobn=0
-                      unidadprecioColor=0
-                      proBN=0
-                      proColor=0
-                      proBNS=0
-                      proColorS=0
-                      clickColor=0  
+                      #raise exceptions.ValidationError( str(g) )                                   
                   #Costo por página procesada BN o color 10742 o 10743             
                   #Renta base con páginas incluidas BN o color + pag. excedentes 10744 o 10745
                   #renta base + costo de página procesada BN o color 10756 o 10757
