@@ -24,7 +24,7 @@ class fac_order(models.Model):
             p=[]
             #h.append(m.id)
             sale=self.env['sale.order'].search([('name', '=', self.name)])
-            raise exceptions.ValidationError( str(ff) )
+            #raise exceptions.ValidationError( str(ff) )
             for m in ff:              
                   p=self.env['stock.production.lot'].search([('x_studio_suscripcion', '=', m.id)])                  
                   procesadasColorTotal=0
@@ -62,7 +62,7 @@ class fac_order(models.Model):
                       if k.x_studio_color_bn=='Color':
                         procesadasColorTotal=k.x_studio_pg_proc_color+procesadasColorTotal
                         procesadasColorBN=k.x_studio_pg_proc+procesadasColorBN                                  
-                      g=self.env['sale.subscription.line'].search([('analytic_account_id', '=', m.id)])
+                      #g=self.env['sale.subscription.line'].search([('analytic_account_id', '=', m.id)])
                       #raise exceptions.ValidationError( str(g) )                                   
                   #Costo por página procesada BN o color 10742 o 10743             
                   #Renta base con páginas incluidas BN o color + pag. excedentes 10744 o 10745
@@ -73,6 +73,7 @@ class fac_order(models.Model):
                   #Renta global + costo de página procesada BN o color 10750 o 10751
 
                   #Renta global con páginas incluidas BN o color + pag. Excedentes caso 1 ids 10740 o 10741
+                  g=self.env['sale.subscription.line'].search([('analytic_account_id', '=', m.id)])
                   v=[]
                   for j in g:
                       v.append(j.product_id.id)
