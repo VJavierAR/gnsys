@@ -229,7 +229,7 @@
             <t t-set="total" t-value="0"/>
             <t t-foreach="chidos" t-as="x">
                 <t t-set="counter" t-value="0"/>
-                <t t-set="ubicac" t-value="stock"/>
+                <t t-set="ubicac" t-value=" "/>
                 <!--<table class="table table-sm" style="width:100%;border-collapse: collapse;">-->
                     <tbody>
                         <tr>
@@ -247,6 +247,10 @@
                                                 <t t-if="quant.x_studio_field_kUc4x!=False"> 
                                                     <t  t-set="ubicac" t-value="quant.x_studio_field_kUc4x.x_name"/>
                                                 </t>
+                                                <t t-if="quant.x_studio_field_kUc4x==False">
+                                                    <t  t-set="ubicac" t-value="stock"/>
+                                                </t>
+
                                             </t>
                                         </t>
                                 </t>
