@@ -21,8 +21,8 @@ class CreacionRuta(Model):
 		self.ordenes.write({'estado':'ruta'})
 		self.ordenes.write({'ajusta':True})
 		for o in self.ordenes:
-			if(self.o.sale_id.x_studio_field_bxHgp):
-				self.o.sale_id.x_studio_field_bxHgp.write({'stage_id':108}) 
+			if(o.sale_id.x_studio_field_bxHgp):
+				o.sale_id.x_studio_field_bxHgp.write({'stage_id':108}) 
 	@api.model
 	def create(self, vals):
 		vals['name'] = self.env['ir.sequence'].next_by_code('ruta') or _('New')
