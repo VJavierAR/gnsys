@@ -22,7 +22,7 @@ class requisicion(models.Model):
     product_rel=fields.One2many('product.rel.requisicion','req_rel')
     state = fields.Selection([('draft','Nuevo'),('open','Proceso'), ('done','Hecho')],'State')
     origen=fields.Char()
-
+    orden=fields.Char('Orden de Compra')
     @api.one
     def update_estado(self):
         self.write({'state':'open'})
@@ -30,10 +30,10 @@ class requisicion(models.Model):
     def update_estado1(self):
         self.write({'state':'done'})
         for record in self:
-            ordenDCompra=self.env['purchase.order'].create({'partner_id':3,'date_planned':record.fecha_prevista})
+            ordenDCompra=self.env['purchase.order'].sudo().create({'partner_id':3,'date_planned':record.fecha_prevista})
             for line in record.product_rel:
-                lineas=self.env['purchase.order.line'].create({'name':line.product.description,'product_id':line.product.id,'product_qty':line.cantidad,'price_unit':line.costo,'taxes_id':[10],'order_id':ordenDCompra.id,'date_planned':record.fecha_prevista,'product_uom':'1'})
-            record['origen']=ordenDCompra.name
+                lineas=self.env['purchase.order.line'].sudo().create({'name':line.product.description,'product_id':line.product.id,'product_qty':line.cantidad,'price_unit':line.costo,'taxes_id':[10],'order_id':ordenDCompra.id,'date_planned':record.fecha_prevista,'product_uom':'1'})
+            record['orden']=ordenDCompra.name
 
     @api.model
     def create(self,vals):
