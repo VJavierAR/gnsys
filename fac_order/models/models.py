@@ -15,9 +15,7 @@ class fac_order(models.Model):
       
       @api.multi 
       def llamado_boton(self):
-        for r in self:
-          if !r.id:   
-            raise exceptions.ValidationError( " Primero guardar " )  
+        for r in self:         
           f=len(r.x_studio_servicios_contratos)
           ff=r.x_studio_servicios_contratos
           if f>0:
