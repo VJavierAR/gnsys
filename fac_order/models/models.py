@@ -18,7 +18,7 @@ class fac_order(models.Model):
         for r in self:         
           #f=len(r.x_studio_servicios_contratos)
           
-          ff=self.env['sale.subscription'].search([('x_studio_referencia_contrato.id', 'in', r.x_studio_field_9NHdy.id)])                        
+          ff=self.env['sale.subscription'].search([('x_studio_referencia_contrato.id', 'in', r.x_studio_field_9NHdy)])                        
           raise exceptions.ValidationError( str(ff) )    
           #ff=r.x_studio_servicios_contratos
           if f>0:
