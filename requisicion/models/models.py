@@ -45,7 +45,7 @@ class requisicion(models.Model):
             ordenDCompra=self.env['purchase.order'].sudo().create({'partner_id':3,'date_planned':record.fecha_prevista})
             for line in record.product_rel:
                 if(line.product.id not in d):
-                    h=list(filter(lambda c:c['product']==line.product.id,record.product_rel))
+                    h=list(filter(lambda c:c['product']['id']==line.product.id,record.product_rel))
                     t=0
                     for hi in h:
                         t=t+hi.cantidad
