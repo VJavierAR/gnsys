@@ -15,7 +15,8 @@ class product_requisicion(models.Model):
 
     @api.depends('cliente')
     def direc(self):
-        self.direccion=str(self.cliente.street_name)+','+str(self.cliente.street_number)+','+str(self.cliente.street_number2)+','+str(self.cliente.l10n_mx_edi_colony)+','+str(self.cliente.state_id.name)+','+str(self.cliente.zip)
+        for recor in self:
+            recor.direccion=str(recor.cliente.street_name)+','+str(recor.cliente.street_number)+','+str(recor.cliente.street_number2)+','+str(recor.cliente.l10n_mx_edi_colony)+','+str(recor.cliente.state_id.name)+','+str(recor.cliente.zip)
 
 
 
