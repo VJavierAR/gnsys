@@ -25,7 +25,6 @@ class servicios_gnsys(models.Model):
     clickExcedenteColor = fields.Integer(string="Click excedente color")
     procesadoColor = fields.Integer(string="Procesado color")
     
-    
     series = fields.One2many('stock.production.lot', 'servicio', string="Series")
     
     color_bn = fields.Integer(string="Color - B/N")
@@ -39,12 +38,17 @@ class servicios_gnsys(models.Model):
     procesadoColor = fields.Integer(string="Procesado color")
 
     modelo = fields.Text(string="Modelo")
-
-
+    
+    contrato = fields.One2many('sale.subscription', 'servicio', string="Contrato")
+    
 class productos_en_servicios(models.Model):
     _inherit = 'product.product'
-    servicio = fields.Many2one('servicios', string="Servicio")
+    servicio = fields.Many2one('servicios', string="Servicio producto")
     
 class equipo_series(models.Model):
     _inherit = 'stock.production.lot'
-    servicio = fields.Many2one('servicios', string="Servicio")
+    servicio = fields.Many2one('servicios', string="Servicio serie")
+
+class contratos_servicios(models.Model):
+    _inherit = 'sale.subscription'
+    servicio = fields.Many2one('servicios', string="Servicio contrato")
