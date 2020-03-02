@@ -74,7 +74,7 @@ class tfs(models.Model):
                             self.env['dcas.dcas'].create({'serie':record.serie.id,'contadorMono':record.actualMonocromatico,'contadorColor':record.actualColor,'fuente':'tfs.tfs'})
                 else:
                     raise exceptions.UserError("No existen cantidades en el almacen para el producto " + self.producto.name)
-    @api.one
+    @api.multi
     def valida(self):
         view = self.env.ref('tfs.view_tfs_ticket')
         wiz = self.env['tfs.ticket'].create({'tfs_ids': [(4, self.id)]})
