@@ -6,14 +6,13 @@
             <form string="Immediate transfer?">
                 <group>
                     <p>
-                        You have not recorded <i>done</i> quantities yet, by clicking on <i>apply</i>
-                        Odoo will process all the <i>reserved</i> quantities.
+                        Seleccione alguna acción a relizar
                     </p>
                 </group>
                 <footer>
-                    <button name="crear_ticket" string="_Apply" type="object" class="btn-primary"/>
-                    <button name="forzar" string="_Apply" type="object" class="btn-primary"/>
-                    <button string="Cancel" class="btn-secondary" special="cancel" />
+                    <button name="crear_ticket" string="Crear ticket" type="object" class="btn-primary"/>
+                    <button name="forzar" string="Confirmar" type="object" class="btn-primary"/>
+                    <button string="Cancelar" class="btn-secondary" special="cancel" />
                 </footer>
             </form>
         </field>
