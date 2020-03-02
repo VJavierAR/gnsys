@@ -3,7 +3,7 @@
         <!--<field name="name">tfs_ticket</field>-->
         <field name="model">tfs.ticket</field>
         <field name="arch" type="xml">
-            <form string="Immediate transfer?">
+            <form string="Alerta">
                 <group>
                     <p>
                         Seleccione alguna acción a relizar
