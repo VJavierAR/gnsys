@@ -16,11 +16,10 @@ class fac_order(models.Model):
       @api.multi 
       def llamado_boton(self):
         for r in self:         
-          #f=len(r.x_studio_servicios_contratos)
+          #
           list = ast.literal_eval(r.x_studio_contratosid)  
-          ff=self.env['sale.subscription'].search([('x_studio_referencia_contrato.id', 'in',list)])                        
-          #raise exceptions.ValidationError( str(ff) )    
-          #ff=r.x_studio_servicios_contratos
+          ff=self.env['sale.subscription'].search([('x_studio_referencia_contrato.id', 'in',list)])                                            
+          f=len(list)
           if f>0:
             h=[]
             g=[]
