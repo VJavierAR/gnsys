@@ -19,7 +19,7 @@ class fac_order(models.Model):
           #f=len(r.x_studio_servicios_contratos)
           list = ast.literal_eval(r.x_studio_contratosid)  
           ff=self.env['sale.subscription'].search([('x_studio_referencia_contrato.id', 'in',list)])                        
-          raise exceptions.ValidationError( str(ff) )    
+          #raise exceptions.ValidationError( str(ff) )    
           #ff=r.x_studio_servicios_contratos
           if f>0:
             h=[]
