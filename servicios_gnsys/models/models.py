@@ -39,7 +39,7 @@ class servicios_gnsys(models.Model):
 
     modelo = fields.Text(string="Modelo")
     
-    contrato = fields.One2many('sale.subscription', 'servicio', string="Contrato")
+    #contrato = fields.One2many('sale.subscription', 'servicio', string="Contrato")
     
 class productos_en_servicios(models.Model):
     _inherit = 'product.product'
@@ -48,7 +48,8 @@ class productos_en_servicios(models.Model):
 class equipo_series(models.Model):
     _inherit = 'stock.production.lot'
     servicio = fields.Many2one('servicios', string="Servicio serie")
-
+"""
 class contratos_servicios(models.Model):
     _inherit = 'sale.subscription'
     servicio = fields.Many2one('servicios', string="Servicio contrato")
+"""
