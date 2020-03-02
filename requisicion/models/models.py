@@ -10,10 +10,10 @@ class product_requisicion(models.Model):
     req_rel=fields.Many2one('requisicion.requisicion')
     costo=fields.Float()
     ticket=fields.Many2one('helpdesk.ticket')
-    direccion=fields.Char()
+    direccion=fields.Char(compute='direc')
     cliente=fields.Many2one('res.partner')
 
-    @api.onchange('cliente')
+    @api.depends('cliente')
     def direc(self):
         self.direccion=str(self.cliente.street_name)+','+str(self.cliente.street_number)+','+str(self.cliente.street_number2)+','+str(self.cliente.l10n_mx_edi_colony)+','+str(self.cliente.state_id.name)+','+str(self.cliente.zip)
 

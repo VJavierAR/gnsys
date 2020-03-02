@@ -46,7 +46,7 @@ class tfs(models.Model):
     evidencias=fields.One2many('tfs.evidencia',string='Evidencias',inverse_name='tfs_id')
     estado=fields.Selection([('borrador','Borrador'),('xValidar','Por Validar'),('Valido','Valido')])
     
-    @api.one
+    @api.multi
     def confirm(self):
         for record in self:
             if(len(record.inventario)>0):
