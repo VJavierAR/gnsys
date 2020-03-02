@@ -16,7 +16,9 @@ class fac_order(models.Model):
       @api.multi 
       def llamado_boton(self):
         for r in self:         
-          f=len(r.x_studio_servicios_contratos)
+          #f=len(r.x_studio_servicios_contratos)
+          raise exceptions.ValidationError( str(x_studio_field_9NHdy.id) )    
+          ff=self.env['sale.subscription'].search([('x_studio_referencia_contrato.id', 'in', x_studio_field_9NHdy.id)])                        
           ff=r.x_studio_servicios_contratos
           if f>0:
             h=[]
@@ -25,7 +27,7 @@ class fac_order(models.Model):
             #h.append(m.id)
             sale=self.env['sale.order'].search([('name', '=', self.name)])
             sale.write({'x_studio_factura' : 'si'})
-            #raise exceptions.ValidationError( str(ff) )
+            #
             for m in ff:              
                   p=self.env['stock.production.lot'].search([('x_studio_suscripcion', '=', m.id)])                  
                   procesadasColorTotal=0
