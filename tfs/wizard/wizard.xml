@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_tfs_ticket" model="ir.ui.view">
+        <field name="name">tfs.ticket.force.view.form</field>
+        <field name="model">tfs.ticket</field>
+        <field name="arch" type="xml">
+            <form string="Immediate transfer?">
+                <group>
+                    <p>
+                        You have not recorded <i>done</i> quantities yet, by clicking on <i>apply</i>
+                        Odoo will process all the <i>reserved</i> quantities.
+                    </p>
+                </group>
+                <footer>
+                    <button name="crear_ticket" string="_Apply" type="object" class="btn-primary"/>
+                    <button name="forzar" string="_Apply" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel" />
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

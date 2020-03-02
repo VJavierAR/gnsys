@@ -66,8 +66,23 @@ class tfs(models.Model):
                     raise exceptions.UserError("No existen cantidades en el almacen para el producto " + self.producto.name)
     @api.one
     def valida(self):
-        self.write({'estado':'Valido'})
-        self.env['dcas.dcas'].create({'serie':self.serie.id,'contadorMono':self.actualMonocromatico,'contadorColor':self.actualColor,'fuente':'tfs.tfs'})
+        view = self.env.ref('tfs.view_tfs_ticket')
+        wiz = self.env['tfs.ticket'].create({'tfs_ids': [(4, self.id)]})
+        #self.write({'estado':'Valido'})
+        #self.env['dcas.dcas'].create({'serie':self.serie.id,'contadorMono':self.actualMonocromatico,'contadorColor':self.actualColor,'fuente':'tfs.tfs'})
+        return {
+                'name': _('Immediate Transfer?'),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'tfs.ticket',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'res_id': wiz.id,
+                'context': self.env.context,
+            }
+
 
     
     
