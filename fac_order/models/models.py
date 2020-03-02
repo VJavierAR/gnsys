@@ -17,8 +17,8 @@ class fac_order(models.Model):
       def llamado_boton(self):
         for r in self:         
           #f=len(r.x_studio_servicios_contratos)
-          raise exceptions.ValidationError( str(x_studio_field_9NHdy.id) )    
-          ff=self.env['sale.subscription'].search([('x_studio_referencia_contrato.id', 'in', x_studio_field_9NHdy.id)])                        
+          raise exceptions.ValidationError( str(r.x_studio_field_9NHdy.id) )    
+          ff=self.env['sale.subscription'].search([('x_studio_referencia_contrato.id', 'in', r.x_studio_field_9NHdy.id)])                        
           ff=r.x_studio_servicios_contratos
           if f>0:
             h=[]
