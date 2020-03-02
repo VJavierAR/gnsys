@@ -9,8 +9,18 @@ class product_requisicion(models.Model):
     product=fields.Many2one('product.product','id')
     req_rel=fields.Many2one('requisicion.requisicion','id')
     costo=fields.Float()
+    ticket=fields.Many2one('helpdesk.ticket')
+    direccion=fields.Char()
+    cliente=fields.Many2one('res.partner')
 
-    
+    @api.onchange('cliente')
+    def direc(self):
+        self.direccion=str(self.cliente.street_name)+','+str(self.cliente.street_number)+','+str(self.cliente.street_number2)+','+str(self.cliente.l10n_mx_edi_colony)+','+str(self.cliente.state_id.name)+','+str(self.cliente.zip)
+
+
+
+
+
 class requisicion(models.Model):
     _name = 'requisicion.requisicion'
     _inherit = ['mail.thread', 'mail.activity.mixin']
