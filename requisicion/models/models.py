@@ -41,7 +41,6 @@ class requisicion(models.Model):
     def update_estado1(self):
         self.write({'state':'done'})
         d=[]
-        datos=
         for record in self:
             ordenDCompra=self.env['purchase.order'].sudo().create({'partner_id':3,'date_planned':record.fecha_prevista})
             for line in record.product_rel:
