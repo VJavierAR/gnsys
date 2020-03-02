@@ -1,6 +1,6 @@
 <odoo>
     <record id="view_tfs_ticket" model="ir.ui.view">
-        <!--<field name="name">Force</field>-->
+        <field name="name">tfs_ticket</field>
         <field name="model">tfs.ticket</field>
         <field name="arch" type="xml">
             <form string="Immediate transfer?">
