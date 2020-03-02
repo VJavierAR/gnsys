@@ -42,7 +42,7 @@ class requisicion(models.Model):
         self.write({'state':'done'})
         d=[]
         for record in self:
-            ordenDCompra=self.env['purchase.order'].sudo().create({'partner_id':3,'date_planned':record.fecha_prevista})
+            ordenDCompra=self.env['purchase.order'].sudo().create({'partner_id':3,'date_planned':record.fecha_prevista,'x_studio_field_a4rih':'Almacén'})
             for line in record.product_rel:
                 if(line.product.id not in d):
                     h=list(filter(lambda c:c['product']['id']==line.product.id,record.product_rel))
