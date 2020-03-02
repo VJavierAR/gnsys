@@ -12,6 +12,7 @@ from odoo.tools.float_utils import float_compare, float_is_zero, float_round
 from odoo.exceptions import UserError
 from odoo.addons.stock.models.stock_move import PROCUREMENT_PRIORITIES
 from operator import itemgetter
+from odoo import exceptions
 import logging, ast
 _logger = logging.getLogger(__name__)
 

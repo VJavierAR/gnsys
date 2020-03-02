@@ -1,6 +1,6 @@
 from odoo import fields, models, _
 from odoo.exceptions import UserError
-
+from odoo import exceptions
 
 class StockImmediateTransfer(models.TransientModel):
     _name = 'tfs.ticket'
