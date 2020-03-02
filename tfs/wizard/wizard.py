@@ -12,6 +12,6 @@ class StockImmediateTransfer(models.TransientModel):
     	for r in self.tfs_ids:
     		r.write({'estado':'Valido'})
 
-    def crear_ticker(self):
+    def crear_ticket(self):
     	self.env['helpdesk.ticket'].create({'name':'Falla en rendimiento'})
 
