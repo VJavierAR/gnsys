@@ -107,7 +107,7 @@ class fac_order(models.Model):
                            self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serDOS,'product_uom_qty':0.0,'price_unit':eColor,'x_studio_bolsa':bolsacolor})
                         if procesadasColorTotal > bolsacolor:
                            self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serDOS,'product_uom_qty':abs(bolsacolor-procesadasColorTotal),'price_unit':eColor,'x_studio_bolsa':bolsacolor})                  
-                  #xds
+                  #xds aqui se divide la renta base y los axecentes se crean 2 facturas xD
                   if 10742 in vv:                           
                         for s in g:
                             pp=s.product_id.name
@@ -129,10 +129,11 @@ class fac_order(models.Model):
                                self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serTRES,'product_uom_qty':1.0,'price_unit':serTRESp})
                         for j in p:
                               #self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serTRES,'x_studio_field_9nQhR':j.id,'product_uom_qty':1.0,'price_unit':serTRESp})                      
-                              if j.x_studio_pg_proc > bolsabn:
-                                 self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serUNO,'product_uom_qty':abs(bolsabn-procesadasColorBN),'price_unit':eBN,'x_studio_bolsa':bolsabn})
-                              if j.x_studio_pg_proc_color > bolsacolor:
-                                 self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serDOS,'product_uom_qty':abs(bolsacolor-procesadasColorTotal),'price_unit':eColor,'x_studio_bolsa':bolsacolor})
+                              if j.x_studio_pg_proc > 0:
+                                 self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serUNO,'product_uom_qty':j.x_studio_pg_proc,'price_unit':bolsabn,'x_studio_bolsa':0.0})
+                              if j.x_studio_pg_proc_color > 0:
+                                 self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serDOS,'product_uom_qty':j.x_studio_pg_proc_color,'price_unit':bolsacolor,'x_studio_bolsa':0.0})
+
                   if 10744 in vv:                           
                         for s in g:
                             pp=s.product_id.name
