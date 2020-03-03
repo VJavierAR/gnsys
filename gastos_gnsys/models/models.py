@@ -7,11 +7,11 @@ from odoo import exceptions, _
 import logging, ast
 import datetime, time
 _logger = logging.getLogger(__name__)
-
+ 
 class gastos_gnsys(models.Model):
     _name = 'gastos'
     _description = 'gastos_gnsys'
-
+    #xd
     quienSolcita     = fields.One2many('hr.employee', 'gastoSolicitante', string = "Quien solita",track_visibility='onchange')
     quienesAutorizan = fields.One2many('hr.employee', 'gastoAutoriza', string = "Quien (es) autorizan",track_visibility='onchange')
     quienesReciben   = fields.One2many('hr.employee', 'gastoRecibe', string = "Quien (es) reciben",track_visibility='onchange')
