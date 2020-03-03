@@ -55,3 +55,36 @@ class contratos(models.Model):
     
     servicio = fields.One2many('servicios', 'contrato', string="Servicio")
     
+    cliente = fields.Many2one('res.partner', string='Cliente')
+    idtmpp = fields.Char(string="idTMPp")
+    tipoDeCliente = fields.Selection([('A','A'),('B','B'),('C','C'),('VIP','VIP'),('OTRO','Otro')], default='A', string="Tipo de cliente")
+    mesaDeAyudaPropia = fields.Boolean(string="Mesa de ayuda propia", default=False)
+    
+    ejecutivoDeCuenta = fields.Many2one('hr.employee', string='Ejecutivo de cuenta')
+    vendedor = fields.Many2one('hr.employee', string="Vendedor")
+    
+    tipoDeContrato = fields.Selection([('ARRENDAMIENTO','Arrendamiento'),('DEMOSTRACION','Demostración'),('OTRO','Otro')], default='ARRENDAMIENTO', string="Tipo de contrato")
+    vigenciaDelContrato = fields.Selection([('INDEFINIDO','Indefinido'),('12','12'),('18','18'),('24','24'),('36','36'),('OTRO','Otro')], default='12', string="Vigencia del contrato (meses)")
+    fechaDeInicioDeContrato = fields.Datetime(string = 'Fecha de inicio de contrato',track_visibility='onchange')
+    fechaDeFinDeContrato = fields.Datetime(string = 'Fecha de finalización de contrato',track_visibility='onchange')
+    ordenDeCompra = fields.Boolean(string="Orden de compra", default=False)
+    
+    tonerGenerico = fields.Boolean(string="Tóner genérico", default=False)
+    equiposNuevos = fields.Boolean(string="Equipos nuevos", default=False)
+    periodicidad = fields.Selection([('BIMESTRAL','Bimestral'),('TRIMESTRAL','Trimestral'),('CUATRIMESTRAL','Cuatrimestral'),('SEMESTRAL','Semestral')], default='BIMESTRAL', string="Periodicidad")
+    idTechraRef = fields.Integer(string="ID techra ref")
+    conteo = fields.Integer(string="Conteo")
+
+    adjuntos = fields.Selection([('CONTRATO DEBIDAMENTE REQUISITADO Y FIRMADO','Contrato debidamente requisitado y firmado'),('CARTA DE INTENCION','Carta de intención')], default='CONTRATO DEBIDAMENTE REQUISITADO Y FIRMADO', string="Se adjunta")
+    documentacion = fields.Many2many('ir.attachment', string="Documentación")
+
+
+class cliente_contratos(models.Model):
+    _inherit = 'res.partner'
+    contrato = fields.One2many('contrato', 'cliente', string="Contratos")
+    
+
+class ejecutivo_de_cuenta_contratos(models.Model):
+    _inherit = 'hr.employee'
+    contratoEjecutivoDeCuenta = fields.One2many('contrato', 'ejecutivoDeCuenta', string="Contratos asociados al ejecutivo de cuenta")
+    contratoVendedor = fields.One2many('contrato', 'vendedor', string="Contratos asociados al vendedor")
