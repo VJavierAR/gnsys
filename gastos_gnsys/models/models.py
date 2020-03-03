@@ -20,7 +20,7 @@ class gastos_gnsys(models.Model):
     montoAtnticipado = fields.Float(string = 'Monto anticipo',track_visibility='onchange')
 
 
-    formaDepago      = fields.Selection((('Efectivo','Efectivo'), ('Cheque','Cheque'),('Depósito','Depósito'),('Transferencia','Transferencia')), string = "Forma de pago (Receptor)",track_visibility='onchange')
+    formaDepagoAnticipo         = fields.Selection((('Efectivo','Efectivo'), ('Cheque','Cheque'),('Depósito','Depósito'),('Transferencia','Transferencia')), string = "Forma de pago (Receptor)",track_visibility='onchange')
 
 
     comoAplicaContablemente     = fields.Selection((('Opcion','Opcion'),('Opcion','Opcion'),('Opcion','Opcion')), string = "Como aplica contablemente",track_visibility='onchange')
