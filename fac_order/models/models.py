@@ -12,6 +12,20 @@ class fac_order(models.Model):
       _inherit = 'sale.order'
 
       nameDos = fields.Char()
+      month = fields.Selection([(1, 'January'), (2, 'February'), (3, 'March'), (4, 'April'),
+                          (5, 'May'), (6, 'June'), (7, 'July'), (8, 'August'), 
+                          (9, 'September'), (10, 'October'), (11, 'November'), (12, 'December'), ], 
+                          string='Month',
+      year = fields.Selection(get_years(), string='Year',)
+            
+            
+      def get_years():
+        year_list = []
+        for i in range(2016, 2036):
+           year_list.append((i, str(i)))
+        return year_list
+      
+      
       
       @api.multi 
       def llamado_boton(self):
