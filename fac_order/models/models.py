@@ -107,6 +107,7 @@ class fac_order(models.Model):
                            self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serDOS,'product_uom_qty':0.0,'price_unit':eColor,'x_studio_bolsa':bolsacolor})
                         if procesadasColorTotal > bolsacolor:
                            self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serDOS,'product_uom_qty':abs(bolsacolor-procesadasColorTotal),'price_unit':eColor,'x_studio_bolsa':bolsacolor})                  
+                  #xds
                   if 10742 in vv:                           
                         for s in g:
                             pp=s.product_id.name
@@ -126,13 +127,12 @@ class fac_order(models.Model):
                                serTRES=s.product_id.id
                                serTRESp=s.price_unit
                                self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serTRES,'product_uom_qty':1.0,'price_unit':serTRESp})
-
-                        #raise exceptions.ValidationError(str(sale.id)+",  "+ str(procesadasColorBN)+",  "+str(procesadasColorTotal))
-                        if procesadasColorBN>0:
-                           self.env['sale.order.line'].create({'order_id': sale.id,'product_id':10742,'product_uom_qty':procesadasColorBN,'price_unit':unidadpreciobn,'x_studio_bolsa':bolsabn})
-                        if procesadasColorTotal>0:
-                           self.env['sale.order.line'].create({'order_id': sale.id,'product_id':10742,'product_uom_qty':procesadasColorTotal,'price_unit':unidadprecioColor,'x_studio_bolsa':bolsacolor})
-
+                        for j in p:
+                              #self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serTRES,'x_studio_field_9nQhR':j.id,'product_uom_qty':1.0,'price_unit':serTRESp})                      
+                              if j.x_studio_pg_proc > bolsabn:
+                                 self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serUNO,'product_uom_qty':abs(bolsabn-procesadasColorBN),'price_unit':eBN,'x_studio_bolsa':bolsabn})
+                              if j.x_studio_pg_proc_color > bolsacolor:
+                                 self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serDOS,'product_uom_qty':abs(bolsacolor-procesadasColorTotal),'price_unit':eColor,'x_studio_bolsa':bolsacolor})
                   if 10744 in vv:                           
                         for s in g:
                             pp=s.product_id.name
