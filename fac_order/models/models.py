@@ -8,6 +8,14 @@ import logging, ast
 import datetime, time
 _logger = logging.getLogger(__name__)
 
+
+def get_years():
+    year_list = []
+    for i in range(2016, 2036):
+       year_list.append((i, str(i)))
+    return year_list
+
+
 class fac_order(models.Model):
       _inherit = 'sale.order'
 
@@ -16,15 +24,8 @@ class fac_order(models.Model):
                           (5, 'May'), (6, 'June'), (7, 'July'), (8, 'August'), 
                           (9, 'September'), (10, 'October'), (11, 'November'), (12, 'December')], 
                           string='Mes')
-      #year = fields.Selection(get_years(), string='Año')
-            
-            
-      def get_years():
-        year_list = []
-        for i in range(2016, 2036):
-           year_list.append((i, str(i)))
-        return year_list
-      
+      year = fields.Selection(get_years(), string='Año')
+                              
       
       
       @api.multi 
