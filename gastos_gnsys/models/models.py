@@ -49,7 +49,7 @@ class motivos_gastos(models.Model):
 class empleados_gastos(models.Model):
     _inherit = 'hr.employee'
     
-    gastoSolicitante = fields.Many2one('gastos' string="Gasto solicitante")
+    gastoSolicitante = fields.Many2one('gastos', string="Gasto solicitante")
     gastoValida = fields.Many2one('gastos', string="Gasto valida")
 
 
