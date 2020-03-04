@@ -84,7 +84,7 @@ class motivos_gastos(models.Model):
     _name = 'motivos'
     _description = 'Motivos de un gasto'
 
-    gasto  = fields.Many2one('gatos', string = "Gasto ", track_visibility='onchange')
+    gasto  = fields.Many2one('gastos', string = "Gasto ", track_visibility='onchange')
     motivoDescripcion = fields.Text()
     tipoDeMotivo      = fields.Selection((('!','1'), ('2','2')), string = "Tipo de motivo",track_visibility='onchange')
 
