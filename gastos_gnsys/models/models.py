@@ -45,7 +45,8 @@ class gastos_gnsys(models.Model):
 
     #En caso de que sea por efectivo o excacto
     #Parcial
-    monto                       = fields.Float(string = 'Monto a cubrir',track_visibility='onchange')
+    montoExacto                 = fields.Float(string = 'Monto a cubrir',track_visibility='onchange')
+    montoParcial                 = fields.Float(string = 'Monto a cubrir',track_visibility='onchange')
     #En caso de que sea por efectivo o por nomina
     comoAplicaContablementeRequerimeintoDevolucion  = fields.Selection((('Opcion','Opcion'),('Opcion','Opcion'),('Opcion','Opcion')), string = "Como aplica contablemente",track_visibility='onchange')
 
