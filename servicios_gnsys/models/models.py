@@ -10,7 +10,9 @@ _logger = logging.getLogger(__name__)
 
 class servicios_gnsys(models.Model):
     _name = 'servicios'
+    _inherit = 'mail.thread'
     _description = 'Servicios GNSYS'
+    
 
     productos = fields.One2many('product.product', 'servicio', string="Productos")
     
