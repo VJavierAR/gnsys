@@ -12,6 +12,8 @@ class product_requisicion(models.Model):
     ticket=fields.Many2one('helpdesk.ticket')
     direccion=fields.Char(compute='direc')
     cliente=fields.Many2one('res.partner')
+    solicitar=fields.Boolean('Solicitar',default=True)
+    pedido=fields.Char('Pedido',)
 
     @api.depends('cliente')
     def direc(self):
@@ -39,19 +41,23 @@ class requisicion(models.Model):
         self.write({'state':'open'})
     @api.one
     def update_estado1(self):
+        if(self.orden==False):
+            self.orden='|'
         self.write({'state':'done'})
         d=[]
         for record in self:
             ordenDCompra=self.env['purchase.order'].sudo().create({'partner_id':3,'date_planned':record.fecha_prevista,'x_studio_field_a4rih':'Almacén'})
-            for line in record.product_rel:
+            data=record.product_rel.search([['pedido','=',False],['solicitar','=',True]])
+            for line in data:
                 if(line.product.id not in d):
                     h=list(filter(lambda c:c['product']['id']==line.product.id,record.product_rel))
                     t=0
                     for hi in h:
                         t=t+hi.cantidad
+                    h.write({'pedido':ordenDCompra.name})
                     lineas=self.env['purchase.order.line'].sudo().create({'name':line.product.description,'product_id':line.product.id,'product_qty':t,'price_unit':line.costo,'taxes_id':[10],'order_id':ordenDCompra.id,'date_planned':record.fecha_prevista,'product_uom':'1'})
                     d.append(line.product.id)
-            record['orden']=ordenDCompra.name
+            record['orden']=self.orden+','+ordenDCompra.name
 
     @api.model
     def create(self,vals):
