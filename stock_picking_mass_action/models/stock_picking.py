@@ -136,10 +136,12 @@ class StockPicking(Model):
     @api.multi
     @api.depends('state')
     def x_historial_ticket_actualiza(self):
-        for record in self:
-            if((record.picking_type_id.id==3 or record.picking_type_id.id==29314) and record.state=="assigned"):
-                record['value2']= 1
-                _logger.info("h")
+        if(self.picking_type_id.id==3 and self.state=="assigned"):
+            self.value2= 1
+        #for record in self:
+        #    if((record.picking_type_id.id==3 or record.picking_type_id.id==29314) and record.state=="assigned"):
+        #        record['value2']= 1
+        #        _logger.info("h")
             # if(record.backorder==False):
             #     record['backorder']=''
             #     self.env.cr.execute("update stock_picking set backorder='' where id ="+str(record.id)+";")
