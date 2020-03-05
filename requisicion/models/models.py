@@ -52,9 +52,10 @@ class requisicion(models.Model):
                 if(line.product.id not in d):
                     h=list(filter(lambda c:c['product']['id']==line.product.id,record.product_rel))
                     t=0
+                    e=data.search([['product','=',line.product.id]])
                     for hi in h:
                         t=t+hi.cantidad
-                    h.write({'pedido':ordenDCompra.name})
+                    e.write({'pedido':ordenDCompra.name})
                     lineas=self.env['purchase.order.line'].sudo().create({'name':line.product.description,'product_id':line.product.id,'product_qty':t,'price_unit':line.costo,'taxes_id':[10],'order_id':ordenDCompra.id,'date_planned':record.fecha_prevista,'product_uom':'1'})
                     d.append(line.product.id)
             record['orden']=self.orden+','+ordenDCompra.name
