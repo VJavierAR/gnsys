@@ -16,7 +16,7 @@ class StockPicking(Model):
     est = fields.Text(compute = 'x_historial_ticket_actualiza')
     backorder=fields.Char('Backorder',store=True)
     lineTemp=fields.One2many('stock.pick.temp','picking')
-    estado = fields.Selection([('draft', 'Draft'),('compras', 'Solicitud de Compra'),('waiting', 'Esperando otra operación'),('confirmed', 'Sin Stock'),('assigned', 'Por Validar'),('done', 'Validado'),('distribucion', 'Distribución'),('cancel', 'Cancelled'),('aDistribucion', 'A Distribución'),('Xenrutar', 'Por en Rutar'),('ruta', 'En Ruta'),('entregado', 'Entregado')],store=True)
+    estado = fields.Selection([('recepcion','Recepción'),('draft', 'Draft'),('compras', 'Solicitud de Compra'),('waiting', 'Esperando otra operación'),('confirmed', 'Sin Stock'),('assigned', 'Por Validar'),('done', 'Validado'),('distribucion', 'Distribución'),('cancel', 'Cancelled'),('aDistribucion', 'A Distribución'),('Xenrutar', 'Por en Rutar'),('ruta', 'En Ruta'),('entregado', 'Entregado')],store=True)
     value2 = fields.Integer(store=True)
     lineasBack = fields.One2many(related='backorder_ids.move_ids_without_package')
     ruta_id=fields.Many2one('creacion.ruta')
