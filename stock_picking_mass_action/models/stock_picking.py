@@ -137,8 +137,8 @@ class StockPicking(Model):
     @api.depends('estado')
     def x_historial_ticket_actualiza(self):
         for record in self:
-        if('SU' in record.name):
-            record['value2'] = 1
+            if('SU' in record.name):
+                record['value2'] = 1
         #if(self.picking_type_id.id==3 and self.state=="assigned"):
         #    self.value2= 1
         #for record in self:
