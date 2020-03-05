@@ -20,9 +20,9 @@ class fac_order(models.Model):
       _inherit = 'sale.order'
 
       nameDos = fields.Char()
-      month = fields.Selection([(01, 'Enero'), (02, 'Febrero'), (03, 'Marzo'), (04, 'Abril'),
-                          (05, 'Mayo'), (06, 'Junio'), (07, 'Julio'), (08, 'Agosto'), 
-                          (09, 'Septiembre'), (10, 'Octubre'), (11, 'Noviembre'), (12, 'Diciembre')], 
+      month = fields.Selection([('01', 'Enero'), ('02', 'Febrero'), ('03', 'Marzo'), ('04', 'Abril'),
+                          ('05', 'Mayo'), ('06', 'Junio'), ('07', 'Julio'), ('08', 'Agosto'), 
+                          ('09', 'Septiembre'), ('10', 'Octubre'), ('11', 'Noviembre'), ('12', 'Diciembre')], 
                           string='Mes')
       year = fields.Selection(get_years(), string='Año')
                               
