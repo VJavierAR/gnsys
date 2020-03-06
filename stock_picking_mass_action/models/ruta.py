@@ -18,13 +18,17 @@ class CreacionRuta(Model):
 	@api.multi
 	def confirmar(self):
 		#self.estado="valido"
-		self.ordenes.write({'ruta_id':self.id})
-		self.ordenes.write({'estado':'ruta'})
-		self.ordenes.write({'ajusta':True})
-		for o in self.ordenes:
-			if(o.sale_id.x_studio_field_bxHgp):
-				o.sale_id.x_studio_field_bxHgp.write({'stage_id':108})
-		self.env['registro.odometro'].sudo().create({'rel_vehiculo':self.vehiculo.id,'odometro':self.odometro,'nivel_tanque':self.nivel_tanque,'chofer':self.chofer}) 
+		if(len(self.ordenes)>0):
+			self.ordenes.write({'ruta_id':self.id})
+			self.ordenes.write({'estado':'ruta'})
+			self.ordenes.write({'ajusta':True})
+			for o in self.ordenes:
+				if(o.sale_id.x_studio_field_bxHgp):
+					o.sale_id.x_studio_field_bxHgp.write({'stage_id':108})
+			self.env['registro.odometro'].sudo().create({'rel_vehiculo':self.vehiculo.id,'odometro':self.odometro,'nivel_tanque':self.nivel_tanque,'chofer':self.chofer}) 
+		else:
+			raise UserError(_('No se ha selaccionado ninguna orden'))
+
 	@api.model
 	def create(self, vals):
 		vals['name'] = self.env['ir.sequence'].next_by_code('ruta') or _('New')
