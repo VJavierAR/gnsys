@@ -76,7 +76,8 @@ class fac_order(models.Model):
                   proColor=0
                   proBNS=0
                   proColorS=0
-                  clickColor=0                  
+                  clickColor=0
+                  raise exceptions.ValidationError( str(perido) + ' ante '+ str(periodoAnterior) ) 
                   for k in p:
                         #poner las series id y hacer la resta
                       currentP=self.env['dcas.dcas'].search([('serie','=',k.id),('x_studio_field_no6Rb', '=', perido)])
