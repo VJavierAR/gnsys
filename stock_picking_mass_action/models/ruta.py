@@ -25,7 +25,7 @@ class CreacionRuta(Model):
 			for o in self.ordenes:
 				if(o.sale_id.x_studio_field_bxHgp):
 					o.sale_id.x_studio_field_bxHgp.write({'stage_id':108})
-			self.env['registro.odometro'].sudo().create({'rel_vehiculo':self.vehiculo.id,'odometro':self.odometro,'nivel_tanque':self.nivel_tanque,'chofer':self.chofer}) 
+			self.env['registro.odometro'].sudo().create({'rel_vehiculo':self.vehiculo.id,'odometro':self.odometro,'nivel_tanque':self.nivel_tanque,'chofer':self.chofer.id}) 
 		else:
 			raise UserError(_('No se ha selaccionado ninguna orden'))
 
