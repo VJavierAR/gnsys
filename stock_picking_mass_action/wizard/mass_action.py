@@ -97,3 +97,14 @@ class StockPickingMassAction(TransientModel):
                 return assigned_picking_lst.action_generate_backorder_wizard()
             assigned_picking_lst.sudo().action_done()
 
+class StockCambio(TransientModel):
+    _name = 'cambio.toner'
+    _description = 'Cambio toner'
+    pro_ids = fields.One2many('cambio.toner.line','rel_cambio')
+
+class StockCambioLine(TransientModel):
+    _name = 'cambio.toner.line'
+    _description = 'Lineas cambio toner'
+    producto1=fields.Many2one('product.product')
+    producto2=fields.Many2one('product.product')
+    rel_cambio=fields.Many2one('cambio.toner')

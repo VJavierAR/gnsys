@@ -289,6 +289,28 @@ class StockPicking(Model):
             'context': self.env.context,
         }
 
+    def cambio_wizard(self):
+    d=[]
+    wiz = self.env['cambio.toner'].create({'display_name':'h'})
+    for p in self.move_ids_without_package:
+        data={'rel_cambio':wiz.id,'producto1':p.product_id.id,'producto2':p.product_id.id}
+        self.env['cambio.toner.line'].create(data)
+        #d.append(data)
+    
+    view = self.env.ref('stock_picking_mass_action.view_cambio_toner_action_form')
+    return {
+        'name': _('xxxx'),
+        'type': 'ir.actions.act_window',
+        'view_type': 'form',
+        'view_mode': 'form',
+        'res_model': 'cambio.toner',
+        'views': [(view.id, 'form')],
+        'view_id': view.id,
+        'target': 'new',
+        'res_id': wiz.id,
+        'context': self.env.context,
+    }
+
 
 
     # @api.depends('move_type', 'move_lines.state', 'move_lines.picking_id')
