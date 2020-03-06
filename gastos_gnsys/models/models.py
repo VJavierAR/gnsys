@@ -106,5 +106,6 @@ class gastosEtapas(models.Model):
     _description = 'Etapas para los gastos'
     name = fields.Char(string='Nombre')
     
+    sequence = fields.Integer(string="Secuencia")
     gasto = fields.One2many('gastos', 'etapas', string="Gasto")
     

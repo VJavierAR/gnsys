@@ -79,6 +79,8 @@ class fac_order(models.Model):
                   proBNS=0
                   proColorS=0
                   clickColor=0                  
+                  bnp=0
+                  colorp=0  
                   for k in p:
                         #poner las series id y hacer la resta
                       currentP=self.env['dcas.dcas'].search([('serie','=',k.id),('x_studio_field_no6Rb', '=', perido)])
@@ -86,13 +88,13 @@ class fac_order(models.Model):
                       bnp=abs(int(currentP.contadorMono)-int(currentP.contadorMono))
                       colorp=abs(int(currentPA.contadorColor)-int(currentPA.contadorColor))                        
                       self.env['sale.order.detalle'].create({'saleOrder': sale.id
-                                                              , 'producto': k.product_id.display_name
-                                                               , 'serieEquipo': k.name
+                                                               ,'producto': k.product_id.display_name
+                                                               ,'serieEquipo': k.name
                                                                ,'locacion':k.x_studio_locacion_recortada
                                                                , 'ultimaLecturaBN': currentP.contadorMono
-                                                               , 'lecturaAnteriorBN': currentPA.contadorColor
+                                                               , 'lecturaAnteriorBN': currentPA.contadorMono
                                                                , 'paginasProcesadasBN': bnp
-                                                               , 'ultimaLecturaColor': currentP.contadorMono
+                                                               , 'ultimaLecturaColor': currentP.contadorColor
                                                                , 'lecturaAnteriorColor': currentPA.contadorColor
                                                                , 'paginasProcesadasColor': colorp
                                                               })                                    
