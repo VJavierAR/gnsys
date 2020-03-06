@@ -33,14 +33,15 @@ class StockPicking(Model):
     @api.onchange('x_studio_evidencia_a_ticket')
     def mandarTicket(self):
         if(self.sale_id.x_studio_field_bxHgp):
-            c = self.env['helpdesk.ticket'].search([('id','=',self.x_studio_idtempticket)]) 
-            c.write({'x_studio_evidencia_distribuidor': self.x_studio_evidencia_a_ticket})
+            self.sale_id.x_studio_field_bxHgp.sudo().write({'x_studio_evidencia_distribuidor': self.x_studio_evidencia_a_ticket})
+            #c = self.env['helpdesk.ticket'].search([('id','=',self.x_studio_idtempticket)]) 
+            #c.write({'x_studio_evidencia_distribuidor': self.x_studio_evidencia_a_ticket})
 
     @api.onchange('x_studio_comentario_1')
     def mandarTicket(self):
         if(self.sale_id.x_studio_field_bxHgp):
             #c = self.env['helpdesk.ticket'].search([('id','=',self.x_studio_idtempticket)])
-            self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : record.sale_id.x_studio_field_bxHgp.id, 'x_persona' : str(self.env.user.name), 'x_estado' : "Comentario", 'x_disgnostico':self.x_studio_comentario}) 
+            self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : self.sale_id.x_studio_field_bxHgp.id, 'x_persona' : str(self.env.user.name), 'x_estado' : "Comentario", 'x_disgnostico':self.x_studio_comentario}) 
             #c.write({'x_studio_evidencia_distribuidor': self.x_studio_evidencia_a_ticket})
 
     #@api.onchange('carrier_tracking_ref')
