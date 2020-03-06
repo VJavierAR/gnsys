@@ -106,7 +106,7 @@ class compras(models.Model):
                        productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
                        product={'product_id':productid.id,'product_qty':qty,'price_unit':g}
                        arr.append(product)
-                record['order_line']=arr
+                self.order_line=arr
             
 class comprasLine(models.Model):
     _inherit = 'purchase.order.line'
