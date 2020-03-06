@@ -4,6 +4,18 @@ import base64,io,csv
 import logging, ast
 import datetime
 _logger = logging.getLogger(__name__)
+
+
+def get_years():
+    year_list = []
+    for i in range(2010, 2036):
+       year_list.append((i, str(i)))
+    return year_list
+valores = [('01', 'Enero'), ('02', 'Febrero'), ('03', 'Marzo'), ('04', 'Abril'),
+                          ('05', 'Mayo'), ('06', 'Junio'), ('07', 'Julio'), ('08', 'Agosto'),
+                          ('09', 'Septiembre'), ('10', 'Octubre'), ('11', 'Noviembre'), ('12', 'Diciembre')]
+
+
 class dcas(models.Model):
     _name = 'dcas.dcas'
     _description ='DCAS'
@@ -36,7 +48,8 @@ class contadores(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _description = 'Contadores Cliente'
     name = fields.Char()
-    mes=fields.Selection(selection=[('1','Enero'),('2','Febrero'),('3','Marzo'),('4','Abril'),('5','Mayo'),('6','Junio'),('7','Julio'),('8','Agosto'),('9','Septiembre'),('10','Octubre'),('11','Noviembre'),('12','Diciembre')])
+    mes=fields.Selection(valores,string='Mes')
+    anio= fields.Selection(get_years(), string='Año')
     dca = fields.One2many('dcas.dcas',inverse_name='contador_id',string='DCAS')
     cliente = fields.Many2one('res.partner', store=True,string='Cliente')
     localidad=fields.Many2one('res.partner',store='True',string='Localidad')
