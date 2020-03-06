@@ -81,17 +81,17 @@ class fac_order(models.Model):
                         #poner las series id y hacer la resta
                       currentP=self.env['dcas.dcas'].search([('serie','=',k.id),('x_studio_field_no6Rb', '=', perido)])
                       currentPA=self.env['dcas.dcas'].search([('serie','=',k.id),('x_studio_field_no6Rb', '=', periodoAnterior)])                      
-                      bnp=abs(int(currentP.x_studio_ultimalecturam)-int(currentP.x_studio_lec_ant_bn))
-                      colorp=abs(int(currentPA.x_studio_ultimalecturacolor)-int(currentPA.x_studio_lec_ant_color))                        
+                      bnp=abs(int(currentP.contadorMono)-int(currentP.contadorMono))
+                      colorp=abs(int(currentPA.contadorColor)-int(currentPA.contadorColor))                        
                       self.env['sale.order.detalle'].create({'saleOrder': sale.id
                                                               , 'producto': k.product_id.display_name
                                                                , 'serieEquipo': k.name
                                                                ,'locacion':k.x_studio_locacion_recortada
-                                                               , 'ultimaLecturaBN': currentP.x_studio_ultimalecturam
-                                                               , 'lecturaAnteriorBN': currentPA.x_studio_lec_ant_bn
+                                                               , 'ultimaLecturaBN': currentP.contadorMono
+                                                               , 'lecturaAnteriorBN': currentPA.contadorColor
                                                                , 'paginasProcesadasBN': bnp
-                                                               , 'ultimaLecturaColor': currentP.x_studio_ultimalecturacolor
-                                                               , 'lecturaAnteriorColor': currentPA.x_studio_lec_ant_color
+                                                               , 'ultimaLecturaColor': currentP.contadorMono
+                                                               , 'lecturaAnteriorColor': currentPA.contadorColor
                                                                , 'paginasProcesadasColor': colorp
                                                               })                                    
                       if k.x_studio_color_bn=='B/N':
