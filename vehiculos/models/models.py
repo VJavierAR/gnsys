@@ -41,6 +41,11 @@ class Automovil(models.Model):
     caballos = fields.Integer()
     imagen = fields.Binary(related='modelo.imagen', string="Logo", readonly=False)
     valor_auto = fields.Float(string="Valor de catalogo (IVA Incl.)")
-
-
+    odometro_registro=fields.Many2one('registro.odometro','rel_vehiculo')
+class Odometro(model.Model):
+    _name='registro.odometro'
+    _description='Registro de Odometro'
+    odoometro=fields.Integer()
+    nivel_tanque=fields.Selection([["reserva","Reserva"],[".25","1/4"],[".5","1/2"],[".75","3/4"],["1","Lleno"]])
+    rel_vehiculo=fields.One2many('automovil')
 
