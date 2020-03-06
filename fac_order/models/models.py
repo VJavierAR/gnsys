@@ -46,9 +46,9 @@ class fac_order(models.Model):
             mesA=''
             anioA=''
             i=0
-            for f in valores:
-                raise exceptions.ValidationError( str(self.month) + ' ante '+ str(f[0]) ) 
+            for f in valores:                
                 if f[0]==str(self.month):
+                 raise exceptions.ValidationError( str(self.month) + ' ante '+ str(f[0]) )    
                  mesaA=str(valores[i-1][0])
                 i=i+1
 
