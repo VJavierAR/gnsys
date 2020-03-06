@@ -40,6 +40,7 @@ class gastos_gnsys(models.Model):
     #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     #Comprobo correctamentes
     comproboCorrectamente       = fields.Selection((('Exacto','Exacto'),('Parcial','Parcial'),('Excedido','Excedido')), string = "Tipo de comprobación",track_visibility='onchange')
+    requiereDevolucion          = fields.Selection((('Efectivo','Efectivo'), ('Descuento nómina','Descuento nómina')), string = "Forma de pago (Receptor)",track_visibility='onchange')
     #Excacto
     montoExacto                 = fields.Float(string = 'Monto a cubrir',track_visibility='onchange')
     #Parcial
