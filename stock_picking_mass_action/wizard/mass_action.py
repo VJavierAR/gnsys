@@ -96,10 +96,16 @@ class StockPickingMassAction(TransientModel):
                 #assigned_picking_lst.write({'backorder':''})
                 return assigned_picking_lst.action_generate_backorder_wizard()
             assigned_picking_lst.sudo().action_done()
-            return {
-            'type': 'ir.actions.report.xml',
-            'report_name': 'report_custom',
-            'datas': assigned_picking_lst,}
+            data = {
+                'ids': self.assigned_picking_lst,
+                'model': self._name,
+                #'form': {
+                ##    'date_start': self.date_start,
+                 #   'date_end': self.date_end,
+                #},
+            }
+            return self.env.ref('stock_picking_mass_action.report_custom').report_action(self, data=data)
+
 
 class StockCambio(TransientModel):
     _name = 'cambio.toner'
