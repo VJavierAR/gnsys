@@ -12,7 +12,7 @@ class gastos_gnsys(models.Model):
     _name = 'gastos'
     _description = 'gastos_gnsys'
     #xd
-    quienSolcita     = fields.Many2one('hr.employee', string = "Quien solita",track_visibility='onchange')
+    quienSolcita     = fields.Many2one('hr.employee', string = "Quien solicita",track_visibility='onchange')
     quienesAutorizan = fields.One2many('hr.employee', 'gastoAutoriza', string = "Quien (es) autorizan",track_visibility='onchange')
     quienesReciben   = fields.One2many('hr.employee', 'gastoRecibe', string = "Quien (es) reciben",track_visibility='onchange')
 
@@ -62,7 +62,7 @@ class gastos_gnsys(models.Model):
     formaDepagoExtendida    = fields.Selection((('Efectivo','Efectivo'), ('Cheque','Cheque'),('Depósito','Depósito'),('Transferencia','Transferencia')), string = "Forma de pago (Receptor)",track_visibility='onchange')
 
     fechaLimiteDePago       = fields.Datetime(string = 'Fecha límite de pago',track_visibility='onchange')
-    fechaDePago             = fields.Datetime(string = 'De pago',track_visibility='onchange')
+    fechaDePago             = fields.Datetime(string = 'Fecha de pago',track_visibility='onchange')
 
 
     #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -79,7 +79,10 @@ class gastos_gnsys(models.Model):
 
     #Si es por descuento por nómina 
     comoAplicaContablementeReceptorCubreAdicional = fields.Selection((('Opcion','Opcion'),('Opcion','Opcion'),('Opcion','Opcion')), string = "Como aplica contablemente",track_visibility='onchange')
-
+    
+    
+    etapas = fields.Many2one('gastos.etapa', string='Etapa', ondelete='restrict', track_visibility='onchange',readonly=True,copy=False,index=True)
+    productos = fields.One2many('product.product','id',string='Solicitudes',store=True)
 
 class motivos_gastos(models.Model):
     _name = 'motivos'
@@ -97,5 +100,11 @@ class empleados_gastos(models.Model):
     
     gastoAutoriza = fields.Many2one('gastos', string="Gasto autoriza")
     gastoRecibe = fields.Many2one('gastos', string="Gasto autoriza")
-
-        
+    
+class gastosEtapas(models.Model):
+    _name = 'gastos.etapa'
+    _description = 'Etapas para los gastos'
+    name = fields.Char(string='Nombre')
+    
+    gasto = fields.One2many('gastos', 'etapas', string="Gasto")
+    
