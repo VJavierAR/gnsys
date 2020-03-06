@@ -85,8 +85,8 @@ class fac_order(models.Model):
                         #poner las series id y hacer la resta
                       currentP=self.env['dcas.dcas'].search([('serie','=',k.id),('x_studio_field_no6Rb', '=', perido)])
                       currentPA=self.env['dcas.dcas'].search([('serie','=',k.id),('x_studio_field_no6Rb', '=', periodoAnterior)])                      
-                      bnp=abs(int(currentP.contadorMono)-int(currentP.contadorMono))
-                      colorp=abs(int(currentPA.contadorColor)-int(currentPA.contadorColor))                        
+                      bnp=abs(int(currentPA.contadorMono)-int(currentP.contadorMono))
+                      colorp=abs(int(currentPA.contadorColor)-int(currentP.contadorColor))                        
                       self.env['sale.order.detalle'].create({'saleOrder': sale.id
                                                                ,'producto': k.product_id.display_name
                                                                ,'serieEquipo': k.name
