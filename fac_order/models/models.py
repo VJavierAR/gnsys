@@ -82,7 +82,7 @@ class fac_order(models.Model):
                   bnp=0
                   colorp=0  
                   for k in p:
-                        #poner las series id y hacer la resta
+                        #poner las series id y hacer la resta 
                       currentP=self.env['dcas.dcas'].search([('serie','=',k.id),('x_studio_field_no6Rb', '=', perido)])
                       currentPA=self.env['dcas.dcas'].search([('serie','=',k.id),('x_studio_field_no6Rb', '=', periodoAnterior)])                      
                       bnp=abs(int(currentPA.contadorMono)-int(currentP.contadorMono))
