@@ -46,7 +46,7 @@ class Odometro(models.Model):
     _name='registro.odometro'
     _description='Registro de Odometro'
     chofer=fields.Many2one('hr.employee')
-    odoometro=fields.Integer()
+    odometro=fields.Integer()
     nivel_tanque=fields.Selection([["reserva","Reserva"],[".25","1/4"],[".5","1/2"],[".75","3/4"],["1","Lleno"]])
     rel_vehiculo=fields.Many2one('automovil')
 
