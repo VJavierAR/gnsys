@@ -102,7 +102,7 @@ class empleados_gastos(models.Model):
     gastoRecibe = fields.Many2one('gastos', string="Gasto autoriza")
     
 class gastosEtapas(models.Model):
-    _name = 'gastos.estapa'
+    _name = 'gastos.etapa'
     _description = 'Etapas para los gastos'
     name = fields.Char(string='Nombre')
     
