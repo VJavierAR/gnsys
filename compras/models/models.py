@@ -42,7 +42,7 @@ class compras(models.Model):
     @api.onchange('archivo')
     def factura(self):
         myCmd = 'pdftotext -fixed 5 hola.pdf test3.txt'
-        if(self.archivo and "konica" in self.partner_id.name.lower()):
+        if(self.archivo and ("konica" in self.partner_id.name.lower() or "kyocera" in self.partner_id.name.lower())):
             out = open("hola.pdf", "wb")
             f2=base64.b64decode(self.archivo)
             H=StringIO(f2)
@@ -83,7 +83,30 @@ class compras(models.Model):
                         productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
                         product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':cantidad,'price_unit':precio,'taxes_id':[10],'name':' '}
                 self.order_line=arreglo
-            
+            if f2.startswith(b'%PDF-1.4'):
+                string = f.read()
+                f.close()
+                b = re.split('\n',string)                    
+                i = 0
+                h=""
+                g=""
+                q=""
+                qty=""
+                arr=[]
+                for o in b:
+                    if('#' in o ):
+                       r = o.split("#")
+                       q = r[1].split(' ')[1]       
+                    if('Customer Pick' in o ):
+                       s = o.split("$")
+                       h=float(s[2])
+                       g=float(s[1].split(' ')[0])
+                       qty=round(h/g)
+                       template=self.env['product.template'].search([('default_code','=',q)])
+                       productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
+                       product={'product_id':productid.id,'product_qty':qty,'price_unit':g}
+                       arr.append(product)
+                record['order_line']=arr
             
 class comprasLine(models.Model):
     _inherit = 'purchase.order.line'
