@@ -14,23 +14,22 @@ def get_years():
     for i in range(2010, 2036):
        year_list.append((i, str(i)))
     return year_list
-
+valores = [('01', 'Enero'), ('02', 'Febrero'), ('03', 'Marzo'), ('04', 'Abril'),
+                          ('05', 'Mayo'), ('06', 'Junio'), ('07', 'Julio'), ('08', 'Agosto'),
+                          ('09', 'Septiembre'), ('10', 'Octubre'), ('11', 'Noviembre'), ('12', 'Diciembre')]
 
 class fac_order(models.Model):
       _inherit = 'sale.order'
 
       nameDos = fields.Char()
-      month = fields.Selection([('01', 'Enero'), ('02', 'Febrero'), ('03', 'Marzo'), ('04', 'Abril'),
-                          ('05', 'Mayo'), ('06', 'Junio'), ('07', 'Julio'), ('08', 'Agosto'), 
-                          ('09', 'Septiembre'), ('10', 'Octubre'), ('11', 'Noviembre'), ('12', 'Diciembre')], 
-                          string='Mes')
+      month = fields.Selection(valores,string='Mes')
       year = fields.Selection(get_years(), string='Año')
-                              
-      
-      
-      @api.multi 
+                             
+     
+     
+      @api.multi
       def llamado_boton(self):
-        for r in self:         
+        for r in self:        
           #
           list = ast.literal_eval(r.x_studio_contratosid)  
           ff=self.env['sale.subscription'].search([('x_studio_referencia_contrato.id', 'in',list)])                                            
@@ -42,7 +41,23 @@ class fac_order(models.Model):
             #h.append(m.id)
             sale=self.env['sale.order'].search([('name', '=', self.name)])
             sale.write({'x_studio_factura' : 'si'})
-            #
+            perido=r.x_studio_peridotmp
+            periodoAnterior=''
+            mesA=''
+            anioA=''
+            i=0
+            for r in valores:
+                if r[0]==str(self.month):
+                 mesaA=valores[i-1][0]
+                i=i+1
+
+            anios=get_years()
+            i=0
+            for e in anios:
+                if e[0]==int(self.year):
+                    anioA=anios[i-1][0])
+                i=i+1                                                                              
+            periodoAnterior= anioA+'-'+mesA
             for m in ff:              
                   p=self.env['stock.production.lot'].search([('x_studio_suscripcion', '=', m.id)])                  
                   procesadasColorTotal=0
@@ -63,26 +78,30 @@ class fac_order(models.Model):
                   proColorS=0
                   clickColor=0                  
                   for k in p:
+                        #poner las series id y hacer la resta
+                      currentP=self.env['dcas.dcas'].search([('serie','=',k.id),('x_studio_field_no6Rb', '=', perido)])
+                      currentPA=self.env['dcas.dcas'].search([('serie','=',k.id),('x_studio_field_no6Rb', '=', periodoAnterior)])                      
+                      bnp=abs(int(currentP.x_studio_ultimalecturam)-int(currentP.x_studio_lec_ant_bn))
+                      colorp=abs(int(currentPA.x_studio_ultimalecturacolor)-int(currentPA.x_studio_lec_ant_color))                        
                       self.env['sale.order.detalle'].create({'saleOrder': sale.id
                                                               , 'producto': k.product_id.display_name
                                                                , 'serieEquipo': k.name
                                                                ,'locacion':k.x_studio_locacion_recortada
-                                                               , 'ultimaLecturaBN': k.x_studio_ultimalecturam
-                                                               , 'lecturaAnteriorBN': k.x_studio_lec_ant_bn
-                                                               , 'paginasProcesadasBN': k.x_studio_pg_proc
-
-                                                               , 'ultimaLecturaColor': k.x_studio_ultimalecturacolor
-                                                               , 'lecturaAnteriorColor': k.x_studio_lec_ant_color
-                                                               , 'paginasProcesadasColor': k.x_studio_pg_proc_color
-                                                              })                                     
+                                                               , 'ultimaLecturaBN': currentP.x_studio_ultimalecturam
+                                                               , 'lecturaAnteriorBN': currentPA.x_studio_lec_ant_bn
+                                                               , 'paginasProcesadasBN': bnp
+                                                               , 'ultimaLecturaColor': currentP.x_studio_ultimalecturacolor
+                                                               , 'lecturaAnteriorColor': currentPA.x_studio_lec_ant_color
+                                                               , 'paginasProcesadasColor': colorp
+                                                              })                                    
                       if k.x_studio_color_bn=='B/N':
-                         procesadasColorBN=k.x_studio_pg_proc+procesadasColorBN                  
+                         procesadasColorBN=bnp+procesadasColorBN                  
                       if k.x_studio_color_bn=='Color':
-                        procesadasColorTotal=k.x_studio_pg_proc_color+procesadasColorTotal
-                        procesadasColorBN=k.x_studio_pg_proc+procesadasColorBN                                  
+                        procesadasColorTotal=colorp+procesadasColorTotal
+                        procesadasColorBN=bn+procesadasColorBN                                  
                       #g=self.env['sale.subscription.line'].search([('analytic_account_id', '=', m.id)])
-                      #raise exceptions.ValidationError( str(g) )                                   
-                  #Costo por página procesada BN o color 10742 o 10743             
+                      #raise exceptions.ValidationError( str(g) )                                  
+                  #Costo por página procesada BN o color 10742 o 10743            
                   #Renta base con páginas incluidas BN o color + pag. excedentes 10744 o 10745
                   #renta base + costo de página procesada BN o color 10756 o 10757
                   #Renta base + costo de página procesada BN o color  10748 o 10749
@@ -97,7 +116,7 @@ class fac_order(models.Model):
                       v.append(j.product_id.id)
 
                   vv=set(v)
-                  if 10740 in vv:                           
+                  if 10740 in vv:                          
                         for s in g:
                             pp=s.product_id.name
                             if pp=='Clic excedente monocromático':    
@@ -123,7 +142,7 @@ class fac_order(models.Model):
                         if procesadasColorTotal > bolsacolor:
                            self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serDOS,'product_uom_qty':abs(bolsacolor-procesadasColorTotal),'price_unit':eColor,'x_studio_bolsa':bolsacolor})                  
                   #xds aqui se divide la renta base y los axecentes se crean 2 facturas xD
-                  if 10742 in vv:                           
+                  if 10742 in vv:                          
                         for s in g:
                             pp=s.product_id.name
                             if pp=='Clic excedente monocromático':    
@@ -133,7 +152,7 @@ class fac_order(models.Model):
                             if pp=='Clic monocromática':
                                bolsabn=s.quantity
                                serUNO=s.product_id.id
-                               unidadpreciobn=s.price_unit                         
+                               unidadpreciobn=s.price_unit                        
                             if pp=='Clic color':
                                bolsacolor=s.quantity
                                serDOS=s.product_id.id
@@ -149,7 +168,7 @@ class fac_order(models.Model):
                               if j.x_studio_pg_proc_color > 0:
                                  self.env['sale.order.line'].create({'order_id': sale.id,'product_id':j.product_id.id,'product_uom_qty':j.x_studio_pg_proc_color,'price_unit':unidadprecioColor,'x_studio_bolsa':0.0})
 
-                  if 10744 in vv:                           
+                  if 10744 in vv:                          
                         for s in g:
                             pp=s.product_id.name
                             if pp=='Clic excedente monocromático':    
@@ -162,7 +181,7 @@ class fac_order(models.Model):
                             if pp=='Clic color':
                                bolsacolor=s.quantity
                                serDOS=s.product_id.id
-                            if s.price_subtotal>3.0:                         
+                            if s.price_subtotal>3.0:                        
                                serTRES=s.product_id.id
                                serTRESp=s.price_unit                                              
                         for j in p:
@@ -171,7 +190,7 @@ class fac_order(models.Model):
                                  self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serUNO,'product_uom_qty':abs(bolsabn-procesadasColorBN),'price_unit':eBN,'x_studio_bolsa':bolsabn})
                               if j.x_studio_pg_proc_color > bolsacolor:
                                  self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serDOS,'product_uom_qty':abs(bolsacolor-procesadasColorTotal),'price_unit':eColor,'x_studio_bolsa':bolsacolor})
-                  if 10749 in vv or 10748 in vv :                           
+                  if 10749 in vv or 10748 in vv :                          
                         for s in g:
                             pp=s.product_id.name
                             if pp=='Clic excedente monocromático':    
@@ -184,7 +203,7 @@ class fac_order(models.Model):
                             if pp=='Clic color':
                                bolsacolor=s.price_unit
                                serDOS=s.product_id.id
-                            if s.price_subtotal>3.0:                         
+                            if s.price_subtotal>3.0:                        
                                serTRES=s.product_id.id
                                serTRESp=s.price_unit                                              
                         for j in p:
@@ -194,7 +213,7 @@ class fac_order(models.Model):
                               if j.x_studio_pg_proc_color > 0:
                                  self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serDOS,'product_uom_qty':j.x_studio_pg_proc_color,'price_unit':bolsacolor,'x_studio_bolsa':0.0})
 
-                  if 10750 in vv:                           
+                  if 10750 in vv:                          
                         for s in g:
                             pp=s.product_id.name
                             if pp=='Clic excedente monocromático':    
@@ -222,7 +241,7 @@ class fac_order(models.Model):
                         if procesadasColorTotal>0:            
                            self.env['sale.order.line'].create({'order_id': sale.id,'product_id':proColorS,'product_uom_qty':procesadasColorTotal,'price_unit':proColor,'x_studio_bolsa':0.0})
 
-                  if 10759 in vv:                           
+                  if 10759 in vv:                          
                         for s in g:
                             pp=s.product_id.name
                             if pp=='Clic excedente monocromático':    
@@ -247,39 +266,39 @@ class fac_order(models.Model):
                            self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serUNO,'product_uom_qty':abs(bolsabn-procesadasColorBN),'price_unit':eBN,'x_studio_bolsa':bolsabn})                  
                         if procesadasColorTotal>0:            
                            self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serDOS,'product_uom_qty':procesadasColorTotal,'price_unit':clickColor,'x_studio_bolsa':0.0})
-                  if 10458 in vv:                           
-                        for s in g:                         
+                  if 10458 in vv:                          
+                        for s in g:                        
                             if s.price_subtotal>3.0:
                                serTRES=s.product_id.id
                                serTRESp=s.price_unit
                                self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serTRES,'product_uom_qty':1.0,'price_unit':serTRESp})                                                                          
                                          
-            
-                  
+           
+                 
       detalle =  fields.One2many('sale.order.detalle', 'saleOrder', string='Order Lines')
-                  
+                 
 class detalle(models.Model):
       _name = 'sale.order.detalle'
       _description = 'Detalle Orden'
-      
+     
       saleOrder = fields.Many2one('sale.order', string='Pedido de venta')
-      
+     
       serieEquipo = fields.Text(string="Serie")
       producto = fields.Text(string="Producto")
       locacion = fields.Text(string="Locación")
-      
+     
       ultimaLecturaBN = fields.Integer(string='Última lectura monocromatico')
       lecturaAnteriorBN = fields.Integer(string='Lectura anterior monocromatico')
       paginasProcesadasBN = fields.Integer(string='Páginas procesadas monocromatico')
-      
+     
       ultimaLecturaColor = fields.Integer(string='última lectura color')
       lecturaAnteriorColor = fields.Integer(string='Lectura anterior color')
       paginasProcesadasColor = fields.Integer(string='Páginas procesadas color')
-      
+     
       periodo = fields.Text(string="Periodo")
-      
-      
-      @api.multi 
+     
+     
+      @api.multi
       def probar(self):
         for r in self:                    
           f=len(r.x_studio_servicios_contratos)
@@ -303,4 +322,4 @@ class detalle(models.Model):
                                                          , 'ultimaLecturaColor': h.x_studio_ultimalecturacolor
                                                          , 'lecturaAnteriorColor': h.x_studio_lec_ant_color
                                                          , 'paginasProcesadasColor': h.x_studio_pg_proc_color
-                                                        })            
+                                                        })
