@@ -48,14 +48,14 @@ class fac_order(models.Model):
             i=0
             for r in valores:
                 if r[0]==str(self.month):
-                 mesaA=valores[i-1][0]
+                 mesaA=str(valores[i-1][0])
                 i=i+1
 
             anios=get_years()
             i=0
             for e in anios:
                 if e[0]==int(self.year):
-                    anioA=anios[i-1][0]
+                    anioA=str(anios[i-1][0])
                 i=i+1                                                                              
             periodoAnterior= anioA+'-'+mesA
             for m in ff:              
