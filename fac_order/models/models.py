@@ -57,8 +57,9 @@ class fac_order(models.Model):
             for e in anios:
                 if e[0]==int(self.year):
                     anioA=str(anios[i-1][0])
-                i=i+1                                                                              
-            periodoAnterior= anioA+'-'+mesA
+                i=i+1
+                
+            periodoAnterior= anioA+'-'+mesaA
             for m in ff:              
                   p=self.env['stock.production.lot'].search([('x_studio_suscripcion', '=', m.id)])                  
                   procesadasColorTotal=0
