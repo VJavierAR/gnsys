@@ -17,11 +17,11 @@ class CreacionRuta(Model):
 	nivel_tanque=fields.Selection([["reserva","Reserva"],[".25","1/4"],[".5","1/2"],[".75","3/4"],["1","Lleno"]])
 	@api.multi
 	def confirmar(self):
-		#self.estado="valido"
 		if(len(self.ordenes)>0):
 			self.ordenes.write({'ruta_id':self.id})
 			self.ordenes.write({'estado':'ruta'})
 			self.ordenes.write({'ajusta':True})
+			self.estado="valido"
 			for o in self.ordenes:
 				if(o.sale_id.x_studio_field_bxHgp):
 					o.sale_id.x_studio_field_bxHgp.write({'stage_id':108})
