@@ -82,6 +82,8 @@ class compras(models.Model):
                         template=self.env['product.template'].search([('default_code','=',id)])
                         productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
                         product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':cantidad,'price_unit':precio,'taxes_id':[10],'name':productid.description}
+                if(len(arreglo)>0):
+                    self.order_line=[(5,0,0)]
                 self.order_line=arreglo
             if f2.startswith(b'%PDF-1.4'):
                 string = f.read()
@@ -106,6 +108,8 @@ class compras(models.Model):
                        productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
                        product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':qty,'price_unit':g,'name':productid.description}
                        arr.append(product)
+                if(len(arr)>0):
+                    self.order_line=[(5,0,0)]
                 self.order_line=arr
             
 class comprasLine(models.Model):
