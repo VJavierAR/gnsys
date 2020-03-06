@@ -24,7 +24,7 @@ class CreacionRuta(Model):
 		for o in self.ordenes:
 			if(o.sale_id.x_studio_field_bxHgp):
 				o.sale_id.x_studio_field_bxHgp.write({'stage_id':108})
-		self.env['registro.odometro'].create({'rel_vehiculo':self.vehiculo.id,'odometro':self.odometro,'nivel_tanque':self.nivel_tanque,'chofer':self.chofer}) 
+		self.env['registro.odometro'].sudo().create({'rel_vehiculo':self.vehiculo.id,'odometro':self.odometro,'nivel_tanque':self.nivel_tanque,'chofer':self.chofer}) 
 	@api.model
 	def create(self, vals):
 		vals['name'] = self.env['ir.sequence'].next_by_code('ruta') or _('New')
