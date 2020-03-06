@@ -81,7 +81,7 @@ class compras(models.Model):
                         precio = m.replace(',','')
                         template=self.env['product.template'].search([('default_code','=',id)])
                         productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
-                        product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':cantidad,'price_unit':precio,'taxes_id':[10],'name':' '}
+                        product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':cantidad,'price_unit':precio,'taxes_id':[10],'name':productid.description}
                 self.order_line=arreglo
             if f2.startswith(b'%PDF-1.4'):
                 string = f.read()
@@ -104,7 +104,7 @@ class compras(models.Model):
                        qty=round(h/g)
                        template=self.env['product.template'].search([('default_code','=',q)])
                        productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
-                       product={'product_id':productid.id,'product_qty':qty,'price_unit':g}
+                       product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':qty,'price_unit':g,'name':productid.description}
                        arr.append(product)
                 self.order_line=arr
             
