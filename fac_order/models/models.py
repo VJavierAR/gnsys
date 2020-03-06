@@ -98,7 +98,7 @@ class fac_order(models.Model):
                          procesadasColorBN=bnp+procesadasColorBN                  
                       if k.x_studio_color_bn=='Color':
                         procesadasColorTotal=colorp+procesadasColorTotal
-                        procesadasColorBN=bn+procesadasColorBN                                  
+                        procesadasColorBN=bnp+procesadasColorBN                                  
                       #g=self.env['sale.subscription.line'].search([('analytic_account_id', '=', m.id)])
                       #raise exceptions.ValidationError( str(g) )                                  
                   #Costo por página procesada BN o color 10742 o 10743            
