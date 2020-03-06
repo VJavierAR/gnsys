@@ -59,8 +59,8 @@
                 <group>
                     <field name="pro_ids">
                         <tree editable="bottom">
-                        <field name="producto1"/>
-                        <field name="producto2"/>
+                        <field name="producto1" readonly="1" string="Registro Original"/>
+                        <field name="producto2" string="Registro a Cambiar"/>
                         </tree>
                     </field>
                 </group>

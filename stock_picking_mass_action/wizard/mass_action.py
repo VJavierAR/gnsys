@@ -100,6 +100,7 @@ class StockPickingMassAction(TransientModel):
 class StockCambio(TransientModel):
     _name = 'cambio.toner'
     _description = 'Cambio toner'
+    pick=fields.Many2one('stock.picking')
     pro_ids = fields.One2many('cambio.toner.line','rel_cambio')
 
 class StockCambioLine(TransientModel):
