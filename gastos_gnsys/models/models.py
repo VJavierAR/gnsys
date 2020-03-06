@@ -11,7 +11,7 @@ _logger = logging.getLogger(__name__)
 class gastos_gnsys(models.Model):
     _name = 'gastos'
     _description = 'gastos_gnsys'
-    #xd
+    
     quienSolcita     = fields.Many2one('hr.employee', string = "Quien solicita",track_visibility='onchange')
     quienesAutorizan = fields.One2many('hr.employee', 'gastoAutoriza', string = "Quien (es) autorizan",track_visibility='onchange')
     quienesReciben   = fields.One2many('hr.employee', 'gastoRecibe', string = "Quien (es) reciben",track_visibility='onchange')
@@ -38,24 +38,19 @@ class gastos_gnsys(models.Model):
     motivos                     = fields.One2many('motivos', 'gasto', string = "Motivos",track_visibility='onchange')
     
     #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
+    #Comprobo correctamentes
     comproboCorrectamente       = fields.Selection((('Exacto','Exacto'),('Parcial','Parcial'),('Excedido','Excedido')), string = "Tipo de comprobación",track_visibility='onchange')
-
-    requiereDevolucion          = fields.Selection((('Efectivo','Efectivo'),('Descuento nómina','Descuento nómina')), string = "¿Requiere devolución?",track_visibility='onchange')
-
-    #En caso de que sea por efectivo o excacto
-    #Parcial
+    #Excacto
     montoExacto                 = fields.Float(string = 'Monto a cubrir',track_visibility='onchange')
-    montoParcial                 = fields.Float(string = 'Monto a cubrir',track_visibility='onchange')
-    #En caso de que sea por efectivo o por nomina
-    comoAplicaContablementeRequerimeintoDevolucion  = fields.Selection((('Opcion','Opcion'),('Opcion','Opcion'),('Opcion','Opcion')), string = "Como aplica contablemente",track_visibility='onchange')
-
-
-    #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
+    #Parcial
+    montoParcial                = fields.Float(string = 'Monto a cubrir',track_visibility='onchange')
+        #Parcial Efectivo
+    aplicacionContaEfecParcial  = fields.Selection((('Opcion','Opcion'),('Opcion','Opcion'),('Opcion','Opcion')), string = "Como aplica contablemente",track_visibility='onchange')
+    fechaLimDevEfecParcial      = fields.Datetime(string = 'Fecha límite devolución',track_visibility='onchange')
+        #Parcial Nomina
+    aplicacionContaEfecParcial  = fields.Selection((('Opcion','Opcion'),('Opcion','Opcion'),('Opcion','Opcion')), string = "Como aplica contablemente",track_visibility='onchange')
+    montoExtendido              = fields.Float(string = 'Monto a cubrir',track_visibility='onchange')
     #En caso de que la devolucion sea excendida
-
     formaDepago = fields.Selection((('¿La empresa cubre adicional? ¿Cuánto?','¿La empresa cubre adicional? ¿Cuánto?'), ('¿Receptor cubre adicional?','¿Receptor cubre adicional?')), string = "Forma de pago (Receptor)",track_visibility='onchange')
     #La empresa cubre lo adicional ¿La empresa cubre adicional? ¿Cuánto?
     #Forma en que caso de que la empresa cubra lo adicional
@@ -63,24 +58,21 @@ class gastos_gnsys(models.Model):
 
     fechaLimiteDePago       = fields.Datetime(string = 'Fecha límite de pago',track_visibility='onchange')
     fechaDePago             = fields.Datetime(string = 'Fecha de pago',track_visibility='onchange')
-
-
     #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
     montoCubrirAdicional    = fields.Float(string = 'Monto a cubrir donde el receptor cubre adicional',track_visibility='onchange')
-
     formaDeCobroAdicional   = fields.Selection((('Efectivo','Efectivo'), ('Descuento nómina','Descuento nómina')), string = "Forma de pago (Receptor)",track_visibility='onchange')
-
     #Si es por efectivo
     comoAplicaContablementeEfectivo    = fields.Selection((('Opcion','Opcion'),('Opcion','Opcion'),('Opcion','Opcion')), string = "Como aplica contablemente",track_visibility='onchange')
-
     fechaLimiteDeReceptor   = fields.Datetime(string = 'Fecha límite devolución',track_visibility='onchange')
-
     #Si es por descuento por nómina 
     comoAplicaContablementeReceptorCubreAdicional = fields.Selection((('Opcion','Opcion'),('Opcion','Opcion'),('Opcion','Opcion')), string = "Como aplica contablemente",track_visibility='onchange')
-    
-    
+     #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    #************************************************************
+    tipoDevolucionSinComprobacion               = fields.Selection((('Efectivo','Efectivo'), ('Descuento nómina','Descuento nómina')), string = "Forma de pago (Receptor)",track_visibility='onchange')
+    aplicacionContableDevolucionEfectivo        = fields.Selection((('Opcion','Opcion'),('Opcion','Opcion'),('Opcion','Opcion')), string = "Como aplica contablemente",track_visibility='onchange')
+    fechaLimiteDevEfectivo                      = fields.Datetime(string = 'Fecha límite devolución',track_visibility='onchange')
+    fechaLimiteDevNomina                        = fields.Datetime(string = 'Fecha límite devolución',track_visibility='onchange')
+    #************************************************************
     etapas = fields.Many2one('gastos.etapa', string='Etapa', ondelete='restrict', track_visibility='onchange',readonly=True,copy=False,index=True)
     productos = fields.One2many('product.product','id',string='Solicitudes',store=True)
 
@@ -108,4 +100,3 @@ class gastosEtapas(models.Model):
     
     sequence = fields.Integer(string="Secuencia")
     gasto = fields.One2many('gastos', 'etapas', string="Gasto")
-    
