@@ -46,8 +46,9 @@ class fac_order(models.Model):
             mesA=''
             anioA=''
             i=0
-            for r in valores:
-                if r[0]==str(self.month):
+            for f in valores:
+                raise exceptions.ValidationError( str(self.month) + ' ante '+ str(f[0]) ) 
+                if f[0]==str(self.month):
                  mesaA=str(valores[i-1][0])
                 i=i+1
 
@@ -76,8 +77,7 @@ class fac_order(models.Model):
                   proColor=0
                   proBNS=0
                   proColorS=0
-                  clickColor=0
-                  raise exceptions.ValidationError( str(perido) + ' ante '+ str(periodoAnterior) ) 
+                  clickColor=0                  
                   for k in p:
                         #poner las series id y hacer la resta
                       currentP=self.env['dcas.dcas'].search([('serie','=',k.id),('x_studio_field_no6Rb', '=', perido)])
