@@ -57,7 +57,6 @@ class contadores(models.Model):
     estado=fields.Selection(selection=[('Abierto', 'Abierto'),('Incompleto', 'Incompleto'),('Valido','Valido')],widget="statusbar", default='Abierto')  
     dom=fields.Char(readonly="1",invisible="1")
     order_line = fields.One2many('contadores.lines','ticket',string='Order Lines')
-    detalle =  fields.One2many('contadores.contadores.detalle', 'contadores', string='Contadores')
     
 
     
@@ -132,7 +131,8 @@ class contadores(models.Model):
         f.close()
                         #record.dca.search([['serial.name','=',dat[3]]])
 
-       
+        detalle =  fields.One2many('contadores.contadores.detalle', 'contadores', string='Contadores')
+   
 
     
 class detalle(models.Model):
