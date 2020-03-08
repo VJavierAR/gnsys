@@ -131,7 +131,7 @@ class contadores(models.Model):
         f.close()
                         #record.dca.search([['serial.name','=',dat[3]]])
 
-        detalle =  fields.One2many('contadores.contadores.detalle', 'contadores', string='Contadores')
+    detalle =  fields.One2many('contadores.contadores.detalle', 'contadores', string='Contadores')
    
 
     
