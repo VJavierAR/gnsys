@@ -69,7 +69,7 @@ class contadores(models.Model):
     
     @api.onchange('mes')
     def onchange_place(self):
-        perido=str(anio)+'-'+str(mes)
+        perido=str(self.anio)+'-'+str(self.mes)
         periodoAnterior=''
         mesA=''
         anioA=''
