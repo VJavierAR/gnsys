@@ -20,11 +20,11 @@ class servicios_gnsys(models.Model):
     rentaMensual = fields.Text(string="Renta mensual")
 
     bolsaBN = fields.Integer(string="Bolsa B/N")
-    clickExcedenteBN = fields.Integer(string="Click excedente B/N")
+    clickExcedenteBN = fields.Float(string="Click excedente B/N")
     procesadoBN = fields.Integer(string="Procesado B/N")
 
     bolsaColor = fields.Integer(string="Bolsa color")
-    clickExcedenteColor = fields.Integer(string="Click excedente color")
+    clickExcedenteColor = fields.Float(string="Click excedente color")
     procesadoColor = fields.Integer(string="Procesado color")
     
     series = fields.One2many('stock.production.lot', 'servicio', string="Series")
