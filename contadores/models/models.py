@@ -84,26 +84,25 @@ class contadores(models.Model):
             if e[0]==int(self.anio):
                anioA=str(anios[i-1][0])
                i=i+1                
-        periodoAnterior= anioA+'-'+mesaA
-        currentP=self.env['dcas.dcas'].search([('x_studio_ultima_ubicacin','=ilike',self.cliente.name),('x_studio_field_no6Rb', '=', perido)])
-        currentPA=self.env['dcas.dcas'].search([('x_studio_ultima_ubicacin','=ilike',self.cliente.name),('x_studio_field_no6Rb', '=', periodoAnterior)])
-        asd=len(currentP)
-        c=0
+        periodoAnterior= anioA+'-'+mesaA              
+        asd=self.env['stock.production.lot'].search([('x_studio_ultima_ubicacin','=ilike',self.cliente.name)])
         for a in asd:
+            currentP=self.env['dcas.dcas'].search([('serie','=',a.id),('x_studio_field_no6Rb', '=', perido)])
+            currentPA=self.env['dcas.dcas'].search([('serie','=',a.id),('x_studio_field_no6Rb', '=', periodoAnterior)])
             self.env['contadores.contadores.detalle'].create({'contadores': self.id
-                                                   ,'producto': currentP[c].product_id.display_name
-                                                   ,'serieEquipo': currentP[c].name
+                                                   ,'producto': currentP.product_id.display_name
+                                                   ,'serieEquipo': currentP.name
                                                    #,'locacion':currentP.x_studio_locacion_recortada
                                                    ,  'periodo':perido                                                              
-                                                   , 'ultimaLecturaBN': currentP[c].contadorMono
-                                                   , 'lecturaAnteriorBN': currentPA[c].contadorMono
+                                                   , 'ultimaLecturaBN': currentP.contadorMono
+                                                   , 'lecturaAnteriorBN': currentPA.contadorMono
                                                    #, 'paginasProcesadasBN': bnp                                                   
                                                    ,  'periodoA':periodoAnterior            
-                                                   , 'ultimaLecturaColor': currentP[c].contadorColor
-                                                   , 'lecturaAnteriorColor': currentPA[c].contadorColor                                                             
+                                                   , 'ultimaLecturaColor': currentP.contadorColor
+                                                   , 'lecturaAnteriorColor': currentPA.contadorColor                                                             
                                                    #, 'paginasProcesadasColor': colorp
                                                    })
-            c=c+1
+        
             
             
 
