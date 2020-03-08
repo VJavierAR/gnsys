@@ -68,7 +68,7 @@ class contadores(models.Model):
     
     @api.onchange('mes')
     def onchange_place(self):
-        if self.mes and self.anio and self.id:
+        if self.anio:
             perido=str(self.anio)+'-'+str(self.mes)
             periodoAnterior=''
             mesA=''
