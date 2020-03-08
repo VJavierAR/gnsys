@@ -57,7 +57,7 @@ class contadores(models.Model):
     estado=fields.Selection(selection=[('Abierto', 'Abierto'),('Incompleto', 'Incompleto'),('Valido','Valido')],widget="statusbar", default='Abierto')  
     dom=fields.Char(readonly="1",invisible="1")
     order_line = fields.One2many('contadores.lines','ticket',string='Order Lines')
-    detalle =  fields.One2many('contatores.contatores.detalle', 'contadores', string='Contadores')
+    detalle =  fields.One2many('contadores.contadores.detalle', 'contadores', string='Contadores')
     
 
     
@@ -89,7 +89,7 @@ class contadores(models.Model):
         currentPA=self.env['dcas.dcas'].search([('x_studio_ultima_ubicacin','=',self.cliente.name),('x_studio_field_no6Rb', '=', periodoAnterior)])
         
         for a in currentPA:
-            self.env['contadores.lines'].create({'ticket': self.id
+            self.env['contadores.contadores.detalle'].create({'ticket': self.id
                                                    ,'producto': k.product_id.display_name
                                                    ,'serieEquipo': k.name
                                                    ,'locacion':k.x_studio_locacion_recortada
@@ -130,7 +130,7 @@ class contadores(models.Model):
 
     
 class detalle(models.Model):
-      _name = 'contatores.contadores.detalle'
+      _name = 'contadores.contadores.detalle'
       _description = 'Detalle Contadores'
      
       contadores = fields.Many2one('contadores.contadores', string='Detalle de contadores')
