@@ -57,6 +57,8 @@ class contadores(models.Model):
     estado=fields.Selection(selection=[('Abierto', 'Abierto'),('Incompleto', 'Incompleto'),('Valido','Valido')],widget="statusbar", default='Abierto')  
     dom=fields.Char(readonly="1",invisible="1")
     order_line = fields.One2many('contadores.lines','ticket',string='Order Lines')
+    detalle =  fields.One2many('contatores.contatores.detalle', 'contadores', string='Contadores')
+    
 
     
     @api.onchange('serie_aux')
@@ -65,22 +67,40 @@ class contadores(models.Model):
         
     
     
-    @api.onchange('cliente')
+    #@api.onchange('mes')
     def onchange_place(self):
-        self.order_line=[(5,0,0)]
-        res = {}
-        d=[]
-        if(self.cliente):
-            #lotes=self.env['stock.production.lot'].search([['x_studio_ubicaciontest', '=' ,self.cliente.name]])
-            self.env.cr.execute("Select id from stock_production_lot where x_studio_ultima_ubicacin like'"+self.cliente.name+"%';")
-            lotes= self.env.cr.fetchall()
-            for l in lotes:
-                #if(l.x_studio_ultima_ubicacin == self.cliente.name):
-                datos={}
-                datos['serie']=l
-                d.append(datos)            
-            self.order_line=d
-        #return res
+        perido=str(anio)+'-'+str(mes)
+        periodoAnterior=''
+        mesA=''
+        anioA=''
+        i=0
+        for f in valores:                
+            if f[0]==str(self.mes):                
+               mesaA=str(valores[i-1][0])
+               i=i+1
+        anios=get_years()
+        i=0
+        for e in anios:
+            if e[0]==int(self.anio):
+               anioA=str(anios[i-1][0])
+               i=i+1                
+        periodoAnterior= anioA+'-'+mesaA
+        currentP=self.env['dcas.dcas'].search([('x_studio_ultima_ubicacin','=',self.cliente.name),('x_studio_field_no6Rb', '=', perido)])
+        currentPA=self.env['dcas.dcas'].search([('x_studio_ultima_ubicacin','=',self.cliente.name),('x_studio_field_no6Rb', '=', periodoAnterior)])
+        
+        for a in currentPA:
+            self.env['contadores.lines'].create({'ticket': self.id
+                                                   ,'producto': k.product_id.display_name
+                                                   ,'serieEquipo': k.name
+                                                   ,'locacion':k.x_studio_locacion_recortada
+                                                   , 'ultimaLecturaBN': currentP.contadorMono
+                                                   , 'lecturaAnteriorBN': currentPA.contadorMono
+                                                   , 'paginasProcesadasBN': bnp
+                                                   , 'ultimaLecturaColor': currentP.contadorColor
+                                                   , 'lecturaAnteriorColor': currentPA.contadorColor
+                                                   , 'paginasProcesadasColor': colorp
+                                                   })            
+            
 
 
     @api.onchange('archivo')
@@ -107,6 +127,31 @@ class contadores(models.Model):
                         #record.dca.search([['serial.name','=',dat[3]]])
 
        
+
+    
+class detalle(models.Model):
+      _name = 'contatores.contadores.detalle'
+      _description = 'Detalle Contadores'
+     
+      contadores = fields.Many2one('contadores.contadores', string='Detalle de contadores')
+     
+      serieEquipo = fields.Text(string="Serie")
+      producto = fields.Text(string="Producto")
+      locacion = fields.Text(string="Locación")
+     
+      ultimaLecturaBN = fields.Integer(string='Última lectura monocromatico')
+      lecturaAnteriorBN = fields.Integer(string='Lectura anterior monocromatico')
+      paginasProcesadasBN = fields.Integer(string='Páginas procesadas monocromatico')
+     
+      ultimaLecturaColor = fields.Integer(string='última lectura color')
+      lecturaAnteriorColor = fields.Integer(string='Lectura anterior color')
+      paginasProcesadasColor = fields.Integer(string='Páginas procesadas color')
+     
+      periodo = fields.Text(string="Periodo")
+      periodoA = fields.Text(string="Periodo Anterior")    
+
+    
+    
     
 class contadores_lines(models.Model):
     _name="contadores.lines"
@@ -123,7 +168,7 @@ class contadores_lines(models.Model):
     mes=fields.Integer()
     pagina=fields.Binary('Pagina de Estado')
     
-    @api.depends('serie')
+    #@api.depends('serie')
     def ultimoContador(self):
         fecha=datetime.datetime.now()
         for record in self:
