@@ -89,12 +89,12 @@ class contadores(models.Model):
             periodoAnterior= anioA+'-'+mesaA              
             asd=self.env['stock.production.lot'].search([('x_studio_ubicaciontest','=',self.cliente.name)])
             #raise Warning('notihng to show xD '+str(self.cliente.name))
-            id=int(self.id)
+            #id=int(self.id)
             for a in asd:
                 currentP=self.env['dcas.dcas'].search([('serie','=',a.id),('x_studio_field_no6Rb', '=', perido)])
                 currentPA=self.env['dcas.dcas'].search([('serie','=',a.id),('x_studio_field_no6Rb', '=', periodoAnterior)])
-                raise exceptions.ValidationError("q onda xd"+str(self.id)+' id  '+str(id))                     
-                rr=self.env['contadores.contadores.detalle'].create({'contadores': id
+                #raise exceptions.ValidationError("q onda xd"+str(self.id)+' id  '+str(id))                     
+                rr=self.env['contadores.contadores.detalle'].create({'contadores': 14
                                                        #,'producto': currentP.product_id.display_name
                                                        ,'serieEquipo': a.name
                                                        #,'locacion':currentP.x_studio_locacion_recortada
@@ -107,7 +107,7 @@ class contadores(models.Model):
                                                        , 'lecturaAnteriorColor': currentPA.contadorColor                                                             
                                                        #, 'paginasProcesadasColor': colorp
                                                        })
-                rr.write({'contadores':id})
+                #rr.write({'contadores':id})
             
         
             
