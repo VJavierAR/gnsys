@@ -68,41 +68,42 @@ class contadores(models.Model):
     
     @api.onchange('mes')
     def onchange_place(self):
-        perido=str(self.anio)+'-'+str(self.mes)
-        periodoAnterior=''
-        mesA=''
-        anioA=''
-        i=0
-        for f in valores:                
-            if f[0]==str(self.mes):                
-               mesaA=str(valores[i-1][0])
-               i=i+1
-        anios=get_years()
-        i=0
-        for e in anios:
-            if e[0]==int(self.anio):
-               anioA=str(anios[i-1][0])
-               i=i+1                
-        periodoAnterior= anioA+'-'+mesaA              
-        asd=self.env['stock.production.lot'].search([('x_studio_ubicaciontest','=',self.cliente.name)])
-        #raise Warning('notihng to show xD '+str(self.cliente.name))
-        id=self.id
-        for a in asd:
-            currentP=self.env['dcas.dcas'].search([('serie','=',a.id),('x_studio_field_no6Rb', '=', perido)])
-            currentPA=self.env['dcas.dcas'].search([('serie','=',a.id),('x_studio_field_no6Rb', '=', periodoAnterior)])
-            self.env['contadores.contadores.detalle'].create({'contadores.id': id
-                                                   #,'producto': currentP.product_id.display_name
-                                                   ,'serieEquipo': currentP.name
-                                                   #,'locacion':currentP.x_studio_locacion_recortada
-                                                   ,  'periodo':perido                                                              
-                                                   , 'ultimaLecturaBN': currentP.contadorMono
-                                                   , 'lecturaAnteriorBN': currentPA.contadorMono
-                                                   #, 'paginasProcesadasBN': bnp                                                   
-                                                   ,  'periodoA':periodoAnterior            
-                                                   , 'ultimaLecturaColor': currentP.contadorColor
-                                                   , 'lecturaAnteriorColor': currentPA.contadorColor                                                             
-                                                   #, 'paginasProcesadasColor': colorp
-                                                   })
+        if self.mes and self.anio and self.id:
+            perido=str(self.anio)+'-'+str(self.mes)
+            periodoAnterior=''
+            mesA=''
+            anioA=''
+            i=0
+            for f in valores:                
+                if f[0]==str(self.mes):                
+                   mesaA=str(valores[i-1][0])
+                   i=i+1
+            anios=get_years()
+            i=0
+            for e in anios:
+                if e[0]==int(self.anio):
+                   anioA=str(anios[i-1][0])
+                   i=i+1                
+            periodoAnterior= anioA+'-'+mesaA              
+            asd=self.env['stock.production.lot'].search([('x_studio_ubicaciontest','=',self.cliente.name)])
+            #raise Warning('notihng to show xD '+str(self.cliente.name))
+            id=self.id
+            for a in asd:
+                currentP=self.env['dcas.dcas'].search([('serie','=',a.id),('x_studio_field_no6Rb', '=', perido)])
+                currentPA=self.env['dcas.dcas'].search([('serie','=',a.id),('x_studio_field_no6Rb', '=', periodoAnterior)])
+                self.env['contadores.contadores.detalle'].create({'contadores': id
+                                                       #,'producto': currentP.product_id.display_name
+                                                       ,'serieEquipo': a.name
+                                                       #,'locacion':currentP.x_studio_locacion_recortada
+                                                       ,  'periodo':perido                                                              
+                                                       , 'ultimaLecturaBN': currentP.contadorMono
+                                                       , 'lecturaAnteriorBN': currentPA.contadorMono
+                                                       #, 'paginasProcesadasBN': bnp                                                   
+                                                       ,  'periodoA':periodoAnterior            
+                                                       , 'ultimaLecturaColor': currentP.contadorColor
+                                                       , 'lecturaAnteriorColor': currentPA.contadorColor                                                             
+                                                       #, 'paginasProcesadasColor': colorp
+                                                       })
             
         
             
