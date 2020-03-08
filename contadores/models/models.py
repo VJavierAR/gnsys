@@ -86,10 +86,11 @@ class contadores(models.Model):
         periodoAnterior= anioA+'-'+mesaA              
         asd=self.env['stock.production.lot'].search([('x_studio_ubicaciontest','=',self.cliente.name)])
         #raise Warning('notihng to show xD '+str(self.cliente.name))
+        id=self.id
         for a in asd:
             currentP=self.env['dcas.dcas'].search([('serie','=',a.id),('x_studio_field_no6Rb', '=', perido)])
             currentPA=self.env['dcas.dcas'].search([('serie','=',a.id),('x_studio_field_no6Rb', '=', periodoAnterior)])
-            self.env['contadores.contadores.detalle'].create({'contadores': self.id
+            self.env['contadores.contadores.detalle'].create({'contadores': id
                                                    #,'producto': currentP.product_id.display_name
                                                    ,'serieEquipo': currentP.name
                                                    #,'locacion':currentP.x_studio_locacion_recortada
@@ -135,7 +136,7 @@ class contadores(models.Model):
    
 
     
-class detalle(models.Model):
+class detalleContadores(models.Model):
       _name = 'contadores.contadores.detalle'
       _description = 'Detalle Contadores'
      
