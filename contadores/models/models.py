@@ -67,7 +67,7 @@ class contadores(models.Model):
         
     
     
-    #@api.onchange('mes')
+    @api.onchange('mes')
     def onchange_place(self):
         perido=str(anio)+'-'+str(mes)
         periodoAnterior=''
@@ -85,21 +85,26 @@ class contadores(models.Model):
                anioA=str(anios[i-1][0])
                i=i+1                
         periodoAnterior= anioA+'-'+mesaA
-        currentP=self.env['dcas.dcas'].search([('x_studio_ultima_ubicacin','=',self.cliente.name),('x_studio_field_no6Rb', '=', perido)])
-        currentPA=self.env['dcas.dcas'].search([('x_studio_ultima_ubicacin','=',self.cliente.name),('x_studio_field_no6Rb', '=', periodoAnterior)])
-        
-        for a in currentPA:
-            self.env['contadores.contadores.detalle'].create({'ticket': self.id
-                                                   ,'producto': k.product_id.display_name
-                                                   ,'serieEquipo': k.name
-                                                   ,'locacion':k.x_studio_locacion_recortada
-                                                   , 'ultimaLecturaBN': currentP.contadorMono
-                                                   , 'lecturaAnteriorBN': currentPA.contadorMono
-                                                   , 'paginasProcesadasBN': bnp
-                                                   , 'ultimaLecturaColor': currentP.contadorColor
-                                                   , 'lecturaAnteriorColor': currentPA.contadorColor
-                                                   , 'paginasProcesadasColor': colorp
-                                                   })            
+        currentP=self.env['dcas.dcas'].search([('x_studio_ultima_ubicacin','=ilike',self.cliente.name),('x_studio_field_no6Rb', '=', perido)])
+        currentPA=self.env['dcas.dcas'].search([('x_studio_ultima_ubicacin','=ilike',self.cliente.name),('x_studio_field_no6Rb', '=', periodoAnterior)])
+        asd=len(currentP)
+        c=0
+        for a in asd:
+            self.env['contadores.contadores.detalle'].create({'contadores': self.id
+                                                   ,'producto': currentP[c].product_id.display_name
+                                                   ,'serieEquipo': currentP[c].name
+                                                   #,'locacion':currentP.x_studio_locacion_recortada
+                                                   ,  'periodo':perido                                                              
+                                                   , 'ultimaLecturaBN': currentP[c].contadorMono
+                                                   , 'lecturaAnteriorBN': currentPA[c].contadorMono
+                                                   #, 'paginasProcesadasBN': bnp                                                   
+                                                   ,  'periodoA':periodoAnterior            
+                                                   , 'ultimaLecturaColor': currentP[c].contadorColor
+                                                   , 'lecturaAnteriorColor': currentPA[c].contadorColor                                                             
+                                                   #, 'paginasProcesadasColor': colorp
+                                                   })
+            c=c+1
+            
             
 
 
