@@ -62,7 +62,7 @@ class contadores(models.Model):
     
 
     
-    @api.onchange('serie_aux')
+    #@api.onchange('serie_aux')
     def getid(self):
         self.serie=self.env['stock.production.lot'].search([['name','=',self.serie_aux]]).id
         
@@ -114,7 +114,7 @@ class contadores(models.Model):
             
 
 
-    @api.onchange('archivo')
+    #@api.onchange('archivo')
     def onchange_archiv(self):
         f=open('1.txt','w')
         for record in self:
