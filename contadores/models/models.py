@@ -90,7 +90,7 @@ class contadores(models.Model):
         for a in asd:
             currentP=self.env['dcas.dcas'].search([('serie','=',a.id),('x_studio_field_no6Rb', '=', perido)])
             currentPA=self.env['dcas.dcas'].search([('serie','=',a.id),('x_studio_field_no6Rb', '=', periodoAnterior)])
-            self.env['contadores.contadores.detalle'].create({'contadores': id
+            self.env['contadores.contadores.detalle'].create({'contadores.id': id
                                                    #,'producto': currentP.product_id.display_name
                                                    ,'serieEquipo': currentP.name
                                                    #,'locacion':currentP.x_studio_locacion_recortada
