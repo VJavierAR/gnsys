@@ -94,7 +94,7 @@ class contadores(models.Model):
                 currentP=self.env['dcas.dcas'].search([('serie','=',a.id),('x_studio_field_no6Rb', '=', perido)])
                 currentPA=self.env['dcas.dcas'].search([('serie','=',a.id),('x_studio_field_no6Rb', '=', periodoAnterior)])
                 #raise exceptions.ValidationError("q onda xd"+str(self.id)+' id  '+str(id))                     
-                rr=self.env['contadores.contadores.detalle'].create({'contadores': 14
+                rr=self.env['contadores.contadores.detalle'].create({'contadores': self.x_studio_tmpbyte
                                                        #,'producto': currentP.product_id.display_name
                                                        ,'serieEquipo': a.name
                                                        #,'locacion':currentP.x_studio_locacion_recortada
