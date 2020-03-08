@@ -86,7 +86,7 @@ class contadores(models.Model):
                i=i+1                
         periodoAnterior= anioA+'-'+mesaA              
         asd=self.env['stock.production.lot'].search([('x_studio_ubicaciontest','=',self.cliente.name)])
-        raise Warning('notihng to show xD '+str(self.cliente.name))
+        #raise Warning('notihng to show xD '+str(self.cliente.name))
         for a in asd:
             currentP=self.env['dcas.dcas'].search([('serie','=',a.id),('x_studio_field_no6Rb', '=', perido)])
             currentPA=self.env['dcas.dcas'].search([('serie','=',a.id),('x_studio_field_no6Rb', '=', periodoAnterior)])
