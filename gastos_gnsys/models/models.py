@@ -88,7 +88,13 @@ class gastos_gnsys(models.Model):
     tipoDeComprobacion = fields.Selection([('Exacto','Exacto'), ('Parcial','Parcial'), ('Excedido','Excedido'), ('noComprobado','No se comprobo correctamente')], string = "Tipo de comprobaci√≥n", track_visibility='onchange')
     quienValidaMonto = fields.Char(string = "Gasto comprobado por", track_visibility='onchange')
     
+    diasAtrasoPago = fields.Integer(compute='computarDiasAtrasoPago',string='DÌas de atraso del pago')
 
+    def computarDiasAtrasoPago(self):
+        for rec in self:
+            fecha = str(rec.create_date).split(' ')[0]
+            converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
+            rec.diasAtrasoPago = (datetime.date.today() - converted_date).days
     
     @api.multi
     def validarGasto(self):
