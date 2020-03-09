@@ -76,7 +76,7 @@ class contadores(models.Model):
                                              ,'contadorMono':r.ultimaLecturaBN
                                              ,'fuente':'dcas.dcas'
                                              ,'x_studio_field_no6Rb':str(self.anio)+'-'+str(self.mes)
-                                             ,'x_studio_fecha_texto_anio':str(self.mes[1])+' de '+str(self.anio)
+                                             ,'x_studio_fecha_texto_anio':str(self.mes[0])+' de '+str(self.anio)
                                             })
         
     
