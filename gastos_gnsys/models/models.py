@@ -84,7 +84,7 @@ class gastos_gnsys(models.Model):
         #_logger.info()
         #estado = self.x_studio_field_VU6DU
         self.write(cr, uid, ids, {'x_studio_field_VU6DU': 'aprobado', 'quienValida': self._uid}, context=context)
-        return True
+        #return True
     
     
     
