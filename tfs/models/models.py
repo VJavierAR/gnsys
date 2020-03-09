@@ -1,6 +1,22 @@
 # -*- coding: utf-8 -*-
+<<<<<<< HEAD
 from odoo import models, fields, api
 from odoo.exceptions import UserError
+=======
+from collections import namedtuple
+import json
+import time
+from datetime import date
+
+from itertools import groupby
+from odoo import api, fields, models, _, SUPERUSER_ID
+from odoo.osv import expression
+from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT
+from odoo.tools.float_utils import float_compare, float_is_zero, float_round
+from odoo.exceptions import UserError
+from odoo.addons.stock.models.stock_move import PROCUREMENT_PRIORITIES
+from operator import itemgetter
+>>>>>>> master
 from odoo import exceptions
 import logging, ast
 _logger = logging.getLogger(__name__)
@@ -35,7 +51,11 @@ class tfs(models.Model):
     evidencias=fields.One2many('tfs.evidencia',string='Evidencias',inverse_name='tfs_id')
     estado=fields.Selection([('borrador','Borrador'),('xValidar','Por Validar'),('Valido','Valido')])
     
+<<<<<<< HEAD
     @api.one
+=======
+    @api.multi
+>>>>>>> master
     def confirm(self):
         for record in self:
             if(len(record.inventario)>0):
@@ -64,10 +84,34 @@ class tfs(models.Model):
                             self.env['dcas.dcas'].create({'serie':record.serie.id,'contadorMono':record.actualMonocromatico,'contadorColor':record.actualColor,'fuente':'tfs.tfs'})
                 else:
                     raise exceptions.UserError("No existen cantidades en el almacen para el producto " + self.producto.name)
+<<<<<<< HEAD
     @api.one
     def valida(self):
         self.write({'estado':'Valido'})
         self.env['dcas.dcas'].create({'serie':self.serie.id,'contadorMono':self.actualMonocromatico,'contadorColor':self.actualColor,'fuente':'tfs.tfs'})
+=======
+            else:
+                    raise exceptions.UserError("No hay inventario en la ubicación selecionada")
+    @api.multi
+    def valida(self):
+        view = self.env.ref('tfs.view_tfs_ticket')
+        wiz = self.env['tfs.ticket'].create({'tfs_ids': [(4, self.id)]})
+        #self.write({'estado':'Valido'})
+        #self.env['dcas.dcas'].create({'serie':self.serie.id,'contadorMono':self.actualMonocromatico,'contadorColor':self.actualColor,'fuente':'tfs.tfs'})
+        return {
+                'name': _('Alerta'),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'tfs.ticket',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'res_id': wiz.id,
+                'context': self.env.context,
+            }
+
+>>>>>>> master
 
     
     

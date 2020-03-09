@@ -2,8 +2,27 @@
 from odoo import models, fields, api
 import base64,io,csv
 import logging, ast
+<<<<<<< HEAD
 import datetime
 _logger = logging.getLogger(__name__)
+=======
+from odoo.exceptions import UserError
+from odoo import exceptions, _
+import datetime
+_logger = logging.getLogger(__name__)
+
+
+def get_years():
+    year_list = []
+    for i in range(2010, 2036):
+       year_list.append((i, str(i)))
+    return year_list
+valores = [('01', 'Enero'), ('02', 'Febrero'), ('03', 'Marzo'), ('04', 'Abril'),
+                          ('05', 'Mayo'), ('06', 'Junio'), ('07', 'Julio'), ('08', 'Agosto'),
+                          ('09', 'Septiembre'), ('10', 'Octubre'), ('11', 'Noviembre'), ('12', 'Diciembre')]
+
+
+>>>>>>> master
 class dcas(models.Model):
     _name = 'dcas.dcas'
     _description ='DCAS'
@@ -36,7 +55,13 @@ class contadores(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _description = 'Contadores Cliente'
     name = fields.Char()
+<<<<<<< HEAD
     mes=fields.Selection(selection=[('1','Enero'),('2','Febrero'),('3','Marzo'),('4','Abril'),('5','Mayo'),('6','Junio'),('7','Julio'),('8','Agosto'),('9','Septiembre'),('10','Octubre'),('11','Noviembre'),('12','Diciembre')])
+=======
+    mes=fields.Selection(valores,string='Mes')
+    anio= fields.Selection(get_years(), string='Año')
+    
+>>>>>>> master
     dca = fields.One2many('dcas.dcas',inverse_name='contador_id',string='DCAS')
     cliente = fields.Many2one('res.partner', store=True,string='Cliente')
     localidad=fields.Many2one('res.partner',store='True',string='Localidad')
@@ -44,13 +69,21 @@ class contadores(models.Model):
     estado=fields.Selection(selection=[('Abierto', 'Abierto'),('Incompleto', 'Incompleto'),('Valido','Valido')],widget="statusbar", default='Abierto')  
     dom=fields.Char(readonly="1",invisible="1")
     order_line = fields.One2many('contadores.lines','ticket',string='Order Lines')
+<<<<<<< HEAD
 
     
     @api.onchange('serie_aux')
+=======
+    
+
+    
+    #@api.onchange('serie_aux')
+>>>>>>> master
     def getid(self):
         self.serie=self.env['stock.production.lot'].search([['name','=',self.serie_aux]]).id
         
     
+<<<<<<< HEAD
     
     @api.onchange('cliente')
     def onchange_place(self):
@@ -71,6 +104,72 @@ class contadores(models.Model):
 
 
     @api.onchange('archivo')
+=======
+    @api.multi
+    def carga_contadores_fac(self):
+        for r in self.detalle:
+            rr=self.env['dcas.dcas'].create({'serie': r.producto
+                                             ,'contadorColor':r.ultimaLecturaColor
+                                             ,'contadorMono':r.ultimaLecturaBN
+                                             ,'fuente':'dcas.dcas'
+                                             ,'x_studio_field_no6Rb':str(self.anio)+'-'+str(self.mes)
+                                             ,'x_studio_fecha_texto_anio':str(valores[int(self.mes[1])-1][1])+' de '+str(self.anio)
+                                            })
+        
+    
+    #@api.onchange('mes')
+    @api.multi
+    def carga_contadores(self):
+        if self.anio:
+            perido=str(self.anio)+'-'+str(self.mes)
+            periodoAnterior=''
+            mesA=''
+            anioA=''
+            i=0
+            for f in valores:                
+                if f[0]==str(self.mes):                
+                   mesaA=str(valores[i-1][0])
+                i=i+1
+            anios=get_years()
+            i=0
+            for e in anios:
+                if e[0]==int(self.anio):
+                   anioA=str(anios[i-1][0])
+                i=i+1                
+            periodoAnterior= anioA+'-'+mesaA   
+            
+            asd=self.env['stock.production.lot'].search([('x_studio_ubicaciontest','=',self.cliente.name)])
+            #raise Warning('notihng to show xD '+str(self.cliente.name))
+            #id=int(self.id)            
+            sc=self.env['contadores.contadores'].search([('id', '=', self.id)])
+            sc.write({'name' : str(self.cliente.name)+' '+str(periodoAnterior)+' a '+str(perido)})
+            for a in asd:
+                currentP=self.env['dcas.dcas'].search([('serie','=',a.id),('x_studio_field_no6Rb', '=', perido)])
+                currentPA=self.env['dcas.dcas'].search([('serie','=',a.id),('x_studio_field_no6Rb', '=', periodoAnterior)])
+                #raise exceptions.ValidationError("q onda xd"+str(self.id)+' id  '+str(id))                     
+                rr=self.env['contadores.contadores.detalle'].create({'contadores': self.id
+                                                       ,'producto': a.id
+                                                       ,'serieEquipo': a.name
+                                                       #,'locacion':currentP.x_studio_locacion_recortada
+                                                       ,  'periodo':perido                                                              
+                                                       , 'ultimaLecturaBN': currentP.contadorMono
+                                                       , 'lecturaAnteriorBN': currentPA.contadorMono
+                                                       #, 'paginasProcesadasBN': bnp                                                   
+                                                       ,  'periodoA':periodoAnterior            
+                                                       , 'ultimaLecturaColor': currentP.contadorColor
+                                                       , 'lecturaAnteriorColor': currentPA.contadorColor                                                             
+                                                       #, 'paginasProcesadasColor': colorp
+                                                       , 'bnColor':a.x_studio_color_bn              
+                                                       })
+                #rr.write({'contadores':id})
+            
+        
+            
+            
+
+
+    #@api.onchange('archivo')
+>>>>>>> master
     def onchange_archiv(self):
         f=open('1.txt','w')
         for record in self:
@@ -93,7 +192,41 @@ class contadores(models.Model):
         f.close()
                         #record.dca.search([['serial.name','=',dat[3]]])
 
+<<<<<<< HEAD
        
+=======
+    detalle =  fields.One2many('contadores.contadores.detalle', 'contadores', string='Contadores')
+   
+
+    
+class detalleContadores(models.Model):
+      _name = 'contadores.contadores.detalle'
+      _description = 'Detalle Contadores'
+     
+      contadores = fields.Many2one('contadores.contadores', string='Detalle de contadores')
+     
+      serieEquipo = fields.Text(string="Serie")
+      producto = fields.Text(string="Producto")
+      locacion = fields.Text(string="Locación")
+      capturar = fields.Boolean()     
+      bnColor = fields.Text(string='Equipo B/N o Color')  
+      ultimaLecturaBN = fields.Integer(string='Última lectura monocromatico')
+      lecturaAnteriorBN = fields.Integer(string='Lectura anterior monocromatico')
+      paginasProcesadasBN = fields.Integer(string='Páginas procesadas monocromatico')
+    
+     
+      ultimaLecturaColor = fields.Integer(string='última lectura color')
+      lecturaAnteriorColor = fields.Integer(string='Lectura anterior color')
+      paginasProcesadasColor = fields.Integer(string='Páginas procesadas color')
+     
+      periodo = fields.Text(string="Periodo")
+      periodoA = fields.Text(string="Periodo Anterior")
+      archivo=fields.Binary(store='True',string='Archivo')
+   
+
+    
+    
+>>>>>>> master
     
 class contadores_lines(models.Model):
     _name="contadores.lines"
@@ -110,7 +243,11 @@ class contadores_lines(models.Model):
     mes=fields.Integer()
     pagina=fields.Binary('Pagina de Estado')
     
+<<<<<<< HEAD
     @api.depends('serie')
+=======
+    #@api.depends('serie')
+>>>>>>> master
     def ultimoContador(self):
         fecha=datetime.datetime.now()
         for record in self:

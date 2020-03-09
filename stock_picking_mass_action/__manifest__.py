@@ -18,5 +18,9 @@
     'data': [
         'wizard/mass_action_view.xml',
         'data/ir_cron.xml',
+<<<<<<< HEAD
+=======
+        'report/views.xml',
+>>>>>>> master
     ],
 }

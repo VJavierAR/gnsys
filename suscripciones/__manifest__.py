@@ -18,8 +18,13 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
+<<<<<<< HEAD
     'depends': ['base','sale_subscription'],
 
+=======
+    'depends': ['base','sale_management' ],
+#va de nuevo
+>>>>>>> master
     # always loaded
     'data': [
         # 'security/ir.model.access.csv',
@@ -30,4 +35,8 @@
     'demo': [
         'demo/demo.xml',
     ],
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> master

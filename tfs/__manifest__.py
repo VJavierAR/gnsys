@@ -27,6 +27,10 @@
         # 'security/ir.model.access.csv',
         'views/views.xml',
         'views/templates.xml',
+<<<<<<< HEAD
+=======
+        'wizard/wizard.xml',
+>>>>>>> master
     ],
     # only loaded in demonstration mode
     'demo': [
