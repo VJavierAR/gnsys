@@ -4,36 +4,6 @@ from odoo.exceptions import UserError
 from odoo.tools.float_utils import float_compare, float_is_zero, float_round
 import logging, ast
 _logger = logging.getLogger(__name__)
-class StockPicking(Model):
-    _inherit = 'stock.picking'
-    almacenOrigen=fields.Many2one('stock.warehouse','Almacen Origen')
-    almacenDestino=fields.Many2one('stock.warehouse','Almacen Destino')
-    hiden=fields.Integer(compute='hide')
-    ajusta=fields.Boolean('Ajusta')
-    #ticketOrigenEnVenta = fields.Char(string='Documento de origen en venta', store=True, related='sale_id.origin')
-    #estado = fields.Text(compute = 'x_historial_ticket_actualiza')
-    backorder=fields.Char('Backorder')
-    lineTemp=fields.One2many('stock.pick.temp','picking')
-    state = fields.Selection([
-    ('draft', 'Draft'),('compras', 'Solicitud de Compra'),
-    ('waiting', 'Waiting Another Operation'),
-    ('confirmed', 'Sin Stock'),
-    ('assigned', 'Por Validar'),
-    ('done', 'Validado'),('distribucion', 'Distribución'),('cancel', 'Cancelled'),('aDistribucion', 'A Distribución')
-], string='Status', compute='_compute_state',
-    copy=False, index=True, readonly=True, store=True, track_visibility='onchange',
-    help=" * Draft: not confirmed yet and will not be scheduled until confirmed.\n"
-         " * Waiting Another Operation: waiting for another move to proceed before it becomes automatically available (e.g. in Make-To-Order flows).\n"
-         " * Waiting: if it is not ready to be sent because the required products could not be reserved.\n"
-         " * Ready: products are reserved and ready to be sent. If the shipping policy is 'As soon as possible' this happens as soon as anything is reserved.\n"
-         " * Done: has been processed, can't be modified or cancelled anymore.\n"
-         " * Cancelled: has been cancelled, can't be confirmed anymore.")
-    estado = fields.Selection([
-    ('draft', 'Draft'),('compras', 'Solicitud de Compra'),
-    ('waiting', 'Waiting Another Operation'),
-    ('confirmed', 'Sin Stock'),
-    ('assigned', 'Por Validar'),
-    ('done', 'Validado'),('distribucion', 'Distribución'),('cancel', 'Cancelled'),('aDistribucion', 'A Distribución')])
 #puro aaa
 class StockPicking(Model):
     _inherit = 'stock.picking'
@@ -87,7 +57,6 @@ class StockPicking(Model):
 
         # If no lots when needed, raise error
         picking_type = self.picking_type_id
-        if(picking_type.id==2 and len(self.x_studio_evidencia)<1):
         if(picking_type.id==2 and len(self.x_studio_evidencia_a_ticket)<1):
             raise UserError(_('Se requiere la Evidencia.'))
             
@@ -96,29 +65,6 @@ class StockPicking(Model):
         no_reserved_quantities = all(float_is_zero(move_line.product_qty, precision_rounding=move_line.product_uom_id.rounding) for move_line in self.move_line_ids)
         if no_reserved_quantities and no_quantities_done:
             raise UserError(_('You cannot validate a transfer if no quantites are reserved nor done. To force the transfer, switch in edit more and encode the done quantities.'))
-        #refaccion
-        #if(self.picking_type_id.id==29314):
-        #    if(self.sale_id.x_studio_field_bxHgp):
-        #        self.sale_id.x_studio_field_bxHgp.write({'stage_id':104})
-        #almacen
-        #if(self.picking_type_id.id==3):
-        #    if(self.sale_id.x_studio_field_bxHgp):
-         #       self.sale_id.x_studio_field_bxHgp.write({'stage_id':93})
-        #distribucion
-        #if(self.picking_type_id.id==29302):
-         #   if(self.sale_id.x_studio_field_bxHgp):
-         #       self.sale_id.x_studio_field_bxHgp.write({'stage_id':94})
-        #transito        
-        if(self.picking_type_id.id==2 and len(self.x_studio_evidencia)>0):
-            if(self.sale_id.x_studio_field_bxHgp):
-                self.sale_id.x_studio_field_bxHgp.write({'stage_id':18})
-                for ev in self.x_studio_evidencia:
-                    self.sale_id.x_studio_field_bxHgp.write({'documentosTecnico':[ev.x_foto]})
-                    self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : self.sale_id.x_studio_field_bxHgp.id
-                                                                       , 'x_persona' : str(self.env.user.name)
-                                                                       , 'x_estado' : "Cierre"
-                                                                       , 'x_disgnostico':ev.x_comentario                                                                   
-                                                                      })
    
         #if(self.picking_type_id.id==2 and len(self.x_studio_evidencia)>0):
         #    if(self.sale_id.x_studio_field_bxHgp):
@@ -179,31 +125,11 @@ class StockPicking(Model):
 
         # Check backorder should check for other barcodes
         if self._check_backorder():
-            self.backorder="Parcial"
             #self.backorder="Parcial"
             if(self.picking_type_id.id==3 or self.picking_type_id.id==29314):
                 if(self.sale_id.x_studio_field_bxHgp):
                     self.sale_id.x_studio_field_bxHgp.write({'stage_id':109})
             return self.action_generate_backorder_wizard()
-        self.action_done()
-        return            
-    
-    
-    @api.onchange('state')
-    def x_historial_ticket_actualiza(self):
-        for record in self:
-            #if('done' in record.state and record.picking_type_id==3):
-            #    record.write({'state':'aDistribucion'})
-            #if('done' in record.state and record.picking_type_id==29302):
-            #    record.write({'state':'distribucion'})
-            if 'assigned' in record.state and record.location_dest_id==9 and record.write_uid>2:
-                self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : numTicket, 'x_persona' : str(self.env.user.name), 'x_estado' : "Refacción Para Entregar"})
-            if 'done' in record.state and record.location_dest_id==9 and record.write_uid>2:
-                self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : numTicket, 'x_persona' : str(self.env.user.name), 'x_estado' : "Refacción Entregada"})                    
-                    
-    
-    
-    
         self.sudo().action_done()
         return            
     
@@ -363,7 +289,6 @@ class StockPicking(Model):
             'res_id': wiz.id,
             'context': self.env.context,
         }
-
 
     def cambio_wizard(self):
         d=[]
