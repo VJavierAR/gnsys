@@ -117,7 +117,7 @@ class StockCambio(TransientModel):
         if(self.pick.sale_id):
             self.pick.backorder=''
             dt=[]
-            for prp in pro_ids:
+            for prp in self.pro_ids:
                 if(prp.producto1.id !=prp.producto2.id):
                     dt.append(prp.producto1.id)
             for s in self.pick.sale_id.order_line:
