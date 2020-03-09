@@ -49,7 +49,7 @@ class gastos_gnsys(models.Model):
     aplicacionContaEfecParcial  = fields.Selection((('Opcion','Opcion'),('Opcion','Opcion'),('Opcion','Opcion')), string = "Como aplica contablemente",track_visibility='onchange')
     fechaLimDevEfecParcial      = fields.Datetime(string = 'Fecha límite devolución',track_visibility='onchange')
         #Parcial Nomina
-    aplicacionContaEfecParcial  = fields.Selection((('Opcion','Opcion'),('Opcion','Opcion'),('Opcion','Opcion')), string = "Como aplica contablemente",track_visibility='onchange')
+    aplicacionContaNomParcial   = fields.Selection((('Opcion','Opcion'),('Opcion','Opcion'),('Opcion','Opcion')), string = "Como aplica contablemente",track_visibility='onchange')
     montoExtendido              = fields.Float(string = 'Monto a cubrir',track_visibility='onchange')
     #En caso de que la devolucion sea excendida
     formaDepago = fields.Selection((('¿La empresa cubre adicional? ¿Cuánto?','¿La empresa cubre adicional? ¿Cuánto?'), ('¿Receptor cubre adicional?','¿Receptor cubre adicional?')), string = "Forma de pago (Receptor)",track_visibility='onchange')
