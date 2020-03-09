@@ -103,9 +103,9 @@ class fac_order(models.Model):
                         procesadasColorTotal=colorp+procesadasColorTotal
                         procesadasColorBN=bnp+procesadasColorBN                                  
                   g=self.env['servicios'].search([('contrato', '=', m.id)])                 
-                  for j in g:
-                      raise exceptions.ValidationError("error"+j.tipo[0]+' lol  '+j.tipo)  
+                  for j in g:                      
                       if j.tipo==2:
+                        raise exceptions.ValidationError("error"+j.tipo[0]+' lol  '+j.tipo)  
                         self.env['sale.order.line'].create({'order_id': sale.id,'product_uom_qty':1.0,'price_unit':j.rentaMensual})                                                    
                         if procesadasColorBN< bolsabn:
                            self.env['sale.order.line'].create({'order_id': sale.id,'product_uom_qty':0.0,'price_unit':j.clickExcedenteBN,'x_studio_bolsa':j.bolsaBN})
