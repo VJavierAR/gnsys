@@ -118,13 +118,9 @@ class gastos_gnsys(models.Model):
         elif str(self.tipoDeComprobacion) != "noComprobado":
             _logger.info("No comprobado")
         else:
-            
-            
+            pass
             
 
-                        
-    
-    
 class motivos_gastos(models.Model):
     _name = 'motivos'
     _description = 'Motivos de un gasto'
