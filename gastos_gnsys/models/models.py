@@ -86,7 +86,7 @@ class gastos_gnsys(models.Model):
         #_logger.info()
         #estado = self.x_studio_field_VU6DU
         gasto=self.env['gastos'].search([('id', '=', self.id)])        
-        gasto.write({'x_studio_field_VU6DU' : 'aprobado','quienValida':self.env.user.id})
+        gasto.write({'x_studio_field_VU6DU' : 'aprobado', 'quienValida':self.env.user.name})
     
     
     
