@@ -94,7 +94,7 @@ class contadores(models.Model):
             #raise Warning('notihng to show xD '+str(self.cliente.name))
             #id=int(self.id)            
             sc=self.env['contadores.contadores'].search([('id', '=', self.id)])
-            sc.write({'name' : str(self.cliente.name)+' '+str(perido)+' '+str(self.id)})
+            sc.write({'name' : str(self.cliente.name)+' '+str(periodoAnterior)+' a '+str(perido)+})
             for a in asd:
                 currentP=self.env['dcas.dcas'].search([('serie','=',a.id),('x_studio_field_no6Rb', '=', perido)])
                 currentPA=self.env['dcas.dcas'].search([('serie','=',a.id),('x_studio_field_no6Rb', '=', periodoAnterior)])
