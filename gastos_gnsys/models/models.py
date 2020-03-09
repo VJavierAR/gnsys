@@ -97,11 +97,9 @@ class gastos_gnsys(models.Model):
             converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
             rec.diasAtrasoPago = (datetime.date.today() - converted_date).days
     
-    
-    @api.depends('etapas')
-    def cambio(self):
-        for record in self:
-            record.montoAprobado = 300.0
+    @api.onchange('montoAprobado')
+    def cambioOnchange(self):
+        raise exceptions.ValidationError("Mira we.")
 
     @api.multi
     def validarGasto(self):
