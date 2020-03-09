@@ -32,7 +32,7 @@ class fac_order(models.Model):
         for r in self:        
           #
           list = ast.literal_eval(r.x_studio_contratosid)  
-          ff=self.env['sale.subscription'].search([('x_studio_referencia_contrato.id', 'in',list)])                                            
+          ff=self.env['servicios'].search([('contrato.id', 'in',list)])                                            
           f=len(list)
           if f>0:
             h=[]
@@ -61,7 +61,7 @@ class fac_order(models.Model):
                 
             periodoAnterior= anioA+'-'+mesaA
             for m in ff:              
-                  p=self.env['stock.production.lot'].search([('x_studio_suscripcion', '=', m.id)])                  
+                  p=self.env['stock.production.lot'].search([('servicio', '=', m.id)])                  
                   procesadasColorTotal=0
                   procesadasColorBN=0
                   serUNO=0
@@ -82,7 +82,6 @@ class fac_order(models.Model):
                   bnp=0
                   colorp=0  
                   for k in p:
-                        #poner las series id y hacer la resta 
                       currentP=self.env['dcas.dcas'].search([('serie','=',k.id),('x_studio_field_no6Rb', '=', perido)])
                       currentPA=self.env['dcas.dcas'].search([('serie','=',k.id),('x_studio_field_no6Rb', '=', periodoAnterior)])                      
                       bnp=abs(int(currentPA.contadorMono)-int(currentP.contadorMono))
@@ -103,22 +102,27 @@ class fac_order(models.Model):
                       if k.x_studio_color_bn=='Color':
                         procesadasColorTotal=colorp+procesadasColorTotal
                         procesadasColorBN=bnp+procesadasColorBN                                  
-                      #g=self.env['sale.subscription.line'].search([('analytic_account_id', '=', m.id)])
-                      #raise exceptions.ValidationError( str(g) )                                  
-                  #Costo por página procesada BN o color 10742 o 10743            
-                  #Renta base con páginas incluidas BN o color + pag. excedentes 10744 o 10745
-                  #renta base + costo de página procesada BN o color 10756 o 10757
-                  #Renta base + costo de página procesada BN o color  10748 o 10749
-                  #Renta base mas costo de pagina procesada BN o color 10754 o 10755
-                  #Renta base con páginas incluidas BN + clic de color + excedentes BN 10758 o 10759                        
-                  #Renta global + costo de página procesada BN o color 10750 o 10751
-
-                  #Renta global con páginas incluidas BN o color + pag. Excedentes caso 1 ids 10740 o 10741
-                  g=self.env['sale.subscription.line'].search([('analytic_account_id', '=', m.id)])
-                  v=[]
+                  g=self.env['servicios'].search([('contrato', '=', m.id)])                 
                   for j in g:
-                      v.append(j.product_id.id)
-
+                      if j.tipo=2:
+                        self.env['sale.order.line'].create({'order_id': sale.id,'product_uom_qty':1.0,'price_unit':j.rentaMensual})                                                    
+                        if procesadasColorBN< bolsabn:
+                           self.env['sale.order.line'].create({'order_id': sale.id,'product_uom_qty':0.0,'price_unit':j.clickExcedenteBN,'x_studio_bolsa':j.bolsaBN})
+                        if procesadasColorBN > bolsabn:
+                           self.env['sale.order.line'].create({'order_id': sale.id,'product_uom_qty':abs(bolsabn-procesadasColorBN),'price_unit':j.clickExcedenteBN,'x_studio_bolsa':j.bolsaBN})
+                        if procesadasColorTotal<bolsacolor:            
+                           self.env['sale.order.line'].create({'order_id': sale.id,'product_uom_qty':0.0,'price_unit':j.clickExcedenteColor,'x_studio_bolsa':j.bolsacolor})
+                        if procesadasColorTotal > bolsacolor:
+                           self.env['sale.order.line'].create({'order_id': sale.id,'product_uom_qty':abs(bolsacolor-procesadasColorTotal),'price_unit':j.clickExcedenteColor,'x_studio_bolsa':j.bolsacolor})                   
+                      if j.tipo=6:
+                        self.env['sale.order.line'].create({'order_id': sale.id,'product_uom_qty':1.0,'price_unit':j.rentaMensual})                                                    
+                        
+                        
+                        
+                        
+                        
+                        
+                  """
                   vv=set(v)
                   if 10740 in vv:                          
                         for s in g:
@@ -276,6 +280,7 @@ class fac_order(models.Model):
                                serTRES=s.product_id.id
                                serTRESp=s.price_unit
                                self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serTRES,'product_uom_qty':1.0,'price_unit':serTRESp})                                                                          
+                  """             
                                          
            
                  
