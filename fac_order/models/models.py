@@ -62,7 +62,7 @@ class fac_order(models.Model):
                 i=i+1
                 
             periodoAnterior= anioA+'-'+mesaA
-            raise exceptions.ValidationError( str(periodoAnterior) + ' ante '+ str(perido) )    
+            #raise exceptions.ValidationError( str(periodoAnterior) + ' ante '+ str(perido) )    
             for m in ff:              
                   p=self.env['stock.production.lot'].search([('servicio', '=', m.id)])                  
                   procesadasColorTotal=0
