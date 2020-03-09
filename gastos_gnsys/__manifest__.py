@@ -22,7 +22,8 @@
     #Modelo de dep
     'depends': [
         'mail',
-        'hr'
+        'hr',
+        'res'
     ],
 
     # always loaded
