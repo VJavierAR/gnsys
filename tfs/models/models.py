@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-from odoo import models, fields, api
-from odoo.exceptions import UserError
 from collections import namedtuple
 import json
 import time
@@ -48,8 +46,6 @@ class tfs(models.Model):
     evidencias=fields.One2many('tfs.evidencia',string='Evidencias',inverse_name='tfs_id')
     estado=fields.Selection([('borrador','Borrador'),('xValidar','Por Validar'),('Valido','Valido')])
     
-
-    @api.one
     @api.multi
     def confirm(self):
         for record in self:
@@ -79,12 +75,8 @@ class tfs(models.Model):
                             self.env['dcas.dcas'].create({'serie':record.serie.id,'contadorMono':record.actualMonocromatico,'contadorColor':record.actualColor,'fuente':'tfs.tfs'})
                 else:
                     raise exceptions.UserError("No existen cantidades en el almacen para el producto " + self.producto.name)
-    @api.one
-    def valida(self):
-        self.write({'estado':'Valido'})
-        self.env['dcas.dcas'].create({'serie':self.serie.id,'contadorMono':self.actualMonocromatico,'contadorColor':self.actualColor,'fuente':'tfs.tfs'})
-        else:
-            raise exceptions.UserError("No hay inventario en la ubicación selecionada")
+            else:
+                    raise exceptions.UserError("No hay inventario en la ubicación selecionada")
     @api.multi
     def valida(self):
         view = self.env.ref('tfs.view_tfs_ticket')
