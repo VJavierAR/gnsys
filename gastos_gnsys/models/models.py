@@ -90,7 +90,7 @@ class gastos_gnsys(models.Model):
     @api.model
     def create(self, values):
         gasto = self.env['gastos'].search([('id', '=', self.id)])
-        gasto.write({'quienSolicita': self.env.user.name
+        gasto.write({'quienSolicita': self.env.user.id
                    })
     
     @api.multi
