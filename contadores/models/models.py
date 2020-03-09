@@ -108,7 +108,7 @@ class contadores(models.Model):
                                                        , 'ultimaLecturaColor': currentP.contadorColor
                                                        , 'lecturaAnteriorColor': currentPA.contadorColor                                                             
                                                        #, 'paginasProcesadasColor': colorp
-                                                       , 'bnColor':currentP.x_studio_color_bn              
+                                                       , 'bnColor':a.x_studio_color_bn              
                                                        })
                 #rr.write({'contadores':id})
             
