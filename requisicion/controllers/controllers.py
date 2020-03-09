@@ -13,16 +13,14 @@ from odoo import http
 #             'objects': http.request.env['requisicion.requisicion'].search([]),
 #         })
 
-<<<<<<< HEAD
+
 #     @http.route('/requisicion/requisicion/objects/<model("requisicion.requisicion"):obj>/', auth='public')
 #     def object(self, obj, **kw):
 #         return http.request.render('requisicion.object', {
 #             'object': obj
 #         })
-=======
 # #     @http.route('/requisicion/requisicion/objects/<model("requisicion.requisicion"):obj>/', auth='public')
 # #     def object(self, obj, **kw):
 # #         return http.request.render('requisicion.object', {
 # #             'object': obj
 # #         })
->>>>>>> master
