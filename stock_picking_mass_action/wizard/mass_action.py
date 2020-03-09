@@ -118,10 +118,11 @@ class StockCambio(TransientModel):
             self.pick.backorder=''
             for s in self.pick.sale_id.order_line:
                 pp=self.pro_ids.search([['producto1','=',self.pick.sale_id.order_line.product_id.id]])
-                _logger.info("***************lista " + str(len(pp)))
+                pp3=list(filter(lambda p:p['producto1']==self.pick.sale_id.order_line.product_id.id,self.pro_ids))
+                _logger.info("***************lista " + str(pp3))
 
                 #pp.ensure_one()
-                if(pp.producto1.id!=pp.producto2.id):
+                if(pp3['producto1']['id']!=pp3['producto1']['id']):
                     self.env.cr.execute("delete from stock_move_line where reference='"+self.pick.name+"' and product_id="+pp.producto1.id+";")
                     self.env.cr.execute("delete from stock_move where origin='"+self.pick.sale_id.name+"' and product_id="+pp.producto1.id+";")
                     self.env.cr.execute("delete from sale_order_line where id="+str(s.id)+"' and product_id="+pp.producto1.id+";")
