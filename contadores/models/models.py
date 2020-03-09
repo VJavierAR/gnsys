@@ -52,6 +52,7 @@ class contadores(models.Model):
     name = fields.Char()
     mes=fields.Selection(valores,string='Mes')
     anio= fields.Selection(get_years(), string='Año')
+    
     dca = fields.One2many('dcas.dcas',inverse_name='contador_id',string='DCAS')
     cliente = fields.Many2one('res.partner', store=True,string='Cliente')
     localidad=fields.Many2one('res.partner',store='True',string='Localidad')
@@ -151,7 +152,7 @@ class detalleContadores(models.Model):
       serieEquipo = fields.Text(string="Serie")
       producto = fields.Text(string="Producto")
       locacion = fields.Text(string="Locación")
-     
+      capturar = fields.Boolean()     
       ultimaLecturaBN = fields.Integer(string='Última lectura monocromatico')
       lecturaAnteriorBN = fields.Integer(string='Lectura anterior monocromatico')
       paginasProcesadasBN = fields.Integer(string='Páginas procesadas monocromatico')
