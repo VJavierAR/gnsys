@@ -84,7 +84,7 @@ class tfs(models.Model):
         self.write({'estado':'Valido'})
         self.env['dcas.dcas'].create({'serie':self.serie.id,'contadorMono':self.actualMonocromatico,'contadorColor':self.actualColor,'fuente':'tfs.tfs'})
             else:
-                    raise exceptions.UserError("No hay inventario en la ubicación selecionada")
+                raise exceptions.UserError("No hay inventario en la ubicación selecionada")
     @api.multi
     def valida(self):
         view = self.env.ref('tfs.view_tfs_ticket')
