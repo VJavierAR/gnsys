@@ -115,6 +115,7 @@ class StockCambio(TransientModel):
 
     def confirmar(self):
         if(self.pick.sale_id):
+            self.pick.backorder=''
             for s in self.pick.sale_id.order_line:
                 self.env.cr.execute("delete from stock_move_line where reference='"+self.pick.name+"';")
                 self.env.cr.execute("delete from stock_move where origin='"+self.pick.sale_id.name+"';")
