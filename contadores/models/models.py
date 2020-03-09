@@ -74,7 +74,10 @@ class contadores(models.Model):
             rr=self.env['dcas.dcas'].create({'serie': r.producto
                                              ,'contadorColor':r.ultimaLecturaColor
                                              ,'contadorMono':r.ultimaLecturaBN
-                                             ,'fuente':'dcas.dcas'})
+                                             ,'fuente':'dcas.dcas'
+                                             ,'x_studio_field_no6Rb':str(self.anio)+'-'+str(self.mes)
+                                             ,'x_studio_fecha_texto_anio':str(self.mes[1])+' de '+str(self.anio)
+                                            })
         
     
     #@api.onchange('mes')
