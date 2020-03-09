@@ -137,5 +137,5 @@ class StockCambioLine(TransientModel):
     _description = 'Lineas cambio toner'
     producto1=fields.Many2one('product.product')
     producto2=fields.Many2one('product.product')
-    cantidad=fields.float()
+    cantidad=fields.Float()
     rel_cambio=fields.Many2one('cambio.toner')
