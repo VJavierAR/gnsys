@@ -80,11 +80,12 @@ class gastos_gnsys(models.Model):
     etapas = fields.Many2one('gastos.etapa', string='Etapa', ondelete='restrict', track_visibility='onchange',readonly=True,copy=False,index=True)
     productos = fields.One2many('product.product','id',string='Solicitudes',store=True)
     
-    def validarGasto(self, cr, uid, ids, context=None):
+    @api.multi
+    def validarGasto(self):
         #_logger.info()
         #estado = self.x_studio_field_VU6DU
-        self.write(cr, uid, ids, {'x_studio_field_VU6DU': 'aprobado', 'quienValida': self._uid}, context=context)
-        #return True
+        idUsuarioLog = self._uid
+        sale.env['gastos'].write({'x_studio_field_VU6DU' : 'aprobado', 'quienValida': idUsuarioLog})
     
     
     
