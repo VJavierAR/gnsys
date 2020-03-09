@@ -14,7 +14,8 @@ class gastos_gnsys(models.Model):
     
     nombre = fields.Char(string="Nombre de gasto")
     
-    quienSolcita     = fields.Many2one('hr.employee', string = "Quien solicita",track_visibility='onchange')
+    #quienSolcita     = fields.Many2one('hr.employee', string = "Quien solicita",track_visibility='onchange')
+    quienSolcita     = fields.Char(string="Quien solicita?" ,track_visibility='onchange')
     quienesAutorizan = fields.One2many('hr.employee', 'gastoAutoriza', string = "Quien (es) autorizan",track_visibility='onchange')
     quienesReciben   = fields.One2many('hr.employee', 'gastoRecibe', string = "Quien (es) reciben",track_visibility='onchange')
 
@@ -85,6 +86,12 @@ class gastos_gnsys(models.Model):
     tipoDeComprobacion = fields.Selection([('Exacto','Exacto'), ('Parcial','Parcial'), ('Excedido','Excedido'), ('noComprobado','No se comprobo correctamente')], string = "Tipo de comprobación", track_visibility='onchange')
     quienValidaMonto = fields.Char(string = "Gasto comprobado por", track_visibility='onchange')
     
+
+    @api.model
+    def create(self, values):
+        gasto = self.env['gastos'].search([('id', '=', self.id)])
+        gasto.write({'quienSolicita': self.env.user.name
+                   })
     
     @api.multi
     def validarGasto(self):
@@ -100,7 +107,8 @@ class gastos_gnsys(models.Model):
         mess = {}
         if str(self.tipoDeComprobacion) == "Exacto":
             if self.montoExacto < self.montoAprobado:
-                #raise exceptions.ValidationError("El gasto comprobado exacto no es igual al monto aprobado.")
+                raise exceptions.ValidationError("El gasto comprobado exacto no es igual al monto aprobado.")
+                
                 message = ("El gasto comprobado exacto no es igual al monto aprobado.")
                 mess = {
                         'title': _('Gasto no comprobado!!!'),
@@ -134,7 +142,7 @@ class motivos_gastos(models.Model):
 class empleados_gastos(models.Model):
     _inherit = 'hr.employee'
     
-    gastoSolicitante = fields.One2many('gastos', 'quienSolcita', string="Gasto solicitante")
+    #gastoSolicitante = fields.One2many('gastos', 'quienSolcita', string="Gasto solicitante")
     #gastoValida = fields.Many2one('gastos', string="Gasto valida")
     
     gastoAutoriza = fields.Many2one('gastos', string="Gasto autoriza")
