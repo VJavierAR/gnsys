@@ -120,8 +120,6 @@ class StockCambio(TransientModel):
             for s in self.pick.sale_id.order_line:
                 pp=self.pro_ids.search([['producto1','=',self.pick.sale_id.order_line.product_id.id]])
                 pp3=list(filter(lambda p:p['producto1']['id']==self.pick.sale_id.order_line.product_id.id,self.pro_ids))
-                _logger.info("***************lista " + str(pp3))
-
                 #pp.ensure_one()
                 if(pp3[0]['producto1']['id']!=pp3[0]['producto2']['id']):
                     i=i+1
@@ -135,11 +133,13 @@ class StockCambio(TransientModel):
                 self.env.cr.execute("select id from stock_picking where sale_id="+str(self.pick.sale_id.id)+";")
                 pickis=self.env.cr.fetchall()
                 pickg=self.env['stock.picking'].search([['id','in',pickis]])
+                _logger.info("***************lista " + str(pp3))
+                pickg.action_confirm()
                 #for li in self.pro_ids:
                     #if(li.serieDestino):
                     #    datos['x_studio_field_9nQhR']=li.serieDestino.id,
-                for p in pickg:
-                    p.action_confirm()
+                #for p in pickg:
+                    #p.action_confirm()
 
 class StockCambioLine(TransientModel):
     _name = 'cambio.toner.line'
