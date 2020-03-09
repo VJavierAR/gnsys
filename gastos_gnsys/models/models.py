@@ -52,7 +52,7 @@ class gastos_gnsys(models.Model):
     aplicacionContaNomParcial   = fields.Selection((('Opcion','Opcion'),('Opcion','Opcion'),('Opcion','Opcion')), string = "Como aplica contablemente",track_visibility='onchange')
     montoExtendido              = fields.Float(string = 'Monto a cubrir',track_visibility='onchange')
     #En caso de que la devolucion sea excendida
-    formaDepago = fields.Selection((('¿La empresa cubre adicional? ¿Cuánto?','¿La empresa cubre adicional? ¿Cuánto?'), ('¿Receptor cubre adicional?','¿Receptor cubre adicional?')), string = "Forma de pago (Receptor)",track_visibility='onchange')
+    formaDepago                 = fields.Selection((('La empresa cubre adicional','La empresa cubre adicional'), ('Receptor cubre adicional','Receptor cubre adicional')), string = "Forma de pago",track_visibility='onchange')
     #La empresa cubre lo adicional ¿La empresa cubre adicional? ¿Cuánto?
     #Forma en que caso de que la empresa cubra lo adicional
     formaDepagoExtendida    = fields.Selection((('Efectivo','Efectivo'), ('Cheque','Cheque'),('Depósito','Depósito'),('Transferencia','Transferencia')), string = "Forma de pago (Receptor)",track_visibility='onchange')
