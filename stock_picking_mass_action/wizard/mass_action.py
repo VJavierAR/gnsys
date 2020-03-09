@@ -113,9 +113,29 @@ class StockCambio(TransientModel):
     pick=fields.Many2one('stock.picking')
     pro_ids = fields.One2many('cambio.toner.line','rel_cambio')
 
+    def confirmar(self):
+        if(self.pick.sale_id):
+            for s in self.pick.sale_id.order_line:
+                self.env.cr.execute("delete from stock_move_line where reference='"+self.pick.name+"';")
+                self.env.cr.execute("delete from stock_move where origin='"+self.pick.sale_id.name+"';")
+                self.env.cr.execute("delete from sale_order_line where id="+str(s.id)+";")
+
+            self.env.cr.execute("update stock_picking set state='draft' where sale_id="+str(self.pick.sale_id.id)+";")
+            self.env.cr.execute("select id from stock_picking where sale_id="+str(self.pick.sale_id.id)+";")
+            pickis=self.env.cr.fetchall()
+            pickg=self.env['stock.picking'].search([['id','in',pickis]])
+            for li in self.pro_ids:
+                datos={'order_id':self.pick.sale_id.id,'product_id':li.producto2.id,'product_uom':li.producto2.uom_id.id,'product_uom_qty':li.cantidad,'name':li.producto2.description if(li.producto2.description) else '/','price_unit':0.00}
+                #if(li.serieDestino):
+                #    datos['x_studio_field_9nQhR']=li.serieDestino.id,
+                ss=self.env['sale.order.line'].sudo().create(datos)
+            for p in pickg:
+                p.action_confirm()
+
 class StockCambioLine(TransientModel):
     _name = 'cambio.toner.line'
     _description = 'Lineas cambio toner'
     producto1=fields.Many2one('product.product')
     producto2=fields.Many2one('product.product')
+    cantidad=fields.Float()
     rel_cambio=fields.Many2one('cambio.toner')
