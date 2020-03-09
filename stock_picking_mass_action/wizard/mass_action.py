@@ -125,9 +125,9 @@ class StockCambio(TransientModel):
                 #pp.ensure_one()
                 if(pp3[0]['producto1']['id']!=pp3[0]['producto2']['id']):
                     i=i+1
-                    self.env.cr.execute("delete from stock_move_line where reference='"+self.pick.name+"' and product_id="+pp3[0]['producto1']['id']+";")
-                    self.env.cr.execute("delete from stock_move where origin='"+self.pick.sale_id.name+"' and product_id="+pp3[0]['producto1']['id']+";")
-                    self.env.cr.execute("delete from sale_order_line where id="+str(s.id)+"' and product_id="+pp3[0]['producto1']['id']+";")
+                    self.env.cr.execute("delete from stock_move_line where reference='"+self.pick.name+"' and product_id="+str(pp3[0]['producto1']['id'])+";")
+                    self.env.cr.execute("delete from stock_move where origin='"+self.pick.sale_id.name+"' and product_id="+str(pp3[0]['producto1']['id'])+";")
+                    self.env.cr.execute("delete from sale_order_line where id="+str(s.id)+"' and product_id="+str(pp3[0]['producto1']['id'])+";")
                     datos={'order_id':self.pick.sale_id.id,'product_id':pp3[0]['producto2']['id'],'product_uom':pp3[0]['producto2']['uom_id']['id'],'product_uom_qty':pp3[0]['cantidad'],'name':pp3[0]['producto2']['description'],'price_unit':0.00}
                     ss=self.env['sale.order.line'].sudo().create(datos)
             if(i>0):
