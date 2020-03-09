@@ -5,7 +5,6 @@
 
 from odoo import fields, api
 from odoo.models import TransientModel
-
 import logging, ast
 import datetime, time
 _logger = logging.getLogger(__name__)
@@ -62,7 +61,6 @@ class StockPickingMassAction(TransientModel):
             draft_picking_lst = self.picking_ids.\
                 filtered(lambda x: x.state == 'draft').\
                 sorted(key=lambda r: r.scheduled_date)
-            draft_picking_lst.action_confirm()
             draft_picking_lst.sudo().action_confirm()
 
         # check availability if asked
@@ -74,7 +72,6 @@ class StockPickingMassAction(TransientModel):
                     'done',
                 ]).\
                 sorted(key=lambda r: r.scheduled_date)
-            pickings_to_check.action_assign()
             pickings_to_check.sudo().action_assign()
 
         # Get all pickings ready to transfer and transfer them if asked
@@ -87,10 +84,6 @@ class StockPickingMassAction(TransientModel):
                 assigned_picking_lst.mapped('move_line_ids').filtered(
                     lambda m: m.state not in ('done', 'cancel')))
             if not quantities_done:
-                return assigned_picking_lst.action_immediate_transfer_wizard()
-            if assigned_picking_lst._check_backorder():
-                return assigned_picking_lst.action_generate_backorder_wizard()
-            assigned_picking_lst.action_done()
                 _logger.info("***************lista " + str(len(assigned_picking_lst)))
                 CON=str(self.env['ir.sequence'].next_by_code('concentrado'))
                 for l in assigned_picking_lst:
