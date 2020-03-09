@@ -55,8 +55,10 @@ class fac_order(models.Model):
             anios=get_years()
             i=0
             for e in anios:
-                if e[0]==int(self.year):
+                if e[0]==int(self.year) and str(self.month)=='01':
                     anioA=str(anios[i-1][0])
+                else :
+                    anioA=str(year) 
                 i=i+1
                 
             periodoAnterior= anioA+'-'+mesaA
