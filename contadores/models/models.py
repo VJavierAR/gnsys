@@ -88,10 +88,13 @@ class contadores(models.Model):
                 if e[0]==int(self.anio):
                    anioA=str(anios[i-1][0])
                 i=i+1                
-            periodoAnterior= anioA+'-'+mesaA              
+            periodoAnterior= anioA+'-'+mesaA   
+            
             asd=self.env['stock.production.lot'].search([('x_studio_ubicaciontest','=',self.cliente.name)])
             #raise Warning('notihng to show xD '+str(self.cliente.name))
-            #id=int(self.id)
+            #id=int(self.id)            
+            sc=self.env['contadores.contadores'].search([('id', '=', self.id)])
+            sc.write({'name' : str(self.cliente.name)+' '+str(periodo)+' '+str(self.id)})
             for a in asd:
                 currentP=self.env['dcas.dcas'].search([('serie','=',a.id),('x_studio_field_no6Rb', '=', perido)])
                 currentPA=self.env['dcas.dcas'].search([('serie','=',a.id),('x_studio_field_no6Rb', '=', periodoAnterior)])
