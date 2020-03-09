@@ -68,8 +68,9 @@ class contadores(models.Model):
         
     
     
-    @api.onchange('mes')
-    def onchange_place(self):
+    #@api.onchange('mes')
+    @api.multi
+    def carga_contadores(self):
         if self.anio:
             perido=str(self.anio)+'-'+str(self.mes)
             periodoAnterior=''
