@@ -100,7 +100,7 @@ class gastos_gnsys(models.Model):
         mess = {}
         if str(self.tipoDeComprobacion) == "Exacto":
             if self.montoExacto < self.montoAprobado:
-                raise exceptions.ValidationError("El gasto comprobado exacto no es igual al monto aprobado.")
+                #raise exceptions.ValidationError("El gasto comprobado exacto no es igual al monto aprobado.")
                 message = ("El gasto comprobado exacto no es igual al monto aprobado.")
                 mess = {
                         'title': _('Gasto no comprobado!!!'),
