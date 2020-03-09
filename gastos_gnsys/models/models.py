@@ -14,7 +14,7 @@ class gastos_gnsys(models.Model):
     
     nombre = fields.Char(string="Nombre de gasto")
     
-    quienSolcita     = fields.Many2one('res.users', string = "Quien solicita",track_visibility='onchange')
+    quienSolcita     = fields.Many2one('res.users', string = "Quien solicita",track_visibility='onchange' default=self.env.user.id)
     #quienSolcita     = fields.Char(string="Quien solicita?" ,track_visibility='onchange')
     quienesAutorizan = fields.One2many('hr.employee', 'gastoAutoriza', string = "Quien (es) autorizan",track_visibility='onchange')
     quienesReciben   = fields.One2many('hr.employee', 'gastoRecibe', string = "Quien (es) reciben",track_visibility='onchange')
@@ -87,11 +87,6 @@ class gastos_gnsys(models.Model):
     quienValidaMonto = fields.Char(string = "Gasto comprobado por", track_visibility='onchange')
     
 
-    @api.model
-    def create(self, values):
-        gasto = self.env['gastos'].search([('id', '=', self.id)])
-        gasto.write({'quienSolicita': self.env.user.id
-                   })
     
     @api.multi
     def validarGasto(self):
