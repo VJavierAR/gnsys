@@ -90,12 +90,19 @@ class gastos_gnsys(models.Model):
     
     diasAtrasoPago = fields.Integer(compute='computarDiasAtrasoPago',string='Dias de atraso del pago')
 
+    
     def computarDiasAtrasoPago(self):
         for rec in self:
             fecha = str(rec.create_date).split(' ')[0]
             converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
             rec.diasAtrasoPago = (datetime.date.today() - converted_date).days
     
+    
+    @api.depends('etapas')
+    def cambio(self):
+        for record in self:
+            record.montoAprobado = 300.0
+
     @api.multi
     def validarGasto(self):
         #_logger.info()
