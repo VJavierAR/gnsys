@@ -16,8 +16,8 @@ class gastos_gnsys(models.Model):
     
     quienSolcita     = fields.Many2one('res.users', string = "Quien solicita",track_visibility='onchange', default=lambda self: self.env.user)
     #quienSolcita     = fields.Char(string="Quien solicita?" ,track_visibility='onchange')
-    quienesAutorizan = fields.One2many('hr.employee', 'gastoAutoriza', string = "Quien (es) autorizan",track_visibility='onchange')
-    quienesReciben   = fields.One2many('hr.employee', 'gastoRecibe', string = "Quien (es) reciben",track_visibility='onchange')
+    quienesAutorizan = fields.One2many('res.users', 'gastoAutoriza', string = "Quien (es) autorizan",track_visibility='onchange')
+    quienesReciben   = fields.One2many('res.users', 'gastoRecibe', string = "Quien (es) reciben",track_visibility='onchange')
 
     montoAprobado    = fields.Float(string = 'Monto aprobado',track_visibility='onchange')
     montoAtnticipado = fields.Float(string = 'Monto anticipo',track_visibility='onchange')
@@ -137,6 +137,8 @@ class motivos_gastos(models.Model):
 class usuarios_gastos(models.Model):
     _inherit = 'res.users'
     gastoSolicitante = fields.One2many('gastos', 'quienSolcita', string="Gasto solicitante")
+    gastoAutoriza = fields.Many2one('gastos', string="Gasto autoriza")
+    gastoRecibe = fields.Many2one('gastos', string="Gasto autoriza")
 
 class empleados_gastos(models.Model):
     _inherit = 'hr.employee'
@@ -144,8 +146,7 @@ class empleados_gastos(models.Model):
     #gastoSolicitante = fields.One2many('gastos', 'quienSolcita', string="Gasto solicitante")
     #gastoValida = fields.Many2one('gastos', string="Gasto valida")
     
-    gastoAutoriza = fields.Many2one('gastos', string="Gasto autoriza")
-    gastoRecibe = fields.Many2one('gastos', string="Gasto autoriza")
+    
     
 class gastosEtapas(models.Model):
     _name = 'gastos.etapa'
