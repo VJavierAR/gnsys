@@ -96,15 +96,18 @@ class gastos_gnsys(models.Model):
 
     @api.multi
     def validarComprobacion(self):
-     
+        message = ""
+        mess = {}
         if str(self.tipoDeComprobacion) == "Exacto":
-            if self.montoExacto != self.montoAprobado:
+            if self.montoExacto <= self.montoAprobado:
+                raise exceptions.ValidationError("El gasto comprobado exacto no es igual al monto aprobado.")
                 message = ("El gasto comprobado exacto no es igual al monto aprobado.")
-                mess= {
+                mess = {
                         'title': _('Gasto no comprobado!!!'),
                         'message' : message
                     }
-                return {'warning': mess} 
+                return {'warning': mess}
+
             else:
                 gasto = self.env['gastos'].search([('id', '=', self.id)])        
                 gasto.write({'x_studio_field_VU6DU': 'Comprobado'
