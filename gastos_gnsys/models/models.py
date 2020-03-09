@@ -12,6 +12,8 @@ class gastos_gnsys(models.Model):
     _name = 'gastos'
     _description = 'gastos_gnsys'
     
+    nombre = fields.Char(string="Nombre de gasto")
+    
     quienSolcita     = fields.Many2one('hr.employee', string = "Quien solicita",track_visibility='onchange')
     quienesAutorizan = fields.One2many('hr.employee', 'gastoAutoriza', string = "Quien (es) autorizan",track_visibility='onchange')
     quienesReciben   = fields.One2many('hr.employee', 'gastoRecibe', string = "Quien (es) reciben",track_visibility='onchange')
