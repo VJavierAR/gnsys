@@ -133,7 +133,7 @@ class StockCambio(TransientModel):
                 self.env.cr.execute("select id from stock_picking where sale_id="+str(self.pick.sale_id.id)+";")
                 pickis=self.env.cr.fetchall()
                 pickg=self.env['stock.picking'].search([['id','in',pickis]])
-                _logger.info("***************lista " + str(pp3))
+                _logger.info("***************lista " + str(len(pickg)))
                 pickg.action_confirm()
                 #for li in self.pro_ids:
                     #if(li.serieDestino):
