@@ -98,7 +98,7 @@ class gastos_gnsys(models.Model):
     def validarComprobacion(self):
      
         if str(self.tipoDeComprobacion) != "Exacto":
-            if self.montoExacto != montoAprobado:
+            if self.montoExacto != self.montoAprobado:
                 message = ("El gasto comprobado exacto no es igual al monto aprobado.")
                 mess= {
                         'title': _('Gasto no comprobado!!!'),
