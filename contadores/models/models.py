@@ -108,6 +108,7 @@ class contadores(models.Model):
                                                        , 'ultimaLecturaColor': currentP.contadorColor
                                                        , 'lecturaAnteriorColor': currentPA.contadorColor                                                             
                                                        #, 'paginasProcesadasColor': colorp
+                                                       , 'bnColor':currentP.x_studio_color_bn              
                                                        })
                 #rr.write({'contadores':id})
             
@@ -153,9 +154,11 @@ class detalleContadores(models.Model):
       producto = fields.Text(string="Producto")
       locacion = fields.Text(string="Locación")
       capturar = fields.Boolean()     
+      bnColor = fields.Text(string='Equipo B/N o Color')  
       ultimaLecturaBN = fields.Integer(string='Última lectura monocromatico')
       lecturaAnteriorBN = fields.Integer(string='Lectura anterior monocromatico')
       paginasProcesadasBN = fields.Integer(string='Páginas procesadas monocromatico')
+    
      
       ultimaLecturaColor = fields.Integer(string='última lectura color')
       lecturaAnteriorColor = fields.Integer(string='Lectura anterior color')
