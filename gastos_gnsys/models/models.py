@@ -97,7 +97,7 @@ class gastos_gnsys(models.Model):
     @api.multi
     def validarComprobacion(self):
      
-        if str(self.tipoDeComprobacion) != "Exacto":
+        if str(self.tipoDeComprobacion) == "Exacto":
             if self.montoExacto != self.montoAprobado:
                 message = ("El gasto comprobado exacto no es igual al monto aprobado.")
                 mess= {
@@ -111,11 +111,11 @@ class gastos_gnsys(models.Model):
                             , 'quienValidaMonto': self.env.user.name
                             })
                  
-        elif str(self.tipoDeComprobacion) != "Parcial":
+        elif str(self.tipoDeComprobacion) == "Parcial":
             _logger.info("Parcial")
-        elif str(self.tipoDeComprobacion) != "Excedido":
+        elif str(self.tipoDeComprobacion) == "Excedido":
             _logger.info("Excedido")
-        elif str(self.tipoDeComprobacion) != "noComprobado":
+        elif str(self.tipoDeComprobacion) == "noComprobado":
             _logger.info("No comprobado")
         #else:
         #    pass
