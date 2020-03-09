@@ -68,6 +68,14 @@ class contadores(models.Model):
         self.serie=self.env['stock.production.lot'].search([['name','=',self.serie_aux]]).id
         
     
+    @api.multi
+    def carga_contadores_fac(self):
+        for r in self.detalle:
+            rr=self.env['dcas.dcas'].create({'serie': r.producto
+                                             ,'contadorColor':r.ultimaLecturaColor
+                                             ,'contadorMono':r.ultimaLecturaBN
+                                             ,'fuente':'dcas.dcas'})
+        
     
     #@api.onchange('mes')
     @api.multi
@@ -100,7 +108,7 @@ class contadores(models.Model):
                 currentPA=self.env['dcas.dcas'].search([('serie','=',a.id),('x_studio_field_no6Rb', '=', periodoAnterior)])
                 #raise exceptions.ValidationError("q onda xd"+str(self.id)+' id  '+str(id))                     
                 rr=self.env['contadores.contadores.detalle'].create({'contadores': self.id
-                                                       #,'producto': currentP.product_id.display_name
+                                                       ,'producto': a.id
                                                        ,'serieEquipo': a.name
                                                        #,'locacion':currentP.x_studio_locacion_recortada
                                                        ,  'periodo':perido                                                              
