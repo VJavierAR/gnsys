@@ -79,13 +79,13 @@ class contadores(models.Model):
             for f in valores:                
                 if f[0]==str(self.mes):                
                    mesaA=str(valores[i-1][0])
-                   i=i+1
+                i=i+1
             anios=get_years()
             i=0
             for e in anios:
                 if e[0]==int(self.anio):
                    anioA=str(anios[i-1][0])
-                   i=i+1                
+                i=i+1                
             periodoAnterior= anioA+'-'+mesaA              
             asd=self.env['stock.production.lot'].search([('x_studio_ubicaciontest','=',self.cliente.name)])
             #raise Warning('notihng to show xD '+str(self.cliente.name))
