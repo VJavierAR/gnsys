@@ -81,13 +81,27 @@ class gastos_gnsys(models.Model):
     etapas = fields.Many2one('gastos.etapa', string='Etapa', ondelete='restrict', track_visibility='onchange',readonly=True,copy=False,index=True)
     productos = fields.One2many('product.product','id',string='Solicitudes',store=True)
     
+
+    tipoDeComprobacion = fields.Selection([('Exacto','Exacto'), ('Parcial','Parcial'), ('Excedido','Excedido'), ('noComprobado','No se comprobo correctamente')], string = "Tipo de comprobación", track_visibility='onchange')
+    quienValidaMonto = fields.Char(string = "Gasto comprobado por", track_visibility='onchange')
+    
+    
     @api.multi
     def validarGasto(self):
         #_logger.info()
-        #estado = self.x_studio_field_VU6DU
-        gasto=self.env['gastos'].search([('id', '=', self.id)])        
-        gasto.write({'x_studio_field_VU6DU' : 'aprobado', 'quienValida':self.env.user.name})
-    
+        gasto = self.env['gastos'].search([('id', '=', self.id)])        
+        gasto.write({'x_studio_field_VU6DU': 'aprobado'
+                     , 'quienValida': self.env.user.name
+                   })
+
+    @api.multi
+    def validarComprobacion(self):
+     
+        if str(self.tipoDeComprobacion) != "False" and str(self.tipoDeComprobacion) != "Exacto":
+             gasto = self.env['gastos'].search([('id', '=', self.id)])        
+             gasto.write({'x_studio_field_VU6DU': 'Comprobado'
+                          , 'quienValidaMonto': self.env.user.name
+                        })
     
     
 class motivos_gastos(models.Model):
