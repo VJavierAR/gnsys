@@ -83,6 +83,8 @@ class gastos_gnsys(models.Model):
     productos = fields.One2many('product.product','id',string='Solicitudes',store=True)
     
 
+    comprobantes = fields.Many2many('ir.attachment', string="Comprobantes")
+
     tipoDeComprobacion = fields.Selection([('Exacto','Exacto'), ('Parcial','Parcial'), ('Excedido','Excedido'), ('noComprobado','No se comprobo correctamente')], string = "Tipo de comprobación", track_visibility='onchange')
     quienValidaMonto = fields.Char(string = "Gasto comprobado por", track_visibility='onchange')
     
