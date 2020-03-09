@@ -161,7 +161,9 @@ class detalleContadores(models.Model):
       paginasProcesadasColor = fields.Integer(string='Páginas procesadas color')
      
       periodo = fields.Text(string="Periodo")
-      periodoA = fields.Text(string="Periodo Anterior")    
+      periodoA = fields.Text(string="Periodo Anterior")
+      archivo=fields.Binary(store='True',string='Archivo')
+   
 
     
     
