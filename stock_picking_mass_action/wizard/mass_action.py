@@ -123,7 +123,7 @@ class StockCambio(TransientModel):
                 _logger.info("***************lista " + str(pp3))
 
                 #pp.ensure_one()
-                if(pp3[0]['producto1']['id']!=pp3[0]['producto1']['id']):
+                if(pp3[0]['producto1']['id']!=pp3[0]['producto2']['id']):
                     i=i+1
                     self.env.cr.execute("delete from stock_move_line where reference='"+self.pick.name+"' and product_id="+pp3[0]['producto1']['id']+";")
                     self.env.cr.execute("delete from stock_move where origin='"+self.pick.sale_id.name+"' and product_id="+pp3[0]['producto1']['id']+";")
