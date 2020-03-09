@@ -118,7 +118,7 @@ class StockCambio(TransientModel):
             self.pick.backorder=''
             for s in self.pick.sale_id.order_line:
                 pp=self.pro_ids.search([['producto1','=',self.pick.sale_id.order_line.product_id.id]])
-                pp3=list(filter(lambda p:p['producto1']==self.pick.sale_id.order_line.product_id.id,self.pro_ids))
+                pp3=list(filter(lambda p:p['producto1']['id']==self.pick.sale_id.order_line.product_id.id,self.pro_ids))
                 _logger.info("***************lista " + str(pp3))
 
                 #pp.ensure_one()
