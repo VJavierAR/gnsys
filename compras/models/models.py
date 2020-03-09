@@ -3,13 +3,11 @@ from odoo import models, fields, api
 import base64
 from PIL import Image, ImageEnhance, ImageFilter
 import pytesseract
-<<<<<<< HEAD
 from io import BytesIO
 from PyPDF2 import PdfFileReader
 from pdf2image import convert_from_path, convert_from_bytes
 import os
 import re
-=======
 #from io import BytesIO
 from pdf2image import convert_from_path, convert_from_bytes
 import os
@@ -18,7 +16,6 @@ from PyPDF2 import PdfFileMerger, PdfFileReader,PdfFileWriter
 from io import BytesIO as StringIO
 import base64
 import datetime
->>>>>>> master
 
 class compras(models.Model):
     _inherit = 'purchase.order'
@@ -43,8 +40,6 @@ class compras(models.Model):
                 order.write({'state': 'to approve'})
         return True
 
-<<<<<<< HEAD
-=======
     
     
     
@@ -122,7 +117,6 @@ class compras(models.Model):
                     self.order_line=[(5,0,0)]
                 self.order_line=arr
             
->>>>>>> master
 class comprasLine(models.Model):
     _inherit = 'purchase.order.line'
     serial=fields.Char()

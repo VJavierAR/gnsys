@@ -5,8 +5,6 @@ from odoo import models, fields, api
 class saleSub(models.Model):
     _inherit = "sale.subscription"
     
-<<<<<<< HEAD
-=======
     notasxD = fields.Text(string="Notas")
     
     """
@@ -50,4 +48,4 @@ class saleSub(models.Model):
 =======
         return [(0, 0, self._prepare_invoice_line(line, fiscal_position)) for line in copia]
     """
->>>>>>> master
+

@@ -2,10 +2,8 @@
 from odoo import models, fields, api
 import base64,io,csv
 import logging, ast
-<<<<<<< HEAD
 import datetime
 _logger = logging.getLogger(__name__)
-=======
 from odoo.exceptions import UserError
 from odoo import exceptions, _
 import datetime
@@ -22,7 +20,6 @@ valores = [('01', 'Enero'), ('02', 'Febrero'), ('03', 'Marzo'), ('04', 'Abril'),
                           ('09', 'Septiembre'), ('10', 'Octubre'), ('11', 'Noviembre'), ('12', 'Diciembre')]
 
 
->>>>>>> master
 class dcas(models.Model):
     _name = 'dcas.dcas'
     _description ='DCAS'
@@ -55,13 +52,10 @@ class contadores(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _description = 'Contadores Cliente'
     name = fields.Char()
-<<<<<<< HEAD
     mes=fields.Selection(selection=[('1','Enero'),('2','Febrero'),('3','Marzo'),('4','Abril'),('5','Mayo'),('6','Junio'),('7','Julio'),('8','Agosto'),('9','Septiembre'),('10','Octubre'),('11','Noviembre'),('12','Diciembre')])
-=======
     mes=fields.Selection(valores,string='Mes')
     anio= fields.Selection(get_years(), string='Año')
     
->>>>>>> master
     dca = fields.One2many('dcas.dcas',inverse_name='contador_id',string='DCAS')
     cliente = fields.Many2one('res.partner', store=True,string='Cliente')
     localidad=fields.Many2one('res.partner',store='True',string='Localidad')
@@ -69,21 +63,17 @@ class contadores(models.Model):
     estado=fields.Selection(selection=[('Abierto', 'Abierto'),('Incompleto', 'Incompleto'),('Valido','Valido')],widget="statusbar", default='Abierto')  
     dom=fields.Char(readonly="1",invisible="1")
     order_line = fields.One2many('contadores.lines','ticket',string='Order Lines')
-<<<<<<< HEAD
 
     
     @api.onchange('serie_aux')
-=======
     
 
     
     #@api.onchange('serie_aux')
->>>>>>> master
     def getid(self):
         self.serie=self.env['stock.production.lot'].search([['name','=',self.serie_aux]]).id
         
     
-<<<<<<< HEAD
     
     @api.onchange('cliente')
     def onchange_place(self):
@@ -104,7 +94,6 @@ class contadores(models.Model):
 
 
     @api.onchange('archivo')
-=======
     @api.multi
     def carga_contadores_fac(self):
         for r in self.detalle:
@@ -169,7 +158,6 @@ class contadores(models.Model):
 
 
     #@api.onchange('archivo')
->>>>>>> master
     def onchange_archiv(self):
         f=open('1.txt','w')
         for record in self:
@@ -192,9 +180,7 @@ class contadores(models.Model):
         f.close()
                         #record.dca.search([['serial.name','=',dat[3]]])
 
-<<<<<<< HEAD
-       
-=======
+
     detalle =  fields.One2many('contadores.contadores.detalle', 'contadores', string='Contadores')
    
 
@@ -226,7 +212,6 @@ class detalleContadores(models.Model):
 
     
     
->>>>>>> master
     
 class contadores_lines(models.Model):
     _name="contadores.lines"
@@ -243,11 +228,8 @@ class contadores_lines(models.Model):
     mes=fields.Integer()
     pagina=fields.Binary('Pagina de Estado')
     
-<<<<<<< HEAD
     @api.depends('serie')
-=======
     #@api.depends('serie')
->>>>>>> master
     def ultimoContador(self):
         fecha=datetime.datetime.now()
         for record in self:

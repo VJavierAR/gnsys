@@ -52,12 +52,11 @@ class helpdesk_update(models.Model):
     agregarContactoCheck = fields.Boolean(string="Añadir contacto", default=False)
     
     idLocalidadAyuda = fields.Integer(compute='_compute_id_localidad',string='Id Localidad Ayuda', store=False) 
-<<<<<<< HEAD
-=======
+
     user_id = fields.Many2one('res.users','Ejecutivo', default=lambda self: self.env.user)
     
     cambiarDatosClienteCheck = fields.Boolean(string="Editar cliente", default=False)
->>>>>>> master
+
     
     #numeroDeGuiaDistribucion = fields.Char(string='Número de guía generado por distribución', store=True)
     
@@ -78,7 +77,6 @@ class helpdesk_update(models.Model):
     def _compute_id_localidad(self):
         for record in self:
             record['idLocalidadAyuda'] = record.x_studio_empresas_relacionadas.id
-<<<<<<< HEAD
         
         
     @api.onchange('x_studio_empresas_relacionadas')
@@ -87,7 +85,6 @@ class helpdesk_update(models.Model):
         sale = self.x_studio_field_nO7Xg
         #if self.x_studio_field_nO7Xg != False and (self.x_studio_empresas_relacionadas.id == False or self.x_studio_empresas_relacionadas.id != None or len(str(self.x_studio_empresas_relacionadas.id)) != 0 or str(self.x_studio_empresas_relacionadas.id) is 0 or not str(self.x_studio_empresas_relacionadas.id) or self.x_studio_empresas_relacionadas.id != []) and self.x_studio_field_nO7Xg.state != 'sale':
         if self.x_studio_field_nO7Xg.id != False and self.x_studio_id_ticket != 0 and self.x_studio_field_nO7Xg.state != 'sale':
-=======
             
     @api.onchange('x_studio_empresas_relacionadas')
     def cambiar_direccion_entrega(self):
@@ -101,7 +98,6 @@ class helpdesk_update(models.Model):
         if self.x_studio_field_nO7Xg.id != False and self.x_studio_id_ticket != 0 and self.x_studio_field_nO7Xg.state != 'sale':
             _logger.info("****************solicitud: " + str(self.x_studio_field_nO7Xg.id))
             _logger.info("****************localidad: " + str(self.x_studio_empresas_relacionadas.id))
->>>>>>> master
             
             if self.x_studio_field_nO7Xg.id != False:
                 #self.env['sale.order'].write(['partner_shipping_id','=',''])
@@ -139,10 +135,8 @@ class helpdesk_update(models.Model):
         
         if self.x_studio_empresas_relacionadas.id != 0:
             contactoId = 0;
-<<<<<<< HEAD
-=======
+
             #_logger.info("*******************************************self.nombreDelContacto: " + str(self.nombreDelContacto))
->>>>>>> master
             titulo = ''
             if len(self.titulo) == 0: 
                 titulo = '' 
@@ -243,10 +237,9 @@ class helpdesk_update(models.Model):
             #rec.days_difference = (datetime.date.today()- rec.create_date).days   
             #fe = ''
             fecha = str(rec.create_date).split(' ')[0]
-<<<<<<< HEAD
-=======
+
             _logger.info("***************t: " + str(fecha))
->>>>>>> master
+
             #fe = t[0]
             converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
             #converted_date = datetime.datetime.strptime(str(rec.create_date), '%Y-%m-%d').date()
@@ -434,11 +427,10 @@ class helpdesk_update(models.Model):
     
     @api.onchange('team_id')
     def asignacion(self):
-<<<<<<< HEAD
-=======
+
         _logger.info("-------------------------------------------------------------self.stage_id.name: " + str(self.stage_id.name))
         _logger.info("-------------------------------------------------------------team_id: " + str(self.team_id.id))
->>>>>>> master
+
         if self.x_studio_id_ticket:
             estadoAntes = str(self.stage_id.name)
             #if self.stage_id.name == 'Abierto' and self.estadoAsignacion == False and self.team_id.id != False:
@@ -446,10 +438,10 @@ class helpdesk_update(models.Model):
                 query = "update helpdesk_ticket set stage_id = 2 where id = " + str(self.x_studio_id_ticket) + ";"
                 _logger.info("lol: " + query)
                 ss = self.env.cr.execute(query)             
-<<<<<<< HEAD
-=======
+
+
                 _logger.info("**********fun: asignacion(), estado: " + str(self.stage_id.name))                
->>>>>>> master
+
                 self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona':self.env.user.name ,'x_estado': "Asignado"})
                 self.estadoAsignacion = True
                 message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Asignado' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
@@ -463,12 +455,12 @@ class helpdesk_update(models.Model):
                 query = "select * from helpdesk_team_res_users_rel where helpdesk_team_id = " + str(idEquipoDeAsistencia) + ";"
                 self.env.cr.execute(query)
                 informacion = self.env.cr.fetchall()
-<<<<<<< HEAD
+
                 listaUsuarios = []
                 #res['domain']={'x_studio_productos':[('categ_id', '=', 5),('x_studio_toner_compatible.id','in',list)]}
                 for idUsuario in informacion:
                     listaUsuarios.append(idUsuario[1])
-=======
+
                 _logger.info("*********lol: " + str(informacion))
                 listaUsuarios = []
                 #res['domain']={'x_studio_productos':[('categ_id', '=', 5),('x_studio_toner_compatible.id','in',list)]}
@@ -476,7 +468,7 @@ class helpdesk_update(models.Model):
                     _logger.info("*********idUsuario: " + str(idUsuario))
                     listaUsuarios.append(idUsuario[1])
                 _logger.info(str(listaUsuarios))
->>>>>>> master
+
                 dominio = [('id', 'in', listaUsuarios)]
                 
                 return {'warning': mess, 'domain': {'user_id': dominio}}
@@ -490,12 +482,12 @@ class helpdesk_update(models.Model):
             query = "select * from helpdesk_team_res_users_rel where helpdesk_team_id = " + str(idEquipoDeAsistencia) + ";"
             self.env.cr.execute(query)
             informacion = self.env.cr.fetchall()
-<<<<<<< HEAD
+
             listaUsuarios = []
             #res['domain']={'x_studio_productos':[('categ_id', '=', 5),('x_studio_toner_compatible.id','in',list)]}
             for idUsuario in informacion:
                 listaUsuarios.append(idUsuario[1])
-=======
+
             _logger.info("*********lol: " + str(informacion))
             listaUsuarios = []
             #res['domain']={'x_studio_productos':[('categ_id', '=', 5),('x_studio_toner_compatible.id','in',list)]}
@@ -503,7 +495,6 @@ class helpdesk_update(models.Model):
                 _logger.info("*********idUsuario: " + str(idUsuario))
                 listaUsuarios.append(idUsuario[1])
             _logger.info(str(listaUsuarios))
->>>>>>> master
             dominio = [('id', 'in', listaUsuarios)]
             res['domain'] = {'user_id': dominio}
             return res
@@ -533,22 +524,17 @@ class helpdesk_update(models.Model):
     
     @api.onchange('x_studio_tcnico')
     def cambioEstadoAtencion(self):
-<<<<<<< HEAD
-=======
+
         _logger.info("-------------------------------------------------------------self.stage_id.name: " + str(self.stage_id.name))
         _logger.info("-------------------------------------------------------------self.x_studio_tcnico.id: " + str(self.x_studio_tcnico.id))
->>>>>>> master
         if self.x_studio_id_ticket:
             estadoAntes = str(self.stage_id.name)
             if (self.stage_id.name == 'Asignado' or self.stage_id.name == 'Resuelto' or self.stage_id.name == 'Cerrado') and self.x_studio_tcnico.id != False and self.estadoAtencion == False:
                 query = "update helpdesk_ticket set stage_id = 13 where id = " + str(self.x_studio_id_ticket) + ";"
-<<<<<<< HEAD
                 ss = self.env.cr.execute(query)
-=======
                 _logger.info("lol: " + query)
                 ss = self.env.cr.execute(query)
                 _logger.info("**********fun: cambioEstadoAtencion(), estado: " + str(self.stage_id.name))
->>>>>>> master
                 #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
                 self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.x_studio_tcnico.name,'x_estado': "Atención"})
                 message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Atención' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
@@ -566,26 +552,21 @@ class helpdesk_update(models.Model):
     
     #@api.onchange('stage_id')
     def cambioResuelto(self):
-<<<<<<< HEAD
-=======
+
         #_logger.info("update current mode......................................")
->>>>>>> master
         #if self.team_id == 8:
         #    if len(self.documentosTecnico)
         #if self.stage_id.name == 'Atención' and self.x_studio_productos != []:
         #raise exceptions.ValidationError("error gerardo: " + str(self.stage_id.name))
         estadoAntes = str(self.stage_id.name)
-<<<<<<< HEAD
         if self.estadoResuelto == False:
             query = "update helpdesk_ticket set stage_id = 3 where id = " + str(self.x_studio_id_ticket) + ";"
             ss = self.env.cr.execute(query)
-=======
         if self.estadoResuelto == False or self.estadoResuelto == True :
             query = "update helpdesk_ticket set stage_id = 3 where id = " + str(self.x_studio_id_ticket) + ";"
             _logger.info("lol: " + query)
             ss = self.env.cr.execute(query)
             _logger.info("**********fun: cambioResuelto(), estado: " + str(self.stage_id.name))
->>>>>>> master
             #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
             self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Resuelto"})
             message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Resuelto' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
@@ -606,13 +587,10 @@ class helpdesk_update(models.Model):
         #if str(self.env.user.id) == str(self.x_studio_tcnico.user_id.id) and self.estadoCotizacion == False:
         if self.estadoCotizacion == False:
             query = "update helpdesk_ticket set stage_id = 101 where id = " + str(self.x_studio_id_ticket) + ";"
-<<<<<<< HEAD
             ss = self.env.cr.execute(query)
-=======
             _logger.info("lol: " + query)
             ss = self.env.cr.execute(query)
             _logger.info("**********fun: cambioCotizacion(), estado: " + str(self.stage_id.name))
->>>>>>> master
             #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
             self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Cotización"})
             message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Cotización' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
@@ -628,24 +606,18 @@ class helpdesk_update(models.Model):
     #Falta comprobar
     @api.onchange('documentosTecnico')
     def cambioResueltoPorDocTecnico(self):
-<<<<<<< HEAD
-=======
         #_logger.info("******************** type: " + str(type(self.documentosTecnico)))
         #_logger.info("********************self.documentosTecnico.id: " + str(self.documentosTecnico[0].id))
         _logger.info("********************self.env.user.id: " + str(self.env.user.id) + " **** self.x_studio_tcnico.user_id.id: " + str(self.x_studio_tcnico.user_id.id))
         #_logger.info("******************** type self.documentosTecnico.id: " + str(type(self.documentosTecnico)))
->>>>>>> master
         estadoAntes = str(self.stage_id.name)
         #if self.documentosTecnico.id != False and str(self.env.user.id) == str(self.x_studio_tcnico.user_id.id):
         if str(self.env.user.id) == str(self.x_studio_tcnico.user_id.id) and self.estadoResueltoPorDocTecnico == False:
             query = "update helpdesk_ticket set stage_id = 3 where id = " + str(self.x_studio_id_ticket) + ";"
-<<<<<<< HEAD
             ss = self.env.cr.execute(query)
-=======
             _logger.info("lol: " + query)
             ss = self.env.cr.execute(query)
             _logger.info("**********fun: cambioResueltoPorDocTecnico(), estado: " + str(self.stage_id.name))
->>>>>>> master
             #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
             self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Resuelto"})
             message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Resuelto' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
@@ -663,18 +635,15 @@ class helpdesk_update(models.Model):
     #@api.onchange('stage_id')
     def cambioCerrado(self):
         estadoAntes = str(self.stage_id.name)
-<<<<<<< HEAD
         if self.stage_id.name == 'Resuelto' or self.stage_id.name == 'Abierto' or self.stage_id.name == 'Asignado' or self.stage_id.name == 'Atención' and self.estadoCerrado == False:
             query = "update helpdesk_ticket set stage_id = 18 where id = " + str(self.x_studio_id_ticket) + ";"
             ss = self.env.cr.execute(query)
-=======
         #_logger.info("********************self.stage_id: " + str(self.stage_id))
         if self.stage_id.name == 'Resuelto' or self.stage_id.name == 'Abierto' or self.stage_id.name == 'Asignado' or self.stage_id.name == 'Atención' and self.estadoCerrado == False:
             query = "update helpdesk_ticket set stage_id = 18 where id = " + str(self.x_studio_id_ticket) + ";"
             _logger.info("lol: " + query)
             ss = self.env.cr.execute(query)
             _logger.info("**********fun: cambioCerrado(), estado: " + str(self.stage_id.name))
->>>>>>> master
             #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
             self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Cerrado"})
             message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Cerrado' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
@@ -692,12 +661,10 @@ class helpdesk_update(models.Model):
     #@api.onchange('stage_id')
     def cambioCancelado(self):
         estadoAntes = str(self.stage_id.name)
-<<<<<<< HEAD
         #if self.stage_id.name == 'Cancelado':
         if self.estadoCancelado == False:
             query = "update helpdesk_ticket set stage_id = 4 where id = " + str(self.x_studio_id_ticket) + ";"
             ss = self.env.cr.execute(query)
-=======
         #_logger.info("********************self.documentosTecnico.id: " + str(self.documentosTecnico.id))
         #if self.stage_id.name == 'Cancelado':
         if self.estadoCancelado == False:
@@ -705,7 +672,6 @@ class helpdesk_update(models.Model):
             _logger.info("lol: " + query)
             ss = self.env.cr.execute(query)
             _logger.info("**********fun: cambioCancelado(), estado: " + str(self.stage_id.name))
->>>>>>> master
             #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
             self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Cancelado"})
             message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Cancelado' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
@@ -716,14 +682,11 @@ class helpdesk_update(models.Model):
             self.estadoCancelado = True
             pedidoDeVentaACancelar = self.x_studio_field_nO7Xg
             if pedidoDeVentaACancelar:
-<<<<<<< HEAD
                 regresa = self.env['stock.picking'].search([['sale_id', '=', int(pedidoDeVentaACancelar.id)], ['state', '=', 'done']])
-=======
                 _logger.info("**********************Info: pedidoDeVentaACancelar: " + str(pedidoDeVentaACancelar))
                 regresa = self.env['stock.picking'].search([['sale_id', '=', int(pedidoDeVentaACancelar.id)], ['state', '=', 'done']])
                 _logger.info("**********************Info: regresa: " + str(regresa))
                 _logger.info("**********************Info: len(regresa): " + str(len(regresa)))
->>>>>>> master
                 if len(regresa) == 0:
                     pedidoDeVentaACancelar.action_cancel()
             
@@ -744,13 +707,10 @@ class helpdesk_update(models.Model):
         for record in self:
             #if record.x_studio_id_ticket != 0:
             if len(record.x_studio_productos) > 0:
-<<<<<<< HEAD
                 if self.x_studio_field_nO7Xg.id != False and self.x_studio_field_nO7Xg.state != 'sale':
-=======
                 _logger.info("***********************************************************************************************" + str(self.x_studio_field_nO7Xg.state))
                 if self.x_studio_field_nO7Xg.id != False and self.x_studio_field_nO7Xg.state != 'sale':
                     _logger.info("Entre en caso de que existe una solicitud y aun no ha sido validada")
->>>>>>> master
                     sale = self.x_studio_field_nO7Xg
                     self.env.cr.execute("delete from sale_order_line where order_id = " + str(sale.id) +";")
                     for c in self.x_studio_productos:
@@ -763,10 +723,7 @@ class helpdesk_update(models.Model):
                         #self.env.cr.commit()
                 else:
                 #if (record.x_studio_tipo_de_falla == 'Solicitud de refacción' ) or (record.x_studio_tipo_de_incidencia == 'Solicitud de refacción' ):
-<<<<<<< HEAD
-=======
                     _logger.info("Entre en caso que no existe una solicitud y aun no ha sido validada")
->>>>>>> master
 
                     sale = self.env['sale.order'].create({'partner_id' : record.partner_id.id
                                                                  , 'origin' : "Ticket de refacción: " + str(record.x_studio_id_ticket)
@@ -786,10 +743,7 @@ class helpdesk_update(models.Model):
                                                                  , 'team_id' : 1
                                                                  , 'x_studio_field_bxHgp': int(record.x_studio_id_ticket) 
                                                                 })
-<<<<<<< HEAD
-=======
                     _logger.info("********Venta creada, id: " + str(sale.id))
->>>>>>> master
                     record['x_studio_field_nO7Xg'] = sale.id
                     for c in record.x_studio_productos:
                         self.env['sale.order.line'].create({'order_id' : sale.id
@@ -798,10 +752,7 @@ class helpdesk_update(models.Model):
                                                                    ,'x_studio_field_9nQhR':self.x_studio_equipo_por_nmero_de_serie[0].id
                                                                    , 'price_unit': 0
                                                                   })
-<<<<<<< HEAD
-=======
                         _logger.info("*****************solicitud id: " + str(sale.id) + " name solicitud: " + str(sale.name) + " cantidad pedida: " + str(c.x_studio_cantidad_pedida) + " Producto pedido: " + str(c.id) + " numero de serie: " + str(self.x_studio_equipo_por_nmero_de_serie[0].id) + " price unit: " + str(0))
->>>>>>> master
                         sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
                         #sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta', 'validity_date' : sale.date_order + datetime.timedelta(days=30)})
                         self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
@@ -827,26 +778,20 @@ class helpdesk_update(models.Model):
                     
                 saleTemp = self.x_studio_field_nO7Xg
                 if saleTemp.id != False:
-<<<<<<< HEAD
-=======
                     _logger.info("Entre*************************************")
->>>>>>> master
                     #if self.x_studio_id_ticket:
                         
                     estadoAntes = str(self.stage_id.name)
                     foraneoDistribuidor = 11
                     #if (self.stage_id.name == 'Atención' or self.stage_id.name == 'Solicitud de Refacción' or self.team_id.id == foraneoDistribuidor) and self.estadoSolicitudDeRefaccion == False:
                     if self.estadoSolicitudDeRefaccion == False:
-<<<<<<< HEAD
                         query = "update helpdesk_ticket set stage_id = 100 where id = " + str(self.x_studio_id_ticket) + ";"
                         ss = self.env.cr.execute(query)
-=======
                         _logger.info("Entre porfin *****************************")
                         query = "update helpdesk_ticket set stage_id = 100 where id = " + str(self.x_studio_id_ticket) + ";"
                         _logger.info("lol: " + query)
                         ss = self.env.cr.execute(query)
                         _logger.info("**********fun: crear_solicitud_refaccion(), estado: " + str(self.stage_id.name))
->>>>>>> master
                             #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
                         self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Solicitud de refacción"})
                         message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Solicitud de refacción' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
@@ -888,8 +833,6 @@ class helpdesk_update(models.Model):
                 self.sudo().env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
                 sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
                 sale.action_confirm()
-<<<<<<< HEAD
-=======
                 for lineas in sale.order_line:
                     st=self.env['stock.quant'].search([['location_id','in',(35204,12)],['product_id','=',lineas.product_id.id]]).sorted(key='quantity',reverse=True)
                     requisicion=False
@@ -909,17 +852,13 @@ class helpdesk_update(models.Model):
                         #if(len(prd)==0):
                         #    requisicion[0].product_rel=[{'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
 
->>>>>>> master
                 
                 
                 estadoAntes = str(self.stage_id.name)
                 #if self.stage_id.name == 'Solicitud de refacción' and self.estadoSolicitudDeRefaccionValidada == False:
                 if (self.stage_id.name == 'Solicitud de Refacción' or self.stage_id.name == 'Cotización') and self.estadoSolicitudDeRefaccionValidada == False:
                     query = "update helpdesk_ticket set stage_id = 102 where id = " + str(self.x_studio_id_ticket) + ";"
-<<<<<<< HEAD
-=======
                     _logger.info("lol: " + query)
->>>>>>> master
                     ss = self.env.cr.execute(query)
                     self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Refacción Autorizada"})
                     
@@ -991,10 +930,9 @@ class helpdesk_update(models.Model):
     def capturandoMesa(self):
       for record in self:  
             for c in record.x_studio_equipo_por_nmero_de_serie:
-<<<<<<< HEAD
-=======
+
               _logger.info("lol: " + str(c.x_studio_field_A6PR9))
->>>>>>> master
+
               if self.team_id.id==8:
                 q='helpdesk.ticket'
               else:
@@ -1042,13 +980,13 @@ class helpdesk_update(models.Model):
                     
     estadoSolicitudDeToner = fields.Boolean(string="Paso por estado pendiente por autorizar solicitud", default=False)
     
-<<<<<<< HEAD
+
     @api.onchange('x_studio_tipo_de_requerimiento')
     def toner(self):
       for record in self:
         jalaSolicitudes=''
         if self.x_studio_field_nO7Xg.id != False and self.x_studio_field_nO7Xg.state != 'sale':
-=======
+
     #@api.onchange('x_studio_tipo_de_requerimiento')
     @api.multi
     def toner(self):
@@ -1058,7 +996,6 @@ class helpdesk_update(models.Model):
         _logger.info("***********************************************************************************************" + str(self.x_studio_field_nO7Xg.id))
         if self.x_studio_field_nO7Xg.id != False and self.x_studio_field_nO7Xg.state != 'sale':
             _logger.info("Entre en caso de que existe una solicitud y aun no ha sido validada")
->>>>>>> master
             sale = self.x_studio_field_nO7Xg
             self.env.cr.execute("delete from sale_order_line where order_id = " + str(sale.id) +";")
             for c in self.x_studio_productos:
@@ -1073,14 +1010,11 @@ class helpdesk_update(models.Model):
                 #self.env.cr.commit()
         else:
             #if record.x_studio_id_ticket != 0:
-<<<<<<< HEAD
             
             
             if (record.team_id.id == 8 ) and record.x_studio_tipo_de_requerimiento == 'Tóner':                
-=======
             _logger.info("Entre en caso que no existe una solicitud toneeeeeerrrrrrr y aun no ha sido validada")                        
             if record.team_id.id == 8 :                
->>>>>>> master
                 sale = self.env['sale.order'].sudo().create({'partner_id' : record.partner_id.id
                                                 , 'origin' : "Ticket de tóner: " + str(record.x_studio_id_ticket)
                                                 , 'x_studio_tipo_de_solicitud' : "Venta"
@@ -1096,10 +1030,7 @@ class helpdesk_update(models.Model):
                                                 ,'x_studio_corte':self.x_studio_corte     
                                               })
                 record['x_studio_field_nO7Xg'] = sale.id
-<<<<<<< HEAD
-=======
                 _logger.info("-----------------------------------------sale.id: " + str(sale.id))                
->>>>>>> master
             
                 serieaca=''
                 for c in record.x_studio_equipo_por_nmero_de_serie:
@@ -1111,10 +1042,7 @@ class helpdesk_update(models.Model):
                     #Toner BN
                     if c.x_studio_solicitar_tner_bn:                      
                         pro = self.env['product.product'].search([['name','=',c.x_studio_reftoner],['categ_id','=',5]])
-<<<<<<< HEAD
-=======
                         _logger.info("------------------------- pro : " + str(pro))
->>>>>>> master
                         gen = pro.sorted(key='qty_available',reverse=True)[0]
                         datos={'name': ' '
                                ,'order_id' : sale.id
@@ -1133,10 +1061,7 @@ class helpdesk_update(models.Model):
                     #Toner Ama
                     if c.x_studio_solicitar_tner_amarillo:                      
                         pro = self.env['product.product'].search([['name','=',c.x_studio_reftonera],['categ_id','=',5]])
-<<<<<<< HEAD
-=======
                         _logger.info("------------------------- pro : " + str(pro))
->>>>>>> master
                         gen = pro.sorted(key='qty_available',reverse=True)[0]
                         datos={'name': ' '
                                ,'order_id' : sale.id
@@ -1155,10 +1080,7 @@ class helpdesk_update(models.Model):
                     #Toner cian
                     if c.x_studio_solicitar_tner_cian_1:                      
                         pro = self.env['product.product'].search([['name','=',c.x_studio_field_nXQHF],['categ_id','=',5]])
-<<<<<<< HEAD
-=======
                         _logger.info("------------------------- pro : " + str(pro))
->>>>>>> master
                         gen = pro.sorted(key='qty_available',reverse=True)[0]
                         datos={'name': ' '
                                ,'order_id' : sale.id
@@ -1177,10 +1099,7 @@ class helpdesk_update(models.Model):
                     #Toner mage
                     if c.x_studio_solicitar_tner_magenta:                      
                         pro = self.env['product.product'].search([['name','=',c.x_studio_reftonerm],['categ_id','=',5]])
-<<<<<<< HEAD
-=======
                         _logger.info("------------------------- pro : " + str(pro))
->>>>>>> master
                         gen = pro.sorted(key='qty_available',reverse=True)[0]
                         datos={'name': ' '
                                ,'order_id' : sale.id
@@ -1204,13 +1123,10 @@ class helpdesk_update(models.Model):
                 jalaSolicitudess='solicitud de toner '+sale.name+' para la serie :'+serieaca
                 #sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta', 'validity_date' : sale.date_order + datetime.timedelta(days=30)})
                 self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
-<<<<<<< HEAD
-=======
             
             
             
             
->>>>>>> master
             if (record.team_id.id == 13 ) and record.x_studio_tipo_de_requerimiento == 'Tóner':
                 sale = self.env['sale.order'].sudo().create({'partner_id' : record.partner_id.id
                                                 , 'origin' : "Ticket de tfs: " + str(record.x_studio_id_ticket)
@@ -1226,10 +1142,7 @@ class helpdesk_update(models.Model):
                                               })
                 record['x_studio_field_nO7Xg'] = sale.id
                 for c in record.x_studio_seriestoner:
-<<<<<<< HEAD
-=======
                   #_logger.info('*************cantidad a solicitar: ' + str(c.x_studio_cantidad_a_solicitar))
->>>>>>> master
                   self.env['sale.order.line'].create({'order_id' : sale.id
                                                 , 'product_id' : c.id
                                                 , 'product_uom_qty' : 1.0
@@ -1246,10 +1159,7 @@ class helpdesk_update(models.Model):
                     #if self.stage_id.name == 'Atención' and self.estadoSolicitudDeToner == False:
                     if self.estadoSolicitudDeToner == False:    
                         query = "update helpdesk_ticket set stage_id = 91 where id = " + str(self.x_studio_id_ticket) + ";"
-<<<<<<< HEAD
-=======
                         _logger.info("lol: " + query)
->>>>>>> master
                         ss = self.env.cr.execute(query)
                         self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_disgnostico':jalaSolicitudess,'x_persona': self.env.user.name,'x_estado': "Pendiente por autorizar solicitud"})
                         message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Pendiente por autorizar solicitud' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
@@ -1276,27 +1186,22 @@ class helpdesk_update(models.Model):
         
     #@api.onchange('x_studio_verificacin_de_tner')
     def validar_solicitud_toner(self):
-<<<<<<< HEAD
         for record in self:
             sale = record.x_studio_field_nO7Xg
-=======
         _logger.info("validar_solicitud_toner()")        
         for record in self:
             sale = record.x_studio_field_nO7Xg
             _logger.info("*******sale.id: " + str(sale.id))
->>>>>>> master
             if sale.id != 0:
                 self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
                 sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
                 sale.write({'x_studio_corte':self.x_studio_corte})
                 sale.write({'x_studio_comentario_adicional':self.x_studio_comentarios_de_localidad})      
-<<<<<<< HEAD
                 if self.x_studio_almacen_1=='Agricola':
                    sale.write({'warehouse_id':1})
                 if self.x_studio_almacen_1=='Queretaro':
                    sale.write({'warehouse_id':18})
       
-=======
                 x=0
                 if self.x_studio_almacen_1=='Agricola':
                    sale.write({'warehouse_id':1})
@@ -1324,24 +1229,17 @@ class helpdesk_update(models.Model):
                             #requisicion[0].product_rel=[{'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
 
 
->>>>>>> master
                 sale.action_confirm()
                 
                 if self.estadoSolicitudDeTonerValidar == False:
                     query="update helpdesk_ticket set stage_id = 95 where id = " + str(self.x_studio_id_ticket) + ";" 
-<<<<<<< HEAD
-=======
                     _logger.info("lol: " + query)
->>>>>>> master
                     ss=self.env.cr.execute(query)
                     self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Autorizado"})
 
                     #En almacen
                     query="update helpdesk_ticket set stage_id = 93 where id = " + str(self.x_studio_id_ticket) + ";" 
-<<<<<<< HEAD
-=======
                     _logger.info("lol: " + query)
->>>>>>> master
                     ss=self.env.cr.execute(query)
                     self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "En almacén"})
 
@@ -1379,7 +1277,6 @@ class helpdesk_update(models.Model):
             idf = self.team_id.id
             tam = len(list)
             if idf == 8 or idf == 13 :
-<<<<<<< HEAD
                res['domain']={'x_studio_productos':[('categ_id', '=', 5),('x_studio_toner_compatible.id','in',list)]}
             if idf == 9:
                res['domain']={'x_studio_productos':[('categ_id', '=', 7),('x_studio_toner_compatible.id','=',list[0])]}
@@ -1387,7 +1284,6 @@ class helpdesk_update(models.Model):
                res['domain']={'x_studio_productos':[('x_studio_toner_compatible.id','=',list[0])]}
             #if idf 55:
             #   res['domain'] = {'x_studio_productos':[('x_studio_toner_compatible.id', '=', list[0]),('x_studio_toner_compatible.property_stock_inventory.id', '=', 121),('x_studio_toner_compatible.id property_stock_inventory.id', '=', 121)] }
-=======
                _logger.info("el id xD Toner"+g)            
                res['domain']={'x_studio_productos':[('categ_id', '=', 5),('x_studio_toner_compatible.id','in',list)]}
             if idf == 9:
@@ -1401,7 +1297,6 @@ class helpdesk_update(models.Model):
             #   _logger.info("Cotizacion xD" + g)
             #   res['domain'] = {'x_studio_productos':[('x_studio_toner_compatible.id', '=', list[0]),('x_studio_toner_compatible.property_stock_inventory.id', '=', 121),('x_studio_toner_compatible.id property_stock_inventory.id', '=', 121)] }
             #   _logger.info("res"+str(res))
->>>>>>> master
         return res
         
     @api.onchange('x_studio_zona')
@@ -1428,10 +1323,7 @@ class helpdesk_update(models.Model):
     
     @api.onchange('stage_id')
     def actualiza_datos_estado(self):
-<<<<<<< HEAD
-=======
         _logger.info("staged()  **********************************#*"+self.env.user.name)
->>>>>>> master
         self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})        
     
     
@@ -1443,10 +1335,7 @@ class helpdesk_update(models.Model):
         res = self.x_studio_responsable_de_equipo.name
         team = self.team_id.name
         
-<<<<<<< HEAD
-=======
         _logger.info("actualiza_datos_zona()  **********************************#*"+str(s)+" "+str(res)+""+str(team))
->>>>>>> master
         if s=='Abierto' :
         #if s == 'New' :
             if self.x_studio_id_ticket :
@@ -1885,10 +1774,8 @@ class helpdesk_update(models.Model):
                             if cliente == []:
                                 self.env.cr.execute("update helpdesk_ticket set partner_id = " + cliente + "  where  id = " + idM + ";")
                             v['partner_id'] = cliente
-<<<<<<< HEAD
-=======
+
                             _logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.phone)
->>>>>>> master
                             cliente_telefono = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.phone
                             self._origin.sudo().write({'x_studio_telefono' : cliente_telefono})
                             record.x_studio_telefono = cliente_telefono
@@ -1932,30 +1819,23 @@ class helpdesk_update(models.Model):
                 else:
                     raise exceptions.ValidationError("No es posible registrar más de un número de serie")
             if record.team_id.id==8:
-<<<<<<< HEAD
-=======
+
                 _logger.info('record_ 1: ' + str(self._origin.partner_id))
                 _logger.info('record_id 1: ' + str(self._origin.id))
->>>>>>> master
                 _my_object = self.env['helpdesk.ticket']
                 #v['x_studio_equipo_por_nmero_de_serie'] = {record.x_studio_equipo_por_nmero_de_serie.id}
 
 
-<<<<<<< HEAD
-=======
                 #_logger.info('record_feliz : ' + str(record.x_studio_equipo_por_nmero_de_serie.id))
->>>>>>> master
                 #ids.append(record.x_studio_equipo_por_nmero_de_serie.id)
 
                 #record['x_studio_equipo_por_nmero_de_serie'] = [(4,record.x_studio_equipo_por_nmero_de_serie.id)]
 
 
-<<<<<<< HEAD
                 for numeros_serie in record.x_studio_equipo_por_nmero_de_serie:
                     ids.append(numeros_serie.id)
                     for move_line in numeros_serie.x_studio_move_line:
                         #move_line.para.almacen.ubicacion.
-=======
                 _logger.info('*********order_line: ')
                 _logger.info(str(record.x_studio_equipo_por_nmero_de_serie))
                 for numeros_serie in record.x_studio_equipo_por_nmero_de_serie:
@@ -1969,47 +1849,37 @@ class helpdesk_update(models.Model):
                         #move_line.para.almacen.ubicacion.
                         _logger.info('Cliente info***************************************************************************')
                         _logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id)
->>>>>>> master
                         cliente = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
                         self._origin.sudo().write({'partner_id' : cliente})
                         record.partner_id = cliente
                         idM=self._origin.id
-<<<<<<< HEAD
                         if cliente == []:
                             self.env.cr.execute("update helpdesk_ticket set partner_id = " + cliente + "  where  id = " + idM + ";")
                         v['partner_id'] = cliente
-=======
                         _logger.info("que show"+str(idM))
                         if cliente == []:
                             self.env.cr.execute("update helpdesk_ticket set partner_id = " + cliente + "  where  id = " + idM + ";")
                         v['partner_id'] = cliente
                         _logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.phone)
->>>>>>> master
                         cliente_telefono = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.phone
                         self._origin.sudo().write({'x_studio_telefono' : cliente_telefono})
                         record.x_studio_telefono = cliente_telefono
                         if cliente_telefono != []:
                             srtt="update helpdesk_ticket set x_studio_telefono = '" + str(cliente_telefono) + "' where  id = " + str(idM) + ";"
-<<<<<<< HEAD
                             #s=self.env.cr.execute("update helpdesk_ticket set x_studio_telefono = '" + str(cliente_telefono) + "' where  id = " + str(idM) + ";")
                         v['x_studio_telefono'] = cliente_telefono
-=======
                             _logger.info("update gacho"+srtt)
                             #s=self.env.cr.execute("update helpdesk_ticket set x_studio_telefono = '" + str(cliente_telefono) + "' where  id = " + str(idM) + ";")
                             #_logger.info("update gacho 2 "+str(s))
                         v['x_studio_telefono'] = cliente_telefono
                         _logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.mobile)
->>>>>>> master
                         cliente_movil = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.mobile
                         self._origin.sudo().write({'x_studio_movil' : cliente_movil})
                         record.x_studio_movil = cliente_movil
                         if cliente_movil == []:
                             self.env.cr.execute("update helpdesk_ticket set x_studio_movil = '" + str(cliente_movil) + "' where  id = " +idM + ";")
                         v['x_studio_movil'] = cliente_movil
-<<<<<<< HEAD
-=======
                         _logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.x_studio_nivel_del_cliente)
->>>>>>> master
                         cliente_nivel = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.x_studio_nivel_del_cliente
                         self._origin.sudo().write({'x_studio_nivel_del_cliente' : cliente_nivel})
                         record.x_studio_nivel_del_cliente = cliente_nivel
@@ -2018,7 +1888,6 @@ class helpdesk_update(models.Model):
                         v['x_studio_nivel_del_cliente'] = cliente_nivel
 
                         #localidad datos
-<<<<<<< HEAD
                         localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
                         self._origin.sudo().write({'x_studio_empresas_relacionadas' : localidad})
                         record.x_studio_empresas_relacionadas = localidad
@@ -2027,7 +1896,6 @@ class helpdesk_update(models.Model):
                         #self._origin.sudo().write({x_studio_telefono_localidad : telefono_localidad})
                         #movil_localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.mobile
                         #self._origin.sudo().write({x_studio_movil_localidad : movil_localidad})
-=======
                         _logger.info('Localidad info*************************************************************************')
                         _logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z)
                         localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
@@ -2042,23 +1910,19 @@ class helpdesk_update(models.Model):
                         #movil_localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.mobile
                         #self._origin.sudo().write({x_studio_movil_localidad : movil_localidad})
                         _logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.email)
->>>>>>> master
                         #email_localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.email
                         #self._origin.sudo().write({x_studio_correo_electrnico_de_localidad : email_localidad})
 
                         #
-<<<<<<< HEAD
 
                     #self._origin.sudo().write({x_studio_responsable_de_equipo : responsable_equipo_de_distribucion})
 
-=======
                         #_logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.)
 
                     #self._origin.sudo().write({x_studio_responsable_de_equipo : responsable_equipo_de_distribucion})
 
                     #_logger.info(record['x_studio_equipo_por_nmero_de_serie'])
                     _logger.info(ids)
->>>>>>> master
                     #record['x_studio_equipo_por_nmero_de_serie'] = (6, 0, [ids])
                     #record.sudo().write({x_studio_equipo_por_nmero_de_serie : [(6, 0, [ids])] })
                     #self._origin.sudo().write({'x_studio_equipo_por_nmero_de_serie' : (4, ids) })
@@ -2082,24 +1946,18 @@ class helpdesk_update(models.Model):
                         #self.env.cr.commit()
                         v['x_studio_empresas_relacionadas'] = localidad        
                     """
-<<<<<<< HEAD
-=======
                     _logger.info({'value': v})
                     _logger.info(v)
->>>>>>> master
                     #self._origin.env['helpdesk.ticket'].sudo().write(v)
 
                     #res = super(helpdesk_update, self).sudo().write(v)
                     #return res
                     #return {'value': v}
         if int(self.x_studio_tamao_lista) > 0 and self.team_id.id != 8:
-<<<<<<< HEAD
             query="select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!="+str(self.x_studio_id_ticket)+"  and h.stage_id!=18 and h.team_id!=8 and  h.active='t' and stock_production_lot_id = "+str(self.x_studio_equipo_por_nmero_de_serie[0].id)+" limit 1;"            
-=======
             _logger.info("actualiza_datos_cliente()" + str(self.x_studio_equipo_por_nmero_de_serie[0].id))
             query="select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!="+str(self.x_studio_id_ticket)+"  and h.stage_id!=18 and h.team_id!=8 and  h.active='t' and stock_production_lot_id = "+str(self.x_studio_equipo_por_nmero_de_serie[0].id)+" limit 1;"            
             _logger.info("primera query s "+str(query))
->>>>>>> master
             self.env.cr.execute(query)                        
             informacion = self.env.cr.fetchall()
             if len(informacion) > 0:
@@ -2111,13 +1969,10 @@ class helpdesk_update(models.Model):
                 return {'warning': mess}
                 #raise exceptions.ValidationError("No es posible registrar número de serie, primero cerrar el ticket con el id  "+str(informacion[0][0]))
         if int(self.x_studio_tamao_lista) > 0 and self.team_id.id == 8:
-<<<<<<< HEAD
             queryt="select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!="+str(self.x_studio_id_ticket)+"  and h.stage_id!=18 and h.team_id=8 and  h.active='t' and stock_production_lot_id = "+str(self.x_studio_equipo_por_nmero_de_serie[0].id)+" limit 1;"            
-=======
             _logger.info("actualiza_datos_cliente()" + str(self.x_studio_equipo_por_nmero_de_serie[0].id))
             queryt="select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!="+str(self.x_studio_id_ticket)+"  and h.stage_id!=18 and h.team_id=8 and  h.active='t' and stock_production_lot_id = "+str(self.x_studio_equipo_por_nmero_de_serie[0].id)+" limit 1;"            
             _logger.info("primera query st "+str(queryt))
->>>>>>> master
             self.env.cr.execute(queryt)                        
             informaciont = self.env.cr.fetchall()
             if len(informaciont) > 0:
@@ -2247,10 +2102,8 @@ class helpdesk_update(models.Model):
     def message_new(self, msg, custom_values=None):
         values = dict(custom_values or {}, partner_email=msg.get('from'), partner_id=msg.get('author_id'))
 
-<<<<<<< HEAD
-=======
         _logger.info('************ticket: ' + str(msg.get('from')))
->>>>>>> master
+
         if(("gnsys.mx" in str(msg.get('from'))) or ("scgenesis.mx" in str(msg.get('from')))):
             return 0
         ticket = super(helpdesk_update, self).message_new(msg, custom_values=values)

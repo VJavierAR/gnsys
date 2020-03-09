@@ -4,8 +4,6 @@ from odoo.exceptions import UserError
 from odoo.tools.float_utils import float_compare, float_is_zero, float_round
 import logging, ast
 _logger = logging.getLogger(__name__)
-<<<<<<< HEAD
-
 class StockPicking(Model):
     _inherit = 'stock.picking'
     almacenOrigen=fields.Many2one('stock.warehouse','Almacen Origen')
@@ -36,7 +34,6 @@ class StockPicking(Model):
     ('confirmed', 'Sin Stock'),
     ('assigned', 'Por Validar'),
     ('done', 'Validado'),('distribucion', 'Distribución'),('cancel', 'Cancelled'),('aDistribucion', 'A Distribución')])
-=======
 #puro aaa
 class StockPicking(Model):
     _inherit = 'stock.picking'
@@ -81,7 +78,6 @@ class StockPicking(Model):
     #def mandarTicketGuia(self):
     #    c = self.env['helpdesk.ticket'].search([('id','=',self.x_studio_idtempticket)]) 
     #    c.write({'x_studio_nmero_de_guia_1': self.carrier_tracking_ref})        
->>>>>>> master
     
     @api.multi
     def button_validate(self):
@@ -91,11 +87,8 @@ class StockPicking(Model):
 
         # If no lots when needed, raise error
         picking_type = self.picking_type_id
-<<<<<<< HEAD
         if(picking_type.id==2 and len(self.x_studio_evidencia)<1):
-=======
         if(picking_type.id==2 and len(self.x_studio_evidencia_a_ticket)<1):
->>>>>>> master
             raise UserError(_('Se requiere la Evidencia.'))
             
         precision_digits = self.env['decimal.precision'].precision_get('Product Unit of Measure')
@@ -103,7 +96,6 @@ class StockPicking(Model):
         no_reserved_quantities = all(float_is_zero(move_line.product_qty, precision_rounding=move_line.product_uom_id.rounding) for move_line in self.move_line_ids)
         if no_reserved_quantities and no_quantities_done:
             raise UserError(_('You cannot validate a transfer if no quantites are reserved nor done. To force the transfer, switch in edit more and encode the done quantities.'))
-<<<<<<< HEAD
         #refaccion
         #if(self.picking_type_id.id==29314):
         #    if(self.sale_id.x_studio_field_bxHgp):
@@ -127,7 +119,6 @@ class StockPicking(Model):
                                                                        , 'x_estado' : "Cierre"
                                                                        , 'x_disgnostico':ev.x_comentario                                                                   
                                                                       })
-=======
    
         #if(self.picking_type_id.id==2 and len(self.x_studio_evidencia)>0):
         #    if(self.sale_id.x_studio_field_bxHgp):
@@ -139,7 +130,6 @@ class StockPicking(Model):
          #                                                              , 'x_estado' : "Cierre"
          #                                                              , 'x_disgnostico':ev.x_comentario                                                                   
          #                                                             })
->>>>>>> master
                     
 
         if picking_type.use_create_lots or picking_type.use_existing_lots:
@@ -189,16 +179,12 @@ class StockPicking(Model):
 
         # Check backorder should check for other barcodes
         if self._check_backorder():
-<<<<<<< HEAD
             self.backorder="Parcial"
-=======
             #self.backorder="Parcial"
->>>>>>> master
             if(self.picking_type_id.id==3 or self.picking_type_id.id==29314):
                 if(self.sale_id.x_studio_field_bxHgp):
                     self.sale_id.x_studio_field_bxHgp.write({'stage_id':109})
             return self.action_generate_backorder_wizard()
-<<<<<<< HEAD
         self.action_done()
         return            
     
@@ -218,7 +204,6 @@ class StockPicking(Model):
     
     
     
-=======
         self.sudo().action_done()
         return            
     
@@ -307,7 +292,6 @@ class StockPicking(Model):
                 #if 'done' in record.state and record.location_dest_id.id==9 and record.write_uid.id>2:
                 #   self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : numTicket, 'x_persona' : str(self.env.user.name), 'x_estado' : "Refacción Entregada"})                    
             
->>>>>>> master
     def action_toggle_is_locked(self):
         self.ensure_one()
         if(self.is_locked==True):
@@ -379,8 +363,7 @@ class StockPicking(Model):
             'res_id': wiz.id,
             'context': self.env.context,
         }
-<<<<<<< HEAD
-=======
+
 
     def cambio_wizard(self):
         d=[]
@@ -462,7 +445,6 @@ class StockPicking(Model):
     #                 self.estado='confirmed'
 
 
->>>>>>> master
 class StockPicking(Model):
     _inherit = 'stock.move'
     almacenOrigen=fields.Many2one('stock.warehouse','Almacen Origen')

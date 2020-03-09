@@ -5,13 +5,10 @@
 
 from odoo import fields, api
 from odoo.models import TransientModel
-<<<<<<< HEAD
 
-=======
 import logging, ast
 import datetime, time
 _logger = logging.getLogger(__name__)
->>>>>>> master
 
 class StockPickingMassAction(TransientModel):
     _name = 'stock.picking.mass.action'
@@ -65,11 +62,8 @@ class StockPickingMassAction(TransientModel):
             draft_picking_lst = self.picking_ids.\
                 filtered(lambda x: x.state == 'draft').\
                 sorted(key=lambda r: r.scheduled_date)
-<<<<<<< HEAD
             draft_picking_lst.action_confirm()
-=======
             draft_picking_lst.sudo().action_confirm()
->>>>>>> master
 
         # check availability if asked
         if self.check_availability:
@@ -80,11 +74,8 @@ class StockPickingMassAction(TransientModel):
                     'done',
                 ]).\
                 sorted(key=lambda r: r.scheduled_date)
-<<<<<<< HEAD
             pickings_to_check.action_assign()
-=======
             pickings_to_check.sudo().action_assign()
->>>>>>> master
 
         # Get all pickings ready to transfer and transfer them if asked
         if self.transfer:
@@ -96,12 +87,10 @@ class StockPickingMassAction(TransientModel):
                 assigned_picking_lst.mapped('move_line_ids').filtered(
                     lambda m: m.state not in ('done', 'cancel')))
             if not quantities_done:
-<<<<<<< HEAD
                 return assigned_picking_lst.action_immediate_transfer_wizard()
             if assigned_picking_lst._check_backorder():
                 return assigned_picking_lst.action_generate_backorder_wizard()
             assigned_picking_lst.action_done()
-=======
                 _logger.info("***************lista " + str(len(assigned_picking_lst)))
                 CON=str(self.env['ir.sequence'].next_by_code('concentrado'))
                 for l in assigned_picking_lst:
@@ -137,4 +126,3 @@ class StockCambioLine(TransientModel):
     producto1=fields.Many2one('product.product')
     producto2=fields.Many2one('product.product')
     rel_cambio=fields.Many2one('cambio.toner')
->>>>>>> master
