@@ -74,6 +74,8 @@ class StockPickingMassAction(TransientModel):
             assigned_picking_lst = self.picking_ids.\
                 filtered(lambda x: x.state == 'assigned').\
                 sorted(key=lambda r: r.scheduled_date)
+            assigned_picking_lst2 = self.picking_ids.\
+                filtered(lambda x: x.picking_type_id.id == 3 and x.state == 'assigned')
             quantities_done = sum(
                 move_line.qty_done for move_line in
                 assigned_picking_lst.mapped('move_line_ids').filtered(
@@ -138,8 +140,9 @@ class StockPickingMassAction(TransientModel):
                  #   'date_end': self.date_end,
                 #},
             #}
-            return self.env.ref('stock_picking_mass_action.report_custom').report_action(assigned_picking_lst)
-        return False
+            if(len(assigned_picking_lst2)>0):
+                return self.env.ref('stock_picking_mass_action.report_custom').report_action(assigned_picking_lst2)
+        return {'type': 'ir.actions.client','tag': 'reload',}
     @api.multi
     def test(self):
         do=[]
