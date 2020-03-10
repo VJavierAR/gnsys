@@ -107,7 +107,7 @@ class StockPickingMassAction(TransientModel):
             do.append(d.id)
         data = {
                 'ids': do,
-                'model': self._name,
+                'model': 'stock.picking',
                 #'form': {
                 ##    'date_start': self.date_start,
                  #   'date_end': self.date_end,
