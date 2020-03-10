@@ -108,9 +108,10 @@ class StockPickingMassAction(TransientModel):
             if pick_to_do:
                 pick_to_do.action_done()
             if pick_to_backorder:
-                _logger.info("***************lista2" + str(pick_to_backorder.id))
-                wiz = self.env['stock.backorder.confirmation'].create({'pick_ids': [(4, pick_to_backorder.id)]})
-                wiz.process()
+                #_logger.info("***************lista2" + str(pick_to_backorder.id))
+                #wiz = self.env['stock.backorder.confirmation'].create({'pick_ids': [(4, pick_to_backorder.id)]})
+                #wiz.process()
+                pick_to_backorder.action_done()
                 #cancel_backorder=False
                     #if cancel_backorder:
                     #    for pick_id in self.pick_ids:
