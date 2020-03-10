@@ -158,7 +158,7 @@ class StockPickingMassAction(TransientModel):
                  #   'date_end': self.date_end,
                 #},
             }
-        return self.env.ref('stock_picking_mass_action.report_custom').report_action(self.picking_ids)
+        return self.env.ref('stock_picking_mass_action.report_custom').report_action(self.picking_ids),self.env.ref('stock.report_deliveryslip').report_action(self.picking_ids)
 
 
 class StockCambio(TransientModel):
