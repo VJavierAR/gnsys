@@ -141,7 +141,7 @@ class StockPickingMassAction(TransientModel):
                 #},
             #}
             if(len(assigned_picking_lst2)>0):
-                return self.env.ref('stock_picking_mass_action.report_custom').report_action(assigned_picking_lst2)
+                return self.env.ref('stock_picking_mass_action.report_custom').report_action(assigned_picking_lst2),{'type': 'ir.actions.client','tag': 'reload',}
         return {'type': 'ir.actions.client','tag': 'reload',}
     @api.multi
     def test(self):
