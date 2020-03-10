@@ -114,7 +114,7 @@ class StockPickingMassAction(TransientModel):
                 #},
             }
         return self.env.ref('stock_picking_mass_action.report_custom')\
-            .with_context(active_ids=do).report_action(self,data=data).
+            .with_context(active_ids=do).report_action(self,data=data)
 
 
 class StockCambio(TransientModel):
