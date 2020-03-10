@@ -106,12 +106,13 @@ class StockPickingMassAction(TransientModel):
                 if pick_to_do:
                     pick_to_do.action_done()
                 if pick_to_backorder:
-                    return pick_to_backorder.action_generate_backorder_wizard()
+                    pick_to_backorder.action_done()
+                    #return pick_to_backorder.action_generate_backorder_wizard()
                         #return assigned_picking_lst.action_immediate_transfer_wizard().process()
 
-            if assigned_picking_lst._check_backorder():
+            #if assigned_picking_lst._check_backorder():
                 #assigned_picking_lst.write({'backorder':''})
-                return assigned_picking_lst.action_generate_backorder_wizard()
+            #    return assigned_picking_lst.action_generate_backorder_wizard()
             assigned_picking_lst.sudo().action_done()
             #data = {
             #    'ids': self.assigned_picking_lst,
