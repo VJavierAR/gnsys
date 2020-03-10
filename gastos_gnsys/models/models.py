@@ -38,7 +38,7 @@ class gastos_gnsys(models.Model):
     anticipoCubierto            = fields.Float(string = 'Anticipo cubierto',track_visibility='onchange')
 
     #quienValida                 = fields.One2many('hr.employee', 'gastoValida', string = "Validado por",track_visibility='onchange')
-    quienValida                 = fields.Char(string = "Responsable de aprobación", track_visibility='onchange')
+    quienValida                 = fields.Char(string = "Responsable de aprobacion", track_visibility='onchange')
 
     motivos                     = fields.One2many('motivos', 'gasto', string = "Motivos",track_visibility='onchange')
     
