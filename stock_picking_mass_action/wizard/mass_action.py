@@ -106,14 +106,14 @@ class StockPickingMassAction(TransientModel):
         #for d in self.picking_ids:
         #    do.append(d.id)
         data = {
-                'docs':self.picking_ids,
+                #'docs':self.picking_ids,
                 'model': 'stock.picking',
                 #'form': {
                 ##    'date_start': self.date_start,
                  #   'date_end': self.date_end,
                 #},
             }
-        return self.env.ref('stock_picking_mass_action.report_custom').report_action(self,data=data)
+        return self.env.ref('stock_picking_mass_action.report_custom').report_action(self,data=data,docs=self.picking_ids)
 
 
 class StockCambio(TransientModel):
