@@ -98,7 +98,7 @@ class gastos_gnsys(models.Model):
             converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
             rec.diasAtrasoPago = (datetime.date.today() - converted_date).days
     
-    
+
 
     @api.multi
     def validarGasto(self):
@@ -167,3 +167,6 @@ class gastosEtapas(models.Model):
     
     sequence = fields.Integer(string="Secuencia")
     gasto = fields.One2many('gastos', 'etapas', string="Gasto")
+
+
+
