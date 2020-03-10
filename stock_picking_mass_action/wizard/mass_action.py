@@ -78,18 +78,18 @@ class StockPickingMassAction(TransientModel):
                 move_line.qty_done for move_line in
                 assigned_picking_lst.mapped('move_line_ids').filtered(
                     lambda m: m.state not in ('done', 'cancel')))
-            #if not quantities_done:
-            _logger.info("***************lista " + str(len(assigned_picking_lst)))
-            CON=str(self.env['ir.sequence'].next_by_code('concentrado'))
-            for l in assigned_picking_lst:
-                if(l.picking_type_id.id==3):
-                    l.sudo().write({'concentrado':CON})
-                    self.env['stock.picking'].search([['sale_id','=',l.sale_id.id]]).write({'concentrado':CON})
-                #return assigned_picking_lst.action_immediate_transfer_wizard()
+            if not quantities_done:
+                _logger.info("***************lista " + str(len(assigned_picking_lst)))
+                CON=str(self.env['ir.sequence'].next_by_code('concentrado'))
+                for l in assigned_picking_lst:
+                    if(l.picking_type_id.id==3):
+                        l.sudo().write({'concentrado':CON})
+                        self.env['stock.picking'].search([['sale_id','=',l.sale_id.id]]).write({'concentrado':CON})
+                return assigned_picking_lst.action_immediate_transfer_wizard().process()
 
-            #if assigned_picking_lst._check_backorder():
+            if assigned_picking_lst._check_backorder():
                 #assigned_picking_lst.write({'backorder':''})
-            #    return assigned_picking_lst.action_generate_backorder_wizard()
+                return assigned_picking_lst.action_generate_backorder_wizard()
             assigned_picking_lst.sudo().action_done()
             #data = {
             #    'ids': self.assigned_picking_lst,
@@ -99,7 +99,7 @@ class StockPickingMassAction(TransientModel):
                  #   'date_end': self.date_end,
                 #},
             #}
-            #return self.env.ref('stock_picking_mass_action.report_custom').report_action(assigned_picking_lst)
+            return self.env.ref('stock_picking_mass_action.report_custom').report_action(assigned_picking_lst, data=data)
     @api.multi
     def test(self):
         do=[]
