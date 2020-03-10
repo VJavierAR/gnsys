@@ -78,38 +78,38 @@ class StockPickingMassAction(TransientModel):
                 move_line.qty_done for move_line in
                 assigned_picking_lst.mapped('move_line_ids').filtered(
                     lambda m: m.state not in ('done', 'cancel')))
-            if not quantities_done:
-                _logger.info("***************lista " + str(len(assigned_picking_lst)))
-                CON=str(self.env['ir.sequence'].next_by_code('concentrado'))
-                for l in assigned_picking_lst:
-                    if(l.picking_type_id.id==3):
-                        l.sudo().write({'concentrado':CON})
-                        self.env['stock.picking'].search([['sale_id','=',l.sale_id.id]]).write({'concentrado':CON})
-                pick_to_backorder = self.env['stock.picking']
-                pick_to_do = self.env['stock.picking']
-                for picking in assigned_picking_lst:
-                    # If still in draft => confirm and assign
-                    if picking.state == 'draft':
-                        picking.action_confirm()
+            #if not quantities_done:
+            _logger.info("***************lista " + str(len(assigned_picking_lst)))
+            CON=str(self.env['ir.sequence'].next_by_code('concentrado'))
+            for l in assigned_picking_lst:
+                if(l.picking_type_id.id==3):
+                    l.sudo().write({'concentrado':CON})
+                    self.env['stock.picking'].search([['sale_id','=',l.sale_id.id]]).write({'concentrado':CON})
+            pick_to_backorder = self.env['stock.picking']
+            pick_to_do = self.env['stock.picking']
+            for picking in assigned_picking_lst:
+                # If still in draft => confirm and assign
+                if picking.state == 'draft':
+                    picking.action_confirm()
+                    if picking.state != 'assigned':
+                        picking.action_assign()
                         if picking.state != 'assigned':
-                            picking.action_assign()
-                            if picking.state != 'assigned':
-                                raise UserError(_("Could not reserve all requested products. Please use the \'Mark as Todo\' button to handle the reservation manually."))
-                    for move in picking.move_lines.filtered(lambda m: m.state not in ['done', 'cancel']):
-                        for move_line in move.move_line_ids:
-                            move_line.qty_done = move_line.product_uom_qty
-                    if picking._check_backorder():
-                        pick_to_backorder |= picking
-                        continue
-                    pick_to_do |= picking
-                # Process every picking that do not require a backorder, then return a single backorder wizard for every other ones.
-                if pick_to_do:
-                    pick_to_do.action_done()
-                if pick_to_backorder:
-                    _logger.info("***************lista2" + str(pick_to_backorder.id))
-                    wiz = self.env['stock.backorder.confirmation'].create({'pick_ids': [(4, pick_to_backorder.id)]})
-                    wiz.process()
-                    #cancel_backorder=False
+                            raise UserError(_("Could not reserve all requested products. Please use the \'Mark as Todo\' button to handle the reservation manually."))
+                for move in picking.move_lines.filtered(lambda m: m.state not in ['done', 'cancel']):
+                    for move_line in move.move_line_ids:
+                        move_line.qty_done = move_line.product_uom_qty
+                if picking._check_backorder():
+                    pick_to_backorder |= picking
+                    continue
+                pick_to_do |= picking
+            # Process every picking that do not require a backorder, then return a single backorder wizard for every other ones.
+            if pick_to_do:
+                pick_to_do.action_done()
+            if pick_to_backorder:
+                _logger.info("***************lista2" + str(pick_to_backorder.id))
+                wiz = self.env['stock.backorder.confirmation'].create({'pick_ids': [(4, pick_to_backorder.id)]})
+                wiz.process()
+                #cancel_backorder=False
                     #if cancel_backorder:
                     #    for pick_id in self.pick_ids:
                     #        moves_to_log = {}
