@@ -16,29 +16,28 @@ class gastos_gnsys(models.Model):
     
     quienSolcita     = fields.Many2one('res.users', string = "Quien solicita",track_visibility='onchange', default=lambda self: self.env.user)
     #quienSolcita     = fields.Char(string="Quien solicita?" ,track_visibility='onchange')
-    proyecto = fields.Text(string="Proyecto", track_visibility='onchange')
-
-    quienesAutorizan = fields.One2many('res.users', 'gastoAutoriza', string = "Responsable de autorizacion",track_visibility='onchange')
+    quienesAutorizan = fields.One2many('res.users', 'gastoAutoriza', string = "Quien (es) autorizan",track_visibility='onchange')
     quienesReciben   = fields.One2many('res.users', 'gastoRecibe', string = "Quien (es) reciben",track_visibility='onchange')
 
-    montoRequerido   = fields.Float(string = 'Monto requerido',track_visibility='onchange')
     montoAprobado    = fields.Float(string = 'Monto aprobado',track_visibility='onchange')
-    montoAtnticipado = fields.Float(string = 'Monto adelanto',track_visibility='onchange')
-    
-    formaDepagoAnticipo         = fields.Selection((('Efectivo','Efectivo'), ('Cheque','Cheque'),('Deposito','Deposito'),('Transferencia','Transferencia')), string = "Forma de pago",track_visibility='onchange')
+    montoAtnticipado = fields.Float(string = 'Monto anticipo',track_visibility='onchange')
+
+
+    formaDepagoAnticipo         = fields.Selection((('Efectivo','Efectivo'), ('Cheque','Cheque'),('Depósito','Depósito'),('Transferencia','Transferencia')), string = "Forma de pago",track_visibility='onchange')
+
 
     comoAplicaContablemente     = fields.Selection((('Opcion','Opcion'),('Opcion','Opcion'),('Opcion','Opcion')), string = "Como aplica contablemente",track_visibility='onchange')
-    porCubrirAnticipo           = fields.Datetime(string = 'Fecha compromiso de adelanto', track_visibility='onchange')
+    porCubrirAnticipo           = fields.Datetime(string = 'Fecha límite de pago',track_visibility='onchange')
 
-    fechaPago                   = fields.Datetime(string = 'Fecha pago de adelanto',track_visibility='onchange')
+    fechaPago                   = fields.Datetime(string = 'Fecha de pago',track_visibility='onchange')
 
-    fechaLimiteDeComprobacion   = fields.Datetime(string = 'Fecha limite de comprobacion',track_visibility='onchange')
+    fechaLimiteDeComprobacion   = fields.Datetime(string = 'Fecha límite de comprobación',track_visibility='onchange')
 
 
     anticipoCubierto            = fields.Float(string = 'Anticipo cubierto',track_visibility='onchange')
 
     #quienValida                 = fields.One2many('hr.employee', 'gastoValida', string = "Validado por",track_visibility='onchange')
-    quienValida                 = fields.Char(string = "Responsable de aprobacion", track_visibility='onchange')
+    quienValida                 = fields.Char(string = "Validado por", track_visibility='onchange')
 
     motivos                     = fields.One2many('motivos', 'gasto', string = "Motivos",track_visibility='onchange')
     
@@ -83,13 +82,22 @@ class gastos_gnsys(models.Model):
     etapas = fields.Many2one('gastos.etapa', string='Etapa', ondelete='restrict', track_visibility='onchange',readonly=True,copy=False,index=True)
     productos = fields.One2many('product.product','id',string='Solicitudes',store=True)
     
-
-    comprobantes = fields.Many2many('ir.attachment', string="Comprobantes")
+    comprobantes        = fields.Many2many('ir.attachment', string="Comprobantes")
+    
 
     tipoDeComprobacion = fields.Selection([('Exacto','Exacto'), ('Parcial','Parcial'), ('Excedido','Excedido'), ('noComprobado','No se comprobo correctamente')], string = "Tipo de comprobación", track_visibility='onchange')
     quienValidaMonto = fields.Char(string = "Gasto comprobado por", track_visibility='onchange')
     
     diasAtrasoPago = fields.Integer(compute='computarDiasAtrasoPago',string='Dias de atraso del pago')
+
+
+
+    #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$4
+
+    comprobaciones = fields.One2many('gastos.comprovaciones', 'comprobante', string = "Comprobantes",track_visibility='onchange')
+
+
+    #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$4
 
     
     def computarDiasAtrasoPago(self):
@@ -97,9 +105,10 @@ class gastos_gnsys(models.Model):
             fecha = str(rec.create_date).split(' ')[0]
             converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
             rec.diasAtrasoPago = (datetime.date.today() - converted_date).days
-    
-
-
+    @api.depends('etapas')
+    def cambio(self):
+        for record in self:
+            record.montoAprobado = 300.0
     @api.multi
     def validarGasto(self):
         #_logger.info()
@@ -107,7 +116,6 @@ class gastos_gnsys(models.Model):
         gasto.write({'x_studio_field_VU6DU': 'aprobado'
                      , 'quienValida': self.env.user.name
                    })
-
     @api.multi
     def validarComprobacion(self):
         message = ""
@@ -137,7 +145,6 @@ class gastos_gnsys(models.Model):
             _logger.info("No comprobado")
         #else:
         #    pass
-
 class motivos_gastos(models.Model):
     _name = 'motivos'
     _description = 'Motivos de un gasto'
@@ -145,21 +152,16 @@ class motivos_gastos(models.Model):
     gasto  = fields.Many2one('gastos', string = "Gasto ", track_visibility='onchange')
     motivoDescripcion = fields.Text()
     tipoDeMotivo      = fields.Selection((('!','1'), ('2','2')), string = "Tipo de motivo",track_visibility='onchange')
-
 class usuarios_gastos(models.Model):
     _inherit = 'res.users'
     gastoSolicitante = fields.One2many('gastos', 'quienSolcita', string="Gasto solicitante")
     gastoAutoriza = fields.Many2one('gastos', string="Gasto autoriza")
     gastoRecibe = fields.Many2one('gastos', string="Gasto autoriza")
-
 class empleados_gastos(models.Model):
     _inherit = 'hr.employee'
     
     #gastoSolicitante = fields.One2many('gastos', 'quienSolcita', string="Gasto solicitante")
     #gastoValida = fields.Many2one('gastos', string="Gasto valida")
-    
-    
-    
 class gastosEtapas(models.Model):
     _name = 'gastos.etapa'
     _description = 'Etapas para los gastos'
@@ -168,5 +170,18 @@ class gastosEtapas(models.Model):
     sequence = fields.Integer(string="Secuencia")
     gasto = fields.One2many('gastos', 'etapas', string="Gasto")
 
-
-
+#Tabla de comprobaciones
+class comprobaciones(models.Model):
+    _name = 'gastos.comprovaciones'
+    _description = 'Tipos de comprovaciónes del gasto'
+    comprobante  = fields.Many2one('gastos', string = "Comprobación ", track_visibility='onchange')
+    concepto                = fields.Text(string = "Concepto",      track_visibility='onchange')
+    descripcion             = fields.Text(string = "Descripción",   track_visibility='onchange')
+    justificacon            = fields.Text(string = "Justificación", track_visibility='onchange')
+    monto                   = fields.Float(string = "Monto",         track_visibility='onchange')
+    comprobantes            = fields.Many2many('ir.attachment', string="Comprobantes")
+    tipoDeComprobante       = fields.Selection((('Factura','Factura'),('FacturaSinIva','Factura sin IVA'),('TiketFacturable','Ticket facturable'),('Tiket','Ticket'),('Nota','Nota')), string = "Tipo de Comprobante",track_visibility='onchange')
+    porcentajeAceptado      = fields.Selection((('100','100%'),('75','75%'),('50','50%'),('25','25%'),('Nota','Nota')), string = "Porcentaje Aceptado",track_visibility='onchange')
+    montoJustificado        = fields.Float(string = 'Monto justificado',track_visibility='onchange')
+    cuentaContableDestino   = fields.Text(string = "Cuenta contable Destino",      track_visibility='onchange')
+    centoDeCostos           = fields.Text(string = "Centro de Costos",      track_visibility='onchange')
