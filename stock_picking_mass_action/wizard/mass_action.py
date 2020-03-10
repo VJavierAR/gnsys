@@ -123,7 +123,7 @@ class StockPickingMassAction(TransientModel):
                 #},
             #}
             return self.env.ref('stock_picking_mass_action.report_custom').report_action(assigned_picking_lst)
-        return 0
+        return False
     @api.multi
     def test(self):
         do=[]
