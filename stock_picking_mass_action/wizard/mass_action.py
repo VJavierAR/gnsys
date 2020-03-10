@@ -1,8 +1,3 @@
-# Copyright 2014 Camptocamp SA - Guewen Baconnier
-# Copyright 2018 Tecnativa - Vicent Cubells
-# Copyright 2019 Tecnativa - Carlos Dauden
-# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-
 from odoo import fields, api
 from odoo.models import TransientModel
 import logging, ast
@@ -105,6 +100,9 @@ class StockPickingMassAction(TransientModel):
                 #},
             }
             return self.env.ref('stock_picking_mass_action.report_custom').report_action(self, data=data)
+    @api.multi
+    def test(self):
+        return self.env.ref('stock_picking_mass_action.report_custom').report_action(self, data=data)
 
 
 class StockCambio(TransientModel):
