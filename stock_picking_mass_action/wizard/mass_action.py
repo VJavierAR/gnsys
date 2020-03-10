@@ -113,7 +113,7 @@ class StockPickingMassAction(TransientModel):
             #if assigned_picking_lst._check_backorder():
                 #assigned_picking_lst.write({'backorder':''})
             #    return assigned_picking_lst.action_generate_backorder_wizard()
-            assigned_picking_lst.sudo().action_done()
+            #assigned_picking_lst.sudo().action_done()
             #data = {
             #    'ids': self.assigned_picking_lst,
             #    'model': self._name,
@@ -123,7 +123,7 @@ class StockPickingMassAction(TransientModel):
                 #},
             #}
             return self.env.ref('stock_picking_mass_action.report_custom').report_action(assigned_picking_lst)
-            return 0
+        return 0
     @api.multi
     def test(self):
         do=[]
