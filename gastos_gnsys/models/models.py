@@ -32,7 +32,7 @@ class gastos_gnsys(models.Model):
 
     fechaPago                   = fields.Datetime(string = 'Fecha pago de adelanto',track_visibility='onchange')
 
-    fechaLimiteDeComprobacion   = fields.Datetime(string = 'Fecha límite de comprobación',track_visibility='onchange')
+    fechaLimiteDeComprobacion   = fields.Datetime(string = 'Fecha limite de comprobacion',track_visibility='onchange')
 
 
     anticipoCubierto            = fields.Float(string = 'Anticipo cubierto',track_visibility='onchange')
