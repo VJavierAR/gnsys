@@ -70,7 +70,7 @@ class contadores(models.Model):
     
     @api.multi
     def carga_contadores_fac(self):
-        if self.x_studio_estado_capturas='Listo':
+        if self.x_studio_estado_capturas=='Listo':
             for r in self.detalle:
                 rr=self.env['dcas.dcas'].create({'serie': r.producto
                                                  ,'contadorColor':r.ultimaLecturaColor
