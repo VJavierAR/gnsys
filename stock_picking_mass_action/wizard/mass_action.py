@@ -134,7 +134,7 @@ class StockCambio(TransientModel):
                 pickis=self.env.cr.fetchall()
                 pickg=self.env['stock.picking'].search([['id','in',pickis]])
                 for li in self.pro_ids:
-                    datos={'order_id':self.pick.sale_id.id,'product_id':li.producto2.id,'product_uom':li.producto2.uom_id.id,'product_uom_qty':li.cantidad,'name':li.producto2.description if(li.producto2.description) else '/','price_unit':0.00}
+                    datos={'order_id':self.pick.sale_id.id,'product_id':li.producto2.id,'product_uom':li.producto2.uom_id.id,'product_uom_qty':li.cantidad,'name':li.producto2.description if(li.producto2.description) else '/','price_unit':0.00,'x_studio_serieorderline':li.serie}
                     #if(li.serieDestino):
                     #    datos['x_studio_field_9nQhR']=li.serieDestino.id,
                     ss=self.env['sale.order.line'].sudo().create(datos)
@@ -148,3 +148,4 @@ class StockCambioLine(TransientModel):
     producto2=fields.Many2one('product.product')
     cantidad=fields.Float()
     rel_cambio=fields.Many2one('cambio.toner')
+    serie=fields.Char()
