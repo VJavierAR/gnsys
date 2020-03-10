@@ -102,7 +102,7 @@ class StockPickingMassAction(TransientModel):
             return self.env.ref('stock_picking_mass_action.report_custom').report_action(self, data=data)
     @api.multi
     def test(self):
-        return self.env.ref('stock_picking_mass_action.report_custom').report_action(self, data=data)
+        return self.env.ref('stock_picking_mass_action.report_custom').report_action(self,docids=self.picking_ids)
 
 
 class StockCambio(TransientModel):
