@@ -105,7 +105,7 @@ class StockPickingMassAction(TransientModel):
         do=[]
         for d in self.picking_ids:
             do.append(d.id)
-        data = {
+        data = {'docids':do,
                 'docs':self.picking_ids,
                 'model': 'stock.picking',
                 #'form': {
