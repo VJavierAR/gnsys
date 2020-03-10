@@ -16,7 +16,7 @@ class gastos_gnsys(models.Model):
     
     quienSolcita     = fields.Many2one('res.users', string = "Quien solicita",track_visibility='onchange', default=lambda self: self.env.user)
     #quienSolcita     = fields.Char(string="Quien solicita?" ,track_visibility='onchange')
-    proyecto = Text(string="Proyecto", track_visibility='onchange')
+    proyecto = fields.Text(string="Proyecto", track_visibility='onchange')
 
     quienesAutorizan = fields.One2many('res.users', 'gastoAutoriza', string = "Responsable de autorizacion",track_visibility='onchange')
     quienesReciben   = fields.One2many('res.users', 'gastoRecibe', string = "Quien (es) reciben",track_visibility='onchange')
