@@ -19,5 +19,6 @@
         'wizard/mass_action_view.xml',
         'data/ir_cron.xml',
         'report/views.xml',
+        'view/template.xml'
     ],
 }
