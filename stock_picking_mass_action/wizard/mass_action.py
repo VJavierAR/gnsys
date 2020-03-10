@@ -143,7 +143,7 @@ class StockPickingMassAction(TransientModel):
             #}
             if(len(assigned_picking_lst2)>0):
                 return self.env.ref('stock_picking_mass_action.report_custom').report_action(assigned_picking_lst2),self.env.ref('stock.report_deliveryslip').report_action(self.assigned_picking_lst2)
-        time.sleep(20)
+        #time.sleep(20)
         return {'type': 'ir.actions.client','tag': 'reload',}
     @api.multi
     def test(self):
