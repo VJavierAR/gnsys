@@ -1,8 +1,3 @@
-# Copyright 2014 Camptocamp SA - Guewen Baconnier
-# Copyright 2018 Tecnativa - Vicent Cubells
-# Copyright 2019 Tecnativa - Carlos Dauden
-# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-
 from odoo import fields, api
 from odoo.models import TransientModel
 import logging, ast
@@ -79,32 +74,89 @@ class StockPickingMassAction(TransientModel):
             assigned_picking_lst = self.picking_ids.\
                 filtered(lambda x: x.state == 'assigned').\
                 sorted(key=lambda r: r.scheduled_date)
+            assigned_picking_lst2 = self.picking_ids.\
+                filtered(lambda x: x.picking_type_id.id == 3 and x.state == 'assigned')
             quantities_done = sum(
                 move_line.qty_done for move_line in
                 assigned_picking_lst.mapped('move_line_ids').filtered(
                     lambda m: m.state not in ('done', 'cancel')))
-            if not quantities_done:
-                _logger.info("***************lista " + str(len(assigned_picking_lst)))
-                CON=str(self.env['ir.sequence'].next_by_code('concentrado'))
-                for l in assigned_picking_lst:
-                    if(l.picking_type_id.id==3):
-                        l.sudo().write({'concentrado':CON})
-                        self.env['stock.picking'].search([['sale_id','=',l.sale_id.id]]).write({'concentrado':CON})
-                return assigned_picking_lst.action_immediate_transfer_wizard()
+            #if not quantities_done:
+            _logger.info("***************lista " + str(len(assigned_picking_lst)))
+            CON=str(self.env['ir.sequence'].next_by_code('concentrado'))
+            for l in assigned_picking_lst:
+                if(l.picking_type_id.id==3):
+                    l.sudo().write({'concentrado':CON})
+                    self.env['stock.picking'].search([['sale_id','=',l.sale_id.id]]).write({'concentrado':CON})
+            pick_to_backorder = self.env['stock.picking']
+            pick_to_do = self.env['stock.picking']
+            for picking in assigned_picking_lst:
+                # If still in draft => confirm and assign
+                if picking.state == 'draft':
+                    picking.action_confirm()
+                    if picking.state != 'assigned':
+                        picking.action_assign()
+                        if picking.state != 'assigned':
+                            raise UserError(_("Could not reserve all requested products. Please use the \'Mark as Todo\' button to handle the reservation manually."))
+                for move in picking.move_lines.filtered(lambda m: m.state not in ['done', 'cancel']):
+                    for move_line in move.move_line_ids:
+                        move_line.qty_done = move_line.product_uom_qty
+                if picking._check_backorder():
+                    pick_to_backorder |= picking
+                    continue
+                pick_to_do |= picking
+            # Process every picking that do not require a backorder, then return a single backorder wizard for every other ones.
+            if pick_to_do:
+                pick_to_do.action_done()
+            if pick_to_backorder:
+                _logger.info("***************lista2" + str(pick_to_backorder.id))
+                wiz = self.env['stock.backorder.confirmation'].create({'pick_ids': [(4, pick_to_backorder.id)]})
+                wiz.process()
+                #cancel_backorder=False
+                    #if cancel_backorder:
+                    #    for pick_id in self.pick_ids:
+                    #        moves_to_log = {}
+                    #        for move in pick_id.move_lines:
+                    #            if float_compare(move.product_uom_qty, move.quantity_done, precision_rounding=move.product_uom.rounding) > 0:
+                    #                moves_to_log[move] = (move.quantity_done, move.product_uom_qty)
+                    #        pick_id._log_less_quantities_than_expected(moves_to_log)
+                    #self.pick_ids.action_done()
+                    #if cancel_backorder:
+                    #    for pick_id in self.pick_ids:
+                    #        backorder_pick = self.env['stock.picking'].search([('backorder_id', '=', pick_id.id)])
+                    #        backorder_pick.action_cancel()
+                    #        pick_id.message_post(body=_("Back order <em>%s</em> <b>cancelled</b>.") % (",".join([b.name or '' for b in backorder_pick])))
+                                #return pick_to_backorder.action_generate_backorder_wizard()
+                        #return assigned_picking_lst.action_immediate_transfer_wizard().process()
 
-            if assigned_picking_lst._check_backorder():
+            #if assigned_picking_lst._check_backorder():
                 #assigned_picking_lst.write({'backorder':''})
-                return assigned_picking_lst.action_generate_backorder_wizard()
-            assigned_picking_lst.sudo().action_done()
-            data = {
-                'ids': self.assigned_picking_lst,
-                'model': self._name,
+            #    return assigned_picking_lst.action_generate_backorder_wizard()
+            #assigned_picking_lst.sudo().action_done()
+            #data = {
+            #    'ids': self.assigned_picking_lst,
+            #    'model': self._name,
+                #'form': {
+                ##    'date_start': self.date_start,
+                 #   'date_end': self.date_end,
+                #},
+            #}
+            if(len(assigned_picking_lst2)>0):
+                return self.env.ref('stock_picking_mass_action.report_custom').report_action(assigned_picking_lst2)
+        return {'type': 'ir.actions.client','tag': 'reload',}
+    @api.multi
+    def test(self):
+        do=[]
+        for d in self.picking_ids:
+            do.append(d.id)
+        data = {'docids':do,
+                'docs':self,
+                'model': 'stock.picking',
                 #'form': {
                 ##    'date_start': self.date_start,
                  #   'date_end': self.date_end,
                 #},
             }
-            return self.env.ref('stock_picking_mass_action.report_custom').report_action(self, data=data)
+        return self.env.ref('stock_picking_mass_action.report_custom').report_action(self.picking_ids)
 
 
 class StockCambio(TransientModel):
@@ -134,7 +186,7 @@ class StockCambio(TransientModel):
                 pickis=self.env.cr.fetchall()
                 pickg=self.env['stock.picking'].search([['id','in',pickis]])
                 for li in self.pro_ids:
-                    datos={'order_id':self.pick.sale_id.id,'product_id':li.producto2.id,'product_uom':li.producto2.uom_id.id,'product_uom_qty':li.cantidad,'name':li.producto2.description if(li.producto2.description) else '/','price_unit':0.00}
+                    datos={'order_id':self.pick.sale_id.id,'product_id':li.producto2.id,'product_uom':li.producto2.uom_id.id,'product_uom_qty':li.cantidad,'name':li.producto2.description if(li.producto2.description) else '/','price_unit':0.00,'x_studio_serieorderline':li.serie}
                     #if(li.serieDestino):
                     #    datos['x_studio_field_9nQhR']=li.serieDestino.id,
                     ss=self.env['sale.order.line'].sudo().create(datos)
@@ -148,3 +200,4 @@ class StockCambioLine(TransientModel):
     producto2=fields.Many2one('product.product')
     cantidad=fields.Float()
     rel_cambio=fields.Many2one('cambio.toner')
+    serie=fields.Char()
