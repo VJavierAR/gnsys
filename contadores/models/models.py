@@ -70,15 +70,15 @@ class contadores(models.Model):
     
     @api.multi
     def carga_contadores_fac(self):
-        for r in self.detalle:
-            rr=self.env['dcas.dcas'].create({'serie': r.producto
-                                             ,'contadorColor':r.ultimaLecturaColor
-                                             ,'contadorMono':r.ultimaLecturaBN
-                                             ,'fuente':'dcas.dcas'
-                                             ,'x_studio_field_no6Rb':str(self.anio)+'-'+str(self.mes)
-                                             ,'x_studio_fecha_texto_anio':str(valores[int(self.mes[1])-1][1])+' de '+str(self.anio)
-                                            })
-        
+        if self.x_studio_estado_capturas='Listo':
+            for r in self.detalle:
+                rr=self.env['dcas.dcas'].create({'serie': r.producto
+                                                 ,'contadorColor':r.ultimaLecturaColor
+                                                 ,'contadorMono':r.ultimaLecturaBN
+                                                 ,'fuente':'dcas.dcas'
+                                                 ,'x_studio_field_no6Rb':str(self.anio)+'-'+str(self.mes)
+                                                 ,'x_studio_fecha_texto_anio':str(valores[int(self.mes[1])-1][1])+' de '+str(self.anio)
+                                                })                    
     
     #@api.onchange('mes')
     @api.multi
