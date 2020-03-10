@@ -102,9 +102,9 @@ class StockPickingMassAction(TransientModel):
             return self.env.ref('stock_picking_mass_action.report_custom').report_action(self, data=data)
     @api.multi
     def test(self):
-        #do=[]
-        #for d in self.picking_ids:
-        #    do.append(d.id)
+        do=[]
+        for d in self.picking_ids:
+            do.append(d.id)
         data = {
                 #'docs':self.picking_ids,
                 'model': 'stock.picking',
@@ -113,7 +113,7 @@ class StockPickingMassAction(TransientModel):
                  #   'date_end': self.date_end,
                 #},
             }
-        return self.env.ref('stock_picking_mass_action.report_custom').report_action(self,data=data,docs=self.picking_ids)
+        return self.env.ref('stock_picking_mass_action.report_custom').report_action(self,data=data, docids=do, config=True)
 
 
 class StockCambio(TransientModel):
