@@ -149,8 +149,8 @@ class StockPickingMassAction(TransientModel):
     def vales(self):
         return self.env.ref('stock.report_deliveryslip').report_action(assigned_picking_lst2)
     @api.multi
-        def etiquetas(self):
-            return self.env.ref('stock.report_deliveryslip').report_action(assigned_picking_lst2)
+    def etiquetas(self):
+        return self.env.ref('stock.report_deliveryslip').report_action(assigned_picking_lst2)
 
 
 class StockCambio(TransientModel):
