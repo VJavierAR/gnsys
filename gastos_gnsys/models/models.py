@@ -110,10 +110,8 @@ class gastos_gnsys(models.Model):
             fecha = str(rec.create_date).split(' ')[0]
             converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
             rec.diasAtrasoPago = (datetime.date.today() - converted_date).days
-    @api.depends('etapas')
-    def cambio(self):
-        for record in self:
-            record.montoAprobado = 300.0
+    
+
     @api.multi
     def validarGasto(self):
         #_logger.info()
@@ -177,8 +175,8 @@ class gastosEtapas(models.Model):
 
 #Tabla de comprobaciones
 class comprobaciones(models.Model):
-    _name = 'gastos.comprovaciones'
-    _description = 'Tipos de comprovaciónes del gasto'
+    _name = 'gastos.comprobaciones'
+    _description = 'Tipos de comprobaciónes del gasto'
     comprobante  = fields.Many2one('gastos', string = "Comprobación ", track_visibility='onchange')
     concepto                = fields.Text(string = "Concepto",      track_visibility='onchange')
     descripcion             = fields.Text(string = "Descripción",   track_visibility='onchange')
