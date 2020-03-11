@@ -142,10 +142,9 @@ class StockPickingMassAction(TransientModel):
                 #},
             #}
             if(len(assigned_picking_lst2)>0):
-                a=self.env.ref('stock_picking_mass_action.report_custom').report_action(assigned_picking_lst2)
-                b=self.env.ref('stock.action_report_delivery').report_action(assigned_picking_lst2)
-                c=self.env.ref('studio_customization.transferir_reporte_4541ad13-9ccb-4a0f-9758-822064db7c9a').report_action(assigned_picking_lst2)
-                return a,b,c
+                return self.env.ref('stock_picking_mass_action.report_custom').report_action(assigned_picking_lst2)
+                return self.env.ref('stock.action_report_delivery').report_action(assigned_picking_lst2)
+                return self.env.ref('studio_customization.transferir_reporte_4541ad13-9ccb-4a0f-9758-822064db7c9a').report_action(assigned_picking_lst2)
         #time.sleep(20)
         return {'type': 'ir.actions.client','tag': 'reload',}
     @api.multi
