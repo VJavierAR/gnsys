@@ -195,6 +195,8 @@ class devoluciones(models.Model):
     _description = 'Complemento/devolución'
     gasto = fields.Many2one('gastos', string="Gasto relacionado", track_visibility='onchange')
 
+
+    #datos tabla compleneto/Devolucion
     montoEntregado = fields.Float(string = "Monto entregado")
     montoJustificado = fields.Float(string = "Monto justificado")
     saldo = fields.Float(string = "Saldo", compute = "calcularSaldo", readonly = True)
@@ -203,7 +205,18 @@ class devoluciones(models.Model):
     complementoDePagoPorHacer = fields.Float(string = "Complemento de pago por hacer")
     devolucionPorRecuperar = fields.Float(string = "Devolución por recuperar")
 
+    #datos tabla pago de complemento/devolucion
+    monto = fields.Float(string = "Monto")
+    formaDePago = fields.Selection((('Efectivo','Efectivo'), ('Cheque','Cheque'),('Deposito','Deposito'),('Transferencia','Transferencia')), string = "Forma de pago")
+    fechaProgramada = fields.Datetime(string = 'Fecha programada')
+    comprobanteDePago = fields.Many2many('ir.attachment', string="Comprobante de pago")
+    montoPagado = fields.Float(string = "Monto pagado")
+    fechaDePago = fields.Datetime(string = 'Fecha de pago')
+    totalMonto = fields.Float(string = "Total de monto")
+
 
     def calcularSaldo(self):
         for rec in self:
             rec.saldo = rec.montoEntregado - rec.montoJustificado
+
+
