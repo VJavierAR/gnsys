@@ -147,7 +147,8 @@ class StockPickingMassAction(TransientModel):
         return {'type': 'ir.actions.client','tag': 'reload',}
     @api.multi
     def vales(self):
-        return self.env.ref('stock.report_delivery_document').report_action(assigned_picking_lst2)
+        return self.env['report'].get_action(assigned_picking_lst2, 'stock.report_delivery_document')
+        #return self.env.ref('stock.report_delivery_document').report_action(assigned_picking_lst2)
     @api.multi
     def etiquetas(self):
         return self.env.ref('studio_customization.studio_report_docume_16d98cc0-fa92-4a4b-b6fc-6e79e13845a0').report_action(assigned_picking_lst2)
