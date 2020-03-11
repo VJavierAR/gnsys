@@ -152,7 +152,9 @@ class StockPickingMassAction(TransientModel):
         return self.env.ref('stock.action_report_delivery').report_action(assigned_picking_lst2)
     @api.multi
     def etiquetas(self):
-        return self.env.ref('studio_customization.studio_report_docume_16d98cc0-fa92-4a4b-b6fc-6e79e13845a0').report_action(assigned_picking_lst2)
+        assigned_picking_lst2 = self.picking_ids.\
+        filtered(lambda x: x.picking_type_id.id == 3 and x.state == 'done')
+        return self.env.ref('studio_customization.transferir_reporte_4541ad13-9ccb-4a0f-9758-822064db7c9a').report_action(assigned_picking_lst2)
 
 
 class StockCambio(TransientModel):
