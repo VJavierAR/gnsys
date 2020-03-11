@@ -105,6 +105,18 @@ class gastos_gnsys(models.Model):
 
     #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$4
 
+
+    totalDeMontoPagado = fields.Float(string = 'Total')
+
+    @api.onchange('devoluciones')
+    def calcularTotalPagoDevolucion(self):
+        listaDevoluciones = self.devoluciones
+        montoPagadoTotal = 0.0
+        if listaDevoluciones != []:
+            for devolucion in listaDevoluciones:
+                montoPagadoTotal += devolucion.montoPagado
+        self.totalDeMontoPagado = montoPagadoTotal
+
     
     def computarDiasAtrasoPago(self):
         for rec in self:
