@@ -197,9 +197,13 @@ class devoluciones(models.Model):
 
     montoEntregado = fields.Float(string = "Monto entregado")
     montoJustificado = fields.Float(string = "Monto justificado")
-    saldo = fields.Float(string = "Saldo", default = lambda self: self.montoEntregado - self.montoJustificado)
+    saldo = fields.Float(string = "Saldo", compute = "calcularSaldo", readonly = True)
     montoAjustado = fields.Float(string = "Monto ajustado")
     responsableDeMontoAjustado = fields.Many2one('res.users', string = "Responsable de monto ajustado", track_visibility='onchange')
     complementoDePagoPorHacer = fields.Float(string = "Complemento de pago por hacer")
     devolucionPorRecuperar = fields.Float(string = "Devolución por recuperar")
 
+
+    def calcularSaldo(self):
+        for rec in self:
+            rec.saldo = rec.montoEntregado - rec.montoJustificado
