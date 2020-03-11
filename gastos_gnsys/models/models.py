@@ -101,6 +101,7 @@ class gastos_gnsys(models.Model):
 
     comprobaciones = fields.One2many('gastos.comprobaciones', 'comprobante', string = "Comprobantes",track_visibility='onchange')
 
+    devoluciones = fields.One2many('gastos.devolucion', 'gasto' , string = 'Devoluciones', track_visibility = 'onchange')
 
     #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$4
 
@@ -160,11 +161,9 @@ class usuarios_gastos(models.Model):
     gastoSolicitante = fields.One2many('gastos', 'quienSolcita', string="Gasto solicitante")
     gastoAutoriza = fields.Many2one('gastos', string="Gasto autoriza")
     gastoRecibe = fields.Many2one('gastos', string="Gasto autoriza")
-class empleados_gastos(models.Model):
-    _inherit = 'hr.employee'
-    
-    #gastoSolicitante = fields.One2many('gastos', 'quienSolcita', string="Gasto solicitante")
-    #gastoValida = fields.Many2one('gastos', string="Gasto valida")
+    devoResponsableAjuste = fields.One2many('gastos.devolucion', 'responsableDeMontoAjustado', string = "Devolucion responsable")
+
+
 class gastosEtapas(models.Model):
     _name = 'gastos.etapa'
     _description = 'Etapas para los gastos'
@@ -189,3 +188,18 @@ class comprobaciones(models.Model):
     montoJustificado        = fields.Float(string = 'Monto justificado',track_visibility='onchange')
     cuentaContableDestino   = fields.Text(string = "Cuenta contable Destino",      track_visibility='onchange')
     centoDeCostos           = fields.Text(string = "Centro de Costos",      track_visibility='onchange')
+
+
+class devoluciones(models.Model):
+    _name = "gastos.devolucion"
+    _description = 'Complemento/devolución'
+    gasto = fields.Many2one('gastos', string="Gasto relacionado", track_visibility='onchange')
+
+    montoEntregado = fields.Float(string = "Monto entregado")
+    montoJustificado = fields.Float(string = "Monto justificado")
+    saldo = fields.Float(string = "Saldo", default = lambda self: self.montoEntregado - self.montoJustificado)
+    montoAjustado = fields.Float(string = "Monto ajustado")
+    responsableDeMontoAjustado = fields.Many2one('res.users', string = "Responsable de monto ajustado", track_visibility='onchange')
+    complementoDePagoPorHacer = fields.Float(string = "Complemento de pago por hacer")
+    devolucionPorRecuperar = fields.Float(string = "Devolución por recuperar")
+
