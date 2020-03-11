@@ -8,6 +8,7 @@ import logging, ast
 import datetime, time
 _logger = logging.getLogger(__name__)
 
+
 class pagos(models.Model):
     _name = 'gastos.pago'
     _description = 'Pagos de los gastos'

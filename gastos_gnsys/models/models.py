@@ -197,3 +197,74 @@ class gastosEtapas(models.Model):
     gasto = fields.One2many('gastos', 'etapas', string="Gasto")
 
 
+
+class motivos_gastos(models.Model):
+    _name = 'motivos'
+    _description = 'Motivos de un gasto'
+
+    gasto  = fields.Many2one('gastos', string = "Gasto ", track_visibility='onchange')
+    motivoDescripcion = fields.Text()
+    tipoDeMotivo      = fields.Selection((('!','1'), ('2','2')), string = "Tipo de motivo",track_visibility='onchange')
+
+
+
+class comprobaciones(models.Model):
+    _name = 'gastos.comprobaciones'
+    _description = 'Tipos de comprobaciónes del gasto'
+    nombre                  = fields.Char(string="Nombre de comprobación", track_visibility='onchange')
+    comprobante             = fields.Many2one('gastos', string = "Comprobación ", track_visibility='onchange')
+    concepto                = fields.Text(string = "Concepto",      track_visibility='onchange')
+    descripcion             = fields.Text(string = "Descripción",   track_visibility='onchange')
+    justificacon            = fields.Text(string = "Justificación", track_visibility='onchange')
+    monto                   = fields.Float(string = "Monto",         track_visibility='onchange')
+    comprobantes            = fields.Many2many('ir.attachment', string="Comprobantes")
+    tipoDeComprobante       = fields.Selection((('Factura','Factura'),('FacturaSinIva','Factura sin IVA'),('TiketFacturable','Ticket facturable'),('Tiket','Ticket'),('Nota','Nota')), string = "Tipo de Comprobante",track_visibility='onchange')
+    porcentajeAceptado      = fields.Selection((('100','100%'),('75','75%'),('50','50%'),('25','25%'),('0','0%')), string = "Porcentaje Aceptado",track_visibility='onchange')
+    montoJustificado        = fields.Float(string = 'Monto aprobado', compute='calcularMontoAprobado', track_visibility='onchange')
+    cuentaContableDestino   = fields.Text(string = "Aplicación contable", track_visibility='onchange')
+    centoDeCostos           = fields.Text(string = "Centro de Costos", track_visibility='onchange')
+    cliente = fields.Many2one('res.partner', string = 'Cliente', track_visibility='onchange')
+    servicio = fields.Text(string = 'Servicio')
+
+    def calcularMontoAprobado(self):
+        for rec in self:
+            if str(rec.porcentajeAceptado) != 'false':
+                montoJustificado = rec.monto * rec.porcentajeAceptado
+
+
+class devoluciones(models.Model):
+    _name = "gastos.devolucion"
+    _description = 'Complemento/devolución'
+    gasto = fields.Many2one('gastos', string="Gasto relacionado", track_visibility='onchange')
+
+
+    #datos tabla compleneto/Devolucion
+    montoEntregado = fields.Float(string = "Monto entregado")
+    montoJustificado = fields.Float(string = "Monto justificado")
+    saldo = fields.Float(string = "Saldo", compute = "calcularSaldo", readonly = True)
+    montoAjustado = fields.Float(string = "Monto ajustado")
+    responsableDeMontoAjustado = fields.Many2one('res.users', string = "Responsable de monto ajustado", track_visibility='onchange')
+    complementoDePagoPorHacer = fields.Float(string = "Complemento de pago por hacer")
+    devolucionPorRecuperar = fields.Float(string = "Devolución por recuperar")
+
+
+    def calcularSaldo(self):
+        for rec in self:
+            rec.saldo = rec.montoEntregado - rec.montoJustificado
+
+class pagos(models.Model):
+    _name = 'gastos.pago'
+    _description = 'Pagos de los gastos'
+    gasto = fields.Many2one('gastos', string="Pago relacionado", track_visibility='onchange')
+
+    #datos tabla pago de complemento/devolucion
+    montoSolicitante = fields.Float(string = "Solicitante")
+    montoEmpresa = fields.Float(string = "Empresa")
+    concepto = fields.Text(string = "Concepto")
+    formaDePago = fields.Selection((('Efectivo','Efectivo'), ('Cheque','Cheque'),('Deposito','Deposito'),('Transferencia','Transferencia')), string = "Forma de pago")
+    fechaProgramada = fields.Datetime(string = 'Fecha programada')
+    comprobanteDePago = fields.Many2many('ir.attachment', string="Comprobante de pago")
+    montoPagado = fields.Float(string = "Monto pagado")
+    fechaDePago = fields.Datetime(string = 'Fecha de pago')
+    totalMonto = fields.Float(string = "Total de monto")
+
