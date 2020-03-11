@@ -110,10 +110,13 @@ class gastos_gnsys(models.Model):
 
     @api.onchange('devoluciones')
     def calcularTotalPagoDevolucion(self):
+        _logger.info('gastos.calcularTotalPagoDevolucion()')
         listaDevoluciones = self.devoluciones
         montoPagadoTotal = 0.0
         if listaDevoluciones != []:
+            _logger.info('lista no vacia')
             for devolucion in listaDevoluciones:
+                _logger.info('montoPagado: ' + str(devolucion.montoPagado) + ' montoPagadoTotal: ' +  str(montoPagadoTotal))
                 montoPagadoTotal += devolucion.montoPagado
         self.totalDeMontoPagado = montoPagadoTotal
 
