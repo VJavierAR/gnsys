@@ -2076,15 +2076,15 @@ class helpdesk_update(models.Model):
             _logger.info("*****************self.x_studio_tecnico: " + str(self.x_studio_tecnico)
     """
 
-    diagnosticos = fields.One2many('helpdesk.diagnostico', 'ticketrelacion', string = 'Diagnostico')
+    diagnosticos = fields.One2many('helpdesk.diagnostico', 'ticketRelacion', string = 'Diagnostico')
     
     order_line = fields.One2many('helpdesk.lines','ticket',string='Order Lines')
 
 
-class helpdes_diagnostico(object):
+class helpdes_diagnostico(models.Model):
     _name = "helpdesk.diagnostico"
     _description = "Historial de diagnostico"
-    ticketrelacion = fields.Many2one('helpdesk.ticket', string = 'Ticket realcionado a diagnostico')
+    ticketRelacion = fields.Many2one('helpdesk.ticket', string = 'Ticket realcionado a diagnostico')
 
 
 class helpdesk_lines(models.Model):
