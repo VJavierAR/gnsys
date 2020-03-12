@@ -354,7 +354,7 @@ class helpdesk_update(models.Model):
         if self.x_studio_id_ticket and int(self.x_studio_tamao_lista) < 2:
             estadoAntes = str(self.stage_id.name)
             if self.stage_id.name == 'Pre-ticket' and self.x_studio_equipo_por_nmero_de_serie.id != False and self.estadoAbierto == False:
-                ticketActualiza.write({'stage_id': 89})        
+                ticketActualiza.write({'stage_id': '89'})
                 #query = "update helpdesk_ticket set stage_id = 89 where id = " + str(self.x_studio_id_ticket) + ";"
                 #ss = self.env.cr.execute(query)
                 self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Abierto"})
