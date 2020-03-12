@@ -67,8 +67,8 @@ class helpdesk_update(models.Model):
                 nombreCliente = 'No disponible'
             
             localidad = str(rec.x_studio_empresas_relacionadas.name)
-            if str(localidad) == 'False':
-                nombreCliente = 'No disponible'
+            if localidad == 'False':
+                localidad = 'No disponible'
             
             contactoDeLocalidad = str(rec.localidadContacto.name)
             if contactoDeLocalidad == 'False':
