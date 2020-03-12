@@ -57,7 +57,7 @@ class helpdesk_update(models.Model):
     cambiarDatosClienteCheck = fields.Boolean(string="Editar cliente", default=False)
         
 
-    datosCliente = fields.Text(string="Cliente datos" compute='_compute_datosCliente')
+    datosCliente = fields.Text(string="Cliente datos", compute='_compute_datosCliente')
 
 
     def _compute_datosCliente(self):
