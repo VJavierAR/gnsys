@@ -2086,7 +2086,15 @@ class helpdes_diagnostico(models.Model):
     _description = "Historial de diagnostico"
     ticketRelacion = fields.Many2one('helpdesk.ticket', string = 'Ticket realcionado a diagnostico')
 
-
+    estadoTicket = fields.Char(string='Estado de ticket')
+    comentario = fields.Text(string='Diagnostico')
+    evidencia = fields.Many2many('ir.attachment', string="Evidencia")
+    mostrarComentario = fields.Boolean(string = "Editar cliente", default = False)
+    
+    
+    
+    
+    
 class helpdesk_lines(models.Model):
     _name="helpdesk.lines"
     _description = "Ticket Order"
