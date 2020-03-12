@@ -2032,6 +2032,21 @@ class helpdesk_update(models.Model):
     
     order_line = fields.One2many('helpdesk.lines','ticket',string='Order Lines')
 
+    def cambio_wizard(self):
+    wiz = self.env['helpdesk.comentarior'].create({'ticket_ids':self.id})
+    view = self.env.ref('view_helpdesk_comentario')
+    return {
+        'name': _('Comentario'),
+        'type': 'ir.actions.act_window',
+        'view_type': 'form',
+        'view_mode': 'form',
+        'res_model': 'helpdesk.comentario',
+        'views': [(view.id, 'form')],
+        'view_id': view.id,
+        'target': 'new',
+        'res_id': wiz.id,
+        'context': self.env.context,
+    }
 
 
 class helpdes_diagnostico(models.Model):
