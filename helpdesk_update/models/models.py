@@ -59,30 +59,30 @@ class helpdesk_update(models.Model):
 
     def open_to_form_view(self, cr, uid, ids, context=None):
  
-    if not context:
-        context = {}
+        if not context:
+            context = {}
 
-    name = 'Ticket'
-    res_model = 'helpdesk.ticket' 
-    view_name = 'helpdesk.ticket.form' 
-    
-    document_id = self.browse(cr, uid, ids[0]).id
+        name = 'Ticket'
+        res_model = 'helpdesk.ticket' 
+        view_name = 'helpdesk.ticket.form' 
+        
+        document_id = self.browse(cr, uid, ids[0]).id
 
-    view = models.get_object_reference(cr, uid, name, view)
-    view_id = view and view[1] or False
+        view = models.get_object_reference(cr, uid, name, view)
+        view_id = view and view[1] or False
 
 
-    return {
-        'name': (name),
-        'view_type': 'form',
-        'view_mode': 'form',
-        'view_id': [view_id],
-        'res_model': res_model, 
-        'type': 'ir.actions.act_window',
-        'nodestroy': True,
-        'target': 'current',
-        'res_id': document_id,
-    }
+        return {
+            'name': (name),
+            'view_type': 'form',
+            'view_mode': 'form',
+            'view_id': [view_id],
+            'res_model': res_model, 
+            'type': 'ir.actions.act_window',
+            'nodestroy': True,
+            'target': 'current',
+            'res_id': document_id,
+        }
 
 
     datosCliente = fields.Text(string="Cliente datos", compute='_compute_datosCliente')
