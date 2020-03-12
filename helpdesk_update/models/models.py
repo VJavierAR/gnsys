@@ -64,11 +64,11 @@ class helpdesk_update(models.Model):
         for rec in self:
             nombreCliente = str(rec.partner_id.name)
             localidad = str(rec.x_studio_empresas_relacionadas)
-            contactoDeLocalidad = str(res.localidadContacto)
+            contactoDeLocalidad = str(rec.localidadContacto)
             estadoLocalidad = str(rec.x_studio_estado_de_localidad)
             telefonoLocalidad = str(rec.x_studio_telefono_localidad_contacto)
             movilLocalidad = str(rec.x_studio_movil_localidad_contacto)
-            correoElectronicoLocalidad = str(res.x_studio_email_localidad_contacto)
+            correoElectronicoLocalidad = str(rec.x_studio_email_localidad_contacto)
             datos = 'Cliente: ' + nombreCliente + ' Localidad: ' + localidad + ' Localidad contacto: ' + contactoDeLocalidad + ' Estado de localidad: ' + estadoLocalidad + ' Teléfono de localidad: ' + telefonoLocalidad + ' Móvil localidad contacto: ' + movilLocalidad + ' Correo electrónico localidad contacto: ' + correoElectronicoLocalidad
 
             rec.datosCliente = datos
