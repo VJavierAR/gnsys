@@ -199,3 +199,4 @@ class StockCambioLine(TransientModel):
     cantidad=fields.Float()
     rel_cambio=fields.Many2one('cambio.toner')
     serie=fields.Char()
+    estado = fields.Selection([('nuevo','Nuevo'),('usado', 'Usado')],store=True)
