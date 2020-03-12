@@ -11,7 +11,7 @@ class HelpDeskComentario(TransientModel):
     ticket_id = fields.Many2one("helpdesk.ticket")
     estado=fields.Char('Estado')
     comentario=fields.Char('Comentario')
-    evidencia=fields.Binary('Evidencia')
+    evidencia = fields.Many2many('ir.attachment', string="Evidencias")
     #CREAR COMENTARIO
     def creaComentario(self):
-        self.ensure_one()
+        self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.ticket_id.id,'comentario':self.comentario,'estadoTicket':self.estado,'evidencia':[(6,0,self.evidencia.ids)],'mostrarComentario':self.check})
