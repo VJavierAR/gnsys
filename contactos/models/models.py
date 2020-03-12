@@ -2,7 +2,7 @@
 
 from odoo import models, fields, api
 
- class contactos(models.Model):
+class contactos(models.Model):
       _inherit = 'res.partner'
       nameGerardo = fields.Char()
 #     value = fields.Integer()
