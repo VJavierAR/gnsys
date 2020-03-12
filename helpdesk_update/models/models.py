@@ -57,7 +57,7 @@ class helpdesk_update(models.Model):
     cambiarDatosClienteCheck = fields.Boolean(string="Editar cliente", default=False)
     
 
-    def open_to_form_view(self, cr, uid, ids, context=None):
+    def open_to_form_view(self):
  
         if not context:
             context = {}
@@ -2075,7 +2075,7 @@ class helpdesk_update(models.Model):
         wiz = self.env['helpdesk.comentario'].create({'ticket_id':self.id})
         view = self.env.ref('helpdesk_update.view_helpdesk_comentario')
         return {
-            'name': _('Comentario'),
+            'name': _('Diagnostico'),
             'type': 'ir.actions.act_window',
             'view_type': 'form',
             'view_mode': 'form',
