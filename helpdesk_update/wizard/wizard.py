@@ -8,7 +8,7 @@ class HelpDeskComentario(TransientModel):
     _name = 'helpdesk.comentario'
     _description = 'HelpDesk Comentario'
     check = fields.Boolean(string='Mostrar en reporte',default=False,)
-    ticket_ids = fields.Many2many(string='Ticket',comodel_name="helpdesk.ticket")
+    ticket_id = fields.Many2one("helpdesk.ticket")
     estado=fields.Char('Estado')
     comentario=fields.Char('Comentario')
     evidencia=fields.Binary('Evidencia')
