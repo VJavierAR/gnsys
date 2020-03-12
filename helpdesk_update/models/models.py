@@ -63,30 +63,30 @@ class helpdesk_update(models.Model):
     def _compute_datosCliente(self):
         for rec in self:
             nombreCliente = str(rec.partner_id.name)
-            if nombreCliente == False:
+            if nombreCliente == 'False':
                 nombreCliente = 'No disponible'
             
             localidad = str(rec.x_studio_empresas_relacionadas.name)
-            if localidad == False:
+            if localidad == 'False':
                 nombreCliente = 'No disponible'
             
             contactoDeLocalidad = str(rec.localidadContacto.name)
-            if contactoDeLocalidad == False:
+            if contactoDeLocalidad == 'False':
                 contactoDeLocalidad = 'No disponible'
 
             estadoLocalidad = str(rec.x_studio_estado_de_localidad)
-            if estadoLocalidad == False:
+            if estadoLocalidad == 'False':
                 estadoLocalidad = 'No disponible'
 
             telefonoLocalidad = str(rec.x_studio_telfono_localidad_contacto)
-            if telefonoLocalidad == False:
+            if telefonoLocalidad == 'False':
                 telefonoLocalidad = 'No disponible'
 
             movilLocalidad = str(rec.x_studio_movil_localidad_contacto)
-            if movilLocalidad == False:
+            if movilLocalidad == 'False':
                 movilLocalidad = 'No disponible'
             correoElectronicoLocalidad = str(rec.x_studio_email_localidad_contacto)
-            if correoElectronicoLocalidad == False:
+            if correoElectronicoLocalidad == 'False':
                 correoElectronicoLocalidad = 'No disponible'
 
             datos = 'Cliente: ' + nombreCliente + ' Localidad: ' + localidad + ' Localidad contacto: ' + contactoDeLocalidad + ' Estado de localidad: ' + estadoLocalidad + ' Teléfono de localidad: ' + telefonoLocalidad + ' Móvil localidad contacto: ' + movilLocalidad + ' Correo electrónico localidad contacto: ' + correoElectronicoLocalidad
