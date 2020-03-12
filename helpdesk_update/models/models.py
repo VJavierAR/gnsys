@@ -89,7 +89,7 @@ class helpdesk_update(models.Model):
             if correoElectronicoLocalidad == 'False':
                 correoElectronicoLocalidad = 'No disponible'
 
-            datos = 'Cliente: ' + nombreCliente + ' Localidad: ' + localidad + ' Localidad contacto: ' + contactoDeLocalidad + ' Estado de localidad: ' + estadoLocalidad + ' Teléfono de localidad: ' + telefonoLocalidad + ' Móvil localidad contacto: ' + movilLocalidad + ' Correo electrónico localidad contacto: ' + correoElectronicoLocalidad
+            datos = 'Cliente: ' + nombreCliente + ' \nLocalidad: ' + localidad + ' \nLocalidad contacto: ' + contactoDeLocalidad + ' \nEstado de localidad: ' + estadoLocalidad + ' \nTeléfono de localidad: ' + telefonoLocalidad + ' \nMóvil localidad contacto: ' + movilLocalidad + ' \nCorreo electrónico localidad contacto: ' + correoElectronicoLocalidad
 
             rec.datosCliente = datos
 
