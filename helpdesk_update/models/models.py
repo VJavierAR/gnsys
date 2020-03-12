@@ -2059,7 +2059,7 @@ class helpdesk_update(models.Model):
     order_line = fields.One2many('helpdesk.lines','ticket',string='Order Lines')
     @api.multi
     def cambio_wizard(self):
-        wiz = self.env['helpdesk.comentario'].create({'ticket_ids':self.id})
+        wiz = self.env['helpdesk.comentario'].create({'ticket_id':self.id})
         view = self.env.ref('helpdesk_update.view_helpdesk_comentario')
         return {
             'name': _('Comentario'),
