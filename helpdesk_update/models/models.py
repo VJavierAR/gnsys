@@ -57,7 +57,7 @@ class helpdesk_update(models.Model):
     cambiarDatosClienteCheck = fields.Boolean(string="Editar cliente", default=False)
     
 
-    ticketRelacion = fields.Char(string = "Ticket", related = self)
+    #ticketRelacion = fields.Char(string = "Ticket", related = self)
 
 
     #numeroDeGuiaDistribucion = fields.Char(string='Número de guía generado por distribución', store=True)
