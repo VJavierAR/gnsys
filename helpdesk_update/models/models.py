@@ -56,6 +56,10 @@ class helpdesk_update(models.Model):
     
     cambiarDatosClienteCheck = fields.Boolean(string="Editar cliente", default=False)
     
+
+    ticketRelacion = fields.Char(string = "Ticket", related = self)
+
+
     #numeroDeGuiaDistribucion = fields.Char(string='Número de guía generado por distribución', store=True)
     
     """
@@ -338,20 +342,21 @@ class helpdesk_update(models.Model):
     
     estadoAbierto = fields.Boolean(string="Paso por estado abierto", default=False)
     
+
+
+    @api.multi
     @api.onchange('x_studio_equipo_por_nmero_de_serie')
     def abierto(self):
+
+        ticketActualiza = self.env['helpdesk.ticket'].search([('id', '=', self.id)])
+        
+
         if self.x_studio_id_ticket and int(self.x_studio_tamao_lista) < 2:
-           # _logger.info("------------------------self.stage_id.name: " + str(self.stage_id.name))
-           # _logger.info("------------------------self.x_studio_equipo_por_nmero_de_serie.id: " + str(self.x_studio_equipo_por_nmero_de_serie.id))
             estadoAntes = str(self.stage_id.name)
-            
             if self.stage_id.name == 'Pre-ticket' and self.x_studio_equipo_por_nmero_de_serie.id != False and self.estadoAbierto == False:
-            #if self.stage_id.name == 'Pre-ticket' and self.x_studio_equipo_por_nmero_de_serie.id != False and self.estadoAbierto == False:
-                query = "update helpdesk_ticket set stage_id = 89 where id = " + str(self.x_studio_id_ticket) + ";"
-                _logger.info("lol: " + query)
-                ss = self.env.cr.execute(query)
-                _logger.info("**********fun: abierto(), estado: " + str(self.stage_id.name))
-                #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
+                ticketActualiza.write({'stage_id': 89})        
+                #query = "update helpdesk_ticket set stage_id = 89 where id = " + str(self.x_studio_id_ticket) + ";"
+                #ss = self.env.cr.execute(query)
                 self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': "Abierto"})
                 message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Abierto' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
                 mess= {
@@ -1858,12 +1863,13 @@ class helpdesk_update(models.Model):
             self.env.cr.execute(query)                        
             informacion = self.env.cr.fetchall()
             if len(informacion) > 0:
-                message = ('Estas agregando una serie de un ticket ya en proceso. \n Ticket: '+str(informacion[0][0]))
+                message = ('Estas agregando una serie de un ticket ya en proceso. \n Ticket: ' + str(informacion[0][0]) + '\n ')
                 mess= {
                         'title': _('Alerta!!!'),
                         'message' : message
                               }
                 return {'warning': mess}
+
                 #raise exceptions.ValidationError("No es posible registrar número de serie, primero cerrar el ticket con el id  "+str(informacion[0][0]))
         if int(self.x_studio_tamao_lista) > 0 and self.team_id.id == 8:
             _logger.info("actualiza_datos_cliente()" + str(self.x_studio_equipo_por_nmero_de_serie[0].id))
