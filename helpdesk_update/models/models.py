@@ -2030,7 +2030,7 @@ class helpdesk_update(models.Model):
     diagnosticos = fields.One2many('helpdesk.diagnostico', 'ticketRelacion', string = 'Diagnostico')
     
     order_line = fields.One2many('helpdesk.lines','ticket',string='Order Lines')
-
+    @api.multi
     def cambio_wizard(self):
         wiz = self.env['helpdesk.comentario'].create({'ticket_ids':self.id})
         view = self.env.ref('view_helpdesk_comentario')
