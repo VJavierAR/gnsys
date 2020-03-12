@@ -59,9 +59,6 @@ class helpdesk_update(models.Model):
 
     def open_to_form_view(self):
  
-        if not context:
-            context = {}
-
         name = 'Ticket'
         res_model = 'helpdesk.ticket' 
         view_name = 'helpdesk.helpdesk_ticket_view_form' 
