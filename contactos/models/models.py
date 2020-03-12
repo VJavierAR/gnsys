@@ -5,7 +5,7 @@ from odoo import models, fields, api
 class contactos(models.Model):
       _inherit = 'res.partner'
       nameGerardo = fields.Char()
-#     value = fields.Integer()
+#      value = fields.Integer()
 #     value2 = fields.Float(compute="_value_pc", store=True)
 #     description = fields.Text()
 #
