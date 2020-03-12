@@ -8,10 +8,11 @@
                 <group>
                     <field name="estado"/>
                     <field name="comentario"/>
-                    <field name="evidencia"/>
+                    <field name="check"/>
+                    <field name="evidencia" widget="many2many_binary"/>
                 </group>
                 <footer>
-                    <button name="crearComentario" string="Confirmar" type="object" class="oe_highlight"/>
+                    <button name="creaComentario" string="Confirmar" type="object" class="oe_highlight"/>
                     <button string="Cancel" class="oe_link" special="cancel"/>
                 </footer>
             </form>
