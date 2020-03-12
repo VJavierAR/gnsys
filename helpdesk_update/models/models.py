@@ -64,14 +64,13 @@ class helpdesk_update(models.Model):
 
         name = 'Ticket'
         res_model = 'helpdesk.ticket' 
-        view_name = 'helpdesk.ticket.form' 
+        view_name = 'helpdesk.helpdesk_ticket_view_form' 
         
-        document_id = self.browse(cr, uid, ids[0]).id
+        #document_id = self.browse(cr, uid, ids[0]).id
 
-        view = models.get_object_reference(cr, uid, name, view)
-        view_id = view and view[1] or False
-
-
+        #view = models.get_object_reference(cr, uid, name, view)
+        #view_id = view and view[1] or False
+        """
         return {
             'name': (name),
             'view_type': 'form',
@@ -82,6 +81,20 @@ class helpdesk_update(models.Model):
             'nodestroy': True,
             'target': 'current',
             'res_id': document_id,
+        }
+        """
+        view = self.env.ref(view_name)
+        return {
+            'name': _('Ticket'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'helpdesk.ticket',
+            #'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'current',
+            'res_id': self.id,
+            'nodestroy': True
         }
 
 
