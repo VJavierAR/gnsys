@@ -55,7 +55,24 @@ class helpdesk_update(models.Model):
     user_id = fields.Many2one('res.users','Ejecutivo', default=lambda self: self.env.user)
     
     cambiarDatosClienteCheck = fields.Boolean(string="Editar cliente", default=False)
-    
+        
+
+    datosCliente = fields.Text(string="Cliente datos" compute='_compute_datosCliente')
+
+
+    def _compute_datosCliente(self):
+        for rec in self:
+            nombreCliente = str(rec.partner_id.name)
+            localidad = str(rec.x_studio_empresas_relacionadas)
+            contactoDeLocalidad = str(res.localidadContacto)
+            estadoLocalidad = str(rec.x_studio_estado_de_localidad)
+            telefonoLocalidad = str(rec.x_studio_telefono_localidad_contacto)
+            movilLocalidad = str(rec.x_studio_movil_localidad_contacto)
+            correoElectronicoLocalidad = str(res.x_studio_email_localidad_contacto)
+            datos = 'Cliente: ' + nombreCliente + ' Localidad: ' + localidad + ' Localidad contacto: ' + contactoDeLocalidad + ' Estado de localidad: ' + estadoLocalidad + ' Teléfono de localidad: ' + telefonoLocalidad + ' Móvil localidad contacto: ' + movilLocalidad + ' Correo electrónico localidad contacto: ' + correoElectronicoLocalidad
+
+            rec.datosCliente = datos
+
 
     #ticketRelacion = fields.Char(string = "Ticket", related = self)
 
