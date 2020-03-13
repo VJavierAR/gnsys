@@ -124,33 +124,17 @@ class StockPickingMassAction(TransientModel):
                        pick_id._log_less_quantities_than_expected(moves_to_log)
                 self.picking_ids.action_done()
                 if cancel_backorder:
-                   for pick_id in self.picking_ids:
-                       backorder_pick = self.env['stock.picking'].search([('backorder_id', '=', pick_id.id)])
-                       sale = self.env['sale.order'].create({'partner_id' : backorder_pick.sale_id.partner_id.id
-                                                                 , 'origin' : backorder_pick.sale_id.origin
-                                                                 , 'x_studio_tipo_de_solicitud' : 'Venta'
-                                                                 , 'x_studio_requiere_instalacin' : True
-                                                                 #, 'x_studio_fecha_y_hora_de_visita' : self.x_studio_rango_inicial_de_visita
-                                                                 #, 'x_studio_field_rrhrN' : self.x_studio_rango_final_de_visita
-                                                                 #, 'x_studio_comentarios_para_la_visita' : str(self.ticket_type_id.name)
-                                                                 #, 'x_studio_field_bAsX8' : self.x_studio_prioridad
-                                                                 #, 'commitment_date' : self.x_studio_rango_inicial_de_visita
-                                                                 #, 'x_studio_fecha_final' : self.x_studio_rango_final_de_visita
-                                                                 , 'x_studio_field_RnhKr': backorder_pick.sale_id.x_studio_field_RnhKr.id
-                                                                 , 'partner_shipping_id' : backorder_pick.sale_id.partner_shipping_id.id
-                                                                 #, 'user_id' : record.partner_id.x_studio_ejecutivo.id 
-                                                                 , 'x_studio_tcnico' : backorder_pick.sale_id.x_studio_tcnico.id
-                                                                 , 'warehouse_id' :backorder_pick.sale_id.warehouse_id.id    ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
-                                                                 , 'team_id' : 1
-                                                                 , 'x_studio_field_bxHgp': backorder_pick.sale_id.x_studio_field_bxHgp 
-                                                                })
+                    for pick_id in self.picking_ids:
+                        backorder_pick = self.env['stock.picking'].search([('backorder_id', '=', pick_id.id)])
+                        sale = self.env['sale.order'].create({'partner_id' : backorder_pick.sale_id.partner_id.id, 'origin' : backorder_pick.sale_id.origin, 'x_studio_tipo_de_solicitud' : 'Venta', 'x_studio_requiere_instalacin' : True, 'x_studio_field_RnhKr': backorder_pick.sale_id.x_studio_field_RnhKr.id, 'partner_shipping_id' : backorder_pick.sale_id.partner_shipping_id.id, 'x_studio_tcnico' : backorder_pick.sale_id.x_studio_tcnico.id, 'warehouse_id' :backorder_pick.sale_id.warehouse_id.id, 'team_id' : 1, 'x_studio_field_bxHgp': backorder_pick.sale_id.x_studio_field_bxHgp})
                         pick_id.write({'sale_child':sale.id})
                         for rr in pick_id.move_ids_without_package:
                             datosr={'order_id' : sale.id, 'product_id' : rr.product_id.id, 'product_uom_qty' :rr.product_uom_qty,'x_studio_field_9nQhR':pick.x_studio_ticket_relacionado.x_studio_equipo_por_nmero_de_serie[0].id, 'price_unit': 0}
                             if(pick.x_studio_ticket_relacionado.team_id.id==10 or pick.x_studio_ticket_relacionado.team_id.id==11):
                                 datosr['route_id']=22548
                             self.env['sale.order.line'].create(datosr)
-                       backorder_pick.action_cancel()
+                        sale.sudo().action_confirm()
+                        backorder_pick.action_cancel()
 
                        #pick_id.message_post(body=_("Back order <em>%s</em> <b>cancelled</b>.") % (",".join([b.name or '' for b in backorder_pick])))
                 #             #return pick_to_backorder.action_generate_backorder_wizard()
