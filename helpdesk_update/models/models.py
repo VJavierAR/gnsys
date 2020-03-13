@@ -24,7 +24,7 @@ class helpdesk_update(models.Model):
     productos = fields.One2many('product.product','id',string='Solicitudes',store=True)
     
     days_difference = fields.Integer(compute='_compute_difference',string='días de atraso')
-    backorder=fields.Many2many('sale.order')
+
     localidadContacto = fields.Many2one('res.partner', store=True, track_visibility='onchange', string='Localidad contacto', domain="['&',('parent_id.id','=',idLocalidadAyuda),('type','=','contact')]")
     
     tipoDeDireccion = fields.Selection([('contact','Contacto'),('invoice','Dirección de facturación'),('delivery','Dirección de envío'),('other','Otra dirección'),('private','Dirección Privada')], default='contact')
