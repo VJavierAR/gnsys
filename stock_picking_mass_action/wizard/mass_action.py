@@ -207,9 +207,10 @@ class StockCambioLine(TransientModel):
 
     @api.depends('producto1')
     def nuevo(self):
-        ex=self.env['stock.quant'].search([['location_id','=',12],['product_id','=',self.producto1.id]]).sorted(key='quantity',reverse=True)
-        self.existencia1=int(ex[0].quantity) if(len(ex)>0) else 0
-        ex2=self.env['stock.quant'].search([['location_id','=',41917],['product_id','=',self.producto1.id]]).sorted(key='quantity',reverse=True)
-        self.existencia2=int(ex2[0].quantity) if(len(ex2)>0) else 0
+        for record in self:
+            ex=self.env['stock.quant'].search([['location_id','=',12],['product_id','=',record.producto1.id]]).sorted(key='quantity',reverse=True)
+            record.existencia1=int(ex[0].quantity) if(len(ex)>0) else 0
+            ex2=self.env['stock.quant'].search([['location_id','=',41917],['product_id','=',record.producto1.id]]).sorted(key='quantity',reverse=True)
+            record.existencia2=int(ex2[0].quantity) if(len(ex2)>0) else 0
 
 
