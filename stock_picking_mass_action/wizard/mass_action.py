@@ -115,7 +115,7 @@ class StockPickingMassAction(TransientModel):
             if assigned_picking_lst._check_backorder():
                 cancel_backorder=True
                 if cancel_backorder:
-                   for pick_id in self.pick_ids:
+                   for pick_id in self.picking_ids:
                        moves_to_log = {}
                        for move in pick_id.move_lines:
                            if float_compare(move.product_uom_qty, move.quantity_done, precision_rounding=move.product_uom.rounding) > 0:
@@ -123,7 +123,7 @@ class StockPickingMassAction(TransientModel):
                        pick_id._log_less_quantities_than_expected(moves_to_log)
                 self.pick_ids.action_done()
                 if cancel_backorder:
-                   for pick_id in self.pick_ids:
+                   for pick_id in self.picking_ids:
                        backorder_pick = self.env['stock.picking'].search([('backorder_id', '=', pick_id.id)])
                        backorder_pick.action_cancel()
                        pick_id.message_post(body=_("Back order <em>%s</em> <b>cancelled</b>.") % (",".join([b.name or '' for b in backorder_pick])))
