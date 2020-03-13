@@ -144,6 +144,7 @@ class StockPickingMassAction(TransientModel):
                                                                  , 'team_id' : 1
                                                                  , 'x_studio_field_bxHgp': backorder_pick.sale_id.x_studio_field_bxHgp 
                                                                 })
+                        pick_id.write({'sale_child':sale.id})
                         for rr in pick_id.move_ids_without_package:
                             datosr={'order_id' : sale.id, 'product_id' : rr.product_id.id, 'product_uom_qty' :rr.product_uom_qty,'x_studio_field_9nQhR':pick.x_studio_ticket_relacionado.x_studio_equipo_por_nmero_de_serie[0].id, 'price_unit': 0}
                             if(pick.x_studio_ticket_relacionado.team_id.id==10 or pick.x_studio_ticket_relacionado.team_id.id==11):
