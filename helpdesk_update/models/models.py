@@ -2083,7 +2083,7 @@ class helpdesk_update(models.Model):
     @api.multi
     def contadores_wizard(self):
         wiz = self.env['helpdesk.contadores'].create({'ticket_id':self.id})
-        view = self.env.ref('helpdesk_update.view_helpdesk_comentario')
+        view = self.env.ref('helpdesk_update.view_helpdesk_contadores')
         return {
             'name': _('Diagnostico'),
             'type': 'ir.actions.act_window',
