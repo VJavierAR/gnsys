@@ -29,7 +29,12 @@ class StockPicking(Model):
     def back(self):
         for r in self:
             if(r.state=="assigned"):
-                if(self._check_backorder()):
+                i=0
+                for rrr in self.move_ids_without_package:
+                    rrr=self.env['stock.quant'].search([['product_id','=', product1]]).sorted(key='quantity',reverse=True)
+                    if(len(rrr)>0):
+                        i=i+1
+                if(i>0):
                     r.mensaje="Al confirmar se generara un backorder"
                     
     @api.onchange('carrier_tracking_ref')
