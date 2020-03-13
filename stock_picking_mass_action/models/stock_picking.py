@@ -23,7 +23,7 @@ class StockPicking(Model):
     concentrado=fields.Char()
     mensaje=fields.Char(compute='back')
     sale_child=fields.Many2one('sale.order')
-    back=fields.Boolean('Backorder',related='sale_id.x_studio_backorder')
+    back=fields.Boolean('Backorder',related='sale_id.x_studio_backorder',store=True)
     #documentosDistro = fields.Many2many('ir.attachment', string="Evidencias ")
     #historialTicket = fields.One2many('ir.attachment','res_id',string='Evidencias al ticket',store=True,track_visibility='onchange')
 
