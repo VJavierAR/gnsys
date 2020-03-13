@@ -46,9 +46,9 @@ class helpdesk_contadores(TransientModel):
                       negrot = c.x_studio_contador_bn_mesa
                       colort = c.x_studio_contador_color_mesa                        
                       rr=self.env['dcas.dcas'].create({'serie' : c.id
-                                                    , 'contadorMono' : c.contadorBNActual
+                                                    , 'contadorMono' : self.ticket_id.contadorBNActual
                                                     ,'x_studio_contador_color_anterior':colort
-                                                    , 'contadorColor' :c.contadorColorMesa
+                                                    , 'contadorColor' :self.ticket_id.contadorColorMesa
                                                     ,'x_studio_contador_mono_anterior_1':negrot  
                                                     ,'fuente':q
                                                   })                  
@@ -64,9 +64,9 @@ class helpdesk_contadores(TransientModel):
                          negrot = c.x_studio_contador_bn_mesa
                          colort = c.x_studio_contador_color_mesa
                       rr=self.env['dcas.dcas'].create({'serie' : c.id
-                                                    , 'contadorMono' : c.contadorBNActual
+                                                    , 'contadorMono' : self.ticket_id.contadorBNActual
                                                     ,'x_studio_contador_color_anterior':colort
-                                                    , 'contadorColor' :c.contadorColorMesa
+                                                    , 'contadorColor' :self.ticket_id.contadorColorMesa
                                                     ,'x_studio_contador_mono_anterior_1':negrot
                                                     ,'fuente':q
                                                   })   
