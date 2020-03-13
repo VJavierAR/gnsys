@@ -15,6 +15,9 @@
                         <field name="evidencia" widget="many2many_binary"/>
                     </group>
                 </group>
+
+                <!--<field name="diagnostico_id" />-->
+
                 <footer>
                     <button name="creaComentario" string="Confirmar" type="object" class="oe_highlight"/>
                     <button string="Cancel" class="oe_link" special="cancel"/>
