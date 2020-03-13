@@ -61,25 +61,7 @@ class helpdesk_update(models.Model):
  
         name = 'Ticket'
         res_model = 'helpdesk.ticket' 
-        view_name = 'helpdesk.helpdesk_ticket_view_form' 
-        
-        #document_id = self.browse(cr, uid, ids[0]).id
-
-        #view = models.get_object_reference(cr, uid, name, view)
-        #view_id = view and view[1] or False
-        """
-        return {
-            'name': (name),
-            'view_type': 'form',
-            'view_mode': 'form',
-            'view_id': [view_id],
-            'res_model': res_model, 
-            'type': 'ir.actions.act_window',
-            'nodestroy': True,
-            'target': 'current',
-            'res_id': document_id,
-        }
-        """
+        view_name = 'helpdesk.helpdesk_ticket_view_form'
         view = self.env.ref(view_name)
         return {
             'name': _('Ticket'),
@@ -783,7 +765,7 @@ class helpdesk_update(models.Model):
     def validar_solicitud_refaccion(self):
         for record in self:
             sale = record.x_studio_field_nO7Xg
-            if sale.id != 0:
+            if sale.id != 0 and record.x_studio_productos != []:
                 self.sudo().env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
                 sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
                 sale.action_confirm()
@@ -825,7 +807,7 @@ class helpdesk_update(models.Model):
                 
             else:
                 errorRefaccionNoValidada = "Solicitud de refacción no validada"
-                mensajeSolicitudRefaccionNoValida = "No es posible validar una solicitud de refacción en el estado actual."
+                mensajeSolicitudRefaccionNoValida = "No es posible validar una solicitud de refacción en el estado actual debido a falta de productos o porque no existe la solicitud."
                 estadoActual = str(record.stage_id.name)
                 raise exceptions.except_orm(_(errorRefaccionNoValidada), _(mensajeSolicitudRefaccionNoValida + " Estado: " + estadoActual))
     
@@ -941,7 +923,7 @@ class helpdesk_update(models.Model):
                 #self.env.cr.commit()
         else:
             #if record.x_studio_id_ticket != 0:                      
-            if record.team_id.id == 8 :                
+            if record.team_id.id == 8 :
                 sale = self.env['sale.order'].sudo().create({'partner_id' : record.partner_id.id
                                                 , 'origin' : "Ticket de tóner: " + str(record.x_studio_id_ticket)
                                                 , 'x_studio_tipo_de_solicitud' : "Venta"
