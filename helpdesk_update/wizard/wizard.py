@@ -35,7 +35,7 @@ class helpdesk_contadores(TransientModel):
 
     def _compute_contadorBNMesa(self):
         for serie in self.ticket_id.x_studio_equipo_por_nmero_de_serie:
-            contadorBNMesa = int(serie.x_studio_contador_bn_mesan)
+            contadorBNMesa = int(serie.x_studio_contador_bn_mesa)
     
     def modificarContadores(self):
         self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.ticket_id.id
