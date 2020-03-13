@@ -115,15 +115,17 @@ class StockPickingMassAction(TransientModel):
                 if cancel_backorder:
                     for pick_id in self.picking_ids:
                         backorder_pick = self.env['stock.picking'].search([('backorder_id', '=', pick_id.id)])
-                        sale = self.env['sale.order'].create({'x_studio_backorder':True,'partner_id' : backorder_pick.sale_id.partner_id.id, 'origin' : backorder_pick.sale_id.origin, 'x_studio_tipo_de_solicitud' : 'Venta', 'x_studio_requiere_instalacin' : True, 'x_studio_field_RnhKr': backorder_pick.sale_id.x_studio_field_RnhKr.id, 'partner_shipping_id' : backorder_pick.sale_id.partner_shipping_id.id, 'warehouse_id' :backorder_pick.sale_id.warehouse_id.id, 'team_id' : 1, 'x_studio_field_bxHgp': pick_id.x_studio_ticket_relacionado.id})
-                        pick_id.write({'sale_child':sale.id})
-                        for rr in backorder_pick.move_ids_without_package:
-                            datosr={'order_id' : sale.id, 'product_id' : rr.product_id.id, 'product_uom_qty' :rr.product_uom_qty,'x_studio_field_9nQhR':pick_id.x_studio_ticket_relacionado.x_studio_equipo_por_nmero_de_serie[0].id, 'price_unit': 0}
-                            if(pick_id.x_studio_ticket_relacionado.team_id.id==10 or pick_id.x_studio_ticket_relacionado.team_id.id==11):
-                                datosr['route_id']=22548
-                            self.env['sale.order.line'].create(datosr)
-                        pick_id.x_studio_ticket_relacionado.write({'x_studio_field_0OAPP':[(4,sale.id)]})
-                        sale.sudo().action_confirm()
+                        if(pick_id.picking_type_id.id==3 or pick_id.picking_type_id.id==29314):
+
+                            sale = self.env['sale.order'].create({'x_studio_backorder':True,'partner_id' : backorder_pick.sale_id.partner_id.id, 'origin' : backorder_pick.sale_id.origin, 'x_studio_tipo_de_solicitud' : 'Venta', 'x_studio_requiere_instalacin' : True, 'x_studio_field_RnhKr': backorder_pick.sale_id.x_studio_field_RnhKr.id, 'partner_shipping_id' : backorder_pick.sale_id.partner_shipping_id.id, 'warehouse_id' :backorder_pick.sale_id.warehouse_id.id, 'team_id' : 1, 'x_studio_field_bxHgp': pick_id.x_studio_ticket_relacionado.id})
+                            pick_id.write({'sale_child':sale.id})
+                            for rr in backorder_pick.move_ids_without_package:
+                                datosr={'order_id' : sale.id, 'product_id' : rr.product_id.id, 'product_uom_qty' :rr.product_uom_qty,'x_studio_field_9nQhR':pick_id.x_studio_ticket_relacionado.x_studio_equipo_por_nmero_de_serie[0].id, 'price_unit': 0}
+                                if(pick_id.x_studio_ticket_relacionado.team_id.id==10 or pick_id.x_studio_ticket_relacionado.team_id.id==11):
+                                    datosr['route_id']=22548
+                                self.env['sale.order.line'].create(datosr)
+                            pick_id.x_studio_ticket_relacionado.write({'x_studio_field_0OAPP':[(4,sale.id)]})
+                            sale.sudo().action_confirm()
                         backorder_pick.action_cancel()
             if(len(assigned_picking_lst2)>0):
                 return self.env.ref('stock_picking_mass_action.report_custom').report_action(assigned_picking_lst2)
