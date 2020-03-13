@@ -60,8 +60,8 @@ class helpdesk_contadores(TransientModel):
                                                     ,'x_studio_contador_mono_anterior_1':negrot  
                                                     ,'fuente':q
                                                   })                  
-                      self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario': 'bn '+str(c.x_studio_contador_bn_a_capturar)+' color '+str(c.x_studio_contador_color_a_capturar)}
-                  else :
+                      self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario': 'bn '+str(c.x_studio_contador_bn_a_capturar)+' color '+str(c.x_studio_contador_color_a_capturar)})
+                  else:
                     raise exceptions.ValidationError("Contador Monocromatico Menor")                                   
               if str(c.x_studio_color_bn) != 'B/N':
                   if int(c.x_studio_contador_color_a_capturar) >= int(c.x_studio_contador_color) and int(c.x_studio_contador_bn_a_capturar) >= int(c.x_studio_contador_bn):                      
