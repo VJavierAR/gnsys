@@ -203,6 +203,7 @@ class StockCambio(TransientModel):
                             if(alm2!=[]):
                                 p1.write({'location_id':alm2[0]['almacen']})
                     p.action_confirm()
+                    p.action_assign()
 
 class StockCambioLine(TransientModel):
     _name = 'cambio.toner.line'
