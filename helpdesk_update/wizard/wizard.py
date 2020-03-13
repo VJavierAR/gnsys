@@ -16,3 +16,24 @@ class HelpDeskComentario(TransientModel):
     
     def creaComentario(self):
         self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.ticket_id.id,'comentario':self.comentario,'estadoTicket':self.estado,'evidencia':[(6,0,self.evidencia.ids)],'mostrarComentario':self.check})
+
+
+class helpdesk_contadores(TransientModel):
+    _name = 'helpdesk.contadores'
+    _description = 'HelpDesk Contadores'
+    check = fields.Boolean(string='Solicitar tóner B/N', default=False,)
+    #ticket_id = fields.Many2one("helpdesk.ticket")
+    contadorBN = fields.Integer(string='Contador B/N')
+    contadorBNMesa = fields.Integer(string='Contador B/N Mesa')
+    contadorBNActual = fields.Integer(string='Contador B/N Actual')
+    contadorColorMesa = fields.Integer(string='Contador Color Mesa')
+    negroProcentaje = fields.Integer(string='% Negro')
+    #CREAR COMENTARIO
+    
+    def modificarContadores(self):
+        self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.ticket_id.id
+                                                ,'comentario':self.comentario
+                                                ,'estadoTicket':self.estado,'evidencia':[(6,0,self.evidencia.ids)]
+                                                ,'mostrarComentario':self.check
+                                                })
+

@@ -18,4 +18,28 @@
             </form>
         </field>
     </record>
+
+    <record id="view_helpdesk_contadores" model="ir.ui.view">
+        <field name="model">helpdesk.contadores</field>
+        <field name="arch" type="xml">
+            <form string="Agregar contadores">
+                <group>
+                    <group>
+                        <field name="contadorBN" readonly="1"/>
+                        <field name="contadorBNMesa" readonly="1"/>
+                    </group>
+                    <group>
+                        <field name="contadorBNActual"/>
+                        <field name="contadorColorMesa" />
+                        <field name="negroProcentaje" />
+                    </group>
+                </group>
+                <footer>
+                    <button name="modificarContadores" string="Confirmar" type="object" class="oe_highlight"/>
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    
 </odoo>

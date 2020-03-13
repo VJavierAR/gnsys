@@ -765,7 +765,7 @@ class helpdesk_update(models.Model):
     def validar_solicitud_refaccion(self):
         for record in self:
             sale = record.x_studio_field_nO7Xg
-            if sale.id != 0 and record.x_studio_productos != []:
+            if sale.id != 0 or record.x_studio_productos != []:
                 self.sudo().env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
                 sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
                 sale.action_confirm()
@@ -1089,7 +1089,7 @@ class helpdesk_update(models.Model):
     def validar_solicitud_toner(self):
         for record in self:
             sale = record.x_studio_field_nO7Xg
-            if sale.id != 0:
+            if sale.id != 0 or record.x_studio_productos != []:
                 self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
                 sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
                 sale.write({'x_studio_corte':self.x_studio_corte})
@@ -1144,7 +1144,7 @@ class helpdesk_update(models.Model):
                 
             else:
                 errorTonerNoValidado = "Solicitud de tóner no validada"
-                mensajeSolicitudTonerNoValida = "No es posible validar una solicitud de tóner en el estado actual. Favor de verificar el estado del ticket o revisar que la solicitud se haya generado"
+                mensajeSolicitudTonerNoValida = "No es posible validar una solicitud de tóner en el estado actual. Favor de verificar el estado del ticket, revisar que la solicitud se haya generado o verificar si agrego productos"
                 estadoActual = str(record.stage_id.name)
                 raise exceptions.except_orm(_(errorTonerNoValidado), _(mensajeSolicitudTonerNoValida + " Estado: " + estadoActual))
     
@@ -2052,6 +2052,23 @@ class helpdesk_update(models.Model):
     @api.multi
     def cambio_wizard(self):
         wiz = self.env['helpdesk.comentario'].create({'ticket_id':self.id})
+        view = self.env.ref('helpdesk_update.view_helpdesk_comentario')
+        return {
+            'name': _('Diagnostico'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'helpdesk.comentario',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            'context': self.env.context,
+        }
+
+    @api.multi
+    def _wizard_contadores(self):
+        wiz = self.env['helpdesk.contadores'].create({'ticket_id':self.id})
         view = self.env.ref('helpdesk_update.view_helpdesk_comentario')
         return {
             'name': _('Diagnostico'),
