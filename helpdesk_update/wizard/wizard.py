@@ -38,21 +38,13 @@ class helpdesk_contadores(TransientModel):
                 self.contadorBNMesa = int(serie.x_studio_contador_bn_mesa)
                 self.contadorColorMesa = int(serie.x_studio_contador_color_mesa)
     
-    def modificarContadores(self):
-        for record in self:  
-            for c in record.x_studio_equipo_por_nmero_de_serie:
-              if self.team_id.id==8:
-                q='helpdesk.ticket'
-              else:
-                q='stock.production.lot'              
+    def modificarContadores(self):          
+        for c in self.ticket_id.x_studio_equipo_por_nmero_de_serie:                                       
+              q='stock.production.lot'              
               if str(c.x_studio_color_bn) == 'B/N':
                   if int(c.x_studio_contador_bn_a_capturar) >= int(c.x_studio_contador_bn):
-                      if self.team_id.id==8:
-                         negrot = c.x_studio_contador_bn
-                         colort = c.x_studio_contador_color
-                      else:
-                         negrot = c.x_studio_contador_bn_mesa
-                         colort = c.x_studio_contador_color_mesa                        
+                      negrot = c.x_studio_contador_bn_mesa
+                      colort = c.x_studio_contador_color_mesa                        
                       rr=self.env['dcas.dcas'].create({'serie' : c.id
                                                     , 'contadorMono' : c.contadorBNActual
                                                     ,'x_studio_contador_color_anterior':colort
@@ -60,7 +52,7 @@ class helpdesk_contadores(TransientModel):
                                                     ,'x_studio_contador_mono_anterior_1':negrot  
                                                     ,'fuente':q
                                                   })                  
-                      self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario': 'bn '+str(c.x_studio_contador_bn_a_capturar)+' color '+str(c.x_studio_contador_color_a_capturar)})
+                      self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.ticket_id.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario': 'bn '+str(c.x_studio_contador_bn_a_capturar)+' color '+str(c.x_studio_contador_color_a_capturar)})
                   else:
                     raise exceptions.ValidationError("Contador Monocromatico Menor")                                   
               if str(c.x_studio_color_bn) != 'B/N':
@@ -77,7 +69,7 @@ class helpdesk_contadores(TransientModel):
                                                     , 'contadorColor' :c.contadorColorMesa
                                                     ,'x_studio_contador_mono_anterior_1':negrot
                                                     ,'fuente':q
-                                                  })                  
-                      self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario': 'bn '+str(c.x_studio_contador_bn_a_capturar)+' color '+str(c.x_studio_contador_color_a_capturar)})
+                                                  })   
+                      self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.ticket_id.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario': 'bn '+str(c.x_studio_contador_bn_a_capturar)+' color '+str(c.x_studio_contador_color_a_capturar)})
                   else :
                     raise exceptions.ValidationError("Error al capturar debe ser mayor")
