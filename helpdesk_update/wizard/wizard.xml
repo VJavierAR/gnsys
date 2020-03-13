@@ -33,11 +33,13 @@
                 <group>
                     <group>
                         <field name="contadorBNMesa" readonly="1"/>
+                        <field name="contadorColorMesa" readonly="1"/>
+                        <field name="bnColor" readonly="1"/>
+                        
                     </group>
                     <group>
                         <field name="contadorBNActual"/>
                         <field name="contadorColorMesa" />
-                        <field name="negroProcentaje" />
                     </group>
                 </group>
                 <footer>
