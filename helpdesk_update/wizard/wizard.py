@@ -10,6 +10,7 @@ class HelpDeskComentario(TransientModel):
     _name = 'helpdesk.comentario'
     _description = 'HelpDesk Comentario'
     check = fields.Boolean(string='Mostrar en reporte',default=False,)
+    diagnostico_id = fields.One2many('helpdesk.diagnostico', 'ticketRelacion', string = 'Diagnostico')
     ticket_id = fields.Many2one("helpdesk.ticket")
     estado=fields.Char('Estado')
     comentario=fields.Char('Comentario')
@@ -90,7 +91,7 @@ class helpdesk_contadores(TransientModel):
                               'message' : message
                             }
                       return {'warning': mess}
-                      
+
                   else :
                     raise exceptions.ValidationError("Error al capturar debe ser mayor")
 
