@@ -2081,7 +2081,7 @@ class helpdesk_update(models.Model):
         }
 
     @api.multi
-    def _wizard_contadores(self):
+    def contadores_wizard(self):
         wiz = self.env['helpdesk.contadores'].create({'ticket_id':self.id})
         view = self.env.ref('helpdesk_update.view_helpdesk_comentario')
         return {
