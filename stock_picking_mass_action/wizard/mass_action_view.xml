@@ -56,12 +56,15 @@
     <record id="view_cambio_toner_action_form" model="ir.ui.view">
         <field name="model">cambio.toner</field>
         <field name="arch" type="xml">
-            <form string="xxxx">
+            <form string="Cambio">
                 <group>
                     <field name="pro_ids">
                         <tree editable="bottom">
                         <field name="producto1" readonly="1" string="Registro Original"/>
-                        <field name="producto2" string="Registro a Cambiar"/>
+                        <field name="producto2" string="Registro a Cambiar" readonly="1" invisible="1"/>
+                        <field name="estado" string="Estado"/>
+                        <field name="existencia1" readonly="1"/>
+                        <field name="existencia2" readonly="1"/>
                         </tree>
                     </field>
                 </group>

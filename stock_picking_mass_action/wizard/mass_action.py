@@ -108,7 +108,7 @@ class StockPickingMassAction(TransientModel):
             if pick_to_do:
                 pick_to_do.action_done()
             if pick_to_backorder:
-                #_logger.info("***************lista2" + str(pick_to_backorder.id))
+                _logger.info("***************lista2" + len(pick_to_backorder))
                 #wiz = self.env['stock.backorder.confirmation'].create({'pick_ids': [(4, pick_to_backorder.id)]})
                 #wiz.process()
                 pick_to_backorder.action_done()
@@ -172,7 +172,7 @@ class StockCambio(TransientModel):
                 if(prp.producto1.id !=prp.producto2.id):
                     dt.append(prp.producto1.id)
             for s in self.pick.sale_id.order_line:
-                if(s.product_id.id in dt):
+                if(s.product_id.id in dt or estado=='usado'):
                     i=i+1
                     self.env.cr.execute("delete from stock_move_line where reference='"+self.pick.name+"' and product_id="+str(s.product_id.id)+";")
                     self.env.cr.execute("delete from stock_move where origin='"+self.pick.sale_id.name+"' and product_id="+str(s.product_id.id)+";")
@@ -184,10 +184,12 @@ class StockCambio(TransientModel):
                 pickis=self.env.cr.fetchall()
                 pickg=self.env['stock.picking'].search([['id','in',pickis]])
                 for li in self.pro_ids:
-                    datos={'order_id':self.pick.sale_id.id,'product_id':li.producto2.id,'product_uom':li.producto2.uom_id.id,'product_uom_qty':li.cantidad,'name':li.producto2.description if(li.producto2.description) else '/','price_unit':0.00,'x_studio_serieorderline':li.serie}
-                    #if(li.serieDestino):
-                    #    datos['x_studio_field_9nQhR']=li.serieDestino.id,
-                    ss=self.env['sale.order.line'].sudo().create(datos)
+                    if(s.product_id.id in dt or estado=='usado'):
+                        datos={'location_id':41917,'order_id':self.pick.sale_id.id,'product_id':li.producto2.id,'product_uom':li.producto2.uom_id.id,'product_uom_qty':li.cantidad,'name':li.producto2.description if(li.producto2.description) else '/','price_unit':0.00,'x_studio_serieorderline':li.serie}
+                        
+                        #if(li.serieDestino):
+                        #    datos['x_studio_field_9nQhR']=li.serieDestino.id,
+                        ss=self.env['sale.order.line'].sudo().create(datos)
                 for p in pickg:
                     p.action_confirm()
 
@@ -200,3 +202,14 @@ class StockCambioLine(TransientModel):
     rel_cambio=fields.Many2one('cambio.toner')
     serie=fields.Char()
     estado = fields.Selection([('12','Nuevo'),('41917', 'Usado')],store=True)
+    existencia1=fields.Integer(compute='nuevo','Existencia Nuevo')
+    existencia2=fields.Integer(compute='nuevo''Existencia Usado')
+
+    @api.depends('producto1')
+    def nuevo(self):
+        ex=self.env['stock.quant'].search([['location_id','=',12],['product_id','=',self.producto1.id]]).sorted(key='quantity',reserve=True)
+        self.existencia1=Int(ex[0].quantity) if(len(ex)>0) else 0
+        ex2=self.env['stock.quant'].search([['location_id','=',41917],['product_id','=',self.producto1.id]]).sorted(key='quantity',reserve=True)
+        self.existencia2=Int(ex2[0].quantity) if(len(ex2)>0) else 0
+
+
