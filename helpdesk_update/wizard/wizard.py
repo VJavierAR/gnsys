@@ -39,6 +39,7 @@ class helpdesk_contadores(TransientModel):
             for serie in self.ticket_id.x_studio_equipo_por_nmero_de_serie:
                 self.contadorBNMesa = int(serie.x_studio_contador_bn_mesa)
                 self.contadorColorMesa = int(serie.x_studio_contador_color_mesa)
+
     
     def modificarContadores(self):          
         for c in self.ticket_id.x_studio_equipo_por_nmero_de_serie:                                       
@@ -56,6 +57,14 @@ class helpdesk_contadores(TransientModel):
                                                     ,'fuente':q
                                                   })                  
                       self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.ticket_id.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario': 'bn '+str(c.x_studio_contador_bn_a_capturar)+' color '+str(c.x_studio_contador_color_a_capturar)})
+
+                      message = ('Se capturo el contador.')
+                      mess= {
+                              'title': _('Contador capturado!!!'),
+                              'message' : message
+                            }
+                      return {'warning': mess}
+
                   else:
                     raise exceptions.ValidationError("Contador Monocromatico Menor")                                   
               if str(c.x_studio_color_bn) != 'B/N':
@@ -75,5 +84,13 @@ class helpdesk_contadores(TransientModel):
                                                     ,'fuente':q
                                                   })   
                       self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.ticket_id.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario': 'bn '+str(c.x_studio_contador_bn_a_capturar)+' color '+str(c.x_studio_contador_color_a_capturar)})
+                      message = ('Se capturo el contador.')
+                      mess= {
+                              'title': _('Contador capturado!!!'),
+                              'message' : message
+                            }
+                      return {'warning': mess}
+                      
                   else :
                     raise exceptions.ValidationError("Error al capturar debe ser mayor")
+
