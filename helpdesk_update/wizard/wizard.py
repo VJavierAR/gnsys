@@ -31,6 +31,7 @@ class helpdesk_contadores(TransientModel):
     contadorBNActual = fields.Integer(string='Contador B/N Actual')
     contadorColorMesa = fields.Integer(string='Contador Color Mesa')
     negroProcentaje = fields.Integer(string='% Negro')
+    bnColor = fields.Char(string='Color o BN')
     
 
     
@@ -40,6 +41,7 @@ class helpdesk_contadores(TransientModel):
             for serie in self.ticket_id.x_studio_equipo_por_nmero_de_serie:
                 self.contadorBNMesa = int(serie.x_studio_contador_bn_mesa)
                 self.contadorColorMesa = int(serie.x_studio_contador_color_mesa)
+                self.bnColor= str(serie.x_studio_color_bn)
 
     
     def modificarContadores(self):          
