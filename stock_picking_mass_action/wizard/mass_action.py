@@ -202,8 +202,8 @@ class StockCambioLine(TransientModel):
     rel_cambio=fields.Many2one('cambio.toner')
     serie=fields.Char()
     estado = fields.Selection([('12','Nuevo'),('41917', 'Usado')],store=True)
-    existencia1=fields.Integer(compute='nuevo','Existencia Nuevo')
-    existencia2=fields.Integer(compute='nuevo''Existencia Usado')
+    existencia1=fields.Integer(compute='nuevo',string='Existencia Nuevo')
+    existencia2=fields.Integer(compute='nuevo',string='Existencia Usado')
 
     @api.depends('producto1')
     def nuevo(self):
