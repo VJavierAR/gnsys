@@ -22,7 +22,7 @@ class helpdesk_contadores(TransientModel):
     _name = 'helpdesk.contadores'
     _description = 'HelpDesk Contadores'
     check = fields.Boolean(string='Solicitar tóner B/N', default=False,)
-    #ticket_id = fields.Many2one("helpdesk.ticket")
+    ticket_id = fields.Many2one("helpdesk.ticket")
     contadorBN = fields.Integer(string='Contador B/N')
     contadorBNMesa = fields.Integer(string='Contador B/N Mesa')
     contadorBNActual = fields.Integer(string='Contador B/N Actual')
