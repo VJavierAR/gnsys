@@ -25,7 +25,7 @@ class StockPicking(Model):
     #documentosDistro = fields.Many2many('ir.attachment', string="Evidencias ")
     #historialTicket = fields.One2many('ir.attachment','res_id',string='Evidencias al ticket',store=True,track_visibility='onchange')
 
-    @api.depends('state')
+    @api.depends('move_ids_without_package')
     def back(self):
         for r in self:
             if(r.state=="assigned"):
