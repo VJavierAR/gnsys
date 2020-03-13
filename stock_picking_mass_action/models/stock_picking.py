@@ -21,9 +21,22 @@ class StockPicking(Model):
     lineasBack = fields.One2many(related='backorder_ids.move_ids_without_package')
     ruta_id=fields.Many2one('creacion.ruta')
     concentrado=fields.Char()
+    mensaje=fields.Char(compute='back')
     #documentosDistro = fields.Many2many('ir.attachment', string="Evidencias ")
     #historialTicket = fields.One2many('ir.attachment','res_id',string='Evidencias al ticket',store=True,track_visibility='onchange')
 
+    @api.depends('move_ids_without_package')
+    def back(self):
+        for r in self:
+            if(r.state=="assigned"):
+                i=0
+                for rrr in r.move_ids_without_package:
+                    rrrrr=self.env['stock.quant'].search([['product_id','=', rrr.product_id.id],['location_id','=',12]]).sorted(key='quantity',reverse=True)
+                    if(len(rrrrr)>0):
+                        i=i+1
+                if(i>0):
+                    r.mensaje="Al confirmar se generara un backorder"
+                    
     @api.onchange('carrier_tracking_ref')
     def agregarNumeroGuiaATicketOSolicitud(self):
         if(self.sale_id.x_studio_field_bxHgp):

@@ -1,7 +1,8 @@
-from odoo import fields, api
+from odoo import _,fields, api
 from odoo.models import TransientModel
 import logging, ast
 import datetime, time
+from odoo.tools.float_utils import float_compare
 _logger = logging.getLogger(__name__)
 
 class StockPickingMassAction(TransientModel):
@@ -107,26 +108,27 @@ class StockPickingMassAction(TransientModel):
             # Process every picking that do not require a backorder, then return a single backorder wizard for every other ones.
             if pick_to_do:
                 pick_to_do.action_done()
-            if pick_to_backorder:
-                #_logger.info("***************lista2" + str(pick_to_backorder.id))
+            #if pick_to_backorder:
+            #    _logger.info("***************lista2" + str(len(pick_to_backorder.name)))
                 #wiz = self.env['stock.backorder.confirmation'].create({'pick_ids': [(4, pick_to_backorder.id)]})
                 #wiz.process()
-                pick_to_backorder.action_done()
-                #cancel_backorder=False
-                    #if cancel_backorder:
-                    #    for pick_id in self.pick_ids:
-                    #        moves_to_log = {}
-                    #        for move in pick_id.move_lines:
-                    #            if float_compare(move.product_uom_qty, move.quantity_done, precision_rounding=move.product_uom.rounding) > 0:
-                    #                moves_to_log[move] = (move.quantity_done, move.product_uom_qty)
-                    #        pick_id._log_less_quantities_than_expected(moves_to_log)
-                    #self.pick_ids.action_done()
-                    #if cancel_backorder:
-                    #    for pick_id in self.pick_ids:
-                    #        backorder_pick = self.env['stock.picking'].search([('backorder_id', '=', pick_id.id)])
-                    #        backorder_pick.action_cancel()
-                    #        pick_id.message_post(body=_("Back order <em>%s</em> <b>cancelled</b>.") % (",".join([b.name or '' for b in backorder_pick])))
-                                #return pick_to_backorder.action_generate_backorder_wizard()
+                #pick_to_backorder.action_done()
+            if assigned_picking_lst._check_backorder():
+                cancel_backorder=True
+                if cancel_backorder:
+                   for pick_id in self.picking_ids:
+                       moves_to_log = {}
+                       for move in pick_id.move_lines:
+                           if float_compare(move.product_uom_qty, move.quantity_done, precision_rounding=move.product_uom.rounding) > 0:
+                               moves_to_log[move] = (move.quantity_done, move.product_uom_qty)
+                       pick_id._log_less_quantities_than_expected(moves_to_log)
+                self.picking_ids.action_done()
+                if cancel_backorder:
+                   for pick_id in self.picking_ids:
+                       backorder_pick = self.env['stock.picking'].search([('backorder_id', '=', pick_id.id)])
+                       backorder_pick.action_cancel()
+                       pick_id.message_post(body=_("Back order <em>%s</em> <b>cancelled</b>.") % (",".join([b.name or '' for b in backorder_pick])))
+                #             #return pick_to_backorder.action_generate_backorder_wizard()
                         #return assigned_picking_lst.action_immediate_transfer_wizard().process()
 
             #if assigned_picking_lst._check_backorder():
@@ -169,9 +171,10 @@ class StockCambio(TransientModel):
             self.pick.backorder=''
             dt=[]
             for prp in self.pro_ids:
-                if(prp.producto1.id !=prp.producto2.id):
+                if(prp.producto1.id !=prp.producto2.id or prp.estado=='41917'):
                     dt.append(prp.producto1.id)
             for s in self.pick.sale_id.order_line:
+
                 if(s.product_id.id in dt):
                     i=i+1
                     self.env.cr.execute("delete from stock_move_line where reference='"+self.pick.name+"' and product_id="+str(s.product_id.id)+";")
@@ -184,11 +187,17 @@ class StockCambio(TransientModel):
                 pickis=self.env.cr.fetchall()
                 pickg=self.env['stock.picking'].search([['id','in',pickis]])
                 for li in self.pro_ids:
-                    datos={'order_id':self.pick.sale_id.id,'product_id':li.producto2.id,'product_uom':li.producto2.uom_id.id,'product_uom_qty':li.cantidad,'name':li.producto2.description if(li.producto2.description) else '/','price_unit':0.00,'x_studio_serieorderline':li.serie}
-                    #if(li.serieDestino):
-                    #    datos['x_studio_field_9nQhR']=li.serieDestino.id,
-                    ss=self.env['sale.order.line'].sudo().create(datos)
+                    if(s.product_id.id in dt):
+                        l=self.env['stock.production.lot'].search([['name','=',li.serie]])
+                        datos={'x_studio_field_9nQhR':l.id,'order_id':self.pick.sale_id.id,'product_id':li.producto2.id,'product_uom':li.producto2.uom_id.id,'product_uom_qty':li.cantidad,'name':li.producto2.description if(li.producto2.description) else '/','price_unit':0.00}
+                        
+                        #if(li.serieDestino):
+                        #    datos['x_studio_field_9nQhR']=li.serieDestino.id,
+                        ss=self.env['sale.order.line'].sudo().create(datos)
                 for p in pickg:
+                    for p1 in p.move_ids_without_package:
+                        if(p1.product_id.id in dt):
+                            p1.write({'location_id':41917})
                     p.action_confirm()
 
 class StockCambioLine(TransientModel):
@@ -200,3 +209,15 @@ class StockCambioLine(TransientModel):
     rel_cambio=fields.Many2one('cambio.toner')
     serie=fields.Char()
     estado = fields.Selection([('12','Nuevo'),('41917', 'Usado')],store=True)
+    existencia1=fields.Integer(compute='nuevo',string='Existencia Nuevo')
+    existencia2=fields.Integer(compute='nuevo',string='Existencia Usado')
+
+    @api.depends('producto1')
+    def nuevo(self):
+        for record in self:
+            ex=self.env['stock.quant'].search([['location_id','=',12],['product_id','=',record.producto1.id]]).sorted(key='quantity',reverse=True)
+            record.existencia1=int(ex[0].quantity) if(len(ex)>0) else 0
+            ex2=self.env['stock.quant'].search([['location_id','=',41917],['product_id','=',record.producto1.id]]).sorted(key='quantity',reverse=True)
+            record.existencia2=int(ex2[0].quantity) if(len(ex2)>0) else 0
+
+

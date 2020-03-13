@@ -667,11 +667,10 @@ class helpdesk_update(models.Model):
                     sale = self.x_studio_field_nO7Xg
                     self.env.cr.execute("delete from sale_order_line where order_id = " + str(sale.id) +";")
                     for c in self.x_studio_productos:
-                        self.env['sale.order.line'].create({'order_id' : sale.id
-                                                          , 'product_id' : c.id
-                                                          , 'product_uom_qty' : c.x_studio_cantidad_pedida
-                                                          , 'x_studio_field_9nQhR':self.x_studio_equipo_por_nmero_de_serie[0].id
-                                                          })
+                        datosr={'order_id' : sale.id, 'product_id' : c.id, 'product_uom_qty' : c.x_studio_cantidad_pedida, 'x_studio_field_9nQhR':self.x_studio_equipo_por_nmero_de_serie[0].id}
+                        if(self.team_id.id==10 or self.team_id.id==11):
+                            datosr['route_id']=22548
+                        self.env['sale.order.line'].create(datosr)
                         self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
                         #self.env.cr.commit()
                 else:
@@ -697,12 +696,10 @@ class helpdesk_update(models.Model):
                                                                 })
                     record['x_studio_field_nO7Xg'] = sale.id
                     for c in record.x_studio_productos:
-                        self.env['sale.order.line'].create({'order_id' : sale.id
-                                                                   , 'product_id' : c.id
-                                                                   , 'product_uom_qty' : c.x_studio_cantidad_pedida
-                                                                   ,'x_studio_field_9nQhR':self.x_studio_equipo_por_nmero_de_serie[0].id
-                                                                   , 'price_unit': 0
-                                                                  })
+                        datosr={'order_id' : sale.id, 'product_id' : c.id, 'product_uom_qty' : c.x_studio_cantidad_pedida,'x_studio_field_9nQhR':self.x_studio_equipo_por_nmero_de_serie[0].id, 'price_unit': 0}
+                        if(self.team_id.id==10 or self.team_id.id==11):
+                            datosr['route_id']=22548
+                        self.env['sale.order.line'].create(datosr)
                         sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
                         #sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta', 'validity_date' : sale.date_order + datetime.timedelta(days=30)})
                         self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
@@ -777,10 +774,10 @@ class helpdesk_update(models.Model):
                             requisicion=self.env['requisicion.requisicion'].search([['state','!=','done'],['create_date','<=',datetime.datetime.now()],['origen','=','Refacción']]).sorted(key='create_date',reverse=True)
                     else:
                         requisicion=self.env['requisicion.requisicion'].search([['state','!=','done'],['create_date','<=',datetime.datetime.now()],['origen','=','Refacción']]).sorted(key='create_date',reverse=True)
-                    if(len(requisicion)==0):
+                    if(requisicion!=False ):
                         re=self.env['requisicion.requisicion'].create({'origen':'Refacción','area':'Almacen','state':'draft'})
                         re.product_rel=[{'cliente':sale.partner_shipping_id.id,'ticket':sale.x_studio_field_bxHgp.id,'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
-                    if(len(requisicion)>0):
+                    if(requisicion):
                         #prd=requisicion[0].product_rel.search([['product','=',lineas.product_id.id],['req_rel','=',requisicion[0].id]])
                         requisicion[0].product_rel=[{'cliente':sale.partner_shipping_id.id,'ticket':sale.x_studio_field_bxHgp.id,'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
                         #if(len(prd)>0):
@@ -863,10 +860,17 @@ class helpdesk_update(models.Model):
               #if str(c.x_studio_field_A6PR9) =='Negro':
               if str(c.x_studio_color_bn) == 'B/N':
                   if int(c.x_studio_contador_bn_a_capturar) >= int(c.x_studio_contador_bn):
-                      
-                      self.env['dcas.dcas'].create({'serie' : c.id
+                      if self.team_id.id==8:
+                         negrot = c.x_studio_contador_bn
+                         colort = c.x_studio_contador_color
+                      else:
+                         negrot = c.x_studio_contador_bn_mesa
+                         colort = c.x_studio_contador_color_mesa                        
+                      rr=self.env['dcas.dcas'].create({'serie' : c.id
                                                     , 'contadorMono' : c.x_studio_contador_bn_a_capturar
+                                                    ,'x_studio_contador_color_anterior':colort
                                                     , 'contadorColor' :c.x_studio_contador_color_a_capturar
+                                                    ,'x_studio_contador_mono_anterior_1':negrot
                                                     ,'porcentajeNegro':c.x_studio__negro
                                                     ,'porcentajeCian':c.x_studio__cian      
                                                     ,'porcentajeAmarillo':c.x_studio__amarrillo      
@@ -875,17 +879,26 @@ class helpdesk_update(models.Model):
                                                     ,'x_studio_tickett':self.x_studio_id_ticket
                                                     ,'x_studio_hoja_de_estado':c.x_studio_evidencias
                                                     ,'x_studio_usuariocaptura':self.env.user.name
-                                                    ,'fuente':q                                            
+                                                    ,'fuente':q
+                                                    ,'x_studio_rendimiento':int(c.x_studio_rendimiento)/abs(int(c.x_studio_contador_bn_a_capturar)-int(negrot))
                                                   })                  
-                      self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario':'capturas :' + str('Mono'+str(c.x_studio_contador_bn_a_capturar)+', Color '+str(c.x_studio_contador_color_a_capturar)+', Amarillo '+str(c.x_studio__amarrillo)+', Cian '+str(c.x_studio__cian)+', Negro '+str(c.x_studio__negro)+', Magenta '+str(c.x_studio__magenta))})
+                      self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario':'capturas :' + str('Mono'+str(c.x_studio_contador_bn_a_capturar)+', Color '+str(c.x_studio_contador_color_a_capturar)+', Amarillo '+str(c.x_studio__amarrillo)+', Cian '+str(c.x_studio__cian)+', Negro '+str(c.x_studio__negro)+', Magenta '+str(c.x_studio__magenta)+', % de rendimiento '+str(rr.x_studio_rendimiento))})
                   else :
                     raise exceptions.ValidationError("Contador Monocromatico Menor")                     
               #if str(c.x_studio_field_A6PR9) != 'Negro':       
               if str(c.x_studio_color_bn) != 'B/N':
-                  if int(c.x_studio_contador_color_a_capturar) >= int(c.x_studio_contador_color) and int(c.x_studio_contador_bn_a_capturar) >= int(c.x_studio_contador_bn):
-                      self.env['dcas.dcas'].create({'serie' : c.id
+                  if int(c.x_studio_contador_color_a_capturar) >= int(c.x_studio_contador_color) and int(c.x_studio_contador_bn_a_capturar) >= int(c.x_studio_contador_bn):                      
+                      if self.team_id.id==8:
+                         negrot = c.x_studio_contador_bn
+                         colort = c.x_studio_contador_color
+                      else:
+                         negrot = c.x_studio_contador_bn_mesa
+                         colort = c.x_studio_contador_color_mesa
+                      rr=self.env['dcas.dcas'].create({'serie' : c.id
                                                     , 'contadorMono' : c.x_studio_contador_bn_a_capturar
+                                                    ,'x_studio_contador_color_anterior':colort
                                                     , 'contadorColor' :c.x_studio_contador_color_a_capturar
+                                                    ,'x_studio_contador_mono_anterior_1':negrot
                                                     ,'porcentajeNegro':c.x_studio__negro
                                                     ,'porcentajeCian':c.x_studio__cian      
                                                     ,'porcentajeAmarillo':c.x_studio__amarrillo      
@@ -894,9 +907,10 @@ class helpdesk_update(models.Model):
                                                     ,'x_studio_tickett':self.x_studio_id_ticket
                                                     ,'x_studio_hoja_de_estado':c.x_studio_evidencias
                                                     ,'x_studio_usuariocaptura':self.env.user.name
-                                                    ,'fuente':q                                            
+                                                    ,'fuente':q
+                                                    ,'x_studio_rendimiento':int(c.x_studio_rendimiento)/abs(int(c.x_studio_contador_bn_a_capturar)-int(negrot))
                                                   })                  
-                      self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario':'capturas :' + str('Mono'+str(c.x_studio_contador_bn_a_capturar)+', Color '+str(c.x_studio_contador_color_a_capturar)+', Amarillo '+str(c.x_studio__amarrillo)+', Cian '+str(c.x_studio__cian)+', Negro '+str(c.x_studio__negro)+', Magenta '+str(c.x_studio__magenta))})
+                      self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario':'capturas :' + str('Mono'+str(c.x_studio_contador_bn_a_capturar)+', Color '+str(c.x_studio_contador_color_a_capturar)+', Amarillo '+str(c.x_studio__amarrillo)+', Cian '+str(c.x_studio__cian)+', Negro '+str(c.x_studio__negro)+', Magenta '+str(c.x_studio__magenta)+', % de rendimiento '+str(rr.x_studio_rendimiento))})
                   else :
                     raise exceptions.ValidationError("Error al capturar debe ser mayor")                                                 
 
