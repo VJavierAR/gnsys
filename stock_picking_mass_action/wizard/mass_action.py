@@ -2,6 +2,7 @@ from odoo import fields, api
 from odoo.models import TransientModel
 import logging, ast
 import datetime, time
+from odoo.tools.float_utils import float_compare
 _logger = logging.getLogger(__name__)
 
 class StockPickingMassAction(TransientModel):
