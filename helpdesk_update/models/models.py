@@ -901,7 +901,7 @@ class helpdesk_update(models.Model):
                                                     ,'x_studio_hoja_de_estado':c.x_studio_evidencias
                                                     ,'x_studio_usuariocaptura':self.env.user.name
                                                     ,'fuente':q
-                                                    ,'rendimiento':c.x_studio_rendimiento/abs(c.x_studio_contador_bn_a_capturar-negrot)
+                                                    ,'x_studio_rendimiento':int(c.x_studio_rendimiento)/abs(int(c.x_studio_contador_bn_a_capturar)-int(negrot))
                                                   })                  
                       self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario':'capturas :' + str('Mono'+str(c.x_studio_contador_bn_a_capturar)+', Color '+str(c.x_studio_contador_color_a_capturar)+', Amarillo '+str(c.x_studio__amarrillo)+', Cian '+str(c.x_studio__cian)+', Negro '+str(c.x_studio__negro)+', Magenta '+str(c.x_studio__magenta))})
                   else :
@@ -929,7 +929,7 @@ class helpdesk_update(models.Model):
                                                     ,'x_studio_hoja_de_estado':c.x_studio_evidencias
                                                     ,'x_studio_usuariocaptura':self.env.user.name
                                                     ,'fuente':q
-                                                    ,'rendimiento':c.x_studio_rendimiento/abs(c.x_studio_contador_bn_a_capturar-negrot)
+                                                    ,'x_studio_rendimiento':int(c.x_studio_rendimiento)/abs(int(c.x_studio_contador_bn_a_capturar)-int(negrot))
                                                   })                  
                       self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario':'capturas :' + str('Mono'+str(c.x_studio_contador_bn_a_capturar)+', Color '+str(c.x_studio_contador_color_a_capturar)+', Amarillo '+str(c.x_studio__amarrillo)+', Cian '+str(c.x_studio__cian)+', Negro '+str(c.x_studio__negro)+', Magenta '+str(c.x_studio__magenta))})
                   else :
