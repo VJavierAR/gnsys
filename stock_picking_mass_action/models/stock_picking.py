@@ -31,7 +31,7 @@ class StockPicking(Model):
             if(r.state=="assigned"):
                 i=0
                 for rrr in r.move_ids_without_package:
-                    rrr=self.env['stock.quant'].search([['product_id','=', product1]]).sorted(key='quantity',reverse=True)
+                    rrr=self.env['stock.quant'].search([['product_id','=', r.product_id.id],['location_id','=',12]]).sorted(key='quantity',reverse=True)
                     if(len(rrr)>0):
                         i=i+1
                 if(i>0):
