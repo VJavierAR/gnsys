@@ -133,6 +133,7 @@ class StockPickingMassAction(TransientModel):
                             if(pick.x_studio_ticket_relacionado.team_id.id==10 or pick.x_studio_ticket_relacionado.team_id.id==11):
                                 datosr['route_id']=22548
                             self.env['sale.order.line'].create(datosr)
+                        pick.write({'x_studio_ticket_relacionado':[(4,sale.id)]})
                         sale.sudo().action_confirm()
                         backorder_pick.action_cancel()
 
