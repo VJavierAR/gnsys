@@ -31,7 +31,7 @@ class helpdesk_contadores(TransientModel):
     
 
     
-    @depends('ticket_id')
+    @api.depends('ticket_id')
     def _compute_contadorBNMesa(self):
         for serie in self.ticket_id.x_studio_equipo_por_nmero_de_serie:
             contadorBNMesa = int(serie.x_studio_contador_bn_mesa)
