@@ -7,7 +7,7 @@
             <form string="Creación de comentario">
                 <group>
                     <group>
-                        <field name="estado" readonly="1"/>
+                        <field name="estado" readonly="1" invisible="1"/>
                         <field name="comentario"/>
                     </group>
                     <group>
@@ -40,6 +40,26 @@
                     <group>
                         <field name="contadorBNActual"/>
                         <field name="contadorColorMesa" />
+                    </group>
+                </group>
+                <footer>
+                    <button name="modificarContadores" string="Confirmar" type="object" class="oe_highlight"/>
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_helpdesk_contacto" model="ir.ui.view">
+        <field name="model">helpdesk.contacto</field>
+        <field name="arch" type="xml">
+            <form string="Agregar contadores">
+                <group>
+                    <group>
+                        
+                    </group>
+                    <group>
+                        
                     </group>
                 </group>
                 <footer>
