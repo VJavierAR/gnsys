@@ -23,8 +23,8 @@ class helpdesk_contadores(TransientModel):
     _description = 'HelpDesk Contadores'
     check = fields.Boolean(string='Solicitar tóner B/N', default=False,)
     ticket_id = fields.Many2one("helpdesk.ticket")
-    contadorBN = fields.Integer(string='Contador B/N', compute="_compute_contadorBN")
-    contadorBNMesa = fields.Integer(string='Contador B/N Mesa', compute="_compute_contadorBNMesa")
+    contadorBN = fields.Integer(string='Contador B/N', default= lambda self: self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_bn)
+    contadorBNMesa = fields.Integer(string='Contador B/N Mesa', default= lambda self: self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_bn_mesa)
     contadorBNActual = fields.Integer(string='Contador B/N Actual')
     contadorColorMesa = fields.Integer(string='Contador Color Mesa')
     negroProcentaje = fields.Integer(string='% Negro')
