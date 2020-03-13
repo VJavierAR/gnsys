@@ -175,7 +175,7 @@ class StockCambio(TransientModel):
                     dt.append(prp.producto1.id)
             for s in self.pick.sale_id.order_line:
                 assi = self.pro_ids.\
-                filtered(lambda x: x.producto1 == s.product_id)
+                filtered(lambda x: x.producto1.id == s.product_id.id)
                 if(s.product_id.id in dt or assi.estado=='usado'):
                     i=i+1
                     self.env.cr.execute("delete from stock_move_line where reference='"+self.pick.name+"' and product_id="+str(s.product_id.id)+";")
