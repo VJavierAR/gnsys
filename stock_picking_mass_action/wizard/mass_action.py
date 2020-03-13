@@ -176,7 +176,7 @@ class StockCambio(TransientModel):
             for s in self.pick.sale_id.order_line:
                 assi = self.pro_ids.\
                 filtered(lambda x: x.producto1.id == s.product_id.id)
-                if(s.product_id.id in dt or assi.estado=='usado'):
+                if(s.product_id.id in dt or assi.estado=='41917'):
                     i=i+1
                     self.env.cr.execute("delete from stock_move_line where reference='"+self.pick.name+"' and product_id="+str(s.product_id.id)+";")
                     self.env.cr.execute("delete from stock_move where origin='"+self.pick.sale_id.name+"' and product_id="+str(s.product_id.id)+";")
@@ -188,7 +188,7 @@ class StockCambio(TransientModel):
                 pickis=self.env.cr.fetchall()
                 pickg=self.env['stock.picking'].search([['id','in',pickis]])
                 for li in self.pro_ids:
-                    if(s.product_id.id in dt or estado=='41917'):
+                    if(s.product_id.id in dt or li.estado=='41917'):
                         datos={'location_id':41917,'order_id':self.pick.sale_id.id,'product_id':li.producto2.id,'product_uom':li.producto2.uom_id.id,'product_uom_qty':li.cantidad,'name':li.producto2.description if(li.producto2.description) else '/','price_unit':0.00,'x_studio_serieorderline':li.serie}
                         
                         #if(li.serieDestino):
