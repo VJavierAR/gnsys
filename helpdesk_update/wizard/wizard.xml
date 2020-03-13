@@ -6,10 +6,14 @@
         <field name="arch" type="xml">
             <form string="Creación de comentario">
                 <group>
-                    <field name="estado"/>
-                    <field name="comentario"/>
-                    <field name="check"/>
-                    <field name="evidencia" widget="many2many_binary"/>
+                    <group>
+                        <field name="estado" readonly="1"/>
+                        <field name="comentario"/>
+                    </group>
+                    <group>
+                        <field name="check"/>
+                        <field name="evidencia" widget="many2many_binary"/>
+                    </group>
                 </group>
                 <footer>
                     <button name="creaComentario" string="Confirmar" type="object" class="oe_highlight"/>
@@ -25,7 +29,6 @@
             <form string="Agregar contadores">
                 <group>
                     <group>
-                        <field name="contadorBN" readonly="1"/>
                         <field name="contadorBNMesa" readonly="1"/>
                     </group>
                     <group>
