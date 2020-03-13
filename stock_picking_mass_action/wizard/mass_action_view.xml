@@ -62,7 +62,8 @@
                         <tree editable="bottom">
                         <field name="producto1" readonly="1" string="Registro Original"/>
                         <field name="producto2" string="Registro a Cambiar" readonly="1" invisible="1"/>
-                        <field name="estado" string="Estado"/>
+                        <field name="almacen"/>
+                        <field name="existeciaAlmacen" readonly="1"/>                        
                         <field name="existencia1" readonly="1"/>
                         <field name="existencia2" readonly="1"/>
                         </tree>

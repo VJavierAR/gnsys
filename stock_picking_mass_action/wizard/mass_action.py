@@ -170,11 +170,13 @@ class StockCambio(TransientModel):
             i=0
             self.pick.backorder=''
             dt=[]
+            al=[]
             for prp in self.pro_ids:
-                if(prp.producto1.id !=prp.producto2.id or prp.estado=='41917'):
+                if(prp.producto1.id !=prp.producto2.id or prp.almacen!=False):
                     dt.append(prp.producto1.id)
+                    dat={'producto':prp.producto1.id,'almacen':prp.almacen.lot_stock_id.id}
+                    al.append(dat)
             for s in self.pick.sale_id.order_line:
-
                 if(s.product_id.id in dt):
                     i=i+1
                     self.env.cr.execute("delete from stock_move_line where reference='"+self.pick.name+"' and product_id="+str(s.product_id.id)+";")
@@ -197,7 +199,9 @@ class StockCambio(TransientModel):
                 for p in pickg:
                     for p1 in p.move_ids_without_package:
                         if(p1.product_id.id in dt):
-                            p1.write({'location_id':41917})
+                            alm2=list(filter(lambda x:x['producto']==p1.product_id.id,al))
+                            if(alm2!=[]):
+                                p1.write({'location_id':alm2[0]['almacen']})
                     p.action_confirm()
 
 class StockCambioLine(TransientModel):
@@ -208,10 +212,11 @@ class StockCambioLine(TransientModel):
     cantidad=fields.Float()
     rel_cambio=fields.Many2one('cambio.toner')
     serie=fields.Char()
-    estado = fields.Selection([('12','Nuevo'),('41917', 'Usado')],store=True)
+    almacen=fields.Many2one('stock.warehouse',string='Almacen')
     existencia1=fields.Integer(compute='nuevo',string='Existencia Nuevo')
     existencia2=fields.Integer(compute='nuevo',string='Existencia Usado')
-
+    existeciaAlmacen=fields.Integer(compute='almac',string='Existencia de Almacen seleccionado')
+    
     @api.depends('producto1')
     def nuevo(self):
         for record in self:
@@ -219,5 +224,10 @@ class StockCambioLine(TransientModel):
             record.existencia1=int(ex[0].quantity) if(len(ex)>0) else 0
             ex2=self.env['stock.quant'].search([['location_id','=',41917],['product_id','=',record.producto1.id]]).sorted(key='quantity',reverse=True)
             record.existencia2=int(ex2[0].quantity) if(len(ex2)>0) else 0
-
-
+    
+    @api.depends('almacen')
+    def almac(self):
+        for record in self:
+            if(record.almacen):
+                ex=self.env['stock.quant'].search([['location_id','=',record.almacen.lot_stock_id.id],['product_id','=',record.producto1.id]]).sorted(key='quantity',reverse=True)
+                record.existeciaAlmacen=int(ex[0].quantity) if(len(ex)>0) else 0 
