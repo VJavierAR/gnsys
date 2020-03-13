@@ -3,6 +3,8 @@ from odoo.models import TransientModel
 import logging, ast
 import datetime, time
 _logger = logging.getLogger(__name__)
+from odoo.exceptions import UserError
+from odoo import exceptions, _
 
 class HelpDeskComentario(TransientModel):
     _name = 'helpdesk.comentario'
@@ -42,7 +44,7 @@ class helpdesk_contadores(TransientModel):
         for c in self.ticket_id.x_studio_equipo_por_nmero_de_serie:                                       
               q='stock.production.lot'              
               if str(c.x_studio_color_bn) == 'B/N':
-                  if int(c.x_studio_contador_bn_a_capturar) >= int(c.x_studio_contador_bn):
+                  if int(self.contadorBNActual) >= int(c.x_studio_contador_bn):
                       negrot = c.x_studio_contador_bn_mesa
                       colort = c.x_studio_contador_color_mesa                        
                       rr=self.env['dcas.dcas'].create({'serie' : c.id
@@ -57,7 +59,7 @@ class helpdesk_contadores(TransientModel):
                   else:
                     raise exceptions.ValidationError("Contador Monocromatico Menor")                                   
               if str(c.x_studio_color_bn) != 'B/N':
-                  if int(c.x_studio_contador_color_a_capturar) >= int(c.x_studio_contador_color) and int(c.x_studio_contador_bn_a_capturar) >= int(c.x_studio_contador_bn):                      
+                  if int(self.contadorColorMesa) >= int(c.x_studio_contador_color) and int(self.contadorBNActual) >= int(c.x_studio_contador_bn):                      
                       if self.team_id.id==8:
                          negrot = c.x_studio_contador_bn
                          colort = c.x_studio_contador_color
