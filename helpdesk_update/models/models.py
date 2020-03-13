@@ -1103,7 +1103,7 @@ class helpdesk_update(models.Model):
     def validar_solicitud_toner(self):
         for record in self:
             sale = record.x_studio_field_nO7Xg
-            if sale.id != 0 or not record.x_studio_equipo_por_nmero_de_serie.x_studio_toner_compatible:
+            if sale.id != 0 or record.x_studio_equipo_por_nmero_de_serie.x_studio_toner_compatible:
                 self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
                 sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
                 sale.write({'x_studio_corte':self.x_studio_corte})
