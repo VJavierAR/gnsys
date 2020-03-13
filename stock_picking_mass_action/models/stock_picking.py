@@ -28,10 +28,10 @@ class StockPicking(Model):
     @api.depends('state')
     def back(self):
         for r in self:
-        if(r.state=="assigned"):
-            if(self._check_backorder()):
-                r.mensaje="Al confirmar se generara un backorder"
-                
+            if(r.state=="assigned"):
+                if(self._check_backorder()):
+                    r.mensaje="Al confirmar se generara un backorder"
+                    
     @api.onchange('carrier_tracking_ref')
     def agregarNumeroGuiaATicketOSolicitud(self):
         if(self.sale_id.x_studio_field_bxHgp):
