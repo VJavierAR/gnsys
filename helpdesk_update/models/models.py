@@ -2089,7 +2089,7 @@ class helpdesk_update(models.Model):
             'type': 'ir.actions.act_window',
             'view_type': 'form',
             'view_mode': 'form',
-            'res_model': 'helpdesk.comentario',
+            'res_model': 'helpdesk.contadores',
             'views': [(view.id, 'form')],
             'view_id': view.id,
             'target': 'new',
