@@ -27,6 +27,7 @@ class StockPicking(Model):
 
     @api.depends('state')
     def back(self):
+        self.ensure_one()
         if(self.state=="assigned"):
             if(self._check_backorder()):
                 self.mensaje="Al confirmar se generara un backorder"
