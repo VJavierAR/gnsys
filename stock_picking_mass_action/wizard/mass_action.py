@@ -1,4 +1,4 @@
-from odoo import fields, api
+from odoo import _,fields, api
 from odoo.models import TransientModel
 import logging, ast
 import datetime, time
