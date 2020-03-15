@@ -91,10 +91,10 @@ class contratos(models.Model):
     
     #Dirección Fiscal
     
-    calle        = fields.Text(string="Calle",track_visibility='onchange')
-    colonia      = fields.Text(string="Colonia",track_visibility='onchange')    
-    delegacion   = fields.Text(string="Delegación",track_visibility='onchange')  
-    direcFactura = fields.Text(string="Este cliente factura a ",track_visibility='onchange')
+    calle        = fields.Char(string="Calle",track_visibility='onchange')
+    colonia      = fields.Char(string="Colonia",track_visibility='onchange')    
+    delegacion   = fields.Char(string="Delegación",track_visibility='onchange')  
+    direcFactura = fields.Char(string="Este cliente factura a ",track_visibility='onchange')
 
     
 class cliente_contratos(models.Model):
