@@ -95,6 +95,10 @@ class contratos(models.Model):
     colonia      = fields.Char(string="Colonia",track_visibility='onchange')    
     delegacion   = fields.Char(string="Delegación",track_visibility='onchange')  
     direcFactura = fields.Char(string="Este cliente factura a ",track_visibility='onchange')
+    numExterior  = fields.Integer(string="No.exterior ",track_visibility='onchange')
+    numInterior  = fields.Integer(string="No. interior ",track_visibility='onchange')
+    estado       = fields.Selection([('Aguascalientes,''Aguascalientes') ,('Baja California,''Baja California') ,('Baja California Sur,''Baja California Sur') ,('Campeche,''Campeche') ,('Ciudad de México" ,''Ciudad de México') ,('Coahuila,''Coahuila') ,('Colima,''Colima') ,('Chiapas,''Chiapas') ,('Chihuahua,''Chihuahua') ,('Durango,''Durango') ,('Estado de México,''Estado de México') ,('Guanajuato,''Guanajuato') ,('Guerrero,''Guerrero') ,('Hidalgo,''Hidalgo') ,('Jalisco,''Jalisco') ,('Michoacán,''Michoacán') ,('Morelos,''Morelos') ,('Nayarit,''Nayarit') ,('Nuevo León,''Nuevo León') ,('Oaxaca,''Oaxaca') ,('Puebla,''Puebla') ,('Querétaro,''Querétaro') ,('Quintana Roo,''Quintana Roo') ,('San Luis Potosí,''San Luis Potosí') ,('Sinaloa,''Sinaloa') ,('Sonora,''Sonora') ,('Tabasco,''Tabasco') ,('Tamaulipas,''Tamaulipas') ,('Tlaxcala,''Tlaxcala') ,('Veracruz,''Veracruz') ,('Yucatán,''Yucatán') ,('Zacatecas,''Zacatecas')], string = "Estado",track_visibility='onchange')
+    codPostal    = fields.Integer(string="C.P.",track_visibility='onchange')
 
     
 class cliente_contratos(models.Model):
