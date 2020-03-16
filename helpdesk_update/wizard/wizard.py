@@ -24,6 +24,12 @@ class HelpDeskComentario(TransientModel):
                                                 ,'evidencia': [(6,0,self.evidencia.ids)]
                                                 ,'mostrarComentario': self.check
                                                 })
+        message = ('Se agrego el diagnostico / comentario exitosamente.')
+        mess= {
+                'title': _('Diagnostico / Comentario generado !!!'),
+                'message' : message
+              }
+        return {'warning': mess}
 
     def _compute_estadoTicket(self):
         self.estado = self.ticket_id.stage_id.name

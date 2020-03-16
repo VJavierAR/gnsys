@@ -16,7 +16,7 @@
                     </group>
                 </group>
 
-                <field name="diagnostico_id" options="{'no_create': True}" readonly="0" editable="top">
+                <field name="diagnostico_id" options="{'no_create': True}" readonly="1">
                     <tree>
                         <field name="create_date" string='Creado el' readonly="1"/>
                         <field name="estadoTicket" readonly="1"/>
@@ -86,7 +86,7 @@
                     <group>
                         <field name="subtipo"/>
                         <field name="nombreDelContacto" required='1'/>
-                        <field name="titulo" placeholder="Por ejemplo, Sr."/>
+                        <field name="titulo" placeholder="Por ejemplo, Sr." options="{'no_create_edit': True, 'no_create': True}"/>
                         <field name="puestoDeTrabajo" placeholder="Por ejemplo, Director de ventas"/>
                         <field name="correoElectronico"/>
                         <field name="telefono"/>
@@ -111,7 +111,7 @@
                         <field name="direccionCodigoPostal" placeholder='Código Postal'/>
                     </group>
                     <group>
-                        <field name="nombreDelContacto" options="{'no_create_edit': True, 'no_create': True}"/>
+                        <field name="nombreDelContacto" />
                         <field name="correoElectronico"/>
                         <field name="telefono"/>
                         <field name="movil"/>
