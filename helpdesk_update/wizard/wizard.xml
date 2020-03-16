@@ -26,6 +26,17 @@
                         <field name="mostrarComentario" />
                     </tree>
                     <form>
+                        <group>
+                            <group>
+                                <field name="ticketRelacion" can_create="true" can_write="true" modifiers="{}" invisible="1"/>
+                                <field name="estadoTicket" modifiers="{}" readonly="1"/>
+                                <field name="comentario" modifiers="{}"/>
+                            </group>
+                            <group>
+                                <field name="evidencia" can_create="true" can_write="true" modifiers="{}" widget="many2many_binary"/>
+                                <field name="mostrarComentario" modifiers="{}"/>
+                            </group>
+                        </group>
                     </form>
                 </field>
 
