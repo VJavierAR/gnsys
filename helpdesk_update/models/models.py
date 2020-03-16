@@ -1860,6 +1860,7 @@ class helpdesk_update(models.Model):
                               }
                 return {'warning': mess}
                 """
+                global mensajeCuerpoGlobal
                 mensajeCuerpoGlobal += '\n\nEstas agregando una serie de un ticket ya en proceso. \n Ticket: ' + str(informacion[0][0]) + '\n '
                 mensajeTitulo = 'Alerta !!!'
                 wiz = self.env['helpdesk.alerta.series'].create({'ticket_id': self.id, 'ticket_id_existente': int(informacion[0][0]), 'mensaje': mensajeCuerpoGlobal})
@@ -1893,7 +1894,7 @@ class helpdesk_update(models.Model):
                               }
                 return {'warning': mess}   
                 """
-
+                global mensajeCuerpoGlobal
                 mensajeCuerpoGlobal += '\n\nEstas agregando una serie de un ticket ya en proceso en equipo de toner. \n Ticket: ' + str(informacion[0][0]) + '\n '
                 mensajeTitulo = 'Alerta !!!'
                 wiz = self.env['helpdesk.alerta.series'].create({'ticket_id': self.id, 'ticket_id_existente': int(informacion[0][0]), 'mensaje': mensajeCuerpoGlobal})
