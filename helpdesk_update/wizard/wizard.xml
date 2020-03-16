@@ -53,7 +53,7 @@
     <record id="view_helpdesk_contacto" model="ir.ui.view">
         <field name="model">helpdesk.contacto</field>
         <field name="arch" type="xml">
-            <form string="Agregar contadores">
+            <form string="Añadir contacto a localidad">
                 <group>
                     <group>
                         <field name="tipoDeDireccion"/>
@@ -78,17 +78,16 @@
 
                 <group attrs="{&quot;invisible&quot;: [&quot;|&quot;,[&quot;tipoDeDireccion&quot;,&quot;=&quot;,&quot;contact&quot;],[&quot;tipoDeDireccion&quot;,&quot;=&quot;,False]]}">
                     <group>
-                        <field name="direccionNombreCalle">
-                            <field name="direccionNumeroExterior"/>
-                            <field name="direccionNumeroInterior"/>
-                            <field name="direccionColonia"/>
-                            <field name="direccionLocalidad"/>
-                            <field name="direccionPais"/>
-                            <field name="direccionCiudad"/>
-                            <field name="direccionEstado"/>
-                            <field name="direccionCodigoPostal"/>
-                            <field name="direccionZona" attrs="{&quot;invisible&quot;: [[&quot;tipoDeDireccion&quot;,&quot;!=&quot;,&quot;delivery&quot;]]}"/>
-                        </field>
+                        <field name="direccionNombreCalle"/>
+                        <field name="direccionNumeroExterior"/>
+                        <field name="direccionNumeroInterior"/>
+                        <field name="direccionColonia"/>
+                        <field name="direccionLocalidad"/>
+                        <field name="direccionPais"/>
+                        <field name="direccionCiudad"/>
+                        <field name="direccionEstado"/>
+                        <field name="direccionCodigoPostal"/>
+                        <field name="direccionZona" attrs="{&quot;invisible&quot;: [[&quot;tipoDeDireccion&quot;,&quot;!=&quot;,&quot;delivery&quot;]]}"/>
                     </group>
                     <group>
                         <field name="nombreDelContacto"/>
