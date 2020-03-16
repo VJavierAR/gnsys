@@ -13,7 +13,7 @@ class HelpDeskComentario(TransientModel):
     ticket_id = fields.Many2one("helpdesk.ticket")
     diagnostico_id = fields.One2many('helpdesk.diagnostico', 'ticketRelacion', string = 'Diagnostico', compute='_compute_diagnosticos')
     estado = fields.Char('Estado', compute = "_compute_estadoTicket")
-    comentario = fields.Char('Comentario')
+    comentario = fields.Text('Comentario')
     evidencia = fields.Many2many('ir.attachment', string="Evidencias")
     
     
