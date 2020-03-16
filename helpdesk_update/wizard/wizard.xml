@@ -89,7 +89,7 @@
                         <field name="direccionCodigoPostal" placeholder='Código Postal'/>
                     </group>
                     <group>
-                        <field name="nombreDelContacto"/>
+                        <field name="nombreDelContacto" options="{'no_create_edit': True, 'no_create': True}"/>
                         <field name="correoElectronico"/>
                         <field name="telefono"/>
                         <field name="movil"/>
