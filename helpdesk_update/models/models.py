@@ -1856,7 +1856,7 @@ class helpdesk_update(models.Model):
                 return {'warning': mess}
                 """
                 mensajeTitulo = 'Alerta !!!'
-                wiz = self.env['helpdesk.alerta.series'].create({'ticket_id': self.ticket_id.id, 'ticket_id_existente': int(informacion[0][0]), 'mensaje': mensajeCuerpo})
+                wiz = self.env['helpdesk.alerta.series'].create({'ticket_id': self.id, 'ticket_id_existente': int(informacion[0][0]), 'mensaje': mensajeCuerpo})
                 view = self.env.ref('helpdesk_update.view_helpdesk_alerta_series')
                 return {
                         'name': _(mensajeTitulo),
