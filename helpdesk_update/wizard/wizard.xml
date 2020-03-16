@@ -78,14 +78,15 @@
 
                 <group attrs="{&quot;invisible&quot;: [&quot;|&quot;,[&quot;tipoDeDireccion&quot;,&quot;=&quot;,&quot;contact&quot;],[&quot;tipoDeDireccion&quot;,&quot;=&quot;,False]]}">
                     <group>
-                        <div>
-                            <field name="direccionNombreCalle" placeholder='Nombre de la calle...'/>
-                            <p><field name="direccionNumeroExterior"/><field name="direccionNumeroInterior"/></p>
-                            <p><field name="direccionColonia" placeholder='Colonia...' string=''/></p>
-                            <p><field name="direccionLocalidad" placeholder='Localidad...' string=''/></p>
-                            <p><field name="direccionPais" string=''/><field name="direccionCiudad" string=''/></p>
-                            <p><field name="direccionEstado" string=''/><field name="direccionCodigoPostal" placeholder='Código Postal' string=''/></p>
-                        </div>
+                        <field name="direccionNombreCalle" placeholder='Nombre de la calle...'/>
+                        <field name="direccionNumeroExterior"/>
+                        <field name="direccionNumeroInterior"/>
+                        <field name="direccionColonia" placeholder='Colonia...'/>
+                        <field name="direccionLocalidad" placeholder='Localidad...'/>
+                        <field name="direccionPais" />
+                        <field name="direccionCiudad"/>
+                        <field name="direccionEstado" />
+                        <field name="direccionCodigoPostal" placeholder='Código Postal'/>
                     </group>
                     <group>
                         <field name="nombreDelContacto"/>
