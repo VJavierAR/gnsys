@@ -7,7 +7,7 @@
             <form string="Creación de comentario">
                 <group>
                     <group>
-                        <field name="estado" readonly="1" invisible="1"/>
+                        <field name="estado" readonly="1"/>
                         <field name="comentario"/>
                     </group>
                     <group>
