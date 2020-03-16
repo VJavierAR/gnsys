@@ -117,6 +117,8 @@ class HelpDeskContacto(TransientModel):
 
     
     def agregarContactoALocalidad(self):
+        mensajeTitulo = ''
+        mensajeCuerpo = ''
         if self.ticket_id.x_studio_empresas_relacionadas.id != 0:
             contactoId = 0
             titulo = ''
@@ -190,25 +192,38 @@ class HelpDeskContacto(TransientModel):
                                                                 })
                 contactoId = contacto.id
             else:
-                errorContactoSinNombre = "Contacto sin nombre"
-                mensajeContactoSinNombre = "No es posible añadir un contacto sin nombre. Favor de indicar el nombre primero."
-                raise exceptions.except_orm(_(errorContactoSinNombre), _(mensajeContactoSinNombre))
-                
-            self.env.cr.commit()
+                mensajeTitulo = "Contacto sin nombre"
+                mensajeCuerpo = "No es posible añadir un contacto sin nombre. Favor de indicar el nombre primero."
+                #raise exceptions.except_orm(_(errorContactoSinNombre), _(mensajeContactoSinNombre))
+            #self.env.cr.commit()
             if contactoId > 0:
-                errorContactoGenerado = "Contacto agregado"
-                mensajeContactoGenerado = "Contacto " + str(self.nombreDelContacto) + " agregado a la localidad " + str(self.ticket_id.x_studio_empresas_relacionadas.name)
-                raise exceptions.except_orm(_(errorContactoGenerado), _(mensajeContactoGenerado))
-                self.agregarContactoCheck = False
+                mensajeTitulo = "Contacto agregado." 
+                mensajeCuerpo = "Contacto " + str(self.nombreDelContacto) + " agregado a la localidad " + str(self.ticket_id.x_studio_empresas_relacionadas.name)
+                #raise exceptions.except_orm(_(errorContactoGenerado), _(mensajeContactoGenerado))
             else:
-                errorContactoNoGenerado = "Contacto no agregado"
-                mensajeContactoNoGenerado = "Contacto no agregado. Favor de verificar la información ingresada."
-                raise exceptions.except_orm(_(errorContactoNoGenerado), _(mensajeContactoNoGenerado))
+                mensajeTitulo = "Contacto no agregado"
+                mensajeCuerpo = "Contacto no agregado. Favor de verificar la información ingresada."
+                #raise exceptions.except_orm(_(errorContactoNoGenerado), _(mensajeContactoNoGenerado))
         else:
-            errorContactoSinLocalidad = "Contacto sin localidad"
-            mensajeContactoSinLocalidad = "No es posible añadir un contacto sin primero indicar la localidad. Favor de indicar la localidad primero."
-            raise exceptions.except_orm(_(errorContactoSinLocalidad), _(mensajeContactoSinLocalidad))
-    
+            mensajeTitulo = "Contacto sin localidad"
+            mensajeCuerpo = "No es posible añadir un contacto sin primero indicar la localidad. Favor de indicar la localidad primero."
+            #raise exceptions.except_orm(_(errorContactoSinLocalidad), _(mensajeContactoSinLocalidad))
+        
+        wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
+        view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+        return {
+                'name': _(mensajeTitulo),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'helpdesk.alerta',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'res_id': wiz.id,
+                'context': self.env.context,
+                }
+
 
 
 class helpdesk_contadores(TransientModel):
@@ -236,12 +251,12 @@ class helpdesk_contadores(TransientModel):
     
     def modificarContadores(self):          
         for c in self.ticket_id.x_studio_equipo_por_nmero_de_serie:                                       
-              q='stock.production.lot'              
-              if str(c.x_studio_color_bn) == 'B/N':
-                  if int(self.contadorBNActual) >= int(c.x_studio_contador_bn):
-                      negrot = c.x_studio_contador_bn_mesa
-                      colort = c.x_studio_contador_color_mesa                        
-                      rr=self.env['dcas.dcas'].create({'serie' : c.id
+            q='stock.production.lot'              
+            if str(c.x_studio_color_bn) == 'B/N':
+                if int(self.contadorBNActual) >= int(c.x_studio_contador_bn):
+                    negrot = c.x_studio_contador_bn_mesa
+                    colort = c.x_studio_contador_color_mesa                        
+                    rr=self.env['dcas.dcas'].create({'serie' : c.id
                                                     , 'contadorMono' : self.contadorBNActual
                                                     ,'x_studio_contador_color_anterior':colort
                                                     , 'contadorColor' :self.contadorColorMesa
@@ -249,26 +264,35 @@ class helpdesk_contadores(TransientModel):
                                                     ,'x_studio_contador_mono_anterior_1':negrot  
                                                     ,'fuente':q
                                                   })                  
-                      self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.ticket_id.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario': 'bn '+str(c.x_studio_contador_bn_a_capturar)+' color '+str(c.x_studio_contador_color_a_capturar)})
+                    self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.ticket_id.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario': 'bn '+str(c.x_studio_contador_bn_a_capturar)+' color '+str(c.x_studio_contador_color_a_capturar)})
 
-                      message = ('Se capturo el contador.')
-                      mess= {
-                              'title': _('Contador capturado!!!'),
-                              'message' : message
+                    mensajeTitulo = "Contador capturado!!!"
+                    mensajeCuerpo = "Se capturo el contador."
+                    wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
+                    view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+                    return {
+                            'name': _(mensajeTitulo),
+                            'type': 'ir.actions.act_window',
+                            'view_type': 'form',
+                            'view_mode': 'form',
+                            'res_model': 'helpdesk.alerta',
+                            'views': [(view.id, 'form')],
+                            'view_id': view.id,
+                            'target': 'new',
+                            'res_id': wiz.id,
+                            'context': self.env.context,
                             }
-                      return {'warning': mess}
-
-                  else:
+                else:
                     raise exceptions.ValidationError("Contador Monocromatico Menor")                                   
-              if str(c.x_studio_color_bn) != 'B/N':
-                  if int(self.contadorColorMesa) >= int(c.x_studio_contador_color) and int(self.contadorBNActual) >= int(c.x_studio_contador_bn):                      
-                      if self.team_id.id==8:
-                         negrot = c.x_studio_contador_bn
-                         colort = c.x_studio_contador_color
-                      else:
-                         negrot = c.x_studio_contador_bn_mesa
-                         colort = c.x_studio_contador_color_mesa
-                      rr=self.env['dcas.dcas'].create({'serie' : c.id
+            if str(c.x_studio_color_bn) != 'B/N':
+                if int(self.contadorColorMesa) >= int(c.x_studio_contador_color) and int(self.contadorBNActual) >= int(c.x_studio_contador_bn):                      
+                    if self.team_id.id==8:
+                        negrot = c.x_studio_contador_bn
+                        colort = c.x_studio_contador_color
+                    else:
+                        negrot = c.x_studio_contador_bn_mesa
+                        colort = c.x_studio_contador_color_mesa
+                    rr=self.env['dcas.dcas'].create({'serie' : c.id
                                                     , 'contadorMono' : self.contadorBNActual
                                                     ,'x_studio_contador_color_anterior':colort
                                                     , 'contadorColor' :self.contadorColorMesa
@@ -276,14 +300,23 @@ class helpdesk_contadores(TransientModel):
                                                     ,'x_studio_contador_mono_anterior_1':negrot
                                                     ,'fuente':q
                                                   })   
-                      self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.ticket_id.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario': 'bn '+str(c.x_studio_contador_bn_a_capturar)+' color '+str(c.x_studio_contador_color_a_capturar)})
-                      message = ('Se capturo el contador.')
-                      mess= {
-                              'title': _('Contador capturado!!!'),
-                              'message' : message
+                    self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.ticket_id.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario': 'bn '+str(c.x_studio_contador_bn_a_capturar)+' color '+str(c.x_studio_contador_color_a_capturar)})
+                    mensajeTitulo = "Contador capturado!!!"
+                    mensajeCuerpo = "Se capturo el contador."
+                    wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
+                    view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+                    return {
+                            'name': _(mensajeTitulo),
+                            'type': 'ir.actions.act_window',
+                            'view_type': 'form',
+                            'view_mode': 'form',
+                            'res_model': 'helpdesk.alerta',
+                            'views': [(view.id, 'form')],
+                            'view_id': view.id,
+                            'target': 'new',
+                            'res_id': wiz.id,
+                            'context': self.env.context,
                             }
-                      return {'warning': mess}
-
-                  else :
+                else:
                     raise exceptions.ValidationError("Error al capturar debe ser mayor")
 

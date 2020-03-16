@@ -2085,7 +2085,7 @@ class helpdesk_update(models.Model):
         wiz = self.env['helpdesk.contadores'].create({'ticket_id':self.id})
         view = self.env.ref('helpdesk_update.view_helpdesk_contadores')
         return {
-            'name': _('Diagnostico'),
+            'name': _('Contadores'),
             'type': 'ir.actions.act_window',
             'view_type': 'form',
             'view_mode': 'form',
