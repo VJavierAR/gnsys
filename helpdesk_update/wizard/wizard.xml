@@ -140,7 +140,7 @@
                     </h3>
                 </group>
                 <footer>
-                    
+                    <button special="cancel" string="Cerrar" class="oe_highlight" />
                 </footer>
             </form>
         </field>
