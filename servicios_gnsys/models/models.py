@@ -112,7 +112,7 @@ class contratos(models.Model):
     codPostal    = fields.Integer(string="C.P.",track_visibility='onchange')
 
     #Valores para impresión de factura
-    valoresImpresion   = fields.One2many('servicios.valores', 'servicio',track_visibility='onchange')
+    valoresImpresion   = fields.One2many('servicios.valores', string = "Motivos", 'Valores para impresión de factura',track_visibility='onchange')
 
 class cliente_contratos(models.Model):
     _inherit = 'res.partner'
