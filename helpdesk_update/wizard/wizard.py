@@ -58,6 +58,33 @@ class HelpDeskAlerta(TransientModel):
     mensaje = fields.Text('Mensaje')
     
 
+class HelpDeskAlertaNumeroDeSerie(TransientModel):
+    _name = 'helpdesk.alerta.series'
+    _description = 'HelpDesk Alerta para series existentes'
+    
+    ticket_id = fields.Many2one("helpdesk.ticket")
+    ticket_id_existente = Integer(string = 'Ticket existente')
+    mensaje = fields.Text('Mensaje')
+    
+    
+    def abrirTicket(self):
+        name = 'Ticket'
+        res_model = 'helpdesk.ticket' 
+        view_name = 'helpdesk.helpdesk_ticket_view_form'
+        view = self.env.ref(view_name)
+        return {
+                'name': _('Ticket'),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'helpdesk.ticket',
+                #'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'current',
+                'res_id': self.ticket_id_existente,
+                'nodestroy': True
+                }
+
 
 class HelpDeskContacto(TransientModel):
     _name = 'helpdesk.contacto'

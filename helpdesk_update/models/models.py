@@ -1847,12 +1847,31 @@ class helpdesk_update(models.Model):
             self.env.cr.execute(query)                        
             informacion = self.env.cr.fetchall()
             if len(informacion) > 0:
-                message = ('Estas agregando una serie de un ticket ya en proceso. \n Ticket: ' + str(informacion[0][0]) + '\n ')
+                mensajeCuerpo = ('Estas agregando una serie de un ticket ya en proceso. \n Ticket: ' + str(informacion[0][0]) + '\n ')
+                """
                 mess= {
                         'title': _('Alerta!!!'),
                         'message' : message
                               }
                 return {'warning': mess}
+                """
+                mensajeTitulo = 'Alerta !!!'
+                wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'ticket_id_existente': int(informacion[0][0]), 'mensaje': mensajeCuerpo})
+                view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+                return {
+                        'name': _(mensajeTitulo),
+                        'type': 'ir.actions.act_window',
+                        'view_type': 'form',
+                        'view_mode': 'form',
+                        'res_model': 'helpdesk.alerta.series',
+                        'views': [(view.id, 'form')],
+                        'view_id': view.id,
+                        'target': 'new',
+                        'res_id': wiz.id,
+                        'context': self.env.context,
+                        }
+
+
 
                 #raise exceptions.ValidationError("No es posible registrar número de serie, primero cerrar el ticket con el id  "+str(informacion[0][0]))
         if int(self.x_studio_tamao_lista) > 0 and self.team_id.id == 8:
