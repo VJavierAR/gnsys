@@ -63,10 +63,10 @@ class HelpDeskAlertaNumeroDeSerie(TransientModel):
     _description = 'HelpDesk Alerta para series existentes'
     
     ticket_id = fields.Many2one("helpdesk.ticket")
-    ticket_id_existente = Integer(string = 'Ticket existente')
+    ticket_id_existente = fields.Integer(string = 'Ticket existente')
     mensaje = fields.Text('Mensaje')
-    
-    
+
+
     def abrirTicket(self):
         name = 'Ticket'
         res_model = 'helpdesk.ticket' 
