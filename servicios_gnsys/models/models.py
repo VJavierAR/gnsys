@@ -96,7 +96,7 @@ class contratos(models.Model):
     razonSocial  = fields.Selection([('1','SERVICIOS CORPORATIVOS GENESIS, S.A DE C.V.') ,('2','OUTSOURCING DIGITAL FRIENDLY, S.A. DE C.V.') ,('3" selected="','GN SYS CORPORATIVO S.A. DE C.V.') ,('1000','EMPRESA PRUEBAS CFDI') ,('1001','DOCUMENTO INTEGRAL CORPORATIVO, SA DE CV') ,('1002','GRUPO GNSYS SOLUCIONES SA DE CV')], string = "Razón Social",track_visibility='onchange')
 
     usoCFDI = fields.Selection([('12','D01 Honorarios médicos, dentales y gastos hospitalarios.') ,('13','D02 Gastos médicos por incapacidad o discapacidad') ,('14','D03 Gastos funerales.') ,('15','D04 Donativos.') ,('16','D05 Intereses reales efectivamente pagados por créditos hipotecarios (casa habitación).') ,('17','D06 Aportaciones voluntarias al SAR.') ,('18','D07 Primas por seguros de gastos médicos.') ,('19','D08 Gastos de transportación escolar obligatoria.') ,('20','D09 Depósitos en cuentas para el ahorro, primas que tengan como base planes de pensiones.') ,('21','D10 Pagos por servicios educativos (colegiaturas)') ,('1','G01 Adquisición de mercancias') ,('2','G02 Devoluciones, descuentos o bonificaciones') ,('3','G03 Gastos en general') ,('4','I01 Construcciones') ,('5','I02 Mobilario y equipo de oficina por inversiones') ,('6','I03 Equipo de transporte') ,('7','I04 Equipo de computo y accesorios') ,('8','I05 Dados, troqueles, moldes, matrices y herramental') ,('9','I06 Comunicaciones telefónicas') ,('10','I07 Comunicaciones satelitales') ,('11','I08 Otra maquinaria y equipo') ,('22','P01 Por definir')], string = "Uso CFDI",track_visibility='onchange')
-    
+
     diasCredito = fields.Integer(string="Días de crédito",track_visibility='onchange')
     limbo  = fields.Boolean(string="Limbo", default=False)
     activo = fields.Boolean(string="Activo", default=False)
@@ -111,7 +111,9 @@ class contratos(models.Model):
     estado       = fields.Selection([('Aguascalientes','Aguascalientes') ,('Baja California','Baja California') ,('Baja California Sur','Baja California Sur') ,('Campeche','Campeche') ,('Ciudad de México" ','Ciudad de México') ,('Coahuila','Coahuila') ,('Colima','Colima') ,('Chiapas','Chiapas') ,('Chihuahua','Chihuahua') ,('Durango','Durango') ,('Estado de México','Estado de México') ,('Guanajuato','Guanajuato') ,('Guerrero','Guerrero') ,('Hidalgo','Hidalgo') ,('Jalisco','Jalisco') ,('Michoacán','Michoacán') ,('Morelos','Morelos') ,('Nayarit','Nayarit') ,('Nuevo León','Nuevo León') ,('Oaxaca','Oaxaca') ,('Puebla','Puebla') ,('Querétaro','Querétaro') ,('Quintana Roo','Quintana Roo') ,('San Luis Potosí','San Luis Potosí') ,('Sinaloa','Sinaloa') ,('Sonora','Sonora') ,('Tabasco','Tabasco') ,('Tamaulipas','Tamaulipas') ,('Tlaxcala','Tlaxcala') ,('Veracruz','Veracruz') ,('Yucatán','Yucatán') ,('Zacatecas','Zacatecas')], string = "Estado",track_visibility='onchange')
     codPostal    = fields.Integer(string="C.P.",track_visibility='onchange')
 
-    
+    #Valores para impresión de factura
+    valoresImpresion   = fields.One2many('servicios.valores', 'servicios', string = "Valores para impresión de factura",track_visibility='onchange')
+
 class cliente_contratos(models.Model):
     _inherit = 'res.partner'
     contrato = fields.One2many('contrato', 'cliente', string="Contratos")
@@ -121,3 +123,15 @@ class ejecutivo_de_cuenta_contratos(models.Model):
     _inherit = 'hr.employee'
     contratoEjecutivoDeCuenta = fields.One2many('contrato', 'ejecutivoDeCuenta', string="Contratos asociados al ejecutivo de cuenta")
     contratoVendedor = fields.One2many('contrato', 'vendedor', string="Contratos asociados al vendedor")
+
+
+#Valores para impresión de factura
+class Valores_Impresion(models.Model):
+    _name = 'servicios.valores'
+    _description = 'Valores para impresión de factura'
+    servicio = fields.Many2one('servicios', string = "Servicio", track_visibility='onchange')
+
+    #En la vista de techra así estan clasificados los campos 
+    campo       = fields.Char(string = "Campo", track_visibility='onchange')
+    valor       = fields.Char(string = "Valor", track_visibility="onchange")
+    selection   = fields.Boolean(string="Select", default=False)
