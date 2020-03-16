@@ -32,7 +32,7 @@ class HelpDeskComentario(TransientModel):
         #self.diagnostico_id = self.ticket_id.diagnosticos.ids
         return self.ticket_id.diagnosticos.ids
 
-    diagnostico_id = fields.One2many('helpdesk.diagnostico', 'ticketRelacion', string = 'Diagnostico', default = _compute_diagnosticos(self))
+    diagnostico_id = fields.One2many('helpdesk.diagnostico', 'ticketRelacion', string = 'Diagnostico', default = _compute_diagnosticos())
 
 class HelpDeskContacto(TransientModel):
     _name = 'helpdesk.contacto'
