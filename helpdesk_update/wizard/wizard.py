@@ -25,7 +25,7 @@ class HelpDeskComentario(TransientModel):
                                                 ,'mostrarComentario': self.check
                                                 })
         
-        mess = 'Diagnostico / Comentario añadido al ticket ' + str(self.ticket_id.id) + ' exitosamente.'
+        mess = 'Diagnostico / Comentario añadido al ticket ' + str(self.ticket_id.id) + ' de forma exitosa. \nComentario agregado: ' + str(self.comentario) + ' \nGenerado en el estado: ' + self.ticket_id.stage_id.name
         wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mess})
         view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
         return {
@@ -55,9 +55,8 @@ class HelpDeskAlerta(TransientModel):
     _description = 'HelpDesk Alerta'
     
     ticket_id = fields.Many2one("helpdesk.ticket")
-    mensaje = fields.Char('Mensaje')
+    mensaje = fields.Text('Mensaje')
     
-
 
 
 class HelpDeskContacto(TransientModel):
