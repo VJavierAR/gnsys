@@ -63,7 +63,7 @@
                 <group attrs="{&quot;invisible&quot;: [[&quot;tipoDeDireccion&quot;,&quot;!=&quot;,&quot;contact&quot;]]}">
                     <group>
                         <field name="subtipo"/>
-                        <field name="nombreDelContacto"/>
+                        <field name="nombreDelContacto" required='1'/>
                         <field name="titulo" placeholder="Por ejemplo, Sr."/>
                         <field name="puestoDeTrabajo" placeholder="Por ejemplo, Director de ventas"/>
                         <field name="correoElectronico"/>
@@ -78,16 +78,14 @@
 
                 <group attrs="{&quot;invisible&quot;: [&quot;|&quot;,[&quot;tipoDeDireccion&quot;,&quot;=&quot;,&quot;contact&quot;],[&quot;tipoDeDireccion&quot;,&quot;=&quot;,False]]}">
                     <group>
-                        <field name="direccionNombreCalle"/>
-                        <field name="direccionNumeroExterior"/>
-                        <field name="direccionNumeroInterior"/>
-                        <field name="direccionColonia"/>
-                        <field name="direccionLocalidad"/>
-                        <field name="direccionPais"/>
-                        <field name="direccionCiudad"/>
-                        <field name="direccionEstado"/>
-                        <field name="direccionCodigoPostal"/>
-                        <field name="direccionZona" attrs="{&quot;invisible&quot;: [[&quot;tipoDeDireccion&quot;,&quot;!=&quot;,&quot;delivery&quot;]]}"/>
+                        <div>
+                            <field name="direccionNombreCalle" placeholder='Nombre de la calle...'/>
+                            <p><field name="direccionNumeroExterior"/><field name="direccionNumeroInterior"/></p>
+                            <p><field name="direccionColonia" placeholder='Colonia...' string=''/></p>
+                            <p><field name="direccionLocalidad" placeholder='Localidad...' string=''/></p>
+                            <p><field name="direccionPais" string=''/><field name="direccionCiudad" string=''/></p>
+                            <p><field name="direccionEstado" string=''/><field name="direccionCodigoPostal" placeholder='Código Postal' string=''/></p>
+                        </div>
                     </group>
                     <group>
                         <field name="nombreDelContacto"/>
@@ -95,6 +93,7 @@
                         <field name="telefono"/>
                         <field name="movil"/>
                         <field name="notas" placeholder="Notas internas..."/>
+                        <field name="direccionZona" attrs="{&quot;invisible&quot;: [[&quot;tipoDeDireccion&quot;,&quot;!=&quot;,&quot;delivery&quot;]]}"/>
                     </group>
                 </group>
 

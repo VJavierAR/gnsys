@@ -62,9 +62,9 @@ class HelpDeskContacto(TransientModel):
     direccionNumeroInterior = fields.Char(string='Número interior')
     direccionColonia = fields.Char(string='Colonia')
     direccionLocalidad = fields.Char(string='Localidad')
-    direccionCiudad = fields.Char(string='Ciudad')
+    direccionCiudad = fields.Char(string='Ciudad', default='Ciudad de México')
     direccionCodigoPostal = fields.Char(string='Código postal')
-    direccionPais = fields.Many2one('res.country', store=True, string='País')
+    direccionPais = fields.Many2one('res.country', store=True, string='País', default='156')
     direccionEstado = fields.Many2one('res.country.state', store=True, string='Estado', domain="[('country_id', '=?', direccionPais)]")
     
     direccionZona = fields.Selection([('SUR','SUR')
@@ -86,7 +86,7 @@ class HelpDeskContacto(TransientModel):
                                       ,('VILLAHERMOSA','VILLAHERMOSA')
                                       ,('MERIDA','MERIDA')
                                       ,('ALTAMIRA','ALTAMIRA')]
-                                      )
+                                      , string = 'Zona')
 
     
     def agregarContactoALocalidad(self):
