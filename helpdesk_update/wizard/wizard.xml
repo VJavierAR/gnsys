@@ -127,5 +127,27 @@
             </form>
         </field>
     </record>
+
+
+
+    <record id="view_helpdesk_alerta" model="ir.ui.view">
+        <field name="model">helpdesk.alerta</field>
+        <field name="arch" type="xml">
+            <form string="Alerta">
+                <group>
+                    <group>
+                        <field name="mensaje"/>
+                    </group>
+                    <group>
+                        
+                    </group>
+                </group>
+                <footer>
+                    
+                </footer>
+            </form>
+        </field>
+    </record>
+
     
 </odoo>

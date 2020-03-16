@@ -24,18 +24,40 @@ class HelpDeskComentario(TransientModel):
                                                 ,'evidencia': [(6,0,self.evidencia.ids)]
                                                 ,'mostrarComentario': self.check
                                                 })
-        message = ('Se agrego el diagnostico / comentario exitosamente.')
-        mess= {
-                'title': _('Diagnostico / Comentario generado !!!'),
-                'message' : message
-              }
-        return {'warning': mess}
+        
+        mess = 'Diagnostico / Comentario añadido al ticket ' + str(self.ticket_id.id) + ' exitosamente.'
+        wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mess})
+        view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+        return {
+            'name': _('Diagnostico / Comentario exitoso !!!'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'helpdesk.alerta',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            'context': self.env.context,
+        }
+
+
 
     def _compute_estadoTicket(self):
         self.estado = self.ticket_id.stage_id.name
 
     def _compute_diagnosticos(self):
         self.diagnostico_id = self.ticket_id.diagnosticos.ids
+
+
+class HelpDeskAlerta(TransientModel):
+    _name = 'helpdesk.alerta'
+    _description = 'HelpDesk Alerta'
+    
+    ticket_id = fields.Many2one("helpdesk.ticket")
+    mensaje = fields.Char('Mensaje')
+    
+
 
 
 class HelpDeskContacto(TransientModel):
