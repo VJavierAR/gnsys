@@ -8,6 +8,10 @@ import logging, ast
 import datetime, time
 _logger = logging.getLogger(__name__)
 
+
+mensajeTituloGlobal = ''
+mensajeCuerpoGlobal = ''
+
 class helpdesk_update(models.Model):
     #_inherit = ['mail.thread', 'helpdesk.ticket']
     _inherit = 'helpdesk.ticket'
@@ -411,7 +415,9 @@ class helpdesk_update(models.Model):
                         'message' : message
                     }
                 self.estadoAbierto = True
-                return {'warning': mess}
+
+                mensajeCuerpoGlobal = 'Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Abierto' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página."
+                #return {'warning': mess}
     
     
     
@@ -1847,7 +1853,7 @@ class helpdesk_update(models.Model):
             self.env.cr.execute(query)                        
             informacion = self.env.cr.fetchall()
             if len(informacion) > 0:
-                mensajeCuerpo = ('Estas agregando una serie de un ticket ya en proceso. \n Ticket: ' + str(informacion[0][0]) + '\n ')
+                message = ('Estas agregando una serie de un ticket ya en proceso. \n Ticket: ' + str(informacion[0][0]) + '\n ')
                 """
                 mess= {
                         'title': _('Alerta!!!'),
@@ -1855,8 +1861,9 @@ class helpdesk_update(models.Model):
                               }
                 return {'warning': mess}
                 """
+                mensajeCuerpoGlobal += '\n\nEstas agregando una serie de un ticket ya en proceso. \n Ticket: ' + str(informacion[0][0]) + '\n '
                 mensajeTitulo = 'Alerta !!!'
-                wiz = self.env['helpdesk.alerta.series'].create({'ticket_id': self.id, 'ticket_id_existente': int(informacion[0][0]), 'mensaje': mensajeCuerpo})
+                wiz = self.env['helpdesk.alerta.series'].create({'ticket_id': self.id, 'ticket_id_existente': int(informacion[0][0]), 'mensaje': mensajeCuerpoGlobal})
                 view = self.env.ref('helpdesk_update.view_helpdesk_alerta_series')
                 return {
                         'name': _(mensajeTitulo),
@@ -1871,8 +1878,6 @@ class helpdesk_update(models.Model):
                         'context': self.env.context,
                         }
 
-
-
                 #raise exceptions.ValidationError("No es posible registrar número de serie, primero cerrar el ticket con el id  "+str(informacion[0][0]))
         if int(self.x_studio_tamao_lista) > 0 and self.team_id.id == 8:
             
@@ -1881,12 +1886,31 @@ class helpdesk_update(models.Model):
             self.env.cr.execute(queryt)                        
             informaciont = self.env.cr.fetchall()
             if len(informaciont) > 0:
+                """
                 message = ('Estas agregando una serie de un ticket ya en proceso en equipo de toner. \n Ticket: '+str(informaciont[0][0]))
                 mess= {
                         'title': _('Alerta!!!'),
                         'message' : message
                               }
-                return {'warning': mess}                                                
+                return {'warning': mess}   
+                """
+
+                mensajeCuerpoGlobal += '\n\nEstas agregando una serie de un ticket ya en proceso en equipo de toner. \n Ticket: ' + str(informacion[0][0]) + '\n '
+                mensajeTitulo = 'Alerta !!!'
+                wiz = self.env['helpdesk.alerta.series'].create({'ticket_id': self.id, 'ticket_id_existente': int(informacion[0][0]), 'mensaje': mensajeCuerpoGlobal})
+                view = self.env.ref('helpdesk_update.view_helpdesk_alerta_series')
+                return {
+                        'name': _(mensajeTitulo),
+                        'type': 'ir.actions.act_window',
+                        'view_type': 'form',
+                        'view_mode': 'form',
+                        'res_model': 'helpdesk.alerta.series',
+                        'views': [(view.id, 'form')],
+                        'view_id': view.id,
+                        'target': 'new',
+                        'res_id': wiz.id,
+                        'context': self.env.context,
+                        }                                             
             
     
 
