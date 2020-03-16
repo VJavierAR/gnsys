@@ -56,14 +56,51 @@
             <form string="Agregar contadores">
                 <group>
                     <group>
-                        
+                        <field name="tipoDeDireccion"/>
+                    </group>
+                </group>
+
+                <group attrs="{&quot;invisible&quot;: [[&quot;tipoDeDireccion&quot;,&quot;!=&quot;,&quot;contact&quot;]]}">
+                    <group>
+                        <field name="subtipo"/>
+                        <field name="nombreDelContacto"/>
+                        <field name="titulo" placeholder="Por ejemplo, Sr."/>
+                        <field name="puestoDeTrabajo" placeholder="Por ejemplo, Director de ventas"/>
+                        <field name="correoElectronico"/>
+                        <field name="telefono"/>
+                        <field name="movil"/>
+                        <field name="notas" placeholder="Notas internas..."/>
                     </group>
                     <group>
                         
                     </group>
                 </group>
+
+                <group attrs="{&quot;invisible&quot;: [&quot;|&quot;,[&quot;tipoDeDireccion&quot;,&quot;=&quot;,&quot;contact&quot;],[&quot;tipoDeDireccion&quot;,&quot;=&quot;,False]]}">
+                    <group>
+                        <field name="direccionNombreCalle">
+                            <field name="direccionNumeroExterior"/>
+                            <field name="direccionNumeroInterior"/>
+                            <field name="direccionColonia"/>
+                            <field name="direccionLocalidad"/>
+                            <field name="direccionPais"/>
+                            <field name="direccionCiudad"/>
+                            <field name="direccionEstado"/>
+                            <field name="direccionCodigoPostal"/>
+                            <field name="direccionZona" attrs="{&quot;invisible&quot;: [[&quot;tipoDeDireccion&quot;,&quot;!=&quot;,&quot;delivery&quot;]]}"/>
+                        </field>
+                    </group>
+                    <group>
+                        <field name="nombreDelContacto"/>
+                        <field name="correoElectronico"/>
+                        <field name="telefono"/>
+                        <field name="movil"/>
+                        <field name="notas" placeholder="Notas internas..."/>
+                    </group>
+                </group>
+
                 <footer>
-                    <button name="modificarContadores" string="Confirmar" type="object" class="oe_highlight"/>
+                    <button name="agregarContactoALocalidad" string="Agregar contacto a localidad" type="object" class="oe_highlight"/>
                     <button string="Cancel" class="oe_link" special="cancel"/>
                 </footer>
             </form>

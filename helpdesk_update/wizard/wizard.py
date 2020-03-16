@@ -12,7 +12,7 @@ class HelpDeskComentario(TransientModel):
     check = fields.Boolean(string='Mostrar en reporte',default=False,)
     ticket_id = fields.Many2one("helpdesk.ticket")
     diagnostico_id = fields.One2many('helpdesk.diagnostico', 'ticketRelacion', string = 'Diagnostico')
-    estado = fields.Char('Estado', compute="_compute_estadoTicket")
+    estado = fields.Char('Estado', compute = "_compute_estadoTicket")
     comentario = fields.Char('Comentario')
     evidencia = fields.Many2many('ir.attachment', string="Evidencias")
     
@@ -28,6 +28,9 @@ class HelpDeskComentario(TransientModel):
     def _compute_estadoTicket(self):
         self.estado = self.ticket_id.stage_id.name
 
+    #def _compute_diagnosticos(self):
+    #    self.diagnostico_id = self.ticket_id.
+
 
 class HelpDeskContacto(TransientModel):
     _name = 'helpdesk.contacto'
@@ -39,13 +42,13 @@ class HelpDeskContacto(TransientModel):
                                         ,('delivery','Dirección de envío')
                                         ,('other','Otra dirección')
                                         ,('private','Dirección Privada')]
-                                        , default='contact')
+                                        , default='contact', string="Tipo de dirección")
     subtipo = fields.Selection([('Contacto comercial','Contacto comercial')
                                 ,('Contacto sistemas','Contacto sistemas')
                                 ,('Contacto para pagos','Contacto parra pagos')
                                 ,('Contacto para compras','Contacto para compras')
                                 ,('private','Dirección Privada')]
-                                )
+                                , string = "Subtipo")
     nombreDelContacto = fields.Char(string='Nombre de contacto')
     titulo = fields.Many2one('res.partner.title', store=True, string='Titulo')
     puestoDeTrabajo = fields.Char(string='Puesto de trabajo')
@@ -85,12 +88,8 @@ class HelpDeskContacto(TransientModel):
                                       ,('ALTAMIRA','ALTAMIRA')]
                                       )
 
-    def creaComentario(self):
-        self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.ticket_id.id,'comentario':self.comentario,'estadoTicket':self.estado,'evidencia':[(6,0,self.evidencia.ids)],'mostrarComentario':self.check})
-
-
+    
     def agregarContactoALocalidad(self):
-        
         if self.ticket_id.x_studio_empresas_relacionadas.id != 0:
             contactoId = 0
             titulo = ''
