@@ -28,11 +28,11 @@ class HelpDeskComentario(TransientModel):
     def _compute_estadoTicket(self):
         self.estado = self.ticket_id.stage_id.name
 
-    def _compute_diagnosticos(self):
+    def _compute_diagnosticos(ticket_id):
         #self.diagnostico_id = self.ticket_id.diagnosticos.ids
-        return self.ticket_id.diagnosticos.ids
+        return ticket_id.diagnosticos.ids
 
-    diagnostico_id = fields.One2many('helpdesk.diagnostico', 'ticketRelacion', string = 'Diagnostico', default = _compute_diagnosticos())
+    diagnostico_id = fields.One2many('helpdesk.diagnostico', 'ticketRelacion', string = 'Diagnostico', default = _compute_diagnosticos(ticket_id))
 
 class HelpDeskContacto(TransientModel):
     _name = 'helpdesk.contacto'
