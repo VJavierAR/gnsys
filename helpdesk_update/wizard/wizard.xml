@@ -21,7 +21,7 @@
                         <field name="create_date" string='Creado el' readonly="1"/>
                         <field name="estadoTicket" readonly="1"/>
                         <field name="comentario" />
-                        <field name="diagnostico_id" readonly="1"/>
+                        <!--<field name="diagnostico_id" readonly="1"/>-->
                         <field name="evidencia" widget="many2many_binary"/>
                         <field name="mostrarComentario" />
                     </tree>
