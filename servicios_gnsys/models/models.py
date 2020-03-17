@@ -132,6 +132,6 @@ class Valores_Impresion(models.Model):
     servicio = fields.Many2one('servicios', string = "Servicio", track_visibility='onchange')
 
     #En la vista de techra así estan clasificados los campos 
-    campo       = fields.Char(string = "Campo", track_visibility='onchange')
-    valor       = fields.Char(string = "Valor", track_visibility="onchange")
-    selection   = fields.Boolean(string="Select", default=False)
+    campo       = fields.Char()
+    valor       = fields.Char()
+    selection   = fields.Boolean(default=False)
