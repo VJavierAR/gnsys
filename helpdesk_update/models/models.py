@@ -9,8 +9,8 @@ import datetime, time
 _logger = logging.getLogger(__name__)
 
 
-mensajeTituloGlobal = ''
-mensajeCuerpoGlobal = ''
+#mensajeTituloGlobal = ''
+#mensajeCuerpoGlobal = ''
 
 class helpdesk_update(models.Model):
     #_inherit = ['mail.thread', 'helpdesk.ticket']
@@ -416,9 +416,8 @@ class helpdesk_update(models.Model):
                         'message' : message
                     }
                 self.estadoAbierto = True
-
-                mensajeCuerpoGlobal = 'Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Abierto' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página."
-                #return {'warning': mess}
+                #mensajeCuerpoGlobal = 'Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Abierto' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página."
+                return {'warning': mess}
     
     
     
@@ -1855,7 +1854,7 @@ class helpdesk_update(models.Model):
             informacion = self.env.cr.fetchall()
             if len(informacion) > 0:
                 message = ('Estas agregando una serie de un ticket ya en proceso. \n Ticket: ' + str(informacion[0][0]) + '\n ')
-                """
+                
                 mess= {
                         'title': _('Alerta!!!'),
                         'message' : message
@@ -1879,7 +1878,7 @@ class helpdesk_update(models.Model):
                         'res_id': wiz.id,
                         'context': self.env.context,
                         }
-
+                """
                 #raise exceptions.ValidationError("No es posible registrar número de serie, primero cerrar el ticket con el id  "+str(informacion[0][0]))
         if int(self.x_studio_tamao_lista) > 0 and self.team_id.id == 8:
             
@@ -1888,13 +1887,15 @@ class helpdesk_update(models.Model):
             self.env.cr.execute(queryt)                        
             informaciont = self.env.cr.fetchall()
             if len(informaciont) > 0:
-                """
+                
                 message = ('Estas agregando una serie de un ticket ya en proceso en equipo de toner. \n Ticket: '+str(informaciont[0][0]))
                 mess= {
                         'title': _('Alerta!!!'),
                         'message' : message
                               }
                 return {'warning': mess}   
+                
+
                 """
                 global mensajeCuerpoGlobal
                 mensajeCuerpoGlobal += '\n\nEstas agregando una serie de un ticket ya en proceso en equipo de toner. \n Ticket: ' + str(informacion[0][0]) + '\n '
@@ -1913,7 +1914,7 @@ class helpdesk_update(models.Model):
                         'res_id': wiz.id,
                         'context': self.env.context,
                         }                                             
-            
+                """
     
 
                 
