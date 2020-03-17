@@ -39,7 +39,7 @@ class StockPicking(Model):
                 if(i>0):
                     r.mensaje="Al confirmar se generara un backorder"
 
-    @api.depends('parent_id')
+    @api.depends('res_partner')
     def cliente(self):
         if(self.res_partner):
             if(self.res_partner.state_id.code in 'DIF'):
