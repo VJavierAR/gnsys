@@ -23,6 +23,7 @@ class StockPicking(Model):
     concentrado=fields.Char()
     mensaje=fields.Char(compute='back')
     sale_child=fields.Many2one('sale.order')
+    tipo=fields.Char(compute='cliente')
     #documentosDistro = fields.Many2many('ir.attachment', string="Evidencias ")
     #historialTicket = fields.One2many('ir.attachment','res_id',string='Evidencias al ticket',store=True,track_visibility='onchange')
 
@@ -37,7 +38,17 @@ class StockPicking(Model):
                         i=i+1
                 if(i>0):
                     r.mensaje="Al confirmar se generara un backorder"
-                    
+
+    @api.depends('parent_id')
+    def cliente(self):
+        if(self.res_partner):
+            if(self.res_partner.state_id.code in 'DIF'):
+                self.tipo='local'
+            else:
+                self.tipo='foraneo'
+
+
+
     @api.onchange('carrier_tracking_ref')
     def agregarNumeroGuiaATicketOSolicitud(self):
         if(self.sale_id.x_studio_field_bxHgp):
