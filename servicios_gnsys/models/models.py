@@ -15,7 +15,8 @@ class servicios_gnsys(models.Model):
     
 
     productos = fields.One2many('product.product', 'servicio', string="Productos")
-    
+    fechaDeInicioDeServicio = fields.Datetime(string = 'Fecha de inicio de servicio',track_visibility='onchange')
+    fechaDeFinDeServicio = fields.Datetime(string = 'Fecha de finalización de servicio',track_visibility='onchange')
     descripcion = fields.Text(string="Descripción")
     rentaMensual = fields.Text(string="Renta mensual")
     tipo = fields.Selection([('1','Costo por página procesada BN o color'),('2','Renta base con páginas incluidas BN o color + pag. excedentes'),('3','Renta base + costo de página procesada BN o color'),('4','Renta base con páginas incluidas BN + clic de color + excedentes BN'),('5','Renta global + costo de página procesada BN o color'),('6','SERVICIO DE PCOUNTER'),('7','RENTA MENSUAL DE LICENCIA EMBEDED')],string="Tipo de cobro")
@@ -42,6 +43,7 @@ class servicios_gnsys(models.Model):
     modelo = fields.Text(string="Modelo")
     
     contrato = fields.Many2one('contrato', string="Contrato")
+    
     
 class productos_en_servicios(models.Model):
     _inherit = 'product.product'
