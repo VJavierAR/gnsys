@@ -131,12 +131,8 @@ class contratos(models.Model):
     activo = fields.Boolean(string="Activo", default=False)
     #Dirección Fiscal
     
-    calle        = fields.Char(string="Calle",track_visibility='onchange')
-    colonia      = fields.Char(string="Colonia",track_visibility='onchange')    
-    delegacion   = fields.Char(string="Delegación",track_visibility='onchange')  
-    direcFactura = fields.Char(string="Este cliente factura a ",track_visibility='onchange')
-    numExterior  = fields.Integer(string="No.exterior ",track_visibility='onchange')
-    numInterior  = fields.Integer(string="No. interior ",track_visibility='onchange')
+    direccion     = fields.Text(string="Dirección",track_visibility='onchange')
+
     estado       = fields.Selection([('Aguascalientes','Aguascalientes') ,('Baja California','Baja California') ,('Baja California Sur','Baja California Sur') ,('Campeche','Campeche') ,('Ciudad de México" ','Ciudad de México') ,('Coahuila','Coahuila') ,('Colima','Colima') ,('Chiapas','Chiapas') ,('Chihuahua','Chihuahua') ,('Durango','Durango') ,('Estado de México','Estado de México') ,('Guanajuato','Guanajuato') ,('Guerrero','Guerrero') ,('Hidalgo','Hidalgo') ,('Jalisco','Jalisco') ,('Michoacán','Michoacán') ,('Morelos','Morelos') ,('Nayarit','Nayarit') ,('Nuevo León','Nuevo León') ,('Oaxaca','Oaxaca') ,('Puebla','Puebla') ,('Querétaro','Querétaro') ,('Quintana Roo','Quintana Roo') ,('San Luis Potosí','San Luis Potosí') ,('Sinaloa','Sinaloa') ,('Sonora','Sonora') ,('Tabasco','Tabasco') ,('Tamaulipas','Tamaulipas') ,('Tlaxcala','Tlaxcala') ,('Veracruz','Veracruz') ,('Yucatán','Yucatán') ,('Zacatecas','Zacatecas')], string = "Estado",track_visibility='onchange')
     codPostal    = fields.Integer(string="C.P.",track_visibility='onchange')
 
@@ -145,10 +141,12 @@ class contratos(models.Model):
 
     @api.onchange('cliente')
     def cambiarRazonSocial(self):
-        _logger.info('razon social cliente: ' + str(self.cliente.razonSocial))
+        #_logger.info('razon social cliente: ' + str(self.cliente.razonSocial))
         self.razonSocial = self.cliente.razonSocial
 
-
+    @api.onchange('direccion')
+    def asignaDireccion(self)
+        self.direccion = self.res.partner.contact_address
 
 class cliente_contratos(models.Model):
     _inherit = 'res.partner'
