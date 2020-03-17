@@ -144,9 +144,9 @@ class contratos(models.Model):
         #_logger.info('razon social cliente: ' + str(self.cliente.razonSocial))
         self.razonSocial = self.cliente.razonSocial
 
-    @api.onchange('direccion')
+    @api.onchange('cliente')
     def asignaDireccion(self):
-        self.direccion = self.res.partner.contact_address
+        self.direccion = self.cliente.contact_address
 
 class cliente_contratos(models.Model):
     _inherit = 'res.partner'
