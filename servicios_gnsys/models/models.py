@@ -144,6 +144,7 @@ class contratos(models.Model):
         self.razonSocial = self.cliente.razonSocial
         self.direccion = self.cliente.contact_address
         self.ejecutivoDeCuenta = self.cliente.x_studio_ejecutivo
+        self.vendedor = self.cliente.x_studio_vendedor
 
         
 
