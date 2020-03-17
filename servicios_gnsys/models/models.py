@@ -145,7 +145,7 @@ class contratos(models.Model):
         self.razonSocial = self.cliente.razonSocial
 
     @api.onchange('direccion')
-    def asignaDireccion(self)
+    def asignaDireccion(self):
         self.direccion = self.res.partner.contact_address
 
 class cliente_contratos(models.Model):
