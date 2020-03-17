@@ -41,8 +41,8 @@ class StockPicking(Model):
 
     @api.depends('parent_id')
     def cliente(self):
-        if(self.parent_id):
-            if(self.parent_id.state_id.code in 'DIF'):
+        if(self.res_partner):
+            if(self.res_partner.state_id.code in 'DIF'):
                 self.tipo='local'
             else:
                 self.tipo='foraneo'

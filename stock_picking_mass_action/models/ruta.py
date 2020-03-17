@@ -15,6 +15,9 @@ class CreacionRuta(Model):
 	estado=fields.Selection([["borrador","Borrador"],["valido","Confirmado"]])
 	odometro=fields.Integer()
 	nivel_tanque=fields.Selection([["reserva","Reserva"],[".25","1/4"],[".5","1/2"],[".75","3/4"],["1","Lleno"]])
+	tipo=fields.Selection([["local","Local"],["foraneo","Foraneo"]])
+
+
 	@api.multi
 	def confirmar(self):
 		if(len(self.ordenes)>0):
