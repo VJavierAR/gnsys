@@ -9,6 +9,9 @@ import datetime, time
 _logger = logging.getLogger(__name__)
 
 
+mensajeTituloGlobal = ''
+mensajeCuerpoGlobal = ''
+
 class helpdesk_update(models.Model):
     #_inherit = ['mail.thread', 'helpdesk.ticket']
     _inherit = 'helpdesk.ticket'
@@ -57,8 +60,7 @@ class helpdesk_update(models.Model):
     
     cambiarDatosClienteCheck = fields.Boolean(string="Editar cliente", default=False)
     
-    mensajeTituloGlobal = ''
-    mensajeCuerpoGlobal = ''
+    
 
     def open_to_form_view(self):
  
