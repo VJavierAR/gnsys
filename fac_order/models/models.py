@@ -115,7 +115,7 @@ class fac_order(models.Model):
                                                                 })
                     
                       for d in self.order_line:
-                          if !d.x_studio_bolsa:  
+                          if d.x_studio_bolsa:  
                              self.env['sale.order.line'].create({'order_id': fac.id,'product_id':11340,'product_uom_qty':d.product_uom_qty,'price_unit':d.price_unit,'x_studio_bolsa':d.x_studio_bolsa})                                                
                   else:
                       for j in g:                      
