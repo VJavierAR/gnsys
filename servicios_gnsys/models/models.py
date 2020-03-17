@@ -80,6 +80,10 @@ class equipo_series(models.Model):
     _inherit = 'stock.production.lot'
     servicio = fields.Many2one('servicios', string="Servicio serie")
 
+
+
+
+
 class contratos(models.Model):
     _name = "contrato"
     _description = 'Contratos GNSYS'
@@ -141,7 +145,7 @@ class contratos(models.Model):
 
     @api.onchange('cliente')
     def cambiarRazonSocial(self):
-        self.razonSocial = self.cliente.razonSocial
+        self.razonSocial = self.cliente.razonSocial[0][1]
         self.direccion = self.cliente.contact_address
         self.ejecutivoDeCuenta = self.cliente.x_studio_ejecutivo
         self.vendedor = self.cliente.x_studio_vendedor
