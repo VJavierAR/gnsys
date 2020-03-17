@@ -49,7 +49,7 @@ class servicios_gnsys(models.Model):
     @api.multi
     def crear_solicitud_arrendamineto(self):
         for record in self:            
-            if len(record.x_studio_productos) > 0:
+            if len(record.x_studio_field_7jBI3) > 0:
                 if self.x_studio_solicitud.id != False and self.x_studio_solicitud.state != 'sale':
                     sale = self.x_studio_solicitud
                     self.env.cr.execute("delete from sale_order_line where order_id = " + str(sale.id) +";")
