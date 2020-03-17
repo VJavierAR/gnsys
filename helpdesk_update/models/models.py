@@ -886,8 +886,8 @@ class helpdesk_update(models.Model):
                                                     ,'x_studio_hoja_de_estado':c.x_studio_evidencias
                                                     ,'x_studio_usuariocaptura':self.env.user.name
                                                     ,'fuente':q
-                                                    ,'x_studio_rendimiento':int(c.x_studio_rendimiento)/abs(int(c.x_studio_contador_bn_a_capturar)-int(negrot)*100)
-                                                    ,'x_studio_rendimiento_color':int(c.x_studio_rendimiento)/abs(int(c.x_studio_contador_color_a_capturar)-int(colort)*100)   
+                                                    ,'x_studio_rendimiento':int(c.x_studio_rendimiento)/abs(int(c.x_studio_contador_bn_a_capturar)-int(negrot))
+                                                    ,'x_studio_rendimiento_color':int(c.x_studio_rendimiento)/abs(int(c.x_studio_contador_color_a_capturar)-int(colort))   
                                                   })                  
                       self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario':'capturas :' + str('Mono'+str(c.x_studio_contador_bn_a_capturar)+', Color '+str(c.x_studio_contador_color_a_capturar)+', Amarillo '+str(c.x_studio__amarrillo)+', Cian '+str(c.x_studio__cian)+', Negro '+str(c.x_studio__negro)+', Magenta '+str(c.x_studio__magenta)+', % de rendimiento '+str(rr.x_studio_rendimiento))})
                   else :
@@ -915,8 +915,8 @@ class helpdesk_update(models.Model):
                                                     ,'x_studio_hoja_de_estado':c.x_studio_evidencias
                                                     ,'x_studio_usuariocaptura':self.env.user.name
                                                     ,'fuente':q
-                                                    ,'x_studio_rendimiento':int(c.x_studio_rendimiento)/abs(int(c.x_studio_contador_bn_a_capturar)-int(negrot)*100)
-                                                    ,'x_studio_rendimiento_color':int(c.x_studio_rendimiento)/abs(int(c.x_studio_contador_color_a_capturar)-int(colort)*100)
+                                                    ,'x_studio_rendimiento':int(c.x_studio_rendimiento)/abs(int(c.x_studio_contador_bn_a_capturar)-int(negrot))
+                                                    ,'x_studio_rendimiento_color':int(c.x_studio_rendimiento)/abs(int(c.x_studio_contador_color_a_capturar)-int(colort))
    
                                                   })                  
                       self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario':'capturas :' + str('Mono'+str(c.x_studio_contador_bn_a_capturar)+', Color '+str(c.x_studio_contador_color_a_capturar)+', Amarillo '+str(c.x_studio__amarrillo)+', Cian '+str(c.x_studio__cian)+', Negro '+str(c.x_studio__negro)+', Magenta '+str(c.x_studio__magenta)+', % de rendimiento '+str(rr.x_studio_rendimiento))})
