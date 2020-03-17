@@ -105,21 +105,33 @@ class fac_order(models.Model):
                       if k.x_studio_color_bn=='Color':
                         procesadasColorTotal=colorp+procesadasColorTotal
                         procesadasColorBN=bnp+procesadasColorBN                                  
-                  g=self.env['servicios'].search([('contrato', '=', m.id)])                 
-                  for j in g:                      
-                      if str(j.tipo)=='2':                        
-                        self.env['sale.order.line'].create({'order_id': sale.id,'product_id':11340,'product_uom_qty':1.0,'price_unit':j.rentaMensual})                                                    
-                        if procesadasColorBN< j.bolsaBN:
-                           self.env['sale.order.line'].create({'order_id': sale.id,'product_id':11340,'product_uom_qty':0.0,'price_unit':j.clickExcedenteBN,'x_studio_bolsa':j.bolsaBN})
-                        if procesadasColorBN > j.bolsaBN:
-                           self.env['sale.order.line'].create({'order_id': sale.id,'product_id':11340,'product_uom_qty':abs(bolsabn-procesadasColorBN),'price_unit':j.clickExcedenteBN,'x_studio_bolsa':j.bolsaBN})
-                        if procesadasColorTotal<j.bolsaColor:            
-                           self.env['sale.order.line'].create({'order_id': sale.id,'product_id':11340,'product_uom_qty':0.0,'price_unit':j.clickExcedenteColor,'x_studio_bolsa':j.bolsaColor})
-                        if procesadasColorTotal > j.bolsaColor:
-                           self.env['sale.order.line'].create({'order_id': sale.id,'product_id':11340,'product_uom_qty':abs(bolsacolor-procesadasColorTotal),'price_unit':j.clickExcedenteColor,'x_studio_bolsa':j.bolsaColor})                   
-                      if str(j.tipo)=='6':
-                        self.env['sale.order.line'].create({'order_id': sale.id,'product_id':11340,'product_uom_qty':1.0,'price_unit':j.rentaMensual})                                                    
-                        
+                  g=self.env['servicios'].search([('contrato', '=', m.id)])
+                  if self.x_studio_dividir_servicios:
+                      fac = self.env['sale.order'].create({'partner_id' : self.partner_id.id
+                                                                 ,'origin' : "dividir por excedentes: " + str(self.id)
+                                                                 , 'x_studio_tipo_de_solicitud' : 'Arrendamiento'
+                                                                 , 'x_studio_requiere_instalacin' : True                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+                                                                 , 'team_id' : 1                                                                  
+                                                                })
+                    
+                      for d in self.order_line:
+                          if !d.x_studio_bolsa:  
+                             self.env['sale.order.line'].create({'order_id': fac.id,'product_id':11340,'product_uom_qty':d.product_uom_qty,'price_unit':d.price_unit,'x_studio_bolsa':d.x_studio_bolsa})                                                
+                  else:
+                      for j in g:                      
+                          if str(j.tipo)=='2':                        
+                            self.env['sale.order.line'].create({'order_id': sale.id,'product_id':11340,'product_uom_qty':1.0,'price_unit':j.rentaMensual})                                                    
+                            if procesadasColorBN< j.bolsaBN:
+                               self.env['sale.order.line'].create({'order_id': sale.id,'product_id':11340,'product_uom_qty':0.0,'price_unit':j.clickExcedenteBN,'x_studio_bolsa':j.bolsaBN})
+                            if procesadasColorBN > j.bolsaBN:
+                               self.env['sale.order.line'].create({'order_id': sale.id,'product_id':11340,'product_uom_qty':abs(bolsabn-procesadasColorBN),'price_unit':j.clickExcedenteBN,'x_studio_bolsa':j.bolsaBN})
+                            if procesadasColorTotal<j.bolsaColor:            
+                               self.env['sale.order.line'].create({'order_id': sale.id,'product_id':11340,'product_uom_qty':0.0,'price_unit':j.clickExcedenteColor,'x_studio_bolsa':j.bolsaColor})
+                            if procesadasColorTotal > j.bolsaColor:
+                               self.env['sale.order.line'].create({'order_id': sale.id,'product_id':11340,'product_uom_qty':abs(bolsacolor-procesadasColorTotal),'price_unit':j.clickExcedenteColor,'x_studio_bolsa':j.bolsaColor})                   
+                          if str(j.tipo)=='6':
+                            self.env['sale.order.line'].create({'order_id': sale.id,'product_id':11340,'product_uom_qty':1.0,'price_unit':j.rentaMensual})                                                    
+
                         
                         
                         
