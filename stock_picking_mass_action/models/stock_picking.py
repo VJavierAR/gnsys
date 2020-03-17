@@ -148,7 +148,6 @@ class StockPicking(Model):
         self.sudo().action_done()
         return            
     
-    
     #@api.one
     @api.depends('estado')
     def x_historial_ticket_actualiza(self):
