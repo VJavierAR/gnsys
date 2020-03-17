@@ -45,6 +45,36 @@ class servicios_gnsys(models.Model):
     contrato = fields.Many2one('contrato', string="Contrato")
     
     
+    
+    @api.multi
+    def crear_solicitud_arrendamineto(self):
+        for record in self:            
+            if len(record.x_studio_productos) > 0:
+                if self.x_studio_solicitud.id != False and self.x_studio_solicitud.state != 'sale':
+                    sale = self.x_studio_solicitud
+                    self.env.cr.execute("delete from sale_order_line where order_id = " + str(sale.id) +";")
+                    for c in self.x_studio_field_7jBI3:
+                        datosr={'order_id' : sale.id, 'product_id' : c.id, 'product_uom_qty' : c.x_studio_cantidad_pedida}                                                
+                        self.env['sale.order.line'].create(datosr)
+                        self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Arrendamiento' where  id = " + str(sale.id) + ";")                        
+                else:                
+                    sale = self.env['sale.order'].create({'partner_id' : record.partner_id.id
+                                                                 , 'origin' : "Ticket de refacción: " + str(record.id)
+                                                                 , 'x_studio_tipo_de_solicitud' : 'Arrendamiento'
+                                                                 , 'x_studio_requiere_instalacin' : True                                                                                                                                                                                                                                                                                                                                                                                                      
+                                                                 , 'x_studio_field_RnhKr': self.localidadContacto.id
+                                                                 , 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id                                                                 
+                                                                 , 'x_studio_tcnico' : record.x_studio_tcnico.id
+                                                                 , 'warehouse_id' : 5865   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
+                                                                 , 'team_id' : 1                                                                  
+                                                                })
+                    record['x_studio_solicitud'] = sale.id
+                    for c in record.x_studio_field_7jBI3:
+                        datosr={'order_id' : sale.id, 'product_id' : c.id, 'product_uom_qty' : c.x_studio_cantidad_pedida,'price_unit': 0}                        
+                        self.env['sale.order.line'].create(datosr)
+                        sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})                        
+                        self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Arrendamiento' where  id = " + str(sale.id) + ";")        
+    
 class productos_en_servicios(models.Model):
     _inherit = 'product.product'
     servicio = fields.Many2one('servicios', string="Servicio producto")
