@@ -58,13 +58,9 @@ class servicios_gnsys(models.Model):
                         self.env['sale.order.line'].create(datosr)
                         self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Arrendamiento' where  id = " + str(sale.id) + ";")                        
                 else:                
-                    sale = self.env['sale.order'].create({'partner_id' : record.partner_id.id
-                                                                 , 'origin' : "Ticket de refacción: " + str(record.id)
+                    sale = self.env['sale.order'].create({'origin' : "Servicio: " + str(record.id)
                                                                  , 'x_studio_tipo_de_solicitud' : 'Arrendamiento'
-                                                                 , 'x_studio_requiere_instalacin' : True                                                                                                                                                                                                                                                                                                                                                                                                      
-                                                                 , 'x_studio_field_RnhKr': self.localidadContacto.id
-                                                                 , 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id                                                                 
-                                                                 , 'x_studio_tcnico' : record.x_studio_tcnico.id
+                                                                 , 'x_studio_requiere_instalacin' : True                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
                                                                  , 'warehouse_id' : 5865   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
                                                                  , 'team_id' : 1                                                                  
                                                                 })
