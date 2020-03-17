@@ -114,6 +114,13 @@ class contratos(models.Model):
     #Valores para impresión de factura
     valoresImpresion   = fields.One2many('servicios.valores', 'servicio', string = "Valores para impresión de factura",track_visibility='onchange')
 
+    @api.onchange('cliente')
+    def cambiarRazonSocial(self):
+        _logger.info('razon social cliente: ' + str(self.cliente.razonSocial))
+        self.razonSocial = self.cliente.razonSocial
+
+
+
 class cliente_contratos(models.Model):
     _inherit = 'res.partner'
     contrato = fields.One2many('contrato', 'cliente', string="Contratos")
@@ -135,3 +142,6 @@ class Valores_Impresion(models.Model):
     campo       = fields.Char()
     valor       = fields.Char()
     selection   = fields.Boolean(default=False)
+
+
+
