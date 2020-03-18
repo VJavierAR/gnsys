@@ -1686,7 +1686,7 @@ class helpdesk_update(models.Model):
     @api.onchange('x_studio_equipo_por_nmero_de_serie')
     #@api.depends('x_studio_equipo_por_nmero_de_serie')
     def actualiza_datos_cliente(self):        
-        
+        _logger.info('hiooooo')
         v = {}
         ids = []
         localidad = []
