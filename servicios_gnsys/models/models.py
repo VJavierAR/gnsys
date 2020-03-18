@@ -146,7 +146,7 @@ class contratos(models.Model):
     @api.onchange('cliente')
     def cambiarRazonSocial(self):
         if self.cliente :
-            _logger.info('razon social cliente: ' + str(razonSocial))
+            _logger.info('razon social cliente: ' + str(self.cliente.contact_address))
             #self.direccion = self.cliente.contact_address[str(self.cliente.contact_address)]
             self.ejecutivoDeCuenta = self.cliente.x_studio_ejecutivo
             self.vendedor = self.cliente.x_studio_vendedor
