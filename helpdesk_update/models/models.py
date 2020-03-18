@@ -1919,25 +1919,25 @@ class helpdesk_update(models.Model):
         #         return {'warning': mess}   
                 
 
-                """
-                global mensajeCuerpoGlobal
-                mensajeCuerpoGlobal += '\n\nEstas agregando una serie de un ticket ya en proceso en equipo de toner. \n Ticket: ' + str(informacion[0][0]) + '\n '
-                mensajeTitulo = 'Alerta !!!'
-                wiz = self.env['helpdesk.alerta.series'].create({'ticket_id': self.id, 'ticket_id_existente': int(informacion[0][0]), 'mensaje': mensajeCuerpoGlobal})
-                view = self.env.ref('helpdesk_update.view_helpdesk_alerta_series')
-                return {
-                        'name': _(mensajeTitulo),
-                        'type': 'ir.actions.act_window',
-                        'view_type': 'form',
-                        'view_mode': 'form',
-                        'res_model': 'helpdesk.alerta.series',
-                        'views': [(view.id, 'form')],
-                        'view_id': view.id,
-                        'target': 'new',
-                        'res_id': wiz.id,
-                        'context': self.env.context,
-                        }                                             
-                """
+                
+                # global mensajeCuerpoGlobal
+                # mensajeCuerpoGlobal += '\n\nEstas agregando una serie de un ticket ya en proceso en equipo de toner. \n Ticket: ' + str(informacion[0][0]) + '\n '
+                # mensajeTitulo = 'Alerta !!!'
+                # wiz = self.env['helpdesk.alerta.series'].create({'ticket_id': self.id, 'ticket_id_existente': int(informacion[0][0]), 'mensaje': mensajeCuerpoGlobal})
+                # view = self.env.ref('helpdesk_update.view_helpdesk_alerta_series')
+                # return {
+                #         'name': _(mensajeTitulo),
+                #         'type': 'ir.actions.act_window',
+                #         'view_type': 'form',
+                #         'view_mode': 'form',
+                #         'res_model': 'helpdesk.alerta.series',
+                #         'views': [(view.id, 'form')],
+                #         'view_id': view.id,
+                #         'target': 'new',
+                #         'res_id': wiz.id,
+                #         'context': self.env.context,
+                #         }                                             
+                
     
 
         #cvg        
