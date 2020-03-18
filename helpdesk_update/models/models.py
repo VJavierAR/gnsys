@@ -423,7 +423,7 @@ class helpdesk_update(models.Model):
                 if len(informacion) > 0:
                     _logger.info(str(informacion[0][0]))
                     #return {'name': _('Name'),'type': 'ir.actions.act_window','view_type': 'form','view_mode': 'form','res_model': 'helpdesk.alerta.series','views': [(view.id, 'form')],'view_id': view.id,'target': 'new','res_id': wiz.id,}
-                    return  return {
+                    return {
                 'type': 'ir.actions.act_window',
                 'view_type': 'form',
                 'view_mode': 'form',
