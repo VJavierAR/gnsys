@@ -430,7 +430,8 @@ class helpdesk_update(models.Model):
                     }
                 self.estadoAbierto = True
                 #mensajeCuerpoGlobal = 'Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Abierto' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página."
-                return {'warning': mess}
+                else:
+                    return {'warning': mess}
     
     
     
