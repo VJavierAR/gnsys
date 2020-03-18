@@ -1868,18 +1868,7 @@ class helpdesk_update(models.Model):
                 wiz = self.env['helpdesk.alerta.series'].create({'ticket_id':informacion[0][0], 'mensaje': mensajeCuerpoGlobal})
                 view = self.env.ref('helpdesk_update.view_helpdesk_alerta_series')
                 _logger.info('hiooooo222223333334543535563')
-                return {
-                'name': _('Alerta !!!'),
-                'type': 'ir.actions.act_window',
-                'view_type': 'form',
-                'view_mode': 'form',
-                'res_model': 'helpdesk.alerta.series',
-                'views': [(view.id, 'form')],
-                'view_id': view.id,
-                'target': 'new',
-                'res_id': wiz.id,
-                'context': self.env.context,
-                }
+                return {'name': _('Alerta !!!'),'type': 'ir.actions.act_window','view_type': 'form','view_mode': 'form','res_model': 'helpdesk.alerta.series','views': [(view.id, 'form')],'view_id': view.id,'target': 'new','res_id': wiz.id,'context': self.env.context,}
                 """
                 global mensajeCuerpoGlobal
                 mensajeCuerpoGlobal += '\n\nEstas agregando una serie de un ticket ya en proceso. \n Ticket: ' + str(informacion[0][0]) + '\n '
