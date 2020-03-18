@@ -158,7 +158,7 @@
                 </group>
                 <footer>
                     <button name="abrirTicket" string="Abrir ticket existente" type="object" class="oe_highlight"/>
-                    <button special="cancel" string="Cerrar" class="oe_highlight" />
+                    <button special="cancel" string="Continuar" class="oe_highlight" />
                 </footer>
             </form>
         </field>
