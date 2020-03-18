@@ -412,6 +412,7 @@ class helpdesk_update(models.Model):
                 ss = self.env.cr.execute(query)
                 self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': "Abierto", 'write_uid':  self.env.user.name})
                 if(self.team_id.id!=8):
+                    _logger.info(str(self.x_studio_equipo_por_nmero_de_serie[0].id))
                     query="select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!="+str(self.x_studio_id_ticket)+"  and h.stage_id!=18 and h.team_id!=8 and  h.active='t' and stock_production_lot_id = "+str(self.x_studio_equipo_por_nmero_de_serie[0].id)+" limit 1;"            
                     self.env.cr.execute(query)
                     informacion = self.env.cr.fetchall()
