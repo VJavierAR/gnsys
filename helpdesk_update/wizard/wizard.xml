@@ -162,6 +162,23 @@
             </form>
         </field>
     </record>
+
+
+        <record id="view_helpdesk_alerta_serie2" model="ir.ui.view">
+        <field name="model">helpdesk.alerta.series</field>
+        <field name="arch" type="xml">
+            <form string="Alerta">
+                <group>
+                    <h3>
+                        <field name="mensaje" readonly='1'/>
+                    </h3>
+                </group>
+                <footer>
+                    <button special="cancel" string="Cerrar" class="oe_highlight" />
+                </footer>
+            </form>
+        </field>
+    </record>
     
 
     <record id="view_helpdesk_bitacora" model="ir.ui.view">
