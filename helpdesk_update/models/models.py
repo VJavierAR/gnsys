@@ -1707,157 +1707,157 @@ class helpdesk_update(models.Model):
     
     
     #@api.model
-    @api.multi
-    @api.onchange('x_studio_equipo_por_nmero_de_serie')
-    #@api.depends('x_studio_equipo_por_nmero_de_serie')
-    def actualiza_datos_cliente(self):        
-        _logger.info('hiooooo')
-        v = {}
-        ids = []
-        localidad = []
-        for record in self:
-            cantidad_numeros_serie = record.x_studio_tamao_lista
-            if record.team_id.id!=8:
-                if int(cantidad_numeros_serie) < 2 :
-                    for numeros_serie in record.x_studio_equipo_por_nmero_de_serie:
-                        ids.append(numeros_serie.id)
+ #18/03/20   @api.multi
+    # @api.onchange('x_studio_equipo_por_nmero_de_serie')
+    # #@api.depends('x_studio_equipo_por_nmero_de_serie')
+    # def actualiza_datos_cliente(self):        
+    #     _logger.info('hiooooo')
+    #     v = {}
+    #     ids = []
+    #     localidad = []
+    #     for record in self:
+    #         cantidad_numeros_serie = record.x_studio_tamao_lista
+    #         if record.team_id.id!=8:
+    #             if int(cantidad_numeros_serie) < 2 :
+    #                 for numeros_serie in record.x_studio_equipo_por_nmero_de_serie:
+    #                     ids.append(numeros_serie.id)
                         
-                        for move_line in numeros_serie.x_studio_move_line:
+    #                     for move_line in numeros_serie.x_studio_move_line:
                             
-                            cliente = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
-                            self._origin.sudo().write({'partner_id' : cliente})
-                            record.partner_id = cliente
-                            idM=self._origin.id
+    #                         cliente = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
+    #                         self._origin.sudo().write({'partner_id' : cliente})
+    #                         record.partner_id = cliente
+    #                         idM=self._origin.id
                             
-                            if cliente == []:
-                                self.env.cr.execute("update helpdesk_ticket set partner_id = " + cliente + "  where  id = " + idM + ";")
-                            v['partner_id'] = cliente
-                            cliente_telefono = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.phone
-                            self._origin.sudo().write({'x_studio_telefono' : cliente_telefono})
-                            record.x_studio_telefono = cliente_telefono
-                            if cliente_telefono != []:
-                                srtt="update helpdesk_ticket set x_studio_telefono = '" + str(cliente_telefono) + "' where  id = " + str(idM) + ";"                                
-                            v['x_studio_telefono'] = cliente_telefono
-                            cliente_movil = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.mobile
-                            self._origin.sudo().write({'x_studio_movil' : cliente_movil})
-                            record.x_studio_movil = cliente_movil
-                            if cliente_movil == []:
-                                self.env.cr.execute("update helpdesk_ticket set x_studio_movil = '" + str(cliente_movil) + "' where  id = " +idM + ";")
-                            v['x_studio_movil'] = cliente_movil
+    #                         if cliente == []:
+    #                             self.env.cr.execute("update helpdesk_ticket set partner_id = " + cliente + "  where  id = " + idM + ";")
+    #                         v['partner_id'] = cliente
+    #                         cliente_telefono = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.phone
+    #                         self._origin.sudo().write({'x_studio_telefono' : cliente_telefono})
+    #                         record.x_studio_telefono = cliente_telefono
+    #                         if cliente_telefono != []:
+    #                             srtt="update helpdesk_ticket set x_studio_telefono = '" + str(cliente_telefono) + "' where  id = " + str(idM) + ";"                                
+    #                         v['x_studio_telefono'] = cliente_telefono
+    #                         cliente_movil = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.mobile
+    #                         self._origin.sudo().write({'x_studio_movil' : cliente_movil})
+    #                         record.x_studio_movil = cliente_movil
+    #                         if cliente_movil == []:
+    #                             self.env.cr.execute("update helpdesk_ticket set x_studio_movil = '" + str(cliente_movil) + "' where  id = " +idM + ";")
+    #                         v['x_studio_movil'] = cliente_movil
                             
-                            cliente_nivel = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.x_studio_nivel_del_cliente
-                            self._origin.sudo().write({'x_studio_nivel_del_cliente' : cliente_nivel})
-                            record.x_studio_nivel_del_cliente = cliente_nivel
-                            if cliente_nivel == []:
-                                self.env.cr.execute("update helpdesk_ticket set x_studio_nivel_del_cliente = '" + str(cliente_nivel) + "' where  id = " + idM + ";")
-                            v['x_studio_nivel_del_cliente'] = cliente_nivel
+    #                         cliente_nivel = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.x_studio_nivel_del_cliente
+    #                         self._origin.sudo().write({'x_studio_nivel_del_cliente' : cliente_nivel})
+    #                         record.x_studio_nivel_del_cliente = cliente_nivel
+    #                         if cliente_nivel == []:
+    #                             self.env.cr.execute("update helpdesk_ticket set x_studio_nivel_del_cliente = '" + str(cliente_nivel) + "' where  id = " + idM + ";")
+    #                         v['x_studio_nivel_del_cliente'] = cliente_nivel
 
 
-                            localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
+    #                         localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
 
-                            self._origin.sudo().write({'x_studio_empresas_relacionadas' : localidad})
-                            record.x_studio_empresas_relacionadas = localidad
+    #                         self._origin.sudo().write({'x_studio_empresas_relacionadas' : localidad})
+    #                         record.x_studio_empresas_relacionadas = localidad
 
-                            if record.x_studio_empresas_relacionadas.id != False:
-                                self.env.cr.execute("select * from res_partner where id = " + str(record.x_studio_empresas_relacionadas.id) + ";")
-                                localidad_tempo = self.env.cr.fetchall()
-                                if str(localidad_tempo[0][80]) != 'None':
-                                    record.x_studio_field_29UYL = str(localidad_tempo[0][80])
+    #                         if record.x_studio_empresas_relacionadas.id != False:
+    #                             self.env.cr.execute("select * from res_partner where id = " + str(record.x_studio_empresas_relacionadas.id) + ";")
+    #                             localidad_tempo = self.env.cr.fetchall()
+    #                             if str(localidad_tempo[0][80]) != 'None':
+    #                                 record.x_studio_field_29UYL = str(localidad_tempo[0][80])
 
-                            #self._origin.sudo().write({'x_studio_field_6furK' : self._origin.sudo().write({'x_studio_field_6furK' : move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.x_studio_field_SqU5B})})
-                        lista_ids = []
-                        for id in ids:
-                            lista_ids.append((4,id))
+    #                         #self._origin.sudo().write({'x_studio_field_6furK' : self._origin.sudo().write({'x_studio_field_6furK' : move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.x_studio_field_SqU5B})})
+    #                     lista_ids = []
+    #                     for id in ids:
+    #                         lista_ids.append((4,id))
                         
-                        v['x_studio_equipo_por_nmero_de_serie'] = lista_ids
-                        self._origin.sudo().write({'x_studio_equipo_por_nmero_de_serie' : lista_ids})
-                        record.x_studio_equipo_por_nmero_de_serie = lista_ids
-                else:
-                    raise exceptions.ValidationError("No es posible registrar más de un número de serie")
-            if record.team_id.id==8:
-                _my_object = self.env['helpdesk.ticket']
-                #v['x_studio_equipo_por_nmero_de_serie'] = {record.x_studio_equipo_por_nmero_de_serie.id}
+    #                     v['x_studio_equipo_por_nmero_de_serie'] = lista_ids
+    #                     self._origin.sudo().write({'x_studio_equipo_por_nmero_de_serie' : lista_ids})
+    #                     record.x_studio_equipo_por_nmero_de_serie = lista_ids
+    #             else:
+    #                 raise exceptions.ValidationError("No es posible registrar más de un número de serie")
+    #         if record.team_id.id==8:
+    #             _my_object = self.env['helpdesk.ticket']
+    #             #v['x_studio_equipo_por_nmero_de_serie'] = {record.x_studio_equipo_por_nmero_de_serie.id}
 
 
-                #_logger.info('record_feliz : ' + str(record.x_studio_equipo_por_nmero_de_serie.id))
-                #ids.append(record.x_studio_equipo_por_nmero_de_serie.id)
+    #             #_logger.info('record_feliz : ' + str(record.x_studio_equipo_por_nmero_de_serie.id))
+    #             #ids.append(record.x_studio_equipo_por_nmero_de_serie.id)
 
-                #record['x_studio_equipo_por_nmero_de_serie'] = [(4,record.x_studio_equipo_por_nmero_de_serie.id)]
+    #             #record['x_studio_equipo_por_nmero_de_serie'] = [(4,record.x_studio_equipo_por_nmero_de_serie.id)]
 
-                for numeros_serie in record.x_studio_equipo_por_nmero_de_serie:
-                    ids.append(numeros_serie.id)
+    #             for numeros_serie in record.x_studio_equipo_por_nmero_de_serie:
+    #                 ids.append(numeros_serie.id)
 
-                    for move_line in numeros_serie.x_studio_move_line:
+    #                 for move_line in numeros_serie.x_studio_move_line:
 
-                        #move_line.para.almacen.ubicacion.
+    #                     #move_line.para.almacen.ubicacion.
 
-                        cliente = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
-                        self._origin.sudo().write({'partner_id' : cliente})
-                        record.partner_id = cliente
-                        idM=self._origin.id
+    #                     cliente = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
+    #                     self._origin.sudo().write({'partner_id' : cliente})
+    #                     record.partner_id = cliente
+    #                     idM=self._origin.id
 
-                        if cliente == []:
-                            self.env.cr.execute("update helpdesk_ticket set partner_id = " + cliente + "  where  id = " + idM + ";")
-                        v['partner_id'] = cliente
+    #                     if cliente == []:
+    #                         self.env.cr.execute("update helpdesk_ticket set partner_id = " + cliente + "  where  id = " + idM + ";")
+    #                     v['partner_id'] = cliente
 
-                        cliente_telefono = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.phone
-                        self._origin.sudo().write({'x_studio_telefono' : cliente_telefono})
-                        record.x_studio_telefono = cliente_telefono
-                        if cliente_telefono != []:
-                            srtt="update helpdesk_ticket set x_studio_telefono = '" + str(cliente_telefono) + "' where  id = " + str(idM) + ";"
+    #                     cliente_telefono = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.phone
+    #                     self._origin.sudo().write({'x_studio_telefono' : cliente_telefono})
+    #                     record.x_studio_telefono = cliente_telefono
+    #                     if cliente_telefono != []:
+    #                         srtt="update helpdesk_ticket set x_studio_telefono = '" + str(cliente_telefono) + "' where  id = " + str(idM) + ";"
 
-                            #s=self.env.cr.execute("update helpdesk_ticket set x_studio_telefono = '" + str(cliente_telefono) + "' where  id = " + str(idM) + ";")
-                            #_logger.info("update gacho 2 "+str(s))
-                        v['x_studio_telefono'] = cliente_telefono
+    #                         #s=self.env.cr.execute("update helpdesk_ticket set x_studio_telefono = '" + str(cliente_telefono) + "' where  id = " + str(idM) + ";")
+    #                         #_logger.info("update gacho 2 "+str(s))
+    #                     v['x_studio_telefono'] = cliente_telefono
 
-                        cliente_movil = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.mobile
-                        self._origin.sudo().write({'x_studio_movil' : cliente_movil})
-                        record.x_studio_movil = cliente_movil
-                        if cliente_movil == []:
-                            self.env.cr.execute("update helpdesk_ticket set x_studio_movil = '" + str(cliente_movil) + "' where  id = " +idM + ";")
-                        v['x_studio_movil'] = cliente_movil
+    #                     cliente_movil = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.mobile
+    #                     self._origin.sudo().write({'x_studio_movil' : cliente_movil})
+    #                     record.x_studio_movil = cliente_movil
+    #                     if cliente_movil == []:
+    #                         self.env.cr.execute("update helpdesk_ticket set x_studio_movil = '" + str(cliente_movil) + "' where  id = " +idM + ";")
+    #                     v['x_studio_movil'] = cliente_movil
 
-                        cliente_nivel = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.x_studio_nivel_del_cliente
-                        self._origin.sudo().write({'x_studio_nivel_del_cliente' : cliente_nivel})
-                        record.x_studio_nivel_del_cliente = cliente_nivel
-                        if cliente_nivel == []:
-                            self.env.cr.execute("update helpdesk_ticket set x_studio_nivel_del_cliente = '" + str(cliente_nivel) + "' where  id = " + idM + ";")
-                        v['x_studio_nivel_del_cliente'] = cliente_nivel
+    #                     cliente_nivel = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.x_studio_nivel_del_cliente
+    #                     self._origin.sudo().write({'x_studio_nivel_del_cliente' : cliente_nivel})
+    #                     record.x_studio_nivel_del_cliente = cliente_nivel
+    #                     if cliente_nivel == []:
+    #                         self.env.cr.execute("update helpdesk_ticket set x_studio_nivel_del_cliente = '" + str(cliente_nivel) + "' where  id = " + idM + ";")
+    #                     v['x_studio_nivel_del_cliente'] = cliente_nivel
 
-                        #localidad datos
+    #                     #localidad datos
 
-                        localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
+    #                     localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
 
-                        self._origin.sudo().write({'x_studio_empresas_relacionadas' : localidad})
-                        record.x_studio_empresas_relacionadas = localidad
+    #                     self._origin.sudo().write({'x_studio_empresas_relacionadas' : localidad})
+    #                     record.x_studio_empresas_relacionadas = localidad
 
                         
-                        #telefono_localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.phone
-                        #self._origin.sudo().write({x_studio_telefono_localidad : telefono_localidad})
+    #                     #telefono_localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.phone
+    #                     #self._origin.sudo().write({x_studio_telefono_localidad : telefono_localidad})
                         
-                        #movil_localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.mobile
-                        #self._origin.sudo().write({x_studio_movil_localidad : movil_localidad})
+    #                     #movil_localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.mobile
+    #                     #self._origin.sudo().write({x_studio_movil_localidad : movil_localidad})
                         
-                        #email_localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.email
-                        #self._origin.sudo().write({x_studio_correo_electrnico_de_localidad : email_localidad})
+    #                     #email_localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.email
+    #                     #self._origin.sudo().write({x_studio_correo_electrnico_de_localidad : email_localidad})
 
-                        #
-                        #_logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.)
+    #                     #
+    #                     #_logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.)
 
-                    #self._origin.sudo().write({x_studio_responsable_de_equipo : responsable_equipo_de_distribucion})
+    #                 #self._origin.sudo().write({x_studio_responsable_de_equipo : responsable_equipo_de_distribucion})
 
-                    #_logger.info(record['x_studio_equipo_por_nmero_de_serie'])
+    #                 #_logger.info(record['x_studio_equipo_por_nmero_de_serie'])
                     
-                    #record['x_studio_equipo_por_nmero_de_serie'] = (6, 0, [ids])
-                    #record.sudo().write({x_studio_equipo_por_nmero_de_serie : [(6, 0, [ids])] })
-                    #self._origin.sudo().write({'x_studio_equipo_por_nmero_de_serie' : (4, ids) })
-                    lista_ids = []
-                    for id in ids:
-                        lista_ids.append((4,id))
-                    #v['x_studio_equipo_por_nmero_de_serie'] = [(4, ids[0]), (4, ids[1])]
-                    v['x_studio_equipo_por_nmero_de_serie'] = lista_ids
-                    self._origin.sudo().write({'x_studio_equipo_por_nmero_de_serie' : lista_ids})
-                    record.x_studio_equipo_por_nmero_de_serie = lista_ids
+    #                 #record['x_studio_equipo_por_nmero_de_serie'] = (6, 0, [ids])
+    #                 #record.sudo().write({x_studio_equipo_por_nmero_de_serie : [(6, 0, [ids])] })
+    #                 #self._origin.sudo().write({'x_studio_equipo_por_nmero_de_serie' : (4, ids) })
+    #                 lista_ids = []
+    #                 for id in ids:
+    #                     lista_ids.append((4,id))
+    #                 #v['x_studio_equipo_por_nmero_de_serie'] = [(4, ids[0]), (4, ids[1])]
+    #                 v['x_studio_equipo_por_nmero_de_serie'] = lista_ids
+    #                 self._origin.sudo().write({'x_studio_equipo_por_nmero_de_serie' : lista_ids})
+ #18/03/20                   record.x_studio_equipo_por_nmero_de_serie = lista_ids
                     """
                     if localidad != []:
                         srtt="update helpdesk_ticket set x_studio_empresas_relacionadas = " + str(localidad) + " where  id = " + str(idM )+ ";"
