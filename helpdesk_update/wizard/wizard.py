@@ -53,7 +53,7 @@ class HelpDeskDetalleSerie(object):
     historicoTickets = fields.One2many('dcas.dcas', 'serie', string = 'Historico de tickets', compute='_compute_historico_tickets')
 
     def _compute_historico_tickets(self):
-        self.historicoTickets = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_field_Yxv2m
+        self.historicoTickets = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_field_Yxv2m.ids
 
 class HelpDeskAlerta(TransientModel):
     _name = 'helpdesk.alerta'
