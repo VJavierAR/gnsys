@@ -1862,27 +1862,27 @@ class helpdesk_update(models.Model):
                     #res = super(helpdesk_update, self).sudo().write(v)
                     #return res
                     #return {'value': v}
-        if int(self.x_studio_tamao_lista) > 0 and self.team_id.id != 8:
-            _logger.info('hiooooo22222')
-            query="select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!="+str(self.x_studio_id_ticket)+"  and h.stage_id!=18 and h.team_id!=8 and  h.active='t' and stock_production_lot_id = "+str(self.x_studio_equipo_por_nmero_de_serie[0].id)+" limit 1;"            
+        # if int(self.x_studio_tamao_lista) > 0 and self.team_id.id != 8:
+        #     _logger.info('hiooooo22222')
+        #     query="select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!="+str(self.x_studio_id_ticket)+"  and h.stage_id!=18 and h.team_id!=8 and  h.active='t' and stock_production_lot_id = "+str(self.x_studio_equipo_por_nmero_de_serie[0].id)+" limit 1;"            
             
-            self.env.cr.execute(query)                        
-            informacion = self.env.cr.fetchall()
-            if len(informacion) > 0:
-                message = ('Estas agregando una serie de un ticket ya en proceso. \n Ticket: ' + str(informacion[0][0]) + '\n ')
+        #     self.env.cr.execute(query)                        
+        #     informacion = self.env.cr.fetchall()
+        #     if len(informacion) > 0:
+        #         message = ('Estas agregando una serie de un ticket ya en proceso. \n Ticket: ' + str(informacion[0][0]) + '\n ')
 
-                mess= {
-                        'title': _('Alerta!!!'),
-                        'message' : message
-                              }
-                #return {'warning': mess}
-                mensajeCuerpoGlobal = 'Estas agregando una serie de un ticket ya en proceso. \n Ticket: ' + str(informacion[0][0]) + '\n '
-                mensajeTitulo = 'Alerta !!!'
-                wiz = self.env['helpdesk.alerta.series'].create({'ticket_id':informacion[0][0], 'mensaje': mensajeCuerpoGlobal})
-                view = self.env.ref('helpdesk_update.view_helpdesk_alerta_series')
-                _logger.info(str(view.id))
-                return {'name': _('Alerta'),'type': 'ir.actions.act_window','view_type': 'form','view_mode': 'form','res_model': 'helpdesk.alerta.series','views': [(view.id, 'form')],'view_id': view.id,'target': 'new','res_id': wiz.id,'context': self.env.context,}
-                """
+        #         mess= {
+        #                 'title': _('Alerta!!!'),
+        #                 'message' : message
+        #                       }
+        #         #return {'warning': mess}
+        #         mensajeCuerpoGlobal = 'Estas agregando una serie de un ticket ya en proceso. \n Ticket: ' + str(informacion[0][0]) + '\n '
+        #         mensajeTitulo = 'Alerta !!!'
+        #         wiz = self.env['helpdesk.alerta.series'].create({'ticket_id':informacion[0][0], 'mensaje': mensajeCuerpoGlobal})
+        #         view = self.env.ref('helpdesk_update.view_helpdesk_alerta_series')
+        #         _logger.info(str(view.id))
+        #         return {'name': _('Alerta'),'type': 'ir.actions.act_window','view_type': 'form','view_mode': 'form','res_model': 'helpdesk.alerta.series','views': [(view.id, 'form')],'view_id': view.id,'target': 'new','res_id': wiz.id,'context': self.env.context,}
+                 """
                 global mensajeCuerpoGlobal
                 mensajeCuerpoGlobal += '\n\nEstas agregando una serie de un ticket ya en proceso. \n Ticket: ' + str(informacion[0][0]) + '\n '
                 mensajeTitulo = 'Alerta !!!'
@@ -1891,20 +1891,20 @@ class helpdesk_update(models.Model):
 
                 """
                 #raise exceptions.ValidationError("No es posible registrar número de serie, primero cerrar el ticket con el id  "+str(informacion[0][0]))
-        if int(self.x_studio_tamao_lista) > 0 and self.team_id.id == 8:
-            _logger.info('hiooooo')
-            queryt="select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!="+str(self.x_studio_id_ticket)+"  and h.stage_id!=18 and h.team_id=8 and  h.active='t' and stock_production_lot_id = "+str(self.x_studio_equipo_por_nmero_de_serie[0].id)+" limit 1;"            
+        # if int(self.x_studio_tamao_lista) > 0 and self.team_id.id == 8:
+        #     _logger.info('hiooooo')
+        #     queryt="select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!="+str(self.x_studio_id_ticket)+"  and h.stage_id!=18 and h.team_id=8 and  h.active='t' and stock_production_lot_id = "+str(self.x_studio_equipo_por_nmero_de_serie[0].id)+" limit 1;"            
             
-            self.env.cr.execute(queryt)                        
-            informaciont = self.env.cr.fetchall()
-            if len(informaciont) > 0:
+        #     self.env.cr.execute(queryt)                        
+        #     informaciont = self.env.cr.fetchall()
+        #     if len(informaciont) > 0:
                 
-                message = ('Estas agregando una serie de un ticket ya en proceso en equipo de toner. \n Ticket: '+str(informaciont[0][0]))
-                mess= {
-                        'title': _('Alerta!!!'),
-                        'message' : message
-                              }
-                return {'warning': mess}   
+        #         message = ('Estas agregando una serie de un ticket ya en proceso en equipo de toner. \n Ticket: '+str(informaciont[0][0]))
+        #         mess= {
+        #                 'title': _('Alerta!!!'),
+        #                 'message' : message
+        #                       }
+        #         return {'warning': mess}   
                 
 
                 """
