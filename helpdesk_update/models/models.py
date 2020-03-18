@@ -1857,7 +1857,8 @@ class helpdesk_update(models.Model):
             informacion = self.env.cr.fetchall()
             if len(informacion) > 0:
                 message = ('Estas agregando una serie de un ticket ya en proceso. \n Ticket: ' + str(informacion[0][0]) + '\n ')
-                
+                _logger.info('hiooooo22222333333')
+
                 mess= {
                         'title': _('Alerta!!!'),
                         'message' : message
