@@ -418,7 +418,7 @@ class helpdesk_update(models.Model):
     #         query="select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!="+str(self.x_studio_id_ticket)+"  and h.stage_id!=18 and h.team_id!=8 and  h.active='t' and stock_production_lot_id = "+str(self.x_studio_equipo_por_nmero_de_serie[0].id)+" limit 1;"            
     #         self.env.cr.execute(query)
     #         informacion = self.env.cr.fetchall()
-        raise UserError(_('Test')), self.otert()
+        raise UserError(_('Test'), self.otert())
     def otert(self):
         wiz = self.env['helpdesk.alerta.series'].create({'ticket_id':23433, 'mensaje': ''})
         view = self.env.ref('helpdesk_update.view_helpdesk_alerta_serie2')
