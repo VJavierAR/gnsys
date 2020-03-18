@@ -50,40 +50,13 @@ class HelpDeskDetalleSerie(TransientModel):
     _name = 'helpdesk.detalle.serie'
     _description = 'HelpDesk Detalle Serie'
     ticket_id = fields.Many2one("helpdesk.ticket")
-    historicoTickets = fields.One2many('dcas.dcas', 'serie', string = 'Historico de tickets', compute='_compute_datos')
-    lecturas = fields.One2many('dcas.dcas', 'serie', string = 'Lecturas')
-    toner = fields.One2many('dcas.dcas', 'serie', string = 'Tóner')
-    historicoDeComponentes = fields.One2many('x_studio_historico_de_componentes', 'x_studio_field_MH4DO', string = 'Historico de Componentes')
-    movimientos = fields.One2many('stock.move.line', 'lot_id', string = 'Movimientos')
-    serie = fields.Text(string = "Serie")
+    historicoTickets = fields.One2many('dcas.dcas', 'serie', string = 'Historico de tickets', compute='_compute_historico_tickets')
+    lecturas = fields.One2many('dcas.dcas', 'serie', string = 'Lecturas', compute='_compute_lecturas')
+    toner = fields.One2many('dcas.dcas', 'serie', string = 'Tóner', compute='_compute_toner')
+    historicoDeComponentes = fields.One2many('x_studio_historico_de_componentes', 'x_studio_field_MH4DO', string = 'Historico de Componentes', compute='_compute_historico_de_componentes')
+    movimientos = fields.One2many('stock.move.line', 'lot_id', string = 'Movimientos', compute='_compute_movimientos')
+    serie = fields.Text(string = "Serie", compute = '_compute_serie_nombre')
 
-    def _compute_datos(self):
-        if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
-            self.serie = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].name
-            self.historicoTickets = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_field_Yxv2m.ids
-            self.lecturas = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_field_PYss4.ids
-            self.toner = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_toner_1.ids
-            self.historicoDeComponentes = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_histrico_de_componentes.ids
-            self.movimientos = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_move_line.ids
-        else:
-            mensajeTitulo = 'No existe serie'
-            mensajeCuerpo = 'El ticket no cuenta con un número de serie asignado.\n'
-            wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
-            view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
-            return {
-                    'name': _(mensajeTitulo),
-                    'type': 'ir.actions.act_window',
-                    'view_type': 'form',
-                    'view_mode': 'form',
-                    'res_model': 'helpdesk.alerta',
-                    'views': [(view.id, 'form')],
-                    'view_id': view.id,
-                    'target': 'new',
-                    'res_id': wiz.id,
-                    'context': self.env.context,
-                    }
-
-    """
     def _compute_serie_nombre(self):
         self.serie = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].name
 
@@ -100,9 +73,7 @@ class HelpDeskDetalleSerie(TransientModel):
         self.historicoDeComponentes = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_histrico_de_componentes.ids
 
     def _compute_movimientos(self):
-        self.movimientos = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_move_line.ids
-    """
-
+        self.historicoDeComponentes = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_move_line.ids
 
 class HelpDeskAlerta(TransientModel):
     _name = 'helpdesk.alerta'
