@@ -422,7 +422,7 @@ class helpdesk_update(models.Model):
                         return {'name': _('Name'),'type': 'ir.actions.act_window','view_type': 'form','view_mode': 'form','res_model': 'helpdesk.alerta.series','views': [(view.id, 'form')],'view_id': view.id,'target': 'current','res_id': wiz.id,}
 
 
-                message = ('Estas agregando una serie de un ticket ya en proceso. \n Ticket: ' + str(informacion[0][0]) + '\n ')
+                #message = ('Estas agregando una serie de un ticket ya en proceso. \n Ticket: ' + str(informacion[0][0]) + '\n ')
                 message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Abierto' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
                 mess= {
                         'title': _('Estado de ticket actualizado!!!'),
