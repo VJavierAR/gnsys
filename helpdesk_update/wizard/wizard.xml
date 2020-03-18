@@ -182,7 +182,7 @@
     
 
     <record id="view_helpdesk_bitacora" model="ir.ui.view">
-        <field name="model">helpdesk.bitacora</field>
+        <field name="model">helpdesk.detalle.serie</field>
         <field name="arch" type="xml">
             <form string="Detalle serie">
                 <group>
