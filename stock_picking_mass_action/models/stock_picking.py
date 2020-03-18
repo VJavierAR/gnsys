@@ -43,10 +43,11 @@ class StockPicking(Model):
     def cliente(self):
         for r in self:
             if(r.partner_id):
-                if(r.partner_id.state_id.code in 'DIF'):
-                    r.tipo='local'
-                else:
-                    r.tipo='foraneo'
+                if(r.partner_id.state_id):
+                    if(r.partner_id.state_id.code in 'DIF'):
+                        r.tipo='local'
+                    else:
+                        r.tipo='foraneo'
 
 
 
