@@ -129,7 +129,6 @@
     </record>
 
 
-
     <record id="view_helpdesk_alerta" model="ir.ui.view">
         <field name="model">helpdesk.alerta</field>
         <field name="arch" type="xml">

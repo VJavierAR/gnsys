@@ -1857,7 +1857,6 @@ class helpdesk_update(models.Model):
             informacion = self.env.cr.fetchall()
             if len(informacion) > 0:
                 message = ('Estas agregando una serie de un ticket ya en proceso. \n Ticket: ' + str(informacion[0][0]) + '\n ')
-                _logger.info('hiooooo22222333333')
 
                 mess= {
                         'title': _('Alerta!!!'),
@@ -1868,7 +1867,9 @@ class helpdesk_update(models.Model):
                 mensajeTitulo = 'Alerta !!!'
                 wiz = self.env['helpdesk.alerta.series'].create({'ticket_id':informacion[0][0], 'mensaje': mensajeCuerpoGlobal})
                 view = self.env.ref('helpdesk_update.view_helpdesk_alerta_series')
-                return {'name': _(mensajeTitulo),
+                _logger.info('hiooooo222223333334543535563')
+                return {
+                'name': _('Alerta !!!'),
                 'type': 'ir.actions.act_window',
                 'view_type': 'form',
                 'view_mode': 'form',
