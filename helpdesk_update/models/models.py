@@ -24,6 +24,7 @@ class helpdesk_update(models.Model):
     x_studio_empresas_relacionadas = fields.Many2one('res.partner', store=True, track_visibility='onchange', string='Localidad')
     historialCuatro = fields.One2many('x_historial_helpdesk','x_id_ticket',string='historial de ticket estados',store=True,track_visibility='onchange')
     documentosTecnico = fields.Many2many('ir.attachment', string="Evidencias")
+    ultimoEvidencia = fields.Many2many('ir.attachment', string="Ultima evidencia",readonly=True,store=False)
     stage_id = fields.Many2one('helpdesk.stage', string='Stage', ondelete='restrict', track_visibility='onchange',group_expand='_read_group_stage_ids',readonly=True,copy=False,index=True, domain="[('team_ids', '=', team_id)]")
     productos = fields.One2many('product.product','id',string='Solicitudes',store=True)
     
@@ -887,7 +888,7 @@ class helpdesk_update(models.Model):
                                                     ,'x_studio_usuariocaptura':self.env.user.name
                                                     ,'fuente':q
                                                     ,'x_studio_rendimiento':int(c.x_studio_rendimiento)/abs(int(c.x_studio_contador_bn_a_capturar)-int(negrot))
-                                                    ,'x_studio_rendimiento_color':int(c.x_studio_rendimiento)/abs(int(c.x_studio_contador_color_a_capturar)-int(colort))   
+                                                   # ,'x_studio_rendimiento_color':int(c.x_studio_rendimiento)/abs(int(c.x_studio_contador_color_a_capturar)-int(colort))   
                                                   })                  
                       self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario':'capturas :' + str('Mono'+str(c.x_studio_contador_bn_a_capturar)+', Color '+str(c.x_studio_contador_color_a_capturar)+', Amarillo '+str(c.x_studio__amarrillo)+', Cian '+str(c.x_studio__cian)+', Negro '+str(c.x_studio__negro)+', Magenta '+str(c.x_studio__magenta)+', % de rendimiento '+str(rr.x_studio_rendimiento))})
                   else :
@@ -916,7 +917,7 @@ class helpdesk_update(models.Model):
                                                     ,'x_studio_usuariocaptura':self.env.user.name
                                                     ,'fuente':q
                                                     ,'x_studio_rendimiento':int(c.x_studio_rendimiento)/abs(int(c.x_studio_contador_bn_a_capturar)-int(negrot))
-                                                    ,'x_studio_rendimiento_color':int(c.x_studio_rendimiento)/abs(int(c.x_studio_contador_color_a_capturar)-int(colort))
+                                                    #,'x_studio_rendimiento_color':int(c.x_studio_rendimiento)/abs(int(c.x_studio_contador_color_a_capturar)-int(colort))
    
                                                   })                  
                       self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario':'capturas :' + str('Mono'+str(c.x_studio_contador_bn_a_capturar)+', Color '+str(c.x_studio_contador_color_a_capturar)+', Amarillo '+str(c.x_studio__amarrillo)+', Cian '+str(c.x_studio__cian)+', Negro '+str(c.x_studio__negro)+', Magenta '+str(c.x_studio__magenta)+', % de rendimiento '+str(rr.x_studio_rendimiento))})
@@ -1266,7 +1267,6 @@ class helpdesk_update(models.Model):
             if len(record)>0:
                 f = record.x_studio_dcas_ultimo
                 raise exceptions.ValidationError("No son vacios : "+str(f))
-    
     
     #@api.one
     #@api.depends('team_id', 'x_studio_responsable_de_equipo')
@@ -1682,11 +1682,11 @@ class helpdesk_update(models.Model):
     
     
     #@api.model
-    #@api.multi
+    @api.multi
     @api.onchange('x_studio_equipo_por_nmero_de_serie')
     #@api.depends('x_studio_equipo_por_nmero_de_serie')
     def actualiza_datos_cliente(self):        
-        
+        _logger.info('hiooooo')
         v = {}
         ids = []
         localidad = []
@@ -1850,41 +1850,36 @@ class helpdesk_update(models.Model):
                     #return res
                     #return {'value': v}
         if int(self.x_studio_tamao_lista) > 0 and self.team_id.id != 8:
-            
+            _logger.info('hiooooo22222')
             query="select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!="+str(self.x_studio_id_ticket)+"  and h.stage_id!=18 and h.team_id!=8 and  h.active='t' and stock_production_lot_id = "+str(self.x_studio_equipo_por_nmero_de_serie[0].id)+" limit 1;"            
             
             self.env.cr.execute(query)                        
             informacion = self.env.cr.fetchall()
             if len(informacion) > 0:
                 message = ('Estas agregando una serie de un ticket ya en proceso. \n Ticket: ' + str(informacion[0][0]) + '\n ')
-                
+
                 mess= {
                         'title': _('Alerta!!!'),
                         'message' : message
                               }
-                return {'warning': mess}
+                #return {'warning': mess}
+                mensajeCuerpoGlobal = 'Estas agregando una serie de un ticket ya en proceso. \n Ticket: ' + str(informacion[0][0]) + '\n '
+                mensajeTitulo = 'Alerta !!!'
+                wiz = self.env['helpdesk.alerta.series'].create({'ticket_id':informacion[0][0], 'mensaje': mensajeCuerpoGlobal})
+                view = self.env.ref('helpdesk_update.view_helpdesk_alerta_series')
+                _logger.info(str(view.id))
+                return {'name': _('Alerta'),'type': 'ir.actions.act_window','view_type': 'form','view_mode': 'form','res_model': 'helpdesk.alerta.series','views': [(view.id, 'form')],'view_id': view.id,'target': 'new','res_id': wiz.id,'context': self.env.context,}
                 """
                 global mensajeCuerpoGlobal
                 mensajeCuerpoGlobal += '\n\nEstas agregando una serie de un ticket ya en proceso. \n Ticket: ' + str(informacion[0][0]) + '\n '
                 mensajeTitulo = 'Alerta !!!'
                 wiz = self.env['helpdesk.alerta.series'].create({'ticket_id': self.id, 'ticket_id_existente': int(informacion[0][0]), 'mensaje': mensajeCuerpoGlobal})
                 view = self.env.ref('helpdesk_update.view_helpdesk_alerta_series')
-                return {
-                        'name': _(mensajeTitulo),
-                        'type': 'ir.actions.act_window',
-                        'view_type': 'form',
-                        'view_mode': 'form',
-                        'res_model': 'helpdesk.alerta.series',
-                        'views': [(view.id, 'form')],
-                        'view_id': view.id,
-                        'target': 'new',
-                        'res_id': wiz.id,
-                        'context': self.env.context,
-                        }
+
                 """
                 #raise exceptions.ValidationError("No es posible registrar número de serie, primero cerrar el ticket con el id  "+str(informacion[0][0]))
         if int(self.x_studio_tamao_lista) > 0 and self.team_id.id == 8:
-            
+            _logger.info('hiooooo')
             queryt="select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!="+str(self.x_studio_id_ticket)+"  and h.stage_id!=18 and h.team_id=8 and  h.active='t' and stock_production_lot_id = "+str(self.x_studio_equipo_por_nmero_de_serie[0].id)+" limit 1;"            
             
             self.env.cr.execute(queryt)                        

@@ -1,20 +1,23 @@
-# Copyright (C) 2017 Creu Blanca
+# Copyright 2009-2018 Noviat.
 # License AGPL-3.0 or later (https://www.gnuorg/licenses/agpl.html).
 
-from odoo.addons.web.controllers import main as report
-from odoo.http import content_disposition, route, request
-from odoo.tools.safe_eval import safe_eval
-
 import json
-import time
+
+from odoo.addons.report_xlsx.controllers.main import ReportController
+from odoo.http import content_disposition, route, request
 
 
-class ReportController(report.ReportController):
-    @route()
+class ReportController(ReportController):
+
+    @route([
+        '/report/<converter>/<reportname>',
+        '/report/<converter>/<reportname>/<docids>',
+    ], type='http', auth='user', website=True)
     def report_routes(self, reportname, docids=None, converter=None, **data):
-        if converter == 'xlsx':
-            report = request.env['ir.actions.report']._get_report_from_name(
-                reportname)
+        report = request.env['ir.actions.report']._get_report_from_name(
+            reportname)
+        if converter == 'xlsx' and not report:
+
             context = dict(request.env.context)
             if docids:
                 docids = [int(i) for i in docids.split(',')]
@@ -28,24 +31,24 @@ class ReportController(report.ReportController):
                 if data['context'].get('lang'):
                     del data['context']['lang']
                 context.update(data['context'])
+            context['report_name'] = reportname
+
             xlsx = report.with_context(context).render_xlsx(
                 docids, data=data
             )[0]
-            report_name = report.report_file
-            if report.print_report_name and not len(docids) > 1:
-                obj = request.env[report.model].browse(docids[0])
-                report_name = safe_eval(report.print_report_name,
-                                        {'object': obj, 'time': time})
+            report_file = context.get('report_file')
+            if not report_file:
+                active_model = context.get('active_model', 'export')
+                report_file = active_model.replace('.', '_')
             xlsxhttpheaders = [
                 ('Content-Type', 'application/vnd.openxmlformats-'
                                  'officedocument.spreadsheetml.sheet'),
                 ('Content-Length', len(xlsx)),
                 (
                     'Content-Disposition',
-                    content_disposition(report_name + '.xlsx')
+                    content_disposition(report_file + '.xlsx')
                 )
             ]
             return request.make_response(xlsx, headers=xlsxhttpheaders)
         return super(ReportController, self).report_routes(
-            reportname, docids, converter, **data
-        )
+            reportname, docids, converter, **data)

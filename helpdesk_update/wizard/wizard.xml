@@ -129,7 +129,6 @@
     </record>
 
 
-
     <record id="view_helpdesk_alerta" model="ir.ui.view">
         <field name="model">helpdesk.alerta</field>
         <field name="arch" type="xml">
@@ -158,7 +157,7 @@
                 </group>
                 <footer>
                     <button name="abrirTicket" string="Abrir ticket existente" type="object" class="oe_highlight"/>
-                    <button special="cancel" string="Cerrar" class="oe_highlight" />
+                    <button special="cancel" string="Continuar" class="oe_highlight" />
                 </footer>
             </form>
         </field>

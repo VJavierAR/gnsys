@@ -63,7 +63,7 @@ class HelpDeskAlertaNumeroDeSerie(TransientModel):
     _description = 'HelpDesk Alerta para series existentes'
     
     ticket_id = fields.Many2one("helpdesk.ticket")
-    ticket_id_existente = fields.Integer(string = 'Ticket existente')
+    #ticket_id_existente = fields.Integer(string = 'Ticket existente')
     mensaje = fields.Text('Mensaje')
 
 
@@ -81,7 +81,7 @@ class HelpDeskAlertaNumeroDeSerie(TransientModel):
                 #'views': [(view.id, 'form')],
                 'view_id': view.id,
                 'target': 'current',
-                'res_id': self.ticket_id_existente,
+                'res_id': self.ticket_id.id,
                 'nodestroy': True
                 }
 
@@ -226,6 +226,7 @@ class HelpDeskContacto(TransientModel):
             if contactoId > 0:
                 mensajeTitulo = "Contacto agregado." 
                 mensajeCuerpo = "Contacto " + str(self.nombreDelContacto) + " agregado a la localidad " + str(self.ticket_id.x_studio_empresas_relacionadas.name)
+                self.ticket_id.localidadContacto=contactoId
                 #raise exceptions.except_orm(_(errorContactoGenerado), _(mensajeContactoGenerado))
             else:
                 mensajeTitulo = "Contacto no agregado"
