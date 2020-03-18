@@ -1267,7 +1267,6 @@ class helpdesk_update(models.Model):
                 f = record.x_studio_dcas_ultimo
                 raise exceptions.ValidationError("No son vacios : "+str(f))
     
-    
     #@api.one
     #@api.depends('team_id', 'x_studio_responsable_de_equipo')
     """
