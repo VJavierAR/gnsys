@@ -418,6 +418,7 @@ class helpdesk_update(models.Model):
                     wiz = self.env['helpdesk.alerta.series'].create({'ticket_id':informacion[0][0], 'mensaje': ''})
                     view = self.env.ref('helpdesk_update.view_helpdesk_alerta_series')
                     if len(informacion) > 0:
+                        _logger.info(str(informacion[0][0]))
                         return {'name': _('Name'),'type': 'ir.actions.act_window','view_type': 'form','view_mode': 'form','res_model': 'helpdesk.alerta.series','views': [(view.id, 'form')],'view_id': view.id,'target': 'current','res_id': wiz.id,}
 
 
