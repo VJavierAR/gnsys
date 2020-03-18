@@ -146,11 +146,6 @@ class contratos(models.Model):
     @api.onchange('cliente')
     def cambiarRazonSocial(self):
         if self.cliente :
-            val=self.env['res.partner']
-            _logger.info('razon social cliente: ' + val)
-
-            
-
             self.razonSocial = self.cliente.razonSocial
             self.direccion = self.cliente.contact_address
             self.ejecutivoDeCuenta = self.cliente.x_studio_ejecutivo
