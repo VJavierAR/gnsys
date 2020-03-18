@@ -185,6 +185,11 @@
         <field name="model">helpdesk.detalle.serie</field>
         <field name="arch" type="xml">
             <form string="Detalle serie">
+                <group class='text-center'>
+                    <h2>
+                        <field name="serie" string='' readonly="1"/>
+                    </h2>
+                </group>
                 <group>
                     <notebook>
                         <page string = 'Tickets'>
