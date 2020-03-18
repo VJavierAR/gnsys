@@ -147,7 +147,7 @@ class contratos(models.Model):
     def cambiarRazonSocial(self):
         if self.cliente :
             #_logger.info('razon social cliente: ' + str(self.cliente.contact_address))
-            self.direccion = self.res.cliente.contact_address
+            self.direccion = self.cliente.contact_address
             self.ejecutivoDeCuenta = self.cliente.x_studio_ejecutivo
             self.vendedor = self.cliente.x_studio_vendedor
 
