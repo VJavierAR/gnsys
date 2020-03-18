@@ -404,35 +404,35 @@ class helpdesk_update(models.Model):
 
         #ticketActualiza = self.env['helpdesk.ticket'].search([('id', '=', self.id)])
         
-        if self.x_studio_id_ticket and int(self.x_studio_tamao_lista) < 2:
-            estadoAntes = str(self.stage_id.name)
-            if self.stage_id.name == 'Pre-ticket' and self.estadoAbierto == False:
-                #ticketActualiza.write({'stage_id': '89'})
-                query = "update helpdesk_ticket set stage_id = 89 where id = " + str(self.x_studio_id_ticket) + ";"
-                ss = self.env.cr.execute(query)
-                self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': "Abierto", 'write_uid':  self.env.user.name})
-                if(self.team_id.id!=8):
-                    _logger.info('gggGGGGGGG'+str(self.x_studio_equipo_por_nmero_de_serie[0].id))
-                    query="select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!="+str(self.x_studio_id_ticket)+"  and h.stage_id!=18 and h.team_id!=8 and  h.active='t' and stock_production_lot_id = "+str(self.x_studio_equipo_por_nmero_de_serie[0].id)+" limit 1;"            
-                    self.env.cr.execute(query)
-                    informacion = self.env.cr.fetchall()
-                    wiz = self.env['helpdesk.alerta.series'].create({'ticket_id':informacion[0][0], 'mensaje': ''})
-                    view = self.env.ref('helpdesk_update.view_helpdesk_alerta_serie2')
-                    if len(informacion) > 0:
-                        _logger.info(str(informacion[0][0]))
-                        return {'name': _('Name'),'type': 'ir.actions.act_window','view_type': 'form','view_mode': 'form','res_model': 'helpdesk.alerta.series','views': [(view.id, 'form')],'view_id': view.id,'target': 'new','res_id': wiz.id,}
+        # if self.x_studio_id_ticket and int(self.x_studio_tamao_lista) < 2:
+        #     estadoAntes = str(self.stage_id.name)
+        if self.stage_id.name == 'Pre-ticket' and self.estadoAbierto == False:
+            #ticketActualiza.write({'stage_id': '89'})
+            query = "update helpdesk_ticket set stage_id = 89 where id = " + str(self.x_studio_id_ticket) + ";"
+            ss = self.env.cr.execute(query)
+            self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': "Abierto", 'write_uid':  self.env.user.name})
+            if(self.team_id.id!=8):
+                _logger.info('gggGGGGGGG'+str(self.x_studio_equipo_por_nmero_de_serie[0].id))
+                query="select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!="+str(self.x_studio_id_ticket)+"  and h.stage_id!=18 and h.team_id!=8 and  h.active='t' and stock_production_lot_id = "+str(self.x_studio_equipo_por_nmero_de_serie[0].id)+" limit 1;"            
+                self.env.cr.execute(query)
+                informacion = self.env.cr.fetchall()
+                wiz = self.env['helpdesk.alerta.series'].create({'ticket_id':informacion[0][0], 'mensaje': ''})
+                view = self.env.ref('helpdesk_update.view_helpdesk_alerta_serie2')
+                if len(informacion) > 0:
+                    _logger.info(str(informacion[0][0]))
+                    return {'name': _('Name'),'type': 'ir.actions.act_window','view_type': 'form','view_mode': 'form','res_model': 'helpdesk.alerta.series','views': [(view.id, 'form')],'view_id': view.id,'target': 'new','res_id': wiz.id,}
 
 
-                #message = ('Estas agregando una serie de un ticket ya en proceso. \n Ticket: ' + str(informacion[0][0]) + '\n ')
-                message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Abierto' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
-                mess= {
-                        'title': _('Estado de ticket actualizado!!!'),
-                        'message' : message
-                    }
-                self.estadoAbierto = True
-                #mensajeCuerpoGlobal = 'Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Abierto' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página."
-                if(self.team_id.id==8):
-                    return {'warning': mess}
+            #message = ('Estas agregando una serie de un ticket ya en proceso. \n Ticket: ' + str(informacion[0][0]) + '\n ')
+            message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Abierto' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
+            mess= {
+                    'title': _('Estado de ticket actualizado!!!'),
+                    'message' : message
+                }
+            self.estadoAbierto = True
+            #mensajeCuerpoGlobal = 'Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Abierto' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página."
+            if(self.team_id.id==8):
+                return {'warning': mess}
     
     
     
