@@ -46,7 +46,7 @@ class HelpDeskComentario(TransientModel):
     def _compute_diagnosticos(self):
         self.diagnostico_id = self.ticket_id.diagnosticos.ids
 
-class HelpDeskDetalleSerie(object):
+class HelpDeskDetalleSerie(TransientModel):
     _name = 'helpdesk.detalle.serie'
     _description = 'HelpDesk Detalle Serie'
     ticket_id = fields.Many2one("helpdesk.ticket")
