@@ -103,6 +103,7 @@ class helpdesk_update(models.Model):
             if estadoLocalidad == 'False':
                 estadoLocalidad = 'No disponible'
 
+            """
             telefonoLocalidad = str(rec.x_studio_telfono_localidad_contacto)
             if telefonoLocalidad == 'False':
                 telefonoLocalidad = 'No disponible'
@@ -113,8 +114,9 @@ class helpdesk_update(models.Model):
             correoElectronicoLocalidad = str(rec.x_studio_email_localidad_contacto)
             if correoElectronicoLocalidad == 'False':
                 correoElectronicoLocalidad = 'No disponible'
-
-            datos = 'Cliente: ' + nombreCliente + ' \nLocalidad: ' + localidad + ' \nLocalidad contacto: ' + contactoDeLocalidad + ' \nEstado de localidad: ' + estadoLocalidad + ' \nTeléfono de localidad: ' + telefonoLocalidad + ' \nMóvil localidad contacto: ' + movilLocalidad + ' \nCorreo electrónico localidad contacto: ' + correoElectronicoLocalidad
+            """
+            #datos = 'Cliente: ' + nombreCliente + ' \nLocalidad: ' + localidad + ' \nLocalidad contacto: ' + contactoDeLocalidad + ' \nEstado de localidad: ' + estadoLocalidad + ' \nTeléfono de localidad: ' + telefonoLocalidad + ' \nMóvil localidad contacto: ' + movilLocalidad + ' \nCorreo electrónico localidad contacto: ' + correoElectronicoLocalidad
+            datos = 'Cliente: ' + nombreCliente + ' \nLocalidad: ' + localidad + ' \nLocalidad contacto: ' + contactoDeLocalidad + ' \nEstado de localidad: ' + estadoLocalidad
 
             rec.datosCliente = datos
 
@@ -2170,6 +2172,24 @@ class helpdesk_update(models.Model):
             'res_id': wiz.id,
             'context': self.env.context,
         }    
+
+
+    @api.multi
+    def detalle_serie_wizard(self):
+        wiz = self.env['helpdesk.detalle.serie'].create({'ticket_id': self.id})
+        view = self.env.ref('helpdesk_update.view_helpdesk_bitacora')
+        return {
+            'name': _('Detalle serie'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'helpdesk.detalle.serie',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            'context': self.env.context,
+        }
 
 class helpdes_diagnostico(models.Model):
     _name = "helpdesk.diagnostico"

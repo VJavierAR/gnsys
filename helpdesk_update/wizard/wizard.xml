@@ -153,7 +153,7 @@
                 <group>
                     <h3>
                         <field name="mensaje" readonly='1'/>
-                    </h3>
+                    </h3> 
                 </group>
                 <footer>
                     <button name="abrirTicket" string="Abrir ticket existente" type="object" class="oe_highlight"/>
@@ -163,4 +163,24 @@
         </field>
     </record>
     
+
+    <record id="view_helpdesk_bitacora" model="ir.ui.view">
+        <field name="model">helpdesk.bitacora</field>
+        <field name="arch" type="xml">
+            <form string="Detalle serie">
+                <group>
+                    <notebook>
+                        <page string = 'Tickets'>
+                            <field name='historicoTickets' />
+                        </page>
+                    </notebook>
+                </group>
+                <footer>
+                    <button special="cancel" string="Cerrar" class="oe_highlight" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
 </odoo>

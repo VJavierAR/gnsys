@@ -16,7 +16,6 @@ class HelpDeskComentario(TransientModel):
     comentario = fields.Text('Comentario')
     evidencia = fields.Many2many('ir.attachment', string="Evidencias")
     
-    
     def creaComentario(self):
         self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.ticket_id.id
                                                 ,'comentario': self.comentario
@@ -41,14 +40,20 @@ class HelpDeskComentario(TransientModel):
             'context': self.env.context,
         }
 
-
-
     def _compute_estadoTicket(self):
         self.estado = self.ticket_id.stage_id.name
 
     def _compute_diagnosticos(self):
         self.diagnostico_id = self.ticket_id.diagnosticos.ids
 
+class HelpDeskDetalleSerie(object):
+    _name = 'helpdesk.detalle.serie'
+    _description = 'HelpDesk Detalle Serie'
+    ticket_id = fields.Many2one("helpdesk.ticket")
+    historicoTickets = fields.One2many('dcas.dcas', 'serie', string = 'Historico de tickets', compute='_compute_historico_tickets')
+
+    def _compute_historico_tickets(self):
+        self.historicoTickets = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_field_Yxv2m
 
 class HelpDeskAlerta(TransientModel):
     _name = 'helpdesk.alerta'
