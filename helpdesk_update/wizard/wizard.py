@@ -51,9 +51,25 @@ class HelpDeskDetalleSerie(TransientModel):
     _description = 'HelpDesk Detalle Serie'
     ticket_id = fields.Many2one("helpdesk.ticket")
     historicoTickets = fields.One2many('dcas.dcas', 'serie', string = 'Historico de tickets', compute='_compute_historico_tickets')
+    lecturas = fields.One2many('dcas.dcas', 'serie', string = 'Lecturas', compute='_compute_lecturas')
+    toner = fields.One2many('dcas.dcas', 'serie', string = 'Tóner', compute='_compute_toner')
+    historicoDeComponentes = fields.One2many('x_studio_historico_de_componentes', 'x_studio_field_MH4DO', string = 'Historico de Componentes', compute='_compute_historico_de_componentes')
+    movimientos = fields.One2many('stock.move.line', 'lot_id', string = 'Movimientos', compute='_compute_movimientos')
 
     def _compute_historico_tickets(self):
         self.historicoTickets = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_field_Yxv2m.ids
+
+    def _compute_lecturas(self):
+        self.lecturas = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_field_PYss4.ids
+
+    def _compute_toner(self):
+        self.toner = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_toner_1.ids
+
+    def _compute_historico_de_componentes(self):
+        self.historicoDeComponentes = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_histrico_de_componentes.ids
+
+    def _compute_movimientos(self):
+        self.historicoDeComponentes = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_move_line.ids
 
 class HelpDeskAlerta(TransientModel):
     _name = 'helpdesk.alerta'

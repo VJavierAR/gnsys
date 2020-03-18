@@ -190,6 +190,18 @@
                         <page string = 'Tickets'>
                             <field name='historicoTickets' />
                         </page>
+                        <page string = 'Lecturas'>
+                            <field name='lecturas' />
+                        </page>
+                        <page string = 'Tóner'>
+                            <field name='toner' />
+                        </page>
+                        <page string = 'Historico de componentes'>
+                            <field name='historicoDeComponentes' />
+                        </page>
+                        <page string = 'Movimientos'>
+                            <field name='movimientos' />
+                        </page>
                     </notebook>
                 </group>
                 <footer>
