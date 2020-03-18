@@ -1858,16 +1858,16 @@ class helpdesk_update(models.Model):
     #                 v['x_studio_equipo_por_nmero_de_serie'] = lista_ids
     #                 self._origin.sudo().write({'x_studio_equipo_por_nmero_de_serie' : lista_ids})
  #18/03/20                   record.x_studio_equipo_por_nmero_de_serie = lista_ids
-                    """
-                    if localidad != []:
-                        srtt="update helpdesk_ticket set x_studio_empresas_relacionadas = " + str(localidad) + " where  id = " + str(idM )+ ";"
-                        _logger.info("update gacho localidad " + srtt)
-                        record.x_studio_empresas_relacionadas = localidad
-                        record['x_studio_empresas_relacionadas'] = localidad
-                        self.env.cr.execute(srtt)
-                        #self.env.cr.commit()
-                        v['x_studio_empresas_relacionadas'] = localidad        
-                    """
+                    
+                    # if localidad != []:
+                    #     srtt="update helpdesk_ticket set x_studio_empresas_relacionadas = " + str(localidad) + " where  id = " + str(idM )+ ";"
+                    #     _logger.info("update gacho localidad " + srtt)
+                    #     record.x_studio_empresas_relacionadas = localidad
+                    #     record['x_studio_empresas_relacionadas'] = localidad
+                    #     self.env.cr.execute(srtt)
+                    #     #self.env.cr.commit()
+                    #     v['x_studio_empresas_relacionadas'] = localidad        
+                    
                     
                     #self._origin.env['helpdesk.ticket'].sudo().write(v)
 
