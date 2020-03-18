@@ -435,15 +435,15 @@ class helpdesk_update(models.Model):
                 'context': self.env.context,}
 
             #message = ('Estas agregando una serie de un ticket ya en proceso. \n Ticket: ' + str(informacion[0][0]) + '\n ')
-            message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Abierto' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
-            mess= {
-                    'title': _('Estado de ticket actualizado!!!'),
-                    'message' : message
-                }
-            self.estadoAbierto = True
+            #message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Abierto' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
+            #mess= {
+            #        'title': _('Estado de ticket actualizado!!!'),
+            #        'message' : message
+            #    }
+            #self.estadoAbierto = True
             #mensajeCuerpoGlobal = 'Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Abierto' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página."
-            if(self.team_id.id==8):
-                return {'warning': mess}
+            #if(self.team_id.id==8):
+            #    return {'warning': mess}
     
     
     
