@@ -55,6 +55,10 @@ class HelpDeskDetalleSerie(TransientModel):
     toner = fields.One2many('dcas.dcas', 'serie', string = 'Tóner', compute='_compute_toner')
     historicoDeComponentes = fields.One2many('x_studio_historico_de_componentes', 'x_studio_field_MH4DO', string = 'Historico de Componentes', compute='_compute_historico_de_componentes')
     movimientos = fields.One2many('stock.move.line', 'lot_id', string = 'Movimientos', compute='_compute_movimientos')
+    serie = fields.Text(string = "Serie", compute = '_compute_serie_nombre')
+
+    def _compute_serie_nombre(self):
+        self.serie = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].name
 
     def _compute_historico_tickets(self):
         self.historicoTickets = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_field_Yxv2m.ids
