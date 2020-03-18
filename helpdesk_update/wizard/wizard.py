@@ -226,6 +226,7 @@ class HelpDeskContacto(TransientModel):
             if contactoId > 0:
                 mensajeTitulo = "Contacto agregado." 
                 mensajeCuerpo = "Contacto " + str(self.nombreDelContacto) + " agregado a la localidad " + str(self.ticket_id.x_studio_empresas_relacionadas.name)
+                self.ticket_id.localidadContacto=contactoId
                 #raise exceptions.except_orm(_(errorContactoGenerado), _(mensajeContactoGenerado))
             else:
                 mensajeTitulo = "Contacto no agregado"
