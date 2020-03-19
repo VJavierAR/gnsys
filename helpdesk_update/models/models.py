@@ -130,15 +130,15 @@ class helpdesk_update(models.Model):
 
 
     def _compute_telefonoLocalidad(self):
-        if self.localidadContacto:
+        if self.localidadContacto.id:
             self.telefonoLocalidadContacto = self.localidadContacto.phone
 
     def _compute_movilLocalidad(self):
-        if self.localidadContacto:
+        if self.localidadContacto.id:
             self.movilLocalidadContacto = self.localidadContacto.mobile
 
     def _compute_correoLocalidad(self):
-        if self.localidadContacto:
+        if self.localidadContacto.id:
             self.correoLocalidadContacto = self.localidadContacto.email
 
 
