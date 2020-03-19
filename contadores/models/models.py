@@ -42,6 +42,16 @@ class dcas(models.Model):
     porcentajeCian=fields.Integer(string='Cian')
     porcentajeMagenta=fields.Integer(string='Magenta')
     fuente=fields.Selection(selection=[('dcas.dcas', 'DCA'),('helpdesk.ticket', 'Mesa'),('stock.production.lot','Equipo'),('tfs.tfs','Tfs')], default='dcas.dcas')  
+    cartuchoNegro=fields.Selection([('a', 'Ninguna serie selecionada')], string='prueba')
+    
+    
+    @api.depends('serie')
+    def get_yearstest():
+    cartuchoNegro=fields.Selection(get_years(), string='prueba')
+    
+    
+    
+    
 
     
 
