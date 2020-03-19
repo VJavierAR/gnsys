@@ -419,7 +419,7 @@ class helpdesk_update(models.Model):
     #         self.env.cr.execute(query)
     #         informacion = self.env.cr.fetchall()
         raise RedirectWarning('mensaje',400,_('Test'))
-        return {'id':24326,'model':'helpdesk.ticket','view_type':'form','menu_id':406}
+        return {'id':'24326','model':'helpdesk.ticket','view_type':'form','menu_id':'406'}
     def otert(self):
         wiz = self.env['helpdesk.alerta.series'].create({'ticket_id':23433, 'mensaje': ''})
         view = self.env.ref('helpdesk_update.view_helpdesk_alerta_serie2')
