@@ -31,7 +31,7 @@
         'views/views.xml',
         'views/templates.xml',
         'wizard/wizard.xml',
-        'static/src/css'
+        'static/src/css/helpdesk_update.css'
     ],
     # only loaded in demonstration mode
     #'demo': [
