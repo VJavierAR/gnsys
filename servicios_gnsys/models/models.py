@@ -149,8 +149,15 @@ class contratos(models.Model):
 
     @api.onchange('cliente')
     def cambiarRazonSocial(self):
+        valores = [('0', 'DOCUMENTO INTEGRAL CORPORATIVO, SA DE CV'), ('1', 'GN SYS CORPORATIVO S.A. DE C.V.'),
+               ('2', 'GRUPO GNSYS SOLUCIONES SA DE CV'), ('3', 'SERVICIOS CORPORATIVOS GENESIS, S.A DE C.V.')]
         if self.cliente :
-            self.razonSocial = self.cliente.razonSocial
+            busca = str(self.cliente.razonSocial)
+            for valor in valores:
+                llave,valor  = valor
+                if(busca == llave):
+                    print(valor)
+                    self.razonSocial = valores
             self.direccion = self.cliente.contact_address
             self.ejecutivoDeCuenta = self.cliente.x_studio_ejecutivo
             self.vendedor = self.cliente.x_studio_vendedor
