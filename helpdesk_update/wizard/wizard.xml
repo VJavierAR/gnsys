@@ -53,13 +53,13 @@
         <field name="arch" type="xml">
             <form string="Agregar contadores">
                 <group>
-                    <group>
+                    <group string="Contadores anteriores">
                         <field name="contadorBNMesa" readonly="1"/>
                         <field name="contadorColorMesa" readonly="1"/>
                         <field name="bnColor" readonly="1"/>
                         
                     </group>
-                    <group>
+                    <group string="Contador actual">
                         <field name="contadorBNActual"/>
                         <field name="contadorColorMesa" />
                     </group>
