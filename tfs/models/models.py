@@ -44,11 +44,13 @@ class tfs(models.Model):
     actualporcentajeCian=fields.Integer(string='Toner Cian %')
     actualporcentajeMagenta=fields.Integer(string='Toner Magenta%')
     evidencias=fields.One2many('tfs.evidencia',string='Evidencias',inverse_name='tfs_id')
-    estado=fields.Selection([('borrador','Borrador'),('xValidar','Por Validar'),('Valido','Valido')])
+    estado=fields.Selection([('borrador','Borrador'),('xValidar','Por Validar'),('Valido','Valido'),('Confirmado','Confirmado')])
     
     @api.multi
     def confirm(self):
         for record in self:
+            if(len(record.evidencias)==0):
+                raise exceptions.UserError("No hay evidencias registradas")                
             if(len(record.inventario)>0):
                 In=self.inventario.search([['product_id.name','=',self.producto.name],['location_id','=',self.almacen.lot_stock_id.id]]).sorted(key='quantity',reverse=True)
                 #for qua in record.inventario:
@@ -58,11 +60,13 @@ class tfs(models.Model):
                     if(self.tipo=='negro'):
                         rendimientoMono=self.actualMonocromatico-self.contadorAnteriorMono
                         porcentaje=(100*rendimientoMono)/self.producto.x_studio_rendimiento_toner if self.producto.x_studio_rendimiento_toner>0 else 1
+                        self.actualporcentajeNegro=porcentaje
                         if(porcentaje<60):
                             self.write({'estado':'xValidar'})
                         else:
                             self.write({'estado':'Valido'})
-                            In[0].write({'quantity':In[0].quantity-1})
+                            self.env['dcas.dcas'].create({'x_studio_toner_'+str(self.tipo).lower():1,'serie':record.serie.id,'contadorMono':record.actualMonocromatico,'contadorColor':record.actualColor,'fuente':'tfs.tfs'})
+                            #In[0].write({'quantity':In[0].quantity-1})
                     else:
                         rendimientoColor=self.actualColor-self.contadorAnteriorColor
                         porcentaje=(100*rendimientoColor)/self.producto.x_studio_rendimiento_toner if self.producto.x_studio_rendimiento_toner>0 else 1
@@ -70,9 +74,9 @@ class tfs(models.Model):
                             self.write({'estado':'xValidar'})
                         else:
                             self.write({'estado':'Valido'})
-                            _logger.info(In[0])
-                            In[0].write({'quantity':In[0].quantity-1})
-                            self.env['dcas.dcas'].create({'serie':record.serie.id,'contadorMono':record.actualMonocromatico,'contadorColor':record.actualColor,'fuente':'tfs.tfs'})
+                            #_logger.info(In[0])
+                            #In[0].write({'quantity':In[0].quantity-1})
+                            self.env['dcas.dcas'].create({'x_studio_toner_'+str(self.tipo).lower():1,'serie':record.serie.id,'contadorMono':record.actualMonocromatico,'contadorColor':record.actualColor,'fuente':'tfs.tfs'})
                 else:
                     raise exceptions.UserError("No existen cantidades en el almacen para el producto " + self.producto.name)
             else:
@@ -81,8 +85,12 @@ class tfs(models.Model):
     def valida(self):
         view = self.env.ref('tfs.view_tfs_ticket')
         wiz = self.env['tfs.ticket'].create({'tfs_ids': [(4, self.id)]})
-        #self.write({'estado':'Valido'})
+        self.write({'estado':'Confirmado'})
         #self.env['dcas.dcas'].create({'serie':self.serie.id,'contadorMono':self.actualMonocromatico,'contadorColor':self.actualColor,'fuente':'tfs.tfs'})
+        In=self.inventario.search([['product_id.name','=',self.producto.name],['location_id','=',self.almacen.lot_stock_id.id]]).sorted(key='quantity',reverse=True)
+        if(len(In)>0):
+            In[0].write({'quantity':In[0].quantity-1})
+
         return {
                 'name': _('Alerta'),
                 'type': 'ir.actions.act_window',
@@ -138,6 +146,15 @@ class tfs(models.Model):
                 record['almacen'] =self.env['stock.warehouse'].search([['x_studio_field_E0H1Z','=',record.localidad.id]]).lot_stock_id.x_studio_almacn_padre
                 record['tipo']=record.producto.x_studio_color
     
+    @api.onchange('tipo')
+    def type(self):
+        for record in self:
+            if(record.tipo):
+                dc=self.env['dcas.dcas'].search([['serie','=',record.serie.id],['fuente','=','tfs.tfs'],['x_studio_toner_'+str(record.tipo).lower(),'=',1]]).sorted(key='create_date',reverse=True)
+                _logger.info('hhhhhhhhhhhhhhhhhh'+str(dc))
+                if(len(dc)>0):
+                    record['contadorAnterior']=dc[0].id 
+
     @api.depends('almacen')
     def cambio(self):
         res={}
@@ -167,15 +184,11 @@ class tfs(models.Model):
                         localidad=move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
                         record['cliente'] = cliente
                         record['localidad'] = localidad
-                        i=1
-            dc=self.env['dcas.dcas'].search([['serie','=',record.serie.id],['fuente','=','tfs.tfs']]).sorted(key='create_date',reverse=True)
-            if(len(dc)>0):
-                record['contadorAnterior']=dc[0].id     
+                        i=1    
             #if record.localidad:
              #   record['almacen'] =self.env['stock.warehouse'].search([['x_studio_field_E0H1Z','=',record.localidad.id]])
             #self.onchange_localidad()
         return res
-
 
 class evidencias(models.Model):
     _name='tfs.evidencia'
