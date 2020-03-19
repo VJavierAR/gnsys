@@ -156,8 +156,7 @@ class contratos(models.Model):
             for valor in valores:
                 llave,valor  = valor
                 if(busca == llave):
-                    print(valor)
-                    self.razonSocial = valores
+                    self.razonSocial = valor
             self.direccion = self.cliente.contact_address
             self.ejecutivoDeCuenta = self.cliente.x_studio_ejecutivo
             self.vendedor = self.cliente.x_studio_vendedor
