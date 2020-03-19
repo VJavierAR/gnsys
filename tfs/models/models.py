@@ -144,7 +144,7 @@ class tfs(models.Model):
         for record in self:
             if record.localidad:
                 record['almacen'] =self.env['stock.warehouse'].search([['x_studio_field_E0H1Z','=',record.localidad.id]]).lot_stock_id.x_studio_almacn_padre
-                record.tipo=record.producto.x_studio_color
+                self.tipo=record.producto.x_studio_color
     
     @api.onchange('tipo')
     def type(self):
