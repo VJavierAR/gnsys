@@ -61,7 +61,7 @@
                     </group>
                     <group string="Contador actual">
                         <field name="contadorBNActual"/>
-                        <field name="contadorColorMesa" />
+                        <field name="contadorColorMesa" attrs='{"invisible": [["bnColor", "=", "B/N"]]}'/>
                     </group>
                 </group>
                 <footer>
