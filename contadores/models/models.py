@@ -45,9 +45,6 @@ class dcas(models.Model):
     cartuchoNegro=fields.Selection([('a', 'Ninguna serie selecionada')], string='prueba')
     
     
-    @api.onchange('serie')
-    def get_yearstest():
-        cartuchoNegro=fields.Selection(get_years(), string='prueba')
     
     
     
