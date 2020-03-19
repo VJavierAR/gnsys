@@ -30,7 +30,7 @@ class tfs(models.Model):
     serie=fields.Many2one('stock.production.lot',string='Numero de Serie',store='True')
     domi=fields.Integer()
     producto=fields.Many2one('product.product',string='Toner')
-    contadorAnterior=fields.Many2one('dcas.dcas',string='Anterior',compute='ultimoContador',store=True)
+    contadorAnterior=fields.Many2one('dcas.dcas',string='Anterior',compute='type',store=True)
     contadorAnteriorMono=fields.Integer(related='contadorAnterior.contadorMono',string='Monocromatico',store=True)
     contadorAnteriorColor=fields.Integer(related='contadorAnterior.contadorColor',string='Color',store=True)
     porcentajeAnteriorNegro=fields.Integer(related='contadorAnterior.porcentajeNegro',string='Negro',store=True)
@@ -146,7 +146,7 @@ class tfs(models.Model):
                 record['almacen'] =self.env['stock.warehouse'].search([['x_studio_field_E0H1Z','=',record.localidad.id]]).lot_stock_id.x_studio_almacn_padre
                 self.tipo=record.producto.x_studio_color
     
-    @api.onchange('tipo')
+    @api.depends('tipo')
     def type(self):
         for record in self:
             if(record.tipo):
@@ -167,7 +167,7 @@ class tfs(models.Model):
                 #res['domain'] = {'serie': [('x_studio_ubicacion_id', '=', record.almacen.lot_stock_id.id)]}
         #return res
     @api.multi
-    @api.depends('serie')
+    @api.onchange('serie')
     def ultimoContador(self):
         i=0
         res={}
