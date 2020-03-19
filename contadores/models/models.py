@@ -47,7 +47,7 @@ class dcas(models.Model):
     
     @api.depends('serie')
     def get_yearstest():
-    cartuchoNegro=fields.Selection(get_years(), string='prueba')
+        cartuchoNegro=fields.Selection(get_years(), string='prueba')
     
     
     
