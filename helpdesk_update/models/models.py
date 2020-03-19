@@ -99,6 +99,7 @@ class helpdesk_update(models.Model):
         if ticket.user_id:
             ticket.assign_date = ticket.create_date
             ticket.assign_hours = 0
+        _logger.info("id Ticket: " + str(ticket.id))
         ticket.x_studio_id_ticket = ticket.id
         return ticket
 
