@@ -36,12 +36,20 @@ class dcas(models.Model):
     contadorColor=fields.Integer(string='Contador Color')
     contadorMono=fields.Integer(string='Contador Monocromatico')
     contador_id=fields.Many2one('contadores.contadores')
+    #tickete=fields.Many2one('seriesDCA')
     dominio=fields.Integer()
     porcentajeNegro=fields.Integer(string='Negro')
     porcentajeAmarillo=fields.Integer(string='Amarillo')
     porcentajeCian=fields.Integer(string='Cian')
     porcentajeMagenta=fields.Integer(string='Magenta')
     fuente=fields.Selection(selection=[('dcas.dcas', 'DCA'),('helpdesk.ticket', 'Mesa'),('stock.production.lot','Equipo'),('tfs.tfs','Tfs')], default='dcas.dcas')  
+    cartuchoNegro=fields.Selection([('a', 'Ninguna serie selecionada')], string='prueba')
+    
+    
+    
+    
+    
+    
 
     
 
