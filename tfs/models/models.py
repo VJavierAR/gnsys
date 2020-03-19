@@ -149,10 +149,11 @@ class tfs(models.Model):
     @api.onchange('tipo')
     def type(self):
         for record in self:
-            dc=self.env['dcas.dcas'].search([['serie','=',record.serie.id],['fuente','=','tfs.tfs'],['x_studio_toner_'+str(record.tipo).lower(),'=',1]]).sorted(key='create_date',reverse=True)
-            _logger.info(str(dc))
-            if(len(dc)>0):
-                record['contadorAnterior']=dc[0].id 
+            if(record.tipo):
+                dc=self.env['dcas.dcas'].search([['serie','=',record.serie.id],['fuente','=','tfs.tfs'],['x_studio_toner_'+str(record.tipo).lower(),'=',1]]).sorted(key='create_date',reverse=True)
+                _logger.info('hhhhhhhhhhhhhhhhhh'+str(dc))
+                if(len(dc)>0):
+                    record['contadorAnterior']=dc[0].id 
 
     @api.depends('almacen')
     def cambio(self):
