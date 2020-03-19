@@ -64,11 +64,11 @@ class helpdesk_update(models.Model):
     
     
     
-    descripcion = fields.Text(string = 'Descripción del reporte', compute = '_compute_descripcion')
+    name = fields.Text(string = 'Descripción del reporte')
 
     #@api.one
-    def _compute_descripcion():
-        self.descripcion = self.name
+    #def _compute_descripcion():
+    #    self.descripcion = self.name
 
     
 
