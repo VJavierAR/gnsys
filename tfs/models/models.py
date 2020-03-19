@@ -57,7 +57,7 @@ class tfs(models.Model):
                 #    qua.product_id.id==self.producto.id
                 #    if(qua.product_id.id==self.producto.id):
                 if(len(In)>0 and In[0].quantity>0):
-                    if(self.tipo=='negro'):
+                    if(self.tipo=='Negro'):
                         rendimientoMono=self.actualMonocromatico-self.contadorAnteriorMono
                         porcentaje=(100*rendimientoMono)/self.producto.x_studio_rendimiento_toner if self.producto.x_studio_rendimiento_toner>0 else 1
                         _logger.info('porcentaje'+str(porcentaje))
@@ -82,6 +82,9 @@ class tfs(models.Model):
                     raise exceptions.UserError("No existen cantidades en el almacen para el producto " + self.producto.name)
             else:
                     raise exceptions.UserError("No hay inventario en la ubicación selecionada")
+    def test(self):
+        i=self.env['tfs.tfs'].search([[]])
+        raise RedirectWarning('mensaje',i[0],_('Test'))
     @api.multi
     def valida(self):
         view = self.env.ref('tfs.view_tfs_ticket')
