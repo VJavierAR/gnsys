@@ -37,6 +37,7 @@ class dcas(models.Model):
     contadorMono=fields.Integer(string='Contador Monocromatico')
     contador_id=fields.Many2one('contadores.contadores')
     #tickete=fields.Many2one('seriesDCA')
+    ticketRelacion = fields.Many2one('helpdesk.ticket', string = 'Ticket realcionado a al contador')
     dominio=fields.Integer()
     porcentajeNegro=fields.Integer(string='Negro')
     porcentajeAmarillo=fields.Integer(string='Amarillo')
