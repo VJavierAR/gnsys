@@ -91,6 +91,19 @@ class helpdesk_update(models.Model):
     telefonoLocalidadContacto = fields.Text(string = 'Telefono de localidad', compute = '_compute_telefonoLocalidad')
     movilLocalidadContacto = fields.Text(string = 'Movil de localidad', compute = '_compute_movilLocalidad')
     correoLocalidadContacto = fields.Text(string = 'Correo de localidad', compute = '_compute_correoLocalidad')
+
+    def _compute_telefonoLocalidad(self):
+        if self.localidadContacto == []:
+            self.telefonoLocalidadContacto = self.localidadContacto.phone
+
+    def _compute_movilLocalidad(self):
+        if self.localidadContacto == []:
+            self.movilLocalidadContacto = self.localidadContacto.mobile
+
+    def _compute_correoLocalidad(self):
+        if self.localidadContacto == []:
+            self.correoLocalidadContacto = self.localidadContacto.email
+
     datosCliente = fields.Text(string="Cliente datos", compute='_compute_datosCliente')
 
     def _compute_datosCliente(self):
@@ -129,17 +142,7 @@ class helpdesk_update(models.Model):
             rec.datosCliente = datos
 
 
-    def _compute_telefonoLocalidad(self):
-        if self.localidadContacto.id:
-            self.telefonoLocalidadContacto = self.localidadContacto.phone
-
-    def _compute_movilLocalidad(self):
-        if self.localidadContacto.id:
-            self.movilLocalidadContacto = self.localidadContacto.mobile
-
-    def _compute_correoLocalidad(self):
-        if self.localidadContacto.id:
-            self.correoLocalidadContacto = self.localidadContacto.email
+    
 
 
     #ticketRelacion = fields.Char(string = "Ticket", related = self)
