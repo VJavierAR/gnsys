@@ -420,8 +420,9 @@ class helpdesk_update(models.Model):
                 return {'warning': mess}
                 #USAR----
                 #raise RedirectWarning('mensaje',400,_('Test'))
+                #return objeto
                 #return {'id':'24326','model':'helpdesk.ticket','view_type':'form','menu_id':'406'}
-    
+
     
     
     
