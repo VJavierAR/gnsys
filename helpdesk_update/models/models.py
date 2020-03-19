@@ -2212,7 +2212,25 @@ class helpdesk_update(models.Model):
             'target': 'new',
             'res_id': wiz.id,
             'context': self.env.context,
-        }    
+        }
+
+    @api.multi
+    def detalle_serie_wizard(self):
+        wiz = self.env['helpdesk.detalle.serie'].create({'ticket_id':self.id})
+        view = self.env.ref('helpdesk_update.view_helpdesk_bitacora')
+        return {
+            'name': _('Bitacora'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'helpdesk.detalle.serie',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            'context': self.env.context,
+        }        
+
 
 class helpdes_diagnostico(models.Model):
     _name = "helpdesk.diagnostico"
