@@ -57,9 +57,8 @@ class helpdesk_update(models.Model):
     
     idLocalidadAyuda = fields.Integer(compute='_compute_id_localidad',string='Id Localidad Ayuda', store=False) 
     user_id = fields.Many2one('res.users','Ejecutivo', default=lambda self: self.env.user)
-    
+    ultimoEvidencia = fields.Many2many('ir.attachment', string="Ultima evidencia",readonly=True,store=False)    
     cambiarDatosClienteCheck = fields.Boolean(string="Editar cliente", default=False)
-    
     
 
     def open_to_form_view(self):
