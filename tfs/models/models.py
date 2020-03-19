@@ -60,6 +60,7 @@ class tfs(models.Model):
                     if(self.tipo=='negro'):
                         rendimientoMono=self.actualMonocromatico-self.contadorAnteriorMono
                         porcentaje=(100*rendimientoMono)/self.producto.x_studio_rendimiento_toner if self.producto.x_studio_rendimiento_toner>0 else 1
+                        _logger.info(str(porcentaje))
                         self.actualporcentajeNegro=porcentaje
                         if(porcentaje<60):
                             self.write({'estado':'xValidar'})
