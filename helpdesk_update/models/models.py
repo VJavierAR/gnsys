@@ -67,7 +67,44 @@ class helpdesk_update(models.Model):
     name = fields.Text(string = 'Descripción del reporte', default = lambda self: self._compute_descripcion())
 
     @api.model
+    def create(self, vals):
+        if vals.get('team_id'):
+            vals.update(item for item in self._onchange_team_get_values(self.env['helpdesk.team'].browse(vals['team_id'])).items() if item[0] not in vals)
+        # Fill in missing partner information in case of a programmatic creation
+        if 'partner_id' in vals:
+            partner = self.env['res.partner'].browse(vals['partner_id'])
+            if 'partner_name' not in vals:
+                vals['partner_name'] = partner.name
+            if 'partner_email' not in vals:
+                vals['partner_email'] = partner.email
+        # Manually create a partner now since 'generate_recipients' doesn't keep the name. This is
+        # to avoid intrusive changes in the 'mail' module
+        if 'partner_name' in vals and 'partner_email' in vals and 'partner_id' not in vals:
+            try:
+                vals['partner_id'] = self.env['res.partner'].find_or_create(
+                    tools.formataddr((vals['partner_name'], vals['partner_email']))
+                )
+            except UnicodeEncodeError:
+                # 'formataddr' doesn't support non-ascii characters in email. Therefore, we fall
+                # back on a simple partner creation.
+                vals['partner_id'] = self.env['res.partner'].create({
+                    'name': vals['partner_name'],
+                    'email': vals['partner_email'],
+                }).id
+
+        # context: no_log, because subtype already handle this
+        ticket = super(HelpdeskTicket, self.with_context(mail_create_nolog=True)).create(vals)
+        if ticket.partner_id:
+            ticket.message_subscribe(partner_ids=ticket.partner_id.ids)
+        if ticket.user_id:
+            ticket.assign_date = ticket.create_date
+            ticket.assign_hours = 0
+        ticket.x_studio_id_ticket = ticket.id
+        return ticket
+
+    @api.model
     def _compute_descripcion(self):
+
         return 'Ticket ' + str(self.id)
 
     
