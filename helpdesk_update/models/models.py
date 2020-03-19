@@ -62,24 +62,25 @@ class helpdesk_update(models.Model):
     ultimoEvidencia = fields.Many2many('ir.attachment', string="Ultima evidencia",readonly=True,store=False)    
     cambiarDatosClienteCheck = fields.Boolean(string="Editar cliente", default=False)
     
-    
-    
-    name = fields.Text(string = 'Descripción del reporte', default = lambda self: self._compute_descripcion())
+    #name = fields.Text(string = 'Descripción del reporte', default = lambda self: self._compute_descripcion())
+    name = fields.Text(string = 'Descripción del reporte')
 
     @api.model
     def create(self, vals):
         _logger.info("self.id: " + str(self.id))
         _logger.info("vals: " + str(vals))
+        vals['name'] = self.env['ir.sequence'].next_by_code('helpdesk_name')
         ticket = super(helpdesk_update, self).create(vals)
         _logger.info("id Ticket: " + str(ticket.id))
         ticket.x_studio_id_ticket = ticket.id
         return ticket
 
+    """
     @api.model
     def _compute_descripcion(self):
 
         return 'Ticket ' + str(self.x_studio_id_ticket)
-
+    """
     
 
     def open_to_form_view(self):
@@ -444,7 +445,8 @@ class helpdesk_update(models.Model):
     @api.multi
     @api.onchange('x_studio_equipo_por_nmero_de_serie')
     def abierto(self):
-
+        self.x_studio_id_ticket = self.env['helpdesk.ticket'].search([['name', '=', self.name]]).id
+        _logger.info("id ticket search: " + str(self.x_studio_id_ticket))
         #ticketActualiza = self.env['helpdesk.ticket'].search([('id', '=', self.id)])
         
         if self.x_studio_id_ticket and int(self.x_studio_tamao_lista) < 2:
