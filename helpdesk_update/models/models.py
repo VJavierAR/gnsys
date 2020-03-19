@@ -68,6 +68,8 @@ class helpdesk_update(models.Model):
 
     @api.model
     def create(self, vals):
+        _logger.info("self.id: " + str(self.id))
+        _logger.info("vals: " + str(vals))
         ticket = super(helpdesk_update, self).create(vals)
         _logger.info("id Ticket: " + str(ticket.id))
         ticket.x_studio_id_ticket = ticket.id
@@ -76,7 +78,7 @@ class helpdesk_update(models.Model):
     @api.model
     def _compute_descripcion(self):
 
-        return 'Ticket ' + str(self.id)
+        return 'Ticket ' + str(self.x_studio_id_ticket)
 
     
 
