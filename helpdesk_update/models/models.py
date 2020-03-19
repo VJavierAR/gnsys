@@ -24,7 +24,6 @@ class helpdesk_update(models.Model):
     x_studio_empresas_relacionadas = fields.Many2one('res.partner', store=True, track_visibility='onchange', string='Localidad')
     historialCuatro = fields.One2many('x_historial_helpdesk','x_id_ticket',string='historial de ticket estados',store=True,track_visibility='onchange')
     documentosTecnico = fields.Many2many('ir.attachment', string="Evidencias")
-    ultimoEvidencia = fields.Many2many('ir.attachment', string="Ultima evidencia",readonly=True,store=False)
     stage_id = fields.Many2one('helpdesk.stage', string='Stage', ondelete='restrict', track_visibility='onchange',group_expand='_read_group_stage_ids',readonly=True,copy=False,index=True, domain="[('team_ids', '=', team_id)]")
     productos = fields.One2many('product.product','id',string='Solicitudes',store=True)
     
@@ -103,7 +102,6 @@ class helpdesk_update(models.Model):
             if estadoLocalidad == 'False':
                 estadoLocalidad = 'No disponible'
 
-            """
             telefonoLocalidad = str(rec.x_studio_telfono_localidad_contacto)
             if telefonoLocalidad == 'False':
                 telefonoLocalidad = 'No disponible'
@@ -114,9 +112,8 @@ class helpdesk_update(models.Model):
             correoElectronicoLocalidad = str(rec.x_studio_email_localidad_contacto)
             if correoElectronicoLocalidad == 'False':
                 correoElectronicoLocalidad = 'No disponible'
-            """
-            #datos = 'Cliente: ' + nombreCliente + ' \nLocalidad: ' + localidad + ' \nLocalidad contacto: ' + contactoDeLocalidad + ' \nEstado de localidad: ' + estadoLocalidad + ' \nTeléfono de localidad: ' + telefonoLocalidad + ' \nMóvil localidad contacto: ' + movilLocalidad + ' \nCorreo electrónico localidad contacto: ' + correoElectronicoLocalidad
-            datos = 'Cliente: ' + nombreCliente + ' \nLocalidad: ' + localidad + ' \nLocalidad contacto: ' + contactoDeLocalidad + ' \nEstado de localidad: ' + estadoLocalidad
+
+            datos = 'Cliente: ' + nombreCliente + ' \nLocalidad: ' + localidad + ' \nLocalidad contacto: ' + contactoDeLocalidad + ' \nEstado de localidad: ' + estadoLocalidad + ' \nTeléfono de localidad: ' + telefonoLocalidad + ' \nMóvil localidad contacto: ' + movilLocalidad + ' \nCorreo electrónico localidad contacto: ' + correoElectronicoLocalidad
 
             rec.datosCliente = datos
 
@@ -406,47 +403,24 @@ class helpdesk_update(models.Model):
 
         #ticketActualiza = self.env['helpdesk.ticket'].search([('id', '=', self.id)])
         
-        # if self.x_studio_id_ticket and int(self.x_studio_tamao_lista) < 2:
-        #     estadoAntes = str(self.stage_id.name)
-    # if self.stage_id.name == 'Pre-ticket' and len(self.x_studio_equipo_por_nmero_de_serie)>0 and self.estadoAbierto == False:
-    #     #ticketActualiza.write({'stage_id': '89'})
-    #     query = "update helpdesk_ticket set stage_id = 89 where id = " + str(self.x_studio_id_ticket) + ";"
-    #     ss = self.env.cr.execute(query)
-    #     self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': "Abierto", 'write_uid':  self.env.user.name})
-    #     if(self.team_id.id!=8):
-    #         _logger.info('gggGGGGGGG'+str(self.x_studio_equipo_por_nmero_de_serie[0].id))
-    #         query="select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!="+str(self.x_studio_id_ticket)+"  and h.stage_id!=18 and h.team_id!=8 and  h.active='t' and stock_production_lot_id = "+str(self.x_studio_equipo_por_nmero_de_serie[0].id)+" limit 1;"            
-    #         self.env.cr.execute(query)
-    #         informacion = self.env.cr.fetchall()
-        raise RedirectWarning('mensaje',400,_('Test'))
-        return {'id':'24326','model':'helpdesk.ticket','view_type':'form','menu_id':'406'}
-    def otert(self):
-        wiz = self.env['helpdesk.alerta.series'].create({'ticket_id':23433, 'mensaje': ''})
-        view = self.env.ref('helpdesk_update.view_helpdesk_alerta_serie2')
-    #         if len(informacion) > 0:
-    #             _logger.info(str(informacion[0][0]))
-    #             #return {'name': _('Name'),'type': 'ir.actions.act_window','view_type': 'form','view_mode': 'form','res_model': 'helpdesk.alerta.series','views': [(view.id, 'form')],'view_id': view.id,'target': 'new','res_id': wiz.id,}
-        return {
-                'type': 'ir.actions.act_window',
-                'view_type': 'form',
-                'view_mode': 'form',
-                'res_model': 'stock.overprocessed.transfer',
-                'views': [(view.id, 'form')],
-                'view_id': view.id,
-                'target': 'new',
-                'res_id': wiz.id,
-                'context': self.env.context,}
-
-            #message = ('Estas agregando una serie de un ticket ya en proceso. \n Ticket: ' + str(informacion[0][0]) + '\n ')
-            #message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Abierto' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
-            #mess= {
-            #        'title': _('Estado de ticket actualizado!!!'),
-            #        'message' : message
-            #    }
-            #self.estadoAbierto = True
-            #mensajeCuerpoGlobal = 'Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Abierto' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página."
-            #if(self.team_id.id==8):
-            #    return {'warning': mess}
+        if self.x_studio_id_ticket and int(self.x_studio_tamao_lista) < 2:
+            estadoAntes = str(self.stage_id.name)
+            if self.stage_id.name == 'Pre-ticket' and self.x_studio_equipo_por_nmero_de_serie.id != False and self.estadoAbierto == False:
+                #ticketActualiza.write({'stage_id': '89'})
+                query = "update helpdesk_ticket set stage_id = 89 where id = " + str(self.x_studio_id_ticket) + ";"
+                ss = self.env.cr.execute(query)
+                self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': "Abierto", 'write_uid':  self.env.user.name})
+                message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Abierto' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
+                mess= {
+                        'title': _('Estado de ticket actualizado!!!'),
+                        'message' : message
+                    }
+                self.estadoAbierto = True
+                #mensajeCuerpoGlobal = 'Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Abierto' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página."
+                return {'warning': mess}
+                #USAR----
+                #raise RedirectWarning('mensaje',400,_('Test'))
+                #return {'id':'24326','model':'helpdesk.ticket','view_type':'form','menu_id':'406'}
     
     
     
@@ -916,7 +890,7 @@ class helpdesk_update(models.Model):
                                                     ,'x_studio_usuariocaptura':self.env.user.name
                                                     ,'fuente':q
                                                     ,'x_studio_rendimiento':int(c.x_studio_rendimiento)/abs(int(c.x_studio_contador_bn_a_capturar)-int(negrot))
-                                                   # ,'x_studio_rendimiento_color':int(c.x_studio_rendimiento)/abs(int(c.x_studio_contador_color_a_capturar)-int(colort))   
+                                                    ,'x_studio_rendimiento_color':int(c.x_studio_rendimiento)/abs(int(c.x_studio_contador_color_a_capturar)-int(colort))   
                                                   })                  
                       self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario':'capturas :' + str('Mono'+str(c.x_studio_contador_bn_a_capturar)+', Color '+str(c.x_studio_contador_color_a_capturar)+', Amarillo '+str(c.x_studio__amarrillo)+', Cian '+str(c.x_studio__cian)+', Negro '+str(c.x_studio__negro)+', Magenta '+str(c.x_studio__magenta)+', % de rendimiento '+str(rr.x_studio_rendimiento))})
                   else :
@@ -945,7 +919,7 @@ class helpdesk_update(models.Model):
                                                     ,'x_studio_usuariocaptura':self.env.user.name
                                                     ,'fuente':q
                                                     ,'x_studio_rendimiento':int(c.x_studio_rendimiento)/abs(int(c.x_studio_contador_bn_a_capturar)-int(negrot))
-                                                    #,'x_studio_rendimiento_color':int(c.x_studio_rendimiento)/abs(int(c.x_studio_contador_color_a_capturar)-int(colort))
+                                                    ,'x_studio_rendimiento_color':int(c.x_studio_rendimiento)/abs(int(c.x_studio_contador_color_a_capturar)-int(colort))
    
                                                   })                  
                       self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario':'capturas :' + str('Mono'+str(c.x_studio_contador_bn_a_capturar)+', Color '+str(c.x_studio_contador_color_a_capturar)+', Amarillo '+str(c.x_studio__amarrillo)+', Cian '+str(c.x_studio__cian)+', Negro '+str(c.x_studio__negro)+', Magenta '+str(c.x_studio__magenta)+', % de rendimiento '+str(rr.x_studio_rendimiento))})
@@ -1295,6 +1269,7 @@ class helpdesk_update(models.Model):
             if len(record)>0:
                 f = record.x_studio_dcas_ultimo
                 raise exceptions.ValidationError("No son vacios : "+str(f))
+    
     
     #@api.one
     #@api.depends('team_id', 'x_studio_responsable_de_equipo')
@@ -1710,240 +1685,245 @@ class helpdesk_update(models.Model):
     
     
     #@api.model
- #18/03/20   @api.multi
-    # @api.onchange('x_studio_equipo_por_nmero_de_serie')
-    # #@api.depends('x_studio_equipo_por_nmero_de_serie')
-    # def actualiza_datos_cliente(self):        
-    #     _logger.info('hiooooo')
-    #     v = {}
-    #     ids = []
-    #     localidad = []
-    #     for record in self:
-    #         cantidad_numeros_serie = record.x_studio_tamao_lista
-    #         if record.team_id.id!=8:
-    #             if int(cantidad_numeros_serie) < 2 :
-    #                 for numeros_serie in record.x_studio_equipo_por_nmero_de_serie:
-    #                     ids.append(numeros_serie.id)
+    #@api.multi
+    @api.onchange('x_studio_equipo_por_nmero_de_serie')
+    #@api.depends('x_studio_equipo_por_nmero_de_serie')
+    def actualiza_datos_cliente(self):        
+        
+        v = {}
+        ids = []
+        localidad = []
+        for record in self:
+            cantidad_numeros_serie = record.x_studio_tamao_lista
+            if record.team_id.id!=8:
+                if int(cantidad_numeros_serie) < 2 :
+                    for numeros_serie in record.x_studio_equipo_por_nmero_de_serie:
+                        ids.append(numeros_serie.id)
                         
-    #                     for move_line in numeros_serie.x_studio_move_line:
+                        for move_line in numeros_serie.x_studio_move_line:
                             
-    #                         cliente = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
-    #                         self._origin.sudo().write({'partner_id' : cliente})
-    #                         record.partner_id = cliente
-    #                         idM=self._origin.id
+                            cliente = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
+                            self._origin.sudo().write({'partner_id' : cliente})
+                            record.partner_id = cliente
+                            idM=self._origin.id
                             
-    #                         if cliente == []:
-    #                             self.env.cr.execute("update helpdesk_ticket set partner_id = " + cliente + "  where  id = " + idM + ";")
-    #                         v['partner_id'] = cliente
-    #                         cliente_telefono = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.phone
-    #                         self._origin.sudo().write({'x_studio_telefono' : cliente_telefono})
-    #                         record.x_studio_telefono = cliente_telefono
-    #                         if cliente_telefono != []:
-    #                             srtt="update helpdesk_ticket set x_studio_telefono = '" + str(cliente_telefono) + "' where  id = " + str(idM) + ";"                                
-    #                         v['x_studio_telefono'] = cliente_telefono
-    #                         cliente_movil = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.mobile
-    #                         self._origin.sudo().write({'x_studio_movil' : cliente_movil})
-    #                         record.x_studio_movil = cliente_movil
-    #                         if cliente_movil == []:
-    #                             self.env.cr.execute("update helpdesk_ticket set x_studio_movil = '" + str(cliente_movil) + "' where  id = " +idM + ";")
-    #                         v['x_studio_movil'] = cliente_movil
+                            if cliente == []:
+                                self.env.cr.execute("update helpdesk_ticket set partner_id = " + cliente + "  where  id = " + idM + ";")
+                            v['partner_id'] = cliente
+                            cliente_telefono = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.phone
+                            self._origin.sudo().write({'x_studio_telefono' : cliente_telefono})
+                            record.x_studio_telefono = cliente_telefono
+                            if cliente_telefono != []:
+                                srtt="update helpdesk_ticket set x_studio_telefono = '" + str(cliente_telefono) + "' where  id = " + str(idM) + ";"                                
+                            v['x_studio_telefono'] = cliente_telefono
+                            cliente_movil = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.mobile
+                            self._origin.sudo().write({'x_studio_movil' : cliente_movil})
+                            record.x_studio_movil = cliente_movil
+                            if cliente_movil == []:
+                                self.env.cr.execute("update helpdesk_ticket set x_studio_movil = '" + str(cliente_movil) + "' where  id = " +idM + ";")
+                            v['x_studio_movil'] = cliente_movil
                             
-    #                         cliente_nivel = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.x_studio_nivel_del_cliente
-    #                         self._origin.sudo().write({'x_studio_nivel_del_cliente' : cliente_nivel})
-    #                         record.x_studio_nivel_del_cliente = cliente_nivel
-    #                         if cliente_nivel == []:
-    #                             self.env.cr.execute("update helpdesk_ticket set x_studio_nivel_del_cliente = '" + str(cliente_nivel) + "' where  id = " + idM + ";")
-    #                         v['x_studio_nivel_del_cliente'] = cliente_nivel
+                            cliente_nivel = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.x_studio_nivel_del_cliente
+                            self._origin.sudo().write({'x_studio_nivel_del_cliente' : cliente_nivel})
+                            record.x_studio_nivel_del_cliente = cliente_nivel
+                            if cliente_nivel == []:
+                                self.env.cr.execute("update helpdesk_ticket set x_studio_nivel_del_cliente = '" + str(cliente_nivel) + "' where  id = " + idM + ";")
+                            v['x_studio_nivel_del_cliente'] = cliente_nivel
 
 
-    #                         localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
+                            localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
 
-    #                         self._origin.sudo().write({'x_studio_empresas_relacionadas' : localidad})
-    #                         record.x_studio_empresas_relacionadas = localidad
+                            self._origin.sudo().write({'x_studio_empresas_relacionadas' : localidad})
+                            record.x_studio_empresas_relacionadas = localidad
 
-    #                         if record.x_studio_empresas_relacionadas.id != False:
-    #                             self.env.cr.execute("select * from res_partner where id = " + str(record.x_studio_empresas_relacionadas.id) + ";")
-    #                             localidad_tempo = self.env.cr.fetchall()
-    #                             if str(localidad_tempo[0][80]) != 'None':
-    #                                 record.x_studio_field_29UYL = str(localidad_tempo[0][80])
+                            if record.x_studio_empresas_relacionadas.id != False:
+                                self.env.cr.execute("select * from res_partner where id = " + str(record.x_studio_empresas_relacionadas.id) + ";")
+                                localidad_tempo = self.env.cr.fetchall()
+                                if str(localidad_tempo[0][80]) != 'None':
+                                    record.x_studio_field_29UYL = str(localidad_tempo[0][80])
 
-    #                         #self._origin.sudo().write({'x_studio_field_6furK' : self._origin.sudo().write({'x_studio_field_6furK' : move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.x_studio_field_SqU5B})})
-    #                     lista_ids = []
-    #                     for id in ids:
-    #                         lista_ids.append((4,id))
+                            #self._origin.sudo().write({'x_studio_field_6furK' : self._origin.sudo().write({'x_studio_field_6furK' : move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.x_studio_field_SqU5B})})
+                        lista_ids = []
+                        for id in ids:
+                            lista_ids.append((4,id))
                         
-    #                     v['x_studio_equipo_por_nmero_de_serie'] = lista_ids
-    #                     self._origin.sudo().write({'x_studio_equipo_por_nmero_de_serie' : lista_ids})
-    #                     record.x_studio_equipo_por_nmero_de_serie = lista_ids
-    #             else:
-    #                 raise exceptions.ValidationError("No es posible registrar más de un número de serie")
-    #         if record.team_id.id==8:
-    #             _my_object = self.env['helpdesk.ticket']
-    #             #v['x_studio_equipo_por_nmero_de_serie'] = {record.x_studio_equipo_por_nmero_de_serie.id}
+                        v['x_studio_equipo_por_nmero_de_serie'] = lista_ids
+                        self._origin.sudo().write({'x_studio_equipo_por_nmero_de_serie' : lista_ids})
+                        record.x_studio_equipo_por_nmero_de_serie = lista_ids
+                else:
+                    raise exceptions.ValidationError("No es posible registrar más de un número de serie")
+            if record.team_id.id==8:
+                _my_object = self.env['helpdesk.ticket']
+                #v['x_studio_equipo_por_nmero_de_serie'] = {record.x_studio_equipo_por_nmero_de_serie.id}
 
 
-    #             #_logger.info('record_feliz : ' + str(record.x_studio_equipo_por_nmero_de_serie.id))
-    #             #ids.append(record.x_studio_equipo_por_nmero_de_serie.id)
+                #_logger.info('record_feliz : ' + str(record.x_studio_equipo_por_nmero_de_serie.id))
+                #ids.append(record.x_studio_equipo_por_nmero_de_serie.id)
 
-    #             #record['x_studio_equipo_por_nmero_de_serie'] = [(4,record.x_studio_equipo_por_nmero_de_serie.id)]
+                #record['x_studio_equipo_por_nmero_de_serie'] = [(4,record.x_studio_equipo_por_nmero_de_serie.id)]
 
-    #             for numeros_serie in record.x_studio_equipo_por_nmero_de_serie:
-    #                 ids.append(numeros_serie.id)
+                for numeros_serie in record.x_studio_equipo_por_nmero_de_serie:
+                    ids.append(numeros_serie.id)
 
-    #                 for move_line in numeros_serie.x_studio_move_line:
+                    for move_line in numeros_serie.x_studio_move_line:
 
-    #                     #move_line.para.almacen.ubicacion.
+                        #move_line.para.almacen.ubicacion.
 
-    #                     cliente = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
-    #                     self._origin.sudo().write({'partner_id' : cliente})
-    #                     record.partner_id = cliente
-    #                     idM=self._origin.id
+                        cliente = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
+                        self._origin.sudo().write({'partner_id' : cliente})
+                        record.partner_id = cliente
+                        idM=self._origin.id
 
-    #                     if cliente == []:
-    #                         self.env.cr.execute("update helpdesk_ticket set partner_id = " + cliente + "  where  id = " + idM + ";")
-    #                     v['partner_id'] = cliente
+                        if cliente == []:
+                            self.env.cr.execute("update helpdesk_ticket set partner_id = " + cliente + "  where  id = " + idM + ";")
+                        v['partner_id'] = cliente
 
-    #                     cliente_telefono = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.phone
-    #                     self._origin.sudo().write({'x_studio_telefono' : cliente_telefono})
-    #                     record.x_studio_telefono = cliente_telefono
-    #                     if cliente_telefono != []:
-    #                         srtt="update helpdesk_ticket set x_studio_telefono = '" + str(cliente_telefono) + "' where  id = " + str(idM) + ";"
+                        cliente_telefono = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.phone
+                        self._origin.sudo().write({'x_studio_telefono' : cliente_telefono})
+                        record.x_studio_telefono = cliente_telefono
+                        if cliente_telefono != []:
+                            srtt="update helpdesk_ticket set x_studio_telefono = '" + str(cliente_telefono) + "' where  id = " + str(idM) + ";"
 
-    #                         #s=self.env.cr.execute("update helpdesk_ticket set x_studio_telefono = '" + str(cliente_telefono) + "' where  id = " + str(idM) + ";")
-    #                         #_logger.info("update gacho 2 "+str(s))
-    #                     v['x_studio_telefono'] = cliente_telefono
+                            #s=self.env.cr.execute("update helpdesk_ticket set x_studio_telefono = '" + str(cliente_telefono) + "' where  id = " + str(idM) + ";")
+                            #_logger.info("update gacho 2 "+str(s))
+                        v['x_studio_telefono'] = cliente_telefono
 
-    #                     cliente_movil = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.mobile
-    #                     self._origin.sudo().write({'x_studio_movil' : cliente_movil})
-    #                     record.x_studio_movil = cliente_movil
-    #                     if cliente_movil == []:
-    #                         self.env.cr.execute("update helpdesk_ticket set x_studio_movil = '" + str(cliente_movil) + "' where  id = " +idM + ";")
-    #                     v['x_studio_movil'] = cliente_movil
+                        cliente_movil = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.mobile
+                        self._origin.sudo().write({'x_studio_movil' : cliente_movil})
+                        record.x_studio_movil = cliente_movil
+                        if cliente_movil == []:
+                            self.env.cr.execute("update helpdesk_ticket set x_studio_movil = '" + str(cliente_movil) + "' where  id = " +idM + ";")
+                        v['x_studio_movil'] = cliente_movil
 
-    #                     cliente_nivel = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.x_studio_nivel_del_cliente
-    #                     self._origin.sudo().write({'x_studio_nivel_del_cliente' : cliente_nivel})
-    #                     record.x_studio_nivel_del_cliente = cliente_nivel
-    #                     if cliente_nivel == []:
-    #                         self.env.cr.execute("update helpdesk_ticket set x_studio_nivel_del_cliente = '" + str(cliente_nivel) + "' where  id = " + idM + ";")
-    #                     v['x_studio_nivel_del_cliente'] = cliente_nivel
+                        cliente_nivel = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.x_studio_nivel_del_cliente
+                        self._origin.sudo().write({'x_studio_nivel_del_cliente' : cliente_nivel})
+                        record.x_studio_nivel_del_cliente = cliente_nivel
+                        if cliente_nivel == []:
+                            self.env.cr.execute("update helpdesk_ticket set x_studio_nivel_del_cliente = '" + str(cliente_nivel) + "' where  id = " + idM + ";")
+                        v['x_studio_nivel_del_cliente'] = cliente_nivel
 
-    #                     #localidad datos
+                        #localidad datos
 
-    #                     localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
+                        localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
 
-    #                     self._origin.sudo().write({'x_studio_empresas_relacionadas' : localidad})
-    #                     record.x_studio_empresas_relacionadas = localidad
+                        self._origin.sudo().write({'x_studio_empresas_relacionadas' : localidad})
+                        record.x_studio_empresas_relacionadas = localidad
 
                         
-    #                     #telefono_localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.phone
-    #                     #self._origin.sudo().write({x_studio_telefono_localidad : telefono_localidad})
+                        #telefono_localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.phone
+                        #self._origin.sudo().write({x_studio_telefono_localidad : telefono_localidad})
                         
-    #                     #movil_localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.mobile
-    #                     #self._origin.sudo().write({x_studio_movil_localidad : movil_localidad})
+                        #movil_localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.mobile
+                        #self._origin.sudo().write({x_studio_movil_localidad : movil_localidad})
                         
-    #                     #email_localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.email
-    #                     #self._origin.sudo().write({x_studio_correo_electrnico_de_localidad : email_localidad})
+                        #email_localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.email
+                        #self._origin.sudo().write({x_studio_correo_electrnico_de_localidad : email_localidad})
 
-    #                     #
-    #                     #_logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.)
+                        #
+                        #_logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.)
 
-    #                 #self._origin.sudo().write({x_studio_responsable_de_equipo : responsable_equipo_de_distribucion})
+                    #self._origin.sudo().write({x_studio_responsable_de_equipo : responsable_equipo_de_distribucion})
 
-    #                 #_logger.info(record['x_studio_equipo_por_nmero_de_serie'])
+                    #_logger.info(record['x_studio_equipo_por_nmero_de_serie'])
                     
-    #                 #record['x_studio_equipo_por_nmero_de_serie'] = (6, 0, [ids])
-    #                 #record.sudo().write({x_studio_equipo_por_nmero_de_serie : [(6, 0, [ids])] })
-    #                 #self._origin.sudo().write({'x_studio_equipo_por_nmero_de_serie' : (4, ids) })
-    #                 lista_ids = []
-    #                 for id in ids:
-    #                     lista_ids.append((4,id))
-    #                 #v['x_studio_equipo_por_nmero_de_serie'] = [(4, ids[0]), (4, ids[1])]
-    #                 v['x_studio_equipo_por_nmero_de_serie'] = lista_ids
-    #                 self._origin.sudo().write({'x_studio_equipo_por_nmero_de_serie' : lista_ids})
- #18/03/20                   record.x_studio_equipo_por_nmero_de_serie = lista_ids
-                    
-                    # if localidad != []:
-                    #     srtt="update helpdesk_ticket set x_studio_empresas_relacionadas = " + str(localidad) + " where  id = " + str(idM )+ ";"
-                    #     _logger.info("update gacho localidad " + srtt)
-                    #     record.x_studio_empresas_relacionadas = localidad
-                    #     record['x_studio_empresas_relacionadas'] = localidad
-                    #     self.env.cr.execute(srtt)
-                    #     #self.env.cr.commit()
-                    #     v['x_studio_empresas_relacionadas'] = localidad        
-                    
+                    #record['x_studio_equipo_por_nmero_de_serie'] = (6, 0, [ids])
+                    #record.sudo().write({x_studio_equipo_por_nmero_de_serie : [(6, 0, [ids])] })
+                    #self._origin.sudo().write({'x_studio_equipo_por_nmero_de_serie' : (4, ids) })
+                    lista_ids = []
+                    for id in ids:
+                        lista_ids.append((4,id))
+                    #v['x_studio_equipo_por_nmero_de_serie'] = [(4, ids[0]), (4, ids[1])]
+                    v['x_studio_equipo_por_nmero_de_serie'] = lista_ids
+                    self._origin.sudo().write({'x_studio_equipo_por_nmero_de_serie' : lista_ids})
+                    record.x_studio_equipo_por_nmero_de_serie = lista_ids
+                    """
+                    if localidad != []:
+                        srtt="update helpdesk_ticket set x_studio_empresas_relacionadas = " + str(localidad) + " where  id = " + str(idM )+ ";"
+                        _logger.info("update gacho localidad " + srtt)
+                        record.x_studio_empresas_relacionadas = localidad
+                        record['x_studio_empresas_relacionadas'] = localidad
+                        self.env.cr.execute(srtt)
+                        #self.env.cr.commit()
+                        v['x_studio_empresas_relacionadas'] = localidad        
+                    """
                     
                     #self._origin.env['helpdesk.ticket'].sudo().write(v)
 
                     #res = super(helpdesk_update, self).sudo().write(v)
                     #return res
                     #return {'value': v}
-        # if int(self.x_studio_tamao_lista) > 0 and self.team_id.id != 8:
-        #     _logger.info('hiooooo22222')
-        #     query="select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!="+str(self.x_studio_id_ticket)+"  and h.stage_id!=18 and h.team_id!=8 and  h.active='t' and stock_production_lot_id = "+str(self.x_studio_equipo_por_nmero_de_serie[0].id)+" limit 1;"            
+        if int(self.x_studio_tamao_lista) > 0 and self.team_id.id != 8:
             
-        #     self.env.cr.execute(query)                        
-        #     informacion = self.env.cr.fetchall()
-        #     if len(informacion) > 0:
-        #         message = ('Estas agregando una serie de un ticket ya en proceso. \n Ticket: ' + str(informacion[0][0]) + '\n ')
-
-        #         mess= {
-        #                 'title': _('Alerta!!!'),
-        #                 'message' : message
-        #                       }
-        #         #return {'warning': mess}
-        #         mensajeCuerpoGlobal = 'Estas agregando una serie de un ticket ya en proceso. \n Ticket: ' + str(informacion[0][0]) + '\n '
-        #         mensajeTitulo = 'Alerta !!!'
-        #         wiz = self.env['helpdesk.alerta.series'].create({'ticket_id':informacion[0][0], 'mensaje': mensajeCuerpoGlobal})
-        #         view = self.env.ref('helpdesk_update.view_helpdesk_alerta_series')
-        #         _logger.info(str(view.id))
-        #         return {'name': _('Alerta'),'type': 'ir.actions.act_window','view_type': 'form','view_mode': 'form','res_model': 'helpdesk.alerta.series','views': [(view.id, 'form')],'view_id': view.id,'target': 'new','res_id': wiz.id,'context': self.env.context,}
-                 
-                # global mensajeCuerpoGlobal
-                # mensajeCuerpoGlobal += '\n\nEstas agregando una serie de un ticket ya en proceso. \n Ticket: ' + str(informacion[0][0]) + '\n '
-                # mensajeTitulo = 'Alerta !!!'
-                # wiz = self.env['helpdesk.alerta.series'].create({'ticket_id': self.id, 'ticket_id_existente': int(informacion[0][0]), 'mensaje': mensajeCuerpoGlobal})
-                # view = self.env.ref('helpdesk_update.view_helpdesk_alerta_series')
-
+            query="select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!="+str(self.x_studio_id_ticket)+"  and h.stage_id!=18 and h.team_id!=8 and  h.active='t' and stock_production_lot_id = "+str(self.x_studio_equipo_por_nmero_de_serie[0].id)+" limit 1;"            
+            
+            self.env.cr.execute(query)                        
+            informacion = self.env.cr.fetchall()
+            if len(informacion) > 0:
+                message = ('Estas agregando una serie de un ticket ya en proceso. \n Ticket: ' + str(informacion[0][0]) + '\n ')
                 
+                mess= {
+                        'title': _('Alerta!!!'),
+                        'message' : message
+                              }
+                return {'warning': mess}
+                """
+                global mensajeCuerpoGlobal
+                mensajeCuerpoGlobal += '\n\nEstas agregando una serie de un ticket ya en proceso. \n Ticket: ' + str(informacion[0][0]) + '\n '
+                mensajeTitulo = 'Alerta !!!'
+                wiz = self.env['helpdesk.alerta.series'].create({'ticket_id': self.id, 'ticket_id_existente': int(informacion[0][0]), 'mensaje': mensajeCuerpoGlobal})
+                view = self.env.ref('helpdesk_update.view_helpdesk_alerta_series')
+                return {
+                        'name': _(mensajeTitulo),
+                        'type': 'ir.actions.act_window',
+                        'view_type': 'form',
+                        'view_mode': 'form',
+                        'res_model': 'helpdesk.alerta.series',
+                        'views': [(view.id, 'form')],
+                        'view_id': view.id,
+                        'target': 'new',
+                        'res_id': wiz.id,
+                        'context': self.env.context,
+                        }
+                """
                 #raise exceptions.ValidationError("No es posible registrar número de serie, primero cerrar el ticket con el id  "+str(informacion[0][0]))
-        # if int(self.x_studio_tamao_lista) > 0 and self.team_id.id == 8:
-        #     _logger.info('hiooooo')
-        #     queryt="select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!="+str(self.x_studio_id_ticket)+"  and h.stage_id!=18 and h.team_id=8 and  h.active='t' and stock_production_lot_id = "+str(self.x_studio_equipo_por_nmero_de_serie[0].id)+" limit 1;"            
+        if int(self.x_studio_tamao_lista) > 0 and self.team_id.id == 8:
             
-        #     self.env.cr.execute(queryt)                        
-        #     informaciont = self.env.cr.fetchall()
-        #     if len(informaciont) > 0:
+            queryt="select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!="+str(self.x_studio_id_ticket)+"  and h.stage_id!=18 and h.team_id=8 and  h.active='t' and stock_production_lot_id = "+str(self.x_studio_equipo_por_nmero_de_serie[0].id)+" limit 1;"            
+            
+            self.env.cr.execute(queryt)                        
+            informaciont = self.env.cr.fetchall()
+            if len(informaciont) > 0:
                 
-        #         message = ('Estas agregando una serie de un ticket ya en proceso en equipo de toner. \n Ticket: '+str(informaciont[0][0]))
-        #         mess= {
-        #                 'title': _('Alerta!!!'),
-        #                 'message' : message
-        #                       }
-        #         return {'warning': mess}   
+                message = ('Estas agregando una serie de un ticket ya en proceso en equipo de toner. \n Ticket: '+str(informaciont[0][0]))
+                mess= {
+                        'title': _('Alerta!!!'),
+                        'message' : message
+                              }
+                return {'warning': mess}   
                 
 
-                
-                # global mensajeCuerpoGlobal
-                # mensajeCuerpoGlobal += '\n\nEstas agregando una serie de un ticket ya en proceso en equipo de toner. \n Ticket: ' + str(informacion[0][0]) + '\n '
-                # mensajeTitulo = 'Alerta !!!'
-                # wiz = self.env['helpdesk.alerta.series'].create({'ticket_id': self.id, 'ticket_id_existente': int(informacion[0][0]), 'mensaje': mensajeCuerpoGlobal})
-                # view = self.env.ref('helpdesk_update.view_helpdesk_alerta_series')
-                # return {
-                #         'name': _(mensajeTitulo),
-                #         'type': 'ir.actions.act_window',
-                #         'view_type': 'form',
-                #         'view_mode': 'form',
-                #         'res_model': 'helpdesk.alerta.series',
-                #         'views': [(view.id, 'form')],
-                #         'view_id': view.id,
-                #         'target': 'new',
-                #         'res_id': wiz.id,
-                #         'context': self.env.context,
-                #         }                                             
-                
+                """
+                global mensajeCuerpoGlobal
+                mensajeCuerpoGlobal += '\n\nEstas agregando una serie de un ticket ya en proceso en equipo de toner. \n Ticket: ' + str(informacion[0][0]) + '\n '
+                mensajeTitulo = 'Alerta !!!'
+                wiz = self.env['helpdesk.alerta.series'].create({'ticket_id': self.id, 'ticket_id_existente': int(informacion[0][0]), 'mensaje': mensajeCuerpoGlobal})
+                view = self.env.ref('helpdesk_update.view_helpdesk_alerta_series')
+                return {
+                        'name': _(mensajeTitulo),
+                        'type': 'ir.actions.act_window',
+                        'view_type': 'form',
+                        'view_mode': 'form',
+                        'res_model': 'helpdesk.alerta.series',
+                        'views': [(view.id, 'form')],
+                        'view_id': view.id,
+                        'target': 'new',
+                        'res_id': wiz.id,
+                        'context': self.env.context,
+                        }                                             
+                """
     
 
-        #cvg        
+                
     """
     @api.model
     def create(self, vals):
@@ -2185,24 +2165,6 @@ class helpdesk_update(models.Model):
             'res_id': wiz.id,
             'context': self.env.context,
         }    
-
-
-    @api.multi
-    def detalle_serie_wizard(self):
-        wiz = self.env['helpdesk.detalle.serie'].create({'ticket_id': self.id})
-        view = self.env.ref('helpdesk_update.view_helpdesk_bitacora')
-        return {
-            'name': _('Detalle serie'),
-            'type': 'ir.actions.act_window',
-            'view_type': 'form',
-            'view_mode': 'form',
-            'res_model': 'helpdesk.detalle.serie',
-            'views': [(view.id, 'form')],
-            'view_id': view.id,
-            'target': 'new',
-            'res_id': wiz.id,
-            'context': self.env.context,
-        }
 
 class helpdes_diagnostico(models.Model):
     _name = "helpdesk.diagnostico"
