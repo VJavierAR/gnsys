@@ -298,7 +298,7 @@ class helpdesk_contadores(TransientModel):
                 self.contadorBNMesa = int(serie.x_studio_contador_bn_mesa)
                 self.contadorColorMesa = int(serie.x_studio_contador_color_mesa)
                 _logger.info('bnColor: ' + str(serie.x_studio_color_bn))
-                self.bnColor = str(serie.x_studio_color_bn)
+                self.bnColor = serie.x_studio_color_bn
 
     
     def modificarContadores(self):          
