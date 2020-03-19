@@ -1,2 +1,4 @@
 
-.o_column_sortable [data-id="name"]{width: 10px;}
+.myClass .{
+	width: 10px;
+}
