@@ -291,15 +291,14 @@ class helpdesk_contadores(TransientModel):
     negroProcentaje = fields.Integer(string='% Negro')
     bnColor = fields.Char(string='Color o BN')
     
-
-    
     @api.depends('ticket_id')
     def _compute_contadorBNMesa(self):
         if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
             for serie in self.ticket_id.x_studio_equipo_por_nmero_de_serie:
                 self.contadorBNMesa = int(serie.x_studio_contador_bn_mesa)
                 self.contadorColorMesa = int(serie.x_studio_contador_color_mesa)
-                self.bnColor= str(serie.x_studio_color_bn)
+                _logger.info('bnColor: ' + str(serie.x_studio_color_bn))
+                self.bnColor = str(serie.x_studio_color_bn)
 
     
     def modificarContadores(self):          
