@@ -145,10 +145,14 @@ class tfs(models.Model):
             if record.localidad:
                 record['almacen'] =self.env['stock.warehouse'].search([['x_studio_field_E0H1Z','=',record.localidad.id]]).lot_stock_id.x_studio_almacn_padre
                 record['tipo']=record.producto.x_studio_color
-                dc=self.env['dcas.dcas'].search([['serie','=',record.serie.id],['fuente','=','tfs.tfs'],['x_studio_toner_'+str(record.tipo).lower(),'=',1]]).sorted(key='create_date',reverse=True)
-                if(len(dc)>0):
-                    record['contadorAnterior']=dc[0].id 
     
+    @api.onchange('tipo')
+    def type(self):
+        for record in self:
+            dc=self.env['dcas.dcas'].search([['serie','=',record.serie.id],['fuente','=','tfs.tfs'],['x_studio_toner_'+str(record.tipo).lower(),'=',1]]).sorted(key='create_date',reverse=True)
+            if(len(dc)>0):
+                record['contadorAnterior']=dc[0].id 
+
     @api.depends('almacen')
     def cambio(self):
         res={}
