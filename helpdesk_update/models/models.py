@@ -26,6 +26,8 @@ class helpdesk_update(models.Model):
     documentosTecnico = fields.Many2many('ir.attachment', string="Evidencias")
     stage_id = fields.Many2one('helpdesk.stage', string='Stage', ondelete='restrict', track_visibility='onchange',group_expand='_read_group_stage_ids',readonly=True,copy=False,index=True, domain="[('team_ids', '=', team_id)]")
     productos = fields.One2many('product.product','id',string='Solicitudes',store=True)
+    seriesDCA = fields.One2many('dcas.dcas', 'tickete', string="Series")
+
     
     days_difference = fields.Integer(compute='_compute_difference',string='días de atraso')
 
@@ -59,6 +61,9 @@ class helpdesk_update(models.Model):
     user_id = fields.Many2one('res.users','Ejecutivo', default=lambda self: self.env.user)
     ultimoEvidencia = fields.Many2many('ir.attachment', string="Ultima evidencia",readonly=True,store=False)    
     cambiarDatosClienteCheck = fields.Boolean(string="Editar cliente", default=False)
+    
+    
+    
     
 
     def open_to_form_view(self):
@@ -2238,6 +2243,9 @@ class helpdesk_lines(models.Model):
             if idf != 9 and idf != 8:
                res['domain']={'producto':[('id','in',d)]}
         return res
+    
+
+    
 
     
     
