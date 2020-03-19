@@ -107,7 +107,7 @@ class helpdesk_update(models.Model):
             estadoLocalidad = str(rec.x_studio_estado_de_localidad)
             if estadoLocalidad == 'False':
                 estadoLocalidad = 'No disponible'
-
+            """
             telefonoLocalidad = str(rec.x_studio_telfono_localidad_contacto)
             if telefonoLocalidad == 'False':
                 telefonoLocalidad = 'No disponible'
@@ -118,8 +118,9 @@ class helpdesk_update(models.Model):
             correoElectronicoLocalidad = str(rec.x_studio_email_localidad_contacto)
             if correoElectronicoLocalidad == 'False':
                 correoElectronicoLocalidad = 'No disponible'
-
-            datos = 'Cliente: ' + nombreCliente + ' \nLocalidad: ' + localidad + ' \nLocalidad contacto: ' + contactoDeLocalidad + ' \nEstado de localidad: ' + estadoLocalidad + ' \nTeléfono de localidad: ' + telefonoLocalidad + ' \nMóvil localidad contacto: ' + movilLocalidad + ' \nCorreo electrónico localidad contacto: ' + correoElectronicoLocalidad
+            """
+            #datos = 'Cliente: ' + nombreCliente + ' \nLocalidad: ' + localidad + ' \nLocalidad contacto: ' + contactoDeLocalidad + ' \nEstado de localidad: ' + estadoLocalidad + ' \nTeléfono de localidad: ' + telefonoLocalidad + ' \nMóvil localidad contacto: ' + movilLocalidad + ' \nCorreo electrónico localidad contacto: ' + correoElectronicoLocalidad
+            datos = 'Cliente: ' + nombreCliente + ' \nLocalidad: ' + localidad + ' \nLocalidad contacto: ' + contactoDeLocalidad + ' \nEstado de localidad: ' + estadoLocalidad 
 
             rec.datosCliente = datos
 
