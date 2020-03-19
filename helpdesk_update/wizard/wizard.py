@@ -287,9 +287,9 @@ class helpdesk_contadores(TransientModel):
     
     contadorBNMesa = fields.Integer(string='Contador B/N Mesa', compute="_compute_contadorBNMesa")
     contadorBNActual = fields.Integer(string='Contador B/N Actual')
-    contadorColorMesa = fields.Integer(string='Contador Color Mesa')
+    contadorColorMesa = fields.Integer(string='Contador Color Mesa', compute = '_compute_actualizaContadorColorMesa')
     negroProcentaje = fields.Integer(string='% Negro')
-    bnColor = fields.Text(string='Color o BN', compute = 'actualizaDato')
+    bnColor = fields.Text(string='Color o BN', compute = '_compute_actualizaColor')
     
     @api.depends('ticket_id')
     def _compute_contadorBNMesa(self):
@@ -297,13 +297,15 @@ class helpdesk_contadores(TransientModel):
             for serie in self.ticket_id.x_studio_equipo_por_nmero_de_serie:
                 self.contadorBNMesa = int(serie.x_studio_contador_bn_mesa)
                 self.contadorColorMesa = int(serie.x_studio_contador_color_mesa)
-                _logger.info('bnColor: ' + str(serie.x_studio_color_bn))
                 self.bnColor = serie.x_studio_color_bn
 
-    def actualizaDato(self):
+    def _compute_actualizaColor(self):
         for serie in self.ticket_id.x_studio_equipo_por_nmero_de_serie:
-            _logger.info('bnColor compuatdo: ' + str(serie.x_studio_color_bn))
             self.bnColor = str(serie.x_studio_color_bn)
+
+    def _compute_actualizaContadorColorMesa(self):
+        for serie in self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+            self.contadorColorMesa = int(serie.x_studio_contador_color_mesa)
     
     def modificarContadores(self):          
         for c in self.ticket_id.x_studio_equipo_por_nmero_de_serie:                                       
