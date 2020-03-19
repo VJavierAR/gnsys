@@ -152,6 +152,7 @@ class tfs(models.Model):
             if(record.tipo):
                 dc=self.env['dcas.dcas'].search([['serie','=',record.serie.id],['fuente','=','tfs.tfs'],['x_studio_toner_'+str(record.tipo).lower(),'=',1]]).sorted(key='create_date',reverse=True)
                 _logger.info('hhhhhhhhhhhhhhhhhh'+str(dc))
+                _logger.info('x_studio_toner_'+str(record.tipo).lower())
                 if(len(dc)>0):
                     record['contadorAnterior']=dc[0].id 
 
