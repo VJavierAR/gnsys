@@ -31,8 +31,29 @@ class helpdesk_update(models.Model):
     
     days_difference = fields.Integer(compute='_compute_difference',string='días de atraso')
 
-    localidadContacto = fields.Many2one('res.partner', store=True, track_visibility='onchange', string='Localidad contacto', domain="['&',('parent_id.id','=',idLocalidadAyuda),('type','=','contact')]")
+    localidadContacto = fields.Many2one('res.partner'
+                                        , store=True
+                                        , track_visibility='onchange'
+                                        , string='Localidad contacto'
+                                        , domain="['&',('parent_id.id','=',idLocalidadAyuda),('type','=','contact')]"
+                                        , default = lambda self: self._contacto_definido())
     
+    @api.onchange('localidadContacto')
+    def cambiaContactoLocalidad(self):
+        _logger.info('helpdesk.cambiaContactoLocalidad()')
+        if self.x_studio_empresas_relacionadas:
+            loc = self.x_studio_empresas_relacionadas.id
+            self.localidadContacto = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_subtipo', '=', 'Contacto de localidad']], order='create_date desc', limit=1).id
+            _logger.info('self.x_studio_empresas_relacionadas.id: ' + str(self.x_studio_empresas_relacionadas.id) + ' self.localidadContacto' + str(self.localidadContacto))
+
+    @api.model
+    def _contacto_definido(self):
+        if self.x_studio_empresas_relacionadas:
+            loc = self.x_studio_empresas_relacionadas.id
+            return self.env['res.partner'].search([['parent_id', '=', loc],['subtipo' '=', 'Contacto de localidad']], order='create_date desc', limit=1).id
+
+
+
     tipoDeDireccion = fields.Selection([('contact','Contacto'),('invoice','Dirección de facturación'),('delivery','Dirección de envío'),('other','Otra dirección'),('private','Dirección Privada')], default='contact')
     subtipo = fields.Selection([('Contacto comercial','Contacto comercial'),('Contacto sistemas','Contacto sistemas'),('Contacto para pagos','Contacto parra pagos'),('Contacto para compras','Contacto para compras'),('private','Dirección Privada')])
     nombreDelContacto = fields.Char(string='Nombre de contacto')
@@ -62,15 +83,19 @@ class helpdesk_update(models.Model):
     ultimoEvidencia = fields.Many2many('ir.attachment', string="Ultima evidencia",readonly=True,store=False)    
     cambiarDatosClienteCheck = fields.Boolean(string="Editar cliente", default=False)
     
+    team_id = fields.Many2one('helpdesk.team', store = True, copied = True, index = True, string = 'Área de atención', default = 9)
+
+
     #name = fields.Text(string = 'Descripción del reporte', default = lambda self: self._compute_descripcion())
     name = fields.Text(string = 'Descripción del reporte')
+
 
     @api.model
     def create(self, vals):
         _logger.info("self.id: " + str(self.id))
         _logger.info("vals: " + str(vals))
         vals['name'] = self.env['ir.sequence'].next_by_code('helpdesk_name')
-        vals['team_id'] = 9
+        #vals['team_id'] = 8
         ticket = super(helpdesk_update, self).create(vals)
         _logger.info("id Ticket: " + str(ticket.id))
         ticket.x_studio_id_ticket = ticket.id
