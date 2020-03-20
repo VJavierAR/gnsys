@@ -39,18 +39,13 @@ class helpdesk_update(models.Model):
     
     @api.depends('x_studio_equipo_por_nmero_de_serie')
     def cambiaContactoLocalidad(self):
-        _logger.info('helpdesk.cambiaContactoLocalidad()')
-
         if self.x_studio_empresas_relacionadas:
             loc = self.x_studio_empresas_relacionadas.id
-            #self.localidadContacto = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_subtipo', '=', 'Contacto de localidad']], order='create_date desc', limit=1).id
             idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_subtipo', '=', 'Contacto de localidad']], order='create_date desc', limit=1).id
             self.localidadContacto = idLoc
-            #self.sudo().write({'localidadContacto' : idLoc})
             query = "update helpdesk_ticket set \"localidadContacto\" = " + str(idLoc) + " where id = " + str(self.x_studio_id_ticket) + ";"
             self.env.cr.execute(query)
             self.env.cr.commit()
-            _logger.info('self.x_studio_empresas_relacionadas.id: ' + str(self.x_studio_empresas_relacionadas.id) + ' self.localidadContacto.id: ' + str(self.localidadContacto.id) )
 
     @api.model
     def _contacto_definido(self):
@@ -191,6 +186,13 @@ class helpdesk_update(models.Model):
             #datos = 'Cliente: ' + nombreCliente + ' \nLocalidad: ' + localidad + ' \nLocalidad contacto: ' + contactoDeLocalidad + ' \nEstado de localidad: ' + estadoLocalidad 
 
             rec.datosCliente = datos
+
+            loc = self.x_studio_empresas_relacionadas.id
+            idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_subtipo', '=', 'Contacto de localidad']], order='create_date desc', limit=1).id
+            self.localidadContacto = idLoc
+            query = "update helpdesk_ticket set \"localidadContacto\" = " + str(idLoc) + " where id = " + str(self.x_studio_id_ticket) + ";"
+            self.env.cr.execute(query)
+            self.env.cr.commit()
 
 
     
