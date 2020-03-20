@@ -151,9 +151,6 @@ class contratos(models.Model):
     def cambiarRazonSocial(self):
         valores = [('0', 'DOCUMENTO INTEGRAL CORPORATIVO, SA DE CV'), ('1', 'GN SYS CORPORATIVO S.A. DE C.V.'),
                ('2', 'GRUPO GNSYS SOLUCIONES SA DE CV'), ('3', 'SERVICIOS CORPORATIVOS GENESIS, S.A DE C.V.')]
-        
-        serviciosTodos = self.env['contactos'].search([('razonSocial', '=', self.cliente.razonSocial)])
-        _logger.info("Servicio --- : "+serviciosTodos)
 
         if self.cliente :
             busca = str(self.cliente.razonSocial)
