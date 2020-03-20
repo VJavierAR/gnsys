@@ -153,6 +153,14 @@ class helpdesk_update(models.Model):
 
     @api.depends('x_studio_equipo_por_nmero_de_serie')
     def _compute_datosCliente(self):
+        
+        loc = self.x_studio_empresas_relacionadas.id
+            idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_subtipo', '=', 'Contacto de localidad']], order='create_date desc', limit=1).id
+            self.localidadContacto = idLoc
+            query = "update helpdesk_ticket set \"localidadContacto\" = " + str(idLoc) + " where id = " + str(self.x_studio_id_ticket) + ";"
+            self.env.cr.execute(query)
+            self.env.cr.commit()
+
         for rec in self:
             nombreCliente = str(rec.partner_id.name)
             if nombreCliente == 'False':
@@ -187,15 +195,7 @@ class helpdesk_update(models.Model):
 
             rec.datosCliente = datos
 
-            loc = self.x_studio_empresas_relacionadas.id
-            idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_subtipo', '=', 'Contacto de localidad']], order='create_date desc', limit=1).id
-            self.localidadContacto = idLoc
-            query = "update helpdesk_ticket set \"localidadContacto\" = " + str(idLoc) + " where id = " + str(self.x_studio_id_ticket) + ";"
-            self.env.cr.execute(query)
-            self.env.cr.commit()
 
-
-    
 
 
     #ticketRelacion = fields.Char(string = "Ticket", related = self)
