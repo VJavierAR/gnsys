@@ -34,8 +34,9 @@ class helpdesk_update(models.Model):
     localidadContacto = fields.Many2one('res.partner', store=True, track_visibility='onchange', string='Localidad contacto', domain="['&',('parent_id.id','=',idLocalidadAyuda),('type','=','contact')]", default = lambda self: self._contacto_definido())
     
     def _contacto_definido():
-        loc = self.x_studio_empresas_relacionadas.id
-        self.env['res.partner'].search([['parent_id', '=', loc],['subtipo' '=', 'Contacto de localidad']], order='create_date desc', limit=1).id
+        if self.x_studio_empresas_relacionadas:
+            loc = self.x_studio_empresas_relacionadas.id
+            self.env['res.partner'].search([['parent_id', '=', loc],['subtipo' '=', 'Contacto de localidad']], order='create_date desc', limit=1).id
 
     tipoDeDireccion = fields.Selection([('contact','Contacto'),('invoice','Dirección de facturación'),('delivery','Dirección de envío'),('other','Otra dirección'),('private','Dirección Privada')], default='contact')
     subtipo = fields.Selection([('Contacto comercial','Contacto comercial'),('Contacto sistemas','Contacto sistemas'),('Contacto para pagos','Contacto parra pagos'),('Contacto para compras','Contacto para compras'),('private','Dirección Privada')])
@@ -69,12 +70,13 @@ class helpdesk_update(models.Model):
     #name = fields.Text(string = 'Descripción del reporte', default = lambda self: self._compute_descripcion())
     name = fields.Text(string = 'Descripción del reporte')
 
+
     @api.model
     def create(self, vals):
         _logger.info("self.id: " + str(self.id))
         _logger.info("vals: " + str(vals))
         vals['name'] = self.env['ir.sequence'].next_by_code('helpdesk_name')
-        vals['team_id'] = 9
+        #vals['team_id'] = 9
         ticket = super(helpdesk_update, self).create(vals)
         _logger.info("id Ticket: " + str(ticket.id))
         ticket.x_studio_id_ticket = ticket.id
