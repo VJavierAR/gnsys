@@ -156,6 +156,7 @@ class helpdesk_update(models.Model):
 
     datosCliente = fields.Text(string="Cliente datos", compute='_compute_datosCliente')
 
+    @api.depends('x_studio_equipo_por_nmero_de_serie')
     def _compute_datosCliente(self):
         for rec in self:
             nombreCliente = str(rec.partner_id.name)
