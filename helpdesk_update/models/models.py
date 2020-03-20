@@ -37,7 +37,7 @@ class helpdesk_update(models.Model):
                                         , string='Localidad contacto'
                                         , domain="['&',('parent_id.id','=',idLocalidadAyuda),('type','=','contact')]")
     
-    @api.onchange('x_studio_equipo_por_nmero_de_serie')
+    @api.depends('x_studio_equipo_por_nmero_de_serie')
     def cambiaContactoLocalidad(self):
         _logger.info('helpdesk.cambiaContactoLocalidad()')
 
