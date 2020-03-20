@@ -43,7 +43,7 @@ class helpdesk_update(models.Model):
         _logger.info('helpdesk.cambiaContactoLocalidad()')
         if self.x_studio_empresas_relacionadas:
             loc = self.x_studio_empresas_relacionadas.id
-            self.localidadContacto = self.env['res.partner'].search([['parent_id', '=', loc],['subtipo', '=', 'Contacto de localidad']], order='create_date desc', limit=1).id
+            self.localidadContacto = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_subtipo', '=', 'Contacto de localidad']], order='create_date desc', limit=1).id
             _logger.info('self.x_studio_empresas_relacionadas.id: ' + str(self.x_studio_empresas_relacionadas.id) + ' self.localidadContacto' + str(self.localidadContacto))
 
     @api.model
