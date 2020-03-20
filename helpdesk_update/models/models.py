@@ -76,7 +76,7 @@ class helpdesk_update(models.Model):
         _logger.info("self.id: " + str(self.id))
         _logger.info("vals: " + str(vals))
         vals['name'] = self.env['ir.sequence'].next_by_code('helpdesk_name')
-        #vals['team_id'] = 9
+        vals['team_id'] = 8
         ticket = super(helpdesk_update, self).create(vals)
         _logger.info("id Ticket: " + str(ticket.id))
         ticket.x_studio_id_ticket = ticket.id
