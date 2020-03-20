@@ -33,6 +33,7 @@ class helpdesk_update(models.Model):
 
     localidadContacto = fields.Many2one('res.partner', store=True, track_visibility='onchange', string='Localidad contacto', domain="['&',('parent_id.id','=',idLocalidadAyuda),('type','=','contact')]", default = lambda self: self._contacto_definido())
     
+    @api.model
     def _contacto_definido():
         if self.x_studio_empresas_relacionadas:
             loc = self.x_studio_empresas_relacionadas.id
