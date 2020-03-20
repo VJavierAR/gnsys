@@ -48,7 +48,7 @@ class helpdesk_update(models.Model):
     def _contacto_definido(self):
         if self.x_studio_empresas_relacionadas:
             loc = self.x_studio_empresas_relacionadas.id
-            return self.env['res.partner'].search([['parent_id', '=', loc],['subtipo' '=', 'Contacto de localidad']], order='create_date desc', limit=1).id
+            self.localidadContacto = self.env['res.partner'].search([['parent_id', '=', loc],['subtipo' '=', 'Contacto de localidad']], order='create_date desc', limit=1).id
 
 
 
