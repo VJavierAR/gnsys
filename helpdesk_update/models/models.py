@@ -38,11 +38,19 @@ class helpdesk_update(models.Model):
                                         , domain="['&',('parent_id.id','=',idLocalidadAyuda),('type','=','contact')]"
                                         , default = lambda self: self._contacto_definido())
     
+    @api.onchange('localidadContacto')
+    def cambiaContactoLocalidad(self):
+        if self.x_studio_empresas_relacionadas:
+            loc = self.x_studio_empresas_relacionadas.id
+            return self.env['res.partner'].search([['parent_id', '=', loc],['subtipo' '=', 'Contacto de localidad']], order='create_date desc', limit=1).id
+
     @api.model
     def _contacto_definido(self):
         if self.x_studio_empresas_relacionadas:
             loc = self.x_studio_empresas_relacionadas.id
             return self.env['res.partner'].search([['parent_id', '=', loc],['subtipo' '=', 'Contacto de localidad']], order='create_date desc', limit=1).id
+
+
 
     tipoDeDireccion = fields.Selection([('contact','Contacto'),('invoice','Dirección de facturación'),('delivery','Dirección de envío'),('other','Otra dirección'),('private','Dirección Privada')], default='contact')
     subtipo = fields.Selection([('Contacto comercial','Contacto comercial'),('Contacto sistemas','Contacto sistemas'),('Contacto para pagos','Contacto parra pagos'),('Contacto para compras','Contacto para compras'),('private','Dirección Privada')])
