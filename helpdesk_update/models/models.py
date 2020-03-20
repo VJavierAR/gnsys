@@ -31,8 +31,12 @@ class helpdesk_update(models.Model):
     
     days_difference = fields.Integer(compute='_compute_difference',string='días de atraso')
 
-    localidadContacto = fields.Many2one('res.partner', store=True, track_visibility='onchange', string='Localidad contacto', domain="['&',('parent_id.id','=',idLocalidadAyuda),('type','=','contact')]")
+    localidadContacto = fields.Many2one('res.partner', store=True, track_visibility='onchange', string='Localidad contacto', domain="['&',('parent_id.id','=',idLocalidadAyuda),('type','=','contact')]", default = lambda self: self._contacto_definido())
     
+    def _contacto_definido():
+        loc = self.x_studio_empresas_relacionadas.id
+        self.env['res.partner'].search([['parent_id', '=', loc],['subtipo' '=', 'Contacto de localidad']], order='create_date desc', limit=1).id
+
     tipoDeDireccion = fields.Selection([('contact','Contacto'),('invoice','Dirección de facturación'),('delivery','Dirección de envío'),('other','Otra dirección'),('private','Dirección Privada')], default='contact')
     subtipo = fields.Selection([('Contacto comercial','Contacto comercial'),('Contacto sistemas','Contacto sistemas'),('Contacto para pagos','Contacto parra pagos'),('Contacto para compras','Contacto para compras'),('private','Dirección Privada')])
     nombreDelContacto = fields.Char(string='Nombre de contacto')
