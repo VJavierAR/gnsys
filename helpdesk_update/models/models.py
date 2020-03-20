@@ -31,10 +31,15 @@ class helpdesk_update(models.Model):
     
     days_difference = fields.Integer(compute='_compute_difference',string='días de atraso')
 
-    localidadContacto = fields.Many2one('res.partner', store=True, track_visibility='onchange', string='Localidad contacto', domain="['&',('parent_id.id','=',idLocalidadAyuda),('type','=','contact')]", default = lambda self: self._contacto_definido())
+    localidadContacto = fields.Many2one('res.partner'
+                                        , store=True
+                                        , track_visibility='onchange'
+                                        , string='Localidad contacto'
+                                        , domain="['&',('parent_id.id','=',idLocalidadAyuda),('type','=','contact')]"
+                                        , default = lambda self: self._contacto_definido())
     
     @api.model
-    def _contacto_definido():
+    def _contacto_definido(self):
         if self.x_studio_empresas_relacionadas:
             loc = self.x_studio_empresas_relacionadas.id
             return self.env['res.partner'].search([['parent_id', '=', loc],['subtipo' '=', 'Contacto de localidad']], order='create_date desc', limit=1).id
