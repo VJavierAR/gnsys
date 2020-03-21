@@ -1099,13 +1099,13 @@ class helpdesk_update(models.Model):
                         self.env['sale.order.line'].create(datos)
                         magen=str(c.x_studio_cartucho_magenta.name)
                         
-                    jalaSolicitudes='solicitud de toner '+sale.name+' para la serie :'+serieaca +' '+bn+' '+amar+' '+cian+' '+magen
+                    jalaSolicitudes='solicitud de toner '+self.x_studio_field_nO7Xg.name+' para la serie :'+serieaca +' '+bn+' '+amar+' '+cian+' '+magen
                     self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'comentario':jalaSolicitudes, 'estadoTicket': "solicitud por serie", 'write_uid':  self.env.user.name})
                     
                 sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
-                jalaSolicitudess='solicitud de toner '+sale.name+' para la serie :'+serieaca
+                jalaSolicitudess='solicitud de toner '+self.x_studio_field_nO7Xg.name+' para la serie :'+serieaca
                 #sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta', 'validity_date' : sale.date_order + datetime.timedelta(days=30)})
-                self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")                
+                self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(self.x_studio_field_nO7Xg.id) + ";")                
         else:                               
             if record.team_id.id == 8 :
                 sale = self.env['sale.order'].sudo().create({'partner_id' : record.partner_id.id
