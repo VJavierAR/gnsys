@@ -480,13 +480,19 @@ class helpdesk_update(models.Model):
     @api.multi
     @api.onchange('x_studio_equipo_por_nmero_de_serie','x_studio_equipo_por_nmero_de_serie_1')
     def abierto(self):
-        self.x_studio_id_ticket = self.env['helpdesk.ticket'].search([['name', '=', self.name]]).id
+        self.x_studio_id_ticket = self.env['helpdesk.ticket'].search([['name', '=', self.name]])[0].id
         _logger.info("id ticket search: " + str(self.x_studio_id_ticket))
+        #que pasa si hay mas de 1 ticket xD .i ->search([['name', '=', self.name]]).id
         #ticketActualiza = self.env['helpdesk.ticket'].search([('id', '=', self.id)])
+        if self.team_id==8:
+            tam = len(self.x_studio_equipo_por_nmero_de_serie_1)
+        else:
+            tam = int(self.x_studio_tamao_lista)
         
-        if self.x_studio_id_ticket and int(self.x_studio_tamao_lista) < 2:
+        
+        if self.x_studio_id_ticket and tam < 2:
             estadoAntes = str(self.stage_id.name)
-            if self.stage_id.name == 'Pre-ticket' and (self.x_studio_equipo_por_nmero_de_serie.id or self.x_studio_equipo_por_nmero_de_serie_1) != False and self.estadoAbierto == False:
+            if self.stage_id.name == 'Pre-ticket' and (self.x_studio_equipo_por_nmero_de_serie.id or self.x_studio_equipo_por_nmero_de_serie_1.serie.id) != False and self.estadoAbierto == False:
                 #ticketActualiza.write({'stage_id': '89'})
                 query = "update helpdesk_ticket set stage_id = 89 where id = " + str(self.x_studio_id_ticket) + ";"
                 ss = self.env.cr.execute(query)
