@@ -1998,9 +1998,9 @@ class helpdesk_update(models.Model):
                     for id in ids:
                         lista_ids.append((4,id))
                     #v['x_studio_equipo_por_nmero_de_serie'] = [(4, ids[0]), (4, ids[1])]
-                    v['x_studio_equipo_por_nmero_de_serie_1'] = lista_ids
-                    self._origin.sudo().write({'x_studio_equipo_por_nmero_de_serie_1' : lista_ids})
-                    record.x_studio_equipo_por_nmero_de_serie_1 = lista_ids
+                    #asv['x_studio_equipo_por_nmero_de_serie_1'] = lista_ids
+                    #asself._origin.sudo().write({'x_studio_equipo_por_nmero_de_serie_1' : lista_ids})
+                    #asrecord.x_studio_equipo_por_nmero_de_serie_1 = lista_ids
                     """
                     if localidad != []:
                         srtt="update helpdesk_ticket set x_studio_empresas_relacionadas = " + str(localidad) + " where  id = " + str(idM )+ ";"
