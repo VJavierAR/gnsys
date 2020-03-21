@@ -162,6 +162,7 @@ class helpdesk_update(models.Model):
                 self.env.cr.execute(query)
                 self.env.cr.commit()
 
+            
             nombreCliente = str(rec.partner_id.name)
             if nombreCliente == 'False':
                 nombreCliente = 'No disponible'
