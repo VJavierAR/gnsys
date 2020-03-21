@@ -1934,7 +1934,7 @@ class helpdesk_update(models.Model):
                         #move_line.para.almacen.ubicacion.
 
                         cliente = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
-                        _logger.info('record_feliz : ' + str(cliente.name))
+                        _logger.info('record_feliz : ' + str(cliente))
                         self._origin.sudo().write({'partner_id' : cliente})
                         record.partner_id = cliente
                         idM=self._origin.id
