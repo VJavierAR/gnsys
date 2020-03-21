@@ -37,7 +37,7 @@ class helpdesk_update(models.Model):
                                         , string='Localidad contacto'
                                         , domain="['&',('parent_id.id','=',idLocalidadAyuda),('type','=','contact')]")
     
-    @api.depends('x_studio_equipo_por_nmero_de_serie')
+    @api.depends('x_studio_equipo_por_nmero_de_serie','x_studio_equipo_por_nmero_de_serie_1')
     def cambiaContactoLocalidad(self):
         if self.x_studio_empresas_relacionadas:
             loc = self.x_studio_empresas_relacionadas.id
@@ -151,7 +151,7 @@ class helpdesk_update(models.Model):
 
     datosCliente = fields.Text(string="Cliente datos", compute='_compute_datosCliente')
 
-    @api.depends('x_studio_equipo_por_nmero_de_serie')
+    @api.depends('x_studio_equipo_por_nmero_de_serie','x_studio_equipo_por_nmero_de_serie_1')
     def _compute_datosCliente(self):
         for rec in self:
             nombreCliente = str(rec.partner_id.name)
@@ -478,7 +478,7 @@ class helpdesk_update(models.Model):
 
 
     @api.multi
-    @api.onchange('x_studio_equipo_por_nmero_de_serie')
+    @api.onchange('x_studio_equipo_por_nmero_de_serie','x_studio_equipo_por_nmero_de_serie_1')
     def abierto(self):
         self.x_studio_id_ticket = self.env['helpdesk.ticket'].search([['name', '=', self.name]]).id
         _logger.info("id ticket search: " + str(self.x_studio_id_ticket))
@@ -486,7 +486,7 @@ class helpdesk_update(models.Model):
         
         if self.x_studio_id_ticket and int(self.x_studio_tamao_lista) < 2:
             estadoAntes = str(self.stage_id.name)
-            if self.stage_id.name == 'Pre-ticket' and self.x_studio_equipo_por_nmero_de_serie.id != False and self.estadoAbierto == False:
+            if self.stage_id.name == 'Pre-ticket' and (self.x_studio_equipo_por_nmero_de_serie.id or self.x_studio_equipo_por_nmero_de_serie_1) != False and self.estadoAbierto == False:
                 #ticketActualiza.write({'stage_id': '89'})
                 query = "update helpdesk_ticket set stage_id = 89 where id = " + str(self.x_studio_id_ticket) + ";"
                 ss = self.env.cr.execute(query)
@@ -1818,8 +1818,10 @@ class helpdesk_update(models.Model):
               record['x_studio_empresas_relacionadas'] = ''
               if self.team_id.id==8:
                  record['x_studio_equipo_por_nmero_de_serie'] = ''
+                 record['x_studio_equipo_por_nmero_de_serie_1'] = ''                    
               if self.team_id.id!=8:
-                 record['x_studio_equipo_por_nmero_de_serie'] = ''   
+                 record['x_studio_equipo_por_nmero_de_serie'] = ''
+                 record['x_studio_equipo_por_nmero_de_serie_1'] = ''   
 
             if id_cliente != zero  and id_localidad != zero:
               #raise Warning('entro3')
@@ -1839,14 +1841,16 @@ class helpdesk_update(models.Model):
               record['x_studio_movil'] = ''
             if self.team_id.id==8:
                action = {'domain':{'x_studio_equipo_por_nmero_de_serie':dominio}}
+               action = {'domain':{'x_studio_equipo_por_nmero_de_serie_1':dominio}}            
             if self.team_id.id!=8:
                action = {'domain':{'x_studio_equipo_por_nmero_de_serie':dominio}}    
+               action = {'domain':{'x_studio_equipo_por_nmero_de_serie_1':dominio}}
             return action
     
     
     #@api.model
     #@api.multi
-    @api.onchange('x_studio_equipo_por_nmero_de_serie')
+    @api.onchange('x_studio_equipo_por_nmero_de_serie','x_studio_equipo_por_nmero_de_serie_1')
     #@api.depends('x_studio_equipo_por_nmero_de_serie')
     def actualiza_datos_cliente(self):        
         
@@ -1922,10 +1926,10 @@ class helpdesk_update(models.Model):
 
                 #record['x_studio_equipo_por_nmero_de_serie'] = [(4,record.x_studio_equipo_por_nmero_de_serie.id)]
 
-                for numeros_serie in record.x_studio_equipo_por_nmero_de_serie:
-                    ids.append(numeros_serie.id)
+                for numeros_serie in record.x_studio_equipo_por_nmero_de_serie_1:
+                    ids.append(numeros_serie.serie.id)
 
-                    for move_line in numeros_serie.x_studio_move_line:
+                    for move_line in numeros_serie.serie.x_studio_move_line:
 
                         #move_line.para.almacen.ubicacion.
 
@@ -1993,9 +1997,9 @@ class helpdesk_update(models.Model):
                     for id in ids:
                         lista_ids.append((4,id))
                     #v['x_studio_equipo_por_nmero_de_serie'] = [(4, ids[0]), (4, ids[1])]
-                    v['x_studio_equipo_por_nmero_de_serie'] = lista_ids
-                    self._origin.sudo().write({'x_studio_equipo_por_nmero_de_serie' : lista_ids})
-                    record.x_studio_equipo_por_nmero_de_serie = lista_ids
+                    v['x_studio_equipo_por_nmero_de_serie_1'] = lista_ids
+                    self._origin.sudo().write({'x_studio_equipo_por_nmero_de_serie_1' : lista_ids})
+                    record.x_studio_equipo_por_nmero_de_serie_1 = lista_ids
                     """
                     if localidad != []:
                         srtt="update helpdesk_ticket set x_studio_empresas_relacionadas = " + str(localidad) + " where  id = " + str(idM )+ ";"
@@ -2046,7 +2050,7 @@ class helpdesk_update(models.Model):
                         }
                 """
                 #raise exceptions.ValidationError("No es posible registrar número de serie, primero cerrar el ticket con el id  "+str(informacion[0][0]))
-        if int(self.x_studio_tamao_lista) > 0 and self.team_id.id == 8:
+        if int(len(self.x_studio_equipo_por_nmero_de_serie_1)) > 0 and self.team_id.id == 8:
             
             queryt="select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!="+str(self.x_studio_id_ticket)+"  and h.stage_id!=18 and h.team_id=8 and  h.active='t' and stock_production_lot_id = "+str(self.x_studio_equipo_por_nmero_de_serie[0].id)+" limit 1;"            
             
