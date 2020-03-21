@@ -154,7 +154,7 @@ class helpdesk_update(models.Model):
     @api.depends('x_studio_equipo_por_nmero_de_serie','x_studio_equipo_por_nmero_de_serie_1')
     def _compute_datosCliente(self):
         for rec in self:
-            if rec.x_studio_empresas_relacionadas:
+            if rec.x_studio_empresas_relacionadas and rec.localidadContacto:
                 loc = rec.x_studio_empresas_relacionadas.id
                 idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_subtipo', '=', 'Contacto de localidad']], order='create_date desc', limit=1).id
                 rec.localidadContacto = idLoc
