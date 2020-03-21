@@ -154,12 +154,13 @@ class helpdesk_update(models.Model):
     @api.depends('x_studio_equipo_por_nmero_de_serie','x_studio_equipo_por_nmero_de_serie_1')
     def _compute_datosCliente(self):
         for rec in self:
-            loc = rec.x_studio_empresas_relacionadas.id
-            idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_subtipo', '=', 'Contacto de localidad']], order='create_date desc', limit=1).id
-            rec.localidadContacto = idLoc
-            query = "update helpdesk_ticket set \"localidadContacto\" = " + str(idLoc) + " where id = " + str(rec.x_studio_id_ticket) + ";"
-            self.env.cr.execute(query)
-            self.env.cr.commit()
+            if rec.x_studio_empresas_relacionadas:
+                loc = rec.x_studio_empresas_relacionadas.id
+                idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_subtipo', '=', 'Contacto de localidad']], order='create_date desc', limit=1).id
+                rec.localidadContacto = idLoc
+                query = "update helpdesk_ticket set \"localidadContacto\" = " + str(idLoc) + " where id = " + str(rec.x_studio_id_ticket) + ";"
+                self.env.cr.execute(query)
+                self.env.cr.commit()
 
             nombreCliente = str(rec.partner_id.name)
             if nombreCliente == 'False':
