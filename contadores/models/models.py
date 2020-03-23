@@ -50,7 +50,7 @@ class dcas(models.Model):
     @api.model
     def create(self, vals):
         c = super(dcas, self).create(vals)
-        c.write(['x_studio_fecha','=',datetime.now()])
+        c.write(['x_studio_fecha','=',datetime.now])
         return c
     
     
