@@ -146,7 +146,7 @@ class contratos(models.Model):
 
     #Valores para impresión de factura
     valoresImpresion   = fields.One2many('servicios.valores', 'servicio', string = "Valores para impresión de factura",track_visibility='onchange')
-    razonPrueba  = fields.Text(string = "Razón Social",track_visibility='onchange')
+    razonPrueba  = fields.Many2one('contactos', string="Contactos")
     @api.onchange('cliente')
     def cambiarRazonSocial(self):
         valores = [('0', 'DOCUMENTO INTEGRAL CORPORATIVO, SA DE CV'), ('1', 'GN SYS CORPORATIVO S.A. DE C.V.'),
@@ -158,7 +158,7 @@ class contratos(models.Model):
         # new = wt.browse(id_needed)
         # list = [new.field1, new.field2, new.field3]
         if self.cliente :
-            razonPrueba = self.cliente.razonSocial
+            #razonPrueba = self.cliente.razonSocial
             _logger.info("Estamos aquí  ",razonPrueba)
             busca = str(self.cliente.razonSocial)
             for valor in valores:
