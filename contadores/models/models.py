@@ -48,7 +48,7 @@ class dcas(models.Model):
     
     
     @api.onchange('contadorColor','contadorMono')
-    def validaContadores(self)
+    def validaContadores(self):
         contaColor=self.contadorColor
         contadorMono=self.contadorMono
         cam=self.x_studio_contador_mono_anterior_1
