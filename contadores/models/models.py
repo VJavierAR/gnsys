@@ -77,7 +77,7 @@ class dcas(models.Model):
             c=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeCian','=',1]],order='x_studio_fecha desc',limit=1).contadorColor
             a=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeAmarillo','=',1]],order='x_studio_fecha desc',limit=1).contadorColor
             m=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeMagenta','=',1]],order='x_studio_fecha desc',limit=1).contadorColor
-            raise exceptions.ValidationError("Color Cian"+srt(c)+"Color amarillo"+srt(a)+"Color magenta"+srt(m))
+            raise exceptions.ValidationError("Color Cian"+str(c)+"Color amarillo"+str(a)+"Color magenta"+str(m))
             
             
         
