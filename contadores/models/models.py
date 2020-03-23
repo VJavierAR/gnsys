@@ -47,7 +47,7 @@ class dcas(models.Model):
     cartuchoNegro=fields.Selection([('a', 'Ninguna serie selecionada')], string='prueba')
     
     
-     @api.model
+    @api.model
     def create(self, vals):
         c = super(dcas, self).create(vals)                
         contaC=c.contadorColor
