@@ -158,6 +158,7 @@ class contratos(models.Model):
         # new = wt.browse(id_needed)
         # list = [new.field1, new.field2, new.field3]
         if self.cliente :
+            self.razonPrueba = self.cliente.razonSocial
             #razonPrueba = self.cliente.razonSocial
             _logger.info("Estamos aquí  "+str(self.razonPrueba))
             busca = str(self.cliente.razonSocial)
