@@ -2292,6 +2292,7 @@ class helpdesk_update(models.Model):
     @api.multi
     def cambio_wizard(self):
         _logger.info('Entre por web')
+        _logger.info('self: ' + str(self))
         wiz = self.env['helpdesk.comentario'].create({'ticket_id':self.id })
         view = self.env.ref('helpdesk_update.view_helpdesk_comentario')
         return {
