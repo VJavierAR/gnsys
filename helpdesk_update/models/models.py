@@ -1868,7 +1868,7 @@ class helpdesk_update(models.Model):
     
     #@api.model
     #@api.multi
-    @api.onchange('x_studio_equipo_por_nmero_de_serie','x_studio_equipo_por_nmero_de_serie_1.serie')
+    @api.onchange('x_studio_equipo_por_nmero_de_serie','x_studio_equipo_por_nmero_de_serie_1.serie','x_studio_equipo_por_nmero_de_serie_1')
     #@api.depends('x_studio_equipo_por_nmero_de_serie')
     def actualiza_datos_cliente(self):        
         
@@ -2016,9 +2016,9 @@ class helpdesk_update(models.Model):
                     for id in ids:
                         lista_ids.append((4,id))
                     #v['x_studio_equipo_por_nmero_de_serie'] = [(4, ids[0]), (4, ids[1])]
-                    v['x_studio_equipo_por_nmero_de_serie_1.serie'] = lista_ids
-                    self._origin.sudo().write({'x_studio_equipo_por_nmero_de_serie_1.serie' : lista_ids})
-                    record.x_studio_equipo_por_nmero_de_serie_1.serie = lista_ids
+                    #as v['x_studio_equipo_por_nmero_de_serie_1.serie'] = lista_ids
+                    #as self._origin.sudo().write({'x_studio_equipo_por_nmero_de_serie_1.serie' : lista_ids})
+                    #as record.x_studio_equipo_por_nmero_de_serie_1.serie = lista_ids
                     """
                     if localidad != []:
                         srtt="update helpdesk_ticket set x_studio_empresas_relacionadas = " + str(localidad) + " where  id = " + str(idM )+ ";"
