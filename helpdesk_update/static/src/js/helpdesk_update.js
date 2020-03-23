@@ -12,8 +12,7 @@ function test() {
 */
 
 
-
-odoo.define('helpdesk_update.tree_view_button', function (require){
+odoo.define('invoice.action_button', function (require) {
 "use strict";
 
 	var core = require('web.core');
@@ -25,9 +24,9 @@ odoo.define('helpdesk_update.tree_view_button', function (require){
 	ListController.include({
 		renderButtons: function($node) {
 		this._super.apply(this, arguments);
-		   if (this.$buttons) {
-		     this.$buttons.find('.oe_action_button').click(this.proxy('action_def'));
-		   }
+			if (this.$buttons) {
+		    	this.$buttons.find('.oe_action_button').click(this.proxy('action_def'));
+		   	}
 		},
 
 		action_def: function () {
@@ -39,7 +38,7 @@ odoo.define('helpdesk_update.tree_view_button', function (require){
                 args: [[user],{'id':user}],
             });
         },
-
+        
         receive_invoice: function () {
             var self = this
             var user = session.uid;
