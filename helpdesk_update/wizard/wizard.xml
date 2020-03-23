@@ -35,6 +35,8 @@
                             <group>
                                 <field name="evidencia" can_create="true" can_write="true" modifiers="{}" widget="many2many_binary"/>
                                 <field name="mostrarComentario" modifiers="{}"/>
+                                <field name="editarZona" force_save = "1"/>
+                                <field name="zona" attrs='{"invisible": [["editarZona","=",False]]}' force_save = "1"/>
                             </group>
                         </group>
                     </form>
