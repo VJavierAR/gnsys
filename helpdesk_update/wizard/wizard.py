@@ -88,9 +88,8 @@ class HelpDeskAlertaNumeroDeSerie(TransientModel):
     _description = 'HelpDesk Alerta para series existentes'
     
     ticket_id = fields.Many2one("helpdesk.ticket")
-    #ticket_id_existente = fields.Integer(string = 'Ticket existente')
+    ticket_id_existente = fields.Integer(string = 'Ticket existente')
     mensaje = fields.Text('Mensaje')
-
 
     def abrirTicket(self):
         name = 'Ticket'
@@ -448,7 +447,12 @@ class helpdesk_crearconserie(TransientModel):
                                             ,'x_studio_equipo_por_nmero_de_serie': [(6,0,self.serie.ids)]
                                             ,'partner_id': self.idCliente
                                             ,'x_studio_empresas_relacionadas': self.idLocaliidad
+                                            ,'team_id': 9
                                             })
+        ticket_id.write({'partner_id': self.idCliente
+                        ,'x_studio_empresas_relacionadas': self.idLocaliidad
+                        ,'team_id': 9
+                        })
         query = "select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!=" + str(ticket.x_studio_id_ticket) + "  and h.stage_id!=18 and h.team_id!=8 and  h.active='t' and stock_production_lot_id = " +  str(ticket.x_studio_equipo_por_nmero_de_serie[0].id) + " limit 1;"            
         self.env.cr.execute(query)                        
         informacion = self.env.cr.fetchall()
@@ -457,7 +461,18 @@ class helpdesk_crearconserie(TransientModel):
 
         mensajeTitulo = "Ticket generado!!!"
         mensajeCuerpo = "Se creo el ticket '" + str(ticket.id) + "' para el número de serie " + self.serie.name + "\n\n" + messageTemp
-        warning = {'title': _(mensajeTitulo)
-                , 'message': _(mensajeCuerpo),
-        }
-        return {'warning': warning}
+        
+        wiz = self.env['helpdesk.alerta.series'].create({'ticket_id': ticket.id, 'ticket_id_existente': informacion[0][0], 'mensaje': mensajeCuerpo})
+        view = self.env.ref('helpdesk_update.view_helpdesk_alerta_series')
+        return {
+                'name': _(mensajeTitulo),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'helpdesk.alerta.series',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'res_id': wiz.id,
+                'context': self.env.context,
+                }
