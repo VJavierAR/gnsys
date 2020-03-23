@@ -396,8 +396,8 @@ class helpdesk_crearconserie(TransientModel):
 
     @api.onchange('serie')
     def cambia_serie(self):
-        if serie:
-            if len(serie) > 1:
+        if self.serie:
+            if len(self.serie) > 1:
                 mensajeTitulo = "Alerta!!!"
                 mensajeCuerpo = "No puede capturar más de una serie."
                 wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
