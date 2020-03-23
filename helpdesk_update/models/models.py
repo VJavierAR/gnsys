@@ -1851,7 +1851,8 @@ class helpdesk_update(models.Model):
               record['x_studio_movil'] = ''
             if self.team_id.id==8:
                action = {'domain':{'x_studio_equipo_por_nmero_de_serie':dominio}}
-               action = {'domain':{'x_studio_equipo_por_nmero_de_serie_1':dominio}}            
+               action = {'domain':{'x_studio_equipo_por_nmero_de_serie_1':dominio}}
+               raise Warning('este es el dominio xD ' +str(dominio)) 
             if self.team_id.id!=8:
                action = {'domain':{'x_studio_equipo_por_nmero_de_serie':dominio}}    
                action = {'domain':{'x_studio_equipo_por_nmero_de_serie_1':dominio}}
