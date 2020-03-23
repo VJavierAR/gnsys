@@ -1852,7 +1852,7 @@ class helpdesk_update(models.Model):
             if self.team_id.id==8:
                action = {'domain':{'x_studio_equipo_por_nmero_de_serie':dominio}}
                action = {'domain':{'x_studio_equipo_por_nmero_de_serie_1':dominio}}
-               raise Warning('este es el dominio xD ' +str(dominio)) 
+               #raise Warning('este es el dominio xD ' +str(dominio)) 
             if self.team_id.id!=8:
                action = {'domain':{'x_studio_equipo_por_nmero_de_serie':dominio}}    
                action = {'domain':{'x_studio_equipo_por_nmero_de_serie_1':dominio}}
