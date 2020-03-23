@@ -217,4 +217,35 @@
     </record>
 
 
+    <record id="view_helpdesk_crear_desde_serie" model="ir.ui.view">
+        <field name="model">helpdesk.crearDesdeSerie</field>
+        <field name="arch" type="xml">
+            <form string="Crear">
+                <group>
+                    <group class='text-center'>
+                        <h3>Serie</h3>
+                        <field name='serie' widget='many2many_tags' string=''/>
+                    </group>
+                </group>
+                <group>
+                    <group string="Cliente y localidad">
+                        <field name='cliente' readonly='1'/>
+                        <field name='localidad' readonly='1'/>
+                        <field name='zonaLocalidad' readonly='1'/>
+                        <field name='idLocaliidad' readonly='1' invisible='1'/>
+                    </group>
+                    <group string="Datos de contacto">
+                        <field name='nombreContactoLocalidad' readonly='1'/>
+                        <field name='telefonoContactoLocalidad' readonly='1'/>
+                        <field name='movilContactoLocalidad' readonly='1'/>
+                        <field name='correoContactoLocalidad' readonly='1'/>
+                    </group>
+                </group>
+                <footer>
+                    <button special="cancel" string="Cancelar" class="oe_highlight" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
 </odoo>

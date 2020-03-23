@@ -33,12 +33,12 @@ odoo.define('invoice.action_button', function (require) {
             var self = this
             var user = session.uid;
             self.do_action({
-            	name: _t('helpdesk.comentario'),
+            	name: _t('Crear ticket con base a una serie'),
             	type : 'ir.actions.act_window',
-            	res_model: 'helpdesk.comentario',
+            	res_model: 'helpdesk.crearDesdeSerie',
             	view_type: 'form',
             	view_mode: 'form',
-            	view_id: 'view_helpdesk_comentario',
+            	view_id: 'view_helpdesk_crear_desde_serie',
             	views: [[false, 'form']],
             	target: 'new',
             }, {
