@@ -4,7 +4,7 @@
     model="res.partner"
     string="Print to XLSX"
     report_type="xlsx"
-    name="module_name.report_name"
+    name="requisicion.report_name"
     file="res_partner"
     attachment_use="False"/>
 </odoo>
