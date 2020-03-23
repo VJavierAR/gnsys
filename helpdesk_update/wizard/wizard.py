@@ -394,27 +394,17 @@ class helpdesk_crearconserie(TransientModel):
     movilContactoLocalidad = fields.Text(string = 'Movil de contacto')
     correoContactoLocalidad = fields.Text(string = 'Correo electronico de contacto')
 
-    @api.depends('serie')
+    @api.onchange('serie')
     def cambia_serie(self):
         if self.serie:
             if len(self.serie) > 1:
                 _logger.info('Mayor que 1: ' + str(len(self.serie)))
                 mensajeTitulo = "Alerta!!!"
                 mensajeCuerpo = "No puede capturar más de una serie."
-                wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
-                view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
-                return {
-                        'name': _(mensajeTitulo),
-                        'type': 'ir.actions.act_window',
-                        'view_type': 'form',
-                        'view_mode': 'form',
-                        'res_model': 'helpdesk.alerta',
-                        'views': [(view.id, 'form')],
-                        'view_id': view.id,
-                        'target': 'new',
-                        'res_id': wiz.id,
-                        'context': self.env.context,
-                        }
+                warning = {'title': _(mensajeTitulo)
+                            , 'message': _(mensajeCuerpo),
+                    }
+                return {'warning': warning}
             else:
                 _logger.info('Menor que 1: ' + str(len(self.serie)))
                 if self.serie[0].x_studio_move_line:
@@ -435,17 +425,7 @@ class helpdesk_crearconserie(TransientModel):
                 else:
                     mensajeTitulo = "Alerta!!!"
                     mensajeCuerpo = "No existe una locación del equipo."
-                    wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
-                    view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
-                    return {
-                            'name': _(mensajeTitulo),
-                            'type': 'ir.actions.act_window',
-                            'view_type': 'form',
-                            'view_mode': 'form',
-                            'res_model': 'helpdesk.alerta',
-                            'views': [(view.id, 'form')],
-                            'view_id': view.id,
-                            'target': 'new',
-                            'res_id': wiz.id,
-                            'context': self.env.context,
-                            }
+                    warning = {'title': _(mensajeTitulo)
+                            , 'message': _(mensajeCuerpo),
+                    }
+                    return {'warning': warning}
