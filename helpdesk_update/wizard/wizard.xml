@@ -241,6 +241,7 @@
                     </group>
                 </group>
                 <footer>
+                    <button name="crearTicket" string="Crear" type="object" class="oe_highlight"/>
                     <button special="cancel" string="Cancelar" class="oe_highlight" />
                 </footer>
             </form>

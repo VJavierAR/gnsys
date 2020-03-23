@@ -386,6 +386,7 @@ class helpdesk_crearconserie(TransientModel):
 
     serie = fields.Many2many('stock.production.lot', string = 'Serie')
     cliente = fields.Text(string = 'Cliente')
+    idCliente = fields.Text(string = 'idCliente')
     localidad = fields.Text(string = 'Localidad')
     zonaLocalidad = fields.Selection([('SUR','SUR'),('NORTE','NORTE'),('PONIENTE','PONIENTE'),('ORIENTE','ORIENTE'),('CENTRO','CENTRO'),('DISTRIBUIDOR','DISTRIBUIDOR'),('MONTERREY','MONTERREY'),('CUERNAVACA','CUERNAVACA'),('GUADALAJARA','GUADALAJARA'),('QUERETARO','QUERETARO'),('CANCUN','CANCUN'),('VERACRUZ','VERACRUZ'),('PUEBLA','PUEBLA'),('TOLUCA','TOLUCA'),('LEON','LEON'),('COMODIN','COMODIN'),('VILLAHERMOSA','VILLAHERMOSA'),('MERIDA','MERIDA'),('ALTAMIRA','ALTAMIRA'),('COMODIN','COMODIN'),('DF00','DF00'),('SAN LP','SAN LP'),('ESTADO DE MÉXICO','ESTADO DE MÉXICO'),('Foraneo Norte','Foraneo Norte'),('Foraneo Sur','Foraneo Sur')], string = 'Zona')
     idLocaliidad = fields.Text(string = 'idLocaliidad')
@@ -404,6 +405,7 @@ class helpdesk_crearconserie(TransientModel):
             else:
                 if self.serie[0].x_studio_move_line:
                     self.cliente = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.name
+                    self.idCliente = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
                     self.localidad = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.name
                     self.zonaLocalidad = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.x_studio_field_SqU5B
                     self.idLocaliidad = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
@@ -439,3 +441,16 @@ class helpdesk_crearconserie(TransientModel):
             self.telefonoContactoLocalidad = ''
             self.movilContactoLocalidad = ''
             self.correoContactoLocalidad = ''
+
+    def creaTicket(self):
+        ticket = self.env['helpdesk.ticket'].create({'stage_id': 89 
+                                            ,'x_studio_equipo_por_nmero_de_serie': [(6,0,self.serie.ids)]
+                                            ,'partner_id': self.idCliente
+                                            ,'x_studio_empresas_relacionadas': self.idLocaliidad
+                                            })
+        mensajeTitulo = "Ticket generado!!!"
+        mensajeCuerpo = "Se creo el ticket '" + str(ticket.id) + "' para el número de serie " + self.serie.name
+        warning = {'title': _(mensajeTitulo)
+                , 'message': _(mensajeCuerpo),
+        }
+        return {'warning': warning}
