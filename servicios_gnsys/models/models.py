@@ -153,12 +153,13 @@ class contratos(models.Model):
                ('2', 'GRUPO GNSYS SOLUCIONES SA DE CV'), ('3', 'SERVICIOS CORPORATIVOS GENESIS, S.A DE C.V.')]
         #serviciosTodos = fields.Many2one('res.partner', string='Cliente')
         # serviciosTodos = self.env['contactos']
-        razonPrueba = self.cliente.razonSocial
-        _logger.info(razonPrueba)
+        
         # id_needed = wt.search([('field1', '=', 'value')]).id
         # new = wt.browse(id_needed)
         # list = [new.field1, new.field2, new.field3]
         if self.cliente :
+            razonPrueba = self.cliente.razonSocial
+            _logger.info(razonPrueba)
             busca = str(self.cliente.razonSocial)
             for valor in valores:
                 llave,valor  = valor
