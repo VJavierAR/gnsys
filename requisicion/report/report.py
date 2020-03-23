@@ -1,4 +1,6 @@
 from odoo import models
+_logger = logging.getLogger(__name__)
+
 
 class PartnerXlsx(models.AbstractModel):
     _name = 'report.module_name.report_name'
@@ -11,3 +13,4 @@ class PartnerXlsx(models.AbstractModel):
             sheet = workbook.add_worksheet(report_name[:31])
             bold = workbook.add_format({'bold': True})
             sheet.write(0, 0, obj.name, bold)
+            _logger.info(str(obj.name))
