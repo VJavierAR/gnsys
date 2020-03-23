@@ -397,7 +397,8 @@ class helpdesk_crearconserie(TransientModel):
     @api.onchange('serie')
     def cambia_serie(self):
         if self.serie:
-            if len(self.serie) <= 1:
+            if len(self.serie) > 1:
+                _logger.info('Mayor que 1: ' + str(len(self.serie)))
                 mensajeTitulo = "Alerta!!!"
                 mensajeCuerpo = "No puede capturar más de una serie."
                 wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
@@ -415,19 +416,20 @@ class helpdesk_crearconserie(TransientModel):
                         'context': self.env.context,
                         }
             else:
+                _logger.info('Menor que 1: ' + str(len(self.serie)))
                 if self.serie[0].x_studio_move_line:
                     self.cliente = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.name
                     self.localidad = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.name
                     self.zonaLocalidad = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.x_studio_field_SqU5B
                     self.idLocaliidad = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
                     
-                    idLoc = self.env['res.partner'].search([['parent_id', '=', self.idLocaliidad],['x_studio_subtipo', '=', 'Contacto de localidad']], order='create_date desc', limit=1).id.name.phone.mabile.email
+                    idLoc = self.env['res.partner'].search([['parent_id', '=', self.idLocaliidad],['x_studio_subtipo', '=', 'Contacto de localidad']], order='create_date desc', limit=1)
                     _logger.info('')
                     if idLoc:
-                        self.nombreContactoLocalidad = idLoc.name
-                        self.telefonoContactoLocalidad = idLoc.phone
-                        self.movilContactoLocalidad = idLoc.mobile
-                        self.correoContactoLocalidad = idLoc.email
+                        self.nombreContactoLocalidad = idLoc[0].name
+                        self.telefonoContactoLocalidad = idLoc[0].phone
+                        self.movilContactoLocalidad = idLoc[0].mobile
+                        self.correoContactoLocalidad = idLoc[0].email
 
 
                 else:
