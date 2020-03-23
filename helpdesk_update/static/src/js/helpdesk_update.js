@@ -35,7 +35,7 @@ odoo.define('invoice.action_button', function (require) {
             self.do_action({
             	name: _t('Crear ticket con base a una serie'),
             	type : 'ir.actions.act_window',
-            	res_model: 'helpdesk.crearDesdeSerie',
+            	res_model: 'helpdesk.crearconserie',
             	view_type: 'form',
             	view_mode: 'form',
             	view_id: 'view_helpdesk_crear_desde_serie',

@@ -380,8 +380,8 @@ class helpdesk_contadores(TransientModel):
 
 
 
-class helpdesk_crearDesdeSerie(TransientModel):
-    _name = 'helpdesk.crearDesdeSerie'
+class helpdesk_crearconserie(TransientModel):
+    _name = 'helpdesk.crearconserie'
     _description = 'HelpDesk crear ticket desde la serie'
 
     serie = fields.Many2many('stock.production.lot', string = 'Serie')

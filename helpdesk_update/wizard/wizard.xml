@@ -218,7 +218,7 @@
 
 
     <record id="view_helpdesk_crear_desde_serie" model="ir.ui.view">
-        <field name="model">helpdesk.crearDesdeSerie</field>
+        <field name="model">helpdesk.crearconserie</field>
         <field name="arch" type="xml">
             <form string="Crear">
                 <group>
