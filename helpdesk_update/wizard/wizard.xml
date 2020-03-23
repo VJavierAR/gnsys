@@ -224,11 +224,11 @@
             <form string="Crear">
                 <group >
                     <group>
-                        <h3 class='text-left'>
+                        <h3 class='text-rigth'>
                             Serie: 
                         </h3>
                     </group>
-                    <group class='text-rigth'>
+                    <group class='text-left'>
                         <field name='serie' widget='many2many_tags' string='' options="{'no_create_edit': True, 'no_create': True}"/>
                     </group>
                     
