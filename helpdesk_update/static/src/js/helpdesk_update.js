@@ -29,16 +29,32 @@ odoo.define('invoice.action_button', function (require) {
 		   	}
 		},
 
-		action_def: function () {
+		action_def: function (e) {
             var self = this
             var user = session.uid;
+            self.do_action({
+            	name: _t('helpdesk.comentario'),
+            	type : 'ir.actions.act_window',
+            	res_model: 'helpdesk.comentario',
+            	view_type: 'form',
+            	view_mode: 'form',
+            	view_id: 'view_helpdesk_comentario',
+            	views: [[false, 'form']],
+            	target: 'new',
+            }, {
+            	on_reverse_breadcrumb: function () {
+               		self.update_control_panel({clear: true, hidden: true});
+           		}
+            });
+
+
             rpc.query({
                 model: 'helpdesk.ticket',
                 method: 'cambio_wizard',
                 args: [[user],{'id':user}],
             });
         },
-        
+
         receive_invoice: function () {
             var self = this
             var user = session.uid;
@@ -56,8 +72,8 @@ odoo.define('invoice.action_button', function (require) {
                         target: 'new',
                     });
                     window.location
-                });
-            },
+            	});
+        },
 	});
 	/*
 	var ListView = require('web.ListView');
