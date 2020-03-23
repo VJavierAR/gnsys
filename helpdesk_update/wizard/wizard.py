@@ -401,10 +401,7 @@ class helpdesk_crearconserie(TransientModel):
                 _logger.info('Mayor que 1: ' + str(len(self.serie)))
                 mensajeTitulo = "Alerta!!!"
                 mensajeCuerpo = "No puede capturar más de una serie."
-                warning = {'title': _(mensajeTitulo)
-                            , 'message': _(mensajeCuerpo),
-                    }
-                return {'warning': warning}
+                raise exceptions.Warning(mensajeCuerpo)
             else:
                 _logger.info('Menor que 1: ' + str(len(self.serie)))
                 if self.serie[0].x_studio_move_line:
@@ -412,8 +409,9 @@ class helpdesk_crearconserie(TransientModel):
                     self.localidad = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.name
                     self.zonaLocalidad = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.x_studio_field_SqU5B
                     self.idLocaliidad = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
-                    
-                    idLoc = self.env['res.partner'].search([['parent_id', '=', self.idLocaliidad],['x_studio_subtipo', '=', 'Contacto de localidad']], order='create_date desc', limit=1)
+                    loc = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
+                    _logger.info('loc: ' + str(loc))
+                    idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_subtipo', '=', 'Contacto de localidad']], order='create_date desc', limit=1)
                     _logger.info('idLoc: ' + str(idLoc))
                     if idLoc:
                         self.nombreContactoLocalidad = idLoc[0].name

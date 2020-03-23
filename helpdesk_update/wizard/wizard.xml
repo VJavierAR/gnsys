@@ -232,7 +232,7 @@
                         <field name='cliente' readonly='1'/>
                         <field name='localidad' readonly='1'/>
                         <field name='zonaLocalidad' readonly='1'/>
-                        <field name='idLocaliidad' readonly='1' invisible='1'/>
+                        <field name='idLocaliidad' readonly='1' invisible='0'/>
                     </group>
                     <group string="Datos de contacto">
                         <field name='nombreContactoLocalidad' readonly='1'/>
