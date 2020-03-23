@@ -445,14 +445,15 @@ class helpdesk_crearconserie(TransientModel):
         messageTemp = ''
         ticket = self.env['helpdesk.ticket'].create({'stage_id': 89 
                                             ,'x_studio_equipo_por_nmero_de_serie': [(6,0,self.serie.ids)]
-                                            ,'partner_id': self.idCliente
-                                            ,'x_studio_empresas_relacionadas': self.idLocaliidad
+                                            ,'partner_id': int(self.idCliente)
+                                            ,'x_studio_empresas_relacionadas': int(self.idLocaliidad)
                                             ,'team_id': 9
                                             })
-        ticket.write({'partner_id': self.idCliente
-                        ,'x_studio_empresas_relacionadas': self.idLocaliidad
-                        ,'team_id': 9
-                        })
+        ticket.write({'partner_id': int(self.idCliente)
+                    ,'x_studio_empresas_relacionadas': int(self.idLocaliidad)
+                    ,'team_id': 9
+                    })
+        ticket._compute_datosCliente(ticket)
         query = "select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!=" + str(ticket.x_studio_id_ticket) + "  and h.stage_id!=18 and h.team_id!=8 and  h.active='t' and stock_production_lot_id = " +  str(ticket.x_studio_equipo_por_nmero_de_serie[0].id) + " limit 1;"            
         self.env.cr.execute(query)                        
         informacion = self.env.cr.fetchall()
