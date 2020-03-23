@@ -4,7 +4,7 @@ import base64,io,csv
 import logging, ast
 from odoo.exceptions import UserError
 from odoo import exceptions, _
-import datetime
+from datetime import datetime
 _logger = logging.getLogger(__name__)
 
 
@@ -50,7 +50,7 @@ class dcas(models.Model):
     @api.model
     def create(self, vals):
         c = super(dcas, self).create(vals)
-        c.write(['x_studio_fecha','=',datetime.now])
+        c.write(['x_studio_fecha','=',datetime.now()])
         return c
     
     
