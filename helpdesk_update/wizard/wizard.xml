@@ -161,8 +161,8 @@
                 <footer>
                     <button name="abrirTicket" string="Abrir ticket existente" type="object" class="oe_highlight"/>
                     <button name="abrirTicketCreado" string="Abrir ticket creado" type="object" class="oe_highlight"/>
-                    <button name="action_refresh" string="Continuar cerrar" type="object" class="oe_highlight" />
-                    <button name="action_refresh" special="cancel" string="Continuar" class="oe_highlight" />
+                    <button name="action_refresh" string="Continuar (con recarga)" type="object" class="oe_highlight" />
+                    <button name="action_refresh" special="cancel" string="Continuar (sin recargar)" class="oe_highlight" />
                 </footer>
             </form>
         </field>
