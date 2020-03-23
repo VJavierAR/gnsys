@@ -68,9 +68,23 @@ class dcas(models.Model):
         contaC=self.contadorColor               
         cac=self.x_studio_contador_color_anterior
         if cac>contaC:
-            raise exceptions.ValidationError("Contador Color Menor")                          
-                
+            raise exceptions.ValidationError("Contador Color Menor")
             
+                 
+    @api.onchange('serie')             
+    def ultimosContadoresNACM(self):
+        if self.serie:
+            c=self.env['dcas.dcas'].search([['serie','='self.serie.id],['porcentajeCian','=',1]],order='x_studio_fecha desc',limi=1).contadorColor
+            a=self.env['dcas.dcas'].search([['serie','='self.serie.id],['porcentajeAmarillo','=',1]],order='x_studio_fecha desc',limi=1).contadorColor
+            m=self.env['dcas.dcas'].search([['serie','='self.serie.id],['porcentajeMagenta','=',1]],order='x_studio_fecha desc',limi=1).contadorColor
+            raise exceptions.ValidationError("Color Cian"+srt(c)+"Color amarillo"+srt(a)+"Color magenta"+srt(m))
+            
+            
+        
+        
+    
+    
+    
             
             
     
