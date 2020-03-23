@@ -46,21 +46,13 @@ class dcas(models.Model):
     fuente=fields.Selection(selection=[('dcas.dcas', 'DCA'),('helpdesk.ticket', 'Mesa'),('stock.production.lot','Equipo'),('tfs.tfs','Tfs')], default='dcas.dcas')  
     cartuchoNegro=fields.Selection([('a', 'Ninguna serie selecionada')], string='prueba')
     
-    """
+    
     @api.model
     def create(self, vals):
-        c = super(dcas, self).create(vals)                
-        contaC=c.contadorColor
-        contadorM=c.contadorMono
-        cam=c.x_studio_contador_mono_anterior_1
-        cac=c.x_studio_contador_color_anterior
-        if cac>contaC:
-            raise exceptions.ValidationError("Contador Color Menor")                          
-        if cam>contadorM:
-            raise exceptions.ValidationError("Contador Monocromatico Menor")  
-        
+        c = super(dcas, self).create(vals)
+        c.write(['x_studio_fecha','=',datetime.now()])
         return c
-    """   
+    
     
     
     @api.onchange('contadorMono')
