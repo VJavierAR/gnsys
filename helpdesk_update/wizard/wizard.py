@@ -112,7 +112,7 @@ class HelpDeskAlertaNumeroDeSerie(TransientModel):
         """
         return {
                 "type": "ir.actions.act_url",
-                "url": "https://gnsys-corp.odoo.com/web?debug=assets#id= " + self.ticket_id_existente + " &action=400&active_id=9&model=helpdesk.ticket&view_type=form&menu_id=406",
+                "url": "https://gnsys-corp.odoo.com/web?debug=assets#id= " + str(self.ticket_id_existente) + " &action=400&active_id=9&model=helpdesk.ticket&view_type=form&menu_id=406",
                 "target": "new",
                 }
 
