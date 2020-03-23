@@ -326,7 +326,7 @@ class StockPicking(Model):
         
         view = self.env.ref('stock_picking_mass_action.view_cambio_toner_action_form')
         return {
-            'name': _('xxxx'),
+            'name': _('Cambio'),
             'type': 'ir.actions.act_window',
             'view_type': 'form',
             'view_mode': 'form',
@@ -338,6 +338,36 @@ class StockPicking(Model):
             'context': self.env.context,
         }
 
+    def guia(self):
+        wiz = self.env['guia.ticket'].create({'pick':self.id})
+        view = self.env.ref('stock_picking_mass_action.view_guia_ticket')
+        return {
+            'name': _('Guia'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'cambio.toner',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            'context': self.env.context,
+        }
+    def comentario(self):
+        wiz = self.env['comentario.ticket'].create({'pick':self.id})
+        view = self.env.ref('stock_picking_mass_action.view_comentario_ticket')
+        return {
+            'name': _('Comentario'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'cambio.toner',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            'context': self.env.context,
+        }
 
 
     # @api.depends('move_type', 'move_lines.state', 'move_lines.picking_id')

@@ -217,3 +217,19 @@ class StockCambioLine(TransientModel):
             if(record.almacen):
                 ex=self.env['stock.quant'].search([['location_id','=',record.almacen.lot_stock_id.id],['product_id','=',record.producto1.id]]).sorted(key='quantity',reverse=True)
                 record.existeciaAlmacen=int(ex[0].quantity) if(len(ex)>0) else 0 
+
+class StockCambioLine(TransientModel):
+    _name = 'guia.ticket'
+    _description = 'Guias de Ticket'
+    guia=fields.Char(string='Guia')
+    pick=fields.Many2one('stock.picking')
+
+
+class StockCambioLine(TransientModel):
+    _name = 'comentario.ticket'
+    _description = 'Comemtario de Ticket'
+    comentario=fields.Char(string='Comentario')
+    evidencia=fields.Binary(string='Evidencia')
+    pick=fields.Many2one('stock.picking')
+
+

@@ -77,4 +77,41 @@
             </form>
         </field>
     </record>
+
+        <record id="view_guia_ticket" model="ir.ui.view">
+        <field name="model">guia.ticket</field>
+        <field name="arch" type="xml">
+            <form string="Guia">
+                <group>
+                    <field name="guia">
+                    </field>
+                </group>
+                <footer>
+                    <button name="confirmar" string="Confirmar" type="object" class="oe_highlight"/>
+                    or
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+
+
+            <record id="view_comentario_ticket" model="ir.ui.view">
+        <field name="model">comentario.ticket</field>
+        <field name="arch" type="xml">
+            <form string="Evidencia">
+                <group>
+                    <field name="comentario"/>
+                    <field name="evidencia"/>
+                </group>
+                <footer>
+                    <button name="confirmar" string="Confirmar" type="object" class="oe_highlight"/>
+                    or
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
 </odoo>
