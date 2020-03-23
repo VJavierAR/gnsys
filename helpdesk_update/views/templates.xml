@@ -6,9 +6,7 @@
                 <link rel="shylesheet" href="/helpdesk_update/static/src/css/helpdesk_update.css" />
             </xpath>
         </template>
-
         
-
         <!-- <template id="listing"> -->
         <!--   <ul> -->
         <!--     <li t-foreach="objects" t-as="object"> -->
