@@ -74,10 +74,10 @@ class dcas(models.Model):
     @api.onchange('serie')             
     def ultimosContadoresNACM(self):
         if self.serie:
-            c=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeCian','=',1]],order='x_studio_fecha desc',limit=1).contadorColor
-            a=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeAmarillo','=',1]],order='x_studio_fecha desc',limit=1).contadorColor
-            m=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeMagenta','=',1]],order='x_studio_fecha desc',limit=1).contadorColor
-            raise exceptions.ValidationError("Color Cian"+str(c)+"Color amarillo"+str(a)+"Color magenta"+str(m))
+            c=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeCian','=',1]],order='x_studio_fecha desc',limit=1)
+            a=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeAmarillo','=',1]],order='x_studio_fecha desc',limit=1)
+            m=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeMagenta','=',1]],order='x_studio_fecha desc',limit=1)
+            raise exceptions.ValidationError(" Color Cian "+str(c.contadorColor)+' ticket '+str(c.x_studio_fecha)+"Color amarillo "+str(a.contadorColor)+' ticket '+str(a.x_studio_fecha)+"Color magenta "+str(m.contadorColor)+' ticket '+str(m.x_studio_fecha))
             
             
         
