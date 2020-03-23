@@ -165,7 +165,7 @@
     </record>
 
 
-        <record id="view_helpdesk_alerta_serie2" model="ir.ui.view">
+    <record id="view_helpdesk_alerta_serie2" model="ir.ui.view">
         <field name="model">helpdesk.alerta.series</field>
         <field name="arch" type="xml">
             <form string="Alerta">
@@ -223,12 +223,15 @@
         <field name="arch" type="xml">
             <form string="Crear">
                 <group >
-                    <h3 class='text-center'>
-                        Serie: 
-                    </h3>
-                    <group class='text-center'>
+                    <group>
+                        <h3 class='text-left'>
+                            Serie: 
+                        </h3>
+                    </group>
+                    <group class='text-rigth'>
                         <field name='serie' widget='many2many_tags' string='' options="{'no_create_edit': True, 'no_create': True}"/>
                     </group>
+                    
                     
                 </group>
 

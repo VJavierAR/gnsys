@@ -449,7 +449,7 @@ class helpdesk_crearconserie(TransientModel):
                                             ,'x_studio_empresas_relacionadas': self.idLocaliidad
                                             ,'team_id': 9
                                             })
-        ticket_id.write({'partner_id': self.idCliente
+        ticket.write({'partner_id': self.idCliente
                         ,'x_studio_empresas_relacionadas': self.idLocaliidad
                         ,'team_id': 9
                         })
