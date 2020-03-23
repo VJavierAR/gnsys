@@ -394,7 +394,7 @@ class helpdesk_crearconserie(TransientModel):
     movilContactoLocalidad = fields.Text(string = 'Movil de contacto')
     correoContactoLocalidad = fields.Text(string = 'Correo electronico de contacto')
 
-    @api.onchange('serie')
+    @api.depends('serie')
     def cambia_serie(self):
         if self.serie:
             if len(self.serie) > 1:
@@ -424,7 +424,7 @@ class helpdesk_crearconserie(TransientModel):
                     self.idLocaliidad = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
                     
                     idLoc = self.env['res.partner'].search([['parent_id', '=', self.idLocaliidad],['x_studio_subtipo', '=', 'Contacto de localidad']], order='create_date desc', limit=1)
-                    _logger.info('')
+                    _logger.info('idLoc: ' + str(idLoc))
                     if idLoc:
                         self.nombreContactoLocalidad = idLoc[0].name
                         self.telefonoContactoLocalidad = idLoc[0].phone
