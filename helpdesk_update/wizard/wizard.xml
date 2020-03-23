@@ -158,6 +158,7 @@
                 </group>
                 <footer>
                     <button name="abrirTicket" string="Abrir ticket existente" type="object" class="oe_highlight"/>
+                    <button name="abrirTicketCreado" string="Abrir ticket creado" type="object" class="oe_highlight"/>
                     <button special="cancel" string="Continuar" class="oe_highlight" />
                 </footer>
             </form>
@@ -223,8 +224,8 @@
         <field name="arch" type="xml">
             <form string="Crear">
                 <group >
-                    <group>
-                        <h3 class='text-rigth'>
+                    <group class='text-right'>
+                        <h3 >
                             Serie: 
                         </h3>
                     </group>

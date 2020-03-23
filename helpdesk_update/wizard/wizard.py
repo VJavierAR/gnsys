@@ -116,6 +116,13 @@ class HelpDeskAlertaNumeroDeSerie(TransientModel):
                 "target": "new",
                 }
 
+    def abrirTicketCreado(self):
+        return {
+                "type": "ir.actions.act_url",
+                "url": "https://gnsys-corp.odoo.com/web?debug=assets#id= " + str(self.ticket_id.id) + " &action=400&active_id=9&model=helpdesk.ticket&view_type=form&menu_id=406",
+                "target": "new",
+                }
+
 
 class HelpDeskContacto(TransientModel):
     _name = 'helpdesk.contacto'
@@ -460,6 +467,9 @@ class helpdesk_crearconserie(TransientModel):
                     ,'x_studio_empresas_relacionadas': int(self.idLocaliidad)
                     ,'team_id': 9
                     })
+        query = "update helpdesk_ticket set \"partner_id\" = " + str(self.idCliente) + ", \"x_studio_empresas_relacionadas\" =" + str(self.idLocaliidad) + " where id = " + str(ticket.id) + ";"
+        self.env.cr.execute(query)
+        self.env.cr.commit()
         ticket._compute_datosCliente()
         query = "select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!=" + str(ticket.x_studio_id_ticket) + "  and h.stage_id!=18 and h.team_id!=8 and  h.active='t' and stock_production_lot_id = " +  str(ticket.x_studio_equipo_por_nmero_de_serie[0].id) + " limit 1;"            
         self.env.cr.execute(query)                        
