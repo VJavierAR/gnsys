@@ -466,7 +466,7 @@ class helpdesk_crearconserie(TransientModel):
             self.correoContactoLocalidad = ''
 
     def crearTicket(self):
-        if serie:
+        if self.serie:
             messageTemp = ''
             ticket = self.env['helpdesk.ticket'].create({'stage_id': 89 
                                                 ,'x_studio_equipo_por_nmero_de_serie': [(6,0,self.serie.ids)]
