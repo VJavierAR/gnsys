@@ -443,13 +443,20 @@ class helpdesk_crearconserie(TransientModel):
             self.correoContactoLocalidad = ''
 
     def creaTicket(self):
+        messageTemp = ''
         ticket = self.env['helpdesk.ticket'].create({'stage_id': 89 
                                             ,'x_studio_equipo_por_nmero_de_serie': [(6,0,self.serie.ids)]
                                             ,'partner_id': self.idCliente
                                             ,'x_studio_empresas_relacionadas': self.idLocaliidad
                                             })
+        query = "select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!=" + str(ticket.x_studio_id_ticket) + "  and h.stage_id!=18 and h.team_id!=8 and  h.active='t' and stock_production_lot_id = " +  str(ticket.x_studio_equipo_por_nmero_de_serie[0].id) + " limit 1;"            
+        self.env.cr.execute(query)                        
+        informacion = self.env.cr.fetchall()
+        if len(informacion) > 0:
+            messageTemp = ('Estas agregando una serie de un ticket ya en proceso. \n Ticket: ' + str(informacion[0][0]) + '\n ')
+
         mensajeTitulo = "Ticket generado!!!"
-        mensajeCuerpo = "Se creo el ticket '" + str(ticket.id) + "' para el número de serie " + self.serie.name
+        mensajeCuerpo = "Se creo el ticket '" + str(ticket.id) + "' para el número de serie " + self.serie.name + "\n\n" + messageTemp
         warning = {'title': _(mensajeTitulo)
                 , 'message': _(mensajeCuerpo),
         }
