@@ -92,6 +92,7 @@ class HelpDeskAlertaNumeroDeSerie(TransientModel):
     mensaje = fields.Text('Mensaje')
 
     def abrirTicket(self):
+        """
         name = 'Ticket'
         res_model = 'helpdesk.ticket' 
         view_name = 'helpdesk.helpdesk_ticket_view_form'
@@ -107,6 +108,12 @@ class HelpDeskAlertaNumeroDeSerie(TransientModel):
                 'target': 'current',
                 'res_id': self.ticket_id.id,
                 'nodestroy': True
+                }
+        """
+        return {
+                "type": "ir.actions.act_url",
+                "url": "https://gnsys-corp.odoo.com/web?debug=assets#id= " + self.ticket_id_existente + " &action=400&active_id=9&model=helpdesk.ticket&view_type=form&menu_id=406",
+                "target": "new",
                 }
 
 
