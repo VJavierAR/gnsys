@@ -1805,6 +1805,8 @@ class helpdesk_update(models.Model):
         for record in self:
             zero = 0
             dominio = []
+            dominioT = []
+            
             #for record in self:
             id_cliente = record.partner_id.id
             #id_cliente = record.x_studio_id_cliente
@@ -1816,10 +1818,12 @@ class helpdesk_update(models.Model):
             if id_cliente != zero:
               #raise Warning('entro1')
               dominio = ['&', ('x_studio_categoria_de_producto_3.name','=','Equipo'), ('x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id', '=', id_cliente)]
+              dominioT = ['&', ('serie.x_studio_categoria_de_producto_3.name','=','Equipo'), ('serie.x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id', '=', id_cliente)]  
                 
             else:
               #raise Warning('entro2')
               dominio = [('x_studio_categoria_de_producto_3.name','=','Equipo')]
+              dominioT = [('serie.x_studio_categoria_de_producto_3.name','=','Equipo')]
               record['partner_name'] = ''
               record['partner_email'] = ''
               record['x_studio_nivel_del_cliente'] = ''
@@ -1836,14 +1840,17 @@ class helpdesk_update(models.Model):
             if id_cliente != zero  and id_localidad != zero:
               #raise Warning('entro3')
               dominio = ['&', '&', ('x_studio_categoria_de_producto_3.name','=','Equipo'), ('x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id', '=', id_cliente),('x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id','=',id_localidad)]
+              dominioT = ['&', '&', ('serie.x_studio_categoria_de_producto_3.name','=','Equipo'), ('serie.x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id', '=', id_cliente),('serie.x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id','=',id_localidad)]  
 
             if id_localidad == zero and id_cliente != zero:
               #raise Warning('entro4')
               dominio = ['&', ('x_studio_categoria_de_producto_3.name','=','Equipo'), ('x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id', '=', id_cliente)]
+              dominioT = ['&', ('serie.x_studio_categoria_de_producto_3.name','=','Equipo'), ('serie.x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id', '=', id_cliente)]  
 
             if id_cliente == zero and id_localidad == zero:
               #raise Warning('entro5')
               dominio = [('x_studio_categoria_de_producto_3.name','=','Equipo')]
+              dominio = [('serie.x_studio_categoria_de_producto_3.name','=','Equipo')]  
               record['partner_name'] = ''
               record['partner_email'] = ''
               record['x_studio_nivel_del_cliente'] = ''
@@ -1851,11 +1858,11 @@ class helpdesk_update(models.Model):
               record['x_studio_movil'] = ''
             if self.team_id.id==8:
                action = {'domain':{'x_studio_equipo_por_nmero_de_serie':dominio}}
-               action = {'domain':{'x_studio_equipo_por_nmero_de_serie_1':dominio}}
+               action = {'domain':{'x_studio_equipo_por_nmero_de_serie_1':dominioT}}
                #raise Warning('este es el dominio xD ' +str(dominio)) 
             if self.team_id.id!=8:
                action = {'domain':{'x_studio_equipo_por_nmero_de_serie':dominio}}    
-               action = {'domain':{'x_studio_equipo_por_nmero_de_serie_1':dominio}}
+               action = {'domain':{'x_studio_equipo_por_nmero_de_serie_1':dominioT}}
             return action
     
     
@@ -2009,9 +2016,9 @@ class helpdesk_update(models.Model):
                     for id in ids:
                         lista_ids.append((4,id))
                     #v['x_studio_equipo_por_nmero_de_serie'] = [(4, ids[0]), (4, ids[1])]
-                    #asv['x_studio_equipo_por_nmero_de_serie_1'] = lista_ids
-                    #asself._origin.sudo().write({'x_studio_equipo_por_nmero_de_serie_1' : lista_ids})
-                    #asrecord.x_studio_equipo_por_nmero_de_serie_1 = lista_ids
+                    v['x_studio_equipo_por_nmero_de_serie_1.serie'] = lista_ids
+                    self._origin.sudo().write({'x_studio_equipo_por_nmero_de_serie_1.serie' : lista_ids})
+                    record.x_studio_equipo_por_nmero_de_serie_1.serie = lista_ids
                     """
                     if localidad != []:
                         srtt="update helpdesk_ticket set x_studio_empresas_relacionadas = " + str(localidad) + " where  id = " + str(idM )+ ";"
