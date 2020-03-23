@@ -123,6 +123,12 @@ class HelpDeskAlertaNumeroDeSerie(TransientModel):
                 "target": "new",
                 }
 
+    def action_refresh(self):
+        # apply the logic here
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'reload',
+        }
 
 class HelpDeskContacto(TransientModel):
     _name = 'helpdesk.contacto'
@@ -460,41 +466,42 @@ class helpdesk_crearconserie(TransientModel):
             self.correoContactoLocalidad = ''
 
     def crearTicket(self):
-        messageTemp = ''
-        ticket = self.env['helpdesk.ticket'].create({'stage_id': 89 
-                                            ,'x_studio_equipo_por_nmero_de_serie': [(6,0,self.serie.ids)]
-                                            ,'partner_id': int(self.idCliente)
-                                            ,'x_studio_empresas_relacionadas': int(self.idLocaliidad)
-                                            ,'team_id': 9
-                                            })
-        ticket.write({'partner_id': int(self.idCliente)
-                    ,'x_studio_empresas_relacionadas': int(self.idLocaliidad)
-                    ,'team_id': 9
-                    })
-        query = "update helpdesk_ticket set \"partner_id\" = " + str(self.idCliente) + ", \"x_studio_empresas_relacionadas\" =" + str(self.idLocaliidad) + " where id = " + str(ticket.id) + ";"
-        self.env.cr.execute(query)
-        self.env.cr.commit()
-        ticket._compute_datosCliente()
-        query = "select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!=" + str(ticket.x_studio_id_ticket) + "  and h.stage_id!=18 and h.team_id!=8 and  h.active='t' and stock_production_lot_id = " +  str(ticket.x_studio_equipo_por_nmero_de_serie[0].id) + " limit 1;"            
-        self.env.cr.execute(query)                        
-        informacion = self.env.cr.fetchall()
-        if len(informacion) > 0:
-            messageTemp = ('Estas agregando una serie de un ticket ya en proceso. \n Ticket: ' + str(informacion[0][0]) + '\n ')
+        if serie:
+            messageTemp = ''
+            ticket = self.env['helpdesk.ticket'].create({'stage_id': 89 
+                                                ,'x_studio_equipo_por_nmero_de_serie': [(6,0,self.serie.ids)]
+                                                ,'partner_id': int(self.idCliente)
+                                                ,'x_studio_empresas_relacionadas': int(self.idLocaliidad)
+                                                ,'team_id': 9
+                                                })
+            ticket.write({'partner_id': int(self.idCliente)
+                        ,'x_studio_empresas_relacionadas': int(self.idLocaliidad)
+                        ,'team_id': 9
+                        })
+            query = "update helpdesk_ticket set \"partner_id\" = " + str(self.idCliente) + ", \"x_studio_empresas_relacionadas\" =" + str(self.idLocaliidad) + " where id = " + str(ticket.id) + ";"
+            self.env.cr.execute(query)
+            self.env.cr.commit()
+            ticket._compute_datosCliente()
+            query = "select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!=" + str(ticket.x_studio_id_ticket) + "  and h.stage_id!=18 and h.team_id!=8 and  h.active='t' and stock_production_lot_id = " +  str(ticket.x_studio_equipo_por_nmero_de_serie[0].id) + " limit 1;"            
+            self.env.cr.execute(query)                        
+            informacion = self.env.cr.fetchall()
+            if len(informacion) > 0:
+                messageTemp = ('Estas agregando una serie de un ticket ya en proceso. \n Ticket: ' + str(informacion[0][0]) + '\n ')
 
-        mensajeTitulo = "Ticket generado!!!"
-        mensajeCuerpo = "Se creo el ticket '" + str(ticket.id) + "' para el número de serie " + self.serie.name + "\n\n" + messageTemp
-        
-        wiz = self.env['helpdesk.alerta.series'].create({'ticket_id': ticket.id, 'ticket_id_existente': informacion[0][0], 'mensaje': mensajeCuerpo})
-        view = self.env.ref('helpdesk_update.view_helpdesk_alerta_series')
-        return {
-                'name': _(mensajeTitulo),
-                'type': 'ir.actions.act_window',
-                'view_type': 'form',
-                'view_mode': 'form',
-                'res_model': 'helpdesk.alerta.series',
-                'views': [(view.id, 'form')],
-                'view_id': view.id,
-                'target': 'new',
-                'res_id': wiz.id,
-                'context': self.env.context,
-                }
+            mensajeTitulo = "Ticket generado!!!"
+            mensajeCuerpo = "Se creo el ticket '" + str(ticket.id) + "' para el número de serie " + self.serie.name + "\n\n" + messageTemp
+            
+            wiz = self.env['helpdesk.alerta.series'].create({'ticket_id': ticket.id, 'ticket_id_existente': informacion[0][0], 'mensaje': mensajeCuerpo})
+            view = self.env.ref('helpdesk_update.view_helpdesk_alerta_series')
+            return {
+                    'name': _(mensajeTitulo),
+                    'type': 'ir.actions.act_window',
+                    'view_type': 'form',
+                    'view_mode': 'form',
+                    'res_model': 'helpdesk.alerta.series',
+                    'views': [(view.id, 'form')],
+                    'view_id': view.id,
+                    'target': 'new',
+                    'res_id': wiz.id,
+                    'context': self.env.context,
+                    }
