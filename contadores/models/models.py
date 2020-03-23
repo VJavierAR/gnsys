@@ -62,16 +62,20 @@ class dcas(models.Model):
         return c
     
     
-    @api.onchange('contadorColor','contadorMono')
-    def validaContadores(self):
-        contaC=self.contadorColor
+    @api.onchange('contadorMono')
+    def validaContadores(self):        
         contadorM=self.contadorMono
-        cam=self.x_studio_contador_mono_anterior_1
+        cam=self.x_studio_contador_mono_anterior_1                                        
+        if cam>contadorM:
+            raise exceptions.ValidationError("Contador Monocromatico Menor")
+            
+    @api.onchange('contadorColor')
+    def validaContadores(self):
+        contaC=self.contadorColor               
         cac=self.x_studio_contador_color_anterior
         if cac>contaC:
             raise exceptions.ValidationError("Contador Color Menor")                          
-        if cam>contadorM:
-            raise exceptions.ValidationError("Contador Monocromatico Menor")  
+                
             
             
             
