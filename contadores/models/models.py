@@ -74,9 +74,9 @@ class dcas(models.Model):
     @api.onchange('serie')             
     def ultimosContadoresNACM(self):
         if self.serie:
-            c=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeCian','=',1]],order='x_studio_fecha desc',limi=1).contadorColor
-            a=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeAmarillo','=',1]],order='x_studio_fecha desc',limi=1).contadorColor
-            m=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeMagenta','=',1]],order='x_studio_fecha desc',limi=1).contadorColor
+            c=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeCian','=',1]],order='x_studio_fecha desc',limit=1).contadorColor
+            a=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeAmarillo','=',1]],order='x_studio_fecha desc',limit=1).contadorColor
+            m=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeMagenta','=',1]],order='x_studio_fecha desc',limit=1).contadorColor
             raise exceptions.ValidationError("Color Cian"+srt(c)+"Color amarillo"+srt(a)+"Color magenta"+srt(m))
             
             
