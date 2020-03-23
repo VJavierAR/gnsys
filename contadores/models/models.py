@@ -46,7 +46,7 @@ class dcas(models.Model):
     fuente=fields.Selection(selection=[('dcas.dcas', 'DCA'),('helpdesk.ticket', 'Mesa'),('stock.production.lot','Equipo'),('tfs.tfs','Tfs')], default='dcas.dcas')  
     cartuchoNegro=fields.Selection([('a', 'Ninguna serie selecionada')], string='prueba')
     
-    
+    """
     @api.model
     def create(self, vals):
         c = super(dcas, self).create(vals)                
@@ -60,6 +60,7 @@ class dcas(models.Model):
             raise exceptions.ValidationError("Contador Monocromatico Menor")  
         
         return c
+    """   
     
     
     @api.onchange('contadorMono')
