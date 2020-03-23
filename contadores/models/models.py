@@ -47,6 +47,21 @@ class dcas(models.Model):
     cartuchoNegro=fields.Selection([('a', 'Ninguna serie selecionada')], string='prueba')
     
     
+    @api.onchange('contadorColor','contadorMono')
+    def validaContadores(self)
+        contaColor=self.contadorColor
+        contadorMono=self.contadorMono
+        cam=self.x_studio_contador_mono_anterior_1
+        cac=self.x_studio_contador_color_anterior
+        if cac>contadorColor:
+            raise exceptions.ValidationError("Contador Color Menor")                          
+        if cam>contadorMono:
+            raise exceptions.ValidationError("Contador Monocromatico Menor")  
+            
+            
+            
+    
+    
     
     
     
