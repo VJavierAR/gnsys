@@ -3,6 +3,7 @@ import logging, ast
 _logger = logging.getLogger(__name__)
 
 
+
 class PartnerXlsx(models.AbstractModel):
     _name = 'report.module_name.report_name'
     _inherit = 'report.report_xlsx.abstract'
