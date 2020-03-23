@@ -221,12 +221,10 @@
         <field name="model">helpdesk.crearconserie</field>
         <field name="arch" type="xml">
             <form string="Crear">
-                <group>
-                    <group class='text-center'>
-                        <h3>
-                            Serie: <field name='serie' widget='many2many_tags' string='' options="{'no_create_edit': True, 'no_create': True}"/>
-                        </h3>
-                    </group>
+                <group class='text-center'>
+                    <h3>
+                        Serie: <field name='serie' widget='many2many_tags' string='' options="{'no_create_edit': True, 'no_create': True}"/>
+                    </h3>
                 </group>
                 <group>
                     <group string="Cliente y localidad">
