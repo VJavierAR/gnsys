@@ -223,8 +223,9 @@
             <form string="Crear">
                 <group>
                     <group class='text-center'>
-                        <h3>Serie</h3>
-                        <field name='serie' widget='many2many_tags' string=''/>
+                        <h3>
+                            Serie: <field name='serie' widget='many2many_tags' string='' options="{'no_create_edit': True, 'no_create': True}"/>
+                        </h3>
                     </group>
                 </group>
                 <group>
@@ -232,7 +233,7 @@
                         <field name='cliente' readonly='1'/>
                         <field name='localidad' readonly='1'/>
                         <field name='zonaLocalidad' readonly='1'/>
-                        <field name='idLocaliidad' readonly='1' invisible='0'/>
+                        <field name='idLocaliidad' readonly='1' invisible='1'/>
                     </group>
                     <group string="Datos de contacto">
                         <field name='nombreContactoLocalidad' readonly='1'/>
