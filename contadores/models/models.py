@@ -47,12 +47,13 @@ class dcas(models.Model):
     cartuchoNegro=fields.Selection([('a', 'Ninguna serie selecionada')], string='prueba')
     
     
+    """
     @api.model
     def create(self, vals):
         c = super(dcas, self).create(vals)
         c.write(['x_studio_fecha','=',datetime.now()])
         return c
-    
+    """
     
     
     @api.onchange('contadorMono')
