@@ -218,18 +218,30 @@ class StockCambioLine(TransientModel):
                 ex=self.env['stock.quant'].search([['location_id','=',record.almacen.lot_stock_id.id],['product_id','=',record.producto1.id]]).sorted(key='quantity',reverse=True)
                 record.existeciaAlmacen=int(ex[0].quantity) if(len(ex)>0) else 0 
 
-class StockCambioLine(TransientModel):
+class GuiaTicket(TransientModel):
     _name = 'guia.ticket'
     _description = 'Guias de Ticket'
     guia=fields.Char(string='Guia')
     pick=fields.Many2one('stock.picking')
 
+    def confirmar(self):
+        if(self.guia):
+            self.pick.write({'carrier_tracking_ref':self.guia})
 
-class StockCambioLine(TransientModel):
+
+
+class ComemtarioTicket(TransientModel):
     _name = 'comentario.ticket'
     _description = 'Comemtario de Ticket'
     comentario=fields.Char(string='Comentario')
     evidencia=fields.Binary(string='Evidencia')
     pick=fields.Many2one('stock.picking')
 
+    def confirmar(self):
+        self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.pick.sale_id.x_studio_field_bxHgp.ticket_id.id
+                                        ,'comentario': self.comentario
+                                        ,'estadoTicket': self.pick.sale_id.x_studio_field_bxHgp.ticket_id.stage_id.name
+                                        ,'evidencia': [(4,self.evidencia)]
+                                        ,'mostrarComentario': False
+                                        })
 
