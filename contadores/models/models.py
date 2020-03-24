@@ -82,27 +82,14 @@ class dcas(models.Model):
             #n=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeNegro','=',1]],order='x_studio_fecha desc',limit=1)            
             c=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeCian','=',1]],order='x_studio_fecha desc',limit=1)
             self.nivelCA=c.porcentajeCian
-            self.contadorAnteriorCian=c.contadorColor            
+            self.contadorAnteriorCian=c.x_studio_toner_cian            
             a=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeAmarillo','=',1]],order='x_studio_fecha desc',limit=1)
-            self.nivelAA=a.porcentajeAmarillo
+            self.nivelAA=a.x_studio_toner_amarillo
             self.contadorAnteriorAmarillo=a.contadorColor
             m=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeMagenta','=',1]],order='x_studio_fecha desc',limit=1)
-            self.nivelMA=m.porcentajeMagenta
+            self.nivelMA=m.x_studio_toner_magenta
             self.contadorAnteriorMagenta=m.contadorColor
-            
-            
-                        
-            
-            
-        
-        
-    
-    
-    
-            
-            
-    
-    
+                                                                                            
     
     
     
