@@ -44,29 +44,29 @@ class dcas(models.Model):
     porcentajeMagenta=fields.Integer(string='Magenta')
     fuente=fields.Selection(selection=[('dcas.dcas', 'DCA'),('helpdesk.ticket', 'Mesa'),('stock.production.lot','Equipo'),('tfs.tfs','Tfs')], default='dcas.dcas')  
     cartuchoNegro=fields.Selection([('a', 'Ninguna serie selecionada')], string='prueba')
-    nivelNA=fields.Integer(string='Nivel de toner negro anteior')
-    nivelAA=fields.Integer(string='Nivel de toner Amarillo anteior')
-    nivelCA=fields.Integer(string='Nivel de toner Cian anteior')
-    nivelMA=fields.Integer(string='Nivel de toner Magenta anteior')
+    nivelNA=fields.Integer(string='Nivel de toner negro anteior',readonly=True,store=True)
+    nivelAA=fields.Integer(string='Nivel de toner Amarillo anteior',readonly=True,store=True)
+    nivelCA=fields.Integer(string='Nivel de toner Cian anteior',readonly=True,store=True)
+    nivelMA=fields.Integer(string='Nivel de toner Magenta anteior',readonly=True,store=True)
     contadorAnteriorCian=fields.Integer(string='contador de ultima solicitud Cian')
-    contadorAnteriorAmarillo=fields.Integer(string='contador de ultima solicitud Amarillo')
-    contadorAnteriorMagenta=fields.Integer(string='contador de ultima solicitud Magenta')
-    contadorAnteriorNegro=fields.Integer(string='contador de ultima solicitud Negro')
-    paginasProcesadasBN=fields.Integer(string='Páginas procesadas BN')
-    paginasProcesadasC=fields.Integer(string='Páginas procesadas Cian')
-    paginasProcesadasA=fields.Integer(string='Páginas procesadas Amarillo')
-    paginasProcesadasM=fields.Integer(string='Páginas procesadas Magenta')
+    contadorAnteriorAmarillo=fields.Integer(string='contador de ultima solicitud Amarillo',readonly=True,store=True)
+    contadorAnteriorMagenta=fields.Integer(string='contador de ultima solicitud Magenta',readonly=True,store=True)
+    contadorAnteriorNegro=fields.Integer(string='contador de ultima solicitud Negro',readonly=True,store=True)
+    paginasProcesadasBN=fields.Integer(string='Páginas procesadas BN',readonly=True,store=True)
+    paginasProcesadasC=fields.Integer(string='Páginas procesadas Cian',readonly=True,store=True)
+    paginasProcesadasA=fields.Integer(string='Páginas procesadas Amarillo',readonly=True,store=True)
+    paginasProcesadasM=fields.Integer(string='Páginas procesadas Magenta',readonly=True,store=True)
     x_studio_fecha = fields.Datetime(string='Fecha',default=lambda self: fields.datetime.now())
-    renC=fields.Float(string='Rendimiento Cian')
-    renA=fields.Float(string='Rendimiento Amarillo')
-    renM=fields.Float(string='Rendimiento Magenta')
-    renN=fields.Float(string='Rendimiento Negro')
+    renC=fields.Float(string='Rendimiento Cian',readonly=True,store=True)
+    renA=fields.Float(string='Rendimiento Amarillo',readonly=True,store=True)
+    renM=fields.Float(string='Rendimiento Magenta',readonly=True,store=True)
+    renN=fields.Float(string='Rendimiento Negro ',readonly=True,store=True)
     
-    tablahtml=fields.Text(string='Detalle Equipo',readonly=True)
-    fechaN=fields.Datetime(string='Fecha de captura',readonly=True)
-    fechaA=fields.Datetime(string='Fecha de captura',readonly=True)
-    fechaC=fields.Datetime(string='Fecha de captura',readonly=True)
-    fechaM=fields.Datetime(string='Fecha de captura',readonly=True)
+    tablahtml=fields.Text(string='Detalle Equipo',readonly=True,store=True)
+    fechaN=fields.Datetime(string='Fecha de captura',readonly=True,store=True)
+    fechaA=fields.Datetime(string='Fecha de captura',readonly=True,store=True)
+    fechaC=fields.Datetime(string='Fecha de captura',readonly=True,store=True)
+    fechaM=fields.Datetime(string='Fecha de captura',readonly=True,store=True)
     
 
     
@@ -102,26 +102,21 @@ class dcas(models.Model):
         contaC=self.contadorColor                       
         cac=self.x_studio_contador_color_anterior
         if cac>contaC:            
-            raise exceptions.ValidationError("Contador Color Menor")
+            raise exceptions.ValidationError("Contador Color Menor.")
         else:
             self.paginasProcesadasC=contaC-self.contadorAnteriorCian
             self.paginasProcesadasA=contaC-self.contadorAnteriorAmarillo
             self.paginasProcesadasM=contaC-self.contadorAnteriorMagenta
-            #self.paginasProcesadasBN=contaN-self.x_studio_contador_mono_anterior_1
             c=self.x_studio_rendimientoc
             a=self.x_studio_rendimientoa
             m=self.x_studio_rendimientom
-            #n=self.x_studio_rendimiento_negro            
             if c == '0':
                c = 1
             if a == '0':
                a = 1
             if m == '0':
                m = 1
-            #if n == '0':
-            #   n = 1                   
-            #if n:
-            #   self.renN=self.paginasProcesadasBN*100/int(n)            
+          
             if c:
                self.renC=self.paginasProcesadasC*100/int(c)
             if a:
@@ -129,7 +124,7 @@ class dcas(models.Model):
             if m:
                self.renM=self.paginasProcesadasM*100/int(m)
     
-    @api.onchange('x_studio_cartuchonefro','x_studio_cartucho_amarillo','x_studio_cartucho_cian_1','x_studio_cartucho_magenta')
+    @api.onchange('serie','x_studio_cartuchonefro','x_studio_cartucho_amarillo','x_studio_cartucho_cian_1','x_studio_cartucho_magenta')
     def table(self):
         if self.serie:
             style="<html><head><style>table, th, td {border: 1px solid black;border-collapse: collapse;}th, td {padding: 5px;text-align: left;}</style></head><body>"
