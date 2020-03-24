@@ -78,7 +78,7 @@ class dcas(models.Model):
                  
     @api.onchange('serie')             
     def ultimosContadoresNACM(self):
-        if self.serie:
+        if self.serie and self.x_studio_color_bn=='B/N':
             #n=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeNegro','=',1]],order='x_studio_fecha desc',limit=1)            
             c=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeCian','=',1]],order='x_studio_fecha desc',limit=1)
             self.nivelCA=c.x_studio_toner_cian
