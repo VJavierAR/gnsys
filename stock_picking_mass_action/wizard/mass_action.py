@@ -244,4 +244,56 @@ class ComemtarioTicket(TransientModel):
                                         ,'evidencia': [(4,self.evidencia)]
                                         ,'mostrarComentario': False
                                         })
+class TransferInter(TransientModel):
+    _name='transferencia.interna'
+    _description='Transferencia Interna'    
+    almacenOrigen=fields.Many2one('stock.warehouse')
+    almacenDestino=fields.Many2one('stock.warehouse')
+    lines=fields.One2many('transferencia.interna.temp','transfer')
 
+
+
+class TransferInterMoveTemp(TransientModel):
+    _name='transferencia.interna.temp'
+    _description='Lineas Temporales Transferencia'
+    producto=fields.Many2one('product.product')
+    modelo=fields.Char(related='producto.name',string='Modelo')
+    noParte=fields.Char(related='producto.default_code',string='No. Parte')
+    descripcion=fields.Text(related='producto.description',string='Descripción')
+    stock=fields.Many2one('stock.quant',string='Existencia')
+    cantidad=fields.Integer('Demanda Inicial')
+    almacen=fields.Many2one('stock.warehouse','Almacén Origen')
+    ubicacion=fields.Many2one('stock.location','Ubicación')
+    disponible=fields.Float(related='stock.quantity')
+    transfer=fields.Many2one('transferencia.interna')
+    unidad=fields.Many2one('uom.uom',related='producto.uom_id')
+    #lock=fields.Boolean('lock')
+    #serieDestino=fields.Many2one('stock.production.lot')
+    
+    @api.onchange('ubicacion','producto')
+    def quant(self):
+        self.disponible=0
+        h=self.env['stock.quant'].search([['product_id','=',self.producto.id],['location_id','=',self.ubicacion.id],['quantity','>',0]])
+        if(len(h)>0):
+            self.stock=h.id
+        if(len(h)==0):
+            d=self.env['stock.location'].search([['location_id','=',self.ubicacion.id]])
+            for di in d:
+                i=self.env['stock.quant'].search([['product_id','=',self.producto.id],['location_id','=',di.id],['quantity','>',0]])
+                if(len(i)>0):
+                    self.stock=i.id
+
+class PickingSerie(TransientModel):
+    _name='picking.serie'
+    _description='Seleccion Serie'    
+    pick=fields.Many2one('stock.picking')
+    lines=fields.One2many('picking.serie.line','rel_picki_serie')
+
+
+class PickingSerieLine(TransientModel):
+    _name='picking.serie.line'
+    _description='lines temps'
+    serie=fields.Many2one('stock.production.lot')
+    estado=fields.Seleccion([('Nuevo','Nuevo'),('Usado', 'Usado')])
+    modelo=fields.Many2one(related='serie.product_id')
+    rel_picki_serie=fields.Many2one('picking.serie')
