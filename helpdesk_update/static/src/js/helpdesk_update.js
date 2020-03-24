@@ -75,6 +75,15 @@ odoo.define('invoice.action_button', function (require) {
             	});
         },
 	});
+
+    $(document).ready(function() {
+        console.log("Entrando al cargar...")
+        //var x = document.getElementById("hidden_box");
+        var x = $('.blockUI blockOverlay').remove();
+
+        
+    });
+
 	/*
 	var ListView = require('web.ListView');
 	var QWeb = core.qweb;
