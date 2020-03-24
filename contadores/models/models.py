@@ -83,7 +83,7 @@ class dcas(models.Model):
     """
     
     
-    @api.onchange('contadorMono','x_studio_cartuchonefro','contadorColor','x_studio_cartucho_amarillo','x_studio_cartucho_cian_1','x_studio_cartucho_magenta')
+    @api.onchange('contadorMono','x_studio_cartuchonefro')
     def validaMoon(self):        
         contadorM=self.contadorMono
         cam=self.x_studio_contador_mono_anterior_1                                        
@@ -91,16 +91,14 @@ class dcas(models.Model):
             raise exceptions.ValidationError("Contador Monocromatico Menor")
         else:
             self.paginasProcesadasBN=contadorM-self.x_studio_contador_mono_anterior_1
-            n=self.x_studio_rendimiento_negro
             if n == '0':
                n = 1                   
             if n:
                self.renN=self.paginasProcesadasBN*100/int(n) 
             
-    @api.onchange('contadorMono','x_studio_cartuchonefro','contadorColor','x_studio_cartucho_amarillo','x_studio_cartucho_cian_1','x_studio_cartucho_magenta')
+    @api.onchange('contadorColor','x_studio_cartucho_amarillo','x_studio_cartucho_cian_1','x_studio_cartucho_magenta')
     def validaContadores(self):
-        contaC=self.contadorColor
-        contaN=self.contadorMono               
+        contaC=self.contadorColor                       
         cac=self.x_studio_contador_color_anterior
         if cac>contaC:            
             raise exceptions.ValidationError("Contador Color Menor")
@@ -108,21 +106,21 @@ class dcas(models.Model):
             self.paginasProcesadasC=contaC-self.contadorAnteriorCian
             self.paginasProcesadasA=contaC-self.contadorAnteriorAmarillo
             self.paginasProcesadasM=contaC-self.contadorAnteriorMagenta
-            self.paginasProcesadasBN=contaN-self.x_studio_contador_mono_anterior_1
+            #self.paginasProcesadasBN=contaN-self.x_studio_contador_mono_anterior_1
             c=self.x_studio_rendimientoc
             a=self.x_studio_rendimientoa
             m=self.x_studio_rendimientom
-            n=self.x_studio_rendimiento_negro            
+            #n=self.x_studio_rendimiento_negro            
             if c == '0':
                c = 1
             if a == '0':
                a = 1
             if m == '0':
                m = 1
-            if n == '0':
-               n = 1                   
-            if n:
-               self.renN=self.paginasProcesadasBN*100/int(n)            
+            #if n == '0':
+            #   n = 1                   
+            #if n:
+            #   self.renN=self.paginasProcesadasBN*100/int(n)            
             if c:
                self.renC=self.paginasProcesadasC*100/int(c)
             if a:
@@ -130,7 +128,7 @@ class dcas(models.Model):
             if m:
                self.renM=self.paginasProcesadasM*100/int(m)
     
-    @api.onchange('contadorColor','serie','contadorMono','x_studio_cartucho_amarillo','x_studio_cartucho_cian_1','x_studio_cartucho_magenta')
+    @api.onchange('x_studio_cartuchonefro','x_studio_cartucho_amarillo','x_studio_cartucho_cian_1','x_studio_cartucho_magenta')
     def table(self):
         if self.serie:
             style="<html><head><style>table, th, td {border: 1px solid black;border-collapse: collapse;}th, td {padding: 5px;text-align: left;}</style></head><body>"
