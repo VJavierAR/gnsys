@@ -50,6 +50,8 @@ class dcas(models.Model):
     contadorAnteriorCian=fields.Integer(string='contador de ultima solicitud Cian')
     contadorAnteriorAmarillo=fields.Integer(string='contador de ultima solicitud Amarillo')
     contadorAnteriorMagenta=fields.Integer(string='contador de ultima solicitud Magenta')
+    paginasProcesadasBN=fields.Integer(string='Páginas procesadas BN')
+    
         
     
     """
@@ -67,6 +69,8 @@ class dcas(models.Model):
         cam=self.x_studio_contador_mono_anterior_1                                        
         if cam>contadorM:
             raise exceptions.ValidationError("Contador Monocromatico Menor")
+        else:
+            self.paginasProcesadasBN=self.contadorMono-self.x_studio_contador_mono_anterior_1
             
     @api.onchange('contadorColor')
     def validaContadores(self):
