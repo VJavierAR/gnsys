@@ -56,6 +56,11 @@ class dcas(models.Model):
     paginasProcesadasA=fields.Integer(string='Páginas procesadas Amarillo')
     paginasProcesadasM=fields.Integer(string='Páginas procesadas Magenta')
     x_studio_fecha = fields.Datetime(string='Fecha',default=lambda self: fields.datetime.now())
+    renC=fields.Float(string='Rendimiento Cian')
+    renA=fields.Float(string='Rendimiento Amarillo')
+    renM=fields.Float(string='Rendimiento Magenta')
+
+    
     
     
         
@@ -79,7 +84,7 @@ class dcas(models.Model):
         else:
             self.paginasProcesadasBN=self.contadorMono-self.x_studio_contador_mono_anterior_1
             
-    @api.onchange('contadorColor')
+    @api.onchange('contadorColor','x_studio_cartucho_amarillo','x_studio_cartucho_cian_1','x_studio_cartucho_magenta')
     def validaContadores(self):
         contaC=self.contadorColor               
         cac=self.x_studio_contador_color_anterior
@@ -90,6 +95,22 @@ class dcas(models.Model):
             self.paginasProcesadasC=contaC-self.contadorAnteriorCian
             self.paginasProcesadasA=contaC-self.contadorAnteriorAmarillo
             self.paginasProcesadasM=contaC-self.contadorAnteriorMagenta
+            c=self.x_studio_rendimientoc
+            a=self.x_studio_rendimientoa
+            m=self.x_studio_rendimientom
+            if c == '0':
+               c = 1
+            if a == '0':
+               a = 1
+            if m == '0':
+               m = 1                
+            self.renC=self.paginasProcesadasC*100/int(c)
+            
+            self.renA=self.paginasProcesadasA*100/int(a)
+            
+            self.renM=self.paginasProcesadasM*100/int(m)
+    
+            
             
             
         
