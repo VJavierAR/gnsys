@@ -78,7 +78,7 @@ class dcas(models.Model):
             a=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeAmarillo','=',1]],order='x_studio_fecha desc',limit=1)
             m=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeMagenta','=',1]],order='x_studio_fecha desc',limit=1)
             n=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeNegro','=',1]],order='x_studio_fecha desc',limit=1)
-            raise exceptions.ValidationError(" Color Caian xd "+str(c.contadorColor)+' ticket '+str(c.x_studio_tickett)+"Color amarillo "+str(a.contadorColor)+' ticket '+str(a.x_studio_tickett)+"Color magenta "+str(m.contadorColor)+' ticket '+str(m.x_studio_tickett)+" Color negro "+str(n.contadorMono)+' ticket '+str(n.x_studio_tickett))
+            raise exceptions.ValidationError(" Color Caian xd "+str(c.contadorColor)+' ticket '+str(c.x_studio_tickett)+" Color amarillo "+str(a.contadorColor)+' ticket '+str(a.x_studio_tickett)+" Color magenta "+str(m.contadorColor)+' ticket '+str(m.x_studio_tickett)+" Color negro "+str(n.contadorMono)+' ticket '+str(n.x_studio_tickett))
             
             
         
