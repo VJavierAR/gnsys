@@ -113,12 +113,13 @@ class dcas(models.Model):
             if m:
                self.renM=self.paginasProcesadasM*100/int(m)
     
-    @api.onchange('contadorColor','x_studio_cartucho_amarillo','x_studio_cartucho_cian_1','x_studio_cartucho_magenta')
+    @api.onchange('contadorColor','contadorMono','x_studio_cartucho_amarillo','x_studio_cartucho_cian_1','x_studio_cartucho_magenta')
     def table(self):
-        cabecera="<table style='width:100%'><tr><th></th><th>mono</th><th>cian</th><th>Amar</th><th>Mage</th></tr><tr><tr><td></td></tr>"
-        ultimosContadores='<tr><td>Ultimo Contador</td> <td>'+self.x_studio_contador_mono_anterior_1+'</td> <td>'+self.x_studio_contador_color_anterior+'</td> </tr>'        
-        cierre="</table>"
-        self.tablahtml=cabecera+ultimosContadores+cierre
+        if self.serie:
+            cabecera="<table style='width:100%'><tr><th></th><th>mono</th><th>cian</th><th>Amar</th><th>Mage</th></tr><tr><tr><td></td></tr>"
+            ultimosContadores='<tr><td>Ultimo Contador</td> <td>'+str(self.x_studio_contador_mono_anterior_1)+'</td> <td>'+str(self.x_studio_contador_color_anterior)+'</td> </tr>'        
+            cierre="</table>"
+            self.tablahtml=cabecera+ultimosContadores+cierre
         
             
             
