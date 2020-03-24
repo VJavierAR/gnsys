@@ -294,6 +294,6 @@ class PickingSerieLine(TransientModel):
     _name='picking.serie.line'
     _description='lines temps'
     serie=fields.Many2one('stock.production.lot')
-    estado=fields.Seleccion([('Nuevo','Nuevo'),('Usado', 'Usado')])
+    estado=fields.Selection([('Nuevo','Nuevo'),('Usado', 'Usado')])
     modelo=fields.Many2one(related='serie.product_id')
     rel_picki_serie=fields.Many2one('picking.serie')
