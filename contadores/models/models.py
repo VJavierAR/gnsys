@@ -35,9 +35,7 @@ class dcas(models.Model):
     ip=fields.Char(string='IP')
     contadorColor=fields.Integer(string='Contador Color')
     contadorMono=fields.Integer(string='Contador Monocromatico')
-    contador_id=fields.Many2one('contadores.contadores')
-    #tickete=fields.Many2one('seriesDCA')
-    #ticketRelacion = fields.Many2one('helpdesk.ticket', string = 'Ticket realcionado a al contador')
+    contador_id=fields.Many2one('contadores.contadores')        
     dominio=fields.Integer()
     porcentajeNegro=fields.Integer(string='Negro')
     porcentajeAmarillo=fields.Integer(string='Amarillo')
@@ -45,7 +43,14 @@ class dcas(models.Model):
     porcentajeMagenta=fields.Integer(string='Magenta')
     fuente=fields.Selection(selection=[('dcas.dcas', 'DCA'),('helpdesk.ticket', 'Mesa'),('stock.production.lot','Equipo'),('tfs.tfs','Tfs')], default='dcas.dcas')  
     cartuchoNegro=fields.Selection([('a', 'Ninguna serie selecionada')], string='prueba')
-    
+    nivelNA=fields.Integer(string='Nivel de toner negro anteior')
+    nivelAA=fields.Integer(string='Nivel de toner Amarillo anteior')
+    nivelCA=fields.Integer(string='Nivel de toner Cian anteior')
+    nivelMA=fields.Integer(string='Nivel de toner Magenta anteior')
+    contadorAnteriorCian=fields.Integer(string='contador de ultima solicitud Cian')
+    contadorAnteriorAmarillo=fields.Integer(string='contador de ultima solicitud Amarillo')
+    contadorAnteriorMagenta=fields.Integer(string='contador de ultima solicitud Magenta')
+        
     
     """
     @api.model
@@ -74,11 +79,19 @@ class dcas(models.Model):
     @api.onchange('serie')             
     def ultimosContadoresNACM(self):
         if self.serie:
+            #n=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeNegro','=',1]],order='x_studio_fecha desc',limit=1)            
             c=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeCian','=',1]],order='x_studio_fecha desc',limit=1)
+            self.nivelCA=c.porcentajeCian
+            self.contadorAnteriorCian=c.contadorColor            
             a=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeAmarillo','=',1]],order='x_studio_fecha desc',limit=1)
+            self.nivelAA=a.porcentajeAmarillo
+            self.contadorAnteriorAmarillo=a.contadorColor
             m=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeMagenta','=',1]],order='x_studio_fecha desc',limit=1)
-            n=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeNegro','=',1]],order='x_studio_fecha desc',limit=1)
-            raise exceptions.ValidationError(" Color Caian xd "+str(c.contadorColor)+' ticket '+str(c.x_studio_tickett)+" Color amarillo "+str(a.contadorColor)+' ticket '+str(a.x_studio_tickett)+" Color magenta "+str(m.contadorColor)+' ticket '+str(m.x_studio_tickett)+" Color negro "+str(n.contadorMono)+' ticket '+str(n.x_studio_tickett))
+            self.nivelMA=m.porcentajeMagenta
+            self.contadorAnteriorMagenta=m.contadorColor
+            
+            
+                        
             
             
         
