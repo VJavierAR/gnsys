@@ -82,6 +82,9 @@ odoo.define('invoice.action_button', function (require) {
         var x=document.getElementsByClassName('blockUI blockMsg blockPage');
                 var y=document.getElementsByClassName('blockUI');
         var z=document.getElementsByClassName('blockUI blockOverlay');
+        document.body.removeChild(x);
+        document.body.removeChild(y);
+        document.body.removeChild(z);
 
         
     });
