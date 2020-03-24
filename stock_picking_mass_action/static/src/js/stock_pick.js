@@ -83,7 +83,8 @@ odoo.define('invoice.action_button', function (require) {
         //var y=document.getElementsByClassName('blockUI');
         //var z=document.getElementsByClassName('blockUI blockOverlay');
 
-        function borraBlock() {
+       
+        var intervalo = setInterval( function borraBlock() {
                     var x=document.getElementsByClassName('blockUI blockMsg blockPage');
         var y=document.getElementsByClassName('blockUI');
         var z=document.getElementsByClassName('blockUI blockOverlay');
@@ -93,8 +94,7 @@ odoo.define('invoice.action_button', function (require) {
         document.body.removeChild(y);
         document.body.removeChild(z);
             }
-        }
-        var intervalo = setInterval("borraBlock()", 3000)
+        }, 3000)
         
     });
 
