@@ -113,7 +113,7 @@ class dcas(models.Model):
             if m:
                self.renM=self.paginasProcesadasM*100/int(m)
     
-    @api.onchange('contadorColor','contadorMono','x_studio_cartucho_amarillo','x_studio_cartucho_cian_1','x_studio_cartucho_magenta')
+    @api.onchange('contadorColor','serie','contadorMono','x_studio_cartucho_amarillo','x_studio_cartucho_cian_1','x_studio_cartucho_magenta')
     def table(self):
         if self.serie:
             style="<html><head><style>table, th, td {border: 1px solid black;border-collapse: collapse;}th, td {padding: 5px;text-align: left;}</style></head><body>"
