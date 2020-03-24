@@ -83,7 +83,7 @@ class dcas(models.Model):
     """
     
     
-    @api.onchange('contadorMono','x_studio_cartuchonefro')
+    @api.onchange('contadorMono','x_studio_cartuchonefro','contadorColor','x_studio_cartucho_amarillo','x_studio_cartucho_cian_1','x_studio_cartucho_magenta')
     def validaMoon(self):        
         contadorM=self.contadorMono
         cam=self.x_studio_contador_mono_anterior_1                                        
@@ -97,7 +97,7 @@ class dcas(models.Model):
             if n:
                self.renN=self.paginasProcesadasBN*100/int(n) 
             
-    @api.onchange('contadorColor','x_studio_cartucho_amarillo','x_studio_cartucho_cian_1','x_studio_cartucho_magenta')
+    @api.onchange('contadorMono','x_studio_cartuchonefro','contadorColor','x_studio_cartucho_amarillo','x_studio_cartucho_cian_1','x_studio_cartucho_magenta')
     def validaContadores(self):
         contaC=self.contadorColor
         contaN=self.contadorMono               
