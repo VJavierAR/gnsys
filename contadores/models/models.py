@@ -81,8 +81,8 @@ class dcas(models.Model):
         if self.serie:
             #n=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeNegro','=',1]],order='x_studio_fecha desc',limit=1)            
             c=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeCian','=',1]],order='x_studio_fecha desc',limit=1)
-            self.nivelCA=c.porcentajeCian
-            self.contadorAnteriorCian=c.x_studio_toner_cian            
+            self.nivelCA=c.x_studio_toner_cian
+            self.contadorAnteriorCian=c.contadorColor            
             a=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeAmarillo','=',1]],order='x_studio_fecha desc',limit=1)
             self.nivelAA=a.x_studio_toner_amarillo
             self.contadorAnteriorAmarillo=a.contadorColor
