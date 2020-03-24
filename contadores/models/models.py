@@ -62,7 +62,7 @@ class dcas(models.Model):
     
     
     @api.onchange('contadorMono')
-    def validaContadores(self):        
+    def validaMoon(self):        
         contadorM=self.contadorMono
         cam=self.x_studio_contador_mono_anterior_1                                        
         if cam>contadorM:
