@@ -1,0 +1,93 @@
+odoo.define('invoice.action_button', function (require) {
+"use strict";
+
+	var core = require('web.core');
+	var ListController = require('web.ListController');
+	var rpc = require('web.rpc');
+	var session = require('web.session');
+	var _t = core._t;
+
+	ListController.include({
+		renderButtons: function($node) {
+		this._super.apply(this, arguments);
+			if (this.$buttons) {
+		    	this.$buttons.find('.oe_action_button').click(this.proxy('action_def'));
+		   	}
+		},
+
+		/*action_def: function (e) {
+            var self = this
+            var user = session.uid;
+            self.do_action({
+            	name: _t('Crear ticket con base a una serie'),
+            	type : 'ir.actions.act_window',
+            	res_model: 'helpdesk.crearconserie',
+            	view_type: 'form',
+            	view_mode: 'form',
+            	view_id: 'view_helpdesk_crear_desde_serie',
+            	views: [[false, 'form']],
+            	target: 'new',
+            }, {
+            	on_reverse_breadcrumb: function () {
+               		self.update_control_panel({clear: true, hidden: true});
+           		}
+            });
+
+
+            rpc.query({
+                model: 'helpdesk.ticket',
+                method: 'cambio_wizard',
+                args: [[user],{'id':user}],
+            });
+        },
+
+        receive_invoice: function () {
+            var self = this
+            var user = session.uid;
+            rpc.query({
+                model: 'helpdesk.ticket',
+                method: 'cambio_wizard',
+                args: [[user],{'id':user}],
+                }).then(function (e) {
+                    self.do_action({
+                        name: _t('action_invoices'),
+                        type: 'ir.actions.act_window',
+                        res_model: 'name.name',
+                        views: [[false, 'form']],
+                        view_mode: 'form',
+                        target: 'new',
+                    });
+                    window.location
+            	});
+        },
+	});*/
+	/*
+	var ListView = require('web.ListView');
+	var QWeb = core.qweb;
+
+	ListView.include({
+
+        render_buttons: function($node) {
+            var self = this;
+            this._super($node);
+                this.$buttons.find('.o_list_tender_button_create').click(this.proxy('tree_view_action'));
+        },
+
+        tree_view_action: function () {
+
+	        this.do_action({
+	                type: "ir.actions.act_window",
+	                name: "Series",
+	                res_model: "helpdesk.ticket",
+	                views: [[false,'form']],
+	                target: 'current',
+	                view_type : 'form',
+	                view_mode : 'form',
+	                flags: {'form': {'action_buttons': true, 'options': {'mode': 'edit'}}}
+	        });
+	        return { 'type': 'ir.actions.client'
+	        		,'tag': 'reload', } 
+	    }
+	});
+	*/
+});

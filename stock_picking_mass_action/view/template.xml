@@ -1,9 +1,12 @@
 <odoo>
     <data>
           <template id="assets_backend" inherit_id="web.assets_backend" name="Custom Module">
+            
+
+
+
             <xpath expr="." positio="inside">
-            <script type="text/javascript" src="/helpdesk_update/static/src/js/helpdesk_update.js"></script>
-           <link rel="shylesheet" href="/helpdesk_update/static/src/css/helpdesk_update.css" />
+            <script type="text/javascript" src="/stock_picking_mass_action/static/src/js/stock_pick.js"></script>
             <script type="text/javascript">
 
                 odoo.define('web.csrf', function (require) {
@@ -18,6 +21,17 @@
 
             </script>
              </xpath>
+
+                    <t t-extend="ListView.buttons">
+            <t t-jquery="button.o_list_button_add" t-operation="before">
+                <button t-if="widget.modelName == 'stock.picking'" class="btn btn-primary oe_action_button" type="button" accesskey="f">Crear Transferencia Interna</button>
+
+                <!--
+                <button t-if="widget.model == 'helpdesk.ticket'" class="btn btn-primary btn-sm o_list_tender_button_create" type="button">&gt;Create Tender</button>
+                <button t-if="widget.model != 'helpdesk.ticket'" class="btn btn-primary btn-sm o_list_button_add" type="button">&gt;Create</button>
+                -->
+            </t>
+        </t>
         </template>
         <!-- <template id="listing"> -->
         <!--   <ul> -->
