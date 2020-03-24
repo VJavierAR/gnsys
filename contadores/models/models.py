@@ -104,11 +104,12 @@ class dcas(models.Model):
                a = 1
             if m == '0':
                m = 1                
-            self.renC=self.paginasProcesadasC*100/int(c)
-            
-            self.renA=self.paginasProcesadasA*100/int(a)
-            
-            self.renM=self.paginasProcesadasM*100/int(m)
+            if c:
+               self.renC=self.paginasProcesadasC*100/int(c)
+            if a:
+               self.renA=self.paginasProcesadasA*100/int(a)
+            if m:
+               self.renM=self.paginasProcesadasM*100/int(m)
     
             
             
