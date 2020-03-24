@@ -46,7 +46,7 @@ odoo.define('invoice.action_button', function (require) {
                     self.update_control_panel({clear: true, hidden: true});
                 }
             });
-        }
+        },
 /*
             rpc.query({
                 model: 'helpdesk.ticket',
@@ -74,7 +74,7 @@ odoo.define('invoice.action_button', function (require) {
                     window.location
                 });
         },*/
-    //});
+    });
 
     /*
     var ListView = require('web.ListView');
