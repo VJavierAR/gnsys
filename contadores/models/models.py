@@ -60,6 +60,10 @@ class dcas(models.Model):
     renA=fields.Float(string='Rendimiento Amarillo')
     renM=fields.Float(string='Rendimiento Magenta')
     tablahtml=fields.Text(string='Detalle Equipo',readonly=True)
+    fechaN=fields.Datetime(string='Fecha de captura',readonly=True)
+    fechaA=fields.Datetime(string='Fecha de captura',readonly=True)
+    fechaC=fields.Datetime(string='Fecha de captura',readonly=True)
+    fechaM=fields.Datetime(string='Fecha de captura',readonly=True)
     
 
     
@@ -118,7 +122,7 @@ class dcas(models.Model):
         if self.serie:
             style="<html><head><style>table, th, td {border: 1px solid black;border-collapse: collapse;}th, td {padding: 5px;text-align: left;}</style></head><body>"
             cabecera="<table style='width:100%'><caption>Info xD</caption><tr><th></th><th>Monocormatico  </th><th> Cian </th><th> Amarillo </th><th> Magenta </th></tr><tr><tr><td></td></tr>"
-            ultimosContadores='<tr><td> Último Contador </td> <td>'+str(self.x_studio_contador_mono_anterior_1)+'</td> <td>'+str(self.contadorAnteriorCian)+'</td> <td>'+ str(self.contadorAnteriorAmarillo)+' </td> <td>'+str(self.contadorAnteriorMagenta)+'</td></tr>'
+            ultimosContadores='<tr><td> Último Contador </td> <td>'+str(self.x_studio_contador_mono_anterior_1)+' '+str(self.fechaN)+'</br>'+'</td> <td>'+str(self.contadorAnteriorCian)+' '+str(self.fechaC)+' </br> </td> <td>'+ str(self.contadorAnteriorAmarillo)+' '+str(self.fechaA)+'</br> </td> <td>'+str(self.contadorAnteriorMagenta)+' '+str(self.fechaM)+'</br> </td> </tr>'
             paginasProcesadas='<tr><td> Páginas Procesadas </td> <td>'+str(self.paginasProcesadasBN)+'</td> <td>'+str(self.paginasProcesadasC)+'</td> <td>'+ str(self.paginasProcesadasA)+' </td> <td>'+str(self.paginasProcesadasM)+'</td></tr>'        
             rendimientos='<tr><td> Rendimiento </td> <td>'+str(self.x_studio_rendimiento)+'</td> <td>'+str(self.renC)+'</td> <td>'+ str(self.renA)+' </td> <td>'+str(self.renM)+'</td></tr>'
             niveles='<tr><td> Último nivel </td> <td>'+str(self.nivelNA)+'</td> <td>'+str(self.nivelCA)+'</td> <td>'+ str(self.nivelAA)+' </td> <td>'+str(self.nivelMA)+'</td></tr>'
@@ -135,20 +139,25 @@ class dcas(models.Model):
     def ultimosContadoresNACM(self):
         if self.serie and self.x_studio_color_o_bn=='B/N':
             n=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeNegro','=',1]],order='x_studio_fecha desc',limit=1)
-            self.nivelNA=n.x_studio_toner_negro               
+            self.nivelNA=n.x_studio_toner_negro
+            self.fechaN=n.x_studio_fecha               
         if self.serie and self.x_studio_color_o_bn!='B/N':
             n=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeNegro','=',1]],order='x_studio_fecha desc',limit=1)
+            self.fechaN=n.x_studio_fecha
             self.nivelNA=n.x_studio_toner_negro       
             c=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeCian','=',1]],order='x_studio_fecha desc',limit=1)
             self.nivelCA=c.x_studio_toner_cian
-            self.contadorAnteriorCian=c.contadorColor            
+            self.contadorAnteriorCian=c.contadorColor
+            self.fechaC=c.x_studio_fecha            
             a=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeAmarillo','=',1]],order='x_studio_fecha desc',limit=1)
             self.nivelAA=a.x_studio_toner_amarillo
             self.contadorAnteriorAmarillo=a.contadorColor
+            self.fechaA=a.x_studio_fecha
             m=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeMagenta','=',1]],order='x_studio_fecha desc',limit=1)
             self.nivelMA=m.x_studio_toner_magenta
             self.contadorAnteriorMagenta=m.contadorColor
-                                                                                            
+            self.fechaM=m.x_studio_fecha
+                                                                                             
     
     
     
