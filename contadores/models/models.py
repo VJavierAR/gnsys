@@ -122,7 +122,7 @@ class dcas(models.Model):
             rendimientos='<tr><td>Rendimientos</td> <td>'+str(self.x_studio_rendimiento)+'</td> <td>'+str(self.renC)+'</td> <td>'+ str(self.renA)+' </td> <td>'+str(self.renM)+'</td></tr>'
             niveles='<tr><td>Rendimientos</td> <td>'+str(self.nivelNA)+'</td> <td>'+str(self.nivelCA)+'</td> <td>'+ str(self.nivelAA)+' </td> <td>'+str(self.nivelMA)+'</td></tr>'
             cierre="</table>"
-            self.tablahtml=cabecera+ultimosContadores+cierre
+            self.tablahtml=cabecera+ultimosContadores+paginasProcesadas+rendimientos+niveles+cierre
         
             
             
