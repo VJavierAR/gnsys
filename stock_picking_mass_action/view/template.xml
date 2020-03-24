@@ -1,12 +1,12 @@
 <odoo>
     <data>
-          <template id="assets_backend" inherit_id="web.assets_backend" name="xdsdsd">
+          <template id="assets_backend" inherit_id="web.assets_backend" name="Custom Module">
             
 
 
 
             <xpath expr="." positio="inside">
-            <!--<script type="text/javascript" src="/stock_picking_mass_action/static/src/js/stock_pick.js"></script>-->
+            <script type="text/javascript" src="/stock_picking_mass_action/static/src/js/stock_pick.js"></script>
             <!--<script type="text/javascript">
 
                 odoo.define('web.csrf', function (require) {
