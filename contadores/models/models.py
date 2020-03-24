@@ -116,11 +116,11 @@ class dcas(models.Model):
     @api.onchange('contadorColor','contadorMono','x_studio_cartucho_amarillo','x_studio_cartucho_cian_1','x_studio_cartucho_magenta')
     def table(self):
         if self.serie:
-            cabecera="<table style='width:100%'><tr><th></th><th>Monocormatico</th><th>Cian</th><th>Amarillo</th><th>Magenta</th></tr><tr><tr><td></td></tr>"
-            ultimosContadores='<tr><td>Ultimo Contador</td> <td>'+str(self.x_studio_contador_mono_anterior_1)+'</td> <td>'+str(self.contadorAnteriorCian)+'</td> <td>'+ str(self.contadorAnteriorAmarillo)+' </td> <td>'+str(self.contadorAnteriorMagenta)+'</td></tr>'
-            paginasProcesadas='<tr><td>Páginas Procesadas</td> <td>'+str(self.paginasProcesadasBN)+'</td> <td>'+str(self.paginasProcesadasC)+'</td> <td>'+ str(self.paginasProcesadasA)+' </td> <td>'+str(self.paginasProcesadasM)+'</td></tr>'        
-            rendimientos='<tr><td>Rendimientos</td> <td>'+str(self.x_studio_rendimiento)+'</td> <td>'+str(self.renC)+'</td> <td>'+ str(self.renA)+' </td> <td>'+str(self.renM)+'</td></tr>'
-            niveles='<tr><td>Rendimientos</td> <td>'+str(self.nivelNA)+'</td> <td>'+str(self.nivelCA)+'</td> <td>'+ str(self.nivelAA)+' </td> <td>'+str(self.nivelMA)+'</td></tr>'
+            cabecera="<table style='width:100%'><tr><th></th><th>Monocormatico  </th><th> Cian </th><th> Amarillo </th><th> Magenta </th></tr><tr><tr><td></td></tr>"
+            ultimosContadores='<tr><td> Último Contador </td> <td>'+str(self.x_studio_contador_mono_anterior_1)+'</td> <td>'+str(self.contadorAnteriorCian)+'</td> <td>'+ str(self.contadorAnteriorAmarillo)+' </td> <td>'+str(self.contadorAnteriorMagenta)+'</td></tr>'
+            paginasProcesadas='<tr><td> Páginas Procesadas </td> <td>'+str(self.paginasProcesadasBN)+'</td> <td>'+str(self.paginasProcesadasC)+'</td> <td>'+ str(self.paginasProcesadasA)+' </td> <td>'+str(self.paginasProcesadasM)+'</td></tr>'        
+            rendimientos='<tr><td> Rendimiento </td> <td>'+str(self.x_studio_rendimiento)+'</td> <td>'+str(self.renC)+'</td> <td>'+ str(self.renA)+' </td> <td>'+str(self.renM)+'</td></tr>'
+            niveles='<tr><td> Último nivel </td> <td>'+str(self.nivelNA)+'</td> <td>'+str(self.nivelCA)+'</td> <td>'+ str(self.nivelAA)+' </td> <td>'+str(self.nivelMA)+'</td></tr>'
             cierre="</table>"
             self.tablahtml=cabecera+ultimosContadores+paginasProcesadas+rendimientos+niveles+cierre
         
