@@ -82,9 +82,9 @@ class dcas(models.Model):
         if cac>contaC:
             raise exceptions.ValidationError("Contador Color Menor")
         else:
-            self.paginasProcesadasC=concat-self.contadorAnteriorCian
-            self.paginasProcesadasA=concat-self.contadorAnteriorAmarillo
-            self.paginasProcesadasM=concat-self.contadorAnteriorMagenta
+            self.paginasProcesadasC=contaC-self.contadorAnteriorCian
+            self.paginasProcesadasA=contaC-self.contadorAnteriorAmarillo
+            self.paginasProcesadasM=contaC-self.contadorAnteriorMagenta
             
             
         
