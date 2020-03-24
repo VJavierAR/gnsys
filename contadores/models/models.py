@@ -118,8 +118,8 @@ class dcas(models.Model):
                m = 1
             if n == '0':
                n = 1                   
-            if c:
-               self.renC=self.paginasProcesadasBN*100/int(n)            
+            if n:
+               self.renN=self.paginasProcesadasBN*100/int(n)            
             if c:
                self.renC=self.paginasProcesadasC*100/int(c)
             if a:
@@ -134,7 +134,7 @@ class dcas(models.Model):
             cabecera="<table style='width:100%'><caption>Info xD</caption><tr><th></th><th>Monocormatico  </th><th> Cian </th><th> Amarillo </th><th> Magenta </th></tr><tr><tr><td></td></tr>"
             ultimosContadores='<tr><td> Último Contador </td> <td>'+str(self.x_studio_contador_mono_anterior_1)+' '+str(self.fechaN)+'</br>'+'</td> <td>'+str(self.contadorAnteriorCian)+' '+str(self.fechaC)+' </br> </td> <td>'+ str(self.contadorAnteriorAmarillo)+' '+str(self.fechaA)+'</br> </td> <td>'+str(self.contadorAnteriorMagenta)+' '+str(self.fechaM)+'</br> </td> </tr>'
             paginasProcesadas='<tr><td> Páginas Procesadas </td> <td>'+str(self.paginasProcesadasBN)+'</td> <td>'+str(self.paginasProcesadasC)+'</td> <td>'+ str(self.paginasProcesadasA)+' </td> <td>'+str(self.paginasProcesadasM)+'</td></tr>'        
-            rendimientos='<tr><td> Rendimiento </td> <td>'+str(self.x_studio_rendimiento)+'</td> <td>'+str(self.renC)+'</td> <td>'+ str(self.renA)+' </td> <td>'+str(self.renM)+'</td></tr>'
+            rendimientos='<tr><td> Rendimiento </td> <td>'+str(self.renN)+'</td> <td>'+str(self.renC)+'</td> <td>'+ str(self.renA)+' </td> <td>'+str(self.renM)+'</td></tr>'
             niveles='<tr><td> Último nivel </td> <td>'+str(self.nivelNA)+'</td> <td>'+str(self.nivelCA)+'</td> <td>'+ str(self.nivelAA)+' </td> <td>'+str(self.nivelMA)+'</td></tr>'
             cierre="</table></body></html> "
             self.tablahtml=cabecera+ultimosContadores+paginasProcesadas+rendimientos+niveles+cierre
