@@ -49,8 +49,6 @@ class StockPicking(Model):
                     else:
                         r.tipo='foraneo'
 
-
-
     @api.onchange('carrier_tracking_ref')
     def agregarNumeroGuiaATicketOSolicitud(self):
         if(self.sale_id.x_studio_field_bxHgp):
