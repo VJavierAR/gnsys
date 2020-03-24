@@ -51,6 +51,7 @@ class dcas(models.Model):
     contadorAnteriorCian=fields.Integer(string='contador de ultima solicitud Cian')
     contadorAnteriorAmarillo=fields.Integer(string='contador de ultima solicitud Amarillo')
     contadorAnteriorMagenta=fields.Integer(string='contador de ultima solicitud Magenta')
+    contadorAnteriorNegro=fields.Integer(string='contador de ultima solicitud Negro')
     paginasProcesadasBN=fields.Integer(string='Páginas procesadas BN')
     paginasProcesadasC=fields.Integer(string='Páginas procesadas Cian')
     paginasProcesadasA=fields.Integer(string='Páginas procesadas Amarillo')
@@ -59,6 +60,8 @@ class dcas(models.Model):
     renC=fields.Float(string='Rendimiento Cian')
     renA=fields.Float(string='Rendimiento Amarillo')
     renM=fields.Float(string='Rendimiento Magenta')
+    renN=fields.Float(string='Rendimiento Negro')
+    
     tablahtml=fields.Text(string='Detalle Equipo',readonly=True)
     fechaN=fields.Datetime(string='Fecha de captura',readonly=True)
     fechaA=fields.Datetime(string='Fecha de captura',readonly=True)
@@ -83,16 +86,17 @@ class dcas(models.Model):
     @api.onchange('contadorMono','x_studio_cartuchonefro')
     def validaMoon(self):        
         contadorM=self.contadorMono
-        cam=self.x_studio_contador_mono_anterior_1                                        
+        cam=self.contadorAnteriorNegro                                        
         if cam>contadorM:
             contadorM=0
             raise exceptions.ValidationError("Contador Monocromatico Menor")
         else:
-            self.paginasProcesadasBN=self.contadorMono-self.x_studio_contador_mono_anterior_1
+            self.paginasProcesadasBN=self.contadorMono-self.contadorAnteriorNegro
             
     @api.onchange('contadorColor','x_studio_cartucho_amarillo','x_studio_cartucho_cian_1','x_studio_cartucho_magenta')
     def validaContadores(self):
-        contaC=self.contadorColor               
+        contaC=self.contadorColor
+        contaN=self.contadorMono               
         cac=self.x_studio_contador_color_anterior
         if cac>contaC:
             contaC=0
@@ -101,15 +105,21 @@ class dcas(models.Model):
             self.paginasProcesadasC=contaC-self.contadorAnteriorCian
             self.paginasProcesadasA=contaC-self.contadorAnteriorAmarillo
             self.paginasProcesadasM=contaC-self.contadorAnteriorMagenta
+            self.paginasProcesadasBN=contaN-self.contadorAnteriorNegro
             c=self.x_studio_rendimientoc
             a=self.x_studio_rendimientoa
             m=self.x_studio_rendimientom
+            n=self.x_studio_rendimiento_negro            
             if c == '0':
                c = 1
             if a == '0':
                a = 1
             if m == '0':
-               m = 1                
+               m = 1
+            if n == '0':
+               n = 1                   
+            if c:
+               self.renC=self.paginasProcesadasBN*100/int(n)            
             if c:
                self.renC=self.paginasProcesadasC*100/int(c)
             if a:
@@ -140,7 +150,8 @@ class dcas(models.Model):
         if self.serie and self.x_studio_color_o_bn=='B/N':
             n=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeNegro','=',1]],order='x_studio_fecha desc',limit=1)
             self.nivelNA=n.x_studio_toner_negro
-            self.fechaN=n.x_studio_fecha               
+            self.fechaN=n.x_studio_fecha
+            self.contadorAnteriorNegro=n.contadorMono               
         if self.serie and self.x_studio_color_o_bn!='B/N':
             n=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeNegro','=',1]],order='x_studio_fecha desc',limit=1)
             self.fechaN=n.x_studio_fecha
