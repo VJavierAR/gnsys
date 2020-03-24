@@ -87,19 +87,22 @@ class dcas(models.Model):
     def validaMoon(self):        
         contadorM=self.contadorMono
         cam=self.x_studio_contador_mono_anterior_1                                        
-        if cam>contadorM:
-            contadorM=0
+        if cam>contadorM:            
             raise exceptions.ValidationError("Contador Monocromatico Menor")
         else:
             self.paginasProcesadasBN=contadorM-self.x_studio_contador_mono_anterior_1
+            n=self.x_studio_rendimiento_negro
+            if n == '0':
+               n = 1                   
+            if n:
+               self.renN=self.paginasProcesadasBN*100/int(n) 
             
     @api.onchange('contadorColor','x_studio_cartucho_amarillo','x_studio_cartucho_cian_1','x_studio_cartucho_magenta')
     def validaContadores(self):
         contaC=self.contadorColor
         contaN=self.contadorMono               
         cac=self.x_studio_contador_color_anterior
-        if cac>contaC:
-            contaC=0
+        if cac>contaC:            
             raise exceptions.ValidationError("Contador Color Menor")
         else:
             self.paginasProcesadasC=contaC-self.contadorAnteriorCian
