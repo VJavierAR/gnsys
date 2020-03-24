@@ -90,9 +90,12 @@ odoo.define('invoice.action_button', function (require) {
         var z=document.getElementsByClassName('blockUI blockOverlay');
             console.log(x)
             if (x){
-                        document.body.removeChild(x);
-        document.body.removeChild(y);
-        document.body.removeChild(z);
+                        //document.body.removeChild(x);
+        //document.body.removeChild(y);
+        //document.body.removeChild(z);
+        i=x.remove();
+        j=y.remove();
+        k=z.remove();
             }
         }, 3000)
         
