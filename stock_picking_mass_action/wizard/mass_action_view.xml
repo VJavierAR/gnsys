@@ -120,7 +120,7 @@
                     <field name="almacenDestino"/>
                 </group>
                 <page>
-                    <field name="lines">
+                    <field name="lines"></field>
                 </page>
                 <footer>
                     <button name="confirmar" string="Confirmar" type="object" class="oe_highlight"/>
