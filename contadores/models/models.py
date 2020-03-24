@@ -91,6 +91,7 @@ class dcas(models.Model):
             raise exceptions.ValidationError("Contador Monocromatico Menor")
         else:
             self.paginasProcesadasBN=contadorM-self.x_studio_contador_mono_anterior_1
+            n=self.x_studio_rendimiento_negro
             if n == '0':
                n = 1                   
             if n:
