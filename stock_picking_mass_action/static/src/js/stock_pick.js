@@ -108,30 +108,30 @@ odoo.define('invoice.action_button', function (require) {
 });
 
 
-    $(document).ready(function() {
-        console.log("Entrando al cargar...")
-        //var x = document.getElementById("hidden_box");
-        //var x=document.getElementsByClassName('blockUI blockMsg blockPage');
-        //var y=document.getElementsByClassName('blockUI');
-        //var z=document.getElementsByClassName('blockUI blockOverlay');
+    // $(document).ready(function() {
+    //     console.log("Entrando al cargar...")
+    //     //var x = document.getElementById("hidden_box");
+    //     //var x=document.getElementsByClassName('blockUI blockMsg blockPage');
+    //     //var y=document.getElementsByClassName('blockUI');
+    //     //var z=document.getElementsByClassName('blockUI blockOverlay');
 
        
-        var intervalo = setInterval( function borraBlock() {
-                    var x=document.getElementsByClassName('blockUI blockMsg blockPage');
-        var y=document.getElementsByClassName('blockUI');
-        var z=document.getElementsByClassName('blockUI blockOverlay');
-            console.log(x)
-            if (x){
-                x.parentNode.replaceChild(x,'');
-                y.parentNode.replaceChild(y,'');
-                z.parentNode.replaceChild(z,'');
-                        //document.body.removeChild(x);
-        //document.body.removeChild(y);
-        //document.body.removeChild(z);
-        //i=x.remove();
-        //j=y.remove();
-        //k=z.remove();
-            }
-        }, 3000)
+    //     var intervalo = setInterval( function borraBlock() {
+    //                 var x=document.getElementsByClassName('blockUI blockMsg blockPage');
+    //     var y=document.getElementsByClassName('blockUI');
+    //     var z=document.getElementsByClassName('blockUI blockOverlay');
+    //         console.log(x)
+    //         if (x){
+    //             x.parentNode.replaceChild(x,'');
+    //             y.parentNode.replaceChild(y,'');
+    //             z.parentNode.replaceChild(z,'');
+    //                     //document.body.removeChild(x);
+    //     //document.body.removeChild(y);
+    //     //document.body.removeChild(z);
+    //     //i=x.remove();
+    //     //j=y.remove();
+    //     //k=z.remove();
+    //         }
+    //     }, 3000)
         
-    });
+    // });
