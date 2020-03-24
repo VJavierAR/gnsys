@@ -46,14 +46,14 @@ odoo.define('invoice.action_button', function (require) {
                     self.update_control_panel({clear: true, hidden: true});
                 }
             });
-        },
-/*
+
+
             rpc.query({
-                model: 'helpdesk.ticket',
-                method: 'cambio_wizard',
+                model: 'stock.picking',
+                method: 'inter_wizard',
                 args: [[user],{'id':user}],
             });
-        },*/
+        },
 
         /*receive_invoice: function () {
             var self = this
