@@ -59,7 +59,7 @@ class dcas(models.Model):
     renC=fields.Float(string='Rendimiento Cian')
     renA=fields.Float(string='Rendimiento Amarillo')
     renM=fields.Float(string='Rendimiento Magenta')
-    tablahtml=fields.Text(string='Detalle Equipo')
+    tablahtml=fields.Text(string='Detalle Equipo',readonly=True)
     
 
     
