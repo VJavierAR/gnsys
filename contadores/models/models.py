@@ -5,6 +5,7 @@ import logging, ast
 from odoo.exceptions import UserError
 from odoo import exceptions, _
 from datetime import datetime
+from operator import concat
 _logger = logging.getLogger(__name__)
 
 
@@ -51,7 +52,9 @@ class dcas(models.Model):
     contadorAnteriorAmarillo=fields.Integer(string='contador de ultima solicitud Amarillo')
     contadorAnteriorMagenta=fields.Integer(string='contador de ultima solicitud Magenta')
     paginasProcesadasBN=fields.Integer(string='Páginas procesadas BN')
-    
+    paginasProcesadasC=fields.Integer(string='Páginas procesadas Cian')
+    paginasProcesadasA=fields.Integer(string='Páginas procesadas Amarillo')
+    paginasProcesadasM=fields.Integer(string='Páginas procesadas Magenta')
         
     
     """
@@ -78,6 +81,13 @@ class dcas(models.Model):
         cac=self.x_studio_contador_color_anterior
         if cac>contaC:
             raise exceptions.ValidationError("Contador Color Menor")
+        else:
+            self.paginasProcesadasC=concat-self.contadorAnteriorCian
+            self.paginasProcesadasA=concat-self.contadorAnteriorAmarillo
+            self.paginasProcesadasM=concat-self.contadorAnteriorMagenta
+            
+            
+        
             
                  
     @api.onchange('serie')             
