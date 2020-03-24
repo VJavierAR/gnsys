@@ -59,6 +59,8 @@ class dcas(models.Model):
     renC=fields.Float(string='Rendimiento Cian')
     renA=fields.Float(string='Rendimiento Amarillo')
     renM=fields.Float(string='Rendimiento Magenta')
+    tablahtml=fields.HTML(string='Detalle Equipo')
+    
 
     
     
@@ -74,7 +76,7 @@ class dcas(models.Model):
     """
     
     
-    @api.onchange('contadorMono')
+    @api.onchange('contadorMono','x_studio_cartuchonefro')
     def validaMoon(self):        
         contadorM=self.contadorMono
         cam=self.x_studio_contador_mono_anterior_1                                        
@@ -111,6 +113,13 @@ class dcas(models.Model):
             if m:
                self.renM=self.paginasProcesadasM*100/int(m)
     
+    @api.onchange('contadorColor','x_studio_cartucho_amarillo','x_studio_cartucho_cian_1','x_studio_cartucho_magenta')
+    def table(self):
+        cabecera="<table style='width:100%'><tr><th></th><th>mono</th><th>cian</th><th>Amar</th><th>Mage</th></tr><tr><tr><td></td></tr>"
+        ultimosContadores='<tr><td>Ultimo Contador</td> <td>'+self.x_studio_contador_mono_anterior_1+'</td> <td>'+self.x_studio_contador_color_anterior+'</td> </tr>'        
+        cierre="</table>"
+        self.tablahtml=cabecera+ultimosContadores+cierre
+        
             
             
             
