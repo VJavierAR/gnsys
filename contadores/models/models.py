@@ -55,6 +55,9 @@ class dcas(models.Model):
     paginasProcesadasC=fields.Integer(string='Páginas procesadas Cian')
     paginasProcesadasA=fields.Integer(string='Páginas procesadas Amarillo')
     paginasProcesadasM=fields.Integer(string='Páginas procesadas Magenta')
+    x_studio_fecha = fields.Datetime(string='Fecha',default=lambda self: fields.datetime.now())
+    
+    
         
     
     """
