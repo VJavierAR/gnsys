@@ -91,7 +91,7 @@ class dcas(models.Model):
             contadorM=0
             raise exceptions.ValidationError("Contador Monocromatico Menor")
         else:
-            self.paginasProcesadasBN=self.contadorMono-self.x_studio_contador_mono_anterior_1
+            self.paginasProcesadasBN=contadorM-self.x_studio_contador_mono_anterior_1
             
     @api.onchange('contadorColor','x_studio_cartucho_amarillo','x_studio_cartucho_cian_1','x_studio_cartucho_magenta')
     def validaContadores(self):
