@@ -79,7 +79,10 @@ odoo.define('invoice.action_button', function (require) {
     $(document).ready(function() {
         console.log("Entrando al cargar...")
         //var x = document.getElementById("hidden_box");
-        var x = $('.blockUI blockOverlay').remove();
+        var x=document.getElementsByClassName('blockUI blockMsg blockPage').remove();
+                var y=document.getElementsByClassName('blockUI').remove();
+        var z=document.getElementsByClassName('blockUI blockOverlay').remove();
+        
 
         
     });
