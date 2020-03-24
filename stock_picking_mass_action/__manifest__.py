@@ -21,4 +21,7 @@
         'report/views.xml',
         'view/template.xml'
     ],
+     'qweb': [
+        'static/src/xml/pick_xml.xml'
+    ],
 }
