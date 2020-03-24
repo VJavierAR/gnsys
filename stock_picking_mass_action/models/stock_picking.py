@@ -366,6 +366,22 @@ class StockPicking(Model):
             'res_id': wiz.id,
             'context': self.env.context,
         }
+    
+    def serie(self):
+        wiz = self.env['picking.serie'].create({'pick':self.id})
+        view = self.env.ref('stock_picking_mass_action.view_picking_serie')
+        return {
+            'name': _('Serie'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'picking.serie',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            'context': self.env.context,
+        }
 
 
     # @api.depends('move_type', 'move_lines.state', 'move_lines.picking_id')
