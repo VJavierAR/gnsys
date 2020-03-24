@@ -71,6 +71,7 @@ class dcas(models.Model):
         contadorM=self.contadorMono
         cam=self.x_studio_contador_mono_anterior_1                                        
         if cam>contadorM:
+            contadorM=0
             raise exceptions.ValidationError("Contador Monocromatico Menor")
         else:
             self.paginasProcesadasBN=self.contadorMono-self.x_studio_contador_mono_anterior_1
@@ -80,6 +81,7 @@ class dcas(models.Model):
         contaC=self.contadorColor               
         cac=self.x_studio_contador_color_anterior
         if cac>contaC:
+            contaC=0
             raise exceptions.ValidationError("Contador Color Menor")
         else:
             self.paginasProcesadasC=contaC-self.contadorAnteriorCian
