@@ -25,20 +25,20 @@ odoo.define('invoice.action_button', function (require) {
         renderButtons: function($node) {
         this._super.apply(this, arguments);
             if (this.$buttons) {
-                this.$buttons.find('.oe_action_button').click(this.proxy('action_def'));
+                this.$buttons.find('.oe_action_button').click(this.proxy('action_inter'));
             }
         },
-/*
-        action_def: function (e) {
+
+        action_inter: function (e) {
             var self = this
             var user = session.uid;
             self.do_action({
-                name: _t('Crear ticket con base a una serie'),
+                name: _t('Serie'),
                 type : 'ir.actions.act_window',
-                res_model: 'helpdesk.crearconserie',
+                res_model: 'transferencia.interna',
                 view_type: 'form',
                 view_mode: 'form',
-                view_id: 'view_helpdesk_crear_desde_serie',
+                view_id: 'view_transferencia_interna',
                 views: [[false, 'form']],
                 target: 'new',
             }, {
@@ -46,8 +46,8 @@ odoo.define('invoice.action_button', function (require) {
                     self.update_control_panel({clear: true, hidden: true});
                 }
             });
-
-
+        }
+/*
             rpc.query({
                 model: 'helpdesk.ticket',
                 method: 'cambio_wizard',
@@ -74,7 +74,7 @@ odoo.define('invoice.action_button', function (require) {
                     window.location
                 });
         },*/
-    });
+    //});
 
     /*
     var ListView = require('web.ListView');
