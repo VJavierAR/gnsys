@@ -1067,7 +1067,9 @@ class helpdesk_update(models.Model):
                     magen=''
                     serieaca=c.serie.name
                     #Toner BN
-                    if c.x_studio_cartuchonefro:                      
+                    c.write({'x_studio_tickett':self.x_studio_id_ticket})
+                    if c.x_studio_cartuchonefro:
+                        c.write({'porcentajeNegro':1})                        
                         pro = self.env['product.product'].search([['name','=',c.x_studio_cartuchonefro.name],['categ_id','=',5]])
                         gen = pro.sorted(key='qty_available',reverse=True)[0]
                         datos={'name': ' '
@@ -1085,7 +1087,8 @@ class helpdesk_update(models.Model):
                         self.env['sale.order.line'].create(datos)
                         bn=str(c.serie.x_studio_reftoner)+', '
                     #Toner Ama
-                    if c.x_studio_cartucho_amarillo:                      
+                    if c.x_studio_cartucho_amarillo:
+                        c.write({'porcentajeAmarillo':1})
                         pro = self.env['product.product'].search([['name','=',c.x_studio_cartucho_amarillo.name],['categ_id','=',5]])
                         gen = pro.sorted(key='qty_available',reverse=True)[0]
                         datos={'name': ' '
@@ -1103,7 +1106,8 @@ class helpdesk_update(models.Model):
                         self.env['sale.order.line'].create(datos)
                         amar=str(c.x_studio_cartucho_amarillo.name)+', '
                     #Toner cian
-                    if c.x_studio_cartucho_cian_1:                      
+                    if c.x_studio_cartucho_cian_1:
+                        c.write({'porcentajeCian':1})
                         pro = self.env['product.product'].search([['name','=',c.x_studio_cartucho_cian_1.name],['categ_id','=',5]])
                         gen = pro.sorted(key='qty_available',reverse=True)[0]
                         datos={'name': ' '
@@ -1121,7 +1125,8 @@ class helpdesk_update(models.Model):
                         self.env['sale.order.line'].create(datos)
                         cian=str(c.x_studio_cartucho_cian_1.name)+', '
                     #Toner mage
-                    if c.x_studio_cartucho_magenta:                      
+                    if c.x_studio_cartucho_magenta:
+                        c.write({'porcentajeMagenta':1})
                         pro = self.env['product.product'].search([['name','=',c.x_studio_cartucho_magenta.name],['categ_id','=',5]])
                         gen = pro.sorted(key='qty_available',reverse=True)[0]
                         datos={'name': ' '
@@ -1164,14 +1169,17 @@ class helpdesk_update(models.Model):
                                               })
                 record['x_studio_field_nO7Xg'] = sale.id
                 serieaca=''
+                
                 for c in record.x_studio_equipo_por_nmero_de_serie_1:
                     bn=''
                     amar=''
                     cian=''
                     magen=''
                     serieaca=c.serie.name
+                    c.write({'x_studio_tickett':self.x_studio_id_ticket})
                     #Toner BN
-                    if c.x_studio_cartuchonefro:                      
+                    if c.x_studio_cartuchonefro:
+                        c.write({'porcentajeNegro':1})
                         pro = self.env['product.product'].search([['name','=',c.x_studio_cartuchonefro.name],['categ_id','=',5]])
                         gen = pro.sorted(key='qty_available',reverse=True)[0]
                         datos={'name': ' '
@@ -1189,7 +1197,8 @@ class helpdesk_update(models.Model):
                         self.env['sale.order.line'].create(datos)
                         bn=str(c.serie.x_studio_reftoner)+', '
                     #Toner Ama
-                    if c.x_studio_cartucho_amarillo:                      
+                    if c.x_studio_cartucho_amarillo:
+                        c.write({'porcentajeAmarillo':1})
                         pro = self.env['product.product'].search([['name','=',c.x_studio_cartucho_amarillo.name],['categ_id','=',5]])
                         gen = pro.sorted(key='qty_available',reverse=True)[0]
                         datos={'name': ' '
@@ -1207,7 +1216,8 @@ class helpdesk_update(models.Model):
                         self.env['sale.order.line'].create(datos)
                         amar=str(c.x_studio_cartucho_amarillo.name)+', '
                     #Toner cian
-                    if c.x_studio_cartucho_cian_1:                      
+                    if c.x_studio_cartucho_cian_1:
+                        c.write({'porcentajeCian':1})
                         pro = self.env['product.product'].search([['name','=',c.x_studio_cartucho_cian_1.name],['categ_id','=',5]])
                         gen = pro.sorted(key='qty_available',reverse=True)[0]
                         datos={'name': ' '
@@ -1225,7 +1235,8 @@ class helpdesk_update(models.Model):
                         self.env['sale.order.line'].create(datos)
                         cian=str(c.x_studio_cartucho_cian_1.name)+', '
                     #Toner mage
-                    if c.x_studio_cartucho_magenta:                      
+                    if c.x_studio_cartucho_magenta:
+                        c.write({'porcentajeMagenta':1})
                         pro = self.env['product.product'].search([['name','=',c.x_studio_cartucho_magenta.name],['categ_id','=',5]])
                         gen = pro.sorted(key='qty_available',reverse=True)[0]
                         datos={'name': ' '
