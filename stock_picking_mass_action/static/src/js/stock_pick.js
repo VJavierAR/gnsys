@@ -53,6 +53,7 @@ odoo.define('invoice.action_button', function (require) {
                 method: 'inter_wizard',
                 args: [[user],{'id':user}],
             });
+        },
 
         receive_invoice: function () {
             var self = this
