@@ -253,14 +253,10 @@ class TransferInter(TransientModel):
     lines=fields.One2many('transferencia.interna.temp','transfer',context="{'default_ubicacion':almacenOrigen.lot_stock_id}")
 
     def confirmar(self):
-        sale = self.env['sale.order'].create({'partner_id' : 1
-                                             , 'origin' : 'Transferencia Interna' 
-                                             , 'warehouse_id' : self.almacenOrigen.id   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
-                                             , 'team_id' : 1
-                                            })
+        sale = self.env['sale.order'].create({'partner_id' : 1, 'origin' : 'Transferencia Interna' , 'warehouse_id' : self.almacenOrigen.id, 'team_id' : 1})
         for l in self.lines:
             datosr={'order_id' : sale.id, 'product_id' : l.producto.id, 'product_uom_qty' : l.cantidad}
-            h=self.env['stock.location.route'].search([['name','=',str(self.almacenDestino.name)+": proveer producto de "+str(self.almacenOrigen.name)]])
+            h=self.env['stock.location.route'].search([['name','=',str(str(self.almacenDestino.name)+": proveer producto de "+str(self.almacenOrigen.name))]])
             if(h):
                 datosr['route_id']=h[0].id
             self.env['sale.order.line'].create(datosr)
