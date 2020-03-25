@@ -134,57 +134,92 @@ class dcas(models.Model):
             cierre="</table></body></html> "
             self.tablahtml=cabecera+ticket+ultimosContadores+fechas+paginasProcesadas+rendimientos+niveles+cierre    
     
-    @api.onchange('contadorMono','x_studio_cartuchonefro')
+    @api.onchange('contadorMono')
     def validaMoon(self):        
         contadorM=self.contadorMono
         cam=self.contadorAnteriorNegro                                        
         if cam>contadorM:            
             raise exceptions.ValidationError("Contador Monocromatico Menor")
-        else:
-            self.paginasProcesadasBN=contadorM-self.contadorAnteriorNegro
-            n=self.x_studio_rendimiento_negro
-            if n == '0':
-               n = 1                   
-            if n:
-               self.renN=self.paginasProcesadasBN*100/int(n)
-               raise exceptions.ValidationError("wtf"+str(self.renN))
+        if self.serie:
+           style="<html><head><style>table, th, td {border: 1px solid black;border-collapse: collapse;}th, td {padding: 5px;text-align: left;}</style></head><body>"
+           cabecera="<table style='width:100%'><caption>Info xD</caption><tr><th></th><th>Monocormatico  </th><th> Cian </th><th> Amarillo </th><th> Magenta </th></tr><tr><tr><td></td></tr>"
+           ticket='<tr><td> Ticket </td><td>'+str(self.tN)+'</br>'+'</td> <td>'+str(self.tC)+' </br> </td> <td>'+' '+str(self.tA)+'</br> </td> <td>'+str(self.tM)+'</br> </td> </tr>'
+           ultimosContadores='<tr><td> Último Contador </td><td>'+str(self.contadorAnteriorNegro)+'</br>'+'</td> <td>'+str(self.contadorAnteriorCian)+' </br> </td> <td>'+ str(self.contadorAnteriorAmarillo)+'</br> </td> <td>'+str(self.contadorAnteriorMagenta)+' </br> </td> </tr>'
+           fechas='<tr><td> Fecha </td><td>'+str(self.fechaN)+'</br>'+'</td> <td>'+str(self.fechaC)+' </br> </td> <td>'+' '+str(self.fechaA)+'</br> </td> <td>'+str(self.fechaM)+'</br> </td> </tr>'
+           paginasProcesadas='<tr><td> Páginas Procesadas </td> <td>'+str(self.paginasProcesadasBN)+'</td> <td>'+str(self.paginasProcesadasC)+'</td> <td>'+ str(self.paginasProcesadasA)+' </td> <td>'+str(self.paginasProcesadasM)+'</td></tr>'        
+           rendimientos='<tr><td> Rendimiento </td> <td>'+str(self.renN)+'</td> <td>'+str(self.renC)+'</td> <td>'+ str(self.renA)+' </td> <td>'+str(self.renM)+'</td></tr>'
+           niveles='<tr><td> Último nivel </td> <td>'+str(self.nivelNA)+'</td> <td>'+str(self.nivelCA)+'</td> <td>'+ str(self.nivelAA)+' </td> <td>'+str(self.nivelMA)+'</td></tr>'
+           cierre="</table></body></html> "
+           self.tablahtml=cabecera+ticket+ultimosContadores+fechas+paginasProcesadas+rendimientos+niveles+cierre
             
-    @api.onchange('contadorColor','x_studio_cartucho_amarillo','x_studio_cartucho_cian_1','x_studio_cartucho_magenta')
+
+
+    @api.onchange('x_studio_cartuchonefro','x_studio_cartucho_amarillo','x_studio_cartucho_cian_1','x_studio_cartucho_magenta')
+    def vcalcula(self):
+        contaC=self.contadorColor                       
+        cac=self.contadorAnteriorColor
+        contadorM=self.contadorMono
+        self.paginasProcesadasC=contaC-self.contadorAnteriorCian
+        self.paginasProcesadasA=contaC-self.contadorAnteriorAmarillo
+        self.paginasProcesadasM=contaC-self.contadorAnteriorMagenta
+        self.paginasProcesadasBN=contadorM-self.contadorAnteriorNegro            
+        c=self.x_studio_rendimientoc
+        a=self.x_studio_rendimientoa
+        m=self.x_studio_rendimientom
+        n=self.x_studio_rendimiento_negro
+        if c == '0':
+           c = 1
+        if a == '0':
+           a = 1
+        if m == '0':
+           m = 1                        
+        if n == '0':
+           n = 1                   
+        if n:
+           self.renN=self.paginasProcesadasBN*100/int(n)            
+        if c:
+           self.renC=self.paginasProcesadasC*100/int(c)
+        if a:
+           self.renA=self.paginasProcesadasA*100/int(a)
+        if m:
+           self.renM=self.paginasProcesadasM*100/int(m)
+        if self.serie:
+           style="<html><head><style>table, th, td {border: 1px solid black;border-collapse: collapse;}th, td {padding: 5px;text-align: left;}</style></head><body>"
+           cabecera="<table style='width:100%'><caption>Info xD</caption><tr><th></th><th>Monocormatico  </th><th> Cian </th><th> Amarillo </th><th> Magenta </th></tr><tr><tr><td></td></tr>"
+           ticket='<tr><td> Ticket </td><td>'+str(self.tN)+'</br>'+'</td> <td>'+str(self.tC)+' </br> </td> <td>'+' '+str(self.tA)+'</br> </td> <td>'+str(self.tM)+'</br> </td> </tr>'
+           ultimosContadores='<tr><td> Último Contador </td><td>'+str(self.contadorAnteriorNegro)+'</br>'+'</td> <td>'+str(self.contadorAnteriorCian)+' </br> </td> <td>'+ str(self.contadorAnteriorAmarillo)+'</br> </td> <td>'+str(self.contadorAnteriorMagenta)+' </br> </td> </tr>'
+           fechas='<tr><td> Fecha </td><td>'+str(self.fechaN)+'</br>'+'</td> <td>'+str(self.fechaC)+' </br> </td> <td>'+' '+str(self.fechaA)+'</br> </td> <td>'+str(self.fechaM)+'</br> </td> </tr>'
+           paginasProcesadas='<tr><td> Páginas Procesadas </td> <td>'+str(self.paginasProcesadasBN)+'</td> <td>'+str(self.paginasProcesadasC)+'</td> <td>'+ str(self.paginasProcesadasA)+' </td> <td>'+str(self.paginasProcesadasM)+'</td></tr>'        
+           rendimientos='<tr><td> Rendimiento </td> <td>'+str(self.renN)+'</td> <td>'+str(self.renC)+'</td> <td>'+ str(self.renA)+' </td> <td>'+str(self.renM)+'</td></tr>'
+           niveles='<tr><td> Último nivel </td> <td>'+str(self.nivelNA)+'</td> <td>'+str(self.nivelCA)+'</td> <td>'+ str(self.nivelAA)+' </td> <td>'+str(self.nivelMA)+'</td></tr>'
+           cierre="</table></body></html> "
+           self.tablahtml=cabecera+ticket+ultimosContadores+fechas+paginasProcesadas+rendimientos+niveles+cierre
+        
+                    
+                
+            
+    @api.onchange('contadorColor')
     def validaContadores(self):
         contaC=self.contadorColor                       
         cac=self.contadorAnteriorColor
         contadorM=self.contadorMono
         if cac>contaC:            
             raise exceptions.ValidationError("Contador Color Menor.")
-        else:
-            self.paginasProcesadasC=contaC-self.contadorAnteriorCian
-            self.paginasProcesadasA=contaC-self.contadorAnteriorAmarillo
-            self.paginasProcesadasM=contaC-self.contadorAnteriorMagenta
-            self.paginasProcesadasBN=contadorM-self.contadorAnteriorNegro            
-            c=self.x_studio_rendimientoc
-            a=self.x_studio_rendimientoa
-            m=self.x_studio_rendimientom
-            n=self.x_studio_rendimiento_negro
-            if c == '0':
-               c = 1
-            if a == '0':
-               a = 1
-            if m == '0':
-               m = 1                        
-            if n == '0':
-               n = 1                   
-            if n:
-               self.renN=self.paginasProcesadasBN*100/int(n)
-               raise exceptions.ValidationError("wtf"+str(self.renN))
-            if c:
-               self.renC=self.paginasProcesadasC*100/int(c)
-            if a:
-               self.renA=self.paginasProcesadasA*100/int(a)
-            if m:
-               self.renM=self.paginasProcesadasM*100/int(m)
+        if self.serie:
+           style="<html><head><style>table, th, td {border: 1px solid black;border-collapse: collapse;}th, td {padding: 5px;text-align: left;}</style></head><body>"
+           cabecera="<table style='width:100%'><caption>Info xD</caption><tr><th></th><th>Monocormatico  </th><th> Cian </th><th> Amarillo </th><th> Magenta </th></tr><tr><tr><td></td></tr>"
+           ticket='<tr><td> Ticket </td><td>'+str(self.tN)+'</br>'+'</td> <td>'+str(self.tC)+' </br> </td> <td>'+' '+str(self.tA)+'</br> </td> <td>'+str(self.tM)+'</br> </td> </tr>'
+           ultimosContadores='<tr><td> Último Contador </td><td>'+str(self.contadorAnteriorNegro)+'</br>'+'</td> <td>'+str(self.contadorAnteriorCian)+' </br> </td> <td>'+ str(self.contadorAnteriorAmarillo)+'</br> </td> <td>'+str(self.contadorAnteriorMagenta)+' </br> </td> </tr>'
+           fechas='<tr><td> Fecha </td><td>'+str(self.fechaN)+'</br>'+'</td> <td>'+str(self.fechaC)+' </br> </td> <td>'+' '+str(self.fechaA)+'</br> </td> <td>'+str(self.fechaM)+'</br> </td> </tr>'
+           paginasProcesadas='<tr><td> Páginas Procesadas </td> <td>'+str(self.paginasProcesadasBN)+'</td> <td>'+str(self.paginasProcesadasC)+'</td> <td>'+ str(self.paginasProcesadasA)+' </td> <td>'+str(self.paginasProcesadasM)+'</td></tr>'        
+           rendimientos='<tr><td> Rendimiento </td> <td>'+str(self.renN)+'</td> <td>'+str(self.renC)+'</td> <td>'+ str(self.renA)+' </td> <td>'+str(self.renM)+'</td></tr>'
+           niveles='<tr><td> Último nivel </td> <td>'+str(self.nivelNA)+'</td> <td>'+str(self.nivelCA)+'</td> <td>'+ str(self.nivelAA)+' </td> <td>'+str(self.nivelMA)+'</td></tr>'
+           cierre="</table></body></html> "
+           self.tablahtml=cabecera+ticket+ultimosContadores+fechas+paginasProcesadas+rendimientos+niveles+cierre
+            
     
-    
-    @api.onchange('x_studio_cartuchonefro','x_studio_cartucho_amarillo','x_studio_cartucho_cian_1','x_studio_cartucho_magenta')
+    """
+    @api.onchange('contadorColor','contadorMono','x_studio_cartuchonefro','x_studio_cartucho_amarillo','x_studio_cartucho_cian_1','x_studio_cartucho_magenta')
     def table(self):
         if self.serie:
             style="<html><head><style>table, th, td {border: 1px solid black;border-collapse: collapse;}th, td {padding: 5px;text-align: left;}</style></head><body>"
@@ -196,18 +231,8 @@ class dcas(models.Model):
             rendimientos='<tr><td> Rendimiento </td> <td>'+str(self.renN)+'</td> <td>'+str(self.renC)+'</td> <td>'+ str(self.renA)+' </td> <td>'+str(self.renM)+'</td></tr>'
             niveles='<tr><td> Último nivel </td> <td>'+str(self.nivelNA)+'</td> <td>'+str(self.nivelCA)+'</td> <td>'+ str(self.nivelAA)+' </td> <td>'+str(self.nivelMA)+'</td></tr>'
             cierre="</table></body></html> "
-            self.tablahtml=cabecera+ticket+ultimosContadores+fechas+paginasProcesadas+rendimientos+niveles+cierre
-       
-            
-            
-            
-        
-            
-                 
-
-                                                                                             
-    
-    
+            self.tablahtml=cabecera+ticket+ultimosContadores+fechas+paginasProcesadas+rendimientos+niveles+cierre                                                                                                                                                                                 
+    """
     
     
 
