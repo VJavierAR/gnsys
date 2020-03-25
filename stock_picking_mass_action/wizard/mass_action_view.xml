@@ -129,7 +129,8 @@
                             <field name="noParte"/>
                             <field name="ubicacion" invisible="1"/>
                             <field name="descripcion"/>
-                            <field name="stock"/>
+                            <field name="disponible"/>
+                            <field name="stock" invisible="1"/>
                             <field name="cantidad"/>
                         </tree>
                     </field>

@@ -252,6 +252,19 @@ class TransferInter(TransientModel):
     almacenDestino=fields.Many2one('stock.warehouse')
     lines=fields.One2many('transferencia.interna.temp','transfer',context="{'default_ubicacion':almacenOrigen.lot_stock_id}")
 
+    def confirmar(self):
+        sale = self.env['sale.order'].create({'partner_id' : 1
+                                             , 'origin' : "Transferencia Interna" 
+                                             , 'warehouse_id' : almacenOrigen.id   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
+                                             , 'team_id' : 1
+                                            })
+        for l in lines:
+            datosr={'order_id' : sale.id, 'product_id' : l.producto.id, 'product_uom_qty' : l.cantidad}
+            h=self.env['stock.location.route'].search([['name':almacenDestino.name+': proveer producto de '+almacenOrigen.name]])
+            if(h):
+                datosr['route_id']=h[0].id
+            self.env['sale.order.line'].create(datosr)
+        sale.action_confirm()
 
 
 class TransferInterMoveTemp(TransientModel):
@@ -283,6 +296,8 @@ class TransferInterMoveTemp(TransientModel):
                 i=self.env['stock.quant'].search([['product_id','=',self.producto.id],['location_id','=',di.id],['quantity','>',0]])
                 if(len(i)>0):
                     self.stock=i.id
+
+
 
 class PickingSerie(TransientModel):
     _name='picking.serie'
