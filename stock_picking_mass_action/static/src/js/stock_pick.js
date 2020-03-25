@@ -79,17 +79,13 @@ odoo.define('invoice.action_button', function (require) {
     /*
     var ListView = require('web.ListView');
     var QWeb = core.qweb;
-
     ListView.include({
-
         render_buttons: function($node) {
             var self = this;
             this._super($node);
                 this.$buttons.find('.o_list_tender_button_create').click(this.proxy('tree_view_action'));
         },
-
         tree_view_action: function () {
-
             this.do_action({
                     type: "ir.actions.act_window",
                     name: "Series",

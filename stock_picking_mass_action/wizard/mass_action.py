@@ -248,8 +248,45 @@ class TransferInter(TransientModel):
     _name='transferencia.interna'
     _description='Transferencia Interna'    
     almacenOrigen=fields.Many2one('stock.warehouse')
+    ubicacion=fields.Many2one(related='almacenOrigen.lot_stock_id')
     almacenDestino=fields.Many2one('stock.warehouse')
     lines=fields.One2many('transferencia.interna.temp','transfer')
+
+    def confirmar(self):
+        origen=self.env['stock.picking.type'].search([['name','=','Internal Transfers'],['warehouse_id','=',self.almacenOrigen.id]])
+        destino=self.env['stock.picking.type'].search([['name','=','Internal Transfers'],['warehouse_id','=',self.almacenDestino.id]])
+
+        pick_origin = self.env['stock.picking'].create({'picking_type_id' : origen.id, 'location_id':self.almacenOrigen.lot_stock_id.id,'location_dest_id':17})
+        pick_dest = self.env['stock.picking'].create({'picking_type_id' : destino.id, 'location_id':17,'location_dest_id':self.almacenDestino.lot_stock_id.id})
+        
+        for l in self.lines:
+            datos1={'product_id' : l.producto.id, 'product_uom_qty' : l.cantidad,'name':l.producto.description,'product_uom':l.unidad.id,'location_id':self.almacenOrigen.lot_stock_id.id,'location_dest_id':17}
+            datos1['picking_id']= pick_origin.id
+            datos2={'product_id' : l.producto.id, 'product_uom_qty' : l.cantidad,'name':l.producto.description,'product_uom':l.unidad.id,'location_id':17,'location_dest_id':self.almacenDestino.lot_stock_id.id}
+            datos2['picking_id']= pick_dest.id
+            self.env['stock.move'].create(datos1)
+            self.env['stock.move'].create(datos2)
+        pick_origin.action_confirm()
+        pick_origin.action_assign()
+        pick_dest.action_confirm()
+        pick_dest.action_assign()
+        name = 'Picking'
+        res_model = 'stock.picking' 
+        view_name = 'stock.view_picking_form'
+        view = self.env.ref(view_name)
+        return {
+            'name': _('Transferencia'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'stock.picking',
+            #'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'current',
+            'res_id': pick_origin.id,
+            'nodestroy': True
+        }
+
 
 
 
@@ -270,7 +307,7 @@ class TransferInterMoveTemp(TransientModel):
     #lock=fields.Boolean('lock')
     #serieDestino=fields.Many2one('stock.production.lot')
     
-    @api.onchange('ubicacion','producto')
+    @api.onchange('producto')
     def quant(self):
         self.disponible=0
         h=self.env['stock.quant'].search([['product_id','=',self.producto.id],['location_id','=',self.ubicacion.id],['quantity','>',0]])
@@ -283,6 +320,8 @@ class TransferInterMoveTemp(TransientModel):
                 if(len(i)>0):
                     self.stock=i.id
 
+
+
 class PickingSerie(TransientModel):
     _name='picking.serie'
     _description='Seleccion Serie'    
@@ -290,10 +329,26 @@ class PickingSerie(TransientModel):
     lines=fields.One2many('picking.serie.line','rel_picki_serie')
 
 
+    def confirmar(self):
+        for s in self.lines:
+            d=self.env['stock.move.line'].search([['move_id','=',s.move_id.id]])
+            d.write({'lot_id':s.serie.id})
+        return 0
+
 class PickingSerieLine(TransientModel):
     _name='picking.serie.line'
     _description='lines temps'
-    serie=fields.Many2one('stock.production.lot')
-    estado=fields.Selection([('Nuevo','Nuevo'),('Usado', 'Usado')])
+    producto=fields.Many2one('product.product')
+    serie=fields.Many2one('stock.production.lot',domain="['&',('product_id.id','=',producto),('x_studio_estado','=',estado)]")
+    estado=fields.Selection([["Obsoleto","Obsoleto"],["Usado","Usado"],["Hueso","Hueso"],["Para reparación","Para reparación"],["Nuevo","Nuevo"],["Buenas condiciones","Buenas condiciones"],["Excelentes condiciones","Excelentes condiciones"],["Back-up","Back-up"],["Dañado","Dañado"]])
     modelo=fields.Many2one(related='serie.product_id')
     rel_picki_serie=fields.Many2one('picking.serie')
+    color=fields.Selection([('B/N','B/N'),('Color', 'Color')])
+    contadorMono=fields.Integer('Contador Monocromatico')
+    contadorColor=fields.Integer('Contador Color')
+    move_id=fields.Many2one('stock.move')
+    @api.onchange('producto')
+    def color(self):
+        if(self.producto):
+            self.color=self.producto.x_studio_color_bn
+

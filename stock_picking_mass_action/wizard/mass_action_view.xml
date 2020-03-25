@@ -117,11 +117,23 @@
             <form string="Transferencia Interna">
                 <group>
                     <field name="almacenOrigen"/>
+                    <field name="ubicacion" invisible="1"/>
                     <field name="almacenDestino"/>
                 </group>
                 <notebook>
                 <page>
-                    <field name="lines"></field>
+                    <field name="lines" context="{'default_ubicacion': ubicacion}">
+                        <tree editable="bottom">
+                            <field name="producto"/>
+                            <field name="modelo"/>
+                            <field name="noParte"/>
+                            <field name="ubicacion" invisible="1"/>
+                            <field name="descripcion"/>
+                            <field name="disponible"/>
+                            <field name="stock" invisible="1"/>
+                            <field name="cantidad"/>
+                        </tree>
+                    </field>
                 </page>
             </notebook>
                 <footer>
@@ -138,7 +150,15 @@
         <field name="arch" type="xml">
             <form string="Serie">
                 <group>
-                        <field name="lines"></field>
+                        <field name="lines">
+                            <tree editable="bottom">
+                                <field name="producto" readonly="1"/>
+                                <field name="estado"/>
+                                <field name="serie"/>
+                                <field name="contadorMono"/>
+                                <field name="contadorColor"/>
+                            </tree>
+                        </field>
                 </group>
                 <footer>
                     <button name="confirmar" string="Confirmar" type="object" class="oe_highlight"/>

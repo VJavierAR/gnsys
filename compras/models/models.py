@@ -11,6 +11,34 @@ from PyPDF2 import PdfFileMerger, PdfFileReader,PdfFileWriter
 from io import BytesIO as StringIO
 import base64
 import datetime
+from odoo.tools.mimetypes import guess_mimetype
+
+try:
+    import xlrd
+    try:
+        from xlrd import xlsx
+    except ImportError:
+        xlsx = None
+except ImportError:
+    xlrd = xlsx = None
+
+try:
+    from . import odf_ods_reader
+except ImportError:
+    odf_ods_reader = None
+
+FILE_TYPE_DICT = {
+    'text/csv': ('csv', True, None),
+    'application/vnd.ms-excel': ('xls', xlrd, 'xlrd'),
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ('xlsx', xlsx, 'xlrd >= 1.0.0'),
+    'application/vnd.oasis.opendocument.spreadsheet': ('ods', odf_ods_reader, 'odfpy')
+}
+EXTENSIONS = {
+    '.' + ext: handler
+    for mime, (ext, handler, req) in FILE_TYPE_DICT.items()
+}
+
+
 
 class compras(models.Model):
     _inherit = 'purchase.order'
