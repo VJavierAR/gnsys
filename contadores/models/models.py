@@ -120,7 +120,7 @@ class dcas(models.Model):
             query="select \"contadorColor\" from dcas_dcas where  serie="+str(self.serie.id)+" or \"porcentajeMagenta\"=1 or \"porcentajeCian\"=1 or \"porcentajeMagenta\"=1  order by x_studio_fecha desc limit 1;"                        
             self.env.cr.execute(query)                        
             informacion = self.env.cr.fetchall()
-            raise exceptions.ValidationError(str(informacion)+' '+ str(type(informacion))+' '+str(informacion[0]) )
+            raise exceptions.ValidationError(str(informacion)+' '+ str(type(informacion))+' '+str(informacion[0]) +' el chido xD'+str(informacion[0][0]))
             self.contadorAnteriorColor = informacion
         if self.serie:
             style="<html><head><style>table, th, td {border: 1px solid black;border-collapse: collapse;}th, td {padding: 5px;text-align: left;}</style></head><body>"
