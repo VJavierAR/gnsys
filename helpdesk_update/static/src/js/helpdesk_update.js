@@ -26,7 +26,7 @@ odoo.define('invoice.action_button', function (require) {
 		this._super.apply(this, arguments);
 			if (this.$buttons) {
 		    	this.$buttons.find('.oe_action_button').click(this.proxy('action_def'));
-		    	this,$buttons.find('.o_list_button_add').hide()
+		    	this,$buttons.find('.o_list_button_add').hide();
 		   	}
 		},
 
