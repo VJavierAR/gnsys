@@ -52,6 +52,7 @@ class dcas(models.Model):
     contadorAnteriorAmarillo=fields.Integer(string='contador de ultima solicitud Amarillo',readonly=True,store=True)
     contadorAnteriorMagenta=fields.Integer(string='contador de ultima solicitud Magenta',readonly=True,store=True)
     contadorAnteriorNegro=fields.Integer(string='contador de ultima solicitud Negro',readonly=True,store=True)
+    contadorAnteriorColor=fields.Integer(string='contador de ultima solicitud Color',readonly=True,store=True)
     paginasProcesadasBN=fields.Integer(string='Páginas procesadas BN',readonly=True,store=True)
     paginasProcesadasC=fields.Integer(string='Páginas procesadas Cian',readonly=True,store=True)
     paginasProcesadasA=fields.Integer(string='Páginas procesadas Amarillo',readonly=True,store=True)
@@ -115,6 +116,13 @@ class dcas(models.Model):
             self.contadorAnteriorMagenta=m.contadorColor
             self.fechaM=m.x_studio_fecha
             self.tM=m.x_studio_tickett
+            #select "contadorColor" from dcas_dcas where "porcentajeMagenta"=1 or "porcentajeCian"=1 or "porcentajeNegro"=1  order by x_studio_fecha desc limit 1;
+            query="select contadorColor from dcas_dcas where  serie="+self.serie.id+" porcentajeMagenta=1 or porcentajecian=1 or porcentajeMagenta=1  order by x_studio_fecha desc limit 1;"                        
+            self.env.cr.execute(query)                        
+            informacion = self.env.cr.fetchall()
+            raise exceptions.ValidationError(str(informacion)+' '+query)
+            
+            self.contadorAnteriorColor = informacion
         if self.serie:
             style="<html><head><style>table, th, td {border: 1px solid black;border-collapse: collapse;}th, td {padding: 5px;text-align: left;}</style></head><body>"
             cabecera="<table style='width:100%'><caption>Info xD</caption><tr><th></th><th>Monocormatico  </th><th> Cian </th><th> Amarillo </th><th> Magenta </th></tr><tr><tr><td></td></tr>"
@@ -130,7 +138,7 @@ class dcas(models.Model):
     @api.onchange('contadorMono','x_studio_cartuchonefro')
     def validaMoon(self):        
         contadorM=self.contadorMono
-        cam=self.x_studio_contador_mono_anterior_1                                        
+        cam=self.contadorAnteriorNegro                                        
         if cam>contadorM:            
             raise exceptions.ValidationError("Contador Monocromatico Menor")
         else:
@@ -144,7 +152,7 @@ class dcas(models.Model):
     @api.onchange('contadorColor','x_studio_cartucho_amarillo','x_studio_cartucho_cian_1','x_studio_cartucho_magenta')
     def validaContadores(self):
         contaC=self.contadorColor                       
-        cac=self.x_studio_contador_color_anterior
+        cac=self.contadorAnteriorNegro
         if cac>contaC:            
             raise exceptions.ValidationError("Contador Color Menor.")
         else:
