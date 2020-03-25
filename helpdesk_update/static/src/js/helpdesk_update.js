@@ -39,6 +39,7 @@ odoo.define('invoice.action_button_helpdesk', function (require) {
 		    	//var div_blockUI = this.__parentedParent.el.lastElementChild.previousElementSibling.previousElementSibling
 		    	//var div_blockUI_blockOverlay = this.__parentedParent.el.lastElementChild.previousElementSibling
 		    	//var div_blockUI_blockMsg_blockPage = this.__parentedParent.el.lastElementChild
+		    	/*
 		    	if (this.__parentedParent.__parentedParent.el.lastElementChild.previousElementSibling.previousElementSibling.previousElementSibling != null){
 			    	var div_blockUI = this.__parentedParent.__parentedParent.el.lastElementChild.previousElementSibling.previousElementSibling.previousElementSibling.previousSibling
 			    	var div_blockUI_blockOverlay = this.__parentedParent.__parentedParent.el.lastElementChild.previousElementSibling.previousElementSibling.previousElementSibling
@@ -49,6 +50,7 @@ odoo.define('invoice.action_button_helpdesk', function (require) {
 				    	div_blockUI_blockMsg_blockPage.remove()
 			    	}
 			    }
+			    */
 		   	}
 		},
 
