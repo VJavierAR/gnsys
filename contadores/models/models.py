@@ -81,7 +81,7 @@ class dcas(models.Model):
     @api.model
     def create(self, values):                    
         c = super(dcas, self).create(values)
-        raise exceptions.ValidationError("Contador id"+str(c.id)+str(c.tablahtml))
+        raise exceptions.ValidationError("Contador id"+str(c.id)+str(self.tablahtml))
         
         
         return c
