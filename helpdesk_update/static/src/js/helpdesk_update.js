@@ -42,9 +42,11 @@ odoo.define('invoice.action_button_helpdesk', function (require) {
 		    	var div_blockUI = this.__parentedParent.__parentedParent.el.lastElementChild.previousElementSibling.previousElementSibling.previousElementSibling.previousSibling
 		    	var div_blockUI_blockOverlay = this.__parentedParent.__parentedParent.el.lastElementChild.previousElementSibling.previousElementSibling.previousElementSibling
 		    	var div_blockUI_blockMsg_blockPage = this.__parentedParent.__parentedParent.el.lastElementChild.previousElementSibling.previousElementSibling
-		    	div_blockUI_blockMsg_blockPage.remove()
-		    	div_blockUI_blockOverlay.remove()
-		    	div_blockUI.remove()
+		    	if (div_blockUI[0]) {
+			    	div_blockUI.remove()
+			    	div_blockUI_blockOverlay.remove()
+			    	div_blockUI_blockMsg_blockPage.remove()
+		    	}
 		   	}
 		},
 
