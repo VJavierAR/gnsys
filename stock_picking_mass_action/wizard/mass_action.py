@@ -266,7 +266,6 @@ class TransferInter(TransientModel):
             self.env['sale.order.line'].create(datosr)
         sale.action_confirm()
 
-
 class TransferInterMoveTemp(TransientModel):
     _name='transferencia.interna.temp'
     _description='Lineas Temporales Transferencia'
