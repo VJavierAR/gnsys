@@ -2,8 +2,8 @@
     <data>
         <template id="assets_backend" inherit_id="web.assets_backend" name="tree view menu">
             <xpath expr="." positio="inside">
+                <link rel="shylesheet" type="text/css" href="/helpdesk_update/static/src/css/helpdesk_update.css" />
                 <script type="text/javascript" src="/helpdesk_update/static/src/js/helpdesk_update.js"></script>
-                <link rel="shylesheet" href="/helpdesk_update/static/src/css/helpdesk_update.css" />
             </xpath>
         </template>
         
