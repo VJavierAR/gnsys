@@ -23,13 +23,12 @@ odoo.define('invoice.action_button_helpdesk', function (require) {
 
 
 	ListController.include({
-		renderButtons: function($node, dataset) {
+		renderButtons: function($node) {
 		this._super.apply(this, arguments);
-			console.log(this);
-			console.log(arguments);
-			console.log(dataset);
-			console.log(dataset._model['name'])
-			
+			console.log($node)
+			console.log(this)
+			console.log(arguments)
+
 			if (this.$buttons) {
 				//console.log(this);
 		    	//console.log(this.actionViews[0].viewID);
