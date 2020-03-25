@@ -81,11 +81,7 @@ class dcas(models.Model):
         
     
     
-    @api.model
-    def create(self, vals):
-        c = super(dcas, self).create(vals)
-        c.write(['tablahtml','=',c.tablahtml])
-        return c
+   
     
     @api.onchange('serie')             
     def ultimosContadoresNACM(self):
@@ -133,6 +129,8 @@ class dcas(models.Model):
             niveles='<tr><td> Último nivel </td> <td>'+str(self.nivelNA)+'</td> <td>'+str(self.nivelCA)+'</td> <td>'+ str(self.nivelAA)+' </td> <td>'+str(self.nivelMA)+'</td></tr>'
             cierre="</table></body></html> "
             self.tablahtml=cabecera+ticket+ultimosContadores+fechas+paginasProcesadas+rendimientos+niveles+cierre    
+            query = "update dcas_dcas set tablahtml = '"+cabecera+ticket+ultimosContadores+fechas+paginasProcesadas+rendimientos+niveles+cierre+"' where id = " + str(self.id) + ";"
+            ss = self.env.cr.execute(query)
     
     @api.onchange('contadorMono')
     def validaMoon(self):        
