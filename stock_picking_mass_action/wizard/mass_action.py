@@ -256,14 +256,19 @@ class TransferInter(TransientModel):
         origen=self.env['stock.picking.type'].search([['name','=','Internal Transfers'],['warehouse_id','=',self.almacenOrigen.id]])
         destino=self.env['stock.picking.type'].search([['name','=','Internal Transfers'],['warehouse_id','=',self.almacenDestino.id]])
 
-        sale = self.env['stock.picking'].create({'picking_type_id' : origen.id, 'location_id':self.almacenOrigen.lot_stock_id.id,'location_dest_id':})
+        pick_origin = self.env['stock.picking'].create({'picking_type_id' : origen.id, 'location_id':self.almacenOrigen.lot_stock_id.id,'location_dest_id':17})
+        pick_dest = self.env['stock.picking'].create({'picking_type_id' : destino.id, 'location_id':17,'location_dest_id':self.almacenDestino.lot_stock_id.id})
+        datos={}
         for l in self.lines:
-            datosr={'order_id' : sale.id, 'product_id' : l.producto.id, 'product_uom_qty' : l.cantidad,'price_unit':0}
-            h=self.env['stock.location.route'].search([['name','=',str(str(self.almacenDestino.name)+": proveer producto de "+str(self.almacenOrigen.name))]])
-            if(h):
-                datosr['route_id']=h[0].id
-            self.env['sale.order.line'].create(datosr)
-        sale.action_confirm()
+            datos={'product_id' : l.producto.id, 'product_uom_qty' : l.cantidad}
+        datos['picking_id']= pick_origin.id
+        self.env['stock.move'].create(datos)
+        datos['picking_id']= pick_dest.id
+        self.env['stock.move'].create(datos)
+        pick_origin.action_confirm()
+        pick_origin.action_assign()
+        pick_dest.action_confirm()
+        pick_dest.action_assign()
 
 
 
