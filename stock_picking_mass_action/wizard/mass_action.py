@@ -331,7 +331,7 @@ class PickingSerie(TransientModel):
 
     def confirmar(self):
         for s in self.lines:
-            d=self.env['stock.move.line'].search([['move_id':s.move_id.id]])
+            d=self.env['stock.move.line'].search([['move_id','=',s.move_id.id]])
             d.write({'lot_id':s.serie.id})
         return 0
 
