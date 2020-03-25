@@ -27,6 +27,7 @@ odoo.define('invoice.action_button_helpdesk', function (require) {
 			if (this.$buttons) {
 		    	this.$buttons.find('.oe_action_button_helpdesk').click(this.proxy('action_def'));
 		    	this.$buttons.find('.o_list_button_add').hide();
+		    	this.$buttons.find('.o_button_import').hide();
 		   	}
 		},
 
