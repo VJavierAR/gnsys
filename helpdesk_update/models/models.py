@@ -515,7 +515,7 @@ class helpdesk_update(models.Model):
                 #mensajeCuerpoGlobal = 'Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Abierto' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página."
                 return {'warning': mess}
         
-        if self.x_studio_id_ticket and tam < 2 self.team_id!=8:
+        if self.x_studio_id_ticket and tam < 2 and self.team_id!=8:
             estadoAntes = str(self.stage_id.name)
             if self.stage_id.name == 'Pre-ticket' and self.x_studio_equipo_por_nmero_de_serie.id != False and self.estadoAbierto == False:
                 #ticketActualiza.write({'stage_id': '89'})
