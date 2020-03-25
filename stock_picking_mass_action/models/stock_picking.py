@@ -38,7 +38,7 @@ class StockPicking(Model):
                 i=0
                 for rrr in r.move_ids_without_package:
                     if(rrr.product_id.categ_id.id==13):
-                        r.oculta=True
+                        r.write({'oculta':True})
                     rrrrr=self.env['stock.quant'].search([['product_id','=', rrr.product_id.id],['location_id','=',12]]).sorted(key='quantity',reverse=True)
                     if(len(rrrrr)>0):
                         i=i+1
