@@ -21,19 +21,6 @@ odoo.define('invoice.action_button_helpdesk', function (require) {
 	var session = require('web.session');
 	var _t = core._t;
 
-	var dom_ready = require('web.dom_ready');
-
-	dom_ready.extend({
-		init: function () {
-			var x = $('.blockUI blockOverlay');
-            console.log(x)
-            if ($(".blockUI blockOverlay")[0]) {
-                $('.blockUI blockOverlay').remove();
-                $('.blockUI').remove();
-                $('.blockUI blockMsg blockPage').remove();
-            }
-		}
-	});
 
 	ListController.include({
 		renderButtons: function($node) {
@@ -49,6 +36,12 @@ odoo.define('invoice.action_button_helpdesk', function (require) {
 		    		this.$buttons.find('.o_list_button_add').show();
 		    		this.$buttons.find('.oe_action_button_helpdesk').hide();
 		    	}
+		    	var div_blockUI = this.__parentedParent.el.lastElementChild.previousElementSibling.previousElementSibling
+		    	var div_blockUI_blockOverlay = this.__parentedParent.el.lastElementChild.previousElementSibling
+		    	var div_blockUI_blockMsg_blockPage = this.__parentedParent.el.lastElementChild
+		    	div_blockUI_blockMsg_blockPage.remove()
+		    	div_blockUI_blockOverlay.remove()
+		    	div_blockUI.remove()
 		   	}
 		},
 
