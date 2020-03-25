@@ -34,10 +34,11 @@ class helpdesk_update(models.Model):
     days_difference = fields.Integer(compute='_compute_difference',string='días de atraso')
 
     localidadContacto = fields.Many2one('res.partner'
-                                        , store=True
-                                        , track_visibility='onchange'
-                                        , string='Localidad contacto'
-                                        , domain="['&',('parent_id.id','=',idLocalidadAyuda),('type','=','contact')]")
+                                        , store = True
+                                        , track_visibility = 'onchange'
+                                        , string = 'Localidad contacto'
+                                        , compute = 'cambiaContactoLocalidad'
+                                        , domain = "['&',('parent_id.id','=',idLocalidadAyuda),('type','=','contact')]")
     
     @api.depends('x_studio_equipo_por_nmero_de_serie','x_studio_equipo_por_nmero_de_serie_1')
     def cambiaContactoLocalidad(self):
@@ -47,18 +48,7 @@ class helpdesk_update(models.Model):
             loc = self.x_studio_empresas_relacionadas.id
             idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_subtipo', '=', 'Contacto de localidad']], order='create_date desc', limit=1).id
             self.localidadContacto = idLoc
-            query = "update helpdesk_ticket set \"localidadContacto\" = " + str(idLoc) + " where id = " + str(self.x_studio_id_ticket) + ";"
-            self.env.cr.execute(query)
-            self.env.cr.commit()
-
-    @api.depends('x_studio_empresas_relacionadas')
-    def cambiaContactoLocalidad2(self):
-        _logger.info("Entre por toner")
-        if self.x_studio_empresas_relacionadas:
-            _logger.info("Entre por toner: " + str(self.x_studio_empresas_relacionadas))
-            loc = self.x_studio_empresas_relacionadas.id
-            idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_subtipo', '=', 'Contacto de localidad']], order='create_date desc', limit=1).id
-            self.localidadContacto = idLoc
+            #query = "update helpdesk_ticket set \"localidadContacto\" = " + str(idLoc) + " where id = " + str(self.x_studio_id_ticket) + ";"
             query = "update helpdesk_ticket set \"localidadContacto\" = " + str(idLoc) + ", \"x_studio_field_6furK\" = " + str(self.x_studio_empresas_relacionadas.x_studio_field_SqU5B) + " where id = " + str(self.x_studio_id_ticket) + ";"
             self.env.cr.execute(query)
             self.env.cr.commit()
