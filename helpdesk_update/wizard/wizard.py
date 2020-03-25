@@ -145,13 +145,15 @@ class HelpDeskContacto(TransientModel):
                                         ,('delivery','Dirección de envío')
                                         ,('other','Otra dirección')
                                         ,('private','Dirección Privada')]
-                                        , default='contact', string="Tipo de dirección")
+                                        , default='contact', string = "Tipo de dirección", store=True)
     subtipo = fields.Selection([('Contacto comercial','Contacto comercial')
                                 ,('Contacto sistemas','Contacto sistemas')
                                 ,('Contacto para pagos','Contacto parra pagos')
                                 ,('Contacto para compras','Contacto para compras')
+                                ,('Representante legal','Representante legal')
+                                ,('Contacto de localidad','Contacto de localidad')
                                 ,('private','Dirección Privada')]
-                                , string = "Subtipo")
+                                , string = "Subtipo", default = 'Contacto de localidad', store=True)
     nombreDelContacto = fields.Char(string='Nombre de contacto')
     titulo = fields.Many2one('res.partner.title', store=True, string='Titulo')
     puestoDeTrabajo = fields.Char(string='Puesto de trabajo')

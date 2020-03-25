@@ -80,16 +80,16 @@
             <form string="Añadir contacto a localidad">
                 <group>
                     <group>
-                        <field name="tipoDeDireccion"/>
+                        <field name="tipoDeDireccion" invisible='1' force_save = "1"/>
                     </group>
                 </group>
 
                 <group attrs="{&quot;invisible&quot;: [[&quot;tipoDeDireccion&quot;,&quot;!=&quot;,&quot;contact&quot;]]}">
                     <group>
-                        <field name="subtipo"/>
+                        <field name="subtipo" invisible='1' force_save = "1"/>
                         <field name="nombreDelContacto" required='1'/>
-                        <field name="titulo" placeholder="Por ejemplo, Sr." options="{'no_create_edit': True, 'no_create': True}"/>
-                        <field name="puestoDeTrabajo" placeholder="Por ejemplo, Director de ventas"/>
+                        <field name="titulo" placeholder="Por ejemplo, Sr." options="{'no_create_edit': True, 'no_create': True}" invisible='1'/>
+                        <field name="puestoDeTrabajo" placeholder="Por ejemplo, Director de ventas" invisible='1'/>
                         <field name="correoElectronico"/>
                         <field name="telefono"/>
                         <field name="movil"/>
