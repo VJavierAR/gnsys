@@ -120,7 +120,7 @@ class dcas(models.Model):
            cierre="</table></body></html> "
            c.tablahtml=cabecera+ticket+ultimosContadores+fechas+paginasProcesadas+rendimientos+niveles+cierre
            self.env.cr.execute("update dcas_dcas set tablahtml = '"+c.tablahtml+"' where  id = " + str(c.id) + ";")
-           self.env.cr.execute("update dcas_dcas set x_studio_ultima_ubicacin = '"+c.x_studio_ultima_ubicacin+"' where  id = " + str(c.id) + ";")                 
+           self.env.cr.execute("update dcas_dcas set x_studio_ultima_ubicacin = '"+str(c.x_studio_ultima_ubicacin)+"' where  id = " + str(c.id) + ";")                 
                
         #raise exceptions.ValidationError("Contador id"+str(c.id)+str(c.tablahtml))
         
