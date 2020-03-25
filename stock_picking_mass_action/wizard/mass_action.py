@@ -260,7 +260,7 @@ class TransferInter(TransientModel):
                                             })
         for l in lines:
             datosr={'order_id' : sale.id, 'product_id' : l.producto.id, 'product_uom_qty' : l.cantidad}
-            h=self.env['stock.location.route'].search([['name':almacenDestino.name+': proveer producto de '+almacenOrigen.name]])
+            h=self.env['stock.location.route'].search([['name','=',almacenDestino.name+': proveer producto de '+almacenOrigen.name]])
             if(h):
                 datosr['route_id']=h[0].id
             self.env['sale.order.line'].create(datosr)
