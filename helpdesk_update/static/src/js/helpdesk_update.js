@@ -36,9 +36,12 @@ odoo.define('invoice.action_button_helpdesk', function (require) {
 		    		this.$buttons.find('.o_list_button_add').show();
 		    		this.$buttons.find('.oe_action_button_helpdesk').hide();
 		    	}
-		    	var div_blockUI = this.__parentedParent.el.lastElementChild.previousElementSibling.previousElementSibling
-		    	var div_blockUI_blockOverlay = this.__parentedParent.el.lastElementChild.previousElementSibling
-		    	var div_blockUI_blockMsg_blockPage = this.__parentedParent.el.lastElementChild
+		    	//var div_blockUI = this.__parentedParent.el.lastElementChild.previousElementSibling.previousElementSibling
+		    	//var div_blockUI_blockOverlay = this.__parentedParent.el.lastElementChild.previousElementSibling
+		    	//var div_blockUI_blockMsg_blockPage = this.__parentedParent.el.lastElementChild
+		    	var div_blockUI = this.__parentedParent.__parentedParent.el.lastElementChild.previousElementSibling.previousElementSibling.previousElementSibling.previousSibling
+		    	var div_blockUI_blockOverlay = this.__parentedParent.__parentedParent.el.lastElementChild.previousElementSibling.previousElementSibling.previousElementSibling
+		    	var div_blockUI_blockMsg_blockPage = this.__parentedParent.__parentedParent.el.lastElementChild.previousElementSibling.previousElementSibling
 		    	div_blockUI_blockMsg_blockPage.remove()
 		    	div_blockUI_blockOverlay.remove()
 		    	div_blockUI.remove()
