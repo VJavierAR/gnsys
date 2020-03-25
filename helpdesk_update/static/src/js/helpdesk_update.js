@@ -26,8 +26,8 @@ odoo.define('invoice.action_button_helpdesk', function (require) {
 		renderButtons: function($node) {
 		this._super.apply(this, arguments);
 			if (this.$buttons) {
-				console.log(this);
-		    	console.log(this.actionViews[0].viewID);
+				//console.log(this);
+		    	//console.log(this.actionViews[0].viewID);
 		    	if (this.actionViews[0].viewID == 2766) {
 		    		this.$buttons.find('.o_button_import').hide();
 		    		this.$buttons.find('.o_list_button_add').hide();
@@ -39,14 +39,16 @@ odoo.define('invoice.action_button_helpdesk', function (require) {
 		    	//var div_blockUI = this.__parentedParent.el.lastElementChild.previousElementSibling.previousElementSibling
 		    	//var div_blockUI_blockOverlay = this.__parentedParent.el.lastElementChild.previousElementSibling
 		    	//var div_blockUI_blockMsg_blockPage = this.__parentedParent.el.lastElementChild
-		    	var div_blockUI = this.__parentedParent.__parentedParent.el.lastElementChild.previousElementSibling.previousElementSibling.previousElementSibling.previousSibling
-		    	var div_blockUI_blockOverlay = this.__parentedParent.__parentedParent.el.lastElementChild.previousElementSibling.previousElementSibling.previousElementSibling
-		    	var div_blockUI_blockMsg_blockPage = this.__parentedParent.__parentedParent.el.lastElementChild.previousElementSibling.previousElementSibling
-		    	if (div_blockUI[0]) {
-			    	div_blockUI.remove()
-			    	div_blockUI_blockOverlay.remove()
-			    	div_blockUI_blockMsg_blockPage.remove()
-		    	}
+		    	if (this.__parentedParent.__parentedParent.el.lastElementChild.previousElementSibling.previousElementSibling.previousElementSibling.previousSibling != null){
+			    	var div_blockUI = this.__parentedParent.__parentedParent.el.lastElementChild.previousElementSibling.previousElementSibling.previousElementSibling.previousSibling
+			    	var div_blockUI_blockOverlay = this.__parentedParent.__parentedParent.el.lastElementChild.previousElementSibling.previousElementSibling.previousElementSibling
+			    	var div_blockUI_blockMsg_blockPage = this.__parentedParent.__parentedParent.el.lastElementChild.previousElementSibling.previousElementSibling
+			    	if (div_blockUI[0]) {
+				    	div_blockUI.remove()
+				    	div_blockUI_blockOverlay.remove()
+				    	div_blockUI_blockMsg_blockPage.remove()
+			    	}
+			    }
 		   	}
 		},
 
