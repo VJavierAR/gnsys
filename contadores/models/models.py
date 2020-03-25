@@ -83,8 +83,10 @@ class dcas(models.Model):
         vals['tablahtml'] = self.tablahtml
         #vals['team_id'] = 8
         c = super(dcas, self).create(vals)
-        raise exceptions.ValidationError("id xd"+str(c.id))
-        return c    
+        query = "update dcas_dcas set tablahtml = \""+self.tablahtml+"\" where id = " + str(c.id) + ";"
+        ss = self.env.cr.execute(query)
+        raise exceptions.ValidationError("id xd"+str(query))
+        return c
     
     
    
