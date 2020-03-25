@@ -117,6 +117,7 @@
             <form string="Transferencia Interna">
                 <group>
                     <field name="almacenOrigen"/>
+                    <field name="ubicacion" invisible="1"/>
                     <field name="almacenDestino"/>
                 </group>
                 <notebook>
