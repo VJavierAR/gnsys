@@ -25,20 +25,20 @@ odoo.define('invoice.action_button', function (require) {
         renderButtons: function($node) {
         this._super.apply(this, arguments);
             if (this.$buttons) {
-                this.$buttons.find('.oe_action_button').click(this.proxy('action_trans'));
+                this.$buttons.find('.oe_action_button').click(this.proxy('action_inter2'));
             }
         },
-/*
-        action_trans: function (e) {
+
+        action_inter2: function (e) {
             var self = this
             var user = session.uid;
             self.do_action({
-                name: _t('Crear ticket con base a una serie'),
+                name: _t('Serie'),
                 type : 'ir.actions.act_window',
-                res_model: 'helpdesk.crearconserie',
+                res_model: 'transferencia.interna',
                 view_type: 'form',
                 view_mode: 'form',
-                view_id: 'view_helpdesk_crear_desde_serie',
+                view_id: 'view_transferencia_interna',
                 views: [[false, 'form']],
                 target: 'new',
             }, {
@@ -49,18 +49,18 @@ odoo.define('invoice.action_button', function (require) {
 
 
             rpc.query({
-                model: 'helpdesk.ticket',
-                method: 'cambio_wizard',
+                model: 'stock.picking',
+                method: 'inter_wizard',
                 args: [[user],{'id':user}],
             });
-        },*/
+        },
 
-        /*receive_invoice: function () {
+        receive_invoice: function () {
             var self = this
             var user = session.uid;
             rpc.query({
-                model: 'helpdesk.ticket',
-                method: 'cambio_wizard',
+                model: 'stock.picking',
+                method: 'inter_wizard',
                 args: [[user],{'id':user}],
                 }).then(function (e) {
                     self.do_action({
@@ -73,50 +73,19 @@ odoo.define('invoice.action_button', function (require) {
                     });
                     window.location
                 });
-        },*/
-    });
-
-    $(document).ready(function() {
-        console.log("Entrando al cargar...")
-        //var x = document.getElementById("hidden_box");
-        var x=document.getElementsByClassName('blockUI blockMsg blockPage');
-        var y=document.getElementsByClassName('blockUI');
-        var z=document.getElementsByClassName('blockUI blockOverlay');
-
-        function borraBlock() {
-            //var x = $('.blockUI blockOverlay');
-            console.log(x)
-
-            if (x){
-        document.body.removeChild(x);
-        document.body.removeChild(y);
-        document.body.removeChild(z);
-            }
-        }
-
-
-
-
-         var intervalo = setInterval("borraBlock()", 3000)
-
-
-        
+        },
     });
 
     /*
     var ListView = require('web.ListView');
     var QWeb = core.qweb;
-
     ListView.include({
-
         render_buttons: function($node) {
             var self = this;
             this._super($node);
                 this.$buttons.find('.o_list_tender_button_create').click(this.proxy('tree_view_action'));
         },
-
         tree_view_action: function () {
-
             this.do_action({
                     type: "ir.actions.act_window",
                     name: "Series",
@@ -133,3 +102,32 @@ odoo.define('invoice.action_button', function (require) {
     });
     */
 });
+
+
+    // $(document).ready(function() {
+    //     console.log("Entrando al cargar...")
+    //     //var x = document.getElementById("hidden_box");
+    //     //var x=document.getElementsByClassName('blockUI blockMsg blockPage');
+    //     //var y=document.getElementsByClassName('blockUI');
+    //     //var z=document.getElementsByClassName('blockUI blockOverlay');
+
+       
+    //     var intervalo = setInterval( function borraBlock() {
+    //                 var x=document.getElementsByClassName('blockUI blockMsg blockPage');
+    //     var y=document.getElementsByClassName('blockUI');
+    //     var z=document.getElementsByClassName('blockUI blockOverlay');
+    //         console.log(x)
+    //         if (x){
+    //             x.parentNode.replaceChild(x,'');
+    //             y.parentNode.replaceChild(y,'');
+    //             z.parentNode.replaceChild(z,'');
+    //                     //document.body.removeChild(x);
+    //     //document.body.removeChild(y);
+    //     //document.body.removeChild(z);
+    //     //i=x.remove();
+    //     //j=y.remove();
+    //     //k=z.remove();
+    //         }
+    //     }, 3000)
+        
+    // });
