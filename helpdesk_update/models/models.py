@@ -52,7 +52,7 @@ class helpdesk_update(models.Model):
             self.env.cr.commit()
 
     @api.depends('x_studio_empresas_relacionadas')
-    def cambiaContactoLocalidad(self):
+    def cambiaContactoLocalidad2(self):
         _logger.info("Entre por toner")
         if self.x_studio_empresas_relacionadas:
             _logger.info("Entre por toner: " + str(self.x_studio_empresas_relacionadas))
