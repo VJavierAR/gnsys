@@ -146,7 +146,8 @@ class dcas(models.Model):
             if n == '0':
                n = 1                   
             if n:
-               self.renN=self.paginasProcesadasBN*100/int(n) 
+               self.renN=self.paginasProcesadasBN*100/int(n)
+               raise exceptions.ValidationError("wtf"+str(self.renN))
             
     @api.onchange('contadorColor','x_studio_cartucho_amarillo','x_studio_cartucho_cian_1','x_studio_cartucho_magenta')
     def validaContadores(self):
@@ -173,7 +174,8 @@ class dcas(models.Model):
             if n == '0':
                n = 1                   
             if n:
-               self.renN=self.paginasProcesadasBN*100/int(n)          
+               self.renN=self.paginasProcesadasBN*100/int(n)
+               raise exceptions.ValidationError("wtf"+str(self.renN))
             if c:
                self.renC=self.paginasProcesadasC*100/int(c)
             if a:
