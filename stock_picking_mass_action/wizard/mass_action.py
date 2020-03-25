@@ -270,6 +270,22 @@ class TransferInter(TransientModel):
         pick_origin.action_assign()
         pick_dest.action_confirm()
         pick_dest.action_assign()
+        name = 'Picking'
+        res_model = 'stock.picking' 
+        view_name = 'stock.view_picking_form'
+        view = self.env.ref(view_name)
+        return {
+            'name': _('Transferencia'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'stock.picking',
+            #'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'current',
+            'res_id': pick_origin.id,
+            'nodestroy': True
+        }
 
 
 
