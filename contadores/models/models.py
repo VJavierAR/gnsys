@@ -133,7 +133,7 @@ class dcas(models.Model):
     @api.onchange('serie')             
     def ultimosContadoresNACM(self):
         bn_c=self.env['stock.production.lot'].search([['id','=',self.serie.id]]).x_studio_color_bn
-        self.x_studio_color_o_bn=bn_C                                                      
+        self.x_studio_color_o_bn=bn_c                                                      
         if self.serie and self.x_studio_color_o_bn=='B/N':
             n=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeNegro','=',1]],order='x_studio_fecha desc',limit=1)
             self.nivelNA=n.x_studio_toner_negro
