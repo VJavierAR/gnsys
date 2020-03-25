@@ -31,6 +31,9 @@ odoo.define('invoice.action_button_helpdesk', function (require) {
 		    	if (this.actionViews[0].viewID == 2766) {
 		    		this.$buttons.find('.o_list_button_add').hide();
 		    		this.$buttons.find('.oe_action_button_helpdesk').click(this.proxy('action_def'));
+		    	} else {
+		    		this.$buttons.find('.o_list_button_add').show();
+		    		this.$buttons.find('.oe_action_button_helpdesk').hide();
 		    	}
 		   	}
 		},
