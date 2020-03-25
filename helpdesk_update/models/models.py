@@ -41,7 +41,9 @@ class helpdesk_update(models.Model):
     
     @api.depends('x_studio_equipo_por_nmero_de_serie','x_studio_equipo_por_nmero_de_serie_1')
     def cambiaContactoLocalidad(self):
+        _logger.info("Entre por toner")
         if self.x_studio_empresas_relacionadas:
+            _logger.info("Entre por toner: " + str(self.x_studio_empresas_relacionadas))
             loc = self.x_studio_empresas_relacionadas.id
             idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_subtipo', '=', 'Contacto de localidad']], order='create_date desc', limit=1).id
             self.localidadContacto = idLoc
@@ -97,16 +99,11 @@ class helpdesk_update(models.Model):
     def create(self, vals):
         vals['name'] = self.env['ir.sequence'].next_by_code('helpdesk_name')
         #vals['team_id'] = 8
-        if self.team_id.id == 8:
-            vals['partner_id'] = self.partner_id.id
-            vals['x_studio_nivel_del_cliente'] = self.x_studio_nivel_del_cliente
-            vals['x_studio_empresas_relacionadas'] = self.x_studio_empresas_relacionadas.id
-
         ticket = super(helpdesk_update, self).create(vals)
         ticket.x_studio_id_ticket = ticket.id
         if self.x_studio_empresas_relacionadas:
             ticket.x_studio_field_6furK = ticket.x_studio_empresas_relacionadas.x_studio_field_SqU5B
-            
+            ticket.write({'x_studio_field_6furK': ticket.x_studio_empresas_relacionadas.x_studio_field_SqU5B})
 
 
         return ticket
