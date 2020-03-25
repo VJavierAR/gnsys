@@ -368,8 +368,15 @@ class StockPicking(Model):
         }
     
     def serie(self):
+        
+
+
         wiz = self.env['picking.serie'].create({'pick':self.id})
+        for r in self.move_ids_without_package:
+            if(r.categ_id.id==13):
+                 self.env['picking.serie.line'].create({'producto':self.product_id.id,'rel_picki_serie':wiz.id})
         view = self.env.ref('stock_picking_mass_action.view_picking_serie')
+        
         return {
             'name': _('Serie'),
             'type': 'ir.actions.act_window',
@@ -382,6 +389,9 @@ class StockPicking(Model):
             'res_id': wiz.id,
             'context': self.env.context,
         }
+
+
+
     def inter_wizard(self):
         wiz = self.env['transferencia.interna'].create({})
         view = self.env.ref('stock_picking_mass_action.view_transferencia_interna')
