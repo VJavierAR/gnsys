@@ -32,13 +32,15 @@ odoo.define('invoice.action_button_helpdesk', function (require) {
 			if (this.$buttons) {
 				//console.log(this);
 		    	//console.log(this.actionViews[0].viewID);
-		    	if (this.actionViews[0].viewID == 2766) {
-		    		this.$buttons.find('.o_button_import').hide();
-		    		this.$buttons.find('.o_list_button_add').hide();
-		    		this.$buttons.find('.oe_action_button_helpdesk').click(this.proxy('action_def'));
-		    	} else {
-		    		this.$buttons.find('.o_list_button_add').show();
-		    		this.$buttons.find('.oe_action_button_helpdesk').hide();
+		    	if (typeof this.actionViews !== 'undefined' && this.actionViews.length > 0) {
+			    	if (this.actionViews[0].viewID == 2766) {
+			    		this.$buttons.find('.o_button_import').hide();
+			    		this.$buttons.find('.o_list_button_add').hide();
+			    		this.$buttons.find('.oe_action_button_helpdesk').click(this.proxy('action_def'));
+			    	} else {
+			    		this.$buttons.find('.o_list_button_add').show();
+			    		this.$buttons.find('.oe_action_button_helpdesk').hide();
+			    	}
 		    	}
 		    	//var div_blockUI = this.__parentedParent.el.lastElementChild.previousElementSibling.previousElementSibling
 		    	//var div_blockUI_blockOverlay = this.__parentedParent.el.lastElementChild.previousElementSibling
