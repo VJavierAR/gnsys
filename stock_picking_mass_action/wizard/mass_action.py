@@ -329,6 +329,12 @@ class PickingSerie(TransientModel):
     lines=fields.One2many('picking.serie.line','rel_picki_serie')
 
 
+    def confirmar(self):
+        for s in self.lines:
+            d=self.env['stock.move.line'].search([['move_id':s.move_id.id]])
+            d.write({'lot_id':s.serie.id})
+        return 0
+
 class PickingSerieLine(TransientModel):
     _name='picking.serie.line'
     _description='lines temps'
@@ -340,7 +346,7 @@ class PickingSerieLine(TransientModel):
     color=fields.Selection([('B/N','B/N'),('Color', 'Color')])
     contadorMono=fields.Integer('Contador Monocromatico')
     contadorColor=fields.Integer('Contador Color')
-
+    move_id=fields.Many2one('stock.move')
     @api.onchange('producto')
     def color(self):
         if(self.producto):

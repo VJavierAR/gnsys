@@ -374,7 +374,7 @@ class StockPicking(Model):
         wiz = self.env['picking.serie'].create({'pick':self.id})
         for r in self.move_ids_without_package:
             if(r.product_id.categ_id.id==13):
-                 self.env['picking.serie.line'].create({'producto':self.product_id.id,'rel_picki_serie':wiz.id})
+                 self.env['picking.serie.line'].create({'producto':self.product_id.id,'rel_picki_serie':wiz.id,'move_id':r.id})
         view = self.env.ref('stock_picking_mass_action.view_picking_serie')
         
         return {
