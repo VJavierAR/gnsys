@@ -53,14 +53,13 @@ odoo.define('invoice.action_button', function (require) {
                 method: 'inter_wizard',
                 args: [[user],{'id':user}],
             });
-        },
 
-        /*receive_invoice: function () {
+        receive_invoice: function () {
             var self = this
             var user = session.uid;
             rpc.query({
-                model: 'helpdesk.ticket',
-                method: 'cambio_wizard',
+                model: 'stock.picking',
+                method: 'inter_wizard',
                 args: [[user],{'id':user}],
                 }).then(function (e) {
                     self.do_action({
@@ -73,7 +72,7 @@ odoo.define('invoice.action_button', function (require) {
                     });
                     window.location
                 });
-        },*/
+        },
     });
 
     /*
