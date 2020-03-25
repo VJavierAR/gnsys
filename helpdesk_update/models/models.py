@@ -1068,6 +1068,7 @@ class helpdesk_update(models.Model):
                     serieaca=c.serie.name
                     #Toner BN
                     c.write({'x_studio_tickett':self.x_studio_id_ticket})
+                    c.write({'fuente':'helpdesk.ticket'})
                     if c.x_studio_cartuchonefro:
                         c.write({'porcentajeNegro':1})                        
                         pro = self.env['product.product'].search([['name','=',c.x_studio_cartuchonefro.name],['categ_id','=',5]])
@@ -1177,6 +1178,7 @@ class helpdesk_update(models.Model):
                     magen=''
                     serieaca=c.serie.name
                     c.write({'x_studio_tickett':self.x_studio_id_ticket})
+                    c.write({'fuente':'helpdesk.ticket'})
                     #Toner BN
                     if c.x_studio_cartuchonefro:
                         c.write({'porcentajeNegro':1})
