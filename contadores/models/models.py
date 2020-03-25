@@ -80,13 +80,13 @@ class dcas(models.Model):
     
         
     
-    """
+    
     @api.model
     def create(self, vals):
         c = super(dcas, self).create(vals)
-        c.write(['x_studio_fecha','=',datetime.now()])
+        c.write(['tablahtml','=',c.tablahtml])
         return c
-    """
+    
     @api.onchange('serie')             
     def ultimosContadoresNACM(self):
         if self.serie and self.x_studio_color_o_bn=='B/N':
