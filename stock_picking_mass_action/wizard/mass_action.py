@@ -250,7 +250,7 @@ class TransferInter(TransientModel):
     almacenOrigen=fields.Many2one('stock.warehouse')
     ubicacion=fields.Many2one(related='almacenOrigen.lot_stock_id')
     almacenDestino=fields.Many2one('stock.warehouse')
-    lines=fields.One2many('transferencia.interna.temp','transfer',context="{'default_ubicacion':almacenOrigen.lot_stock_id}")
+    lines=fields.One2many('transferencia.interna.temp','transfer')
 
     def confirmar(self):
         sale = self.env['sale.order'].create({'partner_id' : 1, 'partner_shipping_id' : 1, 'user_id' : self.user_id.id,'origin' : 'Transferencia Interna' , 'warehouse_id' : self.almacenOrigen.id, 'team_id' : 1})
