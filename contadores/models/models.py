@@ -67,10 +67,10 @@ class dcas(models.Model):
     fechaA=fields.Datetime(string='Fecha de captura',readonly=True,store=True)
     fechaC=fields.Datetime(string='Fecha de captura',readonly=True,store=True)
     fechaM=fields.Datetime(string='Fecha de captura',readonly=True,store=True)
-    tN=fields.Datetime(string='Ticket BN',readonly=True,store=True)
-    tA=fields.Datetime(string='Ticket Amarillo',readonly=True,store=True)
-    tC=fields.Datetime(string='Ticket Cian',readonly=True,store=True)
-    tM=fields.Datetime(string='Ticket Magenta',readonly=True,store=True)
+    tN=fields.Char(string='Ticket BN',readonly=True,store=True)
+    tA=fields.Char(string='Ticket Amarillo',readonly=True,store=True)
+    tC=fields.Char(string='Ticket Cian',readonly=True,store=True)
+    tM=fields.Char(string='Ticket Magenta',readonly=True,store=True)
     
     
 
