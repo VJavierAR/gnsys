@@ -77,7 +77,7 @@ class dcas(models.Model):
 
     
     
-    
+    """
     @api.model
     def create(self, values):                    
         c = super(dcas, self).create(values)
@@ -85,6 +85,7 @@ class dcas(models.Model):
         
         
         return c
+    """    
     
     
    
