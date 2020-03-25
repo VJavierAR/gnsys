@@ -498,9 +498,26 @@ class helpdesk_update(models.Model):
             tam = int(self.x_studio_tamao_lista)
         
         
-        if self.x_studio_id_ticket and tam < 2:
+        
+        if self.x_studio_id_ticket and tam < 2 and self.team_id==8:
             estadoAntes = str(self.stage_id.name)
-            if self.stage_id.name == 'Pre-ticket' and (self.x_studio_equipo_por_nmero_de_serie[0].id or self.x_studio_equipo_por_nmero_de_serie_1[0].serie.id) != False and self.estadoAbierto == False:
+            if self.stage_id.name == 'Pre-ticket' and self.x_studio_equipo_por_nmero_de_serie_1[0].serie.id != False and self.estadoAbierto == False:
+                #ticketActualiza.write({'stage_id': '89'})
+                query = "update helpdesk_ticket set stage_id = 89 where id = " + str(self.x_studio_id_ticket) + ";"
+                ss = self.env.cr.execute(query)
+                self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': "Abierto", 'write_uid':  self.env.user.name})
+                message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Abierto' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
+                mess= {
+                        'title': _('Estado de ticket actualizado!!!'),
+                        'message' : message
+                    }
+                self.estadoAbierto = True
+                #mensajeCuerpoGlobal = 'Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Abierto' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página."
+                return {'warning': mess}
+        
+        if self.x_studio_id_ticket and tam < 2 self.team_id!=8:
+            estadoAntes = str(self.stage_id.name)
+            if self.stage_id.name == 'Pre-ticket' and self.x_studio_equipo_por_nmero_de_serie.id != False and self.estadoAbierto == False:
                 #ticketActualiza.write({'stage_id': '89'})
                 query = "update helpdesk_ticket set stage_id = 89 where id = " + str(self.x_studio_id_ticket) + ";"
                 ss = self.env.cr.execute(query)
