@@ -83,7 +83,7 @@ class dcas(models.Model):
         vals['tablahtml'] = self.tablahtml
         #vals['team_id'] = 8
         c = super(dcas, self).create(vals)
-        raise exceptions.ValidationError("id xd"+c.id)
+        raise exceptions.ValidationError("id xd"+str(c.id))
         return c    
     
     
