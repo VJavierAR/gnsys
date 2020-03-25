@@ -48,10 +48,11 @@ class helpdesk_update(models.Model):
             loc = self.x_studio_empresas_relacionadas.id
             idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_subtipo', '=', 'Contacto de localidad']], order='create_date desc', limit=1).id
             self.localidadContacto = idLoc
-            #query = "update helpdesk_ticket set \"localidadContacto\" = " + str(idLoc) + " where id = " + str(self.x_studio_id_ticket) + ";"
-            query = "update helpdesk_ticket set \"localidadContacto\" = " + str(idLoc) + ", \"x_studio_field_6furK\" = " + str(self.x_studio_empresas_relacionadas.x_studio_field_SqU5B) + " where id = " + str(self.x_studio_id_ticket) + ";"
-            self.env.cr.execute(query)
-            self.env.cr.commit()
+            if idLoc:
+                query = "update helpdesk_ticket set \"localidadContacto\" = " + str(idLoc) + " where id = " + str(self.x_studio_id_ticket) + ";"
+                #query = "update helpdesk_ticket set \"localidadContacto\" = " + str(idLoc) + ", \"x_studio_field_6furK\" = " + str(self.x_studio_empresas_relacionadas.x_studio_field_SqU5B) + " where id = " + str(self.x_studio_id_ticket) + ";"
+                self.env.cr.execute(query)
+                self.env.cr.commit()
 
     @api.model
     def _contacto_definido(self):
