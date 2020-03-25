@@ -35,6 +35,9 @@
     'qweb': [
         'static/src/xml/tree_view_button.xml'
     ],
+    'css': [
+        'static/src/css/helpdesk_update.css'
+    ],
     # only loaded in demonstration mode
     #'demo': [
      #   'demo/demo.xml',
