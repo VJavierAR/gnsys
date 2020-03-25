@@ -271,7 +271,7 @@ class TransferInterMoveTemp(TransientModel):
     #lock=fields.Boolean('lock')
     #serieDestino=fields.Many2one('stock.production.lot')
     
-    @api.onchange('ubicacion','producto')
+    @api.onchange('producto')
     def quant(self):
         self.disponible=0
         h=self.env['stock.quant'].search([['product_id','=',self.producto.id],['location_id','=',self.ubicacion.id],['quantity','>',0]])
