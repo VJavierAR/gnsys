@@ -63,7 +63,7 @@ class dcas(models.Model):
     renM=fields.Float(string='Rendimiento Magenta')
     renN=fields.Float(string='Rendimiento Negro ')
     
-    tablahtml=fields.Text(string='Detalle Equipo',readonly=True,copy=False,store=False)
+    tablahtml=fields.Text(string='Detalle Equipo')
     fechaN=fields.Datetime(string='Fecha de captura')
     fechaA=fields.Datetime(string='Fecha de captura')
     fechaC=fields.Datetime(string='Fecha de captura')
