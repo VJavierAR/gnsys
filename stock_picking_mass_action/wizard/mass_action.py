@@ -249,7 +249,7 @@ class TransferInter(TransientModel):
     _description='Transferencia Interna'    
     almacenOrigen=fields.Many2one('stock.warehouse')
     almacenDestino=fields.Many2one('stock.warehouse')
-    lines=fields.One2many('transferencia.interna.temp','transfer')
+    lines=fields.One2many('transferencia.interna.temp','transfer',context="{'default_ubicacion':almacenOrigen.lot_stock_id.id}")
 
 
 

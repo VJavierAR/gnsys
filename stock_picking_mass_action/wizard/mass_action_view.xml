@@ -126,6 +126,7 @@
                             <field name="producto"/>
                             <field name="modelo"/>
                             <field name="noParte"/>
+                            <field name="ubicacion"/>
                             <field name="descripcion"/>
                             <field name="stock"/>
                             <field name="cantidad"/>
