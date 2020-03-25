@@ -77,15 +77,53 @@ class dcas(models.Model):
 
     
     
-    """
+    
     @api.model
     def create(self, values):                    
         c = super(dcas, self).create(values)
-        raise exceptions.ValidationError("Contador id"+str(c.id)+str(self.tablahtml))
+        contaC=c.contadorColor                       
+        cac=c.contadorAnteriorColor
+        contadorM=c.contadorMono
+        c.paginasProcesadasC=contaC-self.contadorAnteriorCian
+        c.paginasProcesadasA=contaC-self.contadorAnteriorAmarillo
+        c.paginasProcesadasM=contaC-self.contadorAnteriorMagenta
+        c.paginasProcesadasBN=contadorM-self.contadorAnteriorNegro            
+        cc=c.x_studio_rendimientoc
+        a=c.x_studio_rendimientoa
+        m=c.x_studio_rendimientom
+        n=c.x_studio_rendimiento_negro
+        if cc == '0':
+           cc = 1
+        if a == '0':
+           a = 1
+        if m == '0':
+           m = 1                        
+        if n == '0':
+           n = 1                           
+        if n:
+           c.renN=round(c.paginasProcesadasBN*100/int(n),2)            
+        if cc:
+           c.renC=round(c.paginasProcesadasC*100/int(cc),2)
+        if a:
+           c.renA=round(c.paginasProcesadasA*100/int(a),2)
+        if m:
+           c.renM=round(c.paginasProcesadasM*100/int(m),2)
+        if c.serie:
+           style="<html><head><style>table, th, td {border: 1px solid black;border-collapse: collapse;}th, td {padding: 5px;text-align: left;}</style></head><body>"
+           cabecera="<table style='width:100%'><tr><th></th><th>Monocormatico  </th><th> Cian </th><th> Amarillo </th><th> Magenta </th></tr><tr><tr><td></td></tr>"
+           ticket='<tr><td> Ticket </td><td>'+str(c.tN)+'</br>'+'</td> <td>'+str(c.tC)+' </br> </td> <td>'+' '+str(c.tA)+'</br> </td> <td>'+str(c.tM)+'</br> </td> </tr>'
+           ultimosContadores='<tr><td> Último Contador </td><td>'+str(c.contadorAnteriorNegro)+'</br>'+'</td> <td>'+str(c.contadorAnteriorCian)+' </br> </td> <td>'+ str(c.contadorAnteriorAmarillo)+'</br> </td> <td>'+str(c.contadorAnteriorMagenta)+' </br> </td> </tr>'
+           fechas='<tr><td> Fecha </td><td>'+str(c.fechaN)+'</br>'+'</td> <td>'+str(c.fechaC)+' </br> </td> <td>'+' '+str(c.fechaA)+'</br> </td> <td>'+str(c.fechaM)+'</br> </td> </tr>'
+           paginasProcesadas='<tr><td> Páginas Procesadas </td> <td>'+str(c.paginasProcesadasBN)+'</td> <td>'+str(c.paginasProcesadasC)+'</td> <td>'+ str(c.paginasProcesadasA)+' </td> <td>'+str(c.paginasProcesadasM)+'</td></tr>'        
+           rendimientos='<tr><td> Rendimiento </td> <td>'+str(c.renN)+'</td> <td>'+str(c.renC)+'</td> <td>'+ str(c.renA)+' </td> <td>'+str(self.renM)+'</td></tr>'
+           niveles='<tr><td> Último nivel </td> <td>'+str(c.nivelNA)+'</td> <td>'+str(c.nivelCA)+'</td> <td>'+ str(c.nivelAA)+' </td> <td>'+str(c.nivelMA)+'</td></tr>'
+           cierre="</table></body></html> "
+           c.tablahtml=cabecera+ticket+ultimosContadores+fechas+paginasProcesadas+rendimientos+niveles+cierre
+        raise exceptions.ValidationError("Contador id"+str(c.id)+str(c.tablahtml))
         
         
         return c
-    """    
+    
     
     
    
