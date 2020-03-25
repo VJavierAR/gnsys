@@ -155,8 +155,12 @@
                 <group>
                     <h3>
                         <field name="mensaje" readonly='1'/>
-                    </h3> 
-                    <field name='ticket_id_existente' readonly='1' invisible='1'/>
+                    </h3>
+                </group>
+                <group>
+                    <group>
+                        <field name='ticket_id_existente' readonly='1' invisible='1'/>
+                    </group>
                 </group>
                 <footer>
                     <button name="abrirTicket" string="Abrir ticket existente" type="object" class="oe_highlight" attrs="{'invisible': [['ticket_id_existente','=', 0]]}"/>

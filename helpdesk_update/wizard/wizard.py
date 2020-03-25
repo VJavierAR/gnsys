@@ -493,10 +493,10 @@ class helpdesk_crearconserie(TransientModel):
             self.env.cr.execute(query)                        
             informacion = self.env.cr.fetchall()
             if len(informacion) > 0:
-                messageTemp = ('Estas agregando una serie de un ticket ya en proceso. \n Ticket: ' + str(informacion[0][0]) + '\n ')
+                messageTemp = ('Se creo un ticket que esta en proceso con la serie "' + self.serie.name +'" seleccionada. \n Ticket existente: ' + str(informacion[0][0]) + '\n ')
 
             mensajeTitulo = "Ticket generado!!!"
-            mensajeCuerpo = "Se creo el ticket '" + str(ticket.id) + "' para el número de serie " + self.serie.name + "\n\n" + messageTemp
+            mensajeCuerpo = "Se creo el ticket '" + str(ticket.id) + "' con el número de serie " + self.serie.name + "\n\n" + messageTemp
             
             wiz = self.env['helpdesk.alerta.series'].create({'ticket_id': ticket.id, 'ticket_id_existente': informacion[0][0], 'mensaje': mensajeCuerpo})
             view = self.env.ref('helpdesk_update.view_helpdesk_alerta_series')
