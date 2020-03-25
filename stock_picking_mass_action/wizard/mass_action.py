@@ -260,7 +260,7 @@ class TransferInter(TransientModel):
         pick_dest = self.env['stock.picking'].create({'picking_type_id' : destino.id, 'location_id':17,'location_dest_id':self.almacenDestino.lot_stock_id.id})
         datos={}
         for l in self.lines:
-            datos={'product_id' : l.producto.id, 'product_uom_qty' : l.cantidad}
+            datos={'product_id' : l.producto.id, 'product_uom_qty' : l.cantidad,'name':l.producto.description}
         datos['picking_id']= pick_origin.id
         self.env['stock.move'].create(datos)
         datos['picking_id']= pick_dest.id
