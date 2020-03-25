@@ -197,7 +197,7 @@ class helpdesk_update(models.Model):
             if correoElectronicoLocalidad == 'False':
                 correoElectronicoLocalidad = 'No disponible'
             
-            datos = 'Cliente: ' + nombreCliente + ' \n\nLocalidad: ' + localidad + ' \n\nLocalidad contacto: ' + contactoDeLocalidad + ' \n\nEstado de localidad: ' + estadoLocalidad + '\n\nZona localidad: ' + zonaLocalidad + ' \n\nTeléfono de localidad: ' + telefonoLocalidad + ' \n\nMóvil localidad contacto: ' + movilLocalidad + ' \n\nCorreo electrónico localidad contacto: ' + correoElectronicoLocalidad
+            datos = 'Cliente: ' + nombreCliente + ' \nLocalidad: ' + localidad + ' \nLocalidad contacto: ' + contactoDeLocalidad + ' \nEstado de localidad: ' + estadoLocalidad + '\nZona localidad: ' + zonaLocalidad + ' \nTeléfono de localidad: ' + telefonoLocalidad + ' \nMóvil localidad contacto: ' + movilLocalidad + ' \nCorreo electrónico localidad contacto: ' + correoElectronicoLocalidad
             #datos = 'Cliente: ' + nombreCliente + ' \nLocalidad: ' + localidad + ' \nLocalidad contacto: ' + contactoDeLocalidad + ' \nEstado de localidad: ' + estadoLocalidad 
 
             rec.datosCliente = datos
@@ -500,7 +500,7 @@ class helpdesk_update(models.Model):
         
         if self.x_studio_id_ticket and tam < 2:
             estadoAntes = str(self.stage_id.name)
-            if self.stage_id.name == 'Pre-ticket' and (self.x_studio_equipo_por_nmero_de_serie.id or self.x_studio_equipo_por_nmero_de_serie_1.serie.id) != False and self.estadoAbierto == False:
+            if self.stage_id.name == 'Pre-ticket' and (self.x_studio_equipo_por_nmero_de_serie[0].id or self.x_studio_equipo_por_nmero_de_serie_1[0].serie.id) != False and self.estadoAbierto == False:
                 #ticketActualiza.write({'stage_id': '89'})
                 query = "update helpdesk_ticket set stage_id = 89 where id = " + str(self.x_studio_id_ticket) + ";"
                 ss = self.env.cr.execute(query)
