@@ -25,11 +25,11 @@ odoo.define('invoice.action_button', function (require) {
         renderButtons: function($node) {
         this._super.apply(this, arguments);
             if (this.$buttons) {
-                this.$buttons.find('.oe_action_button').click(this.proxy('action_inter'));
+                this.$buttons.find('.oe_action_button').click(this.proxy('action_inter2'));
             }
         },
 
-        action_inter: function (e) {
+        action_inter2: function (e) {
             var self = this
             var user = session.uid;
             self.do_action({
