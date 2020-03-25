@@ -414,7 +414,7 @@ class helpdesk_crearconserie(TransientModel):
     cliente = fields.Text(string = 'Cliente')
     idCliente = fields.Text(string = 'idCliente', store=True)
     localidad = fields.Text(string = 'Localidad')
-    zonaLocalidad = fields.Selection([('SUR','SUR'),('NORTE','NORTE'),('PONIENTE','PONIENTE'),('ORIENTE','ORIENTE'),('CENTRO','CENTRO'),('DISTRIBUIDOR','DISTRIBUIDOR'),('MONTERREY','MONTERREY'),('CUERNAVACA','CUERNAVACA'),('GUADALAJARA','GUADALAJARA'),('QUERETARO','QUERETARO'),('CANCUN','CANCUN'),('VERACRUZ','VERACRUZ'),('PUEBLA','PUEBLA'),('TOLUCA','TOLUCA'),('LEON','LEON'),('COMODIN','COMODIN'),('VILLAHERMOSA','VILLAHERMOSA'),('MERIDA','MERIDA'),('ALTAMIRA','ALTAMIRA'),('COMODIN','COMODIN'),('DF00','DF00'),('SAN LP','SAN LP'),('ESTADO DE MÉXICO','ESTADO DE MÉXICO'),('Foraneo Norte','Foraneo Norte'),('Foraneo Sur','Foraneo Sur')], string = 'Zona')
+    zonaLocalidad = fields.Selection([('SUR','SUR'),('NORTE','NORTE'),('PONIENTE','PONIENTE'),('ORIENTE','ORIENTE'),('CENTRO','CENTRO'),('DISTRIBUIDOR','DISTRIBUIDOR'),('MONTERREY','MONTERREY'),('CUERNAVACA','CUERNAVACA'),('GUADALAJARA','GUADALAJARA'),('QUERETARO','QUERETARO'),('CANCUN','CANCUN'),('VERACRUZ','VERACRUZ'),('PUEBLA','PUEBLA'),('TOLUCA','TOLUCA'),('LEON','LEON'),('COMODIN','COMODIN'),('VILLAHERMOSA','VILLAHERMOSA'),('MERIDA','MERIDA'),('ALTAMIRA','ALTAMIRA'),('COMODIN','COMODIN'),('DF00','DF00'),('SAN LP','SAN LP'),('ESTADO DE MÉXICO','ESTADO DE MÉXICO'),('Foraneo Norte','Foraneo Norte'),('Foraneo Sur','Foraneo Sur')], string = 'Zona', store = True)
     idLocaliidad = fields.Text(string = 'idLocaliidad', store=True)
     nombreContactoLocalidad = fields.Text(string = 'Contacto de localidad')
     telefonoContactoLocalidad = fields.Text(string = 'Teléfono de contacto')
@@ -480,10 +480,12 @@ class helpdesk_crearconserie(TransientModel):
                                                 ,'partner_id': int(self.idCliente)
                                                 ,'x_studio_empresas_relacionadas': int(self.idLocaliidad)
                                                 ,'team_id': 9
+                                                ,'x_studio_field_6furK': self.zonaLocalidad
                                                 })
             ticket.write({'partner_id': int(self.idCliente)
                         ,'x_studio_empresas_relacionadas': int(self.idLocaliidad)
                         ,'team_id': 9
+                        ,'x_studio_field_6furK': self.zonaLocalidad
                         })
             query = "update helpdesk_ticket set \"partner_id\" = " + str(self.idCliente) + ", \"x_studio_empresas_relacionadas\" =" + str(self.idLocaliidad) + " where id = " + str(ticket.id) + ";"
             self.env.cr.execute(query)
