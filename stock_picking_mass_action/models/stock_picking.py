@@ -24,8 +24,12 @@ class StockPicking(Model):
     mensaje=fields.Char(compute='back')
     sale_child=fields.Many2one('sale.order')
     tipo=fields.Char(compute='cliente',store=True)
+    oculta=fields.Boolean(store=True)
     #documentosDistro = fields.Many2many('ir.attachment', string="Evidencias ")
     #historialTicket = fields.One2many('ir.attachment','res_id',string='Evidencias al ticket',store=True,track_visibility='onchange')
+
+
+
 
     @api.depends('move_ids_without_package')
     def back(self):
@@ -33,6 +37,8 @@ class StockPicking(Model):
             if(r.state=="assigned"):
                 i=0
                 for rrr in r.move_ids_without_package:
+                    if(rrr.product_id.categ_id.id==13):
+                        r.oculta=True
                     rrrrr=self.env['stock.quant'].search([['product_id','=', rrr.product_id.id],['location_id','=',12]]).sorted(key='quantity',reverse=True)
                     if(len(rrrrr)>0):
                         i=i+1
