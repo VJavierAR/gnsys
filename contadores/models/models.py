@@ -67,6 +67,11 @@ class dcas(models.Model):
     fechaA=fields.Datetime(string='Fecha de captura',readonly=True,store=True)
     fechaC=fields.Datetime(string='Fecha de captura',readonly=True,store=True)
     fechaM=fields.Datetime(string='Fecha de captura',readonly=True,store=True)
+    tN=fields.Datetime(string='Ticket BN',readonly=True,store=True)
+    tA=fields.Datetime(string='Ticket Amarillo',readonly=True,store=True)
+    tC=fields.Datetime(string='Ticket Cian',readonly=True,store=True)
+    tM=fields.Datetime(string='Ticket Magenta',readonly=True,store=True)
+    
     
 
     
@@ -81,7 +86,35 @@ class dcas(models.Model):
         c.write(['x_studio_fecha','=',datetime.now()])
         return c
     """
-    
+    @api.onchange('serie')             
+    def ultimosContadoresNACM(self):
+        if self.serie and self.x_studio_color_o_bn=='B/N':
+            n=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeNegro','=',1]],order='x_studio_fecha desc',limit=1)
+            self.nivelNA=n.x_studio_toner_negro
+            self.fechaN=n.x_studio_fecha
+            self.contadorAnteriorNegro=n.contadorMono
+            self.tN=n.x_studio_tickett
+        if self.serie and self.x_studio_color_o_bn!='B/N':
+            n=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeNegro','=',1]],order='x_studio_fecha desc',limit=1)
+            self.fechaN=n.x_studio_fecha
+            self.nivelNA=n.x_studio_toner_negro
+            self.contadorAnteriorNegro=n.contadorMono
+            self.tN=n.x_studio_tickett
+            c=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeCian','=',1]],order='x_studio_fecha desc',limit=1)
+            self.nivelCA=c.x_studio_toner_cian
+            self.contadorAnteriorCian=c.contadorColor
+            self.fechaC=c.x_studio_fecha
+            self.tC=c.x_studio_tickett
+            a=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeAmarillo','=',1]],order='x_studio_fecha desc',limit=1)
+            self.nivelAA=a.x_studio_toner_amarillo
+            self.contadorAnteriorAmarillo=a.contadorColor
+            self.fechaA=a.x_studio_fecha
+            self.tA=a.x_studio_tickett
+            m=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeMagenta','=',1]],order='x_studio_fecha desc',limit=1)
+            self.nivelMA=m.x_studio_toner_magenta
+            self.contadorAnteriorMagenta=m.contadorColor
+            self.fechaM=m.x_studio_fecha
+            self.tM=m.x_studio_tickett
     
     @api.onchange('contadorMono','x_studio_cartuchonefro')
     def validaMoon(self):        
@@ -129,12 +162,14 @@ class dcas(models.Model):
         if self.serie:
             style="<html><head><style>table, th, td {border: 1px solid black;border-collapse: collapse;}th, td {padding: 5px;text-align: left;}</style></head><body>"
             cabecera="<table style='width:100%'><caption>Info xD</caption><tr><th></th><th>Monocormatico  </th><th> Cian </th><th> Amarillo </th><th> Magenta </th></tr><tr><tr><td></td></tr>"
-            ultimosContadores='<tr><td> Último Contador </td><td>'+str(self.x_studio_contador_mono_anterior_1)+' '+str(self.fechaN)+'</br>'+'</td> <td>'+str(self.contadorAnteriorCian)+' '+str(self.fechaC)+' </br> </td> <td>'+ str(self.contadorAnteriorAmarillo)+' '+str(self.fechaA)+'</br> </td> <td>'+str(self.contadorAnteriorMagenta)+' '+str(self.fechaM)+'</br> </td> </tr>'
+            ticket='<tr><td> Ticket </td><td>'+str(self.tN)+'</br>'+'</td> <td>'+str(self.tC)+' </br> </td> <td>'+' '+str(self.tA)+'</br> </td> <td>'+str(self.tM)+'</br> </td> </tr>'
+            ultimosContadores='<tr><td> Último Contador </td><td>'+str(self.x_studio_contador_mono_anterior_1)+'</br>'+'</td> <td>'+str(self.contadorAnteriorCian)+' </br> </td> <td>'+ str(self.contadorAnteriorAmarillo)+'</br> </td> <td>'+str(self.contadorAnteriorMagenta)+' </br> </td> </tr>'
+            fechas='<tr><td> Fecha </td><td>'+str(self.fechaN)+'</br>'+'</td> <td>'+str(self.fechaC)+' </br> </td> <td>'+' '+str(self.fechaA)+'</br> </td> <td>'+str(self.fechaM)+'</br> </td> </tr>'
             paginasProcesadas='<tr><td> Páginas Procesadas </td> <td>'+str(self.paginasProcesadasBN)+'</td> <td>'+str(self.paginasProcesadasC)+'</td> <td>'+ str(self.paginasProcesadasA)+' </td> <td>'+str(self.paginasProcesadasM)+'</td></tr>'        
             rendimientos='<tr><td> Rendimiento </td> <td>'+str(self.renN)+'</td> <td>'+str(self.renC)+'</td> <td>'+ str(self.renA)+' </td> <td>'+str(self.renM)+'</td></tr>'
             niveles='<tr><td> Último nivel </td> <td>'+str(self.nivelNA)+'</td> <td>'+str(self.nivelCA)+'</td> <td>'+ str(self.nivelAA)+' </td> <td>'+str(self.nivelMA)+'</td></tr>'
             cierre="</table></body></html> "
-            self.tablahtml=cabecera+ultimosContadores+paginasProcesadas+rendimientos+niveles+cierre
+            self.tablahtml=cabecera+ticket+ultimosContadores+fechas+paginasProcesadas+rendimientos+niveles+cierre
         
             
             
@@ -142,30 +177,7 @@ class dcas(models.Model):
         
             
                  
-    @api.onchange('serie')             
-    def ultimosContadoresNACM(self):
-        if self.serie and self.x_studio_color_o_bn=='B/N':
-            n=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeNegro','=',1]],order='x_studio_fecha desc',limit=1)
-            self.nivelNA=n.x_studio_toner_negro
-            self.fechaN=n.x_studio_fecha
-            self.contadorAnteriorNegro=n.contadorMono               
-        if self.serie and self.x_studio_color_o_bn!='B/N':
-            n=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeNegro','=',1]],order='x_studio_fecha desc',limit=1)
-            self.fechaN=n.x_studio_fecha
-            self.nivelNA=n.x_studio_toner_negro
-            self.contadorAnteriorNegro=n.contadorMono 
-            c=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeCian','=',1]],order='x_studio_fecha desc',limit=1)
-            self.nivelCA=c.x_studio_toner_cian
-            self.contadorAnteriorCian=c.contadorColor
-            self.fechaC=c.x_studio_fecha            
-            a=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeAmarillo','=',1]],order='x_studio_fecha desc',limit=1)
-            self.nivelAA=a.x_studio_toner_amarillo
-            self.contadorAnteriorAmarillo=a.contadorColor
-            self.fechaA=a.x_studio_fecha
-            m=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeMagenta','=',1]],order='x_studio_fecha desc',limit=1)
-            self.nivelMA=m.x_studio_toner_magenta
-            self.contadorAnteriorMagenta=m.contadorColor
-            self.fechaM=m.x_studio_fecha
+
                                                                                              
     
     

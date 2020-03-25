@@ -94,11 +94,7 @@
             </form>
         </field>
     </record>
-
-
-
-
-            <record id="view_comentario_ticket" model="ir.ui.view">
+    <record id="view_comentario_ticket" model="ir.ui.view">
         <field name="model">comentario.ticket</field>
         <field name="arch" type="xml">
             <form string="Evidencia">
@@ -114,4 +110,44 @@
             </form>
         </field>
     </record>
+
+    <record id="view_transferencia_interna" model="ir.ui.view">
+        <field name="model">transferencia.interna</field>
+        <field name="arch" type="xml">
+            <form string="Transferencia Interna">
+                <group>
+                    <field name="almacenOrigen"/>
+                    <field name="almacenDestino"/>
+                </group>
+                <notebook>
+                <page>
+                    <field name="lines"></field>
+                </page>
+            </notebook>
+                <footer>
+                    <button name="confirmar" string="Confirmar" type="object" class="oe_highlight"/>
+                    or
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_picking_serie" model="ir.ui.view">
+        <field name="model">picking.serie</field>
+        <field name="arch" type="xml">
+            <form string="Serie">
+                <group>
+                        <field name="lines"></field>
+                </group>
+                <footer>
+                    <button name="confirmar" string="Confirmar" type="object" class="oe_highlight"/>
+                    or
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
 </odoo>

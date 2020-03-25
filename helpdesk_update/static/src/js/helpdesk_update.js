@@ -12,7 +12,7 @@ function test() {
 */
 
 
-odoo.define('invoice.action_button', function (require) {
+odoo.define('invoice.action_button_helpdesk', function (require) {
 "use strict";
 
 	var core = require('web.core');
@@ -25,7 +25,9 @@ odoo.define('invoice.action_button', function (require) {
 		renderButtons: function($node) {
 		this._super.apply(this, arguments);
 			if (this.$buttons) {
-		    	this.$buttons.find('.oe_action_button').click(this.proxy('action_def'));
+		    	this.$buttons.find('.oe_action_button_helpdesk').click(this.proxy('action_def'));
+		    	this.$buttons.find('.o_list_button_add').hide();
+		    	this.$buttons.find('.o_button_import').hide();
 		   	}
 		},
 
