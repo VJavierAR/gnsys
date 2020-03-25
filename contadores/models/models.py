@@ -119,10 +119,8 @@ class dcas(models.Model):
             #select "contadorColor" from dcas_dcas where "porcentajeMagenta"=1 or "porcentajeCian"=1 or "porcentajeNegro"=1  order by x_studio_fecha desc limit 1;
             query="select \"contadorColor\" from dcas_dcas where  serie="+str(self.serie.id)+" or \"porcentajeMagenta\"=1 or \"porcentajeCian\"=1 or \"porcentajeMagenta\"=1  order by x_studio_fecha desc limit 1;"                        
             self.env.cr.execute(query)                        
-            informacion = self.env.cr.fetchall()
-            raise exceptions.ValidationError(str(informacion)+' '+query)
-            
-            self.contadorAnteriorColor = informacion
+            informacion = self.env.cr.fetchall()                        
+            self.contadorAnteriorColor = informacion[0]
         if self.serie:
             style="<html><head><style>table, th, td {border: 1px solid black;border-collapse: collapse;}th, td {padding: 5px;text-align: left;}</style></head><body>"
             cabecera="<table style='width:100%'><caption>Info xD</caption><tr><th></th><th>Monocormatico  </th><th> Cian </th><th> Amarillo </th><th> Magenta </th></tr><tr><tr><td></td></tr>"
@@ -142,7 +140,7 @@ class dcas(models.Model):
         if cam>contadorM:            
             raise exceptions.ValidationError("Contador Monocromatico Menor")
         else:
-            self.paginasProcesadasBN=contadorM-self.x_studio_contador_mono_anterior_1
+            self.paginasProcesadasBN=contadorM-self.contadorAnteriorNegro
             n=self.x_studio_rendimiento_negro
             if n == '0':
                n = 1                   
@@ -152,23 +150,29 @@ class dcas(models.Model):
     @api.onchange('contadorColor','x_studio_cartucho_amarillo','x_studio_cartucho_cian_1','x_studio_cartucho_magenta')
     def validaContadores(self):
         contaC=self.contadorColor                       
-        cac=self.contadorAnteriorNegro
+        cac=self.contadorAnteriorColor
+        contadorM=self.contadorMono
         if cac>contaC:            
             raise exceptions.ValidationError("Contador Color Menor.")
         else:
             self.paginasProcesadasC=contaC-self.contadorAnteriorCian
             self.paginasProcesadasA=contaC-self.contadorAnteriorAmarillo
             self.paginasProcesadasM=contaC-self.contadorAnteriorMagenta
+            self.paginasProcesadasBN=contadorM-self.contadorAnteriorNegro            
             c=self.x_studio_rendimientoc
             a=self.x_studio_rendimientoa
             m=self.x_studio_rendimientom
+            n=self.x_studio_rendimiento_negro
             if c == '0':
                c = 1
             if a == '0':
                a = 1
             if m == '0':
-               m = 1
-          
+               m = 1                        
+            if n == '0':
+               n = 1                   
+            if n:
+               self.renN=self.paginasProcesadasBN*100/int(n)          
             if c:
                self.renC=self.paginasProcesadasC*100/int(c)
             if a:
@@ -183,7 +187,7 @@ class dcas(models.Model):
             style="<html><head><style>table, th, td {border: 1px solid black;border-collapse: collapse;}th, td {padding: 5px;text-align: left;}</style></head><body>"
             cabecera="<table style='width:100%'><caption>Info xD</caption><tr><th></th><th>Monocormatico  </th><th> Cian </th><th> Amarillo </th><th> Magenta </th></tr><tr><tr><td></td></tr>"
             ticket='<tr><td> Ticket </td><td>'+str(self.tN)+'</br>'+'</td> <td>'+str(self.tC)+' </br> </td> <td>'+' '+str(self.tA)+'</br> </td> <td>'+str(self.tM)+'</br> </td> </tr>'
-            ultimosContadores='<tr><td> Último Contador </td><td>'+str(self.x_studio_contador_mono_anterior_1)+'</br>'+'</td> <td>'+str(self.contadorAnteriorCian)+' </br> </td> <td>'+ str(self.contadorAnteriorAmarillo)+'</br> </td> <td>'+str(self.contadorAnteriorMagenta)+' </br> </td> </tr>'
+            ultimosContadores='<tr><td> Último Contador </td><td>'+str(self.contadorAnteriorNegro)+'</br>'+'</td> <td>'+str(self.contadorAnteriorCian)+' </br> </td> <td>'+ str(self.contadorAnteriorAmarillo)+'</br> </td> <td>'+str(self.contadorAnteriorMagenta)+' </br> </td> </tr>'
             fechas='<tr><td> Fecha </td><td>'+str(self.fechaN)+'</br>'+'</td> <td>'+str(self.fechaC)+' </br> </td> <td>'+' '+str(self.fechaA)+'</br> </td> <td>'+str(self.fechaM)+'</br> </td> </tr>'
             paginasProcesadas='<tr><td> Páginas Procesadas </td> <td>'+str(self.paginasProcesadasBN)+'</td> <td>'+str(self.paginasProcesadasC)+'</td> <td>'+ str(self.paginasProcesadasA)+' </td> <td>'+str(self.paginasProcesadasM)+'</td></tr>'        
             rendimientos='<tr><td> Rendimiento </td> <td>'+str(self.renN)+'</td> <td>'+str(self.renC)+'</td> <td>'+ str(self.renA)+' </td> <td>'+str(self.renM)+'</td></tr>'
