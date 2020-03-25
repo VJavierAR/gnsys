@@ -253,6 +253,10 @@ class TransferInter(TransientModel):
     lines=fields.One2many('transferencia.interna.temp','transfer')
 
     def confirmar(self):
+        origen=self.env['stock.picking.type'].search([['name','=','Internal Transfers'],['warehouse_id','=',almacenOrigen.id]])
+        destino=self.env['stock.picking.type'].search([['name','=','Internal Transfers'],['warehouse_id','=',almacenDestino.id]])
+
+
         sale = self.env['sale.order'].create({'partner_id' : 1, 'partner_shipping_id' : 1,'origin' : 'Transferencia Interna' , 'warehouse_id' : self.almacenOrigen.id, 'team_id' : 1})
         for l in self.lines:
             datosr={'order_id' : sale.id, 'product_id' : l.producto.id, 'product_uom_qty' : l.cantidad,'price_unit':0}
