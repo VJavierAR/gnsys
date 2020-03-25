@@ -79,10 +79,11 @@ class dcas(models.Model):
     
     
     @api.model
-    def create(self, vals):    
-        vals['tablahtml'] = self.tablahtml
-        #vals['team_id'] = 8
-        c = super(dcas, self).create(vals)        
+    def create(self, values):                    
+        c = super(dcas, self).create(values)
+        raise exceptions.ValidationError("Contador id"+str(c.id)+str(c.tablahtml))
+        
+        
         return c
     
     
