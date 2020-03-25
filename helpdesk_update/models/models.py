@@ -97,10 +97,18 @@ class helpdesk_update(models.Model):
     def create(self, vals):
         vals['name'] = self.env['ir.sequence'].next_by_code('helpdesk_name')
         #vals['team_id'] = 8
+        if self.team_id.id == 8:
+            vals['partner_id'] = self.partner_id.id
+            vals['x_studio_nivel_del_cliente'] = self.x_studio_nivel_del_cliente
+            vals['x_studio_empresas_relacionadas'] = self.x_studio_empresas_relacionadas
+
         ticket = super(helpdesk_update, self).create(vals)
         ticket.x_studio_id_ticket = ticket.id
         if self.x_studio_empresas_relacionadas:
             ticket.x_studio_field_6furK = ticket.x_studio_empresas_relacionadas.x_studio_field_SqU5B
+            
+
+
         return ticket
 
     """
