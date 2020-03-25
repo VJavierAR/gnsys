@@ -21,6 +21,20 @@ odoo.define('invoice.action_button_helpdesk', function (require) {
 	var session = require('web.session');
 	var _t = core._t;
 
+	var dom_ready = require('web.dom_ready');
+
+	dom_ready.extend({
+		init: function () {
+			var x = $('.blockUI blockOverlay');
+            console.log(x)
+            if ($(".blockUI blockOverlay")[0]) {
+                $('.blockUI blockOverlay').remove();
+                $('.blockUI').remove();
+                $('.blockUI blockMsg blockPage').remove();
+            }
+		}
+	});
+
 	ListController.include({
 		renderButtons: function($node) {
 		this._super.apply(this, arguments);
