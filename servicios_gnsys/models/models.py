@@ -148,7 +148,7 @@ class contratos(models.Model):
     valoresImpresion   = fields.One2many('servicios.valores', 'servicio', string = "Valores para impresión de factura",track_visibility='onchange')
     #razonPrueba  = fields.Many2one('contactos', string="Contactos")
 
-    pago    = fields.Selection(string="Pago",track_visibility='onchange')
+    pago    = fields.Selection([("ANTICIPADO","Anticipado"),("VENCIDO","Vencido"),("MIXOT","Mixto")],string="Pago",track_visibility='onchange')
 
     @api.onchange('cliente')
     def cambiarRazonSocial(self):
