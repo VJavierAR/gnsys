@@ -497,7 +497,7 @@ class helpdesk_update(models.Model):
     @api.onchange('x_studio_equipo_por_nmero_de_serie','x_studio_equipo_por_nmero_de_serie_1')
     def abierto(self):
         #que pasa si hay mas de 1 ticket xD .i ->search([['name', '=', self.name]]).id
-        self.x_studio_id_ticket = self.env['helpdesk.ticket'].search([['name', '=', self.name]]).id
+        #self.x_studio_id_ticket = self.env['helpdesk.ticket'].search([['name', '=', self.name]]).id
         _logger.info("id ticket search: " + str(self.x_studio_id_ticket))
         
         #ticketActualiza = self.env['helpdesk.ticket'].search([('id', '=', self.id)])
