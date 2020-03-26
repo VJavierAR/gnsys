@@ -29,7 +29,7 @@ class HelpDeskComentario(TransientModel):
             self.ticket_id.write({'x_studio_zona': self.zona
                                 , 'x_studio_field_6furK': self.zona
                                 })
-        if ticket_id.env.user.in_group_172:
+        if self.ticket_id.env.user.in_group_172 and self.evidencia:
             self.ticket_id.write({'stage_id': 18})
         mess = 'Diagnostico / Comentario añadido al ticket "' + str(self.ticket_id.id) + '" de forma exitosa. \n\nComentario agregado: ' + str(self.comentario) + '. \n\nGenerado en el estado: ' + self.ticket_id.stage_id.name
         wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mess})
