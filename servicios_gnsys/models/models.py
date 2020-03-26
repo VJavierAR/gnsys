@@ -107,7 +107,7 @@ class contratos(models.Model):
     vigenciaDelContrato = fields.Selection([('INDEFINIDO','Indefinido'),('12','12'),('18','18'),('24','24'),('36','36'),('OTRO','Otro')], default='12', string="Vigencia del contrato (meses)")
     fechaDeInicioDeContrato = fields.Datetime(string = 'Fecha de inicio de contrato',track_visibility='onchange')
     fechaDeFinDeContrato = fields.Datetime(string = 'Fecha de finalización de contrato',track_visibility='onchange')
-    ordenDeCompra = fields.Text(string="Orden de compra",track_visibility='onchange')
+    ordenDeCompra = fields.Text(string="URL de orden de compra",track_visibility='onchange')
     instruccionesOrdenDeCompra = fields.Text(string="Instrucciones de orden de compra",track_visibility='onchange')
     
     tonerGenerico = fields.Boolean(string="Tóner genérico", default=False)
