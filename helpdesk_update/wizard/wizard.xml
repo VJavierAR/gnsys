@@ -258,6 +258,18 @@
                         <field name='correoContactoLocalidad' readonly='1'/>
                     </group>
                 </group>
+                <group>
+                    <group string = 'Dirreción'>
+                        <field name='direccionCalleNombre' readonly='1'/>
+                        <field name='direccionNumeroExterior' readonly='1'/>
+                        <field name='direccionNumeroInterior' readonly='1'/>
+                        <field name='direccionColonia' readonly='1'/>
+                        <field name='direccionLocalidad' readonly='1'/>
+                        <field name='direccionCiudad' readonly='1'/>
+                        <field name='direccionEstado' readonly='1'/>
+                        <field name='direccionCodigoPostal' readonly='1'/>
+                    </group>
+                </group>
                 <footer>
                     <button name="crearTicket" string="Crear" type="object" class="oe_highlight"/>
                     <button special="cancel" string="Cancelar" class="oe_highlight" />
