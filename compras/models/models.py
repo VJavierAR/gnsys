@@ -15,6 +15,7 @@ from odoo.tools.mimetypes import guess_mimetype
 import logging, ast
 _logger = logging.getLogger(__name__)
 
+
 try:
     import xlrd
     try:
