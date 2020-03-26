@@ -148,7 +148,15 @@ class compras(models.Model):
                 H=StringIO(f2)
                 book = xlrd.open_workbook(file_contents=f2 or b'')
                 _logger.info(str(book))
-    
+                sheet = book.sheet_by_index(0)
+                # emulate Sheet.get_rows for pre-0.9.4
+                for row in pycompat.imap(sheet.row, range(sheet.nrows)):
+                    values = []
+                    for cell in row:
+                        _logger.info(str(cell))
+
+
+            
 class comprasLine(models.Model):
     _inherit = 'purchase.order.line'
     serial=fields.Char()
