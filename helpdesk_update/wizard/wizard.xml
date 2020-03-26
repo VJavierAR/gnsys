@@ -265,7 +265,7 @@
                         <field name='direccionNumeroInterior' readonly='1'/>
                         <field name='direccionColonia' readonly='1'/>
                     </group>
-                    <group>
+                    <group string = " ">
                         <field name='direccionLocalidad' readonly='1'/>
                         <field name='direccionCiudad' readonly='1'/>
                         <field name='direccionEstado' readonly='1'/>
