@@ -81,8 +81,8 @@ class dcas(models.Model):
     @api.model
     def create(self, values):                    
         c = super(dcas, self).create(values)
-        _logger.info("c "+str(c.tablahtml))
-        _logger.info("self "+str(self.tablahtml))
+        _logger.info("c inicio"+str(c.tablahtml))
+        _logger.info("self inicio"+str(self.tablahtml))
         
         contaC=c.contadorColor                       
         cac=c.contadorAnteriorColor
@@ -126,8 +126,8 @@ class dcas(models.Model):
            self.env.cr.execute("update dcas_dcas set tablahtml = '"+c.tablahtml+"' where  id = " + str(c.id) + ";")
            self.env.cr.execute("update dcas_dcas set x_studio_ultima_ubicacin = '"+str(c.x_studio_ultima_ubicacin)+"' where  id = " + str(c.id) + ";")
            self.env.cr.execute("update dcas_dcas set x_studio_color_o_bn = '"+str(c.x_studio_color_o_bn)+"' where  id = " + str(c.id) + ";")
-           _logger.info("c "+str(c.tablahtml))
-           _logger.info("self "+str(self.tablahtml))
+           _logger.info("c final"+str(c.tablahtml))
+           _logger.info("self final "+str(self.tablahtml))
 
                
         #raise exceptions.ValidationError("Contador id"+str(c.id)+str(c.tablahtml))
