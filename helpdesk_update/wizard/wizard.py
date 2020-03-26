@@ -455,7 +455,7 @@ class helpdesk_crearconserie(TransientModel):
                     self.direccionEstado = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.state_id.name
                     self.direccionCodigoPostal = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.zip
                     #self.direccion = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.
-                    
+
                     _my_object.write({'idCliente' : self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
                                     ,'idLocaliidad': self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
                                     })
@@ -492,6 +492,15 @@ class helpdesk_crearconserie(TransientModel):
             self.telefonoContactoLocalidad = ''
             self.movilContactoLocalidad = ''
             self.correoContactoLocalidad = ''
+
+            self.direccionCalleNombre = ''
+            self.direccionNumeroExterior = ''
+            self.direccionNumeroInterior = ''
+            self.direccionColonia = ''
+            self.direccionLocalidad = ''
+            self.direccionCiudad = ''
+            self.direccionEstado = ''
+            self.direccionCodigoPostal = ''
 
     def crearTicket(self):
         if self.serie:
