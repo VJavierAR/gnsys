@@ -13,7 +13,7 @@
                     <group>
                         <field name="check"/>
                         <field name="evidencia" widget="many2many_binary"/>
-                        <field name="editarZona" force_save = "1"/>
+                        <field name="editarZona" force_save = "1" groups="studio_customization.responsables_de_area_0126b8d9-62a9-425c-b125-0540213a8390"/>
                         <field name="zona" attrs='{"invisible": [["editarZona","=",False]]}' force_save = "1"/>
                     </group>
                 </group>
