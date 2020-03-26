@@ -147,7 +147,8 @@ class compras(models.Model):
                 f2=base64.b64decode(self.archivo)
                 H=StringIO(f2)
                 book = xlrd.open_workbook(file_contents=f2 or b'')
-                _logger.info(str(book))
+                mimetype = guess_mimetype(f2 or b'')
+                _logger.info(str(mimetype))
                 sheet = book.sheet_by_index(0)
                 # emulate Sheet.get_rows for pre-0.9.4
                 for row in pycompat.imap(sheet.row, range(sheet.nrows)):
