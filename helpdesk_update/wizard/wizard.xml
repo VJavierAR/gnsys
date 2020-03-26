@@ -264,6 +264,8 @@
                         <field name='direccionNumeroExterior' readonly='1'/>
                         <field name='direccionNumeroInterior' readonly='1'/>
                         <field name='direccionColonia' readonly='1'/>
+                    </group>
+                    <group>
                         <field name='direccionLocalidad' readonly='1'/>
                         <field name='direccionCiudad' readonly='1'/>
                         <field name='direccionEstado' readonly='1'/>
