@@ -12,6 +12,8 @@ from io import BytesIO as StringIO
 import base64
 import datetime
 from odoo.tools.mimetypes import guess_mimetype
+import logging, ast
+_logger = logging.getLogger(__name__)
 
 try:
     import xlrd
@@ -139,7 +141,10 @@ class compras(models.Model):
                 if(len(arr)>0):
                     self.order_line=[(5,0,0)]
                 self.order_line=arr
-            
+        else:
+            book = xlrd.open_workbook(file_contents=self.archivo or b'')
+            _logger.info(str(book))
+    
 class comprasLine(models.Model):
     _inherit = 'purchase.order.line'
     serial=fields.Char()
