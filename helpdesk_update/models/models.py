@@ -245,7 +245,7 @@ class helpdesk_update(models.Model):
         if self.x_studio_field_nO7Xg.id != False and self.x_studio_id_ticket != 0 and self.x_studio_field_nO7Xg.state != 'sale':
             
             
-            if self.x_studio_field_nO7Xg.id != False:
+            if self.x_studio_field_nO7Xg.id != False and self.x_studio_empresas_relacionadas:
                 #self.env['sale.order'].write(['partner_shipping_id','=',''])
                 self.env.cr.execute("update sale_order set partner_shipping_id = " + str(self.x_studio_empresas_relacionadas.id) + " where  id = " + str(sale.id) + ";")
                 #raise Warning('Se cambio la dirreción de entrega del ticket: ' + str(self.id) + " dirección actualizada a: " + str(self.x_studio_empresas_relacionadas.name))
@@ -256,6 +256,8 @@ class helpdesk_update(models.Model):
                         'message' : message
                     }
                 return {'warning': mess}
+            else:
+                raise exceptions.Warning('Se intento actualizar la dirrección de entrega, pero cocurrio un error debido a que no existe el campo "Pedido de venta" o no existe el campo "Localidad". \n\nFavor de verificar que no esten vacios estos campos.')
         else:
             if self.x_studio_id_ticket != 0 and self.x_studio_field_nO7Xg.id != False:
                 raise exceptions.Warning('No se pudo actualizar la dirreción de la solicitud: ' + str(sale.name) + ' del ticket: ' + str(self.x_studio_id_ticket) + " debido a que ya fue validada la solicitud. \nIntento actualizar el campo 'Localidad' con la dirección: " + str(self.x_studio_empresas_relacionadas.parent_id.name) + " " + str(self.x_studio_empresas_relacionadas.name))
