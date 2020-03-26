@@ -2,12 +2,13 @@
 from odoo import models, fields, api
 import base64,io,csv
 import logging, ast
-import datetime
-_logger = logging.getLogger(__name__)
 from odoo.exceptions import UserError
 from odoo import exceptions, _
-import datetime
+from datetime import datetime
+from operator import concat
 _logger = logging.getLogger(__name__)
+
+
 
 
 def get_years():
@@ -37,13 +38,249 @@ class dcas(models.Model):
     ip=fields.Char(string='IP')
     contadorColor=fields.Integer(string='Contador Color')
     contadorMono=fields.Integer(string='Contador Monocromatico')
-    contador_id=fields.Many2one('contadores.contadores')
+    contador_id=fields.Many2one('contadores.contadores')        
     dominio=fields.Integer()
     porcentajeNegro=fields.Integer(string='Negro')
     porcentajeAmarillo=fields.Integer(string='Amarillo')
     porcentajeCian=fields.Integer(string='Cian')
     porcentajeMagenta=fields.Integer(string='Magenta')
     fuente=fields.Selection(selection=[('dcas.dcas', 'DCA'),('helpdesk.ticket', 'Mesa'),('stock.production.lot','Equipo'),('tfs.tfs','Tfs')], default='dcas.dcas')  
+    cartuchoNegro=fields.Selection([('a', 'Ninguna serie selecionada')], string='prueba')
+    nivelNA=fields.Integer(string='Nivel de toner negro anteior')
+    nivelAA=fields.Integer(string='Nivel de toner Amarillo anteior')
+    nivelCA=fields.Integer(string='Nivel de toner Cian anteior')
+    nivelMA=fields.Integer(string='Nivel de toner Magenta anteior')
+    contadorAnteriorCian=fields.Integer(string='contador de ultima solicitud Cian')
+    contadorAnteriorAmarillo=fields.Integer(string='contador de ultima solicitud Amarillo')
+    contadorAnteriorMagenta=fields.Integer(string='contador de ultima solicitud Magenta')
+    contadorAnteriorNegro=fields.Integer(string='contador de ultima solicitud Negro')
+    contadorAnteriorColor=fields.Integer(string='contador de ultima solicitud Color')
+    paginasProcesadasBN=fields.Integer(string='Páginas procesadas BN')
+    paginasProcesadasC=fields.Integer(string='Páginas procesadas Cian')
+    paginasProcesadasA=fields.Integer(string='Páginas procesadas Amarillo')
+    paginasProcesadasM=fields.Integer(string='Páginas procesadas Magenta')
+    x_studio_fecha = fields.Datetime(string='Fecha',default=lambda self: fields.datetime.now())
+    renC=fields.Float(string='Rendimiento Cian')
+    renA=fields.Float(string='Rendimiento Amarillo')
+    renM=fields.Float(string='Rendimiento Magenta')
+    renN=fields.Float(string='Rendimiento Negro ')
+    
+    tablahtml=fields.Text(string='Detalle Equipo')
+    fechaN=fields.Datetime(string='Fecha de captura')
+    fechaA=fields.Datetime(string='Fecha de captura')
+    fechaC=fields.Datetime(string='Fecha de captura')
+    fechaM=fields.Datetime(string='Fecha de captura')
+    tN=fields.Char(string='Ticket BN')
+    tA=fields.Char(string='Ticket Amarillo')
+    tC=fields.Char(string='Ticket Cian')
+    tM=fields.Char(string='Ticket Magenta')
+    colorEquipo=fields.Char(string='Color o Bn')
+    equipo=fields.Char(string='Equipo')
+    ultimaUbicacion=fields.Char(string='Ultima ubicación')
+    
+    
+    
+
+    
+    
+    
+    @api.model
+    def create(self, values):               
+        _logger.info("values "+str(values))
+        c = super(dcas, self).create(values)
+        
+        _logger.info("c inicio"+str(c.tablahtml))
+        _logger.info("self inicio id"+str(c.id))
+        _logger.info("self inicio id"+str(c.create_date))
+        self.env.cr.execute("update dcas_dcas set x_studio_fecha = '"+str(c.create_date)+"' where  id = " + str(c.id) + ";")
+        """
+        contaC=c.contadorColor                       
+        cac=c.contadorAnteriorColor
+        contadorM=c.contadorMono
+        c.paginasProcesadasC=contaC-c.contadorAnteriorCian
+        c.paginasProcesadasA=contaC-c.contadorAnteriorAmarillo
+        c.paginasProcesadasM=contaC-c.contadorAnteriorMagenta
+        c.paginasProcesadasBN=contadorM-c.contadorAnteriorNegro            
+        cc=c.x_studio_rendimientoc
+        a=c.x_studio_rendimientoa
+        m=c.x_studio_rendimientom
+        n=c.x_studio_rendimiento_negro
+        if cc == '0':
+           cc = 1
+        if a == '0':
+           a = 1
+        if m == '0':
+           m = 1                        
+        if n == '0':
+           n = 1                           
+        if n:
+           c.renN=round(c.paginasProcesadasBN*100/int(n),2)            
+        if cc:
+           c.renC=round(c.paginasProcesadasC*100/int(cc),2)
+        if a:
+           c.renA=round(c.paginasProcesadasA*100/int(a),2)
+        if m:
+           c.renM=round(c.paginasProcesadasM*100/int(m),2)
+           
+        if c.serie:
+           style="<html><head><style>table, th, td {border: 1px solid black;border-collapse: collapse;}th, td {padding: 5px;text-align: left;}</style></head><body>"           
+           cabecera="<table ><tr><th></th><th>Monocormatico  </th><th> Cian </th><th> Amarillo </th><th> Magenta </th></tr><tr><tr><td></td></tr>"
+           ticket='<tr><td> Ticket </td><td>'+str(c.tN)+'</br>'+'</td> <td>'+str(c.tC)+' </br> </td> <td>'+' '+str(c.tA)+'</br> </td> <td>'+str(c.tM)+'</br> </td> </tr>'
+           ultimosContadores='<tr><td> Último Contador </td><td>'+str(c.contadorAnteriorNegro)+'</br>'+'</td> <td>'+str(c.contadorAnteriorCian)+' </br> </td> <td>'+ str(c.contadorAnteriorAmarillo)+'</br> </td> <td>'+str(c.contadorAnteriorMagenta)+' </br> </td> </tr>'
+           fechas='<tr><td> Fecha </td><td>'+str(c.fechaN)+'</br>'+'</td> <td>'+str(c.fechaC)+' </br> </td> <td>'+' '+str(c.fechaA)+'</br> </td> <td>'+str(c.fechaM)+'</br> </td> </tr>'
+           paginasProcesadas='<tr><td> Páginas Procesadas </td> <td>'+str(c.paginasProcesadasBN)+'</td> <td>'+str(c.paginasProcesadasC)+'</td> <td>'+ str(c.paginasProcesadasA)+' </td> <td>'+str(c.paginasProcesadasM)+'</td></tr>'        
+           rendimientos='<tr><td> Rendimiento </td> <td>'+str(c.renN)+'</td> <td>'+str(c.renC)+'</td> <td>'+ str(c.renA)+' </td> <td>'+str(c.renM)+'</td></tr>'
+           niveles='<tr><td> Último nivel </td> <td>'+str(c.nivelNA)+'</td> <td>'+str(c.nivelCA)+'</td> <td>'+ str(c.nivelAA)+' </td> <td>'+str(c.nivelMA)+'</td></tr>'           
+           cierre="</table></body></html> "
+           c.tablahtml=cabecera+ticket+ultimosContadores+fechas+paginasProcesadas+rendimientos+niveles+cierre
+           _logger.info("self final antes  "+str(self.tablahtml)) 
+           self.env.cr.execute("update dcas_dcas set x_studio_ultima_ubicacin = '"+str(c.x_studio_ultima_ubicacin)+"' where  id = " + str(c.id) + ";")
+           _logger.info("c color"+str(c.x_studio_color_o_bn)) 
+           _logger.info("c negro anterior"+str(c.contadorAnteriorNegro))
+           _logger.info("self negro anterior"+str(self.contadorAnteriorNegro))
+           self.env.cr.execute("update dcas_dcas set x_studio_color_o_bn = '"+str(c.x_studio_color_o_bn)+"' where  id = " + str(c.id) + ";")           
+           self.env.cr.execute("update dcas_dcas set tablahtml = '"+c.tablahtml+"' where  id = " + str(c.id) + ";")
+           _logger.info("c final"+str(c.tablahtml))
+           _logger.info("self final "+str(self.tablahtml))
+        """
+        return c
+    
+    
+    
+    
+   
+    
+    @api.onchange('serie')             
+    def ultimosContadoresNACM(self):
+
+        
+        if self.serie :
+            bn_c=self.env['stock.production.lot'].search([['id','=',self.serie.id]])        
+            self.colorEquipo=bn_c.x_studio_color_bn
+            self.ultimaUbicacion=bn_c.x_studio_ultima_ubicacin
+            self.equipo=bn_c.product_id.name
+            n=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeNegro','=',1]],order='x_studio_fecha desc',limit=1)
+            self.fechaN=n.x_studio_fecha
+            self.nivelNA=n.x_studio_toner_negro
+            self.contadorAnteriorNegro=n.contadorMono
+            self.tN=n.x_studio_tickett
+            c=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeCian','=',1]],order='x_studio_fecha desc',limit=1)
+            self.nivelCA=c.x_studio_toner_cian
+            self.contadorAnteriorCian=c.contadorColor
+            self.fechaC=c.x_studio_fecha
+            self.tC=c.x_studio_tickett
+            a=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeAmarillo','=',1]],order='x_studio_fecha desc',limit=1)
+            self.nivelAA=a.x_studio_toner_amarillo
+            self.contadorAnteriorAmarillo=a.contadorColor
+            self.fechaA=a.x_studio_fecha
+            self.tA=a.x_studio_tickett
+            m=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeMagenta','=',1]],order='x_studio_fecha desc',limit=1)
+            self.nivelMA=m.x_studio_toner_magenta
+            self.contadorAnteriorMagenta=m.contadorColor
+            self.fechaM=m.x_studio_fecha
+            self.tM=m.x_studio_tickett
+            #select "contadorColor" from dcas_dcas where "porcentajeMagenta"=1 or "porcentajeCian"=1 or "porcentajeNegro"=1  order by x_studio_fecha desc limit 1;
+            query="select \"contadorColor\" from dcas_dcas where  serie="+str(self.serie.id)+" or \"porcentajeMagenta\"=1 or \"porcentajeCian\"=1 or \"porcentajeMagenta\"=1  order by x_studio_fecha desc limit 1;"                        
+            self.env.cr.execute(query)                        
+            informacion = self.env.cr.fetchall()
+            #raise  exceptions.ValidationError(str(informacion)+' '+ str(type(informacion))+' '+str(informacion[0]) +' el chido xD'+str(informacion[0][0]))
+            self.contadorAnteriorColor = informacion[0][0]
+        if self.serie:
+            style="<html><head><style>table, th, td {border: 1px solid black;border-collapse: collapse;}th, td {padding: 5px;text-align: left;}</style></head><body>"
+            cabecera="<table style='width:100%'><tr><th></th><th>Monocormatico  </th><th> Cian </th><th> Amarillo </th><th> Magenta </th></tr><tr><tr><td></td></tr>"
+            ticket='<tr><td> Ticket </td><td>'+str(self.tN)+'</br>'+'</td> <td>'+str(self.tC)+' </br> </td> <td>'+' '+str(self.tA)+'</br> </td> <td>'+str(self.tM)+'</br> </td> </tr>'
+            ultimosContadores='<tr><td> Último Contador </td><td>'+str(self.contadorAnteriorNegro)+'</br>'+'</td> <td>'+str(self.contadorAnteriorCian)+' </br> </td> <td>'+ str(self.contadorAnteriorAmarillo)+'</br> </td> <td>'+str(self.contadorAnteriorMagenta)+' </br> </td> </tr>'
+            fechas='<tr><td> Fecha </td><td>'+str(self.fechaN)+'</br>'+'</td> <td>'+str(self.fechaC)+' </br> </td> <td>'+' '+str(self.fechaA)+'</br> </td> <td>'+str(self.fechaM)+'</br> </td> </tr>'
+            paginasProcesadas='<tr><td> Páginas Procesadas </td> <td>'+str(self.paginasProcesadasBN)+'</td> <td>'+str(self.paginasProcesadasC)+'</td> <td>'+ str(self.paginasProcesadasA)+' </td> <td>'+str(self.paginasProcesadasM)+'</td></tr>'        
+            rendimientos='<tr><td> Rendimiento </td> <td>'+str(self.renN)+'</td> <td>'+str(self.renC)+'</td> <td>'+ str(self.renA)+' </td> <td>'+str(self.renM)+'</td></tr>'
+            niveles='<tr><td> Último nivel </td> <td>'+str(self.nivelNA)+'</td> <td>'+str(self.nivelCA)+'</td> <td>'+ str(self.nivelAA)+' </td> <td>'+str(self.nivelMA)+'</td></tr>'
+            cartuchos='<tr><td> Cartuchos Selecionados </td> <td>'+str(self.x_studio_cartuchonefro.name)+'</td> <td>'+str(self.x_studio_cartucho_cian_1.name)+'</td> <td>'+ str(self.x_studio_cartucho_amarillo.name)+' </td> <td>'+str(self.x_studio_cartucho_magenta.name)+'</td></tr>'
+            cierre="</table></body></html> "
+            self.tablahtml=cabecera+ticket+ultimosContadores+fechas+paginasProcesadas+rendimientos+niveles+cartuchos+cierre    
+            #query = "update dcas_dcas set tablahtml = \""+cabecera+ticket+ultimosContadores+fechas+paginasProcesadas+rendimientos+niveles+cierre+"\" where id = " + str(self.id) + ";"
+            #ss = self.env.cr.execute(query)
+    
+    @api.onchange('contadorMono')
+    def validaMoon(self):        
+        contadorM=self.contadorMono
+        cam=self.contadorAnteriorNegro                                        
+        if cam>contadorM:            
+            raise exceptions.ValidationError("Contador Monocromatico Menor")
+
+            
+
+
+    @api.onchange('x_studio_cartuchonefro','x_studio_cartucho_amarillo','x_studio_cartucho_cian_1','x_studio_cartucho_magenta')
+    def vcalcula(self):
+        contaC=self.contadorColor                       
+        cac=self.contadorAnteriorColor
+        contadorM=self.contadorMono
+        self.paginasProcesadasC=contaC-self.contadorAnteriorCian
+        self.paginasProcesadasA=contaC-self.contadorAnteriorAmarillo
+        self.paginasProcesadasM=contaC-self.contadorAnteriorMagenta
+        self.paginasProcesadasBN=contadorM-self.contadorAnteriorNegro            
+        c=self.x_studio_rendimientoc
+        a=self.x_studio_rendimientoa
+        m=self.x_studio_rendimientom
+        n=self.x_studio_rendimiento_negro
+        if c == '0':
+           c = 1
+        if a == '0':
+           a = 1
+        if m == '0':
+           m = 1                        
+        if n == '0':
+           n = 1                   
+        if n:
+           self.renN=round(self.paginasProcesadasBN*100/int(n),2)            
+        if c:
+           self.renC=round(self.paginasProcesadasC*100/int(c),2)
+        if a:
+           self.renA=round(self.paginasProcesadasA*100/int(a),2)
+        if m:
+           self.renM=round(self.paginasProcesadasM*100/int(m),2)
+        if self.serie:
+           style="<html><head><style>table, th, td {border: 1px solid black;border-collapse: collapse;}th, td {padding: 5px;text-align: left;}</style></head><body>"
+           cabecera="<table style='width:100%'><tr><th></th><th>Monocormatico  </th><th> Cian </th><th> Amarillo </th><th> Magenta </th></tr><tr><tr><td></td></tr>"
+           ticket='<tr><td> Ticket </td><td>'+str(self.tN)+'</br>'+'</td> <td>'+str(self.tC)+' </br> </td> <td>'+' '+str(self.tA)+'</br> </td> <td>'+str(self.tM)+'</br> </td> </tr>'
+           ultimosContadores='<tr><td> Último Contador </td><td>'+str(self.contadorAnteriorNegro)+'</br>'+'</td> <td>'+str(self.contadorAnteriorCian)+' </br> </td> <td>'+ str(self.contadorAnteriorAmarillo)+'</br> </td> <td>'+str(self.contadorAnteriorMagenta)+' </br> </td> </tr>'
+           fechas='<tr><td> Fecha </td><td>'+str(self.fechaN)+'</br>'+'</td> <td>'+str(self.fechaC)+' </br> </td> <td>'+' '+str(self.fechaA)+'</br> </td> <td>'+str(self.fechaM)+'</br> </td> </tr>'
+           paginasProcesadas='<tr><td> Páginas Procesadas </td> <td>'+str(self.paginasProcesadasBN)+'</td> <td>'+str(self.paginasProcesadasC)+'</td> <td>'+ str(self.paginasProcesadasA)+' </td> <td>'+str(self.paginasProcesadasM)+'</td></tr>'        
+           rendimientos='<tr><td> Rendimiento </td> <td>'+str(self.renN)+'</td> <td>'+str(self.renC)+'</td> <td>'+ str(self.renA)+' </td> <td>'+str(self.renM)+'</td></tr>'
+           niveles='<tr><td> Último nivel </td> <td>'+str(self.nivelNA)+'</td> <td>'+str(self.nivelCA)+'</td> <td>'+ str(self.nivelAA)+' </td> <td>'+str(self.nivelMA)+'</td></tr>'
+           cartuchos='<tr><td> Cartuchos Selecionados </td> <td>'+str(self.x_studio_cartuchonefro.name)+'</td> <td>'+str(self.x_studio_cartucho_cian_1.name)+'</td> <td>'+ str(self.x_studio_cartucho_amarillo.name)+' </td> <td>'+str(self.x_studio_cartucho_magenta.name)+'</td></tr>'
+           cierre="</table></body></html> "
+           self.tablahtml=cabecera+ticket+ultimosContadores+fechas+paginasProcesadas+rendimientos+niveles+cartuchos+cierre
+        
+                    
+                
+            
+    @api.onchange('contadorColor')
+    def validaContadores(self):
+        contaC=self.contadorColor                       
+        cac=self.contadorAnteriorColor
+        contadorM=self.contadorMono
+        if cac>contaC:            
+            raise exceptions.ValidationError("Contador Color Menor.")
+            
+    
+    """
+    @api.onchange('contadorColor','contadorMono','x_studio_cartuchonefro','x_studio_cartucho_amarillo','x_studio_cartucho_cian_1','x_studio_cartucho_magenta')
+    def table(self):
+        if self.serie:
+            style="<html><head><style>table, th, td {border: 1px solid black;border-collapse: collapse;}th, td {padding: 5px;text-align: left;}</style></head><body>"
+            cabecera="<table style='width:100%'><caption>Info xD</caption><tr><th></th><th>Monocormatico  </th><th> Cian </th><th> Amarillo </th><th> Magenta </th></tr><tr><tr><td></td></tr>"
+            ticket='<tr><td> Ticket </td><td>'+str(self.tN)+'</br>'+'</td> <td>'+str(self.tC)+' </br> </td> <td>'+' '+str(self.tA)+'</br> </td> <td>'+str(self.tM)+'</br> </td> </tr>'
+            ultimosContadores='<tr><td> Último Contador </td><td>'+str(self.contadorAnteriorNegro)+'</br>'+'</td> <td>'+str(self.contadorAnteriorCian)+' </br> </td> <td>'+ str(self.contadorAnteriorAmarillo)+'</br> </td> <td>'+str(self.contadorAnteriorMagenta)+' </br> </td> </tr>'
+            fechas='<tr><td> Fecha </td><td>'+str(self.fechaN)+'</br>'+'</td> <td>'+str(self.fechaC)+' </br> </td> <td>'+' '+str(self.fechaA)+'</br> </td> <td>'+str(self.fechaM)+'</br> </td> </tr>'
+            paginasProcesadas='<tr><td> Páginas Procesadas </td> <td>'+str(self.paginasProcesadasBN)+'</td> <td>'+str(self.paginasProcesadasC)+'</td> <td>'+ str(self.paginasProcesadasA)+' </td> <td>'+str(self.paginasProcesadasM)+'</td></tr>'        
+            rendimientos='<tr><td> Rendimiento </td> <td>'+str(self.renN)+'</td> <td>'+str(self.renC)+'</td> <td>'+ str(self.renA)+' </td> <td>'+str(self.renM)+'</td></tr>'
+            niveles='<tr><td> Último nivel </td> <td>'+str(self.nivelNA)+'</td> <td>'+str(self.nivelCA)+'</td> <td>'+ str(self.nivelAA)+' </td> <td>'+str(self.nivelMA)+'</td></tr>'
+            cierre="</table></body></html> "
+            self.tablahtml=cabecera+ticket+ultimosContadores+fechas+paginasProcesadas+rendimientos+niveles+cierre                                                                                                                                                                                 
+    """
+    
+    
 
     
 
@@ -52,7 +289,6 @@ class contadores(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _description = 'Contadores Cliente'
     name = fields.Char()
-    mes=fields.Selection(selection=[('1','Enero'),('2','Febrero'),('3','Marzo'),('4','Abril'),('5','Mayo'),('6','Junio'),('7','Julio'),('8','Agosto'),('9','Septiembre'),('10','Octubre'),('11','Noviembre'),('12','Diciembre')])
     mes=fields.Selection(valores,string='Mes')
     anio= fields.Selection(get_years(), string='Año')
     
@@ -63,9 +299,6 @@ class contadores(models.Model):
     estado=fields.Selection(selection=[('Abierto', 'Abierto'),('Incompleto', 'Incompleto'),('Valido','Valido')],widget="statusbar", default='Abierto')  
     dom=fields.Char(readonly="1",invisible="1")
     order_line = fields.One2many('contadores.lines','ticket',string='Order Lines')
-
-    
-    @api.onchange('serie_aux')
     
 
     
@@ -74,37 +307,17 @@ class contadores(models.Model):
         self.serie=self.env['stock.production.lot'].search([['name','=',self.serie_aux]]).id
         
     
-    
-    @api.onchange('cliente')
-    def onchange_place(self):
-        self.order_line=[(5,0,0)]
-        res = {}
-        d=[]
-        if(self.cliente):
-            #lotes=self.env['stock.production.lot'].search([['x_studio_ubicaciontest', '=' ,self.cliente.name]])
-            self.env.cr.execute("Select id from stock_production_lot where x_studio_ultima_ubicacin like'"+self.cliente.name+"%';")
-            lotes= self.env.cr.fetchall()
-            for l in lotes:
-                #if(l.x_studio_ultima_ubicacin == self.cliente.name):
-                datos={}
-                datos['serie']=l
-                d.append(datos)            
-            self.order_line=d
-        #return res
-
-
-    @api.onchange('archivo')
     @api.multi
     def carga_contadores_fac(self):
-        for r in self.detalle:
-            rr=self.env['dcas.dcas'].create({'serie': r.producto
-                                             ,'contadorColor':r.ultimaLecturaColor
-                                             ,'contadorMono':r.ultimaLecturaBN
-                                             ,'fuente':'dcas.dcas'
-                                             ,'x_studio_field_no6Rb':str(self.anio)+'-'+str(self.mes)
-                                             ,'x_studio_fecha_texto_anio':str(valores[int(self.mes[1])-1][1])+' de '+str(self.anio)
-                                            })
-        
+        if self.x_studio_estado_capturas=='Listo':
+            for r in self.detalle:
+                rr=self.env['dcas.dcas'].create({'serie': r.producto
+                                                 ,'contadorColor':r.ultimaLecturaColor
+                                                 ,'contadorMono':r.ultimaLecturaBN
+                                                 ,'fuente':'dcas.dcas'
+                                                 ,'x_studio_field_no6Rb':str(self.anio)+'-'+str(self.mes)
+                                                 ,'x_studio_fecha_texto_anio':str(valores[int(self.mes[1])-1][1])+' de '+str(self.anio)
+                                                })                    
     
     #@api.onchange('mes')
     @api.multi
@@ -122,8 +335,10 @@ class contadores(models.Model):
             anios=get_years()
             i=0
             for e in anios:
-                if e[0]==int(self.anio):
+                if e[0]==int(self.anio) and str(self.mes)=='01':
                    anioA=str(anios[i-1][0])
+                else:
+                   anioA=str(self.anio)                
                 i=i+1                
             periodoAnterior= anioA+'-'+mesaA   
             
@@ -180,7 +395,6 @@ class contadores(models.Model):
         f.close()
                         #record.dca.search([['serial.name','=',dat[3]]])
 
-
     detalle =  fields.One2many('contadores.contadores.detalle', 'contadores', string='Contadores')
    
 
@@ -228,7 +442,6 @@ class contadores_lines(models.Model):
     mes=fields.Integer()
     pagina=fields.Binary('Pagina de Estado')
     
-    @api.depends('serie')
     #@api.depends('serie')
     def ultimoContador(self):
         fecha=datetime.datetime.now()

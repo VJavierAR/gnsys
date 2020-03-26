@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_helpdesk_comentario" model="ir.ui.view">
+        <field name="model">helpdesk.comentario</field>
+        <field name="arch" type="xml">
+            <form string="Creación de comentario">
+                <group>
+                    <group>
+                        <field name="estado" readonly="1"/>
+                        <field name="comentario"/>
+                    </group>
+                    <group>
+                        <field name="check"/>
+                        <field name="evidencia" widget="many2many_binary"/>
+                        <field name="editarZona" force_save = "1" groups="studio_customization.responsables_de_area_0126b8d9-62a9-425c-b125-0540213a8390"/>
+                        <field name="zona" attrs='{"invisible": [["editarZona","=",False]]}' force_save = "1"/>
+                    </group>
+                </group>
+
+                <field name="diagnostico_id" options="{'no_create': True}" readonly="1">
+                    <tree>
+                        <field name="create_date" string='Creado el' readonly="1"/>
+                        <field name="estadoTicket" readonly="1"/>
+                        <field name="comentario" string='Diagnostico / Comentario'/>
+                        <field name="create_uid" readonly="1" string='Encargado'/>
+                        <field name="evidencia" widget="many2many_binary"/>
+                        <field name="mostrarComentario" />
+                    </tree>
+                    <form>
+                        <group>
+                            <group>
+                                <field name="ticketRelacion" can_create="true" can_write="true" modifiers="{}" invisible="1"/>
+                                <field name="estadoTicket" modifiers="{}" readonly="1"/>
+                                <field name="comentario" modifiers="{}"/>
+                            </group>
+                            <group>
+                                <field name="evidencia" can_create="true" can_write="true" modifiers="{}" widget="many2many_binary"/>
+                                <field name="mostrarComentario" modifiers="{}"/>
+                            </group>
+                        </group>
+                    </form>
+                </field>
+
+                <footer>
+                    <button name="creaComentario" string="Confirmar" type="object" class="oe_highlight"/>
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_helpdesk_contadores" model="ir.ui.view">
+        <field name="model">helpdesk.contadores</field>
+        <field name="arch" type="xml">
+            <form string="Agregar contadores">
+                <group>
+                    <group string="Contadores anteriores">
+                        <field name="contadorBNMesa" readonly="1"/>
+                        <field name="contadorColorMesa" readonly="1"/>
+                        <field name="bnColor" readonly="1"/>
+                        
+                    </group>
+                    <group string="Contador actual">
+                        <field name="contadorBNActual"/>
+                        <field name="contadorColorMesa" attrs='{"invisible": [["bnColor", "=", "B/N"]]}'/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="modificarContadores" string="Confirmar" type="object" class="oe_highlight"/>
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_helpdesk_contacto" model="ir.ui.view">
+        <field name="model">helpdesk.contacto</field>
+        <field name="arch" type="xml">
+            <form string="Añadir contacto a localidad">
+                <group>
+                    <group>
+                        <field name="tipoDeDireccion" invisible='1' force_save = "1"/>
+                    </group>
+                </group>
+
+                <group attrs="{&quot;invisible&quot;: [[&quot;tipoDeDireccion&quot;,&quot;!=&quot;,&quot;contact&quot;]]}">
+                    <group>
+                        <field name="subtipo" invisible='1' force_save = "1"/>
+                        <field name="nombreDelContacto" required='1'/>
+                        <field name="titulo" placeholder="Por ejemplo, Sr." options="{'no_create_edit': True, 'no_create': True}" invisible='1'/>
+                        <field name="puestoDeTrabajo" placeholder="Por ejemplo, Director de ventas" invisible='1'/>
+                        <field name="correoElectronico"/>
+                        <field name="telefono"/>
+                        <field name="movil"/>
+                        <field name="notas" placeholder="Notas internas..."/>
+                    </group>
+                    <group>
+                        
+                    </group>
+                </group>
+
+                <group attrs="{&quot;invisible&quot;: [&quot;|&quot;,[&quot;tipoDeDireccion&quot;,&quot;=&quot;,&quot;contact&quot;],[&quot;tipoDeDireccion&quot;,&quot;=&quot;,False]]}">
+                    <group>
+                        <field name="direccionNombreCalle" placeholder='Nombre de la calle...'/>
+                        <field name="direccionNumeroExterior"/>
+                        <field name="direccionNumeroInterior"/>
+                        <field name="direccionColonia" placeholder='Colonia...'/>
+                        <field name="direccionLocalidad" placeholder='Localidad...'/>
+                        <field name="direccionPais" />
+                        <field name="direccionCiudad"/>
+                        <field name="direccionEstado" />
+                        <field name="direccionCodigoPostal" placeholder='Código Postal'/>
+                    </group>
+                    <group>
+                        <field name="nombreDelContacto" />
+                        <field name="correoElectronico"/>
+                        <field name="telefono"/>
+                        <field name="movil"/>
+                        <field name="notas" placeholder="Notas internas..."/>
+                        <field name="direccionZona" attrs="{&quot;invisible&quot;: [[&quot;tipoDeDireccion&quot;,&quot;!=&quot;,&quot;delivery&quot;]]}"/>
+                    </group>
+                </group>
+
+                <footer>
+                    <button name="agregarContactoALocalidad" string="Agregar contacto a localidad" type="object" class="oe_highlight"/>
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+    <record id="view_helpdesk_alerta" model="ir.ui.view">
+        <field name="model">helpdesk.alerta</field>
+        <field name="arch" type="xml">
+            <form string="Alerta">
+                <group>
+                    <h3>
+                        <field name="mensaje" readonly='1'/>
+                    </h3>
+                </group>
+                <footer>
+                    <button special="cancel" string="Cerrar" class="oe_highlight" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+    <record id="view_helpdesk_alerta_series" model="ir.ui.view">
+        <field name="model">helpdesk.alerta.series</field>
+        <field name="arch" type="xml">
+            <form string="Alerta">
+                <group>
+                    <h3>
+                        <field name="mensaje" readonly='1'/>
+                    </h3>
+                </group>
+                <group>
+                    <group>
+                        <field name='ticket_id_existente' readonly='1' invisible='1'/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="abrirTicket" string="Abrir ticket existente" type="object" class="oe_highlight" attrs="{'invisible': [['ticket_id_existente','=', 0]]}"/>
+                    <!--<button name="abrirTicketCreado" string="Abrir ticket creado" type="object" class="oe_highlight"/>-->
+                    <button name="action_refresh" string="Ir a la lista" type="object" class="oe_highlight" />
+                    <button special="cancel" string="Regresar" class="oe_highlight" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+    <record id="view_helpdesk_alerta_serie2" model="ir.ui.view">
+        <field name="model">helpdesk.alerta.series</field>
+        <field name="arch" type="xml">
+            <form string="Alerta">
+                <group>
+                    <h3>
+                        <field name="mensaje" readonly='1'/>
+                    </h3>
+                </group>
+                <footer>
+                    <button special="cancel" string="Cerrar" class="oe_highlight" />
+                </footer>
+            </form>
+        </field>
+    </record>
+    
+
+    <record id="view_helpdesk_bitacora" model="ir.ui.view">
+        <field name="model">helpdesk.detalle.serie</field>
+        <field name="arch" type="xml">
+            <form string="Detalle serie">
+                <group class='text-center'>
+                    <h2>
+                        <field name="serie" string='' readonly="1"/>
+                    </h2>
+                </group>
+                <group>
+                    <notebook>
+                        <page string = 'Tickets'>
+                            <field name='historicoTickets' />
+                        </page>
+                        <page string = 'Lecturas'>
+                            <field name='lecturas' />
+                        </page>
+                        <page string = 'Tóner'>
+                            <field name='toner' />
+                        </page>
+                        <page string = 'Historico de componentes'>
+                            <field name='historicoDeComponentes' />
+                        </page>
+                        <page string = 'Movimientos'>
+                            <field name='movimientos' />
+                        </page>
+                    </notebook>
+                </group>
+                <footer>
+                    <button special="cancel" string="Cerrar" class="oe_highlight" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+    <record id="view_helpdesk_crear_desde_serie" model="ir.ui.view">
+        <field name="model">helpdesk.crearconserie</field>
+        <field name="arch" type="xml">
+            <form string="Crear">
+                <group >
+                    <group class='text-right'>
+                        <h3 >
+                            Serie: 
+                        </h3>
+                    </group>
+                    <group class='text-left'>
+                        <field name='serie' widget='many2many_tags' string='' options="{'no_create_edit': True, 'no_create': True}"/>
+                    </group>
+                    
+                    
+                </group>
+
+                <group>
+                    <group string="Cliente y localidad">
+                        <field name='cliente' readonly='1'/>
+                        <field name='idCliente' force_save = "1" readonly='1' invisible='1'/>
+                        <field name='localidad' readonly='1'/>
+                        <field name='zonaLocalidad' readonly='1' force_save = "1"/>
+                        <field name='idLocaliidad' force_save = "1" readonly='1' invisible='1'/>
+                    </group>
+                    <group string="Datos de contacto">
+                        <field name='nombreContactoLocalidad' readonly='1'/>
+                        <field name='telefonoContactoLocalidad' readonly='1'/>
+                        <field name='movilContactoLocalidad' readonly='1'/>
+                        <field name='correoContactoLocalidad' readonly='1'/>
+                    </group>
+                </group>
+                <group>
+                    <group string = 'Dirreción'>
+                        <field name='direccionCalleNombre' readonly='1'/>
+                        <field name='direccionNumeroExterior' readonly='1'/>
+                        <field name='direccionNumeroInterior' readonly='1'/>
+                        <field name='direccionColonia' readonly='1'/>
+                    </group>
+                    <group string = " ">
+                        <field name='direccionLocalidad' readonly='1'/>
+                        <field name='direccionCiudad' readonly='1'/>
+                        <field name='direccionEstado' readonly='1'/>
+                        <field name='direccionCodigoPostal' readonly='1'/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="crearTicket" string="Crear" type="object" class="oe_highlight"/>
+                    <button special="cancel" string="Cancelar" class="oe_highlight" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

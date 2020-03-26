@@ -8,7 +8,6 @@ class saleSub(models.Model):
     notasxD = fields.Text(string="Notas")
     
     """
->>>>>>> master
     def _prepare_invoice_lines(self, fiscal_position):
         self.ensure_one()
         fiscal_position = self.env['account.fiscal.position'].browse(fiscal_position)
@@ -43,9 +42,5 @@ class saleSub(models.Model):
               #      l.quantity=0
                # if('Clic excedente color' in l.product_id.name):
                 #    l.quantity=0   
-<<<<<<< HEAD
-        return [(0, 0, self._prepare_invoice_line(line, fiscal_position)) for line in copia]
-=======
         return [(0, 0, self._prepare_invoice_line(line, fiscal_position)) for line in copia]
     """
-

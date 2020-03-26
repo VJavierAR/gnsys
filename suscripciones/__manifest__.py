@@ -18,12 +18,8 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base','sale_subscription'],
-
-
     'depends': ['base','sale_management' ],
 #va de nuevo
-
     # always loaded
     'data': [
         # 'security/ir.model.access.csv',
@@ -34,6 +30,4 @@
     'demo': [
         'demo/demo.xml',
     ],
-
 }
-

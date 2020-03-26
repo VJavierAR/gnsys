@@ -15,6 +15,9 @@ class CreacionRuta(Model):
 	estado=fields.Selection([["borrador","Borrador"],["valido","Confirmado"]])
 	odometro=fields.Integer()
 	nivel_tanque=fields.Selection([["reserva","Reserva"],[".25","1/4"],[".5","1/2"],[".75","3/4"],["1","Lleno"]])
+	tipo=fields.Selection([["local","Local"],["foraneo","Foraneo"]])
+
+
 	@api.multi
 	def confirmar(self):
 		if(len(self.ordenes)>0):
@@ -22,6 +25,8 @@ class CreacionRuta(Model):
 			self.ordenes.write({'estado':'ruta'})
 			self.ordenes.write({'ajusta':True})
 			self.estado="valido"
+			if(self.odometro==0):
+				raise UserError(_('Tiene que ingresas el Odometro'))
 			for o in self.ordenes:
 				if(o.sale_id.x_studio_field_bxHgp):
 					o.sale_id.x_studio_field_bxHgp.write({'stage_id':108})

@@ -1,12 +1,12 @@
 <odoo>
     <data>
-          <template id="assets_backend" inherit_id="web.assets_backend" name="Custom Module">
+        <template id="assets_backend" inherit_id="web.assets_backend" name="tree view menu">
             <xpath expr="." positio="inside">
-            <script type="text/javascript" src="/helpdesk_update/static/src/js/helpdesk_update.js"></script>
-           <link rel="shylesheet" href="/helpdesk_update/static/src/css/helpdesk_update.css" />
-
-             </xpath>
+                <link rel="stylesheet" href="/helpdesk_update/static/src/css/helpdesk_update.css" />
+                <script type="text/javascript" src="/helpdesk_update/static/src/js/helpdesk_update.js"></script>
+            </xpath>
         </template>
+        
         <!-- <template id="listing"> -->
         <!--   <ul> -->
         <!--     <li t-foreach="objects" t-as="object"> -->

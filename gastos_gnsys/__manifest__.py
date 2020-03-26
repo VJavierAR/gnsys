@@ -23,6 +23,7 @@
     'depends': [
         'mail',
         'hr'
+        
     ],
 
     # always loaded

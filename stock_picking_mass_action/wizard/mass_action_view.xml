@@ -6,13 +6,14 @@
         <field name="arch" type="xml">
             <form string="Mass Action for the selected stock picking">
                 <group>
-                    <field name="confirm"/>
-                    <field name="check_availability"/>
-                    <field name="transfer"/>
+                    <field name="confirm" invisible="1"/>
+                    <field name="check_availability" invisible="1"/>
+                    <field name="transfer" invisible="1"/>
                 </group>
                 <footer>
                     <button name="mass_action" string="Apply" type="object" class="oe_highlight"/>
-                    or
+                    <button name="vales" string="Vale" type="object" class="oe_highlight"/>
+                    <button name="etiquetas" string="Etiquetas" type="object" class="oe_highlight"/>
                     <button string="Cancel" class="oe_link" special="cancel"/>
                 </footer>
             </form>
@@ -20,17 +21,17 @@
     </record>
 
     <!-- Confirm Action -->
-    <record id="action_confirm" model="ir.actions.act_window">
+    <!--<record id="action_confirm" model="ir.actions.act_window">
         <field name="name">Mark as Todo</field>
         <field name="res_model">stock.picking.mass.action</field>
         <field name="view_type">form</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
         <field name="binding_model_id" ref="stock.model_stock_picking" />
-    </record>
+    </record>-->
 
     <!-- Check Availability Action -->
-    <record id="action_check_availability" model="ir.actions.act_window">
+    <!--<record id="action_check_availability" model="ir.actions.act_window">
         <field name="name">Check Availability</field>
         <field name="res_model">stock.picking.mass.action</field>
         <field name="view_type">form</field>
@@ -38,7 +39,7 @@
         <field name="target">new</field>
         <field name="context">{'check_availability': 1}</field>
         <field name="binding_model_id" ref="stock.model_stock_picking" />
-    </record>
+    </record>-->
 
     <!-- Transfer Action -->
     <record id="action_transfer" model="ir.actions.act_window">
@@ -51,18 +52,20 @@
         <field name="binding_model_id" ref="stock.model_stock_picking" />
     </record>
 
-<<<<<<< HEAD
-=======
 
     <record id="view_cambio_toner_action_form" model="ir.ui.view">
         <field name="model">cambio.toner</field>
         <field name="arch" type="xml">
-            <form string="xxxx">
+            <form string="Cambio">
                 <group>
                     <field name="pro_ids">
                         <tree editable="bottom">
                         <field name="producto1" readonly="1" string="Registro Original"/>
-                        <field name="producto2" string="Registro a Cambiar"/>
+                        <field name="producto2" string="Registro a Cambiar" readonly="1" invisible="1"/>
+                        <field name="almacen"/>
+                        <field name="existeciaAlmacen" readonly="1"/>                        
+                        <field name="existencia1" readonly="1"/>
+                        <field name="existencia2" readonly="1"/>
                         </tree>
                     </field>
                 </group>
@@ -74,5 +77,97 @@
             </form>
         </field>
     </record>
->>>>>>> master
+
+        <record id="view_guia_ticket" model="ir.ui.view">
+        <field name="model">guia.ticket</field>
+        <field name="arch" type="xml">
+            <form string="Guia">
+                <group>
+                    <field name="guia">
+                    </field>
+                </group>
+                <footer>
+                    <button name="confirmar" string="Confirmar" type="object" class="oe_highlight"/>
+                    or
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="view_comentario_ticket" model="ir.ui.view">
+        <field name="model">comentario.ticket</field>
+        <field name="arch" type="xml">
+            <form string="Evidencia">
+                <group>
+                    <field name="comentario"/>
+                    <field name="evidencia"/>
+                </group>
+                <footer>
+                    <button name="confirmar" string="Confirmar" type="object" class="oe_highlight"/>
+                    or
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_transferencia_interna" model="ir.ui.view">
+        <field name="model">transferencia.interna</field>
+        <field name="arch" type="xml">
+            <form string="Transferencia Interna">
+                <group>
+                    <field name="almacenOrigen"/>
+                    <field name="ubicacion" invisible="1"/>
+                    <field name="almacenDestino"/>
+                </group>
+                <notebook>
+                <page>
+                    <field name="lines" context="{'default_ubicacion': ubicacion}">
+                        <tree editable="bottom">
+                            <field name="producto"/>
+                            <field name="modelo"/>
+                            <field name="noParte"/>
+                            <field name="ubicacion" invisible="1"/>
+                            <field name="descripcion"/>
+                            <field name="disponible"/>
+                            <field name="stock" invisible="1"/>
+                            <field name="cantidad"/>
+                        </tree>
+                    </field>
+                </page>
+            </notebook>
+                <footer>
+                    <button name="confirmar" string="Confirmar" type="object" class="oe_highlight"/>
+                    or
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_picking_serie" model="ir.ui.view">
+        <field name="model">picking.serie</field>
+        <field name="arch" type="xml">
+            <form string="Serie">
+                <group>
+                        <field name="lines">
+                            <tree editable="bottom">
+                                <field name="producto" readonly="1"/>
+                                <field name="estado"/>
+                                <field name="serie"/>
+                                <field name="contadorMono"/>
+                                <field name="contadorColor"/>
+                            </tree>
+                        </field>
+                </group>
+                <footer>
+                    <button name="confirmar" string="Confirmar" type="object" class="oe_highlight"/>
+                    or
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
 </odoo>

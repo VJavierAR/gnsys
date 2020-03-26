@@ -21,8 +21,39 @@ class StockPicking(Model):
     lineasBack = fields.One2many(related='backorder_ids.move_ids_without_package')
     ruta_id=fields.Many2one('creacion.ruta')
     concentrado=fields.Char()
+    mensaje=fields.Char(compute='back')
+    sale_child=fields.Many2one('sale.order')
+    tipo=fields.Char(compute='cliente',store=True)
+    oculta=fields.Boolean(store=True)
     #documentosDistro = fields.Many2many('ir.attachment', string="Evidencias ")
     #historialTicket = fields.One2many('ir.attachment','res_id',string='Evidencias al ticket',store=True,track_visibility='onchange')
+
+
+
+
+    @api.depends('move_ids_without_package')
+    def back(self):
+        for r in self:
+            if(r.state=="assigned"):
+                i=0
+                for rrr in r.move_ids_without_package:
+                    if(rrr.product_id.categ_id.id==13):
+                        r.write({'oculta':True})
+                    rrrrr=self.env['stock.quant'].search([['product_id','=', rrr.product_id.id],['location_id','=',12]]).sorted(key='quantity',reverse=True)
+                    if(len(rrrrr)>0):
+                        i=i+1
+                if(i>0):
+                    r.mensaje="Al confirmar se generara un backorder"
+
+    @api.depends('partner_id')
+    def cliente(self):
+        for r in self:
+            if(r.partner_id):
+                if(r.partner_id.state_id):
+                    if(r.partner_id.state_id.code in 'DIF'):
+                        r.tipo='local'
+                    else:
+                        r.tipo='foraneo'
 
     @api.onchange('carrier_tracking_ref')
     def agregarNumeroGuiaATicketOSolicitud(self):
@@ -133,7 +164,6 @@ class StockPicking(Model):
         self.sudo().action_done()
         return            
     
-    
     #@api.one
     @api.depends('estado')
     def x_historial_ticket_actualiza(self):
@@ -220,31 +250,31 @@ class StockPicking(Model):
             
     def action_toggle_is_locked(self):
         self.ensure_one()
-        if(self.is_locked==True):
-            #borrado
-            if(self.sale_id):
-                self.lineTemp=[(5,0,0)]
-                dat=[]
-                for m in self.move_ids_without_package:
-                    dat.append({'producto':m.product_id.id,'cantidad':m.product_uom_qty,'ubicacion':self.location_id.id,'serieDestino':m.x_studio_serie_destino.id})
-                self.sudo().lineTemp=dat
-                for s in self.sale_id.order_line:
-                    self.env.cr.execute("delete from stock_move_line where reference='"+self.name+"';")
-                    self.env.cr.execute("delete from stock_move where origin='"+self.sale_id.name+"';")
-                    self.env.cr.execute("delete from sale_order_line where id="+str(s.id)+";")
-        if(self.is_locked==False):
-            if(self.sale_id):
-                self.env.cr.execute("update stock_picking set state='draft' where sale_id="+str(self.sale_id.id)+";")
-                self.env.cr.execute("select id from stock_picking where sale_id="+str(self.sale_id.id)+";")
-                pickis=self.env.cr.fetchall()
-                pick=self.env['stock.picking'].search([['id','in',pickis]])
-                for li in self.lineTemp:
-                    datos={'order_id':self.sale_id.id,'product_id':li.producto.id,'product_uom':li.producto.uom_id.id,'product_uom_qty':li.cantidad,'name':li.producto.description if(li.producto.description) else '/','price_unit':0.00}
-                    if(li.serieDestino):
-                        datos['x_studio_field_9nQhR']=li.serieDestino.id,
-                    ss=self.env['sale.order.line'].sudo().create(datos)
-                for p in pick:
-                    p.action_confirm()
+        # if(self.is_locked==True):
+        #     #borrado
+        #     if(self.sale_id):
+        #         self.lineTemp=[(5,0,0)]
+        #         dat=[]
+        #         for m in self.move_ids_without_package:
+        #             dat.append({'producto':m.product_id.id,'cantidad':m.product_uom_qty,'ubicacion':self.location_id.id,'serieDestino':m.x_studio_serie_destino.id})
+        #         self.sudo().lineTemp=dat
+        #         for s in self.sale_id.order_line:
+        #             self.env.cr.execute("delete from stock_move_line where reference='"+self.name+"';")
+        #             self.env.cr.execute("delete from stock_move where origin='"+self.sale_id.name+"';")
+        #             self.env.cr.execute("delete from sale_order_line where id="+str(s.id)+";")
+        # if(self.is_locked==False):
+        #     if(self.sale_id):
+        #         self.env.cr.execute("update stock_picking set state='draft' where sale_id="+str(self.sale_id.id)+";")
+        #         self.env.cr.execute("select id from stock_picking where sale_id="+str(self.sale_id.id)+";")
+        #         pickis=self.env.cr.fetchall()
+        #         pick=self.env['stock.picking'].search([['id','in',pickis]])
+        #         for li in self.lineTemp:
+        #             datos={'order_id':self.sale_id.id,'product_id':li.producto.id,'product_uom':li.producto.uom_id.id,'product_uom_qty':li.cantidad,'name':li.producto.description if(li.producto.description) else '/','price_unit':0.00}
+        #             if(li.serieDestino):
+        #                 datos['x_studio_field_9nQhR']=li.serieDestino.id,
+        #             ss=self.env['sale.order.line'].sudo().create(datos)
+        #         for p in pick:
+        #             p.action_confirm()
         self.is_locked = not self.is_locked
         return True
     
@@ -294,13 +324,13 @@ class StockPicking(Model):
         d=[]
         wiz = self.env['cambio.toner'].create({'display_name':'h','pick':self.id})
         for p in self.move_ids_without_package:
-            data={'rel_cambio':wiz.id,'producto1':p.product_id.id,'producto2':p.product_id.id}
+            data={'rel_cambio':wiz.id,'producto1':p.product_id.id,'producto2':p.product_id.id,'cantidad':p.product_uom_qty,'serie':p.x_studio_serieorderline}
             self.env['cambio.toner.line'].create(data)
             #d.append(data)
         
         view = self.env.ref('stock_picking_mass_action.view_cambio_toner_action_form')
         return {
-            'name': _('xxxx'),
+            'name': _('Cambio'),
             'type': 'ir.actions.act_window',
             'view_type': 'form',
             'view_mode': 'form',
@@ -312,6 +342,77 @@ class StockPicking(Model):
             'context': self.env.context,
         }
 
+    def guia(self):
+        wiz = self.env['guia.ticket'].create({'pick':self.id})
+        view = self.env.ref('stock_picking_mass_action.view_guia_ticket')
+        return {
+            'name': _('Guia'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'guia.ticket',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            'context': self.env.context,
+        }
+    def comentario(self):
+        wiz = self.env['comentario.ticket'].create({'pick':self.id})
+        view = self.env.ref('stock_picking_mass_action.view_comentario_ticket')
+        return {
+            'name': _('Comentario'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'comentario.ticket',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            'context': self.env.context,
+        }
+    
+    def serie(self):
+        
+
+
+        wiz = self.env['picking.serie'].create({'pick':self.id})
+        for r in self.move_ids_without_package:
+            if(r.product_id.categ_id.id==13):
+                 self.env['picking.serie.line'].create({'producto':self.product_id.id,'rel_picki_serie':wiz.id,'move_id':r.id})
+        view = self.env.ref('stock_picking_mass_action.view_picking_serie')
+        
+        return {
+            'name': _('Serie'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'picking.serie',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            'context': self.env.context,
+        }
+
+
+
+    def inter_wizard(self):
+        wiz = self.env['transferencia.interna'].create({})
+        view = self.env.ref('stock_picking_mass_action.view_transferencia_interna')
+        return {
+            'name': _('Serie'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'transferencia.interna',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            'context': self.env.context,
+        }
 
 
     # @api.depends('move_type', 'move_lines.state', 'move_lines.picking_id')
