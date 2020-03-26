@@ -144,7 +144,9 @@ class compras(models.Model):
                 self.order_line=arr
         else:
             if(self.archivo):
-                book = xlrd.open_workbook(file_contents=self.archivo or b'')
+                f2=base64.b64decode(self.archivo)
+                H=StringIO(f2)
+                book = xlrd.open_workbook(file_contents=H or b'')
                 _logger.info(str(book))
     
 class comprasLine(models.Model):
