@@ -81,13 +81,13 @@ class dcas(models.Model):
 
     
     
-    
+    """
     @api.model
     def create(self, values):                    
         c = super(dcas, self).create(values)
         _logger.info("c inicio"+str(c.tablahtml))
         _logger.info("self inicio"+str(self.tablahtml))
-        """
+    
         contaC=c.contadorColor                       
         cac=c.contadorAnteriorColor
         contadorM=c.contadorMono
@@ -115,7 +115,7 @@ class dcas(models.Model):
            c.renA=round(c.paginasProcesadasA*100/int(a),2)
         if m:
            c.renM=round(c.paginasProcesadasM*100/int(m),2)
-        """   
+           
         if c.serie:
            style="<html><head><style>table, th, td {border: 1px solid black;border-collapse: collapse;}th, td {padding: 5px;text-align: left;}</style></head><body>"           
            cabecera="<table ><tr><th></th><th>Monocormatico  </th><th> Cian </th><th> Amarillo </th><th> Magenta </th></tr><tr><tr><td></td></tr>"
@@ -137,6 +137,7 @@ class dcas(models.Model):
            _logger.info("c final"+str(c.tablahtml))
            _logger.info("self final "+str(self.tablahtml))                                      
         return c
+    """
     
     
     
