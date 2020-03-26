@@ -2,7 +2,6 @@
 from odoo import models, fields, api
 import base64,io,csv
 import logging, ast
-import pytz
 from odoo.exceptions import UserError
 from odoo import exceptions, _
 from datetime import datetime
@@ -60,7 +59,7 @@ class dcas(models.Model):
     paginasProcesadasC=fields.Integer(string='Páginas procesadas Cian')
     paginasProcesadasA=fields.Integer(string='Páginas procesadas Amarillo')
     paginasProcesadasM=fields.Integer(string='Páginas procesadas Magenta')
-    x_studio_fecha = fields.Datetime(string='Fecha',default=lambda self: fields.datetime.now(pytz.timezone('America/Mexico_City')))
+    x_studio_fecha = fields.Datetime(string='Fecha',default=lambda self: fields.datetime.now())
     renC=fields.Float(string='Rendimiento Cian')
     renA=fields.Float(string='Rendimiento Amarillo')
     renM=fields.Float(string='Rendimiento Magenta')
