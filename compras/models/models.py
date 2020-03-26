@@ -147,15 +147,20 @@ class compras(models.Model):
             if(self.archivo):
                 f2=base64.b64decode(self.archivo)
                 H=StringIO(f2)
-                book = xlrd.open_workbook(file_contents=f2 or b'')
                 mimetype = guess_mimetype(f2 or b'')
                 _logger.info(str(mimetype))
-                sheet = book.sheet_by_index(0)
-                # emulate Sheet.get_rows for pre-0.9.4
-                for row in pycompat.imap(sheet.row, range(sheet.nrows)):
-                    values = []
-                    for cell in row:
-                        _logger.info(str(cell))
+                if(mimetype=='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'):
+                    book = xlrd.open_workbook(file_contents=f2 or b'')
+                    sheet = book.sheet_by_index(0)
+                    header=[]
+                    for row_num, row in enumerate(sheet.get_rows()):
+                        #  print(row)  # Print out the header
+                        header.append(str(row))
+                    # emulate Sheet.get_rows for pre-0.9.4
+                    #for row in pycompat.imap(sheet.row, range(sheet.nrows)):
+                    #    values = []
+                    #    for cell in row:
+                    _logger.info(str(header))
 
 
             
