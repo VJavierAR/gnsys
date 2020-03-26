@@ -2113,8 +2113,9 @@ class helpdesk_update(models.Model):
                 """
                 #raise exceptions.ValidationError("No es posible registrar número de serie, primero cerrar el ticket con el id  "+str(informacion[0][0]))
         if len(self.x_studio_equipo_por_nmero_de_serie_1) > 0 and self.team_id.id == 8:
-            if len(self.x_studio_equipo_por_nmero_de_serie_1) > 1 and self.x_studio_equipo_por_nmero_de_serie_1[0].ultimaUbicacion != self.x_studio_equipo_por_nmero_de_serie_1[1].ultimaUbicacion:
-               raise exceptions.ValidationError(str(self.x_studio_equipo_por_nmero_de_serie_1[0].ultimaUbicacion)+' vs '+self.x_studio_equipo_por_nmero_de_serie_1[1].ultimaUbicacion)
+            if len(self.x_studio_equipo_por_nmero_de_serie_1) > 1:
+                if self.x_studio_equipo_por_nmero_de_serie_1[0].ultimaUbicacion != self.x_studio_equipo_por_nmero_de_serie_1[1].ultimaUbicacion:
+                   raise exceptions.ValidationError("Eror "+str(self.x_studio_equipo_por_nmero_de_serie_1[0].ultimaUbicacion)+' vs '+self.x_studio_equipo_por_nmero_de_serie_1[1].ultimaUbicacion)
             
             queryt="select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!="+str(self.x_studio_id_ticket)+"  and h.stage_id!=18 and h.team_id=8 and  h.active='t' and stock_production_lot_id = "+str(self.x_studio_equipo_por_nmero_de_serie_1[0].serie.id)+" limit 1;"            
             
