@@ -146,7 +146,7 @@ class compras(models.Model):
             if(self.archivo):
                 f2=base64.b64decode(self.archivo)
                 H=StringIO(f2)
-                book = xlrd.open_workbook(file_contents=H or b'')
+                book = xlrd.open_workbook(file_contents=f2 or b'')
                 _logger.info(str(book))
     
 class comprasLine(models.Model):
