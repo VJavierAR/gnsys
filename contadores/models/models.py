@@ -84,10 +84,10 @@ class dcas(models.Model):
         contaC=c.contadorColor                       
         cac=c.contadorAnteriorColor
         contadorM=c.contadorMono
-        c.paginasProcesadasC=contaC-self.contadorAnteriorCian
-        c.paginasProcesadasA=contaC-self.contadorAnteriorAmarillo
-        c.paginasProcesadasM=contaC-self.contadorAnteriorMagenta
-        c.paginasProcesadasBN=contadorM-self.contadorAnteriorNegro            
+        c.paginasProcesadasC=contaC-c.contadorAnteriorCian
+        c.paginasProcesadasA=contaC-.contadorAnteriorAmarillo
+        c.paginasProcesadasM=contaC-c.contadorAnteriorMagenta
+        c.paginasProcesadasBN=contadorM-c.contadorAnteriorNegro            
         cc=c.x_studio_rendimientoc
         a=c.x_studio_rendimientoa
         m=c.x_studio_rendimientom
@@ -121,7 +121,8 @@ class dcas(models.Model):
            c.tablahtml=cabecera+ticket+ultimosContadores+fechas+paginasProcesadas+rendimientos+niveles+cierre
            self.env.cr.execute("update dcas_dcas set tablahtml = '"+c.tablahtml+"' where  id = " + str(c.id) + ";")
            self.env.cr.execute("update dcas_dcas set x_studio_ultima_ubicacin = '"+str(c.x_studio_ultima_ubicacin)+"' where  id = " + str(c.id) + ";")
-           self.env.cr.execute("update dcas_dcas set x_studio_color_o_bn = '"+str(c.x_studio_color_o_bn)+"' where  id = " + str(c.id) + ";") 
+           self.env.cr.execute("update dcas_dcas set x_studio_color_o_bn = '"+str(c.x_studio_color_o_bn)+"' where  id = " + str(c.id) + ";")
+           
                
         #raise exceptions.ValidationError("Contador id"+str(c.id)+str(c.tablahtml))
         
