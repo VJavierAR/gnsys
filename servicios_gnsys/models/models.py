@@ -147,6 +147,9 @@ class contratos(models.Model):
     #Valores para impresión de factura
     valoresImpresion   = fields.One2many('servicios.valores', 'servicio', string = "Valores para impresión de factura",track_visibility='onchange')
     #razonPrueba  = fields.Many2one('contactos', string="Contactos")
+
+    pago    = fields.Selection(string="Pago",track_visibility='onchange')
+
     @api.onchange('cliente')
     def cambiarRazonSocial(self):
         valores = [('0', 'DOCUMENTO INTEGRAL CORPORATIVO, SA DE CV'), ('1', 'GN SYS CORPORATIVO S.A. DE C.V.'),
