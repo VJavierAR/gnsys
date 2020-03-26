@@ -81,6 +81,9 @@ class dcas(models.Model):
     @api.model
     def create(self, values):                    
         c = super(dcas, self).create(values)
+        _logger.info("c "+str(c.tablahtml))
+        _logger.info("self "+str(self.tablahtml))
+        
         contaC=c.contadorColor                       
         cac=c.contadorAnteriorColor
         contadorM=c.contadorMono
@@ -119,10 +122,13 @@ class dcas(models.Model):
            niveles='<tr><td> Último nivel </td> <td>'+str(c.nivelNA)+'</td> <td>'+str(c.nivelCA)+'</td> <td>'+ str(c.nivelAA)+' </td> <td>'+str(c.nivelMA)+'</td></tr>'           
            cierre="</table></body></html> "
            c.tablahtml=cabecera+ticket+ultimosContadores+fechas+paginasProcesadas+rendimientos+niveles+cierre
+            
            self.env.cr.execute("update dcas_dcas set tablahtml = '"+c.tablahtml+"' where  id = " + str(c.id) + ";")
            self.env.cr.execute("update dcas_dcas set x_studio_ultima_ubicacin = '"+str(c.x_studio_ultima_ubicacin)+"' where  id = " + str(c.id) + ";")
            self.env.cr.execute("update dcas_dcas set x_studio_color_o_bn = '"+str(c.x_studio_color_o_bn)+"' where  id = " + str(c.id) + ";")
-           
+           _logger.info("c "+str(c.tablahtml))
+           _logger.info("self "+str(self.tablahtml))
+
                
         #raise exceptions.ValidationError("Contador id"+str(c.id)+str(c.tablahtml))
         
