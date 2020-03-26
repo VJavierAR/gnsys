@@ -74,6 +74,7 @@ class dcas(models.Model):
     tM=fields.Char(string='Ticket Magenta')
     
     
+    
 
     
     
@@ -124,9 +125,11 @@ class dcas(models.Model):
            cierre="</table></body></html> "
            c.tablahtml=cabecera+ticket+ultimosContadores+fechas+paginasProcesadas+rendimientos+niveles+cierre
            _logger.info("self final antes  "+str(self.tablahtml)) 
-           self.env.cr.execute("update dcas_dcas set tablahtml = '"+c.tablahtml+"' where  id = " + str(c.id) + ";")
            self.env.cr.execute("update dcas_dcas set x_studio_ultima_ubicacin = '"+str(c.x_studio_ultima_ubicacin)+"' where  id = " + str(c.id) + ";")
-           self.env.cr.execute("update dcas_dcas set x_studio_color_o_bn = '"+str(c.x_studio_color_o_bn)+"' where  id = " + str(c.id) + ";")
+           _logger.info("c color"+str(c.x_studio_color_o_bn)) 
+           _logger.info("c negro anterior"+str(c.contadorAnteriorNegro)) 
+           self.env.cr.execute("update dcas_dcas set x_studio_color_o_bn = '"+str(c.x_studio_color_o_bn)+"' where  id = " + str(c.id) + ";")           
+           self.env.cr.execute("update dcas_dcas set tablahtml = '"+c.tablahtml+"' where  id = " + str(c.id) + ";")
            _logger.info("c final"+str(c.tablahtml))
            _logger.info("self final "+str(self.tablahtml))
 
