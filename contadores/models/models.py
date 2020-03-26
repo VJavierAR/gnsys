@@ -85,7 +85,7 @@ class dcas(models.Model):
         cac=c.contadorAnteriorColor
         contadorM=c.contadorMono
         c.paginasProcesadasC=contaC-c.contadorAnteriorCian
-        c.paginasProcesadasA=contaC-.contadorAnteriorAmarillo
+        c.paginasProcesadasA=contaC-c.contadorAnteriorAmarillo
         c.paginasProcesadasM=contaC-c.contadorAnteriorMagenta
         c.paginasProcesadasBN=contadorM-c.contadorAnteriorNegro            
         cc=c.x_studio_rendimientoc
