@@ -72,6 +72,9 @@ class dcas(models.Model):
     tA=fields.Char(string='Ticket Amarillo')
     tC=fields.Char(string='Ticket Cian')
     tM=fields.Char(string='Ticket Magenta')
+    colorEquipo=fields.Char(string='Color o Bn')
+    equipo=fields.Char(string='Equipo')
+    ultimaUbicacion=fields.Char(string='Ultima ubicación')
     
     
     
@@ -150,8 +153,9 @@ class dcas(models.Model):
         
         if self.serie :
             bn_c=self.env['stock.production.lot'].search([['id','=',self.serie.id]])        
-            self.x_studio_color_o_bn=bn_c.x_studio_color_bn
-            self.x_studio_ultima_ubicacin=bn_c.x_studio_ultima_ubicacin
+            self.colorEquipo=bn_c.x_studio_color_bn
+            self.ultimaUbicacion=bn_c.x_studio_ultima_ubicacin
+            self.equipo=bn_c.product_id.name
             n=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeNegro','=',1]],order='x_studio_fecha desc',limit=1)
             self.fechaN=n.x_studio_fecha
             self.nivelNA=n.x_studio_toner_negro
