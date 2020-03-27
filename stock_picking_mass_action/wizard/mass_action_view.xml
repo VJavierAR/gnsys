@@ -100,7 +100,7 @@
             <form string="Evidencia">
                 <group>
                     <field name="comentario"/>
-                    <field name="evidencia"/>
+                    <field name="evidencia" attrs="{'invisible': [('ruta_id', '!=', False)]}"/>
                 </group>
                 <footer>
                     <button name="confirmar" string="Confirmar" type="object" class="oe_highlight"/>

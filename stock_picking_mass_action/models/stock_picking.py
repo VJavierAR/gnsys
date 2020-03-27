@@ -31,6 +31,20 @@ class StockPicking(Model):
     def devolver(self):
         if(self.ruta_id):
             self.ruta_id=False
+            wiz = self.env['comentario.ticket'].create({'pick':self.id})
+            view = self.env.ref('stock_picking_mass_action.view_comentario_ticket')
+            return {
+                'name': _('Comentario'),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'comentario.ticket',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'res_id': wiz.id,
+                'context': self.env.context,
+            }
 
 
 

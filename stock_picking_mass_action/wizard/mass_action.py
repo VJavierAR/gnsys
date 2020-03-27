@@ -238,12 +238,20 @@ class ComemtarioTicket(TransientModel):
     pick=fields.Many2one('stock.picking')
 
     def confirmar(self):
-        self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.pick.sale_id.x_studio_field_bxHgp.ticket_id.id
+        if(ruta==False):
+            pick.x_studio_evidencia_a_ticket=self.evidencia
+            pick.x_studio_comentario_1=self.comentario
+            self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : record.sale_id.x_studio_field_bxHgp.id, 'create_uid' : env.user.id, 'estadoTicket' : "Devuelto a Distribución", 'comentario':self.comentario}) 
+        else:
+            pick.x_studio_evidencia_a_ticket=self.evidencia
+            pick.x_studio_comentario_1=self.comentario
+            self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.pick.sale_id.x_studio_field_bxHgp.id
                                         ,'comentario': self.comentario
-                                        ,'estadoTicket': self.pick.sale_id.x_studio_field_bxHgp.ticket_id.stage_id.name
+                                        ,'estadoTicket': self.pick.sale_id.x_studio_field_bxHgp.stage_id.name
                                         ,'evidencia': [(4,self.evidencia)]
                                         ,'mostrarComentario': False
                                         })
+
 class TransferInter(TransientModel):
     _name='transferencia.interna'
     _description='Transferencia Interna'    
