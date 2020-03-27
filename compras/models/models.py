@@ -156,7 +156,7 @@ class compras(models.Model):
                     for row_num, row in enumerate(sheet.get_rows()):
                         for cell in row:
                         #  print(row)  # Print out the header
-                            if(cell.ctype!=None):
+                            if(cell.value!=None):
                                 header.append(str(cell.value))
                         # emulate Sheet.get_rows for pre-0.9.4
                         #for row in pycompat.imap(sheet.row, range(sheet.nrows)):
