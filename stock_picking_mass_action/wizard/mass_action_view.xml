@@ -17,7 +17,7 @@
                                 <field name="name" invisible="1" readonly="1" attrs="{'invisible':[['picking_type_id','=',29314]]}"/>
                                 <field name="x_studio_ticket" string="Ticket" readonly="1" attrs="{'invisible':[['picking_type_id','=',29314]]}"/>
                                 <field name="origin" string="Orden" readonly="1" attrs="{'invisible':[['picking_type_id','=',29314]]}"/>
-                                <field name="partner_id" readonly="1"/ attrs="{'invisible':[['picking_type_id','=',29314]]}">
+                                <field name="partner_id" readonly="1" attrs="{'invisible':[['picking_type_id','=',29314]]}"/>
                                 <field name="scheduled_date" readonly="1" attrs="{'invisible':[['picking_type_id','=',29314]]}"/>
                                 <field name="x_studio_toneres" widget="html" string="productos" readonly="1" attrs="{'invisible':[['picking_type_id','=',29314]]}"/>
                                 <field name="x_studio_tecnico"  domain="['|',['job_id.name','=','TÉCNICO '],['job_id.name','=','SOFTWARE']]" attrs="{'invisible':[['picking_type_id','=',29314]]}"/>
