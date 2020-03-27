@@ -156,7 +156,7 @@ class compras(models.Model):
                     for row_num, row in enumerate(sheet.get_rows()):
                         _logger.info(str(row[0].value))
                         _logger.info(str(self.partner_id.name))
-                        _logger.info(str(row[0].value in self.partner_id.name and row[0].value!=None))
+                        _logger.info(str(row[0].value in self.partner_id.name.replace(' ','') and row[0].value!=None))
 
 
                         if(row[0].value in self.partner_id.name):
