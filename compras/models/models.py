@@ -154,11 +154,13 @@ class compras(models.Model):
                     sheet = book.sheet_by_index(0)
                     header=[]
                     for row_num, row in enumerate(sheet.get_rows()):
+                        for cell in row:
                         #  print(row)  # Print out the header
-                        header.append(str(row))
-                    # emulate Sheet.get_rows for pre-0.9.4
-                    #for row in pycompat.imap(sheet.row, range(sheet.nrows)):
-                    #    values = []
+                            if(cell.ctype!='empty'):
+                                header.append(str(cell.value))
+                        # emulate Sheet.get_rows for pre-0.9.4
+                        #for row in pycompat.imap(sheet.row, range(sheet.nrows)):
+                        #    values = []
                     #    for cell in row:
                     _logger.info(str(header))
 
