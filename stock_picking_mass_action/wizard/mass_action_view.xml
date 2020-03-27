@@ -11,11 +11,11 @@
                     <field name="transfer" invisible="1"/>
                     <field name="check" invisible="1"/>
                     <field name="tecnico" invisible="1"  domain="['|',['job_id.name','=','TÉCNICO '],['job_id.name','=','SOFTWARE']]"   attrs="{'invisible':[['check','=',1]]}"/>
-                    <field name="picking_ids" >
+                    <field name="picking_ids" attrs="{'invisible':[['picking_type_id','=',29314]]}">
                         <tree editable="bottom">
                                 <field name="id" invisible="1" readonly="1" attrs="{'invisible':[['picking_type_id','=',29314]]}"/>
                                 <field name="name" invisible="1" readonly="1" attrs="{'invisible':[['picking_type_id','=',29314]]}"/>
-                                <field name="x_studio_ticket" string="Ticket" readonly="1" attrs="{'invisible':[['picking_type_id','=',29314]]}"/>
+                                <!--<field name="x_studio_ticket" string="Ticket" readonly="1" attrs="{'invisible':[['picking_type_id','=',29314]]}"/>-->
                                 <field name="origin" string="Orden" readonly="1" attrs="{'invisible':[['picking_type_id','=',29314]]}"/>
                                 <field name="partner_id" readonly="1" attrs="{'invisible':[['picking_type_id','=',29314]]}"/>
                                 <field name="scheduled_date" readonly="1" attrs="{'invisible':[['picking_type_id','=',29314]]}"/>
