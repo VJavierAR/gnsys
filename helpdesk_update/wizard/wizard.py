@@ -532,13 +532,16 @@ class helpdesk_crearconserie(TransientModel):
             query = "select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!=" + str(ticket.x_studio_id_ticket) + "  and h.stage_id!=18 and h.team_id!=8 and  h.active='t' and stock_production_lot_id = " +  str(ticket.x_studio_equipo_por_nmero_de_serie[0].id) + " limit 1;"            
             self.env.cr.execute(query)                        
             informacion = self.env.cr.fetchall()
+            wiz = ''
             if len(informacion) > 0:
                 messageTemp = ('Se creo un ticket que esta en proceso con la serie "' + self.serie.name +'" seleccionada. \n Ticket existente: ' + str(informacion[0][0]) + '\n ')
-
+                wiz = self.env['helpdesk.alerta.series'].create({'ticket_id': ticket.id, 'ticket_id_existente': informacion[0][0], 'mensaje': mensajeCuerpo})
+            else:
+                wiz = self.env['helpdesk.alerta.series'].create({'ticket_id': ticket.id, 'mensaje': mensajeCuerpo})
             mensajeTitulo = "Ticket generado!!!"
             mensajeCuerpo = "Se creo el ticket '" + str(ticket.id) + "' con el número de serie " + self.serie.name + "\n\n" + messageTemp
-            
-            wiz = self.env['helpdesk.alerta.series'].create({'ticket_id': ticket.id, 'ticket_id_existente': informacion[0][0], 'mensaje': mensajeCuerpo})
+
+            #wiz = self.env['helpdesk.alerta.series'].create({'ticket_id': ticket.id, 'mensaje': mensajeCuerpo})
             view = self.env.ref('helpdesk_update.view_helpdesk_alerta_series')
             return {
                     'name': _(mensajeTitulo),
