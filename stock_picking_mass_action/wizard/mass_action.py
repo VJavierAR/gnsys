@@ -47,6 +47,7 @@ class StockPickingMassAction(TransientModel):
         default=lambda self: self._default_picking_ids(),
         help="",
     )
+    check=fields.Integer()
 
     @api.multi
     def mass_action(self):
@@ -81,8 +82,11 @@ class StockPickingMassAction(TransientModel):
             CON=str(self.env['ir.sequence'].next_by_code('concentrado'))
             for l in assigned_picking_lst:
                 if(l.picking_type_id.id==3):
+                    self.check=2
                     #l.sudo().write({'concentrado':CON})
                     self.env['stock.picking'].search([['sale_id','=',l.sale_id.id]]).write({'concentrado':CON})
+                if(l.picking_type_id.id==29314):
+                    self.check=1
             pick_to_backorder = self.env['stock.picking']
             pick_to_do = self.env['stock.picking']
             for picking in assigned_picking_lst:
