@@ -178,7 +178,7 @@ class StockCambio(TransientModel):
                             self.env['stock.move'].search([['sale_id','=',self.pick.sale_id.id],['product_id','=',d[0]['producto2']['id']]]).write({'location_id':d[0]['almacen']['lot_stock_id']['id']})
                     else:
                         if(d[0]['almacen']['id']):
-                            self.env['stock.move'].search([['sale_id','=',self.pick.sale_id.id],['product_id','=',d[0]['producto2']['id']]]).write({'location_id':d[0]['almacen']['lot_stock_id']['id']})
+                            self.env['stock.move'].search([['origin','=',str(self.pick.sale_id.name)],['product_id','=',d[0]['producto2']['id']]]).write({'location_id':d[0]['almacen']['lot_stock_id']['id']})
             self.pick.action_confirm()
             self.pick.action_assign()
             """
