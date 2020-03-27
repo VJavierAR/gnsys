@@ -207,6 +207,7 @@ class StockCambioLine(TransientModel):
     existencia1=fields.Integer(compute='nuevo',string='Existencia Nuevo')
     existencia2=fields.Integer(compute='nuevo',string='Existencia Usado')
     existeciaAlmacen=fields.Integer(compute='almac',string='Existencia de Almacen seleccionado')
+    tipo=fields.Integer()
     
     @api.depends('producto1')
     def nuevo(self):
