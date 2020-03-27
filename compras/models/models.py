@@ -154,7 +154,7 @@ class compras(models.Model):
                     sheet = book.sheet_by_index(0)
                     header=[]
                     for row_num, row in enumerate(sheet.get_rows()):
-                        _logger.info(str(row[0].ctype)=='empty')
+                        _logger.info(str(row[0].ctype))
                         _logger.info(str(self.partner_id.name))
                         _logger.info(str(row[0].value in self.partner_id.name.replace(' ','') and row[0].value!=None))
 
