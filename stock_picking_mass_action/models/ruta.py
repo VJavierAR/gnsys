@@ -10,7 +10,7 @@ class CreacionRuta(Model):
 	name=fields.Char()
 	chofer=fields.Many2one('hr.employee')
 	vehiculo=fields.Many2one('automovil')
-	ordenes=fields.Many2many('stock.picking')
+	ordenes=fields.One2many('stock.picking','ruta_id')
 	zona=fields.Selection([["SUR","SUR"],["NORTE","NORTE"],["PONIENTE","PONIENTE"],["ORIENTE","ORIENTE"],["CENTRO","CENTRO"],["DISTRIBUIDOR","DISTRIBUIDOR"],["MONTERREY","MONTERREY"],["CUERNAVACA","CUERNAVACA"],["GUADALAJARA","GUADALAJARA"],["QUERETARO","QUERETARO"],["CANCUN","CANCUN"],["VERACRUZ","VERACRUZ"],["PUEBLA","PUEBLA"],["TOLUCA","TOLUCA"],["LEON","LEON"],["COMODIN","COMODIN"],["VILLAHERMOSA","VILLAHERMOSA"],["MERIDA","MERIDA"],["VERACRUZ","VERACRUZ"],["ALTAMIRA","ALTAMIRA"]])
 	estado=fields.Selection([["borrador","Borrador"],["valido","Confirmado"]])
 	odometro=fields.Integer()
