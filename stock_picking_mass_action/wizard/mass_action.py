@@ -162,7 +162,7 @@ class StockCambio(TransientModel):
             dt=[]
             al=[]
             for sa in self.pick.move_ids_without_package:
-                d=list(filter(lambda x:x['producto1']==sa.product_id.id,self.pro_ids))
+                d=list(filter(lambda x:x['producto1']['id']==sa.product_id.id,self.pro_ids))
                 if(d!=[]):
                     if(sa.product_id.id!=d[0]['producto2']['id']):
                         self.env.cr.execute("delete from stock_move_line where reference='"+self.pick.name+"' and product_id="+str(sa.product_id.id)+";")
