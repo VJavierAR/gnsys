@@ -245,7 +245,7 @@ class ComemtarioTicket(TransientModel):
     ruta=fields.Integer(related='pick.ruta_id.id')
 
     def confirmar(self):
-        if(ruta==False):
+        if(self.ruta==False):
             pick.x_studio_evidencia_a_ticket=self.evidencia
             pick.x_studio_comentario_1=self.comentario
             self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : record.sale_id.x_studio_field_bxHgp.id, 'create_uid' : env.user.id, 'estadoTicket' : "Devuelto a Distribución", 'comentario':self.comentario}) 
