@@ -155,7 +155,7 @@ class compras(models.Model):
                     header=[]
                     for row_num, row in enumerate(sheet.get_rows()):
                         if(row[0].value in self.partner_id.name):
-                            header.append(str(cell.value))
+                            header.append(str(row))
                         #for cell in row:
                         #  print(row)  # Print out the header
                             #if(cell.value!=None or cell.value!=''):
