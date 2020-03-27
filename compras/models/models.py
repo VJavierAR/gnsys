@@ -154,10 +154,12 @@ class compras(models.Model):
                     sheet = book.sheet_by_index(0)
                     header=[]
                     for row_num, row in enumerate(sheet.get_rows()):
-                        for cell in row:
+                        if(row[0] in self.partner_id.name):
+                            header.append(str(cell.value))
+                        #for cell in row:
                         #  print(row)  # Print out the header
-                            if(cell.value!=None or cell.value!=''):
-                                header.append(str(cell.value))
+                            #if(cell.value!=None or cell.value!=''):
+                                
                         # emulate Sheet.get_rows for pre-0.9.4
                         #for row in pycompat.imap(sheet.row, range(sheet.nrows)):
                         #    values = []
