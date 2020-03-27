@@ -13,7 +13,7 @@ class servicios_gnsys(models.Model):
     _inherit = 'mail.thread'
     _description = 'Servicios GNSYS'
     
-
+    
     productos = fields.One2many('product.product', 'servicio', string="Productos")
     fechaDeInicioDeServicio = fields.Datetime(string = 'Fecha de inicio de servicio',track_visibility='onchange')
     fechaDeFinDeServicio = fields.Datetime(string = 'Fecha de finalización de servicio',track_visibility='onchange')
@@ -49,6 +49,10 @@ class servicios_gnsys(models.Model):
     diaCorte = fields.Integer(string="Día de corte",default='28',track_visibility='onchange')
     renta = fields.Selection([('0','82121503 Impresión digital') ,('1','82121500 Impresión') ,('2','43212105 Impresoras láser') ,('3','44103105 Cartuchos de tinta') ,('4','80161801 Servicio de alquiler o leasing de fotocopiadoras') ,('5','81101707 Mantenimiento de equipos de impresión') ,('6','82121701 Servicios de copias en blanco y negro o de cotejo') ,('7','82121702 Servicios de copias a color o de cotejo') ,('8','44103103 Tóner para impresoras o fax') ,('9','44101700 Accesorios para impresoras, fotocopiadoras y aparatos de fax') ,('10','81161800 Servicios de alquiler o arrendamiento de equipos o plataformas de voz y datos o multimedia') ,('11','44101503 Máquinas multifuncionales') ,('12','80111616 Personal temporal de servicio al cliente') ,('13','93151507 Procedimientos o servicios administrativos') ,('14','84111506 Servicios de facturación') ,('15','81112005 Servicio de escaneo de documentos') ,('16','44103125 Kit de mantenimiento de impresoras') ,('17','81111811 Servicios de soporte técnico o de mesa de ayuda') ,('18','81112306 Mantenimiento de impresoras') ,('19','43233410 Software de controladores de impresoras') ,('20','80161800 Servicios de alquiler o arrendamiento de equipo de oficina') ,('21','25101503 Carros') ,('22','82121700 Fotocopiado')], string = "Código SAT",track_visibility='onchange')
     impresiones = fields.Selection([('0','82121503 Impresión digital') ,('1','82121500 Impresión') ,('2','43212105 Impresoras láser') ,('3','44103105 Cartuchos de tinta') ,('4','80161801 Servicio de alquiler o leasing de fotocopiadoras') ,('5','81101707 Mantenimiento de equipos de impresión') ,('6','82121701 Servicios de copias en blanco y negro o de cotejo') ,('7','82121702 Servicios de copias a color o de cotejo') ,('8','44103103 Tóner para impresoras o fax') ,('9','44101700 Accesorios para impresoras, fotocopiadoras y aparatos de fax') ,('10','81161800 Servicios de alquiler o arrendamiento de equipos o plataformas de voz y datos o multimedia') ,('11','44101503 Máquinas multifuncionales') ,('12','80111616 Personal temporal de servicio al cliente') ,('13','93151507 Procedimientos o servicios administrativos') ,('14','84111506 Servicios de facturación') ,('15','81112005 Servicio de escaneo de documentos') ,('16','44103125 Kit de mantenimiento de impresoras') ,('17','81111811 Servicios de soporte técnico o de mesa de ayuda') ,('18','81112306 Mantenimiento de impresoras') ,('19','43233410 Software de controladores de impresoras') ,('20','80161800 Servicios de alquiler o arrendamiento de equipo de oficina') ,('21','25101503 Carros') ,('22','82121700 Fotocopiado')], string = "Unidad SAT",track_visibility='onchange')
+
+
+    activo = fields.Boolean(string="Activo", default=False)
+
 
     @api.multi
     def crear_solicitud_arrendamineto(self):
@@ -135,8 +139,6 @@ class contratos(models.Model):
     usoCFDI = fields.Selection([('12','D01 Honorarios médicos, dentales y gastos hospitalarios.') ,('13','D02 Gastos médicos por incapacidad o discapacidad') ,('14','D03 Gastos funerales.') ,('15','D04 Donativos.') ,('16','D05 Intereses reales efectivamente pagados por créditos hipotecarios (casa habitación).') ,('17','D06 Aportaciones voluntarias al SAR.') ,('18','D07 Primas por seguros de gastos médicos.') ,('19','D08 Gastos de transportación escolar obligatoria.') ,('20','D09 Depósitos en cuentas para el ahorro, primas que tengan como base planes de pensiones.') ,('21','D10 Pagos por servicios educativos (colegiaturas)') ,('1','G01 Adquisición de mercancias') ,('2','G02 Devoluciones, descuentos o bonificaciones') ,('3','G03 Gastos en general') ,('4','I01 Construcciones') ,('5','I02 Mobilario y equipo de oficina por inversiones') ,('6','I03 Equipo de transporte') ,('7','I04 Equipo de computo y accesorios') ,('8','I05 Dados, troqueles, moldes, matrices y herramental') ,('9','I06 Comunicaciones telefónicas') ,('10','I07 Comunicaciones satelitales') ,('11','I08 Otra maquinaria y equipo') ,('22','P01 Por definir')], string = "Uso CFDI",track_visibility='onchange')
 
     diasCredito = fields.Integer(string="Días de crédito",track_visibility='onchange')
-    limbo  = fields.Boolean(string="Limbo", default=False)
-    activo = fields.Boolean(string="Activo", default=False)
     #Dirección Fiscal
     
     direccion     = fields.Text(string="Dirección",track_visibility='onchange')
