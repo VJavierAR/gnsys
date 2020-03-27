@@ -197,8 +197,8 @@ class StockCambio(TransientModel):
                         l=self.env['stock.production.lot'].search([['name','=',li.serie]])
                         datos={'x_studio_field_9nQhR':l.id,'order_id':self.pick.sale_id.id,'product_id':li.producto2.id,'product_uom':li.producto2.uom_id.id,'product_uom_qty':li.cantidad,'name':li.producto2.description if(li.producto2.description) else '/','price_unit':0.00}
                         ss=self.env['sale.order.line'].sudo().create(datos)
-            """
-                """for p1 in self.pick.move_ids_without_package:
+            
+            for p1 in self.pick.move_ids_without_package:
                     if(i>0):
                     else:
                         if()
@@ -207,7 +207,7 @@ class StockCambio(TransientModel):
                             alm2=list(filter(lambda x:x['producto']==p1.product_id.id,al))
                             if(alm2!=[]):
                                 p1.write({'location_id':alm2[0]['almacen']})
-                """
+            """
 
 
 
