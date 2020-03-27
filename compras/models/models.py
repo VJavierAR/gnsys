@@ -154,12 +154,12 @@ class compras(models.Model):
                     sheet = book.sheet_by_index(0)
                     header=[]
                     for row_num, row in enumerate(sheet.get_rows()):
-                        _logger.info(str(row[0].ctype))
-                        _logger.info(str(self.partner_id.name))
-                        _logger.info(str(row[0].value))
+                        #_logger.info()
+                        #_logger.info(str(self.partner_id.name))
+                        #_logger.info(str(row[0].value))
 
 
-                        if(row[0].value in self.partner_id.name):
+                        if(row[0].value in self.partner_id.name and str(row[0].ctype)!='0'):
                             header.append(str(row))
                         #for cell in row:
                         #  print(row)  # Print out the header
