@@ -65,7 +65,8 @@
                     <field name="pro_ids">
                         <tree editable="bottom">
                         <field name="producto1" readonly="1" string="Registro Original"/>
-                        <field name="producto2" string="Registro a Cambiar"  attrs="{'invisible':[['tipo','=',3]]}"/>
+                        <field name="tipo" invisible="1"/>
+                        <field name="producto2" string="Registro a Cambiar"  attrs="{'invisible':[['tipo','!=',3]]}"/>
                         <field name="almacen"/>
                         <field name="existeciaAlmacen" readonly="1"/>                        
                         <field name="existencia1" readonly="1"/>
