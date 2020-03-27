@@ -115,7 +115,7 @@ class contratos(models.Model):
     periodicidad = fields.Selection([('MENSUAL','Mensual'),('BIMESTRAL','Bimestral'),('TRIMESTRAL','Trimestral'),('CUATRIMESTRAL','Cuatrimestral'),('SEMESTRAL','Semestral'),('ANUAL','Anual'),('CONTRATO','Contrato')], default='BIMESTRAL', string="Periodicidad")
     idTechraRef = fields.Integer(string="ID techra ref")
 
-    adjuntos = fields.Selection([('CONTRATO DEBIDAMENTE REQUISITADO Y FIRMADO','Contrato debidamente requisitado y firmado'),('CARTA DE INTENCION','Carta de intención')], default='CONTRATO DEBIDAMENTE REQUISITADO Y FIRMADO', string="Se adjunta")
+    adjuntos = fields.Selection([("APODERADO_LEGAL_ID","Id de apoderado legal"),("CONSTANCIA_SAT","constancia del SAT"),("ACTACONSTITUTIVA","Acta constitutiva"),("CONTRATO","Contrato"),('CONTRATO DEBIDAMENTE REQUISITADO Y FIRMADO','Contrato debidamente requisitado y firmado'),('CARTA DE INTENCION','Carta de intención')], default='CONTRATO DEBIDAMENTE REQUISITADO Y FIRMADO', string="Se adjunta")
     documentacion = fields.Many2many('ir.attachment', string="Documentación")
 
     #------------------------------------------------------------------------------------------
