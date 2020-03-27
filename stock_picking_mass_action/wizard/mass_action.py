@@ -161,6 +161,26 @@ class StockCambio(TransientModel):
             self.pick.backorder=''
             dt=[]
             al=[]
+            for sa in self.pick.move_ids_without_package:
+                d=list(filter(lambda x:x['producto1']==sa.product_id.id,pro_ids))
+                if(sa.product_id.id!=d[0]['producto2']['id']):
+                    self.env.cr.execute("delete from stock_move_line where reference='"+self.pick.name+"' and product_id="+str(sa.product_id.id)+";")
+                    self.env.cr.execute("delete from stock_move where origin='"+self.pick.sale_id.name+"' and product_id="+str(sa.product_id.id)+";")
+                    self.env.cr.execute("delete from sale_order_line where order_id="+str(self.pick.sale_id.id)+" and product_id="+str(sa.product_id.id)+";")
+                    if(i==0):
+                        self.env.cr.execute("update stock_picking set state='draft' where sale_id="+str(self.pick.sale_id.id)+";")
+                    i=i+1
+                    l=self.env['stock.production.lot'].search([['name','=',d[0]['serie']]])
+                    datos={'x_studio_field_9nQhR':l.id,'order_id':self.pick.sale_id.id,'product_id':d[0]['producto2']['id'],'product_uom':d[0]['producto2']['uom_id']['id'],'product_uom_qty':d[0]['cantidad'],'name':d[0]['producto2']['description'] if(d[0]['producto2']['description']) else '/','price_unit':0.00}
+                    ss=self.env['sale.order.line'].sudo().create(datos)
+                    if(d[0]['almacen']['id']):
+                        self.env['stock.move'].write({'location_id':d[0]['almacen']['lot_stock_id']['id']})
+                else:
+                    if(d[0]['almacen']['id']):
+                        self.env['stock.move'].write({'location_id':d[0]['almacen']['lot_stock_id']['id']})
+            self.pick.action_confirm()
+            self.pick.action_assign()
+            """
             for prp in self.pro_ids:
                 if(prp.producto1.id !=prp.producto2.id):
                     dt.append(prp.producto1.id)
@@ -169,9 +189,7 @@ class StockCambio(TransientModel):
             for s in self.pick.sale_id.order_line:
                 if(s.product_id.id in dt):
                     i=i+1
-                    self.env.cr.execute("delete from stock_move_line where reference='"+self.pick.name+"' and product_id="+str(s.product_id.id)+";")
-                    self.env.cr.execute("delete from stock_move where origin='"+self.pick.sale_id.name+"' and product_id="+str(s.product_id.id)+";")
-                    self.env.cr.execute("delete from sale_order_line where id="+str(s.id)+" and product_id="+str(s.product_id.id)+";")
+
             if(i>0):
                 self.env.cr.execute("update stock_picking set state='draft' where sale_id="+str(self.pick.sale_id.id)+";")
                 for li in self.pro_ids:
@@ -179,8 +197,7 @@ class StockCambio(TransientModel):
                         l=self.env['stock.production.lot'].search([['name','=',li.serie]])
                         datos={'x_studio_field_9nQhR':l.id,'order_id':self.pick.sale_id.id,'product_id':li.producto2.id,'product_uom':li.producto2.uom_id.id,'product_uom_qty':li.cantidad,'name':li.producto2.description if(li.producto2.description) else '/','price_unit':0.00}
                         ss=self.env['sale.order.line'].sudo().create(datos)
-                self.pick.action_confirm()
-                self.pick.action_assign()
+            """
                 """for p1 in self.pick.move_ids_without_package:
                     if(i>0):
                     else:
