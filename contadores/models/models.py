@@ -84,7 +84,7 @@ class dcas(models.Model):
     hTicketFalla = fields.Text(string = 'Falla')
     hTicketUltimaEtapaTicket = fields.Text(string = 'Última etapa ticket')
     hTicketUltimaNota = fields.Text(string = 'Última nota')
-    hTicketFechaNota = fields.Text(string = 'Fecha nota')
+    hTicketFechaNota = fields.Datetime(string = 'Fecha nota')
     
     
     
