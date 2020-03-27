@@ -106,7 +106,7 @@
                 <group>
                     <field name="comentario"/>
                     <field name="ruta" invisible="1"/>
-                    <field name="evidencia" attrs="{'invisible': [['ruta', '!=', 0]]}"/>
+                    <field name="evidencia" attrs="{'invisible': [['ruta', '=', False]]}"/>
                 </group>
                 <footer>
                     <button name="confirmar" string="Confirmar" type="object" class="oe_highlight"/>
