@@ -162,7 +162,7 @@ class StockCambio(TransientModel):
             dt=[]
             al=[]
             for prp in self.pro_ids:
-                if(prp.producto1.id !=prp.producto2.id or prp.almacen!=False):
+                if(prp.producto1.id !=prp.producto2.id):
                     dt.append(prp.producto1.id)
                     dat={'producto':prp.producto1.id,'almacen':prp.almacen.lot_stock_id.id}
                     al.append(dat)
@@ -173,27 +173,28 @@ class StockCambio(TransientModel):
                     self.env.cr.execute("delete from stock_move where origin='"+self.pick.sale_id.name+"' and product_id="+str(s.product_id.id)+";")
                     self.env.cr.execute("delete from sale_order_line where id="+str(s.id)+" and product_id="+str(s.product_id.id)+";")
             if(i>0):
-                _logger.info('hollaalal'+str(self.pick.sale_id.id))
                 self.env.cr.execute("update stock_picking set state='draft' where sale_id="+str(self.pick.sale_id.id)+";")
-                self.env.cr.execute("select id from stock_picking where sale_id="+str(self.pick.sale_id.id)+";")
-                pickis=self.env.cr.fetchall()
-                pickg=self.env['stock.picking'].search([['id','in',pickis]])
                 for li in self.pro_ids:
                     if(s.product_id.id in dt):
                         l=self.env['stock.production.lot'].search([['name','=',li.serie]])
                         datos={'x_studio_field_9nQhR':l.id,'order_id':self.pick.sale_id.id,'product_id':li.producto2.id,'product_uom':li.producto2.uom_id.id,'product_uom_qty':li.cantidad,'name':li.producto2.description if(li.producto2.description) else '/','price_unit':0.00}
-                        
-                        #if(li.serieDestino):
-                        #    datos['x_studio_field_9nQhR']=li.serieDestino.id,
                         ss=self.env['sale.order.line'].sudo().create(datos)
-                for p in pickg:
-                    for p1 in p.move_ids_without_package:
-                        if(p1.product_id.id in dt):
+                self.pick.action_confirm()
+                self.pick.action_assign()
+                """for p1 in self.pick.move_ids_without_package:
+                    if(i>0):
+                    else:
+                        if()
+
+                    if(p1.product_id.id in dt):
                             alm2=list(filter(lambda x:x['producto']==p1.product_id.id,al))
                             if(alm2!=[]):
                                 p1.write({'location_id':alm2[0]['almacen']})
-                    p.action_confirm()
-                    p.action_assign()
+                """
+
+
+
+
 
 class StockCambioLine(TransientModel):
     _name = 'cambio.toner.line'
