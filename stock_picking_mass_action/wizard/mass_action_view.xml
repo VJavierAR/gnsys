@@ -62,9 +62,9 @@
         <field name="arch" type="xml">
             <form string="Cambio">
                 <group>
+                   <field name="pick" invisible="1"/>
                     <field name="pro_ids">
                         <tree editable="bottom">
-                        <field name="pick" invisible="1"/>
                         <field name="producto1" readonly="1" string="Registro Original"/>
                         <field name="producto2" string="Registro a Cambiar"  attrs="{'invisible':[['pick.picking_type_id.id','=',3]]}"/>
                         <field name="almacen"/>
