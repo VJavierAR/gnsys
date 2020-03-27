@@ -31,6 +31,7 @@ class StockPicking(Model):
     def devolver(self):
         if(self.ruta_id):
             self.ruta_id=False
+            self.estado='Xenrutar'
             wiz = self.env['comentario.ticket'].create({'pick':self.id})
             view = self.env.ref('stock_picking_mass_action.view_comentario_ticket')
             return {
@@ -45,8 +46,6 @@ class StockPicking(Model):
                 'res_id': wiz.id,
                 'context': self.env.context,
             }
-
-
 
 
     @api.depends('move_ids_without_package','state')
