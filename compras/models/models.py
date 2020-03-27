@@ -169,7 +169,9 @@ class compras(models.Model):
                         #for row in pycompat.imap(sheet.row, range(sheet.nrows)):
                         #    values = []
                     #    for cell in row:
-                    _logger.info(str(header))
+                    #_logger.info(str(header))
+                    _logger.info(str(len(header)))
+
 
 
             
