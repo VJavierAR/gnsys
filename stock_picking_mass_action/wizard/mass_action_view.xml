@@ -105,7 +105,7 @@
             <form string="Evidencia">
                 <group>
                     <field name="comentario"/>
-                    <field name="pick" invisible="1"/>
+                    <field name="ruta" invisible="1"/>
                     <field name="evidencia" attrs="{'invisible': [['ruta', '!=', 0]]}"/>
                 </group>
                 <footer>
