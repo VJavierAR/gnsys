@@ -175,10 +175,10 @@ class StockCambio(TransientModel):
                         datos={'x_studio_field_9nQhR':l.id,'order_id':self.pick.sale_id.id,'product_id':d[0]['producto2']['id'],'product_uom':d[0]['producto2']['uom_id']['id'],'product_uom_qty':d[0]['cantidad'],'name':d[0]['producto2']['description'] if(d[0]['producto2']['description']) else '/','price_unit':0.00}
                         ss=self.env['sale.order.line'].sudo().create(datos)
                         if(d[0]['almacen']['id']):
-                            self.env['stock.move'].write({'location_id':d[0]['almacen']['lot_stock_id']['id']})
+                            self.env['stock.move'].search([['sale_id','=',self.pick.sale_id.id],['product_id','=',d[0]['producto2']['id']]]).write({'location_id':d[0]['almacen']['lot_stock_id']['id']})
                     else:
                         if(d[0]['almacen']['id']):
-                            self.env['stock.move'].write({'location_id':d[0]['almacen']['lot_stock_id']['id']})
+                            self.env['stock.move'].search([['sale_id','=',self.pick.sale_id.id],['product_id','=',d[0]['producto2']['id']]]).write({'location_id':d[0]['almacen']['lot_stock_id']['id']})
             self.pick.action_confirm()
             self.pick.action_assign()
             """

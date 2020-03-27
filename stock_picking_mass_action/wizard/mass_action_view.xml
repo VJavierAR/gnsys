@@ -13,17 +13,17 @@
                     <field name="tecnico" invisible="1"  domain="['|',['job_id.name','=','TÉCNICO '],['job_id.name','=','SOFTWARE']]"   attrs="{'invisible':[['check','=',1]]}"/>
                     <field name="picking_ids">
                         <tree editable="bottom">
-                                <field name="id" invisible="1" readonly="1" attrs="{'invisible':[['picking_type_id','=',29314]]}"/>
+                                <field name="id" invisible="1" readonly="1" attrs="{'invisible':[['picking_type_id','!=',29314]]}"/>
                                 <field name="picking_type_id" invisible="1"/>
-                                <field name="name" invisible="1" readonly="1" attrs="{'invisible':[['picking_type_id','=',29314]]}"/>
+                                <field name="name" invisible="1" readonly="1" attrs="{'invisible':[['picking_type_id','!=',29314]]}"/>
                                 <!--<field name="x_studio_ticket" string="Ticket" readonly="1" attrs="{'invisible':[['picking_type_id','=',29314]]}"/>-->
                                 <field name="origin" string="Orden" readonly="1" attrs="{'invisible':[['picking_type_id','=',29314]]}"/>
-                                <field name="partner_id" readonly="1" attrs="{'invisible':[['picking_type_id','=',29314]]}"/>
-                                <field name="scheduled_date" readonly="1" attrs="{'invisible':[['picking_type_id','=',29314]]}"/>
-                                <field name="x_studio_toneres" widget="html" string="productos" readonly="1" attrs="{'invisible':[['picking_type_id','=',29314]]}"/>
-                                <field name="x_studio_tecnico"  domain="['|',['job_id.name','=','TÉCNICO '],['job_id.name','=','SOFTWARE']]" attrs="{'invisible':[['picking_type_id','=',29314]]}"/>
-                                <field name="estado"  readonly="1" attrs="{'invisible':[['picking_type_id','=',29314]]}"/>
-                                <field name="date_done" readonly="1" attrs="{'invisible':[['picking_type_id','=',29314]]}"/>
+                                <field name="partner_id" readonly="1" attrs="{'invisible':[['picking_type_id','!=',29314]]}"/>
+                                <field name="scheduled_date" readonly="1" attrs="{'invisible':[['picking_type_id','!=',29314]]}"/>
+                                <field name="x_studio_toneres" widget="html" string="productos" readonly="1" attrs="{'invisible':[['picking_type_id','!=',29314]]}"/>
+                                <field name="x_studio_tecnico"  domain="['|',['job_id.name','=','TÉCNICO '],['job_id.name','=','SOFTWARE']]" attrs="{'invisible':[['picking_type_id','!=',29314]]}"/>
+                                <field name="estado"  readonly="1" attrs="{'invisible':[['picking_type_id','!=',29314]]}"/>
+                                <field name="date_done" readonly="1" attrs="{'invisible':[['picking_type_id','!=',29314]]}"/>
                         </tree>
                     </field>
                     
