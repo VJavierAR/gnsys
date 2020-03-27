@@ -29,7 +29,8 @@ class StockPicking(Model):
     #historialTicket = fields.One2many('ir.attachment','res_id',string='Evidencias al ticket',store=True,track_visibility='onchange')
 
     def devolver(self):
-        if(self.):
+        if(self.ruta_id):
+            self.ruta_id=False
 
 
 
