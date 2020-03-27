@@ -242,6 +242,7 @@ class ComemtarioTicket(TransientModel):
     comentario=fields.Char(string='Comentario')
     evidencia=fields.Binary(string='Evidencia')
     pick=fields.Many2one('stock.picking')
+    ruta=fields.Integer(related='pick.ruta_id.id')
 
     def confirmar(self):
         if(ruta==False):
