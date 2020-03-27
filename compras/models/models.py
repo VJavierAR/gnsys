@@ -154,6 +154,8 @@ class compras(models.Model):
                     sheet = book.sheet_by_index(0)
                     header=[]
                     for row_num, row in enumerate(sheet.get_rows()):
+                        _logger.info(str(row[0].value))
+
                         if(row[0].value in self.partner_id.name):
                             header.append(str(row))
                         #for cell in row:
