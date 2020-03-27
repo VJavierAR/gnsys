@@ -48,6 +48,7 @@ class StockPickingMassAction(TransientModel):
         help="",
     )
     check=fields.Integer()
+    tecnico=fields.Many2one('hr.employee')
 
     @api.multi
     def mass_action(self):
