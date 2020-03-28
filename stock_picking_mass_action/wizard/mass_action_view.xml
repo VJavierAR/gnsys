@@ -145,7 +145,7 @@
                 <page string="Productos">
                     <field name="lines" attrs="{'invisible': [['categoria', '=', False]]}"  context="{'default_ubicacion': ubicacion,'default_categoria':categoria}">
                         <tree editable="bottom">
-                            <field name="producto"/>
+                            <field name="producto" domain="[['categ_id.id','=',categoria.id]]"/>
                             <field name="categoria" />
                             <field name="modelo"/>
                             <field name="noParte"/>
