@@ -344,19 +344,19 @@ class TransferInterMoveTemp(TransientModel):
     #lock=fields.Boolean('lock')
     #serieDestino=fields.Many2one('stock.production.lot')
     
-    #@api.onchange('producto')
-    #def quant(self):
-    #    if(self.producto):
-    #        self.disponible=0
-    #        h=self.env['stock.quant'].search([['product_id','=',self.producto.id],['location_id','=',self.ubicacion.id],['quantity','>',0]])
-    #        if(len(h)>0):
-    #            self.stock=h.id
-    #        if(len(h)==0):
-    #            d=self.env['stock.location'].search([['location_id','=',self.ubicacion.id]])
-    #            for di in d:
-    #                i=self.env['stock.quant'].search([['product_id','=',self.producto.id],['location_id','=',di.id],['quantity','>',0]])
-    #                if(len(i)>0):
-    #                    self.stock=i.id
+    @api.onchange('producto')
+    def quant(self):
+        if(self.producto):
+            self.disponible=0
+            h=self.env['stock.quant'].search([['product_id','=',self.producto.id],['location_id','=',self.ubicacion.id],['quantity','>',0]])
+            if(len(h)>0):
+                self.stock=h.id
+            if(len(h)==0):
+                d=self.env['stock.location'].search([['location_id','=',self.ubicacion.id]])
+                for di in d:
+                    i=self.env['stock.quant'].search([['product_id','=',self.producto.id],['location_id','=',di.id],['quantity','>',0]])
+                    if(len(i)>0):
+                        self.stock=i.id
 
 
 
