@@ -1067,11 +1067,14 @@ class helpdesk_update(models.Model):
                     amar=''
                     cian=''
                     magen=''
+                    car=0
                     serieaca=c.serie.name
                     #Toner BN
                     c.write({'x_studio_tickett':self.x_studio_id_ticket})
                     c.write({'fuente':'helpdesk.ticket'})
+                    
                     if c.x_studio_cartuchonefro:
+                        car=car+1
                         c.write({'porcentajeNegro':1})                        
                         pro = self.env['product.product'].search([['name','=',c.x_studio_cartuchonefro.name],['categ_id','=',5]])
                         gen = pro.sorted(key='qty_available',reverse=True)[0]
@@ -1091,6 +1094,7 @@ class helpdesk_update(models.Model):
                         bn=str(c.serie.x_studio_reftoner)+', '
                     #Toner Ama
                     if c.x_studio_cartucho_amarillo:
+                        car=car+1
                         c.write({'porcentajeAmarillo':1})
                         pro = self.env['product.product'].search([['name','=',c.x_studio_cartucho_amarillo.name],['categ_id','=',5]])
                         gen = pro.sorted(key='qty_available',reverse=True)[0]
@@ -1110,6 +1114,7 @@ class helpdesk_update(models.Model):
                         amar=str(c.x_studio_cartucho_amarillo.name)+', '
                     #Toner cian
                     if c.x_studio_cartucho_cian_1:
+                        car=car+1
                         c.write({'porcentajeCian':1})
                         pro = self.env['product.product'].search([['name','=',c.x_studio_cartucho_cian_1.name],['categ_id','=',5]])
                         gen = pro.sorted(key='qty_available',reverse=True)[0]
@@ -1129,6 +1134,7 @@ class helpdesk_update(models.Model):
                         cian=str(c.x_studio_cartucho_cian_1.name)+', '
                     #Toner mage
                     if c.x_studio_cartucho_magenta:
+                        car=car+1
                         c.write({'porcentajeMagenta':1})
                         pro = self.env['product.product'].search([['name','=',c.x_studio_cartucho_magenta.name],['categ_id','=',5]])
                         gen = pro.sorted(key='qty_available',reverse=True)[0]
@@ -1146,10 +1152,13 @@ class helpdesk_update(models.Model):
                         
                         self.env['sale.order.line'].create(datos)
                         magen=str(c.x_studio_cartucho_magenta.name)
-                        
+                    if car==0:
+                       raise exceptions.ValidationError("Ningun cartucho selecionado, serie ."+str(c.serie.name))                     
+                    
                     jalaSolicitudes='solicitud de toner '+self.x_studio_field_nO7Xg.name+' para la serie :'+serieaca +' '+bn+' '+amar+' '+cian+' '+magen
                     self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'comentario':jalaSolicitudes, 'estadoTicket': "solicitud por serie", 'write_uid':  self.env.user.name})
-                    
+                if len(self.x_studio_field_nO7Xg.order_line)==0:
+                   raise exceptions.ValidationError("Ningun cartucho selecionado, revisar series .")                     
                 self.x_studio_field_nO7Xg.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
                 jalaSolicitudess='solicitud de toner '+self.x_studio_field_nO7Xg.name+' para la serie :'+serieaca
                 #sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta', 'validity_date' : sale.date_order + datetime.timedelta(days=30)})
@@ -1178,11 +1187,13 @@ class helpdesk_update(models.Model):
                     amar=''
                     cian=''
                     magen=''
+                    car=0
                     serieaca=c.serie.name
                     c.write({'x_studio_tickett':self.x_studio_id_ticket})
                     c.write({'fuente':'helpdesk.ticket'})
                     #Toner BN
                     if c.x_studio_cartuchonefro:
+                        car=car+1
                         c.write({'porcentajeNegro':1})
                         pro = self.env['product.product'].search([['name','=',c.x_studio_cartuchonefro.name],['categ_id','=',5]])
                         gen = pro.sorted(key='qty_available',reverse=True)[0]
@@ -1202,6 +1213,7 @@ class helpdesk_update(models.Model):
                         bn=str(c.serie.x_studio_reftoner)+', '
                     #Toner Ama
                     if c.x_studio_cartucho_amarillo:
+                        car=car+1
                         c.write({'porcentajeAmarillo':1})
                         pro = self.env['product.product'].search([['name','=',c.x_studio_cartucho_amarillo.name],['categ_id','=',5]])
                         gen = pro.sorted(key='qty_available',reverse=True)[0]
@@ -1221,6 +1233,7 @@ class helpdesk_update(models.Model):
                         amar=str(c.x_studio_cartucho_amarillo.name)+', '
                     #Toner cian
                     if c.x_studio_cartucho_cian_1:
+                        car=car+1
                         c.write({'porcentajeCian':1})
                         pro = self.env['product.product'].search([['name','=',c.x_studio_cartucho_cian_1.name],['categ_id','=',5]])
                         gen = pro.sorted(key='qty_available',reverse=True)[0]
@@ -1240,6 +1253,7 @@ class helpdesk_update(models.Model):
                         cian=str(c.x_studio_cartucho_cian_1.name)+', '
                     #Toner mage
                     if c.x_studio_cartucho_magenta:
+                        car=car+1
                         c.write({'porcentajeMagenta':1})
                         pro = self.env['product.product'].search([['name','=',c.x_studio_cartucho_magenta.name],['categ_id','=',5]])
                         gen = pro.sorted(key='qty_available',reverse=True)[0]
@@ -1259,11 +1273,13 @@ class helpdesk_update(models.Model):
                         magen=str(c.x_studio_cartucho_magenta.name)
                         
                     
-                    
+                    if car==0:
+                       raise exceptions.ValidationError("Ningun cartucho selecionado, serie ."+str(c.serie.name)) 
                     
                     jalaSolicitudes='solicitud de toner '+sale.name+' para la serie :'+serieaca +' '+bn+' '+amar+' '+cian+' '+magen
                     self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'comentario':jalaSolicitudes, 'estadoTicket': "solicitud por serie", 'write_uid':  self.env.user.name})
-                raise exceptions.ValidationError("Error al capturar debe ser mayor" + str(len(sale.order_line)))                    
+                if len(sale.order_line)==0:
+                   raise exceptions.ValidationError("Ningun cartucho selecionado, revisar series .")                    
                 sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
                 jalaSolicitudess='solicitud de toner '+sale.name+' para la serie :'+serieaca
                 #sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta', 'validity_date' : sale.date_order + datetime.timedelta(days=30)})
