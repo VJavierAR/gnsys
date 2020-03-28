@@ -1254,14 +1254,16 @@ class helpdesk_update(models.Model):
                         if(gen['qty_available']<=0):
                             datos['route_id']=1
                             datos['product_id']=c.x_studio_cartucho_magenta.id
-                        
-                        raise exceptions.ValidationError("Error al capturar debe ser mayor" + str(len(datos)))
+                                                
                         self.env['sale.order.line'].create(datos)
                         magen=str(c.x_studio_cartucho_magenta.name)
                         
+                    
+                    
+                    
                     jalaSolicitudes='solicitud de toner '+sale.name+' para la serie :'+serieaca +' '+bn+' '+amar+' '+cian+' '+magen
                     self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'comentario':jalaSolicitudes, 'estadoTicket': "solicitud por serie", 'write_uid':  self.env.user.name})
-                    
+                raise exceptions.ValidationError("Error al capturar debe ser mayor" + str(len(sale.order_line)))                    
                 sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
                 jalaSolicitudess='solicitud de toner '+sale.name+' para la serie :'+serieaca
                 #sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta', 'validity_date' : sale.date_order + datetime.timedelta(days=30)})
