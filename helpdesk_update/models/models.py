@@ -1255,6 +1255,7 @@ class helpdesk_update(models.Model):
                             datos['route_id']=1
                             datos['product_id']=c.x_studio_cartucho_magenta.id
                         
+                        raise exceptions.ValidationError("Error al capturar debe ser mayor" + str(len(datos)))
                         self.env['sale.order.line'].create(datos)
                         magen=str(c.x_studio_cartucho_magenta.name)
                         
