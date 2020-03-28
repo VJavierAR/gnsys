@@ -161,6 +161,7 @@ class compras(models.Model):
 
 
                         if(row[0].value in self.partner_id.name and str(row[0].ctype)!='0'):
+                            product={}
                             producto=row[2].value
                             precio=float(row[12].value)
                             cantidad=int(row[10].value)
