@@ -2138,7 +2138,7 @@ class helpdesk_update(models.Model):
                 for localidades in self.x_studio_equipo_por_nmero_de_serie_1:
                     if self.x_studio_equipo_por_nmero_de_serie_1[0].ultimaUbicacion != localidades.ultimaUbicacion:
                        raise exceptions.ValidationError("Error "+str(self.x_studio_equipo_por_nmero_de_serie_1[0].ultimaUbicacion)+' deben ser la misma localidad '+localidades.ultimaUbicacion)
-                raise exceptions.ValidationError("tamaño "+str(len(self.x_studio_equipo_por_nmero_de_serie_1))+'serie '+str(self.x_studio_equipo_por_nmero_de_serie_1[len(self.x_studio_equipo_por_nmero_de_serie_1)-1].name))
+                raise exceptions.ValidationError("tamaño "+str(len(self.x_studio_equipo_por_nmero_de_serie_1))+' ids '+ str(self.x_studio_equipo_por_nmero_de_serie_1.ids)+' serie '+str(self.x_studio_equipo_por_nmero_de_serie_1[len(self.x_studio_equipo_por_nmero_de_serie_1)-1].id))
                 for serie in self.x_studio_equipo_por_nmero_de_serie_1:
                     for serieDuplicada in self.x_studio_equipo_por_nmero_de_serie_1:                    
                         if serie.id == serieDuplicada.id:
