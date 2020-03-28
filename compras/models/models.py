@@ -165,13 +165,13 @@ class compras(models.Model):
                             producto=row[2].value
                             precio=float(row[12].value)
                             cantidad=int(row[10].value)
-                            if("KATUN" in row[0].value):
-                                precio=float(row[12].value)-(float(row[12].value)*.02)
-                                product['taxes_id']=[10]
                             _logger.info(str(producto).replace(' ',''))
                             template=self.env['product.template'].search([('default_code','=',str(producto).replace('.0',''))])
                             productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
                             product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':cantidad,'price_unit':precio,'name':productid.description}
+                            if("KATUN" in row[0].value):
+                                product['price_unit']=float(row[12].value)-(float(row[12].value)*.02)
+                                product['taxes_id']=[10]
                             arr.append(product)
                     if(len(arr)>0):
                         self.order_line=[(5,0,0)]
