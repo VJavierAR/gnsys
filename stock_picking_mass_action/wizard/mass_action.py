@@ -343,7 +343,7 @@ class TransferInterMoveTemp(TransientModel):
     cantidad=fields.Integer('Demanda Inicial')
     almacen=fields.Many2one('stock.warehouse','Almacén Origen')
     ubicacion=fields.Many2one('stock.location','Ubicación')
-    disponible=fields.Float(related='stock.quantity','Disponible')
+    disponible=fields.Float(related='stock.quantity',string='Disponible')
     transfer=fields.Many2one('transferencia.interna')
     unidad=fields.Many2one('uom.uom',related='producto.uom_id')
     categoria=fields.Many2one('product.category')
