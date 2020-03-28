@@ -285,6 +285,7 @@ class TransferInter(TransientModel):
     ubicacion=fields.Many2one(related='almacenOrigen.lot_stock_id')
     almacenDestino=fields.Many2one('stock.warehouse')
     lines=fields.One2many('transferencia.interna.temp','transfer')
+    categoria=fields.Many2one('product.category')
 
     def confirmar(self):
         origen=self.env['stock.picking.type'].search([['name','=','Internal Transfers'],['warehouse_id','=',self.almacenOrigen.id]])
@@ -338,6 +339,8 @@ class TransferInterMoveTemp(TransientModel):
     disponible=fields.Float(related='stock.quantity')
     transfer=fields.Many2one('transferencia.interna')
     unidad=fields.Many2one('uom.uom',related='producto.uom_id')
+    categoria=fields.Many2one('product.category')
+    
     #lock=fields.Boolean('lock')
     #serieDestino=fields.Many2one('stock.production.lot')
     
