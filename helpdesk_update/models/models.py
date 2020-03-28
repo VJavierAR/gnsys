@@ -2141,7 +2141,7 @@ class helpdesk_update(models.Model):
                 for serie in self.x_studio_equipo_por_nmero_de_serie_1:
                     for serieDuplicada in self.x_studio_equipo_por_nmero_de_serie_1:                    
                         if serie.id == serieDuplicada.id:
-                            raise exceptions.ValidationError("Error serie ya agregada")
+                            raise exceptions.ValidationError("Error serie ya agregada"+str(serieDuplicada.name)+' '+str(serie.name))
                 
             
             queryt="select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!="+str(self.x_studio_id_ticket)+"  and h.stage_id!=18 and h.team_id=8 and  h.active='t' and stock_production_lot_id = "+str(self.x_studio_equipo_por_nmero_de_serie_1[0].serie.id)+" limit 1;"            
