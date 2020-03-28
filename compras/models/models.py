@@ -166,7 +166,8 @@ class compras(models.Model):
                             cantidad=int(row[10].value)
                             if("KATUN" in row[0].value):
                                 precio=float(row[12].value)-(float(row[12].value)*.02)
-                            template=self.env['product.template'].search([('default_code','=',str(producto))])
+                            _logger.info(str(producto).replace(' ',''))
+                            template=self.env['product.template'].search([('default_code','=',str(producto).replace(' ',''))])
                             productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
                             product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':cantidad,'price_unit':precio,'name':productid.description}
                             arr.append(product)
