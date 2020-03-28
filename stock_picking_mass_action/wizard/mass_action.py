@@ -167,7 +167,7 @@ class StockCambio(TransientModel):
                     if(sa.product_id.id!=d[0]['producto2']['id']):
                         self.env.cr.execute("delete from stock_move_line where reference='"+self.pick.name+"' and product_id="+str(sa.product_id.id)+";")
                         self.env.cr.execute("delete from stock_move where origin='"+self.pick.sale_id.name+"' and product_id="+str(sa.product_id.id)+";")
-                        self.env.cr.execute("delete from sale_order_line where order_id="+str(self.pick.sale_id.id)+" and product_id="+str(sa.product_id.id)+";")
+                        self.env.cr.execute("delete from sale_order_line where id="+str(sa.id)+" and product_id="+str(sa.product_id.id)+";")
                         if(i==0):
                             self.env.cr.execute("update stock_picking set state='draft' where sale_id="+str(self.pick.sale_id.id)+";")
                         i=i+1
