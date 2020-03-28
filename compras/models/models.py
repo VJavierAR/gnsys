@@ -153,6 +153,7 @@ class compras(models.Model):
                     book = xlrd.open_workbook(file_contents=f2 or b'')
                     sheet = book.sheet_by_index(0)
                     header=[]
+                    arr=[]
                     for row_num, row in enumerate(sheet.get_rows()):
                         #_logger.info()
                         #_logger.info(str(self.partner_id.name))
@@ -165,9 +166,13 @@ class compras(models.Model):
                             cantidad=int(row[10].value)
                             if("KATUN" in row[0].value):
                                 precio=float(row[12].value)-(float(row[12].value)*.02)
-                            template=self.env['product.template'].search([('default_code','=',producto)])
+                            template=self.env['product.template'].search([('default_code','=',str(producto))])
                             productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
                             product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':cantidad,'price_unit':precio,'name':productid.description}
+                            arr.append(product)
+                    if(len(arr)>0):
+                        self.order_line=[(5,0,0)]
+                    self.order_line=arr
                             #header.append(str(row))
                         #for cell in row:
                         #  print(row)  # Print out the header
