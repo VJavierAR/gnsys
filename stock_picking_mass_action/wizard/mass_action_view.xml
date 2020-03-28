@@ -26,7 +26,6 @@
                                 <field name="date_done" readonly="1" attrs="{'invisible':[['picking_type_id','!=',29314]]}"/>
                         </tree>
                     </field>
-                    
                 </group>
                 <footer>
                     <button name="mass_action" string="Apply" type="object" class="oe_highlight"/>
