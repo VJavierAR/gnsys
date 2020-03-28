@@ -11,7 +11,7 @@
                     <field name="transfer" invisible="1"/>
                     <field name="check" invisible="1"/>
                     <field name="tecnico" invisible="1"  domain="['|',['job_id.name','=','TÉCNICO '],['job_id.name','=','SOFTWARE']]"   attrs="{'invisible':[['check','=',1]]}"/>
-                    <field name="picking_ids">
+                    <field name="picking_ids" attrs="{'invisible':[['check','=',2]]}">
                         <tree editable="bottom">
                                 <field name="id" invisible="1" readonly="1" attrs="{'invisible':[['picking_type_id','!=',29314]]}"/>
                                 <field name="picking_type_id" invisible="1"/>
@@ -146,7 +146,7 @@
                     <field name="lines" attrs="{'invisible': [['categoria', '=', False]]}"  context="{'default_ubicacion': ubicacion,'default_categoria':categoria}">
                         <tree editable="bottom">
                             <field name="producto" domain="[['categ_id','=',categoria]]"/>
-                            <field name="categoria" />
+                            <field name="categoria" invisible="1" />
                             <field name="modelo"/>
                             <field name="noParte"/>
                             <field name="ubicacion" invisible="1"/>
