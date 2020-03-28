@@ -281,11 +281,11 @@ class ComemtarioTicket(TransientModel):
 class TransferInter(TransientModel):
     _name='transferencia.interna'
     _description='Transferencia Interna'    
-    almacenOrigen=fields.Many2one('stock.warehouse')
+    almacenOrigen=fields.Many2one('stock.warehouse','Almacen Origen')
     ubicacion=fields.Many2one(related='almacenOrigen.lot_stock_id')
-    almacenDestino=fields.Many2one('stock.warehouse')
+    almacenDestino=fields.Many2one('stock.warehouse','Almacen Destino')
     lines=fields.One2many('transferencia.interna.temp','transfer')
-    categoria=fields.Many2one('product.category')
+    categoria=fields.Many2one('product.category','Categoria de productos')
 
     def confirmar(self):
         origen=self.env['stock.picking.type'].search([['name','=','Internal Transfers'],['warehouse_id','=',self.almacenOrigen.id]])
@@ -340,22 +340,23 @@ class TransferInterMoveTemp(TransientModel):
     transfer=fields.Many2one('transferencia.interna')
     unidad=fields.Many2one('uom.uom',related='producto.uom_id')
     categoria=fields.Many2one('product.category')
-    
+
     #lock=fields.Boolean('lock')
     #serieDestino=fields.Many2one('stock.production.lot')
     
     @api.onchange('producto')
     def quant(self):
-        self.disponible=0
-        h=self.env['stock.quant'].search([['product_id','=',self.producto.id],['location_id','=',self.ubicacion.id],['quantity','>',0]])
-        if(len(h)>0):
-            self.stock=h.id
-        if(len(h)==0):
-            d=self.env['stock.location'].search([['location_id','=',self.ubicacion.id]])
-            for di in d:
-                i=self.env['stock.quant'].search([['product_id','=',self.producto.id],['location_id','=',di.id],['quantity','>',0]])
-                if(len(i)>0):
-                    self.stock=i.id
+        if(self.producto):
+            self.disponible=0
+            h=self.env['stock.quant'].search([['product_id','=',self.producto.id],['location_id','=',self.ubicacion.id],['quantity','>',0]])
+            if(len(h)>0):
+                self.stock=h.id
+            if(len(h)==0):
+                d=self.env['stock.location'].search([['location_id','=',self.ubicacion.id]])
+                for di in d:
+                    i=self.env['stock.quant'].search([['product_id','=',self.producto.id],['location_id','=',di.id],['quantity','>',0]])
+                    if(len(i)>0):
+                        self.stock=i.id
 
 
 
