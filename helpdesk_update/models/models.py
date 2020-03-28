@@ -2140,7 +2140,7 @@ class helpdesk_update(models.Model):
                        raise exceptions.ValidationError("Error "+str(self.x_studio_equipo_por_nmero_de_serie_1[0].ultimaUbicacion)+' deben ser la misma localidad '+localidades.ultimaUbicacion)
                 #raise exceptions.ValidationError("tamaño "+str(len(self.x_studio_equipo_por_nmero_de_serie_1))+' ids '+ str(self.x_studio_equipo_por_nmero_de_serie_1.ids)+' serie '+str(self.x_studio_equipo_por_nmero_de_serie_1[len(self.x_studio_equipo_por_nmero_de_serie_1)-1].serie.name))
                 for serie in self.x_studio_equipo_por_nmero_de_serie_1:                    
-                    if serie.id == self.x_studio_equipo_por_nmero_de_serie_1[len(self.x_studio_equipo_por_nmero_de_serie_1)-1].serie.id:
+                    if serie.serie.id == self.x_studio_equipo_por_nmero_de_serie_1[len(self.x_studio_equipo_por_nmero_de_serie_1)-1].serie.id:
                        raise exceptions.ValidationError("Error serie ya agregada"+str(serie.serie.name))
                 
             
