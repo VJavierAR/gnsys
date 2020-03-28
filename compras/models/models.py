@@ -157,16 +157,16 @@ class compras(models.Model):
                     for row_num, row in enumerate(sheet.get_rows()):
                         #_logger.info()
                         #_logger.info(str(self.partner_id.name))
-                        _logger.info(str(row[0].value))
+                        #_logger.info(str(row[0].value))
 
 
                         if(row[0].value in self.partner_id.name.replace(' ','') and str(row[0].ctype)!='0'):
                             product={}
                             producto=row[2].value
                             precio=float(row[12].value)
-                            _logger.info(row[10].value)
-                            cantidad=int(row[10].value)
-                            _logger.info(str(producto).replace(' ',''))
+                            #_logger.info(row[10].value)
+                            cantidad=int(row[10].value) if(row[10].ctype!=0) else 0
+                            #_logger.info(str(producto).replace(' ',''))
                             template=self.env['product.template'].search([('default_code','=',str(producto).replace('.0',''))])
                             productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
                             product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':cantidad,'price_unit':precio,'name':productid.description}
@@ -187,7 +187,7 @@ class compras(models.Model):
                         #    values = []
                     #    for cell in row:
                     #_logger.info(str(header))
-                    _logger.info(str(product))
+                    _logger.info(str(arr))
 
 
 
