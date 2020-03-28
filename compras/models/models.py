@@ -160,7 +160,15 @@ class compras(models.Model):
 
 
                         if(row[0].value in self.partner_id.name and str(row[0].ctype)!='0'):
-                            header.append(str(row))
+                            producto=row[2]
+                            precio=float(row[12])
+                            cantidad=int(row[10])
+                            if("KATUN" in row[0].value):
+                                precio=float(row[12])-(float(row[12])*.02)
+                            template=self.env['product.template'].search([('default_code','=',producto)])
+                            productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
+                            product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':cantidad,'price_unit':precio,'name':productid.description}
+                            #header.append(str(row))
                         #for cell in row:
                         #  print(row)  # Print out the header
                             #if(cell.value!=None or cell.value!=''):
@@ -170,7 +178,7 @@ class compras(models.Model):
                         #    values = []
                     #    for cell in row:
                     #_logger.info(str(header))
-                    _logger.info(str(len(header)))
+                    _logger.info(str(product))
 
 
 
