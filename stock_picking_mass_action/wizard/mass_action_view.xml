@@ -139,14 +139,14 @@
                     <field name="almacenOrigen"/>
                     <field name="ubicacion" invisible="1"/>
                     <field name="almacenDestino"/>
-                    <field name="categoria">
+                    <field name="categoria"/>
                 </group>
                 <notebook>
                 <page>
                     <field name="lines" attrs="{'invisible': [['categoria', '=', False]]}"  context="{'default_ubicacion': ubicacion,'default_categoria':categoria}">
                         <tree editable="bottom">
                             <field name="producto" domain="[['categ_id','=',categoria.id]]"/>
-                            <field name="categoria" invisible="1">
+                            <field name="categoria" invisible="1"/>
                             <field name="modelo"/>
                             <field name="noParte"/>
                             <field name="ubicacion" invisible="1"/>
