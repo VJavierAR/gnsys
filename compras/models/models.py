@@ -164,6 +164,7 @@ class compras(models.Model):
                             product={}
                             producto=row[2].value
                             precio=float(row[12].value)
+                            _logger.info(row[10].value)
                             cantidad=int(row[10].value)
                             _logger.info(str(producto).replace(' ',''))
                             template=self.env['product.template'].search([('default_code','=',str(producto).replace('.0',''))])
