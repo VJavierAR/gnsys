@@ -174,9 +174,9 @@ class compras(models.Model):
                                 product['price_unit']=float(row[12].value)-(float(row[12].value)*.02)
                                 product['taxes_id']=[10]
                             if("CTR" in row[0].value):
-                                descuento=float(row[15].value) if(row[15].ctype!=0) else 0
+                                descuento=float(row[16].value)*.16 if(row[16].ctype!=0) else 0
                                 if(cantidad>0):
-                                    product['price_unit']=float(row[12].value)-(descuento/cantidad)
+                                    product['price_unit']=(float(row[16].value)-(descuento))/cantidad
                                 product['taxes_id']=[10]
                             arr.append(product)
                     if(len(arr)>0):
