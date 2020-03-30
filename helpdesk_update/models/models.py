@@ -380,13 +380,14 @@ class helpdesk_update(models.Model):
     
     def _compute_difference(self):
         for rec in self:
-            #rec.days_difference = (datetime.date.today()- rec.create_date).days   
-            #fe = ''
-            fecha = str(rec.create_date).split(' ')[0]
-            #fe = t[0]
-            converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
-            #converted_date = datetime.datetime.strptime(str(rec.create_date), '%Y-%m-%d').date()
-            rec.days_difference = (datetime.date.today() - converted_date).days
+            if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
+                #rec.days_difference = (datetime.date.today()- rec.create_date).days
+                #fe = ''
+                fecha = str(rec.create_date).split(' ')[0]
+                #fe = t[0]
+                converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
+                #converted_date = datetime.datetime.strptime(str(rec.create_date), '%Y-%m-%d').date()
+                rec.days_difference = (datetime.date.today() - converted_date).days
     
     
     #_logger.info("el id xD Toner xD")            
@@ -796,6 +797,13 @@ class helpdesk_update(models.Model):
         for record in self:
             #if record.x_studio_id_ticket != 0:
             if len(record.x_studio_productos) > 0:
+                if self.x_studio_field_nO7Xg.id != False:
+                    message = ('Existe una solicitud ya generada.')
+                    mess= {'title': _('Solicitud existente!!!')
+                            , 'message' : message
+                    }
+                    return {'warning': mess}
+                """   
                 if self.x_studio_field_nO7Xg.id != False and self.x_studio_field_nO7Xg.state != 'sale':
                     sale = self.x_studio_field_nO7Xg
                     self.env.cr.execute("delete from sale_order_line where order_id = " + str(sale.id) +";")
@@ -806,6 +814,7 @@ class helpdesk_update(models.Model):
                         self.env['sale.order.line'].create(datosr)
                         self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
                         #self.env.cr.commit()
+                """
                 else:
                 #if (record.x_studio_tipo_de_falla == 'Solicitud de refacción' ) or (record.x_studio_tipo_de_incidencia == 'Solicitud de refacción' ):
 
