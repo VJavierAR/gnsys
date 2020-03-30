@@ -205,8 +205,8 @@
                             <field name='historicoTickets'>
                                 <tree default_order="x_studio_fecha desc">
                                     <field name='create_date' />
-                                    <field name='fuente' attrs='{"domain": [["fuente","=","Equipo"]]}'/>
-                                    <field name='x_studio_tickett' />
+                                    <field name='fuente' />
+                                    <field name='x_studio_tickett' attrs='{"domain": [["fuente","=","Equipo"]]}'/>
                                     <field name='x_studio_fecha' />
                                     <field name='hTicketSerie' />
                                     <field name='hTicketCliente' />
