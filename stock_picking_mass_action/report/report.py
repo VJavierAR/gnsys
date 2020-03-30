@@ -18,7 +18,7 @@ class PartnerXlsx(models.AbstractModel):
         #sheet.set_header('A1', {'image_left': '/home/odoo/logo.png'})
         image_file = open('/home/odoo/logo.png', 'rb')
         image_data = xlsxwriter.compatibility.BytesIO(image_file.read())
-        sheet.set_header('&C&G', {'image_center': 'header.jpeg','image_data_left': image_data})
+        sheet.set_header('&C', {'image_center': image_data})
         #sheet.write(0, 0, 'Cliente', bold)
         #sheet.insert_image('A1', 'logo.png')
         for obj in partners:
