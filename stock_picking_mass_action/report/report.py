@@ -14,6 +14,7 @@ class PartnerXlsx(models.AbstractModel):
         report_name = 'Movimientos'
         bold = workbook.add_format({'bold': True})
         sheet = workbook.add_worksheet('Movimientos')
+        
         #header1 = '&CHere is some centered text.'
         #sheet.set_header(header1)
         #sheet.set_column('A:A', 50)
