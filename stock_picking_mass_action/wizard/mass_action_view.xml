@@ -14,7 +14,7 @@
         <field name="arch" type="xml">
             <form string="Mass Action for the selected stock picking">
                 <group>
-                    <h3>Se genaraun reporte</h3>
+                    <h3>Se genara un reporte</h3>
                 </group>
                 <footer>
                     <button name="report" string="Reporte" type="object" class="oe_highlight"/>
