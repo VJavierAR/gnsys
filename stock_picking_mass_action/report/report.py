@@ -19,8 +19,8 @@ class PartnerXlsx(models.AbstractModel):
         #sheet.insert_image('A1', 'logo.png')
         for obj in partners:
             e=[]
-            e.append(obj.name)
-            e.append(obj.street)
+            #e.append(obj.name)
+            #e.append(obj.street)
             d.append(e)
             # One sheet by partner
             
