@@ -179,15 +179,15 @@ class contratos(models.Model):
     @api.depends('fechaDeFinDeContrato')
     def expiracionServicios (self):
         for record in self:
-            fecha = str(record.fechaDeFinDeContrato).split(' ')[0]
-            _logger.info("LOGGUER DDE OSWALDO : "+fecha)
-            # converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
-            # fechaCompara = (datetime.date.today() - converted_date).days
-            # #Comparamos la fecha de hoy con la fecha de fin de contrato
-            # #Aqui obtenemos todos los serviciós
-            # if fechaCompara > 0:
-            #     for servicio in record.servicio: 
-            #         servicio.servActivo = False
+            if record.fechaDeFinDeContrato:
+                fecha = str(record.fechaDeFinDeContrato).split(' ')[0]
+                converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
+                fechaCompara = (datetime.date.today() - converted_date).days
+                #Comparamos la fecha de hoy con la fecha de fin de contrato
+                #Aqui obtenemos todos los serviciós
+                if fechaCompara > 0:
+                    for servicio in record.servicio: 
+                        servicio.servActivo = False
 
 class cliente_contratos(models.Model):
     _inherit = 'res.partner'
