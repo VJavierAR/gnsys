@@ -6,7 +6,7 @@
         <field name="view_type">form</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
-        <field name="binding_model_id" ref="stock.model_stock_move" />
+        <field name="binding_model_id" ref="stock.model_stock_move_line" />
     </record>
 
     <record id="view_stock_move_action_form" model="ir.ui.view">
