@@ -178,11 +178,13 @@ class contratos(models.Model):
     # Si el contrato expira expiran los servicios
     @api.depends('fechaDeFinDeContrato')
     def expiracionServicios (self):
-        #Comparamos la fecha de hoy con la fecha de fin de contrato
-        if datetime.date.today() > self.fechaDeFinDeContrato:
-            #En caso de de que la fecha de hoy sea mayor enotnces el contrato ya expiro
-            for record in self:
-                #Aqui obtenemos todos los serviciós
+        for record in self:
+            fecha = str(record.create_date).split(' ')[0]
+            converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
+            fechaCompara = (datetime.date.today() - converted_date).days
+            #Comparamos la fecha de hoy con la fecha de fin de contrato
+            #Aqui obtenemos todos los serviciós
+            if fechaCompara > 0:
                 for servicio in record.servicio: 
                     servicio.servActivo = False
 
