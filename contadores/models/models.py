@@ -59,8 +59,8 @@ class dcas(models.Model):
     paginasProcesadasC=fields.Integer(string='Páginas procesadas Cian')
     paginasProcesadasA=fields.Integer(string='Páginas procesadas Amarillo')
     paginasProcesadasM=fields.Integer(string='Páginas procesadas Magenta')
-    #x_studio_fecha = fields.Datetime(string='Fecha', default=lambda self: fields.datetime.now())
-    x_studio_fecha = fields.Datetime(string='Fecha')
+    x_studio_fecha = fields.Datetime(string='Fecha', default=lambda self: fields.datetime.now())
+    #x_studio_fecha = fields.Datetime(string='Fecha')
     renC=fields.Float(string='Rendimiento Cian')
     renA=fields.Float(string='Rendimiento Amarillo')
     renM=fields.Float(string='Rendimiento Magenta')
@@ -99,7 +99,7 @@ class dcas(models.Model):
         _logger.info("c inicio"+str(c.tablahtml))
         _logger.info("self inicio id"+str(c.id))
         _logger.info("self inicio id"+str(c.create_date))
-        self.env.cr.execute("update dcas_dcas set x_studio_fecha = '"+str(c.create_date)+"' where  id = " + str(c.id) + ";")
+        #self.env.cr.execute("update dcas_dcas set x_studio_fecha = '"+str(c.create_date)+"' where  id = " + str(c.id) + ";")
         """
         contaC=c.contadorColor                       
         cac=c.contadorAnteriorColor
