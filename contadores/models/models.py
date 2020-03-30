@@ -78,11 +78,13 @@ class dcas(models.Model):
     equipo=fields.Char(string='Equipo')
     ultimaUbicacion=fields.Char(string='Ultima ubicación')
     
+    hTicketSerie = fields.Text(string = 'Serie en h.Ticket')
     hTicketCliente = fields.Text(string = 'Cliente')
     hTicketAreaDeAtencion = fields.Text(string = 'Área de atención')
     hTicketUbicacion = fields.Text(string = 'Ubicación')
     hTicketFalla = fields.Text(string = 'Falla')
     hTicketUltimaEtapaTicket = fields.Text(string = 'Última etapa ticket')
+    hTicketHojaDeEstado = fields.Text(string = 'Hoja de estado')
     hTicketUltimaNota = fields.Text(string = 'Última nota')
     hTicketFechaNota = fields.Datetime(string = 'Fecha nota')
     
