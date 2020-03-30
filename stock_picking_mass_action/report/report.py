@@ -9,12 +9,12 @@ class PartnerXlsx(models.AbstractModel):
     _inherit = 'report.report_xlsx.abstract'
 
     def generate_xlsx_report(self, workbook, data, partners):
-        i=1
+        i=2
         d=[]
         report_name = 'Movimientos'
         bold = workbook.add_format({'bold': True})
         sheet = workbook.add_worksheet('Movimientos')
-        #sheet.set_header('A1', {'image_left': 'logo.png'})
+        sheet.set_header('A1', {'image_left': 'logo.png'})
         #sheet.write(0, 0, 'Cliente', bold)
         #sheet.insert_image('A1', 'logo.png')
         for obj in partners:
@@ -28,5 +28,5 @@ class PartnerXlsx(models.AbstractModel):
             sheet.write(i, 0, obj.reference, bold)
             sheet.write(i, 1, obj.date, bold)
             i=i+1
-        sheet.add_table('A1:B'+str((i+1)),{'columns': [{'header': 'Cliente'},{'header': 'Calle'}]})
+        sheet.add_table('A2:B'+str((i+1)),{'columns': [{'header': 'Cliente'},{'header': 'Calle'}]})
         workbook.close()
