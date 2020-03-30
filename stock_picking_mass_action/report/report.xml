@@ -1,0 +1,10 @@
+<odoo>
+<report
+    id="partner_xlsx"
+    model="res.partner"
+    string="Print to XLSX"
+    report_type="xlsx"
+    name="requisicion.partner_xlsx"
+    file="Clientes"
+    attachment_use="False"/>
+</odoo>
