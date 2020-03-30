@@ -203,7 +203,7 @@
                     <notebook>
                         <page string = 'Tickets'>
                             <field name='historicoTickets'>
-                                <tree>
+                                <tree default_order="x_studio_fecha desc">
                                     <field name='create_date' />
                                     <field name='x_studio_tickett' />
                                     <field name='x_studio_fecha' />
