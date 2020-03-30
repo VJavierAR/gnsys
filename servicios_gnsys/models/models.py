@@ -175,6 +175,16 @@ class contratos(models.Model):
             self.vendedor = self.cliente.x_studio_vendedor
     
 
+    # Si el contrato expira expiran los servicios
+    @api.depends('fechaDeFinDeContrato')
+    def expiracionServicios (self):
+        #Comparamos la fecha de hoy con la fecha de fin de contrato
+        if datetime.date.today() > self.fechaDeFinDeContrato:
+            #En caso de de que la fecha de hoy sea mayor enotnces el contrato ya expiro
+            for record in self:
+                #Aqui obtenemos todos los serviciós
+                for servicio in record.servicio: 
+                    servicio.servActivo = False
 
 class cliente_contratos(models.Model):
     _inherit = 'res.partner'
