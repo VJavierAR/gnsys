@@ -14,11 +14,9 @@ class PartnerXlsx(models.AbstractModel):
         report_name = 'Movimientos'
         bold = workbook.add_format({'bold': True})
         sheet = workbook.add_worksheet('Movimientos')
-        
         #header1 = '&CHere is some centered text.'
-        #sheet.set_header(header1)
-        #sheet.set_column('A:A', 50)
-        image_file = open('logo.png', 'rb')
+        #sheet.set_header('A1', {'image_left': '/home/odoo/logo.png'})
+        image_file = open('/home/odoo/logo.png', 'rb')
         image_data = xlsxwriter.compatibility.BytesIO(image_file.read())
         sheet.set_header('&C&G', {'image_center': 'header.jpeg','image_data_left': image_data})
         #sheet.write(0, 0, 'Cliente', bold)
