@@ -797,13 +797,13 @@ class helpdesk_update(models.Model):
         for record in self:
             #if record.x_studio_id_ticket != 0:
             if len(record.x_studio_productos) > 0:
-                if self.x_studio_field_nO7Xg.id != False:
-                    message = ('Existe una solicitud ya generada.')
-                    mess= {'title': _('Solicitud existente!!!')
+                if self.x_studio_field_nO7Xg.id != False and self.x_studio_field_nO7Xg.state == 'sale':
+                    message = ('Existe una solicitud ya generada y esta fue validada. \n\nNo es posible realizar cambios a una solicitud ya validada.')
+                    mess= {'title': _('Solicitud existente validada!!!')
                             , 'message' : message
                     }
                     return {'warning': mess}
-                """   
+                
                 if self.x_studio_field_nO7Xg.id != False and self.x_studio_field_nO7Xg.state != 'sale':
                     sale = self.x_studio_field_nO7Xg
                     self.env.cr.execute("delete from sale_order_line where order_id = " + str(sale.id) +";")
@@ -814,23 +814,14 @@ class helpdesk_update(models.Model):
                         self.env['sale.order.line'].create(datosr)
                         self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
                         #self.env.cr.commit()
-                """
+                
                 else:
-                #if (record.x_studio_tipo_de_falla == 'Solicitud de refacción' ) or (record.x_studio_tipo_de_incidencia == 'Solicitud de refacción' ):
-
                     sale = self.env['sale.order'].create({'partner_id' : record.partner_id.id
                                                                  , 'origin' : "Ticket de refacción: " + str(record.x_studio_id_ticket)
                                                                  , 'x_studio_tipo_de_solicitud' : 'Venta'
                                                                  , 'x_studio_requiere_instalacin' : True
-                                                                 #, 'x_studio_fecha_y_hora_de_visita' : self.x_studio_rango_inicial_de_visita
-                                                                 #, 'x_studio_field_rrhrN' : self.x_studio_rango_final_de_visita
-                                                                 #, 'x_studio_comentarios_para_la_visita' : str(self.ticket_type_id.name)
-                                                                 #, 'x_studio_field_bAsX8' : self.x_studio_prioridad
-                                                                 #, 'commitment_date' : self.x_studio_rango_inicial_de_visita
-                                                                 #, 'x_studio_fecha_final' : self.x_studio_rango_final_de_visita
                                                                  , 'x_studio_field_RnhKr': self.localidadContacto.id
                                                                  , 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id
-                                                                 #, 'user_id' : record.partner_id.x_studio_ejecutivo.id 
                                                                  , 'x_studio_tcnico' : record.x_studio_tcnico.id
                                                                  , 'warehouse_id' : 5865   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
                                                                  , 'team_id' : 1
@@ -838,9 +829,13 @@ class helpdesk_update(models.Model):
                                                                 })
                     record['x_studio_field_nO7Xg'] = sale.id
                     for c in record.x_studio_productos:
-                        datosr={'order_id' : sale.id, 'product_id' : c.id, 'product_uom_qty' : c.x_studio_cantidad_pedida,'x_studio_field_9nQhR':self.x_studio_equipo_por_nmero_de_serie[0].id, 'price_unit': 0}
-                        if(self.team_id.id==10 or self.team_id.id==11):
-                            datosr['route_id']=22548
+                        datosr = {'order_id' : sale.id
+                                , 'product_id' : c.id
+                                , 'product_uom_qty' : c.x_studio_cantidad_pedida
+                                ,'x_studio_field_9nQhR':self.x_studio_equipo_por_nmero_de_serie[0].id
+                                , 'price_unit': 0}
+                        if (self.team_id.id == 10 or self.team_id.id == 11):
+                            datosr['route_id'] = 22548
                         self.env['sale.order.line'].create(datosr)
                         sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
                         #sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta', 'validity_date' : sale.date_order + datetime.timedelta(days=30)})
@@ -905,45 +900,51 @@ class helpdesk_update(models.Model):
         for record in self:
             sale = record.x_studio_field_nO7Xg
             if sale.id != 0 or record.x_studio_productos != []:
-                self.sudo().env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
-                sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
-                sale.action_confirm()
-                for lineas in sale.order_line:
-                    st=self.env['stock.quant'].search([['location_id','in',(35204,12)],['product_id','=',lineas.product_id.id]]).sorted(key='quantity',reverse=True)
-                    requisicion=False
-                    if(len(st)>0):
-                        if(st[0].quantity==0):
+                if self.x_studio_field_nO7Xg.order_line:
+                    self.sudo().env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
+                    sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
+                    sale.action_confirm()
+                    for lineas in sale.order_line:
+                        st=self.env['stock.quant'].search([['location_id','in',(35204,12)],['product_id','=',lineas.product_id.id]]).sorted(key='quantity',reverse=True)
+                        requisicion=False
+                        if(len(st)>0):
+                            if(st[0].quantity==0):
+                                requisicion=self.env['requisicion.requisicion'].search([['state','!=','done'],['create_date','<=',datetime.datetime.now()],['origen','=','Refacción']]).sorted(key='create_date',reverse=True)
+                        else:
                             requisicion=self.env['requisicion.requisicion'].search([['state','!=','done'],['create_date','<=',datetime.datetime.now()],['origen','=','Refacción']]).sorted(key='create_date',reverse=True)
-                    else:
-                        requisicion=self.env['requisicion.requisicion'].search([['state','!=','done'],['create_date','<=',datetime.datetime.now()],['origen','=','Refacción']]).sorted(key='create_date',reverse=True)
-                    if(requisicion!=False ):
-                        re=self.env['requisicion.requisicion'].create({'origen':'Refacción','area':'Almacen','state':'draft'})
-                        re.product_rel=[{'cliente':sale.partner_shipping_id.id,'ticket':sale.x_studio_field_bxHgp.id,'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
-                    if(requisicion):
-                        #prd=requisicion[0].product_rel.search([['product','=',lineas.product_id.id],['req_rel','=',requisicion[0].id]])
-                        requisicion[0].product_rel=[{'cliente':sale.partner_shipping_id.id,'ticket':sale.x_studio_field_bxHgp.id,'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
-                        #if(len(prd)>0):
-                        #    prd.cantidad=prd.cantidad+lineas.product_uom_qty
-                        #if(len(prd)==0):
-                        #    requisicion[0].product_rel=[{'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
+                        if(requisicion!=False ):
+                            re=self.env['requisicion.requisicion'].create({'origen':'Refacción','area':'Almacen','state':'draft'})
+                            re.product_rel=[{'cliente':sale.partner_shipping_id.id,'ticket':sale.x_studio_field_bxHgp.id,'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
+                        if(requisicion):
+                            #prd=requisicion[0].product_rel.search([['product','=',lineas.product_id.id],['req_rel','=',requisicion[0].id]])
+                            requisicion[0].product_rel=[{'cliente':sale.partner_shipping_id.id,'ticket':sale.x_studio_field_bxHgp.id,'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
+                            #if(len(prd)>0):
+                            #    prd.cantidad=prd.cantidad+lineas.product_uom_qty
+                            #if(len(prd)==0):
+                            #    requisicion[0].product_rel=[{'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
 
-                
-                
-                estadoAntes = str(self.stage_id.name)
-                #if self.stage_id.name == 'Solicitud de refacción' and self.estadoSolicitudDeRefaccionValidada == False:
-                if (self.stage_id.name == 'Solicitud de Refacción' or self.stage_id.name == 'Cotización') and self.estadoSolicitudDeRefaccionValidada == False:
-                    query = "update helpdesk_ticket set stage_id = 102 where id = " + str(self.x_studio_id_ticket) + ";"
-                    ss = self.env.cr.execute(query)
-                    self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': "Refacción Autorizada", 'write_uid':  self.env.user.name})
                     
-                    message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Refacción Autorizada' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
-                    mess= {
-                            'title': _('Estado de ticket actualizado!!!'),
-                            'message' : message
-                          }
-                    self.estadoSolicitudDeRefaccionValidada = True
+                    
+                    estadoAntes = str(self.stage_id.name)
+                    #if self.stage_id.name == 'Solicitud de refacción' and self.estadoSolicitudDeRefaccionValidada == False:
+                    if (self.stage_id.name == 'Solicitud de Refacción' or self.stage_id.name == 'Cotización') and self.estadoSolicitudDeRefaccionValidada == False:
+                        query = "update helpdesk_ticket set stage_id = 102 where id = " + str(self.x_studio_id_ticket) + ";"
+                        ss = self.env.cr.execute(query)
+                        self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': "Refacción Autorizada", 'write_uid':  self.env.user.name})
+                        
+                        message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Refacción Autorizada' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
+                        mess= {
+                                'title': _('Estado de ticket actualizado!!!'),
+                                'message' : message
+                              }
+                        self.estadoSolicitudDeRefaccionValidada = True
+                        return {'warning': mess}
+                else:
+                    message = ("No es posible validar una solicitud que no tiene productos.")
+                    mess = {'title': _('Solicitud sin productos!!!')
+                            , 'message' : message
+                            }
                     return {'warning': mess}
-                
             else:
                 errorRefaccionNoValidada = "Solicitud de refacción no validada"
                 mensajeSolicitudRefaccionNoValida = "No es posible validar una solicitud de refacción en el estado actual debido a falta de productos o porque no existe la solicitud."
@@ -987,79 +988,83 @@ class helpdesk_update(models.Model):
                                              ,'location_dest_id':1
                                             #, 'product_uom_qty' : c.x_studio_cantidad_pedida
                                           })
-    """        
+    """
     
     
     #@api.onchange('x_studio_captura_c')
     @api.multi
     def capturandoMesa(self):
-      for record in self:  
-            for c in record.x_studio_equipo_por_nmero_de_serie:
-              if self.team_id.id==8:
-                q='helpdesk.ticket'
-              else:
-                q='stock.production.lot'
-              #if str(c.x_studio_field_A6PR9) =='Negro':
-              if str(c.x_studio_color_bn) == 'B/N':
-                  if int(c.x_studio_contador_bn_a_capturar) >= int(c.x_studio_contador_bn):
-                      if self.team_id.id==8:
-                         negrot = c.x_studio_contador_bn
-                         colort = c.x_studio_contador_color
-                      else:
-                         negrot = c.x_studio_contador_bn_mesa
-                         colort = c.x_studio_contador_color_mesa                        
-                      rr=self.env['dcas.dcas'].create({'serie' : c.id
-                                                    , 'contadorMono' : c.x_studio_contador_bn_a_capturar
-                                                    ,'x_studio_contador_color_anterior':colort
-                                                    , 'contadorColor' :c.x_studio_contador_color_a_capturar
-                                                    ,'x_studio_contador_mono_anterior_1':negrot
-                                                    ,'porcentajeNegro':c.x_studio__negro
-                                                    ,'porcentajeCian':c.x_studio__cian      
-                                                    ,'porcentajeAmarillo':c.x_studio__amarrillo      
-                                                    ,'porcentajeMagenta':c.x_studio__magenta
-                                                    ,'x_studio_descripcion':self.name
-                                                    ,'x_studio_tickett':self.x_studio_id_ticket
-                                                    ,'x_studio_hoja_de_estado':c.x_studio_evidencias
-                                                    ,'x_studio_usuariocaptura':self.env.user.name
-                                                    ,'fuente':q
-                                                    ,'x_studio_rendimiento':int(c.x_studio_rendimiento)/abs(int(c.x_studio_contador_bn_a_capturar)-int(negrot))
-                                                    ,'x_studio_rendimiento_color':int(c.x_studio_rendimiento)/abs(int(c.x_studio_contador_color_a_capturar)-int(colort))   
-                                                  })                  
-                      self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario':'capturas :' + str('Mono'+str(c.x_studio_contador_bn_a_capturar)+', Color '+str(c.x_studio_contador_color_a_capturar)+', Amarillo '+str(c.x_studio__amarrillo)+', Cian '+str(c.x_studio__cian)+', Negro '+str(c.x_studio__negro)+', Magenta '+str(c.x_studio__magenta)+', % de rendimiento '+str(rr.x_studio_rendimiento))})
-                  else :
-                    raise exceptions.ValidationError("Contador Monocromatico Menor")                     
-              #if str(c.x_studio_field_A6PR9) != 'Negro':       
-              if str(c.x_studio_color_bn) != 'B/N':
-                  if int(c.x_studio_contador_color_a_capturar) >= int(c.x_studio_contador_color) and int(c.x_studio_contador_bn_a_capturar) >= int(c.x_studio_contador_bn):                      
-                      if self.team_id.id==8:
-                         negrot = c.x_studio_contador_bn
-                         colort = c.x_studio_contador_color
-                      else:
-                         negrot = c.x_studio_contador_bn_mesa
-                         colort = c.x_studio_contador_color_mesa
-                      rr=self.env['dcas.dcas'].create({'serie' : c.id
-                                                    , 'contadorMono' : c.x_studio_contador_bn_a_capturar
-                                                    ,'x_studio_contador_color_anterior':colort
-                                                    , 'contadorColor' :c.x_studio_contador_color_a_capturar
-                                                    ,'x_studio_contador_mono_anterior_1':negrot
-                                                    ,'porcentajeNegro':c.x_studio__negro
-                                                    ,'porcentajeCian':c.x_studio__cian      
-                                                    ,'porcentajeAmarillo':c.x_studio__amarrillo      
-                                                    ,'porcentajeMagenta':c.x_studio__magenta
-                                                    ,'x_studio_descripcion':self.name
-                                                    ,'x_studio_tickett':self.x_studio_id_ticket
-                                                    ,'x_studio_hoja_de_estado':c.x_studio_evidencias
-                                                    ,'x_studio_usuariocaptura':self.env.user.name
-                                                    ,'fuente':q
-                                                    ,'x_studio_rendimiento':int(c.x_studio_rendimiento)/abs(int(c.x_studio_contador_bn_a_capturar)-int(negrot))
-                                                    ,'x_studio_rendimiento_color':int(c.x_studio_rendimiento)/abs(int(c.x_studio_contador_color_a_capturar)-int(colort))
-   
-                                                  })                  
-                      self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario':'capturas :' + str('Mono'+str(c.x_studio_contador_bn_a_capturar)+', Color '+str(c.x_studio_contador_color_a_capturar)+', Amarillo '+str(c.x_studio__amarrillo)+', Cian '+str(c.x_studio__cian)+', Negro '+str(c.x_studio__negro)+', Magenta '+str(c.x_studio__magenta)+', % de rendimiento '+str(rr.x_studio_rendimiento))})
-                  else :
-                    raise exceptions.ValidationError("Error al capturar debe ser mayor")                                                 
+        for record in self:
+            #if self.x_studio_field_nO7Xg.id != False and self.x_studio_field_nO7Xg.state == 'sale':
+            if record.x_studio_equipo_por_nmero_de_serie:
+                for c in record.x_studio_equipo_por_nmero_de_serie:
+                    if self.team_id.id == 8:
+                        q = 'helpdesk.ticket'
+                    else:
+                        q = 'stock.production.lot'
+                    #if str(c.x_studio_field_A6PR9) =='Negro':
+                    if str(c.x_studio_color_bn) == 'B/N':
+                        if int(c.x_studio_contador_bn_a_capturar) >= int(c.x_studio_contador_bn):
+                            if self.team_id.id == 8:
+                                negrot = c.x_studio_contador_bn
+                                colort = c.x_studio_contador_color
+                            else:
+                                negrot = c.x_studio_contador_bn_mesa
+                                colort = c.x_studio_contador_color_mesa                        
+                            rr = self.env['dcas.dcas'].create({'serie' : c.id
+                                                            , 'contadorMono' : c.x_studio_contador_bn_a_capturar
+                                                            , 'x_studio_contador_color_anterior':colort
+                                                            , 'contadorColor' :c.x_studio_contador_color_a_capturar
+                                                            , 'x_studio_contador_mono_anterior_1':negrot
+                                                            , 'porcentajeNegro':c.x_studio__negro
+                                                            , 'porcentajeCian':c.x_studio__cian      
+                                                            , 'porcentajeAmarillo':c.x_studio__amarrillo      
+                                                            , 'porcentajeMagenta':c.x_studio__magenta
+                                                            , 'x_studio_descripcion':self.name
+                                                            , 'x_studio_tickett':self.x_studio_id_ticket
+                                                            , 'x_studio_hoja_de_estado':c.x_studio_evidencias
+                                                            , 'x_studio_usuariocaptura':self.env.user.name
+                                                            , 'fuente':q
+                                                            , 'x_studio_rendimiento':int(c.x_studio_rendimiento)/abs(int(c.x_studio_contador_bn_a_capturar)-int(negrot))
+                                                            , 'x_studio_rendimiento_color':int(c.x_studio_rendimiento)/abs(int(c.x_studio_contador_color_a_capturar)-int(colort))   
+                                                            })                  
+                            self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario':'capturas :' + str('Mono'+str(c.x_studio_contador_bn_a_capturar)+', Color '+str(c.x_studio_contador_color_a_capturar)+', Amarillo '+str(c.x_studio__amarrillo)+', Cian '+str(c.x_studio__cian)+', Negro '+str(c.x_studio__negro)+', Magenta '+str(c.x_studio__magenta)+', % de rendimiento '+str(rr.x_studio_rendimiento))})
+                        else :
+                            raise exceptions.ValidationError("Contador Monocromatico Menor")                     
+                    #if str(c.x_studio_field_A6PR9) != 'Negro':       
+                    if str(c.x_studio_color_bn) != 'B/N':
+                        if int(c.x_studio_contador_color_a_capturar) >= int(c.x_studio_contador_color) and int(c.x_studio_contador_bn_a_capturar) >= int(c.x_studio_contador_bn):
+                            if self.team_id.id == 8:
+                                negrot = c.x_studio_contador_bn
+                                colort = c.x_studio_contador_color
+                            else:
+                                negrot = c.x_studio_contador_bn_mesa
+                                colort = c.x_studio_contador_color_mesa
+                            rr=self.env['dcas.dcas'].create({'serie' : c.id
+                                                        , 'contadorMono' : c.x_studio_contador_bn_a_capturar
+                                                        ,'x_studio_contador_color_anterior':colort
+                                                        , 'contadorColor' :c.x_studio_contador_color_a_capturar
+                                                        ,'x_studio_contador_mono_anterior_1':negrot
+                                                        ,'porcentajeNegro':c.x_studio__negro
+                                                        ,'porcentajeCian':c.x_studio__cian      
+                                                        ,'porcentajeAmarillo':c.x_studio__amarrillo      
+                                                        ,'porcentajeMagenta':c.x_studio__magenta
+                                                        ,'x_studio_descripcion':self.name
+                                                        ,'x_studio_tickett':self.x_studio_id_ticket
+                                                        ,'x_studio_hoja_de_estado':c.x_studio_evidencias
+                                                        ,'x_studio_usuariocaptura':self.env.user.name
+                                                        ,'fuente':q
+                                                        ,'x_studio_rendimiento':int(c.x_studio_rendimiento)/abs(int(c.x_studio_contador_bn_a_capturar)-int(negrot))
+                                                        ,'x_studio_rendimiento_color':int(c.x_studio_rendimiento)/abs(int(c.x_studio_contador_color_a_capturar)-int(colort))
+       
+                                                      })                  
+                            self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario':'capturas :' + str('Mono'+str(c.x_studio_contador_bn_a_capturar)+', Color '+str(c.x_studio_contador_color_a_capturar)+', Amarillo '+str(c.x_studio__amarrillo)+', Cian '+str(c.x_studio__cian)+', Negro '+str(c.x_studio__negro)+', Magenta '+str(c.x_studio__magenta)+', % de rendimiento '+str(rr.x_studio_rendimiento))})
+                        else :
+                            raise exceptions.ValidationError("Error al capturar debe ser mayor")
+            else:
+                raise exceptions.ValidationError("Error al capturar.")
 
-                    
+
     estadoSolicitudDeToner = fields.Boolean(string="Paso por estado pendiente por autorizar solicitud", default=False)
     
     #@api.onchange('x_studio_tipo_de_requerimiento')
@@ -1067,7 +1072,13 @@ class helpdesk_update(models.Model):
     def toner(self):
       for record in self:
         jalaSolicitudes=''
+        if self.x_studio_field_nO7Xg.id != False and self.x_studio_field_nO7Xg.state == 'sale':
+            message = ('Existe una solicitud ya generada y esta fue validada. \n\nNo es posible realizar cambios a una solicitud ya validada.')
+            mess = {'title': _('Solicitud existente validada!!!')
+                    , 'message' : message
+            }
         if self.x_studio_field_nO7Xg.id != False and self.x_studio_field_nO7Xg.state != 'sale':
+            return {'warning': mess}
             self.env.cr.execute("delete from sale_order_line where order_id = " + str(self.x_studio_field_nO7Xg.id) +";")
             if record.team_id.id == 8 :
                 serieaca=''
@@ -1359,58 +1370,64 @@ class helpdesk_update(models.Model):
             
             #if sale.id != 0 or record.x_studio_equipo_por_nmero_de_serie.x_studio_toner_compatible: lol xD
             if sale.id != 0:
-                self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
-                sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
-                sale.write({'x_studio_corte':self.x_studio_corte})
-                sale.write({'x_studio_comentario_adicional':self.x_studio_comentarios_de_localidad})      
-                x=0
-                if self.x_studio_almacen_1=='Agricola':
-                   sale.write({'warehouse_id':1})
-                   x=12
-                if self.x_studio_almacen_1=='Queretaro':
-                   sale.write({'warehouse_id':18})
-                   x=115
-                for lineas in sale.order_line:
-                    st=self.env['stock.quant'].search([['location_id','=',x],['product_id','=',lineas.product_id.id]]).sorted(key='quantity',reverse=True)
-                    requisicion=False
-                    if(len(st)>0):
-                        if(st[0].quantity==0):
+                if self.x_studio_field_nO7Xg.order_line:
+                    self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
+                    sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
+                    sale.write({'x_studio_corte':self.x_studio_corte})
+                    sale.write({'x_studio_comentario_adicional':self.x_studio_comentarios_de_localidad})      
+                    x=0
+                    if self.x_studio_almacen_1=='Agricola':
+                       sale.write({'warehouse_id':1})
+                       x=12
+                    if self.x_studio_almacen_1=='Queretaro':
+                       sale.write({'warehouse_id':18})
+                       x=115
+                    for lineas in sale.order_line:
+                        st=self.env['stock.quant'].search([['location_id','=',x],['product_id','=',lineas.product_id.id]]).sorted(key='quantity',reverse=True)
+                        requisicion=False
+                        if(len(st)>0):
+                            if(st[0].quantity==0):
+                                requisicion=self.env['requisicion.requisicion'].search([['state','!=','done'],['create_date','<=',datetime.datetime.now()],['origen','=','Tóner']]).sorted(key='create_date',reverse=True)
+                        else:
                             requisicion=self.env['requisicion.requisicion'].search([['state','!=','done'],['create_date','<=',datetime.datetime.now()],['origen','=','Tóner']]).sorted(key='create_date',reverse=True)
-                    else:
-                        requisicion=self.env['requisicion.requisicion'].search([['state','!=','done'],['create_date','<=',datetime.datetime.now()],['origen','=','Tóner']]).sorted(key='create_date',reverse=True)
-                    if(len(requisicion)==0):
-                        re=self.env['requisicion.requisicion'].create({'origen':'Tóner','area':'Almacen','state':'draft'})
-                        re.product_rel=[{'cliente':sale.partner_shipping_id.id,'ticket':sale.x_studio_field_bxHgp.id,'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
-                    if(len(requisicion)>0):
-                        requisicion[0].product_rel=[{'cliente':sale.partner_shipping_id.id,'ticket':sale.x_studio_field_bxHgp.id,'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
-                        #prd=requisicion[0].product_rel.search([['product','=',lineas.product_id.id],['req_rel','=',requisicion[0].id]])
-                        #if(len(prd)>0):
-                        #    prd.cantidad=prd.cantidad+lineas.product_uom_qty
-                        #if(len(prd)==0):
-                            #requisicion[0].product_rel=[{'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
+                        if(len(requisicion)==0):
+                            re=self.env['requisicion.requisicion'].create({'origen':'Tóner','area':'Almacen','state':'draft'})
+                            re.product_rel=[{'cliente':sale.partner_shipping_id.id,'ticket':sale.x_studio_field_bxHgp.id,'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
+                        if(len(requisicion)>0):
+                            requisicion[0].product_rel=[{'cliente':sale.partner_shipping_id.id,'ticket':sale.x_studio_field_bxHgp.id,'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
+                            #prd=requisicion[0].product_rel.search([['product','=',lineas.product_id.id],['req_rel','=',requisicion[0].id]])
+                            #if(len(prd)>0):
+                            #    prd.cantidad=prd.cantidad+lineas.product_uom_qty
+                            #if(len(prd)==0):
+                                #requisicion[0].product_rel=[{'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
 
 
-                sale.action_confirm()
-                
-                if self.estadoSolicitudDeTonerValidar == False:
-                    query="update helpdesk_ticket set stage_id = 95 where id = " + str(self.x_studio_id_ticket) + ";" 
-                    ss=self.env.cr.execute(query)
-                    self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': "Autorizado", 'write_uid':  self.env.user.name})
+                    sale.action_confirm()
+                    
+                    if self.estadoSolicitudDeTonerValidar == False:
+                        query="update helpdesk_ticket set stage_id = 95 where id = " + str(self.x_studio_id_ticket) + ";" 
+                        ss=self.env.cr.execute(query)
+                        self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': "Autorizado", 'write_uid':  self.env.user.name})
 
-                    #En almacen
-                    query="update helpdesk_ticket set stage_id = 93 where id = " + str(self.x_studio_id_ticket) + ";" 
-                    ss=self.env.cr.execute(query)
-                    self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': "En almacén", 'write_uid':  self.env.user.name})
+                        #En almacen
+                        query="update helpdesk_ticket set stage_id = 93 where id = " + str(self.x_studio_id_ticket) + ";" 
+                        ss=self.env.cr.execute(query)
+                        self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': "En almacén", 'write_uid':  self.env.user.name})
 
-                    estadoAntes = str(self.stage_id.name)
-                    message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Almacen' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
-                    mess= {
-                            'title': _('Estado de ticket actualizado!!!'),
-                            'message' : message
-                          }
-                    self.estadoSolicitudDeTonerValidar = True
+                        estadoAntes = str(self.stage_id.name)
+                        message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Almacen' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
+                        mess= {
+                                'title': _('Estado de ticket actualizado!!!'),
+                                'message' : message
+                              }
+                        self.estadoSolicitudDeTonerValidar = True
+                        return {'warning': mess}
+                else:
+                    message = ("No es posible validar una solicitud que no tiene productos.")
+                    mess = {'title': _('Solicitud sin productos!!!')
+                            , 'message' : message
+                            }
                     return {'warning': mess}
-                
             else:
                 errorTonerNoValidado = "Solicitud de tóner no validada"
                 mensajeSolicitudTonerNoValida = "No es posible validar una solicitud de tóner en el estado actual. Favor de verificar el estado del ticket, revisar que la solicitud se haya generado o verificar si agrego productos"
