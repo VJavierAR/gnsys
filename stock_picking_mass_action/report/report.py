@@ -16,6 +16,7 @@ class PartnerXlsx(models.AbstractModel):
         sheet = workbook.add_worksheet('Movimientos')
         header1 = '&CHere is some centered text.'
         sheet.set_header(header1)
+        worksheet1.set_column('A:A', 50)
         
         #sheet.write(0, 0, 'Cliente', bold)
         #sheet.insert_image('A1', 'logo.png')
