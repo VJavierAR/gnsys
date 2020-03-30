@@ -397,3 +397,7 @@ class PickingSerieLine(TransientModel):
         if(self.producto):
             self.color=self.producto.x_studio_color_bn
 
+class StockPickingMassAction(TransientModel):
+    _name = 'stock.move.action'
+    _description = 'Reporte de Movimientos'
+    picking_ids = fields.Many2many(comodel_name="stock.move")

@@ -19,6 +19,7 @@
         'wizard/mass_action_view.xml',
         'data/ir_cron.xml',
         'report/views.xml',
+        'report/report.xml',
         'view/template.xml'
     ],
      'qweb': [

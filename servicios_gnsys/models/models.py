@@ -94,7 +94,7 @@ class contratos(models.Model):
     _description = 'Contratos GNSYS'
     
     name = fields.Char(string="Nombre")
-    servicio = fields.One2many('servicios', 'contrato', string="Servicio")
+    servicio = fields.One2many('servicios', 'contrato',compute='expiracionServicios' ,string="Servicio")
     
     cliente = fields.Many2one('res.partner', string='Cliente')
     idtmpp = fields.Char(string="idTMPp")
@@ -175,6 +175,18 @@ class contratos(models.Model):
             self.vendedor = self.cliente.x_studio_vendedor
     
 
+    # Si el contrato expira expiran los servicios
+    @api.depends('fechaDeFinDeContrato')
+    def expiracionServicios (self):
+        for record in self:
+            fecha = str(record.create_date).split(' ')[0]
+            converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
+            fechaCompara = (datetime.date.today() - converted_date).days
+            #Comparamos la fecha de hoy con la fecha de fin de contrato
+            #Aqui obtenemos todos los serviciós
+            if fechaCompara > 0:
+                for servicio in record.servicio: 
+                    servicio.servActivo = False
 
 class cliente_contratos(models.Model):
     _inherit = 'res.partner'
