@@ -14,7 +14,7 @@ class PartnerXlsx(models.AbstractModel):
         report_name = 'Movimientos'
         bold = workbook.add_format({'bold': True})
         sheet = workbook.add_worksheet('Movimientos')
-        sheet.set_header('A1', {'image_left': 'logo.png'})
+        sheet.set_header('A1', {'image_left': '/home/odoo/src/user/stock_picking_mass_action/report/logo.png'})
         #sheet.write(0, 0, 'Cliente', bold)
         #sheet.insert_image('A1', 'logo.png')
         for obj in partners:
