@@ -31,7 +31,7 @@ class PartnerXlsx(models.AbstractModel):
             #_logger.info('work')
             sheet.write(i, 0, obj.x_studio_field_aVMhn.name, bold)
             sheet.write(i, 1, obj.date.strftime("%Y/%m/%d"), bold)
-            sheet.write(i, 2, obj.x_studio_almacen, bold)
+            sheet.write(i, 2, obj.x_studio_field_3lDS0.name, bold)
             if(obj.location_id.id==obj.x_studio_almacen.almacen.wh_input_stock_loc_id.id):
                 sheet.write(i, 3, "Entrada", bold)
             else:
