@@ -29,10 +29,17 @@ class PartnerXlsx(models.AbstractModel):
             # One sheet by partner
             
             #_logger.info('work')
-            sheet.write(i, 0, obj.reference, bold)
+            sheet.write(i, 0, obj.x_studio_field_aVMhn.name, bold)
             sheet.write(i, 1, obj.date.strftime("%Y/%m/%d"), bold)
-            sheet.write(i, 2, obj.location_id.name, bold)
-
+            sheet.write(i, 2, obj.x_studio_almacen.name, bold)
+            if(obj.location_id.id==obj.x_studio_almacen.almacen.wh_input_stock_loc_id.id):
+                sheet.write(i, 3, "Entrada", bold)
+            else:
+                sheet.write(i, 3, "Salida", bold)
+            sheet.write(i, 4, obj.product_id.name, bold)
+            sheet.write(i, 5, obj.product_id.default_code, bold)
+            sheet.write(i, 6, obj.qty_done, bold)
+            sheet.write(i, 7, obj.move_id.picking_id.partner_id.name, bold)
             i=i+1
-        sheet.add_table('A2:C'+str((i+1)),{'columns': [{'header': 'Cliente'},{'header': 'Calle'},{'header':'Test'}]})
+        sheet.add_table('A2:H'+str((i+1)),{'columns': [{'header': 'Categoria'},{'header': 'Fecha'},{'header':'Almacen'},{'header': 'Tipo'},{'header': 'Modelo'},{'header': 'No Parte'},{'header': 'Cantidad'},{'header': 'Cliente'}]})
         workbook.close()
