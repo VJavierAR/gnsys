@@ -43,7 +43,7 @@
                 </field>
 
                 <footer>
-                    <button name="creaComentario" string="Confirmar" type="object" class="oe_highlight"/>
+                    <button name="creaComentario" string="Confirmar" type="object" class="oe_highlight" attrs='{"invisible": [["estado","=","Cerrado"]]}'/>
                     <button string="Cancel" class="oe_link" special="cancel"/>
                 </footer>
             </form>
