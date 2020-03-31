@@ -445,7 +445,7 @@ class StockPickingMassAction(TransientModel):
             j.append('&')
         j.extend(i)
         _logger.info(str(j))
-        d=self.env['stock.move.line'].search(j,order='date desc',limit=3000)
+        d=self.env['stock.move.line'].search(j,order='date desc',limit=2000)
         h=d if(d!=[]) else self.env['stock.move.line']
         _logger.info(str(len(d)))
         return self.env.ref('stock_picking_mass_action.partner_xlsx').report_action(d)
