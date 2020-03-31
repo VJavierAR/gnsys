@@ -449,4 +449,3 @@ class StockPickingMassAction(TransientModel):
         h=d if(d!=[]) else self.env['stock.move.line']
         _logger.info(str(len(d)))
         return self.env.ref('stock_picking_mass_action.partner_xlsx').report_action(d)
-
