@@ -79,8 +79,10 @@ class servicios_gnsys(models.Model):
 
 
     # Si el contrato expira expiran los servicios
-    # def expiracionServicios(self):
-    #     for record in self:
+    def expiracionServicios(self):
+        for record in self:
+            _logger.info("-------Logger de OSWALDO "+str(record))
+            _logger.info("-------Logger de OSWALDO "+str(self))
     #         if record.contrato:
     #             _logger.info("-------Logger de OSWALDO "+str(record.contrato.name))
     #             fecha = str(record.fechaDeFinDeContrato).split(' ')[0]
