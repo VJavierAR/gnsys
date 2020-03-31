@@ -406,31 +406,37 @@ class StockPickingMassAction(TransientModel):
     tipo=fields.Selection([["Entrada","Entrada"],["Salida","Salida"],["Todos","Todos"]],default="Todos")
 
     def report(self):
-        if(self.almacen!=False and self.categoria!=False):
-            a=['x_studio_field_aVMhn','=',self.categoria.id]
+        i=[]
+        if(self.almacen==False):
+            almacenes=self.env['stock.warehouse'].search([['x_studio_cliente','=',False]])
+            for alm in almacenes:
+                b=['location_id','=',alm.wh_output_stock_loc_id.id]
+                c=['location_dest_id','=',alm.wh_input_stock_loc_id.id]
+                if(self.tipo=="Todos"):
+                    i.append(b)
+                    i.append(c)
+                if(self.tipo=="Entrada"):
+                    i.append(c)
+                if(self.tipo=="Salida"):
+                    i.append(b)
+        if(self.almacen):
             b=['location_id','=',self.almacen.wh_output_stock_loc_id.id]
             c=['location_dest_id','=',self.almacen.wh_input_stock_loc_id.id]
             if(self.tipo=="Todos"):
-                i=[]
-                i.append(a)
                 i.append(b)
                 i.append(c)
-                d=self.env['stock.move.line'].search(i)
-                _logger.info(str(i))
             if(self.tipo=="Entrada"):
-                i=[]
-                i.append(a)
                 i.append(c)
-                d=self.env['stock.move.line'].search(i)
             if(self.tipo=="Salida"):
-                i=[]
-                i.append(a)
                 i.append(b)
-                d=self.env['stock.move.line'].search(i)
-        if(self.categoria!=False and self.almacen==False):
-            d=self.env['stock.move.line'].search([['reference','like','IN']])
-        if(self.categoria==False and self.almacen!=False):
-            d=self.env['stock.move.line'].search([['reference','like','IN']])
-
+        if(self.categoria):
+            a=['x_studio_field_aVMhn','=',self.categoria.id]
+            i.append(a)
+        if(self.categoria==False):
+            categorias=self.env['product.category'].search([[]])
+            for cat in categorias:
+                ca=['x_studio_field_aVMhn','=',cat.id]
+                i.append(ca)
+        d=self.env['stock.move.line'].search(i)
         return self.env.ref('stock_picking_mass_action.partner_xlsx').report_action(d)
 
