@@ -430,8 +430,6 @@ class StockPickingMassAction(TransientModel):
             d=self.env['stock.move.line'].search([['reference','like','IN']])
         if(self.categoria==False and self.almacen!=False):
             d=self.env['stock.move.line'].search([['reference','like','IN']])
-        else:
-            d=self.env['stock.move.line'].search([['reference','like','IN']])
 
         return self.env.ref('stock_picking_mass_action.partner_xlsx').report_action(d)
 
