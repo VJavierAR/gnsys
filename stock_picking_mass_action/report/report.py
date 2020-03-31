@@ -30,7 +30,9 @@ class PartnerXlsx(models.AbstractModel):
             
             #_logger.info('work')
             sheet.write(i, 0, obj.reference, bold)
-            sheet.write(i, 1, obj.date, bold)
+            sheet.write(i, 1, obj.date.strftime("%Y/%m/%d"), bold)
+            sheet.write(i, 2, obj.locatio_id.name, bold)
+
             i=i+1
-        sheet.add_table('A2:B'+str((i+1)),{'columns': [{'header': 'Cliente'},{'header': 'Calle'}]})
+        sheet.add_table('A2:C'+str((i+1)),{'columns': [{'header': 'Cliente'},{'header': 'Calle'},{'header':'Test'}]})
         workbook.close()
