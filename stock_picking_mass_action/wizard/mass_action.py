@@ -416,6 +416,7 @@ class StockPickingMassAction(TransientModel):
                 i.append(b)
                 i.append(c)
                 d=self.env['stock.move.line'].search(i)
+                _logger.info(str(i))
             if(self.tipo=="Entrada"):
                 i=[]
                 i.append(a)
