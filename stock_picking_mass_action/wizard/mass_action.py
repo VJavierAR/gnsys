@@ -407,7 +407,25 @@ class StockPickingMassAction(TransientModel):
 
     def report(self):
         if(self.almacen!=False and self.categoria!=False):
-            d=self.env['stock.move.line'].search([['reference','like','IN']])
+            a=['x_studio_field_aVMhn','=',self.categoria.id]
+            b=['location_id','=',self.almacen.wh_output_stock_loc_id.id]
+            c=['location_dest_id','=',self.almacen.wh_input_stock_loc_id.id]
+            if(tipo=="Todos"):
+                i=[]
+                i.append(a)
+                i.append(b)
+                i.append(c)
+                d=self.env['stock.move.line'].search(i)
+            if(tipo=="Entrada"):
+                i=[]
+                i.append(a)
+                i.append(c)
+                d=self.env['stock.move.line'].search(i)
+            if(tipo=="Salida"):
+                i=[]
+                i.append(a)
+                i.append(b)
+                d=self.env['stock.move.line'].search(i)
         if(self.categoria!=False and self.almacen==False):
             d=self.env['stock.move.line'].search([['reference','like','IN']])
         if(self.categoria==False and self.almacen!=False):
