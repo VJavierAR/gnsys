@@ -4,6 +4,8 @@ import logging, ast
 import datetime, time
 from odoo.tools.float_utils import float_compare
 _logger = logging.getLogger(__name__)
+import xlsxwriter
+
 
 class StockPickingMassAction(TransientModel):
     _name = 'stock.picking.mass.action'
@@ -447,5 +449,7 @@ class StockPickingMassAction(TransientModel):
         _logger.info(str(j))
         d=self.env['stock.move.line'].search(j)
         _logger.info(str(len(d)))
-        return self.env.ref('stock_picking_mass_action.partner_xlsx').report_action(self).generate_xlsx_report(partner=d)
+        workbook  = xlsxwriter.Workbook('filename.xlsx')
+        data=[]
+        return self.env['report.requisicion.partner_xlsx'].generate_xlsx_report(self,worbook,data,d)
 
