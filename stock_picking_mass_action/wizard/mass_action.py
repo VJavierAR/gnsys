@@ -405,6 +405,7 @@ class StockPickingMassAction(TransientModel):
     categoria=fields.Many2one('product.category')
     tipo=fields.Selection([["Entrada","Entrada"],["Salida","Salida"],["Todos","Todos"]],default="Todos")
 
+
     def report(self):
         i=[]
         if(self.almacen==False):
