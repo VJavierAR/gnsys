@@ -320,7 +320,7 @@ class helpdesk_contadores(TransientModel):
     ticket_id = fields.Many2one("helpdesk.ticket")
     
     contadorBNMesa = fields.Integer(string='Contador B/N Mesa', compute="_compute_contadorBNMesa")
-    contadorBNActual = fields.Integer(string='Contador B/N Actual')
+    contadorBNActual = fields.Integer(string='Contador B/N Actual', default = 0)
     contadorColorMesa = fields.Integer(string='Contador Color Mesa', compute = '_compute_actualizaContadorColorMesa')
     negroProcentaje = fields.Integer(string='% Negro')
     bnColor = fields.Text(string='Color o BN', compute = '_compute_actualizaColor')
@@ -328,10 +328,13 @@ class helpdesk_contadores(TransientModel):
     @api.depends('ticket_id')
     def _compute_contadorBNMesa(self):
         if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
-            for serie in self.ticket_id.x_studio_equipo_por_nmero_de_serie:
-                self.contadorBNMesa = int(serie.x_studio_contador_bn_mesa)
-                self.contadorColorMesa = int(serie.x_studio_contador_color_mesa)
-                self.bnColor = serie.x_studio_color_bn
+            if contadorBNActual != 0:
+                for serie in self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+                    self.contadorBNMesa = int(serie.x_studio_contador_bn_mesa)
+                    self.contadorColorMesa = int(serie.x_studio_contador_color_mesa)
+                    self.bnColor = serie.x_studio_color_bn
+            else:
+                self.contadorBNMesa = self.contadorBNActual
 
     def _compute_actualizaColor(self):
         for serie in self.ticket_id.x_studio_equipo_por_nmero_de_serie:
@@ -343,18 +346,18 @@ class helpdesk_contadores(TransientModel):
     
     def modificarContadores(self):          
         for c in self.ticket_id.x_studio_equipo_por_nmero_de_serie:                                       
-            q='stock.production.lot'              
+            q = 'stock.production.lot'              
             if str(c.x_studio_color_bn) == 'B/N':
                 if int(self.contadorBNActual) >= int(c.x_studio_contador_bn):
                     negrot = c.x_studio_contador_bn_mesa
-                    colort = c.x_studio_contador_color_mesa                        
-                    rr=self.env['dcas.dcas'].create({'serie' : c.id
+                    colort = c.x_studio_contador_color_mesa
+                    rr = self.env['dcas.dcas'].create({'serie' : c.id
                                                     , 'contadorMono' : self.contadorBNActual
-                                                    ,'x_studio_contador_color_anterior':colort
+                                                    , 'x_studio_contador_color_anterior':colort
                                                     , 'contadorColor' :self.contadorColorMesa
-                                                    ,'x_studio_tickett':self.ticket_id.id
-                                                    ,'x_studio_contador_mono_anterior_1':negrot  
-                                                    ,'fuente':q
+                                                    , 'x_studio_tickett':self.ticket_id.id
+                                                    , 'x_studio_contador_mono_anterior_1':negrot  
+                                                    , 'fuente':q
                                                   })                  
                     self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.ticket_id.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario': 'bn '+str(c.x_studio_contador_bn_a_capturar)+' color '+str(c.x_studio_contador_color_a_capturar)})
 
