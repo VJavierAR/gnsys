@@ -405,12 +405,15 @@ class StockPickingMassAction(TransientModel):
     categoria=fields.Many2one('product.category')
     tipo=fields.Selection([["Entrada","Entrada"],["Salida","Salida"],["Todos","Todos"]],default="Todos")
 
-    def reporte(self):
+    def report(self):
         if(almacen!=False and categoria!=False):
             d=self.env['stock.move.line'].search([['reference','like','IN']])
         if(categoria!=False and almacen==False):
             d=self.env['stock.move.line'].search([['reference','like','IN']])
         if(categoria==False and almacen!=False):
             d=self.env['stock.move.line'].search([['reference','like','IN']])
+        else:
+            d=self.env['stock.move.line'].search([['reference','like','IN']])
+
         return self.env.ref('stock_picking_mass_action.partner_xlsx').report_action(d)
 
