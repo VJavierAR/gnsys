@@ -186,8 +186,9 @@ class contratos(models.Model):
                 #Comparamos la fecha de hoy con la fecha de fin de contrato
                 #Aqui obtenemos todos los serviciós
                 if fechaCompara > 0:
-                    for servicio in record.servicio: 
-                        servicio.servActivo = False
+                    if record.servicio :
+                        for servicio in record.servicio: 
+                            servicio.servActivo = False
 
 class cliente_contratos(models.Model):
     _inherit = 'res.partner'
