@@ -11,9 +11,11 @@ class PartnerXlsx(models.AbstractModel):
     def generate_xlsx_report(self, workbook, data, partners):
         i=2
         d=[]
+        merge_format = workbook.add_format({'bold': 1,'border': 1,'align': 'center','valign': 'vcenter','fg_color': 'blue'})
         report_name = 'Movimientos'
         bold = workbook.add_format({'bold': True})
         sheet = workbook.add_worksheet('Movimientos')
+        sheet.merge_range('B4:D4', 'Movimientos', merge_format)
         #header1 = '&CHere is some centered text.'
         #sheet.set_header('A1', {'image_left': '/home/odoo/logo.png'})
         image_file = open('/home/odoo/logo.png', 'rb')
