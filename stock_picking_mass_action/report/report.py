@@ -15,12 +15,12 @@ class PartnerXlsx(models.AbstractModel):
         report_name = 'Movimientos'
         bold = workbook.add_format({'bold': True})
         sheet = workbook.add_worksheet('Movimientos')
-        sheet.merge_range('B4:D4', 'Movimientos', merge_format)
+        sheet.merge_range('A1:H1', 'Movimientos', merge_format)
         #header1 = '&CHere is some centered text.'
         #sheet.set_header('A1', {'image_left': '/home/odoo/logo.png'})
-        image_file = open('/home/odoo/logo.png', 'rb')
-        image_data = xlsxwriter.compatibility.BytesIO(image_file.read())
-        sheet.set_header('&C', {'image_center': image_data})
+        #image_file = open('/home/odoo/logo.png', 'rb')
+        #image_data = xlsxwriter.compatibility.BytesIO(image_file.read())
+        #sheet.set_header('&C', {'image_center': image_data})
         #sheet.insert_image('A1', 'logo.png')
         for obj in partners:
             e=[]
