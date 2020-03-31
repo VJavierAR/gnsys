@@ -449,7 +449,7 @@ class StockPickingMassAction(TransientModel):
         _logger.info(str(j))
         d=self.env['stock.move.line'].search(j)
         _logger.info(str(len(d)))
-        workbook  = xlsxwriter.Workbook('filename.xlsx')
+        worbook  = xlsxwriter.Workbook('filename.xlsx')
         data=[]
         return self.env['report.requisicion.partner_xlsx'].generate_xlsx_report(self,worbook,data,d)
 
