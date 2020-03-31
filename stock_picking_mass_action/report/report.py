@@ -41,5 +41,5 @@ class PartnerXlsx(models.AbstractModel):
             sheet.write(i, 6, obj.qty_done, bold)
             sheet.write(i, 7, obj.move_id.picking_id.partner_id.name, bold)
             i=i+1
-        sheet.add_table('A2:H'+str((i+1)),{'style': 'Table Style Medium 10','columns': [{'header': 'Categoria'},{'header': 'Fecha'},{'header':'Almacen'},{'header': 'Tipo'},{'header': 'Modelo'},{'header': 'No Parte'},{'header': 'Cantidad'},{'header': 'Cliente'}]})
+        sheet.add_table('A2:H'+str((i)),{'style': 'Table Style Medium 9','columns': [{'header': 'Categoria'},{'header': 'Fecha'},{'header':'Almacen'},{'header': 'Tipo'},{'header': 'Modelo'},{'header': 'No Parte'},{'header': 'Cantidad'},{'header': 'Cliente'}]})
         workbook.close()
