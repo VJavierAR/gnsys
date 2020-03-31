@@ -21,7 +21,6 @@ class PartnerXlsx(models.AbstractModel):
         image_file = open('/home/odoo/logo.png', 'rb')
         image_data = xlsxwriter.compatibility.BytesIO(image_file.read())
         sheet.set_header('&C', {'image_center': image_data})
-        #sheet.write(0, 0, 'Cliente', bold)
         #sheet.insert_image('A1', 'logo.png')
         for obj in partners:
             e=[]
