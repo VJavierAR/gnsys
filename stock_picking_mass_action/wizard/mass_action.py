@@ -440,7 +440,11 @@ class StockPickingMassAction(TransientModel):
             for cat in categorias:
                 ca=['x_studio_field_aVMhn','=',cat.id]
                 i.append(ca)
-        _logger.info(str(i))
-        d=self.env['stock.move.line'].search(i)
+        j=[]
+        for l in range(len(i)-1):
+            j.append('&')
+        j.extend(i)
+        _logger.info(str(j))
+        d=self.env['stock.move.line'].search(j)
         return self.env.ref('stock_picking_mass_action.partner_xlsx').report_action(d)
 
