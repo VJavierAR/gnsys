@@ -406,11 +406,11 @@ class StockPickingMassAction(TransientModel):
     tipo=fields.Selection([["Entrada","Entrada"],["Salida","Salida"],["Todos","Todos"]],default="Todos")
 
     def report(self):
-        if(almacen!=False and categoria!=False):
+        if(self.almacen!=False and self.categoria!=False):
             d=self.env['stock.move.line'].search([['reference','like','IN']])
-        if(categoria!=False and almacen==False):
+        if(self.categoria!=False and self.almacen==False):
             d=self.env['stock.move.line'].search([['reference','like','IN']])
-        if(categoria==False and almacen!=False):
+        if(self.categoria==False and self.almacen!=False):
             d=self.env['stock.move.line'].search([['reference','like','IN']])
         else:
             d=self.env['stock.move.line'].search([['reference','like','IN']])
