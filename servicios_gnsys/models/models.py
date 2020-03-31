@@ -45,7 +45,7 @@ class servicios_gnsys(models.Model):
     contrato = fields.Many2one('contrato', string="Contrato")
     
     
-    servActivo = fields.Boolean(string="Activo", default=False)
+    servActivo = fields.Boolean(string="Activo",compute='expiracionServicios', default=False)
     #fecha = fields.Datetime(string = 'Fecha de facturación',track_visibility='onchange')
     diaCorte = fields.Integer(string="Día de corte",default='28',track_visibility='onchange')
     renta = fields.Selection([('0','82121503 Impresión digital') ,('1','82121500 Impresión') ,('2','43212105 Impresoras láser') ,('3','44103105 Cartuchos de tinta') ,('4','80161801 Servicio de alquiler o leasing de fotocopiadoras') ,('5','81101707 Mantenimiento de equipos de impresión') ,('6','82121701 Servicios de copias en blanco y negro o de cotejo') ,('7','82121702 Servicios de copias a color o de cotejo') ,('8','44103103 Tóner para impresoras o fax') ,('9','44101700 Accesorios para impresoras, fotocopiadoras y aparatos de fax') ,('10','81161800 Servicios de alquiler o arrendamiento de equipos o plataformas de voz y datos o multimedia') ,('11','44101503 Máquinas multifuncionales') ,('12','80111616 Personal temporal de servicio al cliente') ,('13','93151507 Procedimientos o servicios administrativos') ,('14','84111506 Servicios de facturación') ,('15','81112005 Servicio de escaneo de documentos') ,('16','44103125 Kit de mantenimiento de impresoras') ,('17','81111811 Servicios de soporte técnico o de mesa de ayuda') ,('18','81112306 Mantenimiento de impresoras') ,('19','43233410 Software de controladores de impresoras') ,('20','80161800 Servicios de alquiler o arrendamiento de equipo de oficina') ,('21','25101503 Carros') ,('22','82121700 Fotocopiado')], string = "Código SAT",track_visibility='onchange')
@@ -76,6 +76,22 @@ class servicios_gnsys(models.Model):
                         self.env['sale.order.line'].create(datosr)
                         sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})                        
                         self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Arrendamiento' where  id = " + str(sale.id) + ";")        
+
+
+    # Si el contrato expira expiran los servicios
+    def expiracionServicios(self):
+        for record in self:
+            if record.contrato:
+                _logger.info("Logger de OSWALDO "+record.contrato.fechaDeFinDeContrato)
+    #             fecha = str(record.fechaDeFinDeContrato).split(' ')[0]
+    #             converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
+    #             fechaCompara = (datetime.date.today() - converted_date).days
+    #             #Comparamos la fecha de hoy con la fecha de fin de contrato
+    #             #Aqui obtenemos todos los serviciós
+    #             if fechaCompara > 0:
+    #                 if record.servicio :
+    #                     for servicio in record.servicio: 
+    #                         servicio.servActivo = False
     
 class productos_en_servicios(models.Model):
     _inherit = 'product.product'
@@ -175,20 +191,7 @@ class contratos(models.Model):
             self.vendedor = self.cliente.x_studio_vendedor
     
 
-    # Si el contrato expira expiran los servicios
-    # @api.depends('fechaDeFinDeContrato')
-    # def expiracionServicios (self):
-    #     for record in self:
-    #         if record.fechaDeFinDeContrato:
-    #             fecha = str(record.fechaDeFinDeContrato).split(' ')[0]
-    #             converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
-    #             fechaCompara = (datetime.date.today() - converted_date).days
-    #             #Comparamos la fecha de hoy con la fecha de fin de contrato
-    #             #Aqui obtenemos todos los serviciós
-    #             if fechaCompara > 0:
-    #                 if record.servicio :
-    #                     for servicio in record.servicio: 
-    #                         servicio.servActivo = False
+
 
 class cliente_contratos(models.Model):
     _inherit = 'res.partner'
