@@ -94,7 +94,7 @@ class contratos(models.Model):
     _description = 'Contratos GNSYS'
     
     name = fields.Char(string="Nombre")
-    servicio = fields.One2many('servicios', 'contrato',compute='expiracionServicios' ,string="Servicio")
+    servicio = fields.One2many('servicios', 'contrato',string="Servicio")
     
     cliente = fields.Many2one('res.partner', string='Cliente')
     idtmpp = fields.Char(string="idTMPp")
