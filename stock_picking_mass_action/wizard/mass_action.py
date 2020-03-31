@@ -423,6 +423,7 @@ class StockPickingMassAction(TransientModel):
         if(self.almacen):
             b=['location_id','=',self.almacen.wh_output_stock_loc_id.id]
             c=['location_dest_id','=',self.almacen.wh_input_stock_loc_id.id]
+
             if(self.tipo=="Todos"):
                 i.append(b)
                 i.append(c)
@@ -438,6 +439,7 @@ class StockPickingMassAction(TransientModel):
             for cat in categorias:
                 ca=['x_studio_field_aVMhn','=',cat.id]
                 i.append(ca)
+        _logger.info(str(i))
         d=self.env['stock.move.line'].search(i)
         return self.env.ref('stock_picking_mass_action.partner_xlsx').report_action(d)
 
