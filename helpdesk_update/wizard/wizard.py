@@ -353,8 +353,8 @@ class helpdesk_contadores(TransientModel):
                     colort = c.x_studio_contador_color_mesa
                     rr = self.env['dcas.dcas'].create({'serie' : c.id
                                                     , 'contadorMono' : self.contadorBNActual
-                                                    , 'x_studio_contador_color_anterior':colort
-                                                    , 'contadorColor' :self.contadorColorMesa
+                                                    #, 'x_studio_contador_color_anterior':colort
+                                                    #, 'contadorColor' :self.contadorColorMesa
                                                     , 'x_studio_tickett':self.ticket_id.id
                                                     , 'x_studio_contador_mono_anterior_1':negrot  
                                                     , 'fuente':q
