@@ -163,9 +163,9 @@
         <field name="arch" type="xml">
             <form string="Transferencia Interna">
                 <group>
-                    <field name="almacenOrigen"/>
+                    <field name="almacenOrigen" required="1"/>
                     <field name="ubicacion" invisible="1"/>
-                    <field name="almacenDestino"/>
+                    <field name="almacenDestino" required="1"/>
                     <field name="categoria"/>
                 </group>
                 <notebook>
