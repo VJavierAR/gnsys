@@ -193,9 +193,9 @@ class contratos(models.Model):
     @api.multi
     def expiracionServicios(self):
         for record in self:
-            _logger.info("-------Logger de OSWALDO "+str(record.mapped('servicio')))
+            _logger.info("-------Logger de OSWALDO "+str(record.mapped('servicio.servActivo')))
             for elemento in record.mapped('servicio'):
-                _logger.info("-------Logger de OSWALDO*****"+str(elemento.name))
+                _logger.info("-------Logger de OSWALDO*****"+str(elemento.servActivo))
 
 
 class cliente_contratos(models.Model):
