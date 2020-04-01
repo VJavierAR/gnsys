@@ -66,10 +66,26 @@ odoo.define('invoice.action_button', function (require) {
         action_inter1: function (e) {
             var self = this
             var user = session.uid;
-            self.do_action({ 'type': 'ir.actions.act_window', 'name': '1384', 'res_model': 'stock.move.line', 'view_type': 'form', 'view_mode': 'tree,form', 'target': '', }, {
+            self.do_action({
+                name: _t('Movimientos'),
+                type : 'ir.actions.act_window',
+                res_model: 'stock.move.action',
+                view_type: 'form',
+                view_mode: 'form',
+                view_id: 'view_stock_move_action_form',
+                views: [[false, 'form']],
+                target: 'new',
+            }, {
                 on_reverse_breadcrumb: function () {
                     self.update_control_panel({clear: true, hidden: true});
                 }
+            });
+
+
+            rpc.query({
+                model: 'stock.picking',
+                method: 'inter_wizard',
+                args: [[user],{'id':user}],
             });
         },
         receive_invoice: function () {
