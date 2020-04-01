@@ -91,7 +91,7 @@ odoo.define('invoice.action_button_helpdesk', function (require) {
         },
 	});
 
-    $(document).ready(function() {
+    /*$(document).ready(function() {
         console.log("Entrando al cargar...")
         //var x = document.getElementById("hidden_box");
         var x = $('.blockUI blockOverlay');
@@ -105,7 +105,7 @@ odoo.define('invoice.action_button_helpdesk', function (require) {
             }
         }
         //var intervalo = setInterval("borraBlock()", 3000)
-    });
+    });*/
 
 	/*
 	var ListView = require('web.ListView');
