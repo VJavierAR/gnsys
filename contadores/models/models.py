@@ -99,7 +99,7 @@ class dcas(models.Model):
         _logger.info("c inicio"+str(c.tablahtml))
         _logger.info("self inicio id"+str(c.id))
         _logger.info("self inicio id"+str(c.create_date))
-        #self.env.cr.execute("update dcas_dcas set x_studio_fecha = '"+str(c.create_date)+"' where  id = " + str(c.id) + ";")
+        self.env.cr.execute("update dcas_dcas set x_studio_fecha = '"+str(c.create_date)+"' where  id = " + str(c.id) + ";")
         """
         contaC=c.contadorColor                       
         cac=c.contadorAnteriorColor
@@ -226,13 +226,13 @@ class dcas(models.Model):
             
             
             if self.fechaN:
-                fechan=self.fechaN
+                fechan=str(self.fechaN)
             if self.fechaC:
-                fechac=self.fechaC
+                fechac=str(self.fechaC)
             if self.fechaA:
-                fechaa=self.fechaA
+                fechaa=str(self.fechaA)
             if self.fechaM:
-                fecham=self.fechaM
+                fecham=str(self.fechaM)
            
             if self.x_studio_cartuchonefro.name:
                 carn=str(self.x_studio_cartuchonefro.name)            
