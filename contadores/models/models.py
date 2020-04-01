@@ -227,13 +227,13 @@ class dcas(models.Model):
             
             
             if self.fechaN:
-                fechan=str(self.fechaN)
+                fechan=str(self.fechaN.strftime('%d-%m-%Y %H:%M:%S'))
             if self.fechaC:
-                fechac=str(self.fechaC)
+                fechac=str(self.fechaC.strftime('%d-%m-%Y %H:%M:%S'))
             if self.fechaA:
-                fechaa=str(self.fechaA)
+                fechaa=str(self.fechaA.strftime('%d-%m-%Y %H:%M:%S'))
             if self.fechaM:
-                fecham=str(self.fechaM)
+                fecham=str(self.fechaM.strftime('%d-%m-%Y %H:%M:%S'))
            
             if self.x_studio_cartuchonefro.name:
                 carn=str(self.x_studio_cartuchonefro.name)            
@@ -325,13 +325,13 @@ class dcas(models.Model):
             
             
            if self.fechaN:
-              fechan=str(self.fechaN)
+              fechan=str(self.fechaN.strftime('%d-%m-%Y %H:%M:%S'))
            if self.fechaC:
-              fechac=str(self.fechaC)
+              fechac=str(self.fechaC.strftime('%d-%m-%Y %H:%M:%S'))
            if self.fechaA:
-              fechaa=str(self.fechaA)
+              fechaa=str(self.fechaA.strftime('%d-%m-%Y %H:%M:%S'))
            if self.fechaM:
-              fecham=str(self.fechaM)
+              fecham=str(self.fechaM.strftime('%d-%m-%Y %H:%M:%S'))
            
            if self.x_studio_cartuchonefro.name:
               carn=str(self.x_studio_cartuchonefro.name)            
