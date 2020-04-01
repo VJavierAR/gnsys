@@ -195,7 +195,7 @@ class contratos(models.Model):
         for record in self:
             _logger.info("-------Logger de OSWALDO "+str(record.mapped('servicio')))
             for elemento in record.mapped('servicio'):
-                _logger.info("-------Logger de OSWALDO*****"+str(elemento))
+                _logger.info("-------Logger de OSWALDO*****"+str(elemento.name))
 
 
 class cliente_contratos(models.Model):
