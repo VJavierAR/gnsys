@@ -227,13 +227,13 @@ class dcas(models.Model):
             
             
             if self.fechaN:
-                fechan=str(self.fechaN)
+                fechan=str(self.fechaN- datetime.timedelta(seconds =6*3600))
             if self.fechaC:
-                fechac=str(self.fechaC)
+                fechac=str(self.fechaC- datetime.timedelta(seconds =6*3600))
             if self.fechaA:
-                fechaa=str(self.fechaA)
+                fechaa=str(self.fechaA- datetime.timedelta(seconds =6*3600))
             if self.fechaM:
-                fecham=str(self.fechaM)
+                fecham=str(self.fechaM- datetime.timedelta(seconds =6*3600))
            
             if self.x_studio_cartuchonefro.name:
                 carn=str(self.x_studio_cartuchonefro.name)            
