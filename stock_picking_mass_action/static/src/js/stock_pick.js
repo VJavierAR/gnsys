@@ -75,14 +75,7 @@ odoo.define('invoice.action_button', function (require) {
                 view_id: 'view_stock_move_action_form',
                 views: [[false, 'form']],
                 target: 'new',
-            }
-            });
-
-
-            rpc.query({
-                model: 'stock.picking',
-                method: 'inter_wizard',
-                args: [[user],{'id':user}],
+            
             });
         },
         receive_invoice: function () {
