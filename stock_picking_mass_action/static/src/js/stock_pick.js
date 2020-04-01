@@ -34,6 +34,7 @@ odoo.define('invoice.action_button', function (require) {
                 }
                 */
                 this.$buttons.find('.oe_action_button').click(this.proxy('action_inter2'));
+                this.$buttons.find('.oe_action_button_move_line').click(this.proxy('action_inter1'));
             }
         },
 
@@ -62,7 +63,15 @@ odoo.define('invoice.action_button', function (require) {
                 args: [[user],{'id':user}],
             });
         },
-
+        action_inter1: function (e) {
+            var self = this
+            var user = session.uid;
+            self.do_action({ 'type': 'ir.actions.act_window', 'name': '1384', 'res_model': 'stock.move.line', 'view_type': 'form', 'view_mode': 'tree,form', 'target': '', }, {
+                on_reverse_breadcrumb: function () {
+                    self.update_control_panel({clear: true, hidden: true});
+                }
+            });
+        },
         receive_invoice: function () {
             var self = this
             var user = session.uid;
