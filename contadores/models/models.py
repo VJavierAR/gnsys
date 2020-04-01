@@ -297,6 +297,63 @@ class dcas(models.Model):
         if m:
            self.renM=round(self.paginasProcesadasM*100/int(m),2)
         if self.serie:
+           carn=''
+           cara=''
+           carc=''
+           carm=''
+            
+           fechan=''
+           fechaa=''
+           fechac=''
+           fecham=''
+            
+           tn=''
+           ta=''
+           tc=''
+           tm=''
+            
+           if self.tN:
+              tn=self.tN
+           if self.tC:
+              tc=self.tC
+           if self.tA:
+              ta=self.tA
+           if self.tM:
+              tm=self.tM
+            
+            
+            
+           if self.fechaN:
+              fechan=str(self.fechaN)
+           if self.fechaC:
+              fechac=str(self.fechaC)
+           if self.fechaA:
+              fechaa=str(self.fechaA)
+           if self.fechaM:
+              fecham=str(self.fechaM)
+           
+           if self.x_studio_cartuchonefro.name:
+              carn=str(self.x_studio_cartuchonefro.name)            
+           if self.x_studio_cartucho_cian_1.name:
+              carc=str(self.x_studio_cartucho_cian_1.name)                
+           if self.x_studio_cartucho_amarillo.name:
+              cara=str(self.x_studio_cartucho_amarillo.name)                
+           if self.x_studio_cartucho_magenta.name:
+              carm=str(self.x_studio_cartucho_magenta.name)
+           
+           style="<html><head><style>table, th, td {border: 1px solid black;border-collapse: collapse;}th, td {padding: 5px;text-align: left;}</style></head><body>"
+           cabecera="<table style='width:100%'><tr><th></th><th>Monocormatico  </th><th> Cian </th><th> Amarillo </th><th> Magenta </th></tr><tr><tr><td></td></tr>"
+           ticket='<tr><td> Ticket </td><td>'+tn+'</br>'+'</td> <td>'+tc+' </br> </td> <td>'+' '+ta+'</br> </td> <td>'+tm+'</br> </td> </tr>'
+           ultimosContadores='<tr><td> Último Contador </td><td>'+str(self.contadorAnteriorNegro)+'</br>'+'</td> <td>'+str(self.contadorAnteriorCian)+' </br> </td> <td>'+ str(self.contadorAnteriorAmarillo)+'</br> </td> <td>'+str(self.contadorAnteriorMagenta)+' </br> </td> </tr>'
+           fechas='<tr><td> Fecha </td><td>'+fechan+'</br>'+'</td> <td>'+fechac+' </br> </td> <td>'+' '+fechaa+'</br> </td> <td>'+fecham+'</br> </td> </tr>'
+           paginasProcesadas='<tr><td> Páginas Procesadas </td> <td>'+str(self.paginasProcesadasBN)+'</td> <td>'+str(self.paginasProcesadasC)+'</td> <td>'+ str(self.paginasProcesadasA)+' </td> <td>'+str(self.paginasProcesadasM)+'</td></tr>'        
+           rendimientos='<tr><td> Rendimiento </td> <td>'+str(self.renN)+'</td> <td>'+str(self.renC)+'</td> <td>'+ str(self.renA)+' </td> <td>'+str(self.renM)+'</td></tr>'
+           niveles='<tr><td> Último nivel </td> <td>'+str(self.nivelNA)+'</td> <td>'+str(self.nivelCA)+'</td> <td>'+ str(self.nivelAA)+' </td> <td>'+str(self.nivelMA)+'</td></tr>'
+           cartuchos='<tr><td> Cartuchos Selecionados </td> <td>'+carn+'</td> <td>'+carc+'</td> <td>'+ cara+' </td> <td>'+carm+'</td></tr>'
+           cierre="</table></body></html> "
+           self.tablahtml=cabecera+ticket+ultimosContadores+fechas+paginasProcesadas+rendimientos+niveles+cartuchos+cierre   
+        
+           """ 
            style="<html><head><style>table, th, td {border: 1px solid black;border-collapse: collapse;}th, td {padding: 5px;text-align: left;}</style></head><body>"
            cabecera="<table style='width:100%'><tr><th></th><th>Monocormatico  </th><th> Cian </th><th> Amarillo </th><th> Magenta </th></tr><tr><tr><td></td></tr>"
            ticket='<tr><td> Ticket </td><td>'+str(self.tN)+'</br>'+'</td> <td>'+str(self.tC)+' </br> </td> <td>'+' '+str(self.tA)+'</br> </td> <td>'+str(self.tM)+'</br> </td> </tr>'
@@ -308,6 +365,7 @@ class dcas(models.Model):
            cartuchos='<tr><td> Cartuchos Selecionados </td> <td>'+str(self.x_studio_cartuchonefro.name)+'</td> <td>'+str(self.x_studio_cartucho_cian_1.name)+'</td> <td>'+ str(self.x_studio_cartucho_amarillo.name)+' </td> <td>'+str(self.x_studio_cartucho_magenta.name)+'</td></tr>'
            cierre="</table></body></html> "
            self.tablahtml=cabecera+ticket+ultimosContadores+fechas+paginasProcesadas+rendimientos+niveles+cartuchos+cierre
+           """
         
                     
                 
