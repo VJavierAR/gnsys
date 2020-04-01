@@ -1093,7 +1093,10 @@ class helpdesk_update(models.Model):
                     
                     if c.x_studio_cartuchonefro:
                         car=car+1
-                        c.write({'porcentajeNegro':1})                        
+                        if c.serie.x_tudio_color_bn=="B/N":
+                         c.write({'x_studio_toner_negro':1})    
+                        else:
+                         c.write({'porcentajeNegro':1})
                         pro = self.env['product.product'].search([['name','=',c.x_studio_cartuchonefro.name],['categ_id','=',5]])
                         gen = pro.sorted(key='qty_available',reverse=True)[0]
                         datos={'name': ' '
@@ -1211,8 +1214,11 @@ class helpdesk_update(models.Model):
                     c.write({'fuente':'helpdesk.ticket'})
                     #Toner BN
                     if c.x_studio_cartuchonefro:
-                        car=car+1
-                        c.write({'porcentajeNegro':1})
+                        car=car+1                        
+                        if c.serie.x_tudio_color_bn=="B/N":
+                           c.write({'x_studio_toner_negro':1})    
+                        else:
+                           c.write({'porcentajeNegro':1})
                         pro = self.env['product.product'].search([['name','=',c.x_studio_cartuchonefro.name],['categ_id','=',5]])
                         gen = pro.sorted(key='qty_available',reverse=True)[0]
                         datos={'name': ' '
