@@ -415,13 +415,10 @@ class StockPickingMassAction(TransientModel):
                 b=['location_id','=',alm.wh_output_stock_loc_id.id]
                 c=['location_dest_id','=',alm.wh_input_stock_loc_id.id]
                 if(self.tipo=="Todos"):
-                    l=[]
-                    #i.append(b)
-                    #i.append(c)
-                    l.append('|')
-                    l.append(b)
-                    l.append(c)
-                    i.append(l)
+                    i.append('|')
+                    i.append(b)
+                    i.append(c)
+                    k=k+1
                 if(self.tipo=="Entrada"):
                     i.append(c)
                 if(self.tipo=="Salida"):
@@ -431,11 +428,10 @@ class StockPickingMassAction(TransientModel):
             c=['location_dest_id','=',self.almacen.wh_input_stock_loc_id.id]
 
             if(self.tipo=="Todos"):
-                l=[]
-                l.append('|')
-                l.append(b)
-                l.append(c)
-                i.append(l)
+                i.append('|')
+                i.append(b)
+                i.append(c)
+                k=k+1
             if(self.tipo=="Entrada"):
                 i.append(c)
             if(self.tipo=="Salida"):
@@ -449,7 +445,7 @@ class StockPickingMassAction(TransientModel):
                 ca=['x_studio_field_aVMhn','=',cat.id]
                 i.append(ca)
         j=[]
-        for l in range(len(i)-1):
+        for l in range(len(i)-1-k):
             j.append('&')
         j.extend(i)
         d=self.env['stock.move.line'].search(j,order='date desc')
