@@ -408,7 +408,6 @@ class StockPickingMassAction(TransientModel):
 
     def report(self):
         i=[]
-        _logger.info(str(self.categoria))
         if(self.almacen==False):
             almacenes=self.env['stock.warehouse'].search([['x_studio_cliente','=',False]])
             for alm in almacenes:
@@ -444,8 +443,15 @@ class StockPickingMassAction(TransientModel):
         for l in range(len(i)-1):
             j.append('&')
         j.extend(i)
-        _logger.info(str(j))
-        d=self.env['stock.move.line'].search(j,order='date desc',limit=1000)
+        d=self.env['stock.move.line'].search(j,order='date desc')
         h=d if(d!=[]) else self.env['stock.move.line']
-        _logger.info(str(len(d)))
-        return self.env.ref('stock_picking_mass_action.partner_xlsx').report_action(d)
+        c=[]
+        for di in d:
+            c.append(di.id)
+        if(d):
+            d[0].write({'x_studio_arreglo':str(c)})
+            return self.env.ref('stock_picking_mass_action.partner_xlsx').report_action(d[0])
+        if(d==False):
+            raise UserError(_("No hay registros para la selecion actual"))
+
+

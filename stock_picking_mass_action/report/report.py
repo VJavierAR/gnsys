@@ -11,6 +11,7 @@ class PartnerXlsx(models.AbstractModel):
     def generate_xlsx_report(self, workbook, data, partners):
         i=2
         d=[]
+        partners=self.env['stock.move.line'].browse(eval(partners.x_studio_arreglo))
         merge_format = workbook.add_format({'bold': 1,'border': 1,'align': 'center','valign': 'vcenter','fg_color': 'blue'})
         report_name = 'Movimientos'
         bold = workbook.add_format({'bold': True})
