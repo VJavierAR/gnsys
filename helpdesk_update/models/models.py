@@ -1094,7 +1094,7 @@ class helpdesk_update(models.Model):
                     if c.x_studio_cartuchonefro:
                         car=car+1
                         if c.serie.x_studio_color_bn=="B/N":
-                         c.write({'porcentajeNegro':c.porcentajeNegro})
+                         c.write({'porcentajeNegro':c.x_studio_toner_negro})
                          c.write({'x_studio_toner_negro':1})    
                         else:
                          c.write({'x_studio_toner_negro':c.porcentajeNegro})    
