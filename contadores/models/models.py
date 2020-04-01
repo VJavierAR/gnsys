@@ -171,9 +171,10 @@ class dcas(models.Model):
             self.fechaN=n.x_studio_fecha
             
             if self.colorEquipo=='B/N':
-                self.nivelNA=n.porcentajeNegro
+                self.nivelNA=n.x_studio_toner_negro
             else:
-                self.nivelNA=n.x_studio_toner_negro                                                            
+                self.nivelNA=n.porcentajeNegro 
+                
             self.contadorAnteriorNegro=n.contadorMono
             self.tN=n.x_studio_tickett
             c=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeCian','=',1],['fuente','=','helpdesk.ticket']],order='x_studio_fecha desc',limit=1)
