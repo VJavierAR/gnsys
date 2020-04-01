@@ -164,7 +164,7 @@ class dcas(models.Model):
             self.colorEquipo=bn_c.x_studio_color_bn
             self.ultimaUbicacion=bn_c.x_studio_ultima_ubicacin
             self.equipo=bn_c.product_id.name
-            if self.colorEquipo='B/N':
+            if self.colorEquipo=='B/N':
                 n=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['x_studio_toner_negro','=',1]],order='x_studio_fecha desc',limit=1)
             else:
                 n=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeNegro','=',1]],order='x_studio_fecha desc',limit=1)
