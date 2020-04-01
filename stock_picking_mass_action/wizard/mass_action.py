@@ -450,7 +450,7 @@ class StockPickingMassAction(TransientModel):
             c.append(di.id)
         if(d):
             d[0].write({'x_studio_arreglo':str(c)})
-            return self.env.ref('requisicion.partner_xlsx').report_action(d[0])
+            return self.env.ref('stock_picking_mass_action.partner_xlsx').report_action(d[0])
         if(d==False):
             raise UserError(_("No hay registros para la selecion actual"))
 
