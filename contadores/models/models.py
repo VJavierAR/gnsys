@@ -200,17 +200,58 @@ class dcas(models.Model):
                 self.contadorAnteriorColor = informacion[0][0]
         if self.serie:
             carn=''
+            cara=''
+            carc=''
+            carm=''
+            
+            fechan=''
+            fechaa=''
+            fechac=''
+            fecham=''
+            
+            tn=''
+            ta=''
+            tc=''
+            tm=''
+            
+            if self.tN:
+                tn=self.tN
+            if self.tC:
+                tc=self.tC
+            if self.tA:
+                ta=self.tA
+            if self.tM:
+                tm=self.tM
+            
+            
+            
+            if self.fechaN:
+                fechan=self.fechaN
+            if self.fechaC:
+                fechac=self.fechaC
+            if self.fechaA:
+                fechaa=self.fechaA
+            if self.fechaM:
+                fecham=self.fechaM
+           
             if self.x_studio_cartuchonefro.name:
-                carn=str(self.x_studio_cartuchonefro.name)
+                carn=str(self.x_studio_cartuchonefro.name)            
+            if self.x_studio_cartucho_cian_1.name:
+                carc=str(self.x_studio_cartucho_cian_1.name)                
+            if self.x_studio_cartucho_amarillo.name:
+                cara=str(self.x_studio_cartucho_amarillo.name)                
+            if self.x_studio_cartucho_magenta.name:
+                carm=str(self.x_studio_cartucho_magenta.name)
+                
             style="<html><head><style>table, th, td {border: 1px solid black;border-collapse: collapse;}th, td {padding: 5px;text-align: left;}</style></head><body>"
             cabecera="<table style='width:100%'><tr><th></th><th>Monocormatico  </th><th> Cian </th><th> Amarillo </th><th> Magenta </th></tr><tr><tr><td></td></tr>"
-            ticket='<tr><td> Ticket </td><td>'+str(self.tN)+'</br>'+'</td> <td>'+str(self.tC)+' </br> </td> <td>'+' '+str(self.tA)+'</br> </td> <td>'+str(self.tM)+'</br> </td> </tr>'
+            ticket='<tr><td> Ticket </td><td>'+tn+'</br>'+'</td> <td>'+tc+' </br> </td> <td>'+' '+ta+'</br> </td> <td>'+tm+'</br> </td> </tr>'
             ultimosContadores='<tr><td> Último Contador </td><td>'+str(self.contadorAnteriorNegro)+'</br>'+'</td> <td>'+str(self.contadorAnteriorCian)+' </br> </td> <td>'+ str(self.contadorAnteriorAmarillo)+'</br> </td> <td>'+str(self.contadorAnteriorMagenta)+' </br> </td> </tr>'
-            fechas='<tr><td> Fecha </td><td>'+str(self.fechaN)+'</br>'+'</td> <td>'+str(self.fechaC)+' </br> </td> <td>'+' '+str(self.fechaA)+'</br> </td> <td>'+str(self.fechaM)+'</br> </td> </tr>'
+            fechas='<tr><td> Fecha </td><td>'+fechan+'</br>'+'</td> <td>'+fechac+' </br> </td> <td>'+' '+fechaa+'</br> </td> <td>'+fecham+'</br> </td> </tr>'
             paginasProcesadas='<tr><td> Páginas Procesadas </td> <td>'+str(self.paginasProcesadasBN)+'</td> <td>'+str(self.paginasProcesadasC)+'</td> <td>'+ str(self.paginasProcesadasA)+' </td> <td>'+str(self.paginasProcesadasM)+'</td></tr>'        
             rendimientos='<tr><td> Rendimiento </td> <td>'+str(self.renN)+'</td> <td>'+str(self.renC)+'</td> <td>'+ str(self.renA)+' </td> <td>'+str(self.renM)+'</td></tr>'
             niveles='<tr><td> Último nivel </td> <td>'+str(self.nivelNA)+'</td> <td>'+str(self.nivelCA)+'</td> <td>'+ str(self.nivelAA)+' </td> <td>'+str(self.nivelMA)+'</td></tr>'
-            cartuchos='<tr><td> Cartuchos Selecionados </td> <td>'+carn+'</td> <td>'+str(self.x_studio_cartucho_cian_1.name)+'</td> <td>'+ str(self.x_studio_cartucho_amarillo.name)+' </td> <td>'+str(self.x_studio_cartucho_magenta.name)+'</td></tr>'
+            cartuchos='<tr><td> Cartuchos Selecionados </td> <td>'+carn+'</td> <td>'+carc+'</td> <td>'+ cara+' </td> <td>'+carm+'</td></tr>'
             cierre="</table></body></html> "
             self.tablahtml=cabecera+ticket+ultimosContadores+fechas+paginasProcesadas+rendimientos+niveles+cartuchos+cierre    
             #query = "update dcas_dcas set tablahtml = \""+cabecera+ticket+ultimosContadores+fechas+paginasProcesadas+rendimientos+niveles+cierre+"\" where id = " + str(self.id) + ";"
