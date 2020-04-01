@@ -408,14 +408,20 @@ class StockPickingMassAction(TransientModel):
 
     def report(self):
         i=[]
+        k=0
         if(self.almacen==False):
             almacenes=self.env['stock.warehouse'].search([['x_studio_cliente','=',False]])
             for alm in almacenes:
                 b=['location_id','=',alm.wh_output_stock_loc_id.id]
                 c=['location_dest_id','=',alm.wh_input_stock_loc_id.id]
                 if(self.tipo=="Todos"):
-                    i.append(b)
-                    i.append(c)
+                    l=[]
+                    #i.append(b)
+                    #i.append(c)
+                    l.append('|')
+                    l.append(b)
+                    l.append(c)
+                    i.append(l)
                 if(self.tipo=="Entrada"):
                     i.append(c)
                 if(self.tipo=="Salida"):
@@ -446,6 +452,7 @@ class StockPickingMassAction(TransientModel):
         d=self.env['stock.move.line'].search(j,order='date desc')
         h=d if(d!=[]) else self.env['stock.move.line']
         c=[]
+        _logger.info(str(j))
         for di in d:
             c.append(di.id)
         if(d):
