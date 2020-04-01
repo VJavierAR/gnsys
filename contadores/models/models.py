@@ -167,7 +167,7 @@ class dcas(models.Model):
             if self.colorEquipo=='B/N':
                 n=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['x_studio_toner_negro','=',1],['fuente','=','helpdesk.ticket']],order='x_studio_fecha desc',limit=1)
             else:
-                n=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeNegro','=',1],['fuente','=','helpdesk.ticket']],order='x_studio_fecha desc',limit=1)
+                n=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeNegro','=',1],['fuente','=','helpdesk.ticket'],['contadorMono','!=',0]],order='x_studio_fecha desc',limit=1)
             self.fechaN=n.x_studio_fecha
             
             if self.colorEquipo=='B/N':
