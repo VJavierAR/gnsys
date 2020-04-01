@@ -193,8 +193,9 @@ class contratos(models.Model):
     
     def expiracionServicios(self):
         for record in self:
-            for rec in self.servicio:
-                _logger.info("-------Logger de OSWALDO "+str(rec.name))
+            _logger.info("-------Logger de OSWALDO "+str(record.mapped('servicio')))
+            for elemento in record.mapped('servicio'):
+                _logger.info("-------Logger de OSWALDO*****"+str(elemento)
 
 
 class cliente_contratos(models.Model):
