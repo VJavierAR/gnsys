@@ -359,7 +359,7 @@ class helpdesk_contadores(TransientModel):
                                                     , 'x_studio_contador_mono_anterior_1':negrot  
                                                     , 'fuente':q
                                                   })                  
-                    self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.ticket_id.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario': 'bn '+str(c.x_studio_contador_bn_a_capturar)+' color '+str(c.x_studio_contador_color_a_capturar)})
+                    self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.ticket_id.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario': 'bn '+str(c.x_studio_contador_bn_a_capturar)})
 
                     mensajeTitulo = "Contador capturado!!!"
                     mensajeCuerpo = "Se capturo el contador."
