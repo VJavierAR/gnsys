@@ -190,7 +190,7 @@ class contratos(models.Model):
             self.direccion = self.cliente.contact_address
             self.ejecutivoDeCuenta = self.cliente.x_studio_ejecutivo
             self.vendedor = self.cliente.x_studio_vendedor
-    
+    @api.multi
     def expiracionServicios(self):
         for record in self:
             _logger.info("-------Logger de OSWALDO "+str(record.mapped('servicio')))
