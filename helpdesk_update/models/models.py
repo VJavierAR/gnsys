@@ -1075,8 +1075,8 @@ class helpdesk_update(models.Model):
             mess = {'title': _('Solicitud existente validada!!!')
                     , 'message' : message
             }
-        if self.x_studio_field_nO7Xg.id != False and self.x_studio_field_nO7Xg.state != 'sale':
             return {'warning': mess}
+        if self.x_studio_field_nO7Xg.id != False and self.x_studio_field_nO7Xg.state != 'sale':
             self.env.cr.execute("delete from sale_order_line where order_id = " + str(self.x_studio_field_nO7Xg.id) +";")
             if record.team_id.id == 8 :
                 serieaca=''
