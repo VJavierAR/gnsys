@@ -192,7 +192,7 @@ class dcas(models.Model):
             self.fechaM=m.x_studio_fecha
             self.tM=m.x_studio_tickett
             #select "contadorColor" from dcas_dcas where "porcentajeMagenta"=1 or "porcentajeCian"=1 or "porcentajeNegro"=1  order by x_studio_fecha desc limit 1;
-            query="select \"contadorColor\" from dcas_dcas where  serie="+str(self.serie.id)+" or \"porcentajeMagenta\"=1 or \"porcentajeCian\"=1 or \"porcentajeMagenta\"=1  order by x_studio_fecha desc limit 1;"                        
+            query="select \"contadorColor\" from dcas_dcas where  serie="+str(self.serie.id)+" or \"porcentajeMagenta\"=1 or \"porcentajeCian\"=1 or \"porcentajeMagenta\"=1 and \"contadorColor\"!=0  order by x_studio_fecha desc limit 1;"                        
             self.env.cr.execute(query)                        
             informacion = self.env.cr.fetchall()
             #raise  exceptions.ValidationError(str(informacion)+' '+ str(type(informacion))+' '+str(informacion[0]) +' el chido xD'+str(informacion[0][0]))
