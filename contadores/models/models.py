@@ -165,9 +165,9 @@ class dcas(models.Model):
             self.ultimaUbicacion=bn_c.x_studio_ultima_ubicacin
             self.equipo=bn_c.product_id.name
             if self.colorEquipo=='B/N':
-                n=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['x_studio_toner_negro','=',1]],order='x_studio_fecha desc',limit=1)
+                n=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['x_studio_toner_negro','=',1],['fuente','=','helpdesk.ticket']],order='x_studio_fecha desc',limit=1)
             else:
-                n=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeNegro','=',1]],order='x_studio_fecha desc',limit=1)
+                n=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeNegro','=',1],['fuente','=','helpdesk.ticket']],order='x_studio_fecha desc',limit=1)
             self.fechaN=n.x_studio_fecha
             
             if self.colorEquipo=='B/N':
@@ -176,23 +176,24 @@ class dcas(models.Model):
                 self.nivelNA=n.x_studio_toner_negro                                                            
             self.contadorAnteriorNegro=n.contadorMono
             self.tN=n.x_studio_tickett
-            c=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeCian','=',1]],order='x_studio_fecha desc',limit=1)
+            c=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeCian','=',1],['fuente','=','helpdesk.ticket']],order='x_studio_fecha desc',limit=1)
             self.nivelCA=c.x_studio_toner_cian
             self.contadorAnteriorCian=c.contadorColor
             self.fechaC=c.x_studio_fecha
             self.tC=c.x_studio_tickett
-            a=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeAmarillo','=',1]],order='x_studio_fecha desc',limit=1)
+            a=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeAmarillo','=',1],['fuente','=','helpdesk.ticket']],order='x_studio_fecha desc',limit=1)
             self.nivelAA=a.x_studio_toner_amarillo
             self.contadorAnteriorAmarillo=a.contadorColor
             self.fechaA=a.x_studio_fecha
             self.tA=a.x_studio_tickett
-            m=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeMagenta','=',1]],order='x_studio_fecha desc',limit=1)
+            m=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeMagenta','=',1],['fuente','=','helpdesk.ticket']],order='x_studio_fecha desc',limit=1)
             self.nivelMA=m.x_studio_toner_magenta
             self.contadorAnteriorMagenta=m.contadorColor
             self.fechaM=m.x_studio_fecha
             self.tM=m.x_studio_tickett
             #select "contadorColor" from dcas_dcas where "porcentajeMagenta"=1 or "porcentajeCian"=1 or "porcentajeNegro"=1  order by x_studio_fecha desc limit 1;
-            query="select \"contadorColor\" from dcas_dcas where  serie="+str(self.serie.id)+" or \"porcentajeMagenta\"=1 or \"porcentajeCian\"=1 or \"porcentajeMagenta\"=1 and \"contadorColor\"!=0  order by x_studio_fecha desc limit 1;"                        
+            query="select \"contadorColor\" from dcas_dcas where  serie="+str(self.serie.id)+" or \"porcentajeMagenta\"=1 or \"porcentajeCian\"=1 or \"porcentajeMagenta\"=1 and \"contadorColor\"!=0 and fuente='helpdesk.ticket' order by x_studio_fecha desc limit 1;"                        
+            _logger.info("self inicio id query"+str(query))
             self.env.cr.execute(query)                        
             informacion = self.env.cr.fetchall()
             #raise  exceptions.ValidationError(str(informacion)+' '+ str(type(informacion))+' '+str(informacion[0]) +' el chido xD'+str(informacion[0][0]))
