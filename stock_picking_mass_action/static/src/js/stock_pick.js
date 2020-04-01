@@ -25,6 +25,14 @@ odoo.define('invoice.action_button', function (require) {
         renderButtons: function($node) {
         this._super.apply(this, arguments);
             if (this.$buttons) {
+                console.log(this.actionViews[0].viewID);
+                /*
+                if (typeof this.actionViews !== 'undefined' && this.actionViews.length > 0) {
+                    if (this.actionViews[0].viewID == 2766) {
+                        this.$buttons.find('.o_list_button_add').hide();
+                    }
+                }
+                */
                 this.$buttons.find('.oe_action_button').click(this.proxy('action_inter2'));
             }
         },

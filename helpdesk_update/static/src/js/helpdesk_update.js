@@ -25,10 +25,9 @@ odoo.define('invoice.action_button_helpdesk', function (require) {
 	ListController.include({
 		renderButtons: function($node) {
 		this._super.apply(this, arguments);
-			console.log($node)
-			console.log(this)
-			console.log(arguments)
-
+			//console.log($node)
+			//console.log(this)
+			//console.log(arguments)
 			if (this.$buttons) {
 				//console.log(this);
 		    	//console.log(this.actionViews[0].viewID);
@@ -42,21 +41,6 @@ odoo.define('invoice.action_button_helpdesk', function (require) {
 			    		this.$buttons.find('.oe_action_button_helpdesk').hide();
 			    	}
 		    	}
-		    	//var div_blockUI = this.__parentedParent.el.lastElementChild.previousElementSibling.previousElementSibling
-		    	//var div_blockUI_blockOverlay = this.__parentedParent.el.lastElementChild.previousElementSibling
-		    	//var div_blockUI_blockMsg_blockPage = this.__parentedParent.el.lastElementChild
-		    	/*
-		    	if (this.__parentedParent.__parentedParent.el.lastElementChild.previousElementSibling.previousElementSibling.previousElementSibling != null){
-			    	var div_blockUI = this.__parentedParent.__parentedParent.el.lastElementChild.previousElementSibling.previousElementSibling.previousElementSibling.previousSibling
-			    	var div_blockUI_blockOverlay = this.__parentedParent.__parentedParent.el.lastElementChild.previousElementSibling.previousElementSibling.previousElementSibling
-			    	var div_blockUI_blockMsg_blockPage = this.__parentedParent.__parentedParent.el.lastElementChild.previousElementSibling.previousElementSibling
-			    	if (div_blockUI[0]) {
-				    	div_blockUI.remove()
-				    	div_blockUI_blockOverlay.remove()
-				    	div_blockUI_blockMsg_blockPage.remove()
-			    	}
-			    }
-			    */
 		   	}
 		},
 
