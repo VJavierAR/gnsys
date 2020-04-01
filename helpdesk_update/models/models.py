@@ -1213,8 +1213,11 @@ class helpdesk_update(models.Model):
                     magen=''
                     car=0
                     serieaca=c.serie.name
+                    weirtihgone=0
+                    weirtihgwtwo=0
                     c.write({'x_studio_tickett':self.x_studio_id_ticket})
                     c.write({'fuente':'helpdesk.ticket'})
+                    
                     #Toner BN
                     if c.x_studio_cartuchonefro:
                         car=car+1                        
@@ -1226,9 +1229,10 @@ class helpdesk_update(models.Model):
                          c.write({'porcentajeNegro':1})
                         pro = self.env['product.product'].search([['name','=',c.x_studio_cartuchonefro.name],['categ_id','=',5]])
                         gen = pro.sorted(key='qty_available',reverse=True)[0]
+                        weirtihgone=c.serie.x_studio_toner_compatible.id if(len(gen)==0) else gen.id
                         datos={'name': ' '
                                ,'order_id' : sale.id
-                               , 'product_id' : c.serie.x_studio_toner_compatible.id if(len(gen)==0) else gen.id
+                               , 'product_id' : weirtihgone
                                #, 'product_id' : c.x_studio_toner_compatible.id
                                , 'product_uom_qty' : 1
                                , 'x_studio_field_9nQhR': c.serie.id 
@@ -1237,7 +1241,10 @@ class helpdesk_update(models.Model):
                         if(gen['qty_available']<=0):
                             datos['route_id']=1
                             datos['product_id']=c.serie.x_studio_toner_compatible.id
-                        
+                            weirtihgone=c.serie.x_studio_toner_compatible.id
+                            weirtihgtwo=1
+                        insert='insert into sale_order_line values (order_id,product_id,product_uom_qty,x_studio_field_9nQhR,route_id,price_unit, customer_lead,x_studio_toner_negro,porcentajeNegro)values('+str(sale.id)+','+  str(weirtihgone)+','+1+','+str(c.serie.id)+','+str(weirtihgtwo)+',0,0,'+str(c.x_studio_toner_negro)+',1)'
+                        raise exceptions.ValidationError("Error al capturar."+str(insert))
                         self.env['sale.order.line'].create(datos)
                         bn=str(c.serie.x_studio_reftoner)+', '
                     #Toner Ama
