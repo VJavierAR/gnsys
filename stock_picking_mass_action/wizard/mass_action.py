@@ -431,8 +431,11 @@ class StockPickingMassAction(TransientModel):
             c=['location_dest_id','=',self.almacen.wh_input_stock_loc_id.id]
 
             if(self.tipo=="Todos"):
-                i.append(b)
-                i.append(c)
+                l=[]
+                l.append('|')
+                l.append(b)
+                l.append(c)
+                i.append(l)
             if(self.tipo=="Entrada"):
                 i.append(c)
             if(self.tipo=="Salida"):
