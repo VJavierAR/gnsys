@@ -168,7 +168,7 @@ class dcas(models.Model):
                 n=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['x_studio_toner_negro','=',1],['fuente','=','helpdesk.ticket'],['contadorMono','!=',0]],order='x_studio_fecha desc',limit=1)
             else:
                 n=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeNegro','=',1],['fuente','=','helpdesk.ticket'],['contadorMono','!=',0]],order='x_studio_fecha desc',limit=1)
-            self.fechaN=n.x_studio_fecha
+            self.fechaN=n.x_studio_fecha.strftime('%d-%m-%Y %H:%M:%S')
             
             if self.colorEquipo=='B/N':
                 self.nivelNA=n.porcentajeNegro
@@ -180,17 +180,17 @@ class dcas(models.Model):
             c=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeCian','=',1],['fuente','=','helpdesk.ticket']],order='x_studio_fecha desc',limit=1)
             self.nivelCA=c.x_studio_toner_cian
             self.contadorAnteriorCian=c.contadorColor
-            self.fechaC=c.x_studio_fecha
+            self.fechaC=c.x_studio_fecha.strftime('%d-%m-%Y %H:%M:%S')
             self.tC=c.x_studio_tickett
             a=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeAmarillo','=',1],['fuente','=','helpdesk.ticket']],order='x_studio_fecha desc',limit=1)
             self.nivelAA=a.x_studio_toner_amarillo
             self.contadorAnteriorAmarillo=a.contadorColor
-            self.fechaA=a.x_studio_fecha
+            self.fechaA=a.x_studio_fecha.strftime('%d-%m-%Y %H:%M:%S')
             self.tA=a.x_studio_tickett
             m=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeMagenta','=',1],['fuente','=','helpdesk.ticket']],order='x_studio_fecha desc',limit=1)
             self.nivelMA=m.x_studio_toner_magenta
             self.contadorAnteriorMagenta=m.contadorColor
-            self.fechaM=m.x_studio_fecha
+            self.fechaM=m.x_studio_fecha.strftime('%d-%m-%Y %H:%M:%S')
             self.tM=m.x_studio_tickett
             #select "contadorColor" from dcas_dcas where "porcentajeMagenta"=1 or "porcentajeCian"=1 or "porcentajeNegro"=1  order by x_studio_fecha desc limit 1;
             if self.colorEquipo!='B/N':
@@ -227,13 +227,13 @@ class dcas(models.Model):
             
             
             if self.fechaN:
-                fechan=str(self.fechaN.strftime('%d-%m-%Y %H:%M:%S'))
+                fechan=str(self.fechaN)
             if self.fechaC:
-                fechac=str(self.fechaC.strftime('%d-%m-%Y %H:%M:%S'))
+                fechac=str(self.fechaC)
             if self.fechaA:
-                fechaa=str(self.fechaA.strftime('%d-%m-%Y %H:%M:%S'))
+                fechaa=str(self.fechaA)
             if self.fechaM:
-                fecham=str(self.fechaM.strftime('%d-%m-%Y %H:%M:%S'))
+                fecham=str(self.fechaM)
            
             if self.x_studio_cartuchonefro.name:
                 carn=str(self.x_studio_cartuchonefro.name)            
@@ -325,13 +325,13 @@ class dcas(models.Model):
             
             
            if self.fechaN:
-              fechan=str(self.fechaN.strftime('%d-%m-%Y %H:%M:%S'))
+              fechan=str(self.fechaN)
            if self.fechaC:
-              fechac=str(self.fechaC.strftime('%d-%m-%Y %H:%M:%S'))
+              fechac=str(self.fechaC)
            if self.fechaA:
-              fechaa=str(self.fechaA.strftime('%d-%m-%Y %H:%M:%S'))
+              fechaa=str(self.fechaA)
            if self.fechaM:
-              fecham=str(self.fechaM.strftime('%d-%m-%Y %H:%M:%S'))
+              fecham=str(self.fechaM)
            
            if self.x_studio_cartuchonefro.name:
               carn=str(self.x_studio_cartuchonefro.name)            
