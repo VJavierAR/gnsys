@@ -1217,6 +1217,7 @@ class helpdesk_update(models.Model):
                     weirtihgwtwo=0
                     insert="insert into sale_order_line values (order_id,product_id,product_uom_qty,x_studio_field_9nQhR,route_id,price_unit, customer_lead,x_studio_toner_negro,porcentajeNegro)values("+str(sale.id)+","+str(weirtihgone)+",1,"+str(c.serie.id)+","+str(weirtihgwtwo)+",0,0,"+str(c.x_studio_toner_negro)+",1)"
                     _logger.info("Error al capturar."+str(insert))
+                    #some like this need to be faster than create insert into sale_order_line (name,order_id,product_id,product_uom_qty,"x_studio_field_9nQhR",route_id,price_unit, customer_lead,product_uom)values('a',2220,10770,1,31902,1,0,0,1);
                         
                     c.write({'x_studio_tickett':self.x_studio_id_ticket})
                     c.write({'fuente':'helpdesk.ticket'})
