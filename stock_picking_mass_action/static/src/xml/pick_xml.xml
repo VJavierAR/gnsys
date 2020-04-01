@@ -3,7 +3,8 @@
 	    <t t-extend="ListView.buttons">
 	        <t t-jquery="button.o_list_button_add" t-operation="before">
 	        	<button t-if="widget.modelName == 'stock.picking'" class="btn btn-primary oe_action_button" type="button" accesskey="f">Transferencia Interna</button>
-	        	<button t-if="widget.modelName == 'stock.move.line'" class="btn btn-primary oe_action_button_move_line" name="%(stock_picking_mass_action.action_report)d" type="action" accesskey="f">Reporte de Movimientos</button>
+	        	<button t-if="widget.modelName == 'stock.move.line'" class="btn btn-primary oe_action_button_move_line" name="%(stock_picking_mass_action.action_report)d" type="action" accesskey="g">Reporte de Movimientos</button>
+	        	<button t-if="widget.modelName == 'stock.move.line'" class="btn btn-primary oe_action_button" type="button" accesskey="h">Reporte de Movimientos2</button>
 	        </t>
 	    </t>
 	</template>
