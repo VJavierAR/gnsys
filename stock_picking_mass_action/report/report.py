@@ -53,7 +53,7 @@ class PartnerXlsx(models.AbstractModel):
             sheet.write(i, 12, obj.move_id.picking_id.partner_id.city, bold)            
             sheet.write(i, 13, obj.move_id.picking_id.partner_id.state_id.name, bold)
             user=self.env['stock.picking'].search(['&',['sale_id','=',obj.picking_id.sale_id.id],['location_id','=',obj.x_studio_field_3lDS0.lot_stock_id.id]])
-            sheet.write(i, 14, user.write_uid.name, bold)
+            sheet.write(i, 14, user[0].write_uid.name, bold)
 
             i=i+1
         sheet.add_table('A2:O'+str((i)),{'style': 'Table Style Medium 9','columns': [{'header': 'Categoria'},{'header': 'Fecha'},{'header': 'Almacen'},{'header':'Tipo'},{'header': 'Modelo'},{'header': 'No Parte'},{'header': 'Cantidad'},{'header': 'Serie'},{'header': 'Cliente'},{'header': 'Localidad'},{'header': 'Comentario'},{'header': 'Documento Origen'},{'header': 'Estado'},{'header': 'Delegación'},{'header': 'Usuario'}]})
