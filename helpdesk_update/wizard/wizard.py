@@ -753,7 +753,7 @@ class helpdesk_crearconserie(TransientModel):
                     'res_id': wiz.id,
                     'context': self.env.context,
                     }
-        elif self.clienteRelacion and self.localidadRelacion:
+        elif self.clienteRelacion.id and self.localidadRelacion.id:
           messageTemp = ''
           ticket = self.env['helpdesk.ticket'].create({'stage_id': 89 
                                               #,'x_studio_equipo_por_nmero_de_serie': [(6,0,self.serie.ids)]
