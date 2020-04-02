@@ -476,10 +476,10 @@ class helpdesk_crearconserie(TransientModel):
     localidadRelacion = fields.Many2one('res.partner', string = 'Localidad')
 
     cliente = fields.Text(string = 'Cliente')
-    idCliente = fields.Text(string = 'idCliente', store=True)
+    idCliente = fields.Text(string = 'idCliente', store=True, default=0)
     localidad = fields.Text(string = 'Localidad')
     zonaLocalidad = fields.Selection([('SUR','SUR'),('NORTE','NORTE'),('PONIENTE','PONIENTE'),('ORIENTE','ORIENTE'),('CENTRO','CENTRO'),('DISTRIBUIDOR','DISTRIBUIDOR'),('MONTERREY','MONTERREY'),('CUERNAVACA','CUERNAVACA'),('GUADALAJARA','GUADALAJARA'),('QUERETARO','QUERETARO'),('CANCUN','CANCUN'),('VERACRUZ','VERACRUZ'),('PUEBLA','PUEBLA'),('TOLUCA','TOLUCA'),('LEON','LEON'),('COMODIN','COMODIN'),('VILLAHERMOSA','VILLAHERMOSA'),('MERIDA','MERIDA'),('ALTAMIRA','ALTAMIRA'),('COMODIN','COMODIN'),('DF00','DF00'),('SAN LP','SAN LP'),('ESTADO DE MÉXICO','ESTADO DE MÉXICO'),('Foraneo Norte','Foraneo Norte'),('Foraneo Sur','Foraneo Sur')], string = 'Zona', store = True)
-    idLocaliidad = fields.Text(string = 'idLocaliidad', store=True)
+    idLocaliidad = fields.Text(string = 'idLocaliidad', store=True, default=0)
     nombreContactoLocalidad = fields.Text(string = 'Contacto de localidad')
     telefonoContactoLocalidad = fields.Text(string = 'Teléfono de contacto')
     movilContactoLocalidad = fields.Text(string = 'Movil de contacto')
@@ -496,7 +496,8 @@ class helpdesk_crearconserie(TransientModel):
 
     @api.onchange('clienteRelacion', 'localidadRelacion')
     def actualiza_dominio_en_numeros_de_serie(self):
-        for record in self:
+        #for record in self:
+        if clienteRelacion or localidadRelacion:
             zero = 0
             dominio = []
             dominioT = []
@@ -588,7 +589,7 @@ class helpdesk_crearconserie(TransientModel):
         self.direccionCodigoPostal = ''
 
     """
-        
+
     """
     @api.onchange('clienteRelacion')
     def cambia_cliente(self):
