@@ -53,6 +53,51 @@ class HelpDeskComentario(TransientModel):
     def _compute_diagnosticos(self):
         self.diagnostico_id = self.ticket_id.diagnosticos.ids
 
+
+
+class HelpDeskCerrarConComentario(TransientModel):
+    _name = 'helpdesk.comentario.cerrar'
+    _description = 'HelpDesk Cerrar Con Comentario'
+    check = fields.Boolean(string = 'Mostrar en reporte', default = False,)
+    ticket_id = fields.Many2one("helpdesk.ticket")
+    diagnostico_id = fields.One2many('helpdesk.diagnostico', 'ticketRelacion', string = 'Diagnostico', compute = '_compute_diagnosticos')
+    estado = fields.Char('Estado previo a cerrar el ticket', compute = "_compute_estadoTicket")
+    comentario = fields.Text('Comentario')
+    evidencia = fields.Many2many('ir.attachment', string = "Evidencias")
+
+    def cerrarTicketConComentario(self):
+        self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.ticket_id.id
+                                                ,'comentario': self.comentario
+                                                ,'estadoTicket': self.ticket_id.stage_id.name
+                                                ,'evidencia': [(6,0,self.evidencia.ids)]
+                                                ,'mostrarComentario': self.check
+                                                })
+        self.ticket_id.write({'stage_id': 18})
+        mess = 'Ticket "' + str(self.ticket_id.id) + '" cerrado y último Diagnostico / Comentario añadido al ticket "' + str(self.ticket_id.id) + '" de forma exitosa. \n\nComentario agregado: ' + str(self.comentario) + '.'
+        wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mess})
+        view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+        return {
+            'name': _('Ticket cerrado !!!'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'helpdesk.alerta',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            'context': self.env.context,
+        }
+
+    def _compute_estadoTicket(self):
+        self.estado = self.ticket_id.stage_id.name
+
+    def _compute_diagnosticos(self):
+        self.diagnostico_id = self.ticket_id.diagnosticos.ids
+
+
+
+
 class HelpDeskDetalleSerie(TransientModel):
     _name = 'helpdesk.detalle.serie'
     _description = 'HelpDesk Detalle Serie'
