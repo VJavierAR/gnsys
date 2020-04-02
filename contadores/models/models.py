@@ -537,6 +537,7 @@ class detalleContadores(models.Model):
      
       periodo = fields.Text(string="Periodo")
       periodoA = fields.Text(string="Periodo Anterior")
+      comentario = fields.Text(string="Comentario")
       archivo=fields.Binary(store='True',string='Archivo')
    
 
