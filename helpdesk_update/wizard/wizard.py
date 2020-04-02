@@ -494,6 +494,9 @@ class helpdesk_crearconserie(TransientModel):
     direccionEstado = fields.Text(string = 'Estado')
     direccionCodigoPostal = fields.Text(string = 'Código postal')
 
+
+    """
+
     @api.onchange('clienteRelacion', 'localidadRelacion')
     def actualiza_dominio_en_numeros_de_serie(self):
         #for record in self:
@@ -542,6 +545,8 @@ class helpdesk_crearconserie(TransientModel):
           dominio = [('x_studio_categoria_de_producto_3.name', '=', 'Equipo')]
           action = {'domain':{'serie': dominio}}
           return action
+
+    """
 
     """
     @api.onchange('localidadRelacion')
