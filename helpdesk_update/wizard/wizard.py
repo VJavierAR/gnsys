@@ -545,10 +545,19 @@ class helpdesk_crearconserie(TransientModel):
         self.localidad = self.localidadRelacion.name
         self.zonaLocalidad = self.localidadRelacion.x_studio_field_SqU5B
 
-        self.nombreContactoLocalidad = self.localidadRelacion.name
-        self.telefonoContactoLocalidad = self.localidadRelacion.phone
-        self.movilContactoLocalidad = self.localidadRelacion.mobile
-        self.correoContactoLocalidad = self.localidadRelacion.email
+        loc = self.localidadRelacion.id
+        idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_subtipo', '=', 'Contacto de localidad']], order='create_date desc', limit=1)
+        if idLoc:
+            self.nombreContactoLocalidad = idLoc[0].name
+            self.telefonoContactoLocalidad = idLoc[0].phone
+            self.movilContactoLocalidad = idLoc[0].mobile
+            self.correoContactoLocalidad = idLoc[0].email
+
+        else:
+            self.nombreContactoLocalidad = ''
+            self.telefonoContactoLocalidad = ''
+            self.movilContactoLocalidad = ''
+            self.correoContactoLocalidad = ''
 
         self.direccionCalleNombre = self.localidadRelacion.street_name
         self.direccionNumeroExterior = self.localidadRelacion.street_number

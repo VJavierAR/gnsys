@@ -312,39 +312,23 @@
         <field name="model">helpdesk.crearconserie</field>
         <field name="arch" type="xml">
             <form string="Crear">
-                <group >
+                <group  string='Buscar por serie'>
+                    <!--
                     <group class='text-right'>
                         <h3 >
                             Serie: 
                         </h3>
                     </group>
-                    <group class='text-left'>
-                        <field name='serie' widget='many2many_tags' string='' options="{'no_create_edit': True, 'no_create': True}"/>
+                    -->
+                    <group >
+                        <field name='serie' widget='many2many_tags' options="{'no_create_edit': True, 'no_create': True}"/>
+                    </group>
+                    <group string='Buscar por cliente y localidad'>
+                        <field name='clienteRelacion' options="{'no_create_edit': True, 'no_create': True}"/>
+                        <field name='localidadRelacion' options="{'no_create_edit': True, 'no_create': True}" domain='[["parent_id.id","=","x_studio_id_ayuda"],["type","=","delivery"]]'/>
                     </group>
                 </group>
-
-                <group >
-                    <group class='text-right'>
-                        <h3 >
-                            Cliente: 
-                        </h3>
-                    </group>
-                    <group class='text-left'>
-                        <field name='clienteRelacion' string='' options="{'no_create_edit': True, 'no_create': True}"/>
-                    </group>
-                </group>
-
-                <group >
-                    <group class='text-right'>
-                        <h3 >
-                            Localidad: 
-                        </h3>
-                    </group>
-                    <group class='text-left'>
-                        <field name='localidadRelacion' string='' options="{'no_create_edit': True, 'no_create': True}"/>
-                    </group>
-                </group>
-
+                
 
                 <group>
                     <group string="Cliente y localidad">
