@@ -472,6 +472,9 @@ class helpdesk_crearconserie(TransientModel):
     _description = 'HelpDesk crear ticket desde la serie'
 
     serie = fields.Many2many('stock.production.lot', string = 'Serie')
+    clienteRelacion fields.Many2one('res.partner' string = 'Cliente')
+    localidadRelacion fields.Many2one('res.partner' string = 'Localidad')
+
     cliente = fields.Text(string = 'Cliente')
     idCliente = fields.Text(string = 'idCliente', store=True)
     localidad = fields.Text(string = 'Localidad')
@@ -490,6 +493,90 @@ class helpdesk_crearconserie(TransientModel):
     direccionCiudad = fields.Text(string = 'Ciudad')
     direccionEstado = fields.Text(string = 'Estado')
     direccionCodigoPostal = fields.Text(string = 'Código postal')
+
+    @api.onchange('clienteRelacion', 'localidadRelacion')
+    def actualiza_dominio_en_numeros_de_serie(self):
+        for record in self:
+            zero = 0
+            dominio = []
+            dominioT = []
+            
+            #for record in self:
+            id_cliente = self.clienteRelacion.id
+            #id_cliente = record.x_studio_id_cliente
+            id_localidad = self.localidadRelacion.id
+
+            self.idCliente = id_cliente
+            self.idLocaliidad = id_localidad
+
+            if id_cliente != zero:
+              #raise Warning('entro1')
+              dominio = ['&', ('x_studio_categoria_de_producto_3.name','=','Equipo'), ('x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id', '=', id_cliente)]
+              #dominioT = ['&', ('serie.x_studio_categoria_de_producto_3.name','=','Equipo'), ('serie.x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id', '=', id_cliente)]  
+              
+            else:
+              #raise Warning('entro2')
+              dominio = [('x_studio_categoria_de_producto_3.name','=','Equipo')]
+              #dominioT = [('serie.x_studio_categoria_de_producto_3.name','=','Equipo')]
+              
+            if id_cliente != zero and id_localidad != zero:
+              #raise Warning('entro3')
+              dominio = ['&', '&', ('x_studio_categoria_de_producto_3.name','=','Equipo'), ('x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id', '=', id_cliente),('x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id','=',id_localidad)]
+              #dominioT = ['&', '&', ('serie.x_studio_categoria_de_producto_3.name','=','Equipo'), ('serie.x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id', '=', id_cliente),('serie.x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id','=',id_localidad)]
+
+            if id_localidad == zero and id_cliente != zero:
+              #raise Warning('entro4')
+              dominio = ['&', ('x_studio_categoria_de_producto_3.name','=','Equipo'), ('x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id', '=', id_cliente)]
+              #dominioT = ['&', ('serie.x_studio_categoria_de_producto_3.name','=','Equipo'), ('serie.x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id', '=', id_cliente)]
+
+            if id_cliente == zero and id_localidad == zero:
+              #raise Warning('entro5')
+              dominio = [('x_studio_categoria_de_producto_3.name', '=', 'Equipo')]
+              dominio = [('serie.x_studio_categoria_de_producto_3.name', '=', 'Equipo')]
+              
+            action = {'domain':{'serie': dominio}}
+            
+            return action
+
+    @api.onchange('localidadRelacion')
+    def cambia_localidad(self):
+      if self.localidadRelacion:
+        self.cliente = self.clienteRelacion.name
+        self.localidad = self.localidadRelacion.name
+        self.zonaLocalidad = self.localidadRelacion.x_studio_field_SqU5B
+
+        self.nombreContactoLocalidad = self.localidadRelacion.name
+        self.telefonoContactoLocalidad = self.localidadRelacion.phone
+        self.movilContactoLocalidad = self.localidadRelacion.mobile
+        self.correoContactoLocalidad = self.localidadRelacion.email
+        
+        self.direccionCalleNombre = self.localidadRelacion.street_name
+        self.direccionNumeroExterior = self.localidadRelacion.street_number
+        self.direccionNumeroInterior = self.localidadRelacion.street_number2
+        self.direccionColonia = self.localidadRelacion.l10n_mx_edi_colony
+        self.direccionLocalidad = self.localidadRelacion.l10n_mx_edi_locality
+        self.direccionCiudad = self.localidadRelacion.city
+        self.direccionEstado = self.localidadRelacion.state_id.name
+        self.direccionCodigoPostal = self.localidadRelacion.zip
+      else:
+        self.cliente = ''
+        self.localidad = ''
+        self.zonaLocalidad = ''
+        self.idLocaliidad = ''
+
+        self.nombreContactoLocalidad = ''
+        self.telefonoContactoLocalidad = ''
+        self.movilContactoLocalidad = ''
+        self.correoContactoLocalidad = ''
+
+        self.direccionCalleNombre = ''
+        self.direccionNumeroExterior = ''
+        self.direccionNumeroInterior = ''
+        self.direccionColonia = ''
+        self.direccionLocalidad = ''
+        self.direccionCiudad = ''
+        self.direccionEstado = ''
+        self.direccionCodigoPostal = ''
 
     @api.onchange('serie')
     def cambia_serie(self):
@@ -608,3 +695,41 @@ class helpdesk_crearconserie(TransientModel):
                     'res_id': wiz.id,
                     'context': self.env.context,
                     }
+        elif self.clienteRelacion and self.localidadRelacion:
+          messageTemp = ''
+          ticket = self.env['helpdesk.ticket'].create({'stage_id': 89 
+                                              #,'x_studio_equipo_por_nmero_de_serie': [(6,0,self.serie.ids)]
+                                              ,'partner_id': int(self.idCliente)
+                                              ,'x_studio_empresas_relacionadas': int(self.idLocaliidad)
+                                              ,'team_id': 9
+                                              ,'x_studio_field_6furK': self.zonaLocalidad
+                                              })
+          ticket.write({'partner_id': int(self.idCliente)
+                      ,'x_studio_empresas_relacionadas': int(self.idLocaliidad)
+                      ,'team_id': 9
+                      ,'x_studio_field_6furK': self.zonaLocalidad
+                      })
+          #query = "update helpdesk_ticket set \"partner_id\" = " + str(self.idCliente) + ", \"x_studio_empresas_relacionadas\" =" + str(self.idLocaliidad) + " where id = " + str(ticket.id) + ";"
+          #self.env.cr.execute(query)
+          #self.env.cr.commit()
+          ticket._compute_datosCliente()
+          #query = "select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!=" + str(ticket.x_studio_id_ticket) + "  and h.stage_id!=18 and h.team_id!=8 and  h.active='t' and stock_production_lot_id = " +  str(ticket.x_studio_equipo_por_nmero_de_serie[0].id) + " limit 1;"            
+          #self.env.cr.execute(query)                        
+          #informacion = self.env.cr.fetchall()
+          wiz = ''
+          mensajeTitulo = "Ticket generado!!!"
+          mensajeCuerpo = "Se creo el ticket '" + str(ticket.id) + "' con el número de serie " + self.serie.name + "\n\n"
+          wiz = self.env['helpdesk.alerta.series'].create({'ticket_id': ticket.id, 'mensaje': mensajeCuerpo})
+          view = self.env.ref('helpdesk_update.view_helpdesk_alerta_series')
+          return {
+                  'name': _(mensajeTitulo),
+                  'type': 'ir.actions.act_window',
+                  'view_type': 'form',
+                  'view_mode': 'form',
+                  'res_model': 'helpdesk.alerta.series',
+                  'views': [(view.id, 'form')],
+                  'view_id': view.id,
+                  'target': 'new',
+                  'res_id': wiz.id,
+                  'context': self.env.context,
+                  }

@@ -321,10 +321,31 @@
                     <group class='text-left'>
                         <field name='serie' widget='many2many_tags' string='' options="{'no_create_edit': True, 'no_create': True}"/>
                     </group>
-                    
-                    
                 </group>
 
+                <group >
+                    <group class='text-right'>
+                        <h3 >
+                            Cliente: 
+                        </h3>
+                    </group>
+                    <group class='text-left'>
+                        <field name='clienteRelacion' widget='many2many_tags' string='' options="{'no_create_edit': True, 'no_create': True}"/>
+                    </group>
+                </group>
+
+                <group >
+                    <group class='text-right'>
+                        <h3 >
+                            Localidad: 
+                        </h3>
+                    </group>
+                    <group class='text-left'>
+                        <field name='localidadRelacion' widget='many2many_tags' string='' options="{'no_create_edit': True, 'no_create': True}"/>
+                    </group>
+                </group>
+                
+                
                 <group>
                     <group string="Cliente y localidad">
                         <field name='cliente' readonly='1'/>
