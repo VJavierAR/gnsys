@@ -404,12 +404,14 @@ class StockPickingMassAction(TransientModel):
     almacen=fields.Many2one('stock.warehouse')
     categoria=fields.Many2one('product.category')
     tipo=fields.Selection([["Entrada","Entrada"],["Salida","Salida"],["Todos","Todos"]],default="Todos")
+    fecha=fields.datetime('Fecha de solicitud'),
 
 
     def report(self):
         i=[]
         k=0
         l=['state','=','done']
+        m=['date','>=',self.fecha]
         i.append(l)
         if(self.almacen==False):
             almacenes=self.env['stock.warehouse'].search([['x_studio_cliente','=',False]])
