@@ -194,7 +194,7 @@ class dcas(models.Model):
             self.tM=m.x_studio_tickett
             #select "contadorColor" from dcas_dcas where "porcentajeMagenta"=1 or "porcentajeCian"=1 or "porcentajeNegro"=1  order by x_studio_fecha desc limit 1;
             if self.colorEquipo!='B/N':
-                query="select \"contadorColor\" from dcas_dcas where  serie="+str(self.serie.id)+" and (\"porcentajeMagenta\"=1 or \"porcentajeCian\"=1 or \"porcentajeMagenta\"=1 and \"contadorColor\"!=0) and fuente='helpdesk.ticket' order by x_studio_fecha desc limit 1;"                        
+                query="select \"contadorColor\" from dcas_dcas where  serie="+str(self.serie.id)+" and (\"porcentajeMagenta\"=1 or \"porcentajeCian\"=1 or \"porcentajeMagenta\"=1 or \"porcentajeNegro\"=1) and \"contadorColor\"!=0 and fuente='helpdesk.ticket' order by x_studio_fecha desc limit 1;"                        
                 _logger.info("self inicio id query"+str(query))
                 self.env.cr.execute(query)                        
                 informacion = self.env.cr.fetchall()            
@@ -537,6 +537,7 @@ class detalleContadores(models.Model):
      
       periodo = fields.Text(string="Periodo")
       periodoA = fields.Text(string="Periodo Anterior")
+      comentario = fields.Text(string="Comentario")
       archivo=fields.Binary(store='True',string='Archivo')
    
 

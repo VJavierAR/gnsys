@@ -66,18 +66,20 @@ class tfs(models.Model):
                             self.write({'estado':'xValidar'})
                         else:
                             self.write({'estado':'Valido'})
-                            self.env['dcas.dcas'].create({'x_studio_toner_'+str(self.tipo).lower():1,'serie':record.serie.id,'contadorMono':record.actualMonocromatico,'contadorColor':record.actualColor,'fuente':'tfs.tfs'})
+                            self.env['dcas.dcas'].create({'x_studio_toner_'+str(self.tipo).lower():1,'serie':record.serie.id,'contadorMono':record.actualMonocromatico,'contadorColor':record.actualColor,'fuente':'tfs.tfs','porcentajeMagenta':self.actualporcentajeMagenta,'porcentajeNegro':self.actualporcentajeNegro,'porcentajeAmarillo':self.actualporcentajeAmarillo,'porcentajeCian':self.actualporcentajeCian})
                             #In[0].write({'quantity':In[0].quantity-1})
                     else:
                         rendimientoColor=self.actualColor-self.contadorAnteriorColor
                         porcentaje=(100*rendimientoColor)/self.producto.x_studio_rendimiento_toner if self.producto.x_studio_rendimiento_toner>0 else 1
+                        
+                        self.write({'actualporcentaje'+str(self.Tipo):porcentaje})
                         if(porcentaje<60):
                             self.write({'estado':'xValidar'})
                         else:
                             self.write({'estado':'Valido'})
                             #_logger.info(In[0])
                             #In[0].write({'quantity':In[0].quantity-1})
-                            self.env['dcas.dcas'].create({'x_studio_toner_'+str(self.tipo).lower():1,'serie':record.serie.id,'contadorMono':record.actualMonocromatico,'contadorColor':record.actualColor,'fuente':'tfs.tfs'})
+                            self.env['dcas.dcas'].create({'x_studio_toner_'+str(self.tipo).lower():1,'serie':record.serie.id,'contadorMono':record.actualMonocromatico,'contadorColor':record.actualColor,'fuente':'tfs.tfs','porcentajeMagenta':self.actualporcentajeMagenta,'porcentajeNegro':self.actualporcentajeNegro,'porcentajeAmarillo':self.actualporcentajeAmarillo,'porcentajeCian':self.actualporcentajeCian})
                 else:
                     raise exceptions.UserError("No existen cantidades en el almacen para el producto " + self.producto.name)
             else:
