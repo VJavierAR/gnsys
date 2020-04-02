@@ -776,7 +776,7 @@ class helpdesk_crearconserie(TransientModel):
           #informacion = self.env.cr.fetchall()
           wiz = ''
           mensajeTitulo = "Ticket generado!!!"
-          mensajeCuerpo = "Se creo el ticket '" + str(ticket.id) + "' con el número de serie " + self.serie.name + "\n\n"
+          mensajeCuerpo = "Se creo el ticket '" + str(ticket.id) + "' sin número de serie " +  + "\n\n"
           wiz = self.env['helpdesk.alerta.series'].create({'ticket_id': ticket.id, 'mensaje': mensajeCuerpo})
           view = self.env.ref('helpdesk_update.view_helpdesk_alerta_series')
           return {
