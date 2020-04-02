@@ -501,7 +501,7 @@ class helpdesk_crearconserie(TransientModel):
     def actualiza_dominio_en_numeros_de_serie(self):
         #for record in self:
         if self.clienteRelacion or self.localidadRelacion:
-            _logger.info("Entre porque existe: " + str(clienteRelacion) + ' loc: ' + str(localidadRelacion))
+            _logger.info("Entre porque existe: " + str(self.clienteRelacion) + ' loc: ' + str(self.localidadRelacion))
             zero = 0
             dominio = []
             dominioT = []
@@ -543,7 +543,7 @@ class helpdesk_crearconserie(TransientModel):
             
             return action
         else:
-          _logger.info("Entre porque no existe: " + str(clienteRelacion) + ' loc: ' + str(localidadRelacion))
+          _logger.info("Entre porque no existe: " + str(self.clienteRelacion) + ' loc: ' + str(self.localidadRelacion))
           dominio = [('x_studio_categoria_de_producto_3.name', '=', 'Equipo')]
           action = {'domain':{'serie': dominio}}
           return action
