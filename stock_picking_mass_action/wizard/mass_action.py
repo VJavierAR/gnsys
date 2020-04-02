@@ -406,7 +406,6 @@ class StockPickingMassAction(TransientModel):
     tipo=fields.Selection([["Entrada","Entrada"],["Salida","Salida"],["Todos","Todos"]],default="Todos")
     fecha=fields.Datetime()
 
-
     def report(self):
         i=[]
         k=0
