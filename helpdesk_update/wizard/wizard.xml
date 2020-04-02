@@ -317,7 +317,7 @@
                         <field name='serie' widget='many2many_tags' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}"/>
                     </group>
                     <group string='Buscar por cliente y localidad'>
-                        <field name='clienteRelacion' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" />
+                        <field name='clienteRelacion' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" attrs='{"domain": [["company_type","=","company"]]}' />
                         <field name='localidadRelacion' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain='[["parent_id.id","=",idCliente],["type","=","delivery"]]'/>
                     </group>
                 </group>

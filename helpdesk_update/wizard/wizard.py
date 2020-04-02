@@ -598,7 +598,7 @@ class helpdesk_crearconserie(TransientModel):
         self.cliente = ''
         self.localidad = ''
         self.zonaLocalidad = ''
-        self.idLocaliidad = ''
+        #self.idLocaliidad = ''
 
         self.nombreContactoLocalidad = ''
         self.telefonoContactoLocalidad = ''
