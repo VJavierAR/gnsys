@@ -325,7 +325,7 @@
                     </group>
                     <group string='Buscar por cliente y localidad'>
                         <field name='clienteRelacion' options="{'no_create_edit': True, 'no_create': True}"/>
-                        <field name='localidadRelacion' options="{'no_create_edit': True, 'no_create': True}" domain='[["parent_id.id","=","x_studio_id_ayuda"],["type","=","delivery"]]'/>
+                        <field name='localidadRelacion' options="{'no_create_edit': True, 'no_create': True}" domain='[["parent_id.id","=","idCliente"],["type","=","delivery"]]'/>
                     </group>
                 </group>
                 
