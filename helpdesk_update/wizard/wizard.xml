@@ -330,7 +330,7 @@
                         </h3>
                     </group>
                     <group class='text-left'>
-                        <field name='clienteRelacion' widget='many2many_tags' string='' options="{'no_create_edit': True, 'no_create': True}"/>
+                        <field name='clienteRelacion' string='' options="{'no_create_edit': True, 'no_create': True}"/>
                     </group>
                 </group>
 
@@ -341,11 +341,11 @@
                         </h3>
                     </group>
                     <group class='text-left'>
-                        <field name='localidadRelacion' widget='many2many_tags' string='' options="{'no_create_edit': True, 'no_create': True}"/>
+                        <field name='localidadRelacion' string='' options="{'no_create_edit': True, 'no_create': True}"/>
                     </group>
                 </group>
-                
-                
+
+
                 <group>
                     <group string="Cliente y localidad">
                         <field name='cliente' readonly='1'/>
