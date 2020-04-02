@@ -196,6 +196,8 @@ class contratos(models.Model):
             _logger.info("-------Logger de OSWALDO "+str(record.mapped('servicio.servActivo')))
             for elemento in record.mapped('servicio'):
                 _logger.info("-------Logger de OSWALDO*****"+str(elemento.servActivo))
+                if elemento:
+                    elemento = False
 
 
 class cliente_contratos(models.Model):
