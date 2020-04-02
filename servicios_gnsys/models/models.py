@@ -79,6 +79,9 @@ class servicios_gnsys(models.Model):
                         sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})                        
                         self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Arrendamiento' where  id = " + str(sale.id) + ";")        
 
+    #La siguiente funcion verifica que si la fecha de fin de servicio este se desactiva 
+    
+
 
     # Si el contrato expira expiran los servicios
 
