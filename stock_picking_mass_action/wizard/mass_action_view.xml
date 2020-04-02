@@ -17,7 +17,7 @@
                     <field name="almacen"/>
                     <field name="categoria"/>
                     <field name="tipo"/>
-                    <field name="fecha"/>
+                    <field name="fecha" string="Fecha de solicitud"/>
                 </group>
                 <footer>
                     <button name="report" string="Reporte" type="object" class="oe_highlight"/>
