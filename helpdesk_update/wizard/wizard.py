@@ -511,8 +511,8 @@ class helpdesk_crearconserie(TransientModel):
             #id_cliente = record.x_studio_id_cliente
             id_localidad = self.localidadRelacion.id
 
-            #self.idCliente = id_cliente
-            #self.idLocaliidad = id_localidad
+            self.idCliente = id_cliente
+            self.idLocaliidad = id_localidad
 
             if id_cliente != zero:
               #raise Warning('entro1')
