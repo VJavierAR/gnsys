@@ -544,30 +544,29 @@ class helpdesk_crearconserie(TransientModel):
         self.cliente = self.clienteRelacion.name
         self.localidad = self.localidadRelacion.name
         self.zonaLocalidad = self.localidadRelacion.x_studio_field_SqU5B
-
+        """
         loc = self.localidadRelacion.id
-        if loc:
-          idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_subtipo', '=', 'Contacto de localidad']], order='create_date desc', limit=1)
-          if idLoc:
-              self.nombreContactoLocalidad = idLoc[0].name
-              self.telefonoContactoLocalidad = idLoc[0].phone
-              self.movilContactoLocalidad = idLoc[0].mobile
-              self.correoContactoLocalidad = idLoc[0].email
+        idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_subtipo', '=', 'Contacto de localidad']], order='create_date desc', limit=1)
+        if idLoc:
+            self.nombreContactoLocalidad = idLoc[0].name
+            self.telefonoContactoLocalidad = idLoc[0].phone
+            self.movilContactoLocalidad = idLoc[0].mobile
+            self.correoContactoLocalidad = idLoc[0].email
 
-          else:
-              self.nombreContactoLocalidad = ''
-              self.telefonoContactoLocalidad = ''
-              self.movilContactoLocalidad = ''
-              self.correoContactoLocalidad = ''
-
-          self.direccionCalleNombre = self.localidadRelacion.street_name
-          self.direccionNumeroExterior = self.localidadRelacion.street_number
-          self.direccionNumeroInterior = self.localidadRelacion.street_number2
-          self.direccionColonia = self.localidadRelacion.l10n_mx_edi_colony
-          self.direccionLocalidad = self.localidadRelacion.l10n_mx_edi_locality
-          self.direccionCiudad = self.localidadRelacion.city
-          self.direccionEstado = self.localidadRelacion.state_id.name
-          self.direccionCodigoPostal = self.localidadRelacion.zip
+        else:
+            self.nombreContactoLocalidad = ''
+            self.telefonoContactoLocalidad = ''
+            self.movilContactoLocalidad = ''
+            self.correoContactoLocalidad = ''
+        """
+        self.direccionCalleNombre = self.localidadRelacion.street_name
+        self.direccionNumeroExterior = self.localidadRelacion.street_number
+        self.direccionNumeroInterior = self.localidadRelacion.street_number2
+        self.direccionColonia = self.localidadRelacion.l10n_mx_edi_colony
+        self.direccionLocalidad = self.localidadRelacion.l10n_mx_edi_locality
+        self.direccionCiudad = self.localidadRelacion.city
+        self.direccionEstado = self.localidadRelacion.state_id.name
+        self.direccionCodigoPostal = self.localidadRelacion.zip
       else:
         self.cliente = ''
         self.localidad = ''
