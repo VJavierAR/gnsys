@@ -588,7 +588,7 @@ class helpdesk_crearconserie(TransientModel):
         self.direccionCodigoPostal = ''
 
     
-
+    """
     @api.onchange('clienteRelacion')
     def cambia_cliente(self):
       if not self.clienteRelacion:
@@ -613,7 +613,7 @@ class helpdesk_crearconserie(TransientModel):
         self.direccionCiudad = ''
         self.direccionEstado = ''
         self.direccionCodigoPostal = ''
-
+    """
 
     @api.onchange('serie')
     def cambia_serie(self):
