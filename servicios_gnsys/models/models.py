@@ -80,12 +80,16 @@ class servicios_gnsys(models.Model):
                         self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Arrendamiento' where  id = " + str(sale.id) + ";")        
 
     #La siguiente funcion verifica que si la fecha de fin de servicio este se desactiva 
-    
-
-
-    # Si el contrato expira expiran los servicios
-
-        
+    @api.onchange('fechaDeFinDeServicio')
+    def verificaFechaFinMayor(self):
+        for record in self:
+            # fechaDeFinDeServicio      fechaDeInicioDeServicio
+            if record.fechaDeFinDeServicio:
+                fecha = str(record.fechaDeFinDeServicio).split(' ')[0]
+                converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
+                diasAtraso = (datetime.date.today() - converted_date).days
+                if diasAtraso > 0:
+                    raise exceptions.ValidationError("Fecha de inicio de servicio tiene que ser menor a fecha de fin de servicio ")
     #    for record in self:       
     #         if record.contrato:
     #             _logger.info("-------Logger de OSWALDO "+str(record.contrato.name))
