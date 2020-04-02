@@ -532,7 +532,7 @@ class helpdesk_crearconserie(TransientModel):
             if id_cliente == zero and id_localidad == zero:
               #raise Warning('entro5')
               dominio = [('x_studio_categoria_de_producto_3.name', '=', 'Equipo')]
-              dominio = [('serie.x_studio_categoria_de_producto_3.name', '=', 'Equipo')]
+              #dominio = [('serie.x_studio_categoria_de_producto_3.name', '=', 'Equipo')]
               
             action = {'domain':{'serie': dominio}}
             

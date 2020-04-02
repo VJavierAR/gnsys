@@ -312,23 +312,20 @@
         <field name="model">helpdesk.crearconserie</field>
         <field name="arch" type="xml">
             <form string="Crear">
-                <group  string='Buscar por serie'>
-                    <!--
-                    <group class='text-right'>
-                        <h3 >
-                            Serie: 
-                        </h3>
-                    </group>
-                    -->
-                    <group >
-                        <field name='serie' widget='many2many_tags' options="{'no_create_edit': True, 'no_create': True}"/>
+                <group>
+                    <group string='Buscar por serie'>
+                        <field name='serie' widget='many2many_tags' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}"/>
                     </group>
                     <group string='Buscar por cliente y localidad'>
-                        <field name='clienteRelacion' options="{'no_create_edit': True, 'no_create': True}"/>
-                        <field name='localidadRelacion' options="{'no_create_edit': True, 'no_create': True}" domain='[["parent_id.id","=",idCliente],["type","=","delivery"]]'/>
+                        <field name='clienteRelacion' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}"/>
+                        <field name='localidadRelacion' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain='[["parent_id.id","=",idCliente],["type","=","delivery"]]'/>
                     </group>
                 </group>
                 
+                <group>
+                    <group class='text-center' string = 'Datos de busqueda'>
+                    </group>
+                </group>
 
                 <group>
                     <group string="Cliente y localidad">
