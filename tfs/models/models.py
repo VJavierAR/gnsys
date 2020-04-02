@@ -71,6 +71,7 @@ class tfs(models.Model):
                     else:
                         rendimientoColor=self.actualColor-self.contadorAnteriorColor
                         porcentaje=(100*rendimientoColor)/self.producto.x_studio_rendimiento_toner if self.producto.x_studio_rendimiento_toner>0 else 1
+                        self.write({'actualporcentaje'+str(self.Tipo):porcentaje})
                         if(porcentaje<60):
                             self.write({'estado':'xValidar'})
                         else:
