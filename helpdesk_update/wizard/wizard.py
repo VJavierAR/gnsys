@@ -532,7 +532,7 @@ class helpdesk_crearconserie(TransientModel):
             if id_cliente == zero and id_localidad == zero:
               #raise Warning('entro5')
               dominio = [('x_studio_categoria_de_producto_3.name', '=', 'Equipo')]
-              dominio = [('serie.x_studio_categoria_de_producto_3.name', '=', 'Equipo')]
+              #dominio = [('serie.x_studio_categoria_de_producto_3.name', '=', 'Equipo')]
               
             action = {'domain':{'serie': dominio}}
             
@@ -546,27 +546,28 @@ class helpdesk_crearconserie(TransientModel):
         self.zonaLocalidad = self.localidadRelacion.x_studio_field_SqU5B
 
         loc = self.localidadRelacion.id
-        idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_subtipo', '=', 'Contacto de localidad']], order='create_date desc', limit=1)
-        if idLoc:
-            self.nombreContactoLocalidad = idLoc[0].name
-            self.telefonoContactoLocalidad = idLoc[0].phone
-            self.movilContactoLocalidad = idLoc[0].mobile
-            self.correoContactoLocalidad = idLoc[0].email
+        if loc:
+          idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_subtipo', '=', 'Contacto de localidad']], order='create_date desc', limit=1)
+          if idLoc:
+              self.nombreContactoLocalidad = idLoc[0].name
+              self.telefonoContactoLocalidad = idLoc[0].phone
+              self.movilContactoLocalidad = idLoc[0].mobile
+              self.correoContactoLocalidad = idLoc[0].email
 
-        else:
-            self.nombreContactoLocalidad = ''
-            self.telefonoContactoLocalidad = ''
-            self.movilContactoLocalidad = ''
-            self.correoContactoLocalidad = ''
+          else:
+              self.nombreContactoLocalidad = ''
+              self.telefonoContactoLocalidad = ''
+              self.movilContactoLocalidad = ''
+              self.correoContactoLocalidad = ''
 
-        self.direccionCalleNombre = self.localidadRelacion.street_name
-        self.direccionNumeroExterior = self.localidadRelacion.street_number
-        self.direccionNumeroInterior = self.localidadRelacion.street_number2
-        self.direccionColonia = self.localidadRelacion.l10n_mx_edi_colony
-        self.direccionLocalidad = self.localidadRelacion.l10n_mx_edi_locality
-        self.direccionCiudad = self.localidadRelacion.city
-        self.direccionEstado = self.localidadRelacion.state_id.name
-        self.direccionCodigoPostal = self.localidadRelacion.zip
+          self.direccionCalleNombre = self.localidadRelacion.street_name
+          self.direccionNumeroExterior = self.localidadRelacion.street_number
+          self.direccionNumeroInterior = self.localidadRelacion.street_number2
+          self.direccionColonia = self.localidadRelacion.l10n_mx_edi_colony
+          self.direccionLocalidad = self.localidadRelacion.l10n_mx_edi_locality
+          self.direccionCiudad = self.localidadRelacion.city
+          self.direccionEstado = self.localidadRelacion.state_id.name
+          self.direccionCodigoPostal = self.localidadRelacion.zip
       else:
         self.cliente = ''
         self.localidad = ''
@@ -587,6 +588,34 @@ class helpdesk_crearconserie(TransientModel):
         self.direccionEstado = ''
         self.direccionCodigoPostal = ''
 
+    
+    """
+    @api.onchange('clienteRelacion')
+    def cambia_cliente(self):
+      if not self.clienteRelacion:
+        self.localidadRelacion = ''
+        self.serie = ''
+
+        #self.cliente = ''
+        #self.localidad = ''
+        self.zonaLocalidad = ''
+        #self.idLocaliidad = ''
+
+        self.nombreContactoLocalidad = ''
+        self.telefonoContactoLocalidad = ''
+        self.movilContactoLocalidad = ''
+        self.correoContactoLocalidad = ''
+
+        self.direccionCalleNombre = ''
+        self.direccionNumeroExterior = ''
+        self.direccionNumeroInterior = ''
+        self.direccionColonia = ''
+        self.direccionLocalidad = ''
+        self.direccionCiudad = ''
+        self.direccionEstado = ''
+        self.direccionCodigoPostal = ''
+    """
+
     @api.onchange('serie')
     def cambia_serie(self):
         if self.serie:
@@ -599,9 +628,11 @@ class helpdesk_crearconserie(TransientModel):
                 if self.serie[0].x_studio_move_line:
                     self.cliente = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.name
                     self.idCliente = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
+                    self.clienteRelacion = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
                     self.localidad = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.name
                     self.zonaLocalidad = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.x_studio_field_SqU5B
                     self.idLocaliidad = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
+                    self.localidadRelacion = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
 
                     self.direccionCalleNombre = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.street_name
                     self.direccionNumeroExterior = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.street_number
@@ -644,6 +675,9 @@ class helpdesk_crearconserie(TransientModel):
             self.localidad = ''
             self.zonaLocalidad = ''
             self.idLocaliidad = ''
+
+            self.clienteRelacion = ''
+            self.localidadRelacion = ''
 
             self.nombreContactoLocalidad = ''
             self.telefonoContactoLocalidad = ''
