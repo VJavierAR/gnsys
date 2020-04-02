@@ -537,7 +537,7 @@ class helpdesk_crearconserie(TransientModel):
             action = {'domain':{'serie': dominio}}
             
             return action
-"""
+    """
     @api.onchange('localidadRelacion')
     def cambia_localidad(self):
       if self.localidadRelacion:
@@ -586,8 +586,9 @@ class helpdesk_crearconserie(TransientModel):
         self.direccionCiudad = ''
         self.direccionEstado = ''
         self.direccionCodigoPostal = ''
-"""
-    
+
+    """
+        
     """
     @api.onchange('clienteRelacion')
     def cambia_cliente(self):
