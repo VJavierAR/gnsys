@@ -538,6 +538,11 @@ class helpdesk_crearconserie(TransientModel):
             action = {'domain':{'serie': dominio}}
             
             return action
+        else:
+          dominio = [('x_studio_categoria_de_producto_3.name', '=', 'Equipo')]
+          action = {'domain':{'serie': dominio}}
+          return action
+
     """
     @api.onchange('localidadRelacion')
     def cambia_localidad(self):
