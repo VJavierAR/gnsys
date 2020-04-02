@@ -581,6 +581,8 @@ class helpdesk_crearconserie(TransientModel):
         self.direccionEstado = self.localidadRelacion.state_id.name
         self.direccionCodigoPostal = self.localidadRelacion.zip
       else:
+        self.serie = ''
+
         self.cliente = ''
         self.localidad = ''
         self.zonaLocalidad = ''
