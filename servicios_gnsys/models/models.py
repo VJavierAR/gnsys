@@ -190,22 +190,25 @@ class contratos(models.Model):
             self.direccion = self.cliente.contact_address
             self.ejecutivoDeCuenta = self.cliente.x_studio_ejecutivo
             self.vendedor = self.cliente.x_studio_vendedor
+    
     @api.onchange('fechaDeFinDeContrato')
     @api.multi
     def expiracionServicios(self):
-        if self.cliente:
+        if self.fechaDeFinDeContrato:
             for record in self:
-                #_logger.info("-------Logger de OSWALDO "+str(record.mapped('servicio.servActivo')))
-                for elemento in record.mapped('servicio'):
-                    #_logger.info("-------Logger de OSWALDO*****"+str(elemento.servActivo))
-                    if elemento:
-                        elemento.servActivo = False
+                fecha = str(record.fechaDeFinDeContrato).split(' ')[0]
+                converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
+                fechaCompara = (datetime.date.today() - converted_date).days
+                if fechaCompara > 0 : 
+                    #_logger.info("-------Logger de OSWALDO "+str(record.mapped('servicio.servActivo')))
+                    for elemento in record.mapped('servicio'):
+                        #_logger.info("-------Logger de OSWALDO*****"+str(elemento.servActivo))
+                        if elemento:
+                            elemento.servActivo = False
     #    for record in self:       
     #         if record.contrato:
     #             _logger.info("-------Logger de OSWALDO "+str(record.contrato.name))
-    #             fecha = str(record.fechaDeFinDeContrato).split(' ')[0]
-    #             converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
-    #             fechaCompara = (datetime.date.today() - converted_date).days
+
     #             #Comparamos la fecha de hoy con la fecha de fin de contrato
     #             #Aqui obtenemos todos los serviciós
     #             if fechaCompara > 0:
