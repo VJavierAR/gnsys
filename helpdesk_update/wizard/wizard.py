@@ -472,8 +472,8 @@ class helpdesk_crearconserie(TransientModel):
     _description = 'HelpDesk crear ticket desde la serie'
 
     serie = fields.Many2many('stock.production.lot', string = 'Serie')
-    clienteRelacion = fields.Many2one('res.partner' string = 'Cliente')
-    localidadRelacion = fields.Many2one('res.partner' string = 'Localidad')
+    clienteRelacion = fields.Many2one('res.partner', string = 'Cliente')
+    localidadRelacion = fields.Many2one('res.partner', string = 'Localidad')
 
     cliente = fields.Text(string = 'Cliente')
     idCliente = fields.Text(string = 'idCliente', store=True)
