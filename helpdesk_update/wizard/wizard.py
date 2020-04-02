@@ -593,12 +593,12 @@ class helpdesk_crearconserie(TransientModel):
     def cambia_cliente(self):
       if not self.clienteRelacion:
         self.localidadRelacion = ''
-        self.serie = ''
+        #self.serie = ''
 
         self.cliente = ''
         self.localidad = ''
         self.zonaLocalidad = ''
-        #self.idLocaliidad = ''
+        self.idLocaliidad = ''
 
         self.nombreContactoLocalidad = ''
         self.telefonoContactoLocalidad = ''
