@@ -587,6 +587,34 @@ class helpdesk_crearconserie(TransientModel):
         self.direccionEstado = ''
         self.direccionCodigoPostal = ''
 
+    
+
+    @api.onchange('clienteRelacion')
+    def cambia_cliente(self):
+      if not self.clienteRelacion:
+        self.localidadRelacion = ''
+        self.serie = ''
+
+        self.cliente = ''
+        self.localidad = ''
+        self.zonaLocalidad = ''
+        self.idLocaliidad = ''
+
+        self.nombreContactoLocalidad = ''
+        self.telefonoContactoLocalidad = ''
+        self.movilContactoLocalidad = ''
+        self.correoContactoLocalidad = ''
+
+        self.direccionCalleNombre = ''
+        self.direccionNumeroExterior = ''
+        self.direccionNumeroInterior = ''
+        self.direccionColonia = ''
+        self.direccionLocalidad = ''
+        self.direccionCiudad = ''
+        self.direccionEstado = ''
+        self.direccionCodigoPostal = ''
+
+
     @api.onchange('serie')
     def cambia_serie(self):
         if self.serie:
