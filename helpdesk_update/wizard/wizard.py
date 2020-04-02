@@ -537,7 +537,7 @@ class helpdesk_crearconserie(TransientModel):
             action = {'domain':{'serie': dominio}}
             
             return action
-
+"""
     @api.onchange('localidadRelacion')
     def cambia_localidad(self):
       if self.localidadRelacion:
@@ -586,7 +586,7 @@ class helpdesk_crearconserie(TransientModel):
         self.direccionCiudad = ''
         self.direccionEstado = ''
         self.direccionCodigoPostal = ''
-
+"""
     
     """
     @api.onchange('clienteRelacion')
@@ -643,7 +643,7 @@ class helpdesk_crearconserie(TransientModel):
                     self.direccionCodigoPostal = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.zip
                     #self.direccion = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.
 
-                    self.write({'idCliente' : self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
+                    _my_object.write({'idCliente' : self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
                                     ,'idLocaliidad': self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
                                     })
                     loc = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
