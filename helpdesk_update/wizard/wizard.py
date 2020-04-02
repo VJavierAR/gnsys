@@ -544,7 +544,7 @@ class helpdesk_crearconserie(TransientModel):
         self.cliente = self.clienteRelacion.name
         self.localidad = self.localidadRelacion.name
         self.zonaLocalidad = self.localidadRelacion.x_studio_field_SqU5B
-        """
+
         loc = self.localidadRelacion.id
         idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_subtipo', '=', 'Contacto de localidad']], order='create_date desc', limit=1)
         if idLoc:
@@ -558,7 +558,7 @@ class helpdesk_crearconserie(TransientModel):
             self.telefonoContactoLocalidad = ''
             self.movilContactoLocalidad = ''
             self.correoContactoLocalidad = ''
-        """
+
         self.direccionCalleNombre = self.localidadRelacion.street_name
         self.direccionNumeroExterior = self.localidadRelacion.street_number
         self.direccionNumeroInterior = self.localidadRelacion.street_number2
@@ -643,7 +643,7 @@ class helpdesk_crearconserie(TransientModel):
                     self.direccionCodigoPostal = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.zip
                     #self.direccion = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.
 
-                    _my_object.write({'idCliente' : self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
+                    self.write({'idCliente' : self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
                                     ,'idLocaliidad': self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
                                     })
                     loc = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
