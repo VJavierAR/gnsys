@@ -599,9 +599,11 @@ class helpdesk_crearconserie(TransientModel):
                 if self.serie[0].x_studio_move_line:
                     self.cliente = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.name
                     self.idCliente = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
+                    self.clienteRelacion = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
                     self.localidad = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.name
                     self.zonaLocalidad = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.x_studio_field_SqU5B
                     self.idLocaliidad = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
+                    self.localidadRelacion = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
 
                     self.direccionCalleNombre = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.street_name
                     self.direccionNumeroExterior = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.street_number
@@ -644,6 +646,9 @@ class helpdesk_crearconserie(TransientModel):
             self.localidad = ''
             self.zonaLocalidad = ''
             self.idLocaliidad = ''
+
+            self.clienteRelacion = ''
+            self.localidadRelacion = ''
 
             self.nombreContactoLocalidad = ''
             self.telefonoContactoLocalidad = ''
