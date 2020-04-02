@@ -497,7 +497,7 @@ class helpdesk_crearconserie(TransientModel):
     @api.onchange('clienteRelacion', 'localidadRelacion')
     def actualiza_dominio_en_numeros_de_serie(self):
         #for record in self:
-        if clienteRelacion or localidadRelacion:
+        if self.clienteRelacion or self.localidadRelacion:
             zero = 0
             dominio = []
             dominioT = []
