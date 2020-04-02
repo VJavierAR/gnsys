@@ -495,12 +495,13 @@ class helpdesk_crearconserie(TransientModel):
     direccionCodigoPostal = fields.Text(string = 'Código postal')
 
 
-    """
+
 
     @api.onchange('clienteRelacion', 'localidadRelacion')
     def actualiza_dominio_en_numeros_de_serie(self):
         #for record in self:
         if self.clienteRelacion or self.localidadRelacion:
+            _logger.info("Entre porque existe: " + str(clienteRelacion) + ' loc: ' + str(localidadRelacion))
             zero = 0
             dominio = []
             dominioT = []
@@ -510,8 +511,8 @@ class helpdesk_crearconserie(TransientModel):
             #id_cliente = record.x_studio_id_cliente
             id_localidad = self.localidadRelacion.id
 
-            self.idCliente = id_cliente
-            self.idLocaliidad = id_localidad
+            #self.idCliente = id_cliente
+            #self.idLocaliidad = id_localidad
 
             if id_cliente != zero:
               #raise Warning('entro1')
@@ -542,11 +543,12 @@ class helpdesk_crearconserie(TransientModel):
             
             return action
         else:
+          _logger.info("Entre porque no existe: " + str(clienteRelacion) + ' loc: ' + str(localidadRelacion))
           dominio = [('x_studio_categoria_de_producto_3.name', '=', 'Equipo')]
           action = {'domain':{'serie': dominio}}
           return action
 
-    """
+    
 
     """
     @api.onchange('localidadRelacion')
