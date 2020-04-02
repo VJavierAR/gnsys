@@ -114,6 +114,11 @@ class contratos(models.Model):
     
     name = fields.Char(string="Nombre")
     servicio = fields.One2many('servicios', 'contrato',string="Servicio")
+    ci = fields.Binary(string="carta de intención")
+    c = fields.Binary(string="contrato")
+    ac = fields.Binary(string="Acta constitutiva")
+    cs = fields.Binary(string="constancia del sat")
+    idal = fields.Binary(string="id apoderado legal")
     
     cliente = fields.Many2one('res.partner', string='Cliente')
     idtmpp = fields.Char(string="idTMPp")
