@@ -66,13 +66,18 @@ class HelpDeskCerrarConComentario(TransientModel):
     evidencia = fields.Many2many('ir.attachment', string = "Evidencias")
 
     def cerrarTicketConComentario(self):
+
+      if self.ticket_id.stage_id.name == 'Resuelto' or self.ticket_id.stage_id.name == 'Abierto' or self.ticket_id.stage_id.name == 'Asignado' or self.ticket_id.stage_id.name == 'Atención' and self.ticket_id.estadoCerrado == False:
         self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.ticket_id.id
                                                 ,'comentario': self.comentario
                                                 ,'estadoTicket': self.ticket_id.stage_id.name
                                                 ,'evidencia': [(6,0,self.evidencia.ids)]
                                                 ,'mostrarComentario': self.check
                                                 })
-        self.ticket_id.write({'stage_id': 18})
+        self.ticket_id.write({'stage_id': 18 
+                            , 'estadoResueltoPorDocTecnico': True
+                            , 'estadoAtencion': True
+                            })
         mess = 'Ticket "' + str(self.ticket_id.id) + '" cerrado y último Diagnostico / Comentario añadido al ticket "' + str(self.ticket_id.id) + '" de forma exitosa. \n\nComentario agregado: ' + str(self.comentario) + '.'
         wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mess})
         view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
