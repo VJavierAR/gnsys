@@ -415,7 +415,7 @@ class StockPickingMassAction(TransientModel):
             i.append(m)
         i.append(l)
         _logger.info(str(self.almacen.id))
-        if(self.almacen==False):
+        if(self.almacen.id==False):
             almacenes=self.env['stock.warehouse'].search([['x_studio_cliente','=',False]])
             for alm in almacenes:
                 b=['location_id','=',alm.wh_output_stock_loc_id.id]
@@ -429,7 +429,7 @@ class StockPickingMassAction(TransientModel):
                     i.append(c)
                 if(self.tipo=="Salida"):
                     i.append(b)
-        if(self.almacen):
+        if(self.almacen.id):
             b=['location_id','=',self.almacen.wh_output_stock_loc_id.id]
             c=['location_dest_id','=',self.almacen.wh_input_stock_loc_id.id]
 
