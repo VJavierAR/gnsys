@@ -91,7 +91,7 @@ class servicios_gnsys(models.Model):
             converted_date_Fin = datetime.datetime.strptime(fechaFin, '%Y-%m-%d').date()
             
 
-            fechaIni = str(self.fechaDeFinDeServicio).split(' ')[0]
+            fechaIni = str(self.fechaDeInicioDeServicio).split(' ')[0]
             converted_date_Ini = datetime.datetime.strptime(fechaIni, '%Y-%m-%d').date()
 
 
