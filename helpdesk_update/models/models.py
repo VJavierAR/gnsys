@@ -504,14 +504,14 @@ class helpdesk_update(models.Model):
         _logger.info("id ticket search: " + str(self.x_studio_id_ticket))
         
         #ticketActualiza = self.env['helpdesk.ticket'].search([('id', '=', self.id)])
-        if self.team_id==8:
+        if self.team_id.id==8:
             tam = len(self.x_studio_equipo_por_nmero_de_serie_1)
         else:
             tam = int(self.x_studio_tamao_lista)
         
         
         
-        if self.x_studio_id_ticket and tam < 2 and self.team_id==8:
+        if self.x_studio_id_ticket and tam < 2 and self.team_id.id==8:
             estadoAntes = str(self.stage_id.name)
             if self.stage_id.name == 'Pre-ticket' and self.x_studio_equipo_por_nmero_de_serie_1[0].serie.id != False and self.estadoAbierto == False:
                 #ticketActualiza.write({'stage_id': '89'})
