@@ -431,7 +431,7 @@ class contadoresCSV(models.Model):
     mes=fields.Selection(valores,string='Mes')
     anio= fields.Selection(get_years(), string='Año')
     csv = fields.Binary(string="CSV")
-    detalle =  fields.One2many('contadores.contadores.detalle', 'contadoresCSV', string='Contadores por csv')
+    detalle =  fields.One2many('contadores.contadores.detalle', 'contadorescvs', string='Contadores por csv')
     
 class contadores(models.Model):
     _name = 'contadores.contadores'
@@ -557,7 +557,7 @@ class detalleContadores(models.Model):
       _description = 'Detalle Contadores'
      
       contadores = fields.Many2one('contadores.contadores', string='Detalle de contadores')
-      contadores = fields.Many2one('contadores.csv', string='Detalle de contadores')
+      contadorescvs = fields.Many2one('contadores.csv', string='Detalle de contadores')
      
       serieEquipo = fields.Text(string="Serie")
       producto = fields.Text(string="Producto")
