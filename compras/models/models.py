@@ -148,6 +148,7 @@ class compras(models.Model):
                                    qty=round(h/g)
                                    template=self.env['product.template'].search([('default_code','=',q)])
                                    productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
+                                   desc=productid.description if(productid.description) else ' '
                                    product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':qty,'price_unit':g,'name':productid.description}
                                    arr.append(product)
                             if(len(arr)>0):
