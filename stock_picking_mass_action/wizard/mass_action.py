@@ -464,12 +464,12 @@ class StockPickingMassAction(TransientModel):
                 i.append(ca)
         j=[]
         for l in range(len(i)):
-            j.append('|')
+            j.append('&')
 
         f=[]
         k=0
         if(len(origenes)>0 and len(destinos)>0):
-            j.append('&')
+            j.append('|')
             i.append(['location_id','in',origenes])
             i.append(['location_dest_id','in',destinos])
         if(len(origenes)>0 and len(destinos)==0):
