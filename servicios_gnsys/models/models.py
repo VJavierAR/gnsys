@@ -97,7 +97,7 @@ class servicios_gnsys(models.Model):
 
             diasAtraso = (converted_date_Fin- converted_date_Ini).days
             
-            if diasAtraso > 0:
+            if diasAtraso < 0:
                 raise exceptions.ValidationError("Fecha de inicio de servicio tiene que ser menor a fecha de fin de servicio ")
                 message = ("Fecha de inicio de servicio tiene que ser menor a fecha de fin de servicio")
                 mess = {
