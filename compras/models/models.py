@@ -141,7 +141,7 @@ class compras(models.Model):
                                 if('#' in o ):
                                    r = o.split("#")
                                    q = r[1].split(' ')[1]       
-                                if('Customer Pick' in o ):
+                                if('Customer' in o ):
                                    s = o.split("$")
                                    h=float(s[2])
                                    g=float(s[1].split(' ')[0])
