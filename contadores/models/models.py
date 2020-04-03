@@ -202,6 +202,7 @@ class dcas(models.Model):
                 query="select \"contadorColor\" from dcas_dcas where  serie="+str(self.serie.id)+" and (\"porcentajeMagenta\"=1 or \"porcentajeCian\"=1 or \"porcentajeMagenta\"=1 or \"porcentajeNegro\"=1) and \"contadorColor\"!=0 and fuente='helpdesk.ticket' order by x_studio_fecha desc limit 1;"                        
                 _logger.info("self inicio id query"+str(query))
                 self.env.cr.execute(query)
+                _logger.info("tam"+str(len(informacion)))
                 if len(informacion)>0:
                    informacion = self.env.cr.fetchall()            
                    self.contadorAnteriorColor = informacion[0][0]
