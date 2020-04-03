@@ -457,6 +457,7 @@ class StockPickingMassAction(TransientModel):
         j=[]
         for l in range(len(i)-1-k):
             j.append('&')
+
         f=[]
         for ci in range(e-1):
             f.append('|')
@@ -464,7 +465,7 @@ class StockPickingMassAction(TransientModel):
         j.extend(i)
         d=self.env['stock.move.line'].search(j,order='date desc')
         h=d if(d!=[]) else self.env['stock.move.line']
-        =[]
+        c=[]
         _logger.info(str(j))
         for di in d:
             c.append(di.id)
