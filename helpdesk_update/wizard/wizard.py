@@ -694,10 +694,7 @@ class helpdesk_crearconserie(TransientModel):
                     wiz = ''
                     mensajeTitulo = "Ticket generado!!!"
                     if len(informacion) > 0:
-                      self.textoTicketExistente = "<h1Esta serie ya tiene un ticket en proceso.</h1>" 
-                                                + "<br/>"
-                                                + "<br/>"
-                                                + "<h3>El ticket en proceso es:" + str(informacion[0][0]) + "</h3>"
+                      self.textoTicketExistente = "<h1Esta serie ya tiene un ticket en proceso.</h1><br/><br/><h3>El ticket en proceso es:" + str(informacion[0][0]) + "</h3>"
                       self.ticket_id_existente = informacion[0][0]
                       mensajeTitulo = "Alerta!!!"
                       mensajeCuerpo = "Esta serie ya tiene un ticket en proceso.\n\nEl ticket en proceso es:" + str(informacion[0][0])
