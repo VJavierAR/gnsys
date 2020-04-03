@@ -103,8 +103,9 @@ class compras(models.Model):
                                 f=x
                                 serial=''
                                 if(len(re.findall(r"\d{2}\/\d{2}\/\d{4}\s*", f))>0):
-                                    serial=f.split('-')[0].replace(' ','')
-                                    product['serial']=serial
+                                    serial=f.split('-')
+                                    if(len(serial)>0):
+                                        product['serial']=serial[0].replace(' ','')
                                     arreglo.append(product)
                                 if ('PIEZA' in f):
                                     cantidad = f.split('PIEZA')[0]
