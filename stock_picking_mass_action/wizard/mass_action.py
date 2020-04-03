@@ -411,7 +411,8 @@ class StockPickingMassAction(TransientModel):
         k=0
         l=['state','=','done']
         e=0
-        
+        origenes=[]
+        destinos=[]
         if(self.fecha):
             m=['date','>=',self.fecha]
             i.append(m)
@@ -420,32 +421,39 @@ class StockPickingMassAction(TransientModel):
         if(self.almacen.id==False):
             almacenes=self.env['stock.warehouse'].search([['x_studio_cliente','=',False]])
             for alm in almacenes:
-                b=['location_id','=',alm.wh_output_stock_loc_id.id]
-                c=['location_dest_id','=',alm.wh_input_stock_loc_id.id]
+                b=alm.wh_output_stock_loc_id.id
+                c=alm.wh_input_stock_loc_id.id
                 if(self.tipo=="Todos"):
                     #i.append('|')
-                    i.append(b)
-                    i.append(c)
+                    origenes.append(b)
+                    destinos.append(c)
+                    #i.append(b)
+                    #i.append(c)
                     e=e+1
                     k=k+2
                 if(self.tipo=="Entrada"):
-                    i.append(c)
+                    destinos.append(c)
+                    #i.append(c)
                 if(self.tipo=="Salida"):
-                    i.append(b)
+                    origenes.append(b)
         if(self.almacen.id):
-            b=['location_id','=',self.almacen.wh_output_stock_loc_id.id]
-            c=['location_dest_id','=',self.almacen.wh_input_stock_loc_id.id]
+            b=self.almacen.wh_output_stock_loc_id.id
+            c=self.almacen.wh_input_stock_loc_id.id
 
             if(self.tipo=="Todos"):
                 #i.append('|')
-                i.append(b)
-                i.append(c)
+                #i.append(b)
+                #i.append(c)
+                origenes.append(b)
+                destinos.append(c)
                 e=e+1
                 k=k+2
             if(self.tipo=="Entrada"):
-                i.append(c)
+                #i.append(c)
+                destinos.append(c)
             if(self.tipo=="Salida"):
-                i.append(b)
+                #i.append(b)
+                origenes.append(b)
         if(self.categoria):
             a=['x_studio_field_aVMhn','=',self.categoria.id]
             i.append(a)
@@ -459,9 +467,17 @@ class StockPickingMassAction(TransientModel):
             j.append('&')
 
         f=[]
+        if(len(origenes)>0 and len(destinos)>0):
+            f=['|',['location_id','in',origenes],['location_dest_id','=',destinos]]
+            i.append(f)
+        if(len(origenes)>0 and len(destinos)==0):
+            i.append(['location_id','in',origenes])
+        if(len(destinos)>0 and len(origenes)==0):
+            i.append(['location_dest_id','in',destinos])
+
         #for ci in range(e-1):
         #    f.append('|')
-        j.extend(f)
+        #j.extend(f)
         j.extend(i)
         d=self.env['stock.move.line'].search(j,order='date desc')
         h=d if(d!=[]) else self.env['stock.move.line']
