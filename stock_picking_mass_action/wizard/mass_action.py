@@ -464,7 +464,7 @@ class StockPickingMassAction(TransientModel):
                 i.append(ca)
         j=[]
         for l in range(len(i)):
-            j.append('&')
+            j.append('|')
 
         f=[]
         k=0
