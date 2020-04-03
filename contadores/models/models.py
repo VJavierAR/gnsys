@@ -87,8 +87,7 @@ class dcas(models.Model):
     hTicketUltimaEtapaTicket = fields.Text(string = 'Última etapa ticket')
     hTicketHojaDeEstado = fields.Text(string = 'Hoja de estado')
     hTicketUltimaNota = fields.Text(string = 'Última nota')
-    hTicketFechaNota = fields.Datetime(string = 'Fecha nota')
-    archivoglobal = fields.Many2many('ir.attachment',string="Evidencia global")    
+    hTicketFechaNota = fields.Datetime(string = 'Fecha nota')    
     archivoCSV = fields.Binary(string="Archivo a cargar csv")    
     
     
@@ -432,6 +431,7 @@ class contadores(models.Model):
     name = fields.Char()
     mes=fields.Selection(valores,string='Mes')
     anio= fields.Selection(get_years(), string='Año')
+    archivoglobal = fields.Many2many('ir.attachment',string="Evidencia global")    
     
     dca = fields.One2many('dcas.dcas',inverse_name='contador_id',string='DCAS')
     cliente = fields.Many2one('res.partner', store=True,string='Cliente')
