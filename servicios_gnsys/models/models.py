@@ -265,7 +265,7 @@ class contratos(models.Model):
             diasAtraso = (converted_date_Fin- converted_date_Ini).days
             
             if diasAtraso < 0:
-                #raise exceptions.ValidationError("Fecha de inicio de contrato tiene que ser menor a fecha de fin de contrato ")
+                raise exceptions.ValidationError("Fecha de inicio de contrato tiene que ser menor a fecha de fin de contrato ")
                 message = ("Fecha de inicio de contrato tiene que ser menor a fecha de fin de contrato")
                 mess = {
                         'title': _('Error de fecha'),
