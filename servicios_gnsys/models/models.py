@@ -82,7 +82,7 @@ class servicios_gnsys(models.Model):
     #La siguiente funcion verifica que si la fecha de fin de servicio este se desactiva 
     @api.onchange('fechaDeFinDeServicio')
     def verificaFechaFinMayor(self):
-        _logger.info("-------Logger de OSWALDO ")
+       # _logger.info("-------Logger de OSWALDO ")
         message = ""
         mess = {}
             # fechaDeFinDeServicio      fechaDeInicioDeServicio
