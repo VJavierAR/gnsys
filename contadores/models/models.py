@@ -88,6 +88,8 @@ class dcas(models.Model):
     hTicketHojaDeEstado = fields.Text(string = 'Hoja de estado')
     hTicketUltimaNota = fields.Text(string = 'Última nota')
     hTicketFechaNota = fields.Datetime(string = 'Fecha nota')
+    archivoglobal = fields.Many2many('ir.attachment',string="Evidencia global")    
+    archivoCSV = fields.Binary(string="Archivo a cargar csv")    
     
     
     
