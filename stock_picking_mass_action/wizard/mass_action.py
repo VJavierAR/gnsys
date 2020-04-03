@@ -414,6 +414,7 @@ class StockPickingMassAction(TransientModel):
             m=['date','>=',self.fecha]
             i.append(m)
         i.append(l)
+        _logger.info(str(self.almacen))
         if(self.almacen==False):
             almacenes=self.env['stock.warehouse'].search([['x_studio_cliente','=',False]])
             for alm in almacenes:
