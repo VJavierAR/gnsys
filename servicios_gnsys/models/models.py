@@ -53,6 +53,8 @@ class servicios_gnsys(models.Model):
 
     comentarioServ = fields.Text(string="Comentario de servicio",track_visibility='onchange')
 
+    polizaServicios = fields.Boolean(string="Póliza de servicios",track_visibility='onchange') 
+
     @api.multi
     def crear_solicitud_arrendamineto(self):
         for record in self:            
