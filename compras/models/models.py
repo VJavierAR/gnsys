@@ -150,8 +150,8 @@ class compras(models.Model):
                                    template=self.env['product.template'].search([('default_code','=',q)])
                                    productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
                                    desc=productid.description if(productid.description) else '|'
-                                   product['name']=desc
                                    product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':qty,'price_unit':g}
+                                   product['name']=desc
                                    arr.append(product)
                             if(len(arr)>0):
                                 self.order_line=[(5,0,0)]
