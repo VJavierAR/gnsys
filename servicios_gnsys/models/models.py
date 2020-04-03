@@ -84,9 +84,15 @@ class servicios_gnsys(models.Model):
     def verificaFechaFinMayor(self):
             # fechaDeFinDeServicio      fechaDeInicioDeServicio
         if self.fechaDeFinDeServicio:
-            fecha = str(self.fechaDeFinDeServicio).split(' ')[0]
-            converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
-            diasAtraso = (datetime.date.today() - converted_date).days
+            fechaFin = str(self.fechaDeFinDeServicio).split(' ')[0]
+            converted_date_Fin = datetime.datetime.strptime(fechaFin, '%Y-%m-%d').date()
+            
+
+            fechaIni = str(self.fechaDeFinDeServicio).split(' ')[0]
+            converted_date_Ini = datetime.datetime.strptime(fechaIni, '%Y-%m-%d').date()
+
+
+            diasAtraso = (converted_date_Fin- converted_date_Ini).days
             if diasAtraso > 0:
                 raise exceptions.ValidationError("Fecha de inicio de servicio tiene que ser menor a fecha de fin de servicio ")
 #    for record in self:       
