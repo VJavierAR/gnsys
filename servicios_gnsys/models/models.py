@@ -245,6 +245,33 @@ class contratos(models.Model):
     #                 if record.servicio :
     #                     for servicio in record.servicio: 
     #                         servicio.servActivo = False
+        #La siguiente funcion verifica que si la fecha de fin de servicio este se desactiva 
+    #fechaDeInicioDeContrato
+    #fechaDeFinDeContrato
+    @api.onchange('fechaDeFinDeContrato')
+    def verificaFechaFinMayor(self):
+        message = ""
+        mess = {}
+            # fechaDeFinDeServicio      fechaDeInicioDeServicio
+        if self.fechaDeFinDeContrato:
+            fechaFin = str(self.fechaDeFinDeContrato).split(' ')[0]
+            converted_date_Fin = datetime.datetime.strptime(fechaFin, '%Y-%m-%d').date()
+            
+
+            fechaIni = str(self.fechaDeInicioDeContrato).split(' ')[0]
+            converted_date_Ini = datetime.datetime.strptime(fechaIni, '%Y-%m-%d').date()
+
+
+            diasAtraso = (converted_date_Fin- converted_date_Ini).days
+            
+            if diasAtraso < 0:
+                raise exceptions.ValidationError("Fecha de inicio de contrato tiene que ser menor a fecha de fin de contrato ")
+                message = ("Fecha de inicio de contrato tiene que ser menor a fecha de fin de contrato")
+                mess = {
+                        'title': _('Error de fecha'),
+                        'message' : message
+                    }
+                return {'warning': mess}
 
 class cliente_contratos(models.Model):
     _inherit = 'res.partner'
