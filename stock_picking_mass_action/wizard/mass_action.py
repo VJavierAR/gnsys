@@ -426,7 +426,7 @@ class StockPickingMassAction(TransientModel):
                     #i.append('|')
                     i.append(b)
                     i.append(c)
-                    e=c+1
+                    e=e+1
                     k=k+2
                 if(self.tipo=="Entrada"):
                     i.append(c)
@@ -440,7 +440,7 @@ class StockPickingMassAction(TransientModel):
                 #i.append('|')
                 i.append(b)
                 i.append(c)
-                e=c+1
+                e=e+1
                 k=k+2
             if(self.tipo=="Entrada"):
                 i.append(c)
