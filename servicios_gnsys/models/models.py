@@ -80,7 +80,7 @@ class servicios_gnsys(models.Model):
                         self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Arrendamiento' where  id = " + str(sale.id) + ";")        
 
     #La siguiente funcion verifica que si la fecha de fin de servicio este se desactiva 
-    @api.onchange('fechaDeFinDeServicio')
+    @api.multi
     def verificaFechaFinMayor(self):
             # fechaDeFinDeServicio      fechaDeInicioDeServicio
         if self.fechaDeFinDeServicio:
