@@ -138,6 +138,7 @@ class compras(models.Model):
                             qty=""
                             arr=[]
                             for o in b:
+                                product={}
                                 if('#' in o ):
                                    r = o.split("#")
                                    q = r[1].split(' ')[1]       
