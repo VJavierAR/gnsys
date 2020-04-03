@@ -112,7 +112,7 @@ class compras(models.Model):
                                     l = f.split('PIEZA')[1].split(' -',1)
                                     #id = l[0]
                                     _logger.info(str(l))
-                                    id = l[0].split('    ')[1]
+                                    id = l[0].replace(' ','')
                                     casi = l[1].split('.')
                                     casii = casi[1].split(' ')[0]
                                     tam = casi[0].split(' ')
