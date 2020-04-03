@@ -424,7 +424,7 @@ class dcas(models.Model):
 
     
 
-class contadoresCSV(models.Model):
+class contadorescsv(models.Model):
     _name = 'contadores.csv'    
     _description = 'Contadores csv'
     name = fields.Char()
