@@ -167,38 +167,45 @@ class dcas(models.Model):
             if self.colorEquipo=='B/N':
                 n=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['x_studio_toner_negro','=',1],['fuente','=','helpdesk.ticket'],['contadorMono','!=',0]],order='x_studio_fecha desc',limit=1)
             else:
-                n=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeNegro','=',1],['fuente','=','helpdesk.ticket'],['contadorMono','!=',0]],order='x_studio_fecha desc',limit=1)
-            self.fechaN=n.x_studio_fecha
-            
-            if self.colorEquipo=='B/N':
-                self.nivelNA=n.porcentajeNegro
-            else:
-                self.nivelNA=n.x_studio_toner_negro
-                
-            self.contadorAnteriorNegro=n.contadorMono
-            self.tN=n.x_studio_tickett
+                n=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeNegro','=',1],['fuente','=','helpdesk.ticket'],['contadorMono','!=',0]],order='x_studio_fecha desc',limit=1)            
+            if len(n)>0:
+               self.fechaN=n.x_studio_fecha
+
+               if self.colorEquipo=='B/N':
+                  self.nivelNA=n.porcentajeNegro
+               else:
+                  self.nivelNA=n.x_studio_toner_negro
+
+               self.contadorAnteriorNegro=n.contadorMono
+               self.tN=n.x_studio_tickett
             c=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeCian','=',1],['fuente','=','helpdesk.ticket']],order='x_studio_fecha desc',limit=1)
-            self.nivelCA=c.x_studio_toner_cian
-            self.contadorAnteriorCian=c.contadorColor
-            self.fechaC=c.x_studio_fecha
-            self.tC=c.x_studio_tickett
+            if len(c)>0:
+               self.nivelCA=c.x_studio_toner_cian
+               self.contadorAnteriorCian=c.contadorColor
+               self.fechaC=c.x_studio_fecha
+               self.tC=c.x_studio_tickett
             a=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeAmarillo','=',1],['fuente','=','helpdesk.ticket']],order='x_studio_fecha desc',limit=1)
-            self.nivelAA=a.x_studio_toner_amarillo
-            self.contadorAnteriorAmarillo=a.contadorColor
-            self.fechaA=a.x_studio_fecha
-            self.tA=a.x_studio_tickett
+            if len(a)>0:
+               self.nivelAA=a.x_studio_toner_amarillo
+               self.contadorAnteriorAmarillo=a.contadorColor
+               self.fechaA=a.x_studio_fecha
+               self.tA=a.x_studio_tickett
             m=self.env['dcas.dcas'].search([['serie','=',self.serie.id],['porcentajeMagenta','=',1],['fuente','=','helpdesk.ticket']],order='x_studio_fecha desc',limit=1)
-            self.nivelMA=m.x_studio_toner_magenta
-            self.contadorAnteriorMagenta=m.contadorColor
-            self.fechaM=m.x_studio_fecha
-            self.tM=m.x_studio_tickett
-            #select "contadorColor" from dcas_dcas where "porcentajeMagenta"=1 or "porcentajeCian"=1 or "porcentajeNegro"=1  order by x_studio_fecha desc limit 1;
+            if len(m)>0:
+                self.nivelMA=m.x_studio_toner_magenta
+                self.contadorAnteriorMagenta=m.contadorColor
+                self.fechaM=m.x_studio_fecha
+                self.tM=m.x_studio_tickett
+                #select "contadorColor" from dcas_dcas where "porcentajeMagenta"=1 or "porcentajeCian"=1 or "porcentajeNegro"=1  order by x_studio_fecha desc limit 1;
             if self.colorEquipo!='B/N':
                 query="select \"contadorColor\" from dcas_dcas where  serie="+str(self.serie.id)+" and (\"porcentajeMagenta\"=1 or \"porcentajeCian\"=1 or \"porcentajeMagenta\"=1 or \"porcentajeNegro\"=1) and \"contadorColor\"!=0 and fuente='helpdesk.ticket' order by x_studio_fecha desc limit 1;"                        
                 _logger.info("self inicio id query"+str(query))
-                self.env.cr.execute(query)                        
-                informacion = self.env.cr.fetchall()            
-                self.contadorAnteriorColor = informacion[0][0]
+                self.env.cr.execute(query)
+                if len(informacion)>0:
+                   informacion = self.env.cr.fetchall()            
+                   self.contadorAnteriorColor = informacion[0][0]
+                else:
+                    self.contadorAnteriorColor=0
         if self.serie:
             carn=''
             cara=''
@@ -247,6 +254,7 @@ class dcas(models.Model):
             style="<html><head><style>table, th, td {border: 1px solid black;border-collapse: collapse;}th, td {padding: 5px;text-align: left;}</style></head><body>"
             cabecera="<table style='width:100%'><tr><th></th><th>Monocormatico  </th><th> Cian </th><th> Amarillo </th><th> Magenta </th></tr><tr><tr><td></td></tr>"
             ticket='<tr><td> Ticket </td><td>'+tn+'</br>'+'</td> <td>'+tc+' </br> </td> <td>'+' '+ta+'</br> </td> <td>'+tm+'</br> </td> </tr>'
+            ContadoresActuales='<tr><td> Contadores capturados </td><td>'+str(self.contadorMono)+'</br>'+'</td> <td>'+str(self.contadorColor)+' </br> </td> <td>'+ str(self.contadorColor)+'</br> </td> <td>'+str(self.contadorColor)+' </br> </td> </tr>'
             ultimosContadores='<tr><td> Último Contador </td><td>'+str(self.contadorAnteriorNegro)+'</br>'+'</td> <td>'+str(self.contadorAnteriorCian)+' </br> </td> <td>'+ str(self.contadorAnteriorAmarillo)+'</br> </td> <td>'+str(self.contadorAnteriorMagenta)+' </br> </td> </tr>'
             fechas='<tr><td> Fecha </td><td>'+fechan+'</br>'+'</td> <td>'+fechac+' </br> </td> <td>'+' '+fechaa+'</br> </td> <td>'+fecham+'</br> </td> </tr>'
             paginasProcesadas='<tr><td> Páginas Procesadas </td> <td>'+str(self.paginasProcesadasBN)+'</td> <td>'+str(self.paginasProcesadasC)+'</td> <td>'+ str(self.paginasProcesadasA)+' </td> <td>'+str(self.paginasProcesadasM)+'</td></tr>'        
@@ -254,7 +262,7 @@ class dcas(models.Model):
             niveles='<tr><td> Último nivel </td> <td>'+str(self.nivelNA)+'</td> <td>'+str(self.nivelCA)+'</td> <td>'+ str(self.nivelAA)+' </td> <td>'+str(self.nivelMA)+'</td></tr>'
             cartuchos='<tr><td> Cartuchos Selecionados </td> <td>'+carn+'</td> <td>'+carc+'</td> <td>'+ cara+' </td> <td>'+carm+'</td></tr>'
             cierre="</table></body></html> "
-            self.tablahtml=cabecera+ticket+ultimosContadores+fechas+paginasProcesadas+rendimientos+niveles+cartuchos+cierre    
+            self.tablahtml=cabecera+ticket+contadoresActuales+ultimosContadores+fechas+paginasProcesadas+rendimientos+niveles+cartuchos+cierre    
             #query = "update dcas_dcas set tablahtml = \""+cabecera+ticket+ultimosContadores+fechas+paginasProcesadas+rendimientos+niveles+cierre+"\" where id = " + str(self.id) + ";"
             #ss = self.env.cr.execute(query)
     
@@ -273,10 +281,23 @@ class dcas(models.Model):
         contaC=self.contadorColor                       
         cac=self.contadorAnteriorColor
         contadorM=self.contadorMono
-        self.paginasProcesadasC=contaC-self.contadorAnteriorCian
-        self.paginasProcesadasA=contaC-self.contadorAnteriorAmarillo
-        self.paginasProcesadasM=contaC-self.contadorAnteriorMagenta
-        self.paginasProcesadasBN=contadorM-self.contadorAnteriorNegro            
+        if contaC==0:
+          self.paginasProcesadasC=0  
+        else:    
+          self.paginasProcesadasC=contaC-self.contadorAnteriorCian
+        if contaC==0:
+          self.paginasProcesadasA=0  
+        else:    
+          self.paginasProcesadasA=contaC-self.contadorAnteriorAmarillo
+        if contaC==0:
+          self.paginasProcesadasM=0  
+        else:    
+          self.paginasProcesadasM=contaC-self.contadorAnteriorMagenta
+        if contadorM==0:
+          self.paginasProcesadasBN=0  
+        else:    
+          self.paginasProcesadasBN=contadorM-self.contadorAnteriorNegro            
+        
         c=self.x_studio_rendimientoc
         a=self.x_studio_rendimientoa
         m=self.x_studio_rendimientom
@@ -346,13 +367,14 @@ class dcas(models.Model):
            cabecera="<table style='width:100%'><tr><th></th><th>Monocormatico  </th><th> Cian </th><th> Amarillo </th><th> Magenta </th></tr><tr><tr><td></td></tr>"
            ticket='<tr><td> Ticket </td><td>'+tn+'</br>'+'</td> <td>'+tc+' </br> </td> <td>'+' '+ta+'</br> </td> <td>'+tm+'</br> </td> </tr>'
            ultimosContadores='<tr><td> Último Contador </td><td>'+str(self.contadorAnteriorNegro)+'</br>'+'</td> <td>'+str(self.contadorAnteriorCian)+' </br> </td> <td>'+ str(self.contadorAnteriorAmarillo)+'</br> </td> <td>'+str(self.contadorAnteriorMagenta)+' </br> </td> </tr>'
+           ontadoresActuales='<tr><td> Contadores capturados </td><td>'+str(self.contadorMono)+'</br>'+'</td> <td>'+str(self.contadorColor)+' </br> </td> <td>'+ str(self.contadorColor)+'</br> </td> <td>'+str(self.contadorColor)+' </br> </td> </tr>'
            fechas='<tr><td> Fecha </td><td>'+fechan+'</br>'+'</td> <td>'+fechac+' </br> </td> <td>'+' '+fechaa+'</br> </td> <td>'+fecham+'</br> </td> </tr>'
            paginasProcesadas='<tr><td> Páginas Procesadas </td> <td>'+str(self.paginasProcesadasBN)+'</td> <td>'+str(self.paginasProcesadasC)+'</td> <td>'+ str(self.paginasProcesadasA)+' </td> <td>'+str(self.paginasProcesadasM)+'</td></tr>'        
            rendimientos='<tr><td> Rendimiento </td> <td>'+str(self.renN)+'</td> <td>'+str(self.renC)+'</td> <td>'+ str(self.renA)+' </td> <td>'+str(self.renM)+'</td></tr>'
            niveles='<tr><td> Último nivel </td> <td>'+str(self.nivelNA)+'</td> <td>'+str(self.nivelCA)+'</td> <td>'+ str(self.nivelAA)+' </td> <td>'+str(self.nivelMA)+'</td></tr>'
            cartuchos='<tr><td> Cartuchos Selecionados </td> <td>'+carn+'</td> <td>'+carc+'</td> <td>'+ cara+' </td> <td>'+carm+'</td></tr>'
            cierre="</table></body></html> "
-           self.tablahtml=cabecera+ticket+ultimosContadores+fechas+paginasProcesadas+rendimientos+niveles+cartuchos+cierre   
+           self.tablahtml=cabecera+ticket+contadoresActuales+ultimosContadores+fechas+paginasProcesadas+rendimientos+niveles+cartuchos+cierre   
         
            """ 
            style="<html><head><style>table, th, td {border: 1px solid black;border-collapse: collapse;}th, td {padding: 5px;text-align: left;}</style></head><body>"
