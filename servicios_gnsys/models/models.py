@@ -217,9 +217,10 @@ class contratos(models.Model):
             self.ejecutivoDeCuenta = self.cliente.x_studio_ejecutivo
             self.vendedor = self.cliente.x_studio_vendedor
     
-    @api.onchange('fechaDeFinDeContrato')
     @api.multi
     def expiracionServicios(self):
+        message = ""
+        mess = {}
         if self.fechaDeFinDeContrato:
             for record in self:
                 fecha = str(record.fechaDeFinDeContrato).split(' ')[0]
