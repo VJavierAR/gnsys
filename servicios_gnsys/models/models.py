@@ -82,15 +82,14 @@ class servicios_gnsys(models.Model):
     #La siguiente funcion verifica que si la fecha de fin de servicio este se desactiva 
     @api.onchange('fechaDeFinDeServicio')
     def verificaFechaFinMayor(self):
-        for record in self:
             # fechaDeFinDeServicio      fechaDeInicioDeServicio
-            if record.fechaDeFinDeServicio:
-                fecha = str(record.fechaDeFinDeServicio).split(' ')[0]
-                converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
-                diasAtraso = (datetime.date.today() - converted_date).days
-                if diasAtraso > 0:
-                    raise exceptions.ValidationError("Fecha de inicio de servicio tiene que ser menor a fecha de fin de servicio ")
-    #    for record in self:       
+        if self.fechaDeFinDeServicio:
+            fecha = str(self.fechaDeFinDeServicio).split(' ')[0]
+            converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
+            diasAtraso = (datetime.date.today() - converted_date).days
+            if diasAtraso > 0:
+                raise exceptions.ValidationError("Fecha de inicio de servicio tiene que ser menor a fecha de fin de servicio ")
+#    for record in self:       
     #         if record.contrato:
     #             _logger.info("-------Logger de OSWALDO "+str(record.contrato.name))
     #             fecha = str(record.fechaDeFinDeContrato).split(' ')[0]
