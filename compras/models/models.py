@@ -99,19 +99,20 @@ class compras(models.Model):
                             n=len(d)
                             arreglo=[]
                             product={}
+                            i=0
                             for x in d:
                                 f=x
                                 serial=''
-                                if(len(re.findall(r"\d{2}\/\d{2}\/\d{4}\s*", f))>0):
-                                    serial=f.split('-')
-                                    if(len(serial)>0):
-                                        product['serial']=serial[0].replace(' ','')
-                                    arreglo.append(product)
+                                #if(len(re.findall(r"\d{2}\/\d{2}\/\d{4}\s*", f))>0):
+                                #    serial=f.split('-')
+                                #    if(len(serial)>0):
+                                #        product['serial']=serial[0].replace(' ','')
+                                    #arreglo.append(product)
                                 if ('PIEZA' in f):
                                     cantidad = f.split('PIEZA')[0]
                                     l = f.split('PIEZA')[1].split(' -',1)
                                     #id = l[0]
-                                    _logger.info(str(l))
+                                    _logger.info(str(i+1))
                                     id = l[0].replace(' ','')
                                     casi = l[1].split('.')
                                     casii = casi[1].split(' ')[0]
@@ -122,6 +123,7 @@ class compras(models.Model):
                                     template=self.env['product.template'].search([('default_code','=',id)])
                                     productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
                                     product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':cantidad,'price_unit':precio,'taxes_id':[10],'name':productid.description}
+                                    arreglo.append(product)
                             if(len(arreglo)>0):
                                 self.order_line=[(5,0,0)]
                             self.order_line=arreglo
