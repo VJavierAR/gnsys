@@ -494,7 +494,15 @@ class helpdesk_crearconserie(TransientModel):
     direccionEstado = fields.Text(string = 'Estado')
     direccionCodigoPostal = fields.Text(string = 'Código postal')
 
+    ticket_id_existente = fields.Integer(string = 'Ticket existente', default = 0)
+    textoTicketExistente = fields.Text(string = '')
 
+    def abrirTicket(self):
+        return {
+                "type": "ir.actions.act_url",
+                "url": "https://gnsys-corp.odoo.com/web#id= " + str(self.ticket_id_existente) + " &action=400&active_id=9&model=helpdesk.ticket&view_type=form&menu_id=406",
+                "target": "new",
+                }
 
 
     @api.onchange('clienteRelacion', 'localidadRelacion')
@@ -677,7 +685,29 @@ class helpdesk_crearconserie(TransientModel):
                         self.telefonoContactoLocalidad = ''
                         self.movilContactoLocalidad = ''
                         self.correoContactoLocalidad = ''
+                    
 
+                    query = "select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.stage_id!=18 and h.team_id!=8 and  h.active='t' and stock_production_lot_id = " +  str(self.serie[0].id) + " limit 1;"
+                    #query = "select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!=" + str(ticket.x_studio_id_ticket) + "  and h.stage_id!=18 and h.team_id!=8 and  h.active='t' and stock_production_lot_id = " +  str(self.serie[0].id) + " limit 1;"
+                    self.env.cr.execute(query)                        
+                    informacion = self.env.cr.fetchall()
+                    wiz = ''
+                    mensajeTitulo = "Ticket generado!!!"
+                    if len(informacion) > 0:
+                      self.textoTicketExistente = "<h1Esta serie ya tiene un ticket en proceso.</h1>" 
+                                                + "<br/>"
+                                                + "<br/>"
+                                                + "<h3>El ticket en proceso es:" + str(informacion[0][0]) + "</h3>"
+                      self.ticket_id_existente = informacion[0][0]
+                      mensajeTitulo = "Alerta!!!"
+                      mensajeCuerpo = "Esta serie ya tiene un ticket en proceso.\n\nEl ticket en proceso es:" + str(informacion[0][0])
+                      warning = {'title': _(mensajeTitulo)
+                              , 'message': _(mensajeCuerpo),
+                      }
+                      return {'warning': warning}
+                    else:
+                      self.ticket_id_existente = 0
+                      self.textoTicketExistente = ''
                 else:
                     mensajeTitulo = "Alerta!!!"
                     mensajeCuerpo = "No existe una locación del equipo."
@@ -727,7 +757,7 @@ class helpdesk_crearconserie(TransientModel):
             self.env.cr.execute(query)
             self.env.cr.commit()
             ticket._compute_datosCliente()
-            query = "select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!=" + str(ticket.x_studio_id_ticket) + "  and h.stage_id!=18 and h.team_id!=8 and  h.active='t' and stock_production_lot_id = " +  str(ticket.x_studio_equipo_por_nmero_de_serie[0].id) + " limit 1;"            
+            query = "select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!=" + str(ticket.x_studio_id_ticket) + "  and h.stage_id!=18 and h.team_id!=8 and  h.active='t' and stock_production_lot_id = " +  str(ticket.x_studio_equipo_por_nmero_de_serie[0].id) + " limit 1;"
             self.env.cr.execute(query)                        
             informacion = self.env.cr.fetchall()
             wiz = ''
