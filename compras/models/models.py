@@ -182,7 +182,8 @@ class compras(models.Model):
                                 product['price_unit']=float(row[12].value)-(float(row[12].value)*.02)
                                 product['taxes_id']=[10]
                             if("CTR" in row[0].value):
-                                #product['price_subtotal']=float(row[12].value)-(float(row[12].value)*.02)
+                                decuento=float(row[15].value) if(row[15].ctype!=0) else 0
+                                product['price_unit']=(float(row[13].value)-descuento)/cantidad
                                 product['taxes_id']=[10]
                             arr.append(product)
                     if(len(arr)>0):
