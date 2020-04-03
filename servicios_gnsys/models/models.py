@@ -82,6 +82,8 @@ class servicios_gnsys(models.Model):
     #La siguiente funcion verifica que si la fecha de fin de servicio este se desactiva 
     @api.multi
     def verificaFechaFinMayor(self):
+        message = ""
+        mess = {}
             # fechaDeFinDeServicio      fechaDeInicioDeServicio
         if self.fechaDeFinDeServicio:
             fechaFin = str(self.fechaDeFinDeServicio).split(' ')[0]
@@ -216,11 +218,11 @@ class contratos(models.Model):
             self.direccion = self.cliente.contact_address
             self.ejecutivoDeCuenta = self.cliente.x_studio_ejecutivo
             self.vendedor = self.cliente.x_studio_vendedor
-    
+
+    @api.onchange('fechaDeFinDeContrato')
     @api.multi
     def expiracionServicios(self):
-        message = ""
-        mess = {}
+
         if self.fechaDeFinDeContrato:
             for record in self:
                 fecha = str(record.fechaDeFinDeContrato).split(' ')[0]
