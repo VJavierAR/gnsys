@@ -313,13 +313,13 @@ class dcas(models.Model):
         if n == '0':
            n = 1                   
         if n:
-           self.renN=round(self.paginasProcesadasBN*100/int(n),2)            
+           self.renN=round(self.paginasProcesadasBN*100/int(n),0)            
         if c:
-           self.renC=round(self.paginasProcesadasC*100/int(c),2)
+           self.renC=round(self.paginasProcesadasC*100/int(c),0)
         if a:
-           self.renA=round(self.paginasProcesadasA*100/int(a),2)
+           self.renA=round(self.paginasProcesadasA*100/int(a),0)
         if m:
-           self.renM=round(self.paginasProcesadasM*100/int(m),2)
+           self.renM=round(self.paginasProcesadasM*100/int(m),0)
         if self.serie:
            carn=''
            cara=''
@@ -372,7 +372,7 @@ class dcas(models.Model):
            contadoresActuales='<tr><td> Contadores capturados </td><td>'+str(self.contadorMono)+'</br>'+'</td> <td>'+str(self.contadorColor)+' </br> </td> <td>'+ str(self.contadorColor)+'</br> </td> <td>'+str(self.contadorColor)+' </br> </td> </tr>'
            fechas='<tr><td> Fecha </td><td>'+fechan+'</br>'+'</td> <td>'+fechac+' </br> </td> <td>'+' '+fechaa+'</br> </td> <td>'+fecham+'</br> </td> </tr>'
            paginasProcesadas='<tr><td> Páginas Procesadas </td> <td>'+str(self.paginasProcesadasBN)+'</td> <td>'+str(self.paginasProcesadasC)+'</td> <td>'+ str(self.paginasProcesadasA)+' </td> <td>'+str(self.paginasProcesadasM)+'</td></tr>'        
-           rendimientos='<tr><td> Rendimiento </td> <td>'+str(self.renN)+'</td> <td>'+str(self.renC)+'</td> <td>'+ str(self.renA)+' </td> <td>'+str(self.renM)+'</td></tr>'
+           rendimientos='<tr><td> Rendimiento </td> <td>'+str(self.renN)+'%</td> <td>'+str(self.renC)+'%</td> <td>'+ str(self.renA)+'% </td> <td>'+str(self.renM)+'%</td></tr>'
            niveles='<tr><td> Último nivel </td> <td>'+str(self.nivelNA)+'</td> <td>'+str(self.nivelCA)+'</td> <td>'+ str(self.nivelAA)+' </td> <td>'+str(self.nivelMA)+'</td></tr>'
            cartuchos='<tr><td> Cartuchos Selecionados </td> <td>'+carn+'</td> <td>'+carc+'</td> <td>'+ cara+' </td> <td>'+carm+'</td></tr>'
            cierre="</table></body></html> "
