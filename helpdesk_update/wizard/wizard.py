@@ -698,10 +698,12 @@ class helpdesk_crearconserie(TransientModel):
                       self.ticket_id_existente = informacion[0][0]
                       mensajeTitulo = "Alerta!!!"
                       mensajeCuerpo = "Esta serie ya tiene un ticket en proceso.\n\nEl ticket en proceso es:" + str(informacion[0][0])
+                      """
                       warning = {'title': _(mensajeTitulo)
                               , 'message': _(mensajeCuerpo),
                       }
                       return {'warning': warning}
+                      """
                     else:
                       self.ticket_id_existente = 0
                       self.textoTicketExistente = ''
