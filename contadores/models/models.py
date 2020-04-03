@@ -424,6 +424,15 @@ class dcas(models.Model):
 
     
 
+class contadoresCSV(models.Model):
+    _name = 'contadores.csv'    
+    _description = 'Contadores csv'
+    name = fields.Char()
+    mes=fields.Selection(valores,string='Mes')
+    anio= fields.Selection(get_years(), string='Año')
+    csv = fields.Binary(string="CSV")
+    detalle =  fields.One2many('contadores.contadores.detalle', 'contadoresCSV', string='Contadores por csv')
+    
 class contadores(models.Model):
     _name = 'contadores.contadores'
     _inherit = ['mail.thread', 'mail.activity.mixin']
@@ -569,14 +578,6 @@ class detalleContadores(models.Model):
       comentario = fields.Text(string="Comentario")
       archivo=fields.Binary(store='True',string='Archivo')
 
-class contadoresCSV(models.Model):
-      _name = 'contadores.csv'    
-      _description = 'Contadores csv'
-      name = fields.Char()
-      mes=fields.Selection(valores,string='Mes')
-      anio= fields.Selection(get_years(), string='Año')
-      csv = fields.Binary(string="CSV")
-      detalle =  fields.One2many('contadores.contadores.detalle', 'contadores', string='Contadores por csv')
 
         
         
