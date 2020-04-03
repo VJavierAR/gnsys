@@ -98,7 +98,7 @@ class compras(models.Model):
                             d = string.split('\n')
                             n=len(d)
                             arreglo=[]
-                            producto={}
+                            product={}
                             for x in d:
                                 f=x
                                 serial=''
