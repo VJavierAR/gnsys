@@ -706,6 +706,10 @@ class helpdesk_crearconserie(TransientModel):
                     }
                     return {'warning': warning}
         else:
+
+            self.ticket_id_existente = 0
+            self.textoTicketExistente = ''
+            
             self.cliente = ''
             self.localidad = ''
             self.zonaLocalidad = ''

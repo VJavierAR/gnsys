@@ -314,17 +314,17 @@
             <form string="Crear">
                 <group>
                     <group string='Buscar por serie'>
-                        <field name='serie' widget='many2many_tags' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}"/>
+                        <field name='serie' widget='many2many_tags' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" force_save = "1"/>
                     </group>
                     <group string='Buscar por cliente y localidad'>
-                        <field name='clienteRelacion' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" attrs='{"domain": [["clienteRelacion.company_type","=","company"]]}' />
-                        <field name='localidadRelacion' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain='[["parent_id.id","=",idCliente],["type","=","delivery"]]'/>
+                        <field name='clienteRelacion' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" attrs='{"domain": [["clienteRelacion.company_type","=","company"]]}' force_save = "1"/>
+                        <field name='localidadRelacion' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain='[["parent_id.id","=",idCliente],["type","=","delivery"]]' force_save = "1"/>
                     </group>
                 </group>
                 
                 <group attrs="{'invisible': ['|',['ticket_id_existente','=', 0],['ticket_id_existente','=', False]]}">
-                    <field name='textoTicketExistente' readonly='1' widget='html'/>
-                    <field name='ticket_id_existente' invisible='1' readonly='1'/>
+                    <field name='textoTicketExistente' readonly='1' widget='html' force_save = "1"/>
+                    <field name='ticket_id_existente' invisible='0' readonly='1' force_save = "1"/>
                 </group>
 
                 <group>
@@ -334,31 +334,31 @@
 
                 <group>
                     <group string="Cliente y localidad">
-                        <field name='cliente' readonly='1'/>
-                        <field name='idCliente' force_save = "1" readonly='1' invisible='1'/>
-                        <field name='localidad' readonly='1'/>
+                        <field name='cliente' readonly='1' force_save = "1"/>
+                        <field name='idCliente' force_save = "1" readonly='1' invisible='1' force_save = "1"/>
+                        <field name='localidad' readonly='1' force_save = "1"/>
                         <field name='zonaLocalidad' readonly='1' force_save = "1"/>
-                        <field name='idLocaliidad' force_save = "1" readonly='1' invisible='1'/>
+                        <field name='idLocaliidad' force_save = "1" readonly='1' invisible='1' force_save = "1"/>
                     </group>
                     <group string="Datos de contacto">
-                        <field name='nombreContactoLocalidad' readonly='1'/>
-                        <field name='telefonoContactoLocalidad' readonly='1'/>
-                        <field name='movilContactoLocalidad' readonly='1'/>
-                        <field name='correoContactoLocalidad' readonly='1'/>
+                        <field name='nombreContactoLocalidad' readonly='1' force_save = "1"/>
+                        <field name='telefonoContactoLocalidad' readonly='1' force_save = "1"/>
+                        <field name='movilContactoLocalidad' readonly='1' force_save = "1"/>
+                        <field name='correoContactoLocalidad' readonly='1' force_save = "1"/>
                     </group>
                 </group>
                 <group>
                     <group string = 'Dirreción'>
-                        <field name='direccionCalleNombre' readonly='1'/>
-                        <field name='direccionNumeroExterior' readonly='1'/>
-                        <field name='direccionNumeroInterior' readonly='1'/>
-                        <field name='direccionColonia' readonly='1'/>
+                        <field name='direccionCalleNombre' readonly='1' force_save = "1"/>
+                        <field name='direccionNumeroExterior' readonly='1' force_save = "1"/>
+                        <field name='direccionNumeroInterior' readonly='1' force_save = "1"/>
+                        <field name='direccionColonia' readonly='1' force_save = "1"/>
                     </group>
                     <group string = " ">
-                        <field name='direccionLocalidad' readonly='1'/>
-                        <field name='direccionCiudad' readonly='1'/>
-                        <field name='direccionEstado' readonly='1'/>
-                        <field name='direccionCodigoPostal' readonly='1'/>
+                        <field name='direccionLocalidad' readonly='1' force_save = "1"/>
+                        <field name='direccionCiudad' readonly='1' force_save = "1"/>
+                        <field name='direccionEstado' readonly='1' force_save = "1"/>
+                        <field name='direccionCodigoPostal' readonly='1' force_save = "1"/>
                     </group>
                 </group>
                 <footer>
