@@ -322,7 +322,7 @@
                     </group>
                 </group>
                 
-                <group>
+                <group attrs="{'invisible': ['|',['ticket_id_existente','=', 0],['ticket_id_existente','=', False]]}">
                     <field name='textoTicketExistente' readonly='1' widget='html'/>
                     <field name='ticket_id_existente' invisible='1' readonly='1'/>
                 </group>
