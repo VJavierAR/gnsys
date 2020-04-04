@@ -653,7 +653,7 @@ class helpdesk_crearconserie(TransientModel):
                 self.env.cr.execute(query)                        
                 informacion = self.env.cr.fetchall()
                 if len(informacion) > 0:
-                  texttoHtml2 = """ 
+                  textoHtml2 = """ 
                                 <!-- Button trigger modal -->
                                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
                                   Launch demo modal
@@ -712,7 +712,7 @@ class helpdesk_crearconserie(TransientModel):
                   textoHtml.append("<br/>")
                   textoHtml.append("<h3 class='text-center'>El ticket en proceso es: " + str(informacion[0][0]) + "</h3>")
                   #textoHtml.append("<script> function test() { alert('Hola') }</script>")
-                  self.textoTicketExistente =  ''.join(textoHtml)
+                  #self.textoTicketExistente =  ''.join(textoHtml)
                   self.textoTicketExistente = textoHtml2
                   self.ticket_id_existente = int(informacion[0][0])
                 else:
