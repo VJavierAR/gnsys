@@ -653,6 +653,57 @@ class helpdesk_crearconserie(TransientModel):
                 self.env.cr.execute(query)                        
                 informacion = self.env.cr.fetchall()
                 if len(informacion) > 0:
+                  texttoHtml2 = """ 
+                                <!-- Button trigger modal -->
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+                                  Launch demo modal
+                                </button>
+
+                                <!-- Modal -->
+                                <div class="modal fade" id="alertaSerieExistenteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                  <div class="modal-dialog modal-dialog-centered" role="document">
+                                    <div class="modal-content">
+                                      <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLongTitle">Aviso!!!</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                          <span aria-hidden="true">&times;</span>
+                                        </button>
+                                      </div>
+                                      <div class="modal-body">
+                                        <div class="row">
+                                          <div class="col-sm-12">
+                                            <h3>Esta serie ya tiene un ticket en proceso.</h3>
+                                            <h4>El ticket en proceso es: <b id='numTicketProceso'></b></h4>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <button id="btnTicketExistente" type="button" class="btn btn-primary">Abrir ticket existente</button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <script> 
+                                  $( document ).ready(function() {
+                                    $("field[name='ticket_id_existente']").change(function() {
+                                      if (this.val() != 0) {
+                                        $("#alertaSerieExistenteModal").modal("show");
+                                        $("#numTicketProceso").val(this.val())
+                                      } else {
+                                        $("#alertaSerieExistenteModal").modal("hide");
+                                      }
+                                    });
+                                    $("#btnTicketExistente").on('click', function() {
+                                      var idTicketExistente = $("field[name='ticket_id_existente']").val();
+                                      var url = "https://gnsys-corp.odoo.com/web#id= " + idTicketExistente + " &action=400&active_id=9&model=helpdesk.ticket&view_type=form&menu_id=406";
+                                      window.open(url);
+                                    });
+                                  });
+
+                                </script>
+                                """
                   textoHtml = []
                   textoHtml.append("<br/>")
                   textoHtml.append("<br/>")
@@ -661,7 +712,7 @@ class helpdesk_crearconserie(TransientModel):
                   textoHtml.append("<br/>")
                   textoHtml.append("<h3 class='text-center'>El ticket en proceso es: " + str(informacion[0][0]) + "</h3>")
                   #textoHtml.append("<script> function test() { alert('Hola') }</script>")
-                  self.textoTicketExistente =  ''.join(textoHtml)
+                  self.textoTicketExistente =  ''.join(textoHtml2)
                   self.ticket_id_existente = int(informacion[0][0])
                 else:
                   self.ticket_id_existente = 0
