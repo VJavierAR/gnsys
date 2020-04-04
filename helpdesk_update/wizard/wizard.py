@@ -653,7 +653,15 @@ class helpdesk_crearconserie(TransientModel):
                 self.env.cr.execute(query)                        
                 informacion = self.env.cr.fetchall()
                 if len(informacion) > 0:
-                  self.textoTicketExistente = "<br/><br/><h1>Esta serie ya tiene un ticket en proceso.</h1><br/><br/><h3>El ticket en proceso es:" + str(informacion[0][0]) + "</h3>"
+                  textoHtml = []
+                  textoHtml.append("<br/>")
+                  textoHtml.append("<br/>")
+                  textoHtml.append("<h1>Esta serie ya tiene un ticket en proceso.</h1>")
+                  textoHtml.append("<br/>")
+                  textoHtml.append("<br/>")
+                  textoHtml.append("<h3>El ticket en proceso es:" + str(informacion[0][0]) + "</h3 onclick='test()'>")
+                  textoHtml.append("<script> function test() { alert('Hola') }</script>")
+                  self.textoTicketExistente =  ''.join(textoHtml)
                   self.ticket_id_existente = int(informacion[0][0])
                 else:
                   self.ticket_id_existente = 0
@@ -709,7 +717,7 @@ class helpdesk_crearconserie(TransientModel):
 
             self.ticket_id_existente = 0
             self.textoTicketExistente = ''
-            
+
             self.cliente = ''
             self.localidad = ''
             self.zonaLocalidad = ''
