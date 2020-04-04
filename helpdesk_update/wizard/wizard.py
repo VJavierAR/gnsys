@@ -659,8 +659,8 @@ class helpdesk_crearconserie(TransientModel):
                   textoHtml.append("<h1>Esta serie ya tiene un ticket en proceso.</h1>")
                   textoHtml.append("<br/>")
                   textoHtml.append("<br/>")
-                  textoHtml.append("<h3 class='text-center' onclick='test()'>El ticket en proceso es:" + str(informacion[0][0]) + "</h3>")
-                  textoHtml.append("<script> function test() { alert('Hola') }</script>")
+                  textoHtml.append("<h3 class='text-center'>El ticket en proceso es: " + str(informacion[0][0]) + "</h3>")
+                  #textoHtml.append("<script> function test() { alert('Hola') }</script>")
                   self.textoTicketExistente =  ''.join(textoHtml)
                   self.ticket_id_existente = int(informacion[0][0])
                 else:
@@ -708,7 +708,7 @@ class helpdesk_crearconserie(TransientModel):
                     
                 else:
                     mensajeTitulo = "Alerta!!!"
-                    mensajeCuerpo = "No existe una locación del equipo."
+                    mensajeCuerpo = "La serie seleccionada no cuenta con una ubicación."
                     warning = {'title': _(mensajeTitulo)
                             , 'message': _(mensajeCuerpo),
                     }
