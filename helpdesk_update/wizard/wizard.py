@@ -712,8 +712,8 @@ class helpdesk_crearconserie(TransientModel):
                   textoHtml.append("<br/>")
                   textoHtml.append("<h3 class='text-center'>El ticket en proceso es: " + str(informacion[0][0]) + "</h3>")
                   #textoHtml.append("<script> function test() { alert('Hola') }</script>")
-                  #self.textoTicketExistente =  ''.join(textoHtml)
-                  self.textoTicketExistente = textoHtml2
+                  self.textoTicketExistente =  ''.join(textoHtml)
+                  #self.textoTicketExistente = textoHtml2
                   self.ticket_id_existente = int(informacion[0][0])
                 else:
                   self.ticket_id_existente = 0
