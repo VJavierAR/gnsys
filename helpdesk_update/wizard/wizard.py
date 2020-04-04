@@ -471,31 +471,31 @@ class helpdesk_crearconserie(TransientModel):
     _name = 'helpdesk.crearconserie'
     _description = 'HelpDesk crear ticket desde la serie'
 
-    serie = fields.Many2many('stock.production.lot', string = 'Serie')
-    clienteRelacion = fields.Many2one('res.partner', string = 'Cliente', default=False)
-    localidadRelacion = fields.Many2one('res.partner', string = 'Localidad')
+    serie = fields.Many2many('stock.production.lot', string = 'Serie', store = True)
+    clienteRelacion = fields.Many2one('res.partner', string = 'Cliente', default=False, store = True)
+    localidadRelacion = fields.Many2one('res.partner', string = 'Localidad', store = True)
 
-    cliente = fields.Text(string = 'Cliente')
+    cliente = fields.Text(string = 'Cliente', store = True)
     idCliente = fields.Text(string = 'idCliente', store=True, default=0)
-    localidad = fields.Text(string = 'Localidad')
+    localidad = fields.Text(string = 'Localidad', store = True)
     zonaLocalidad = fields.Selection([('SUR','SUR'),('NORTE','NORTE'),('PONIENTE','PONIENTE'),('ORIENTE','ORIENTE'),('CENTRO','CENTRO'),('DISTRIBUIDOR','DISTRIBUIDOR'),('MONTERREY','MONTERREY'),('CUERNAVACA','CUERNAVACA'),('GUADALAJARA','GUADALAJARA'),('QUERETARO','QUERETARO'),('CANCUN','CANCUN'),('VERACRUZ','VERACRUZ'),('PUEBLA','PUEBLA'),('TOLUCA','TOLUCA'),('LEON','LEON'),('COMODIN','COMODIN'),('VILLAHERMOSA','VILLAHERMOSA'),('MERIDA','MERIDA'),('ALTAMIRA','ALTAMIRA'),('COMODIN','COMODIN'),('DF00','DF00'),('SAN LP','SAN LP'),('ESTADO DE MÉXICO','ESTADO DE MÉXICO'),('Foraneo Norte','Foraneo Norte'),('Foraneo Sur','Foraneo Sur')], string = 'Zona', store = True)
     idLocaliidad = fields.Text(string = 'idLocaliidad', store=True, default=0)
-    nombreContactoLocalidad = fields.Text(string = 'Contacto de localidad')
-    telefonoContactoLocalidad = fields.Text(string = 'Teléfono de contacto')
-    movilContactoLocalidad = fields.Text(string = 'Movil de contacto')
-    correoContactoLocalidad = fields.Text(string = 'Correo electronico de contacto')
+    nombreContactoLocalidad = fields.Text(string = 'Contacto de localidad', store = True)
+    telefonoContactoLocalidad = fields.Text(string = 'Teléfono de contacto', store = True)
+    movilContactoLocalidad = fields.Text(string = 'Movil de contacto', store = True)
+    correoContactoLocalidad = fields.Text(string = 'Correo electronico de contacto', store = True)
 
-    direccionCalleNombre = fields.Text(string = 'Calle')
-    direccionNumeroExterior = fields.Text(string = 'Número exterior')
-    direccionNumeroInterior = fields.Text(string = 'Número interior')
-    direccionColonia = fields.Text(string = 'Colonia')
-    direccionLocalidad = fields.Text(string = 'Localidad')
-    direccionCiudad = fields.Text(string = 'Ciudad')
-    direccionEstado = fields.Text(string = 'Estado')
-    direccionCodigoPostal = fields.Text(string = 'Código postal')
+    direccionCalleNombre = fields.Text(string = 'Calle', store = True)
+    direccionNumeroExterior = fields.Text(string = 'Número exterior', store = True)
+    direccionNumeroInterior = fields.Text(string = 'Número interior', store = True)
+    direccionColonia = fields.Text(string = 'Colonia', store = True)
+    direccionLocalidad = fields.Text(string = 'Localidad', store = True)
+    direccionCiudad = fields.Text(string = 'Ciudad', store = True)
+    direccionEstado = fields.Text(string = 'Estado', store = True)
+    direccionCodigoPostal = fields.Text(string = 'Código postal', store = True)
 
-    ticket_id_existente = fields.Integer(string = 'Ticket existente', default = 0)
-    textoTicketExistente = fields.Text(string = ' ')
+    ticket_id_existente = fields.Integer(string = 'Ticket existente', default = 0, store = True)
+    textoTicketExistente = fields.Text(string = ' ', store = True)
 
     def abrirTicket(self):
         return {
