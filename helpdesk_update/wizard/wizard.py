@@ -648,6 +648,16 @@ class helpdesk_crearconserie(TransientModel):
                 mensajeCuerpo = "No puede capturar más de una serie."
                 raise exceptions.Warning(mensajeCuerpo)
             else:
+                query = "select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.stage_id!=18 and h.team_id!=8 and  h.active='t' and stock_production_lot_id = " +  str(self.serie[0].id) + " limit 1;"
+                #query = "select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!=" + str(ticket.x_studio_id_ticket) + "  and h.stage_id!=18 and h.team_id!=8 and  h.active='t' and stock_production_lot_id = " +  str(self.serie[0].id) + " limit 1;"
+                self.env.cr.execute(query)                        
+                informacion = self.env.cr.fetchall()
+                if len(informacion) > 0:
+                  self.textoTicketExistente = "<br/><br/><h1>Esta serie ya tiene un ticket en proceso.</h1><br/><br/><h3>El ticket en proceso es:" + str(informacion[0][0]) + "</h3>"
+                  self.ticket_id_existente = int(informacion[0][0])
+                else:
+                  self.ticket_id_existente = 0
+                  self.textoTicketExistente = ''
                 if self.serie[0].x_studio_move_line:
                     self.cliente = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.name
                     self.idCliente = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
@@ -687,26 +697,7 @@ class helpdesk_crearconserie(TransientModel):
                         self.correoContactoLocalidad = ''
                     
 
-                    query = "select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.stage_id!=18 and h.team_id!=8 and  h.active='t' and stock_production_lot_id = " +  str(self.serie[0].id) + " limit 1;"
-                    #query = "select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!=" + str(ticket.x_studio_id_ticket) + "  and h.stage_id!=18 and h.team_id!=8 and  h.active='t' and stock_production_lot_id = " +  str(self.serie[0].id) + " limit 1;"
-                    self.env.cr.execute(query)                        
-                    informacion = self.env.cr.fetchall()
-                    wiz = ''
-                    mensajeTitulo = "Ticket generado!!!"
-                    if len(informacion) > 0:
-                      self.textoTicketExistente = "<br/><br/><h1>Esta serie ya tiene un ticket en proceso.</h1><br/><br/><h3>El ticket en proceso es:" + str(informacion[0][0]) + "</h3>"
-                      self.ticket_id_existente = informacion[0][0]
-                      mensajeTitulo = "Alerta!!!"
-                      mensajeCuerpo = "Esta serie ya tiene un ticket en proceso.\n\nEl ticket en proceso es:" + str(informacion[0][0])
-                      """
-                      warning = {'title': _(mensajeTitulo)
-                              , 'message': _(mensajeCuerpo),
-                      }
-                      return {'warning': warning}
-                      """
-                    else:
-                      self.ticket_id_existente = 0
-                      self.textoTicketExistente = ''
+                    
                 else:
                     mensajeTitulo = "Alerta!!!"
                     mensajeCuerpo = "No existe una locación del equipo."
