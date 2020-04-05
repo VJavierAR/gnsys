@@ -497,6 +497,7 @@ class contadores(models.Model):
             #id=int(self.id)            
             sc=self.env['contadores.contadores'].search([('id', '=', self.id)])
             sc.write({'name' : str(self.cliente.name)+' '+str(periodoAnterior)+' a '+str(perido)})
+            i=1
             for a in asd:
                 currentP=self.env['dcas.dcas'].search([('serie','=',a.id),('x_studio_field_no6Rb', '=', perido)])
                 currentPA=self.env['dcas.dcas'].search([('serie','=',a.id),('x_studio_field_no6Rb', '=', periodoAnterior)])
@@ -513,8 +514,10 @@ class contadores(models.Model):
                                                        , 'ultimaLecturaColor': currentP.contadorColor
                                                        , 'lecturaAnteriorColor': currentPA.contadorColor                                                             
                                                        #, 'paginasProcesadasColor': colorp
-                                                       , 'bnColor':a.x_studio_color_bn              
+                                                       , 'bnColor':a.x_studio_color_bn
+                                                       , 'indice': i             
                                                        })
+                i=1+i
                 #rr.write({'contadores':id})
             
         
