@@ -424,14 +424,14 @@ class dcas(models.Model):
 
     
 
-class contadorescsv(models.Model):
-    _name = 'contadores.csv'    
-    _description = 'Contadores csv'
+class contadoresexcel(models.Model):
+    _name = 'contadores.excel'    
+    _description = 'Contadores carga excel'
     name = fields.Char()
     mes=fields.Selection(valores,string='Mes')
     anio= fields.Selection(get_years(), string='Año')
     csv = fields.Binary(string="CSV")
-    detallecsv =  fields.One2many('contadores.contadores.detalle', 'contadorescvs', string='Contadores por csv')
+    detallecsv =  fields.One2many('contadores.contadores.detalle', 'contadoresexcel', string='Contadores por csv ')
     
 class contadores(models.Model):
     _name = 'contadores.contadores'
@@ -557,7 +557,7 @@ class detalleContadores(models.Model):
       _description = 'Detalle Contadores'
      
       contadores = fields.Many2one('contadores.contadores', string='Detalle de contadores')
-      contadorescvs = fields.Many2one('contadores.csv', string='Detalle de contadores csv')
+      contadoresexcel = fields.Many2one('contadores.excel', string='Detalle de contadores csv')
      
       serieEquipo = fields.Text(string="Serie")
       producto = fields.Text(string="Producto")
@@ -567,7 +567,7 @@ class detalleContadores(models.Model):
       ultimaLecturaBN = fields.Integer(string='Última lectura monocromatico')
       lecturaAnteriorBN = fields.Integer(string='Lectura anterior monocromatico')
       paginasProcesadasBN = fields.Integer(string='Páginas procesadas monocromatico')
-    
+      indice = fields.Integer(string='índice')
      
       ultimaLecturaColor = fields.Integer(string='última lectura color')
       lecturaAnteriorColor = fields.Integer(string='Lectura anterior color')
