@@ -502,14 +502,14 @@ class contadores(models.Model):
                 currentPA=self.env['dcas.dcas'].search([('serie','=',a.id),('x_studio_field_no6Rb', '=', periodoAnterior)])
                 #raise exceptions.ValidationError("q onda xd"+str(self.id)+' id  '+str(id))                     
                 rr=self.env['contadores.contadores.detalle'].create({'contadores': self.id
-                                                       ,'producto': a.id
-                                                       ,'serieEquipo': a.name
-                                                       #,'locacion':currentP.x_studio_locacion_recortada
-                                                       ,  'periodo':perido                                                              
+                                                       , 'producto': a.id
+                                                       , 'serieEquipo': a.name
+                                                       , 'locacion':currentP.x_studio_locacion_recortada
+                                                       , 'periodo':perido                                                              
                                                        , 'ultimaLecturaBN': currentP.contadorMono
                                                        , 'lecturaAnteriorBN': currentPA.contadorMono
                                                        #, 'paginasProcesadasBN': bnp                                                   
-                                                       ,  'periodoA':periodoAnterior            
+                                                       , 'periodoA':periodoAnterior            
                                                        , 'ultimaLecturaColor': currentP.contadorColor
                                                        , 'lecturaAnteriorColor': currentPA.contadorColor                                                             
                                                        #, 'paginasProcesadasColor': colorp
