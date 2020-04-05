@@ -3,10 +3,12 @@ from odoo import models, fields, api
 import base64,io,csv
 import logging, ast
 import datetime
+import xlsxwriter 
 from odoo.exceptions import UserError
 from odoo import exceptions, _
 from operator import concat
 _logger = logging.getLogger(__name__)
+
 
 
 
@@ -470,6 +472,24 @@ class contadores(models.Model):
                                                 })                    
     
     #@api.onchange('mes')
+    @api.multi
+    def genera_excel(self):
+        workbook = xlsxwriter.Workbook('Example2.xlsx') 
+        worksheet = workbook.add_worksheet()   
+        # Start from the first cell. 
+        # Rows and columns are zero indexed. 
+        row = 0
+        column = 0  
+        content = ["ankit", "rahul", "priya", "harshita","sumit", "neeraj", "shivam"]   
+        # iterating through content list 
+        for item in content :   
+        # write operation perform 
+            worksheet.write(row, column, item)   
+            row += 1
+      
+        workbook.close() 
+    
+    
     @api.multi
     def carga_contadores(self):
         if self.anio:
