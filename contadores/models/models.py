@@ -504,7 +504,7 @@ class contadores(models.Model):
                 rr=self.env['contadores.contadores.detalle'].create({'contadores': self.id
                                                        , 'producto': a.id
                                                        , 'serieEquipo': a.name
-                                                       , 'locacion':currentP.x_studio_locacion_recortada
+                                                       , 'locacion':a.x_studio_locacion_recortada
                                                        , 'periodo':perido                                                              
                                                        , 'ultimaLecturaBN': currentP.contadorMono
                                                        , 'lecturaAnteriorBN': currentPA.contadorMono
