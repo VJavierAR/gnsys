@@ -100,6 +100,8 @@ class helpdesk_update(models.Model):
 
     x_studio_contadores = fields.Text(string = 'Contadores Anteriores', store = True, default = lambda self: self.contadoresAnteriores())
 
+    contadores_anteriores = fields.Text(string = 'Contadores Anteriores', store = True, default = lambda self: self.contadoresAnteriores())
+
     @api.model
     def contadoresAnteriores(self):
         if self.x_studio_equipo_por_nmero_de_serie and self.team_id != 8:
