@@ -486,7 +486,7 @@ class contadores(models.Model):
     @api.onchange('csvD')
     def carga_csv(self):
         if self.csvD:
-           myreader = csv.reader(str(base64.b64decode(self.csvD)).splitlines())
+           myreader = csv.DictReader(str(base64.b64decode(self.csvD)).splitlines())
            for row in myreader:
                raise exceptions.ValidationError(str(row['Contador monocromatico'])+' '+ str(row['Número de serie'])+' '+str(row['Contador color'])) 
            #with open(self.csvD, newline='') as csvfile:
