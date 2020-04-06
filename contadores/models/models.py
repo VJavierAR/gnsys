@@ -520,7 +520,7 @@ class contadores(models.Model):
                ebn=0
             else:
                ebn=rpt.ultimaLecturaBN-rpt.lecturaAnteriorBN
-            if rpt.ultimaLecturaColor==0
+            if rpt.ultimaLecturaColor==0:
                ec=0
             else:                
                ec=rpt.ultimaLecturaColor-rpt.lecturaAnteriorColor
