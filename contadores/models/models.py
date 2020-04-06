@@ -515,9 +515,16 @@ class contadores(models.Model):
             worksheet.write(i, 4, rpt.lecturaAnteriorBN)
             worksheet.write(i, 5, rpt.lecturaAnteriorColor)                        
             worksheet.write(i, 6, rpt.ultimaLecturaBN)
-            worksheet.write(i, 7, rpt.ultimaLecturaColor)            
-            ebn=rpt.ultimaLecturaBN-rpt.lecturaAnteriorBN
-            ec=rpt.ultimaLecturaColor-rpt.lecturaAnteriorColor
+            worksheet.write(i, 7, rpt.ultimaLecturaColor)
+            if rpt.ultimaLecturaBN==0:
+               ebn=0
+            else:
+               ebn=rpt.ultimaLecturaBN-rpt.lecturaAnteriorBN
+            if rpt.ultimaLecturaColor==0
+               ec=0
+            else:                
+               ec=rpt.ultimaLecturaColor-rpt.lecturaAnteriorColor
+            
             worksheet.write(i, 8, ebn)
             worksheet.write(i, 9, ec)
             clickbn=ser.clickExcedenteBN
@@ -539,50 +546,50 @@ class contadores(models.Model):
                 if ec>bolsac:
                    stc=round((ec-bolsac)*clickc,2) 
                 st=stbn+stc
-                worksheet.write(i, 10, 's'+str(st))
+                worksheet.write(i, 10, '$ '+str(st))
                 iva=round(st*.16,2)
-                worksheet.write(i, 11,'$'+str(iva) )
+                worksheet.write(i, 11,'$ '+str(iva) )
                 ttt=round(st+iva,2)
-                worksheet.write(i, 12,'$'+str(ttt) )            
+                worksheet.write(i, 12,'$ '+str(ttt) )            
             else:
-                worksheet.write(i, 10, 's'+str(0))
-                worksheet.write(i, 11, 's'+str(0))                
-                worksheet.write(i, 12, 's'+str(0))                
+                worksheet.write(i, 10, '$ '+str(0))
+                worksheet.write(i, 11, '$ '+str(0))                
+                worksheet.write(i, 12, '$ '+str(0))                
             tsubt=st+tsubt
             tiva=iva+tiva
             total=ttt+total
             i=i+1   
         worksheet.write(len(self.detalle)+1, 8, tbn)
         worksheet.write(len(self.detalle)+1, 9, tc)
-        worksheet.write(len(self.detalle)+1, 10, 's'+str(tsubt))
-        worksheet.write(len(self.detalle)+1, 11, 's'+str(tiva))
-        worksheet.write(len(self.detalle)+1, 12, 's'+str(total))
+        worksheet.write(len(self.detalle)+1, 10, '$'+str(tsubt))
+        worksheet.write(len(self.detalle)+1, 11, '$'+str(tiva))
+        worksheet.write(len(self.detalle)+1, 12, '$'+str(total))
         
         if int(ser.rentaMensual)>0 and ser.bolsaBN < tbn :            
            bnae=round((tbn-bolsabn)*clickbn,2)
            tsubt=bnae
            tiva=round(tsubt*.16,2)
            total=tsubt+tiva
-           worksheet.write(len(self.detalle)+1, 10, 's'+str(tsubt))
-           worksheet.write(len(self.detalle)+1, 11, 's'+str(tiva))
-           worksheet.write(len(self.detalle)+1, 12, 's'+str(total))        
+           worksheet.write(len(self.detalle)+1, 10, '$'+str(tsubt))
+           worksheet.write(len(self.detalle)+1, 11, '$'+str(tiva))
+           worksheet.write(len(self.detalle)+1, 12, '$'+str(total))        
         if int(ser.rentaMensual)>0 and ser.bolsaColor < tc :                        
            cae= round((tc-bolsaColor)*clickc,2)
            tsubt=cae           
            tiva=round(tsubt*.16,2)
            total=tsubt+tiva            
-           worksheet.write(len(self.detalle)+1, 10, 's'+str(tsubt))
-           worksheet.write(len(self.detalle)+1, 11, 's'+str(tiva))
-           worksheet.write(len(self.detalle)+1, 12, 's'+str(total))
+           worksheet.write(len(self.detalle)+1, 10, '$'+str(tsubt))
+           worksheet.write(len(self.detalle)+1, 11, '$'+str(tiva))
+           worksheet.write(len(self.detalle)+1, 12, '$'+str(total))
         if int(ser.rentaMensual)>0 and ser.bolsaBN < tbn and ser.bolsaColor < tc:
            bnae=round((tbn-bolsabn)*clickbn,2) 
            cae= round((tc-bolsaColor)*clickc,2)
            tsubt=bnae+cae
            tiva=round(tsubt*.16,2)
            total=tsubt+tiva            
-           worksheet.write(len(self.detalle)+1, 10, 's'+str(tsubt))
-           worksheet.write(len(self.detalle)+1, 11, 's'+str(tiva))
-           worksheet.write(len(self.detalle)+1, 12, 's'+str(total))                                        
+           worksheet.write(len(self.detalle)+1, 10, '$'+str(tsubt))
+           worksheet.write(len(self.detalle)+1, 11, '$'+str(tiva))
+           worksheet.write(len(self.detalle)+1, 12, '$'+str(total))                                        
         workbook.close()
         #fp = StringIO()
         #workbook.save(fp)
