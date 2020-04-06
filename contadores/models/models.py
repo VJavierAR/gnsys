@@ -503,6 +503,9 @@ class contadores(models.Model):
         rgl=0
         tbn=0
         tc=0
+        tsubt=0
+        tiva=0
+        total=0        
         for rpt in self.detalle :
             #agrupar por servicios y generar 2 paginas de excel xD
             worksheet.write(i, 0, rpt.indice)
@@ -525,21 +528,58 @@ class contadores(models.Model):
             #reta
             tbn=ebn+tbn
             tc=ec+tc
+            stbn=0
+            stc=0
             if ser.rentaMensual==0:
                 if ebn>bolsabn:                
-                   worksheet.write(i, 10,round((ebn-bolsabn)*clickbn,2) )
-                else:
-                   worksheet.write(i, 10, 0)
-                if ec>bolsac:                
-                   worksheet.write(i, 11, round((ec-bolsac)*clickc,2) )
-                else:
-                   worksheet.write(i, 11, 0)                                                                
+                   stbn=round((ebn-bolsabn)*clickbn,2)                   
+                if ec>bolsac:
+                   stc=round((ec-bolsac)*clickc,2) 
+                st=stbn+stc
+                worksheet.write(i, 10, 's'+str(st))
+                iva=round(st*.16,2)
+                worksheet.write(i, 11,'$'+str(iva) )
+                ttt=round(st+iva,2)
+                worksheet.write(i, 12,'$'+str(ttt) )            
             else:
-                worksheet.write(i, 10, 0)
-                worksheet.write(i, 11, 0)
+                worksheet.write(i, 10, 's'+str(0))
+                worksheet.write(i, 11, 's'+str(0))                
+                worksheet.write(i, 12, 's'+str(0))                
+            tsubt=st+tsubt
+            tiva=iva+tiva
+            total=ttt+total
             i=i+1   
         worksheet.write(len(self.detalle)+1, 8, tbn)
         worksheet.write(len(self.detalle)+1, 9, tc)
+        worksheet.write(len(self.detalle)+1, 10, 's'+str(tsubt))
+        worksheet.write(len(self.detalle)+1, 11, 's'+str(tiva))
+        worksheet.write(len(self.detalle)+1, 12, 's'+str(total))
+        
+        if ser.rentaMensual>0 and ser.bolsaBN < tbn :            
+           bnae=round((tbn-bolsabn)*clickbn,2)
+           tsubt=bnae
+           tiva=round(tsubt*.16,2)
+           total=tsubt+tiva
+           worksheet.write(len(self.detalle)+1, 10, 's'+str(tsubt))
+           worksheet.write(len(self.detalle)+1, 11, 's'+str(tiva))
+           worksheet.write(len(self.detalle)+1, 12, 's'+str(total))        
+        if ser.rentaMensual>0 and ser.bolsaColor < tc :                        
+           cae= round((tc-bolsaColor)*clickc,2)
+           tsubt=cae           
+           tiva=round(tsubt*.16,2)
+           total=tsubt+tiva            
+           worksheet.write(len(self.detalle)+1, 10, 's'+str(tsubt))
+           worksheet.write(len(self.detalle)+1, 11, 's'+str(tiva))
+           worksheet.write(len(self.detalle)+1, 12, 's'+str(total))
+        if ser.rentaMensual>0 and ser.bolsaBN < tbn and ser.bolsaColor < tc:
+           bnae=round((tbn-bolsabn)*clickbn,2) 
+           cae= round((tc-bolsaColor)*clickc,2)
+           tsubt=bnae+cae
+           tiva=round(tsubt*.16,2)
+           total=tsubt+tiva            
+           worksheet.write(len(self.detalle)+1, 10, 's'+str(tsubt))
+           worksheet.write(len(self.detalle)+1, 11, 's'+str(tiva))
+           worksheet.write(len(self.detalle)+1, 12, 's'+str(total))                                        
         workbook.close()
         #fp = StringIO()
         #workbook.save(fp)
