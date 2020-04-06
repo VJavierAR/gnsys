@@ -533,7 +533,7 @@ class contadores(models.Model):
             st=0
             iva=0
             ttt=0
-            if ser.rentaMensual==0:
+            if int(ser.rentaMensual)==0:
                 if ebn>bolsabn:                
                    stbn=round((ebn-bolsabn)*clickbn,2)                   
                 if ec>bolsac:
@@ -558,7 +558,7 @@ class contadores(models.Model):
         worksheet.write(len(self.detalle)+1, 11, 's'+str(tiva))
         worksheet.write(len(self.detalle)+1, 12, 's'+str(total))
         
-        if ser.rentaMensual>0 and ser.bolsaBN < tbn :            
+        if int(ser.rentaMensual)>0 and ser.bolsaBN < tbn :            
            bnae=round((tbn-bolsabn)*clickbn,2)
            tsubt=bnae
            tiva=round(tsubt*.16,2)
@@ -566,7 +566,7 @@ class contadores(models.Model):
            worksheet.write(len(self.detalle)+1, 10, 's'+str(tsubt))
            worksheet.write(len(self.detalle)+1, 11, 's'+str(tiva))
            worksheet.write(len(self.detalle)+1, 12, 's'+str(total))        
-        if ser.rentaMensual>0 and ser.bolsaColor < tc :                        
+        if int(ser.rentaMensual)>0 and ser.bolsaColor < tc :                        
            cae= round((tc-bolsaColor)*clickc,2)
            tsubt=cae           
            tiva=round(tsubt*.16,2)
@@ -574,7 +574,7 @@ class contadores(models.Model):
            worksheet.write(len(self.detalle)+1, 10, 's'+str(tsubt))
            worksheet.write(len(self.detalle)+1, 11, 's'+str(tiva))
            worksheet.write(len(self.detalle)+1, 12, 's'+str(total))
-        if ser.rentaMensual>0 and ser.bolsaBN < tbn and ser.bolsaColor < tc:
+        if int(ser.rentaMensual)>0 and ser.bolsaBN < tbn and ser.bolsaColor < tc:
            bnae=round((tbn-bolsabn)*clickbn,2) 
            cae= round((tc-bolsaColor)*clickc,2)
            tsubt=bnae+cae
