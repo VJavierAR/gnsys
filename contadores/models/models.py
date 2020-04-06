@@ -5,7 +5,7 @@ import logging, ast
 import datetime
 import xlsxwriter 
 import base64
-import StringIO
+
 from odoo.exceptions import UserError
 from odoo import exceptions, _
 from operator import concat
@@ -495,10 +495,10 @@ class contadores(models.Model):
             row += 1
       
         workbook.close()
-        fp = StringIO()
-        workbook.save(fp)
-        fp.seek(0)
-        datas = base64.encodestring(fp.read())
+        #fp = StringIO()
+        #workbook.save(fp)
+        #fp.seek(0)
+        datas = workbook
         by=self.env['ir.attachment'].create({
                   'name': self.name+'.xlsx',
                     'type': 'binary',
