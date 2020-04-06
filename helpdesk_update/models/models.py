@@ -104,16 +104,17 @@ class helpdesk_update(models.Model):
         vals['name'] = self.env['ir.sequence'].next_by_code('helpdesk_name')
         #vals['team_id'] = 8
         ticket = super(helpdesk_update, self).create(vals)
-        _logger.info("Informacion: " + str(vals))
-        _logger.info("Informacion: " + str(ticket.x_studio_equipo_por_nmero_de_serie))
+        _logger.info("Informacion 1: " + str(vals))
+        _logger.info("Informacion 2: " + str(ticket.x_studio_equipo_por_nmero_de_serie))
         ticket.x_studio_id_ticket = ticket.id
         if self.x_studio_empresas_relacionadas:
             ticket.x_studio_field_6furK = ticket.x_studio_empresas_relacionadas.x_studio_field_SqU5B
             ticket.write({'x_studio_field_6furK': ticket.x_studio_empresas_relacionadas.x_studio_field_SqU5B})
-
-        if self.team_id != 8 and len(self.x_studio_equipo_por_nmero_de_serie) == 1:
-            _logger.info("Informacion: " + str(self))
-            ticket.write({'x_studio_contadores': '</br> Equipo BN o Color: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_color_bn) + ' </br></br> Contador BN: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_bn_mesa) + '</br></br> Contador Color: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_color_mesa)})
+        _logger.info("Informacion 3: " + str(ticket))
+        if ticket.x_studio_equipo_por_nmero_de_serie:
+            if ticket.team_id != 8 and len(ticket.x_studio_equipo_por_nmero_de_serie) == 1:
+                _logger.info("Informacion 4: " + str(ticket))
+                ticket.write({'x_studio_contadores': '</br> Equipo BN o Color: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_color_bn) + ' </br></br> Contador BN: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_bn_mesa) + '</br></br> Contador Color: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_color_mesa)})
 
         return ticket
 
