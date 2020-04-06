@@ -67,8 +67,8 @@ class HelpDeskCerrarConComentario(TransientModel):
 
     def cerrarTicketConComentario(self):
       ultimaEvidenciaTec = []
-      if self.ticket_id.diagnostico:
-        ultimaEvidenciaTec = self.ticket_id.diagnostico[-1].evidencia.ids
+      if self.ticket_id.diagnosticos:
+        ultimaEvidenciaTec = self.ticket_id.diagnosticos[-1].evidencia.ids
         if self.evidencia:
           ultimaEvidenciaTec += self.evidencia.ids
       if self.ticket_id.stage_id.name == 'Resuelto' or self.ticket_id.stage_id.name == 'Abierto' or self.ticket_id.stage_id.name == 'Asignado' or self.ticket_id.stage_id.name == 'Atención' and self.ticket_id.estadoCerrado == False:
