@@ -530,6 +530,7 @@ class contadores(models.Model):
             tc=ec+tc
             stbn=0
             stc=0
+            st=0
             if ser.rentaMensual==0:
                 if ebn>bolsabn:                
                    stbn=round((ebn-bolsabn)*clickbn,2)                   
