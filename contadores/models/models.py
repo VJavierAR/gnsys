@@ -486,8 +486,8 @@ class contadores(models.Model):
     @api.onchange('csvD')
     def carga_csv(self):
         if self.csvD:
-           with open(self.csvD, newline='') as csvfile:
-                reader = csv.DictReader(csvfile)
+           #with open(self.csvD, newline='') as csvfile:
+                reader = csv.DictReader(self.csvD)
                 for row in reader:
                     raise exceptions.ValidationError("Nada que generar "+str(row['Grupo']))
     
