@@ -496,8 +496,10 @@ class contadores(models.Model):
             row += 1
             i=i+1
         i=1
-        worksheet.set_column(0, 1, 40)
-        worksheet.set_column(0, 3, 40)
+        worksheet.set_column('B:B', 40)
+        #worksheet.set_column(2, 2, 40)
+        worksheet.set_column('C:C', 30)
+        worksheet.set_column('D:D', 30)
         if len(self.detalle)>0: 
             ser=self.serie=self.env['servicios'].search([['id','=',self.detalle[0].servicio]])        
         else:
