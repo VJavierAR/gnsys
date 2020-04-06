@@ -498,11 +498,13 @@ class contadores(models.Model):
         #fp = StringIO()
         #workbook.save(fp)
         #fp.seek(0)
-        datas = workbook
+        data = open('Example2.xlsx', 'rb').read()
+        base64_encoded = base64.b64encode(data).decode('UTF-8')
+        
         by=self.env['ir.attachment'].create({
                   'name': self.name+'.xlsx',
                     'type': 'binary',
-                    'datas': datas,
+                    'datas': base64_encoded,
                     'res_model': 'contadores.contadores',
                     'res_id': self.id
                     #'mimetype': 'application/x-pdf'
