@@ -634,8 +634,8 @@ class contadores(models.Model):
             sc.write({'name' : str(self.cliente.name)+' '+str(periodoAnterior)+' a '+str(perido)})
             i=1
             for a in asd:
-                currentP=self.env['dcas.dcas'].search([('serie','=',a.id),('x_studio_field_no6Rb', '=', perido)])
-                currentPA=self.env['dcas.dcas'].search([('serie','=',a.id),('x_studio_field_no6Rb', '=', periodoAnterior)])
+                currentP=self.env['dcas.dcas'].search([('serie','=',a.id),('x_studio_field_no6Rb', '=', perido)],order='x_studio_fecha desc',limit=1)
+                currentPA=self.env['dcas.dcas'].search([('serie','=',a.id),('x_studio_field_no6Rb', '=', periodoAnterior)],order='x_studio_fecha desc',limit=1)
                 #raise exceptions.ValidationError("q onda xd"+str(self.id)+' id  '+str(id))                     
                 rr=self.env['contadores.contadores.detalle'].create({'contadores': self.id
                                                        , 'producto': a.id
