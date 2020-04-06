@@ -119,32 +119,32 @@ class HelpDeskCancelarConComentario(TransientModel):
     evidencia = fields.Many2many('ir.attachment', string = "Evidencias")
 
     def cancelarTicketConComentario(self):
-      if self.ticket_id.stage_id.name == 'Resuelto' or self.ticket_id.stage_id.name == 'Abierto' or self.ticket_id.stage_id.name == 'Asignado' or self.ticket_id.stage_id.name == 'Atención' and self.ticket_id.estadoCerrado == False:
-        self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.ticket_id.id
-                                                ,'comentario': self.comentario
-                                                ,'estadoTicket': self.ticket_id.stage_id.name
-                                                ,'evidencia': [(6,0,self.evidencia.ids)]
-                                                ,'mostrarComentario': self.check
-                                                })
-        self.ticket_id.write({'stage_id': 18 
-                            , 'estadoResueltoPorDocTecnico': True
-                            , 'estadoAtencion': True
-                            })
-        mess = 'Ticket "' + str(self.ticket_id.id) + '" cancelado y último Diagnostico / Comentario añadido al ticket "' + str(self.ticket_id.id) + '" de forma exitosa. \n\nComentario agregado: ' + str(self.comentario) + '.'
-        wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mess})
-        view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
-        return {
-            'name': _('Ticket cancelado !!!'),
-            'type': 'ir.actions.act_window',
-            'view_type': 'form',
-            'view_mode': 'form',
-            'res_model': 'helpdesk.alerta',
-            'views': [(view.id, 'form')],
-            'view_id': view.id,
-            'target': 'new',
-            'res_id': wiz.id,
-            'context': self.env.context,
-        }
+      #if self.ticket_id.stage_id.name == 'Resuelto' or self.ticket_id.stage_id.name == 'Abierto' or self.ticket_id.stage_id.name == 'Asignado' or self.ticket_id.stage_id.name == 'Atención' and self.ticket_id.estadoCerrado == False:
+      self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.ticket_id.id
+                                              ,'comentario': self.comentario
+                                              ,'estadoTicket': self.ticket_id.stage_id.name
+                                              ,'evidencia': [(6,0,self.evidencia.ids)]
+                                              ,'mostrarComentario': self.check
+                                              })
+      self.ticket_id.write({'stage_id': 18 
+                          , 'estadoResueltoPorDocTecnico': True
+                          , 'estadoAtencion': True
+                          })
+      mess = 'Ticket "' + str(self.ticket_id.id) + '" cancelado y último Diagnostico / Comentario añadido al ticket "' + str(self.ticket_id.id) + '" de forma exitosa. \n\nComentario agregado: ' + str(self.comentario) + '.'
+      wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mess})
+      view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+      return {
+          'name': _('Ticket cancelado !!!'),
+          'type': 'ir.actions.act_window',
+          'view_type': 'form',
+          'view_mode': 'form',
+          'res_model': 'helpdesk.alerta',
+          'views': [(view.id, 'form')],
+          'view_id': view.id,
+          'target': 'new',
+          'res_id': wiz.id,
+          'context': self.env.context,
+      }
 
     def _compute_estadoTicket(self):
         self.estado = self.ticket_id.stage_id.name
