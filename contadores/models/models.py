@@ -484,7 +484,7 @@ class contadores(models.Model):
     #@api.onchange('mes')
     
     @api.multi
-    @@api.onchange('csvD')
+    @api.onchange('csvD')
     def carga_csv(self):
         if self.csvD:
            with open(self.csvD, newline='') as csvfile:
