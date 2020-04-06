@@ -561,9 +561,9 @@ class contadores(models.Model):
             i=i+1   
         worksheet.write(len(self.detalle)+1, 8, tbn)
         worksheet.write(len(self.detalle)+1, 9, tc)
-        worksheet.write(len(self.detalle)+1, 10, '$'+str(tsubt))
-        worksheet.write(len(self.detalle)+1, 11, '$'+str(tiva))
-        worksheet.write(len(self.detalle)+1, 12, '$'+str(total))
+        worksheet.write(len(self.detalle)+1, 10, '$'+str(round(tsubt,2)))
+        worksheet.write(len(self.detalle)+1, 11, '$'+str(round(tiva,2)))
+        worksheet.write(len(self.detalle)+1, 12, '$'+str(round(total,2)))
         
         if int(ser.rentaMensual)>0 and ser.bolsaBN < tbn :            
            bnae=round((tbn-bolsabn)*clickbn,2)
