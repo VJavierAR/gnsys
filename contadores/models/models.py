@@ -5,7 +5,7 @@ import logging, ast
 import datetime
 import xlsxwriter 
 import base64
-from cStringIO import StringIO
+import StringIO
 from odoo.exceptions import UserError
 from odoo import exceptions, _
 from operator import concat
@@ -446,8 +446,7 @@ class contadores(models.Model):
     mes=fields.Selection(valores,string='Mes')
     anio= fields.Selection(get_years(), string='Año')
     archivoglobal = fields.Many2many('ir.attachment',string="Evidencia global")    
-    excel = fields.Many2many('ir.attachment',string="Documento Excel")  
-    
+    excel = fields.Many2many('ir.attachment',string="Documento Excel")      
     dca = fields.One2many('dcas.dcas',inverse_name='contador_id',string='DCAS')
     cliente = fields.Many2one('res.partner', store=True,string='Cliente')
     localidad=fields.Many2one('res.partner',store='True',string='Localidad')
