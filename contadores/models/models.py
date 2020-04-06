@@ -494,7 +494,7 @@ class contadores(models.Model):
             row += 1
             i=i+1
         i=1
-        for rpt in detalle :           
+        for rpt in self.detalle :           
             worksheet.write(i, i, rpt.indice)   
             row += 1
             i=i+1
