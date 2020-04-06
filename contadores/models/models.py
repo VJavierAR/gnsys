@@ -501,13 +501,17 @@ class contadores(models.Model):
         data = open('Example2.xlsx', 'rb').read()
         base64_encoded = base64.b64encode(data).decode('UTF-8')
         
-        self.excelD=self.env['ir.attachment'].create({
+        self.excelD=base64_encoded
+        
+        """
+        self.env['ir.attachment'].create({
                   'name': self.name+'.xlsx',
                     'type': 'binary',
                     'datas': base64_encoded,
+            
                     'res_model': 'contadores.contadores'                                        
                     })
-        
+        """
         
         
     
