@@ -111,25 +111,20 @@ class helpdesk_update(models.Model):
     def create(self, vals):
         vals['name'] = self.env['ir.sequence'].next_by_code('helpdesk_name')
         #vals['team_id'] = 8
-        _logger.info("Informacion 0.0: " + str(vals))
-        #if 'x_studio_equipo_por_nmero_de_serie' in vals and vals.get('team_id') != 8:
-        #    _logger.info("Informacion 0.1: ")
-        #    idSerieTemp = vals.get('x_studio_equipo_por_nmero_de_serie')[0][2][0]
-        #    serieTemp = self.env['stock.production.lot'].search([['id', '=', idSerieTemp]])
-        #    vals['x_studio_contadores'] = '</br> Equipo BN o Color: ' + str(serieTemp.x_studio_color_bn) + ' </br></br> Contador BN: ' + str(serieTemp.x_studio_contador_bn_mesa) + '</br></br> Contador Color: ' + str(serieTemp.x_studio_contador_color_mesa)
+        #_logger.info("Informacion 0.0: " + str(vals))
         ticket = super(helpdesk_update, self).create(vals)
-        _logger.info("Informacion 1: " + str(vals))
-        _logger.info("Informacion 2: " + str(ticket.x_studio_equipo_por_nmero_de_serie))
+        #_logger.info("Informacion 1: " + str(vals))
+        #_logger.info("Informacion 2: " + str(ticket.x_studio_equipo_por_nmero_de_serie))
         ticket.x_studio_id_ticket = ticket.id
         if self.x_studio_empresas_relacionadas:
             ticket.x_studio_field_6furK = ticket.x_studio_empresas_relacionadas.x_studio_field_SqU5B
             ticket.write({'x_studio_field_6furK': ticket.x_studio_empresas_relacionadas.x_studio_field_SqU5B})
-        _logger.info("Informacion 3: " + str(ticket))
+        #_logger.info("Informacion 3: " + str(ticket))
         if ticket.x_studio_equipo_por_nmero_de_serie:
             if ticket.team_id != 8 and len(ticket.x_studio_equipo_por_nmero_de_serie) == 1:
-                _logger.info("Informacion 4: " + str(ticket.x_studio_contadores))
+                #_logger.info("Informacion 4: " + str(ticket.x_studio_contadores))
                 #ticket.write({'x_studio_contadores': '</br> Equipo BN o Color: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_color_bn) + ' </br></br> Contador BN: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_bn_mesa) + '</br></br> Contador Color: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_color_mesa)})
-                ticket.write({'contadores_anteriores': '</br> Equipo BN o Color: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_color_bn) + ' </br></br> Contador BN: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_bn_mesa) + '</br></br> Contador Color: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_color_mesa)})
+                ticket.write({'contadores_anteriores': '</br>Equipo BN o Color: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_color_bn) + ' </br></br> Contador BN: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_bn_mesa) + '</br></br> Contador Color: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_color_mesa)})
         return ticket
 
     """
