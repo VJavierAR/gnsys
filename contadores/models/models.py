@@ -490,7 +490,7 @@ class contadores(models.Model):
         content = ["No.", "Localidad", "Modelo", "No. Serie","B/N "+str(self.mes), "Color "+str(self.mes),"B/N ", "Color", "Impresiones B/N", "Impresiones Color","Subtotal","IVA","Total","Ubucación"]        
         i=0
         for item in content :           
-            worksheet.write(row, i, item)   
+            worksheet.write(0, i, item)   
             row += 1
             i=i+1
       
