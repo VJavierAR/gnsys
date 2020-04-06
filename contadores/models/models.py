@@ -497,6 +497,9 @@ class contadores(models.Model):
             i=i+1
         i=1
         ser=self.serie=self.env['servicios'].search([['id','=',self.detalle[0].servicio.id]])        
+        rgl=0
+        tbn=0
+        tc=0
         for rpt in self.detalle :
             #agrupar por servicios y generar 2 paginas de excel xD
             worksheet.write(i, 0, rpt.indice)
@@ -515,17 +518,25 @@ class contadores(models.Model):
             clickc=ser.clickExcedenteColor         
             bolsabn=ser.bolsaBN
             bolsac=ser.bolsaColor
-            subtotal                        
-            if ebn>bolsabn:                
-               worksheet.write(i, 10,round((ebn-bolsabn)*clickbn) )
+            #subtotal
+            #reta
+            tbn=ebn+tbn
+            tc=ec+tc
+            if ser.rentaMensual==0:
+                if ebn>bolsabn:                
+                   worksheet.write(i, 10,round((ebn-bolsabn)*clickbn,2) )
+                else:
+                   worksheet.write(i, 10, 0)
+                if ec>bolsac:                
+                   worksheet.write(i, 11, round((ec-bolsac)*clickc,2) )
+                else:
+                   worksheet.write(i, 11, 0)                                                
+                i=i+1
             else:
-               worksheet.write(i, 10, 0)
-            if ec>bolsac:                
-               worksheet.write(i, 11, round((ec-bolsac)*clickc) )
-            else:
-               worksheet.write(i, 11, 0)                                                
-            i=i+1
-      
+                worksheet.write(i, 10, 0)
+                worksheet.write(i, 11, 0)
+        worksheet.write(len(self.detalle)+1, 8, tbn)
+        worksheet.write(len(self.detalle)+1, 9, tc)
         workbook.close()
         #fp = StringIO()
         #workbook.save(fp)
