@@ -4,10 +4,12 @@ import base64,io,csv
 import logging, ast
 import datetime
 import xlsxwriter 
+import base64
 from odoo.exceptions import UserError
 from odoo import exceptions, _
 from operator import concat
 _logger = logging.getLogger(__name__)
+
 
 
 
@@ -443,6 +445,7 @@ class contadores(models.Model):
     mes=fields.Selection(valores,string='Mes')
     anio= fields.Selection(get_years(), string='Año')
     archivoglobal = fields.Many2many('ir.attachment',string="Evidencia global")    
+    excel = fields.Many2many('ir.attachment',string="Documento Excel")  
     
     dca = fields.One2many('dcas.dcas',inverse_name='contador_id',string='DCAS')
     cliente = fields.Many2one('res.partner', store=True,string='Cliente')
@@ -451,6 +454,9 @@ class contadores(models.Model):
     estado=fields.Selection(selection=[('Abierto', 'Abierto'),('Incompleto', 'Incompleto'),('Valido','Valido')],widget="statusbar", default='Abierto')  
     dom=fields.Char(readonly="1",invisible="1")
     order_line = fields.One2many('contadores.lines','ticket',string='Order Lines')
+    
+    
+    
     
 
     
@@ -488,7 +494,17 @@ class contadores(models.Model):
             row += 1
       
         workbook.close()
-        return workbook
+        content = base64.b64encode(workbook)
+        by=self.env['ir.attachment'].create({
+                  'name': self.name,
+                    'type': 'binary',
+                    'datas': content,
+                    'res_model': 'contadores.contadores',
+                    'res_id': self.id
+                    #'mimetype': 'application/x-pdf'
+                    })
+        self.excel=by.id
+        
         
     
     
