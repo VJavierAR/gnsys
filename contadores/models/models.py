@@ -487,7 +487,7 @@ class contadores(models.Model):
     def carga_csv(self):
         if self.csvD:
            #with open(self.csvD, newline='') as csvfile:
-                reader = csv.DictReader(self.csvD)
+                reader = csv.DictReader(base64.b64decode(self.csvD))
                 raise exceptions.ValidationError("Nada que generar "+str(reader.fieldnames))
                 for row in reader:
                     raise exceptions.ValidationError("Nada que generar "+str(row))
