@@ -496,29 +496,34 @@ class contadores(models.Model):
             row += 1
             i=i+1
         i=1
+        ser=self.serie=self.env['servicios'].search([['id','=',self.detalle[0].servicio.id]])        
         for rpt in self.detalle :
             #agrupar por servicios y generar 2 paginas de excel xD
             worksheet.write(i, 0, rpt.indice)
             worksheet.write(i, 1, rpt.locacion)
             worksheet.write(i, 2, rpt.modelo)
-            worksheet.write(i, 4, rpt.serieEquipo)            
-            worksheet.write(i, 5, rpt.lecturaAnteriorBN)
-            worksheet.write(i, 6, rpt.lecturaAnteriorColor)                        
-            worksheet.write(i, 7, rpt.ultimaLecturaBN)
-            worksheet.write(i, 8, rpt.ultimaLecturaColor)            
+            worksheet.write(i, 3, rpt.serieEquipo)            
+            worksheet.write(i, 4, rpt.lecturaAnteriorBN)
+            worksheet.write(i, 5, rpt.lecturaAnteriorColor)                        
+            worksheet.write(i, 6, rpt.ultimaLecturaBN)
+            worksheet.write(i, 7, rpt.ultimaLecturaColor)            
             ebn=rpt.ultimaLecturaBN-rpt.lecturaAnteriorBN
             ec=rpt.ultimaLecturaColor-rpt.lecturaAnteriorColor
-            worksheet.write(i, 9, ebn)
-            worksheet.write(i, 10, ec)
-            
-            #clickbn=
-            #clickc=            
-            #bolsabn=
-            #bolsac=
-            #subtotal
-            
-            
-            
+            worksheet.write(i, 8, ebn)
+            worksheet.write(i, 9, ec)
+            clickbn=ser.clickExcedenteBN
+            clickc=ser.clickExcedenteColor         
+            bolsabn=ser.bolsaBN
+            bolsac=ser.bolsaColor
+            subtotal                        
+            if ebn>bolsabn:                
+               worksheet.write(i, 10,round((ebn-bolsabn)*clickbn) )
+            else:
+               worksheet.write(i, 10, 0)
+            if ec>bolsac:                
+               worksheet.write(i, 11, round((ec-bolsac)*clickc) )
+            else:
+               worksheet.write(i, 11, 0)                                                
             i=i+1
       
         workbook.close()
