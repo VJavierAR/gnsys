@@ -487,7 +487,7 @@ class contadores(models.Model):
         # Rows and columns are zero indexed. 
         row = 0
         column = 0        
-        content = ["No.", "Localidad", "Modelo", "No. Serie","B/N "+self.mes, "Color "++self.mes,"B/N ", "Color", "Impresiones B/N", "Impresiones Color","Subtotal","IVA","Total","Ubucación"]        
+        content = ["No.", "Localidad", "Modelo", "No. Serie","B/N "+str(self.mes), "Color "+str(self.mes),"B/N ", "Color", "Impresiones B/N", "Impresiones Color","Subtotal","IVA","Total","Ubucación"]        
         i=0
         for item in content :           
             worksheet.write(row, i, item)   
