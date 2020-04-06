@@ -443,6 +443,7 @@ class contadores(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _description = 'Contadores Cliente'
     name = fields.Char()
+    
     mes=fields.Selection(valores,string='Mes')
     anio= fields.Selection(get_years(), string='Año')
     archivoglobal = fields.Many2many('ir.attachment',string="Evidencia global")    
@@ -454,6 +455,7 @@ class contadores(models.Model):
     estado=fields.Selection(selection=[('Abierto', 'Abierto'),('Incompleto', 'Incompleto'),('Valido','Valido')],widget="statusbar", default='Abierto')  
     dom=fields.Char(readonly="1",invisible="1")
     order_line = fields.One2many('contadores.lines','ticket',string='Order Lines')
+    servicio=Integer(string='Servicio')
     
     
     
@@ -494,9 +496,29 @@ class contadores(models.Model):
             row += 1
             i=i+1
         i=1
-        for rpt in self.detalle :           
+        for rpt in self.detalle :
+            #agrupar por servicios y generar 2 paginas de excel xD
             worksheet.write(i, 0, rpt.indice)
             worksheet.write(i, 1, rpt.locacion)
+            worksheet.write(i, 2, rpt.modelo)
+            worksheet.write(i, 4, rpt.serieEquipo)            
+            worksheet.write(i, 5, rpt.lecturaAnteriorBN)
+            worksheet.write(i, 6, rpt.lecturaAnteriorColor)                        
+            worksheet.write(i, 7, rpt.ultimaLecturaBN)
+            worksheet.write(i, 8, rpt.ultimaLecturaColor)            
+            ebn=rpt.ultimaLecturaBN-rpt.lecturaAnteriorBN
+            ec=rpt.ultimaLecturaColor-rpt.lecturaAnteriorColor
+            worksheet.write(i, 9, ebn)
+            worksheet.write(i, 10, ec)
+            
+            #clickbn=
+            #clickc=            
+            #bolsabn=
+            #bolsac=
+            #subtotal
+            
+            
+            
             i=i+1
       
         workbook.close()
@@ -568,6 +590,7 @@ class contadores(models.Model):
                                                        , 'bnColor':a.x_studio_color_bn
                                                        , 'indice': i
                                                        , 'modelo':a.product_id.name
+                                                       , 'servicio':a.servicio.id
                                                        })
                 i=1+i
                 #rr.write({'contadores':id})
