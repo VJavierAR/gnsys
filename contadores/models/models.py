@@ -493,6 +493,11 @@ class contadores(models.Model):
             worksheet.write(0, i, item)   
             row += 1
             i=i+1
+        i=1
+        for rpt in detalle :           
+            worksheet.write(i, i, rpt.indice)   
+            row += 1
+            i=i+1
       
         workbook.close()
         #fp = StringIO()
