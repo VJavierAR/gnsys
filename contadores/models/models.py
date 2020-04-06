@@ -496,7 +496,10 @@ class contadores(models.Model):
             row += 1
             i=i+1
         i=1
-        ser=self.serie=self.env['servicios'].search([['id','=',self.detalle[0].servicio.id]])        
+        if len(detalle)>0:
+            ser=self.serie=self.env['servicios'].search([['id','=',self.detalle[0].servicio]])        
+        else:
+            raise exceptions.ValidationError("Nada que generar ")
         rgl=0
         tbn=0
         tc=0
