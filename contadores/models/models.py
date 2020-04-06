@@ -488,9 +488,9 @@ class contadores(models.Model):
         if self.csvD:
            #with open(self.csvD, newline='') as csvfile:
                 reader = csv.DictReader(base64.b64decode(self.csvD))
-                raise exceptions.ValidationError("Nada que generar "+str(reader.fieldnames))
+                #raise exceptions.ValidationError("Nada que generar "+str(reader.fieldnames))
                 for row in reader:
-                    raise exceptions.ValidationError("Nada que generar "+str(row))
+                    raise exceptions.ValidationError("Nada que generar "+str(row['Grupo']))
     
     
     @api.multi
