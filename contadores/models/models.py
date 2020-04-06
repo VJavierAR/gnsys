@@ -5,6 +5,7 @@ import logging, ast
 import datetime
 import xlsxwriter 
 import base64
+from cStringIO import StringIO
 from odoo.exceptions import UserError
 from odoo import exceptions, _
 from operator import concat
@@ -482,6 +483,7 @@ class contadores(models.Model):
     def genera_excel(self):
         workbook = xlsxwriter.Workbook('Example2.xlsx') 
         worksheet = workbook.add_worksheet()   
+        
         # Start from the first cell. 
         # Rows and columns are zero indexed. 
         row = 0
@@ -494,11 +496,14 @@ class contadores(models.Model):
             row += 1
       
         workbook.close()
-        content = base64.b64encode(workbook)
+        fp = StringIO()
+        workbook.save(fp)
+        fp.seek(0)
+        datas = base64.encodestring(fp.read())
         by=self.env['ir.attachment'].create({
-                  'name': self.name,
+                  'name': self.name+'.xlsx',
                     'type': 'binary',
-                    'datas': content,
+                    'datas': datas,
                     'res_model': 'contadores.contadores',
                     'res_id': self.id
                     #'mimetype': 'application/x-pdf'
