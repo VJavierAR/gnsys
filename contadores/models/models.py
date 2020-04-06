@@ -505,9 +505,7 @@ class contadores(models.Model):
                   'name': self.name+'.xlsx',
                     'type': 'binary',
                     'datas': base64_encoded,
-                    'res_model': 'contadores.contadores',
-                    'res_id': self.id
-                    #'mimetype': 'application/x-pdf'
+                    'res_model': 'contadores.contadores'                                        
                     })
         
         
