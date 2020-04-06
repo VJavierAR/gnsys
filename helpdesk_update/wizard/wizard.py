@@ -126,7 +126,7 @@ class HelpDeskCancelarConComentario(TransientModel):
                                               ,'evidencia': [(6,0,self.evidencia.ids)]
                                               ,'mostrarComentario': self.check
                                               })
-      self.ticket_id.write({'stage_id': 18 
+      self.ticket_id.write({'stage_id': 4
                           , 'estadoResueltoPorDocTecnico': True
                           , 'estadoAtencion': True
                           })
