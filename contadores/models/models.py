@@ -5,6 +5,7 @@ import logging, ast
 import datetime
 import xlsxwriter 
 import base64
+import csv
 
 from odoo.exceptions import UserError
 from odoo import exceptions, _
@@ -455,6 +456,7 @@ class contadores(models.Model):
     estado=fields.Selection(selection=[('Abierto', 'Abierto'),('Incompleto', 'Incompleto'),('Valido','Valido')],widget="statusbar", default='Abierto')  
     dom=fields.Char(readonly="1",invisible="1")
     order_line = fields.One2many('contadores.lines','ticket',string='Order Lines')
+    csvD = fields.Binary(string="Cargar por DCA csv")      
     
     
     
@@ -480,6 +482,17 @@ class contadores(models.Model):
                                                 })                    
     
     #@api.onchange('mes')
+    
+    @api.multi
+    @@api.onchange('csvD')
+    def carga_csv(self):
+        if self.csvD:
+           with open(self.csvD, newline='') as csvfile:
+           reader = csv.DictReader(csvfile)
+           for row in reader:
+               raise exceptions.ValidationError("Nada que generar "+str(row['Grupo']))
+    
+    
     @api.multi
     def genera_excel(self):
         workbook = xlsxwriter.Workbook('Example2.xlsx') 
