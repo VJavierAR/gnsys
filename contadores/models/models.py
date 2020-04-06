@@ -533,11 +533,11 @@ class contadores(models.Model):
                 if ec>bolsac:                
                    worksheet.write(i, 11, round((ec-bolsac)*clickc,2) )
                 else:
-                   worksheet.write(i, 11, 0)                                                
-                i=i+1
+                   worksheet.write(i, 11, 0)                                                                
             else:
                 worksheet.write(i, 10, 0)
                 worksheet.write(i, 11, 0)
+            i=i+1   
         worksheet.write(len(self.detalle)+1, 8, tbn)
         worksheet.write(len(self.detalle)+1, 9, tc)
         workbook.close()
