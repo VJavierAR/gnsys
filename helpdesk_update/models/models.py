@@ -98,17 +98,23 @@ class helpdesk_update(models.Model):
     #name = fields.Text(string = 'Descripción del reporte', default = lambda self: self._compute_descripcion())
     name = fields.Text(string = 'Descripción del reporte')
 
+    x_studio_contadores = fields.Text(string = 'Contadores Anteriores', store = True, default = lambda self: self.contadoresAnteriores())
+
+    @api.model
+    def contadoresAnteriores(self):
+        if self.x_studio_equipo_por_nmero_de_serie and self.team_id != 8:
+            self.x_studio_contadores = '</br> Equipo BN o Color: ' + str(self.x_studio_equipo_por_nmero_de_serie[0].x_studio_color_bn) + ' </br></br> Contador BN: ' + str(self.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_bn_mesa) + '</br></br> Contador Color: ' + str(self.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_color_mesa)
 
     @api.model
     def create(self, vals):
         vals['name'] = self.env['ir.sequence'].next_by_code('helpdesk_name')
         #vals['team_id'] = 8
         _logger.info("Informacion 0.0: " + str(vals))
-        if 'x_studio_equipo_por_nmero_de_serie' in vals and vals.get('team_id') != 8:
-            _logger.info("Informacion 0.1: ")
-            idSerieTemp = vals.get('x_studio_equipo_por_nmero_de_serie')[0][2][0]
-            serieTemp = self.env['stock.production.lot'].search([['id', '=', idSerieTemp]])
-            vals['x_studio_contadores'] = '</br> Equipo BN o Color: ' + str(serieTemp.x_studio_color_bn) + ' </br></br> Contador BN: ' + str(serieTemp.x_studio_contador_bn_mesa) + '</br></br> Contador Color: ' + str(serieTemp.x_studio_contador_color_mesa)
+        #if 'x_studio_equipo_por_nmero_de_serie' in vals and vals.get('team_id') != 8:
+        #    _logger.info("Informacion 0.1: ")
+        #    idSerieTemp = vals.get('x_studio_equipo_por_nmero_de_serie')[0][2][0]
+        #    serieTemp = self.env['stock.production.lot'].search([['id', '=', idSerieTemp]])
+        #    vals['x_studio_contadores'] = '</br> Equipo BN o Color: ' + str(serieTemp.x_studio_color_bn) + ' </br></br> Contador BN: ' + str(serieTemp.x_studio_contador_bn_mesa) + '</br></br> Contador Color: ' + str(serieTemp.x_studio_contador_color_mesa)
         ticket = super(helpdesk_update, self).create(vals)
         _logger.info("Informacion 1: " + str(vals))
         _logger.info("Informacion 2: " + str(ticket.x_studio_equipo_por_nmero_de_serie))
