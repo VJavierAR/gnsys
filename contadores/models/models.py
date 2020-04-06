@@ -489,7 +489,7 @@ class contadores(models.Model):
            #with open(self.csvD, newline='') as csvfile:
                 reader = csv.DictReader(self.csvD)
                 for row in reader:
-                    raise exceptions.ValidationError("Nada que generar "+str(row['Grupo']))
+                    raise exceptions.ValidationError("Nada que generar "+str(row))
     
     
     @api.multi
