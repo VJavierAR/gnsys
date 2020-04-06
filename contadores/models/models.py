@@ -488,7 +488,7 @@ class contadores(models.Model):
         if self.csvD:
            myreader = csv.reader(str(base64.b64decode(self.csvD)).splitlines())
            for row in myreader:
-               raise exceptions.ValidationError(str(row[0])+' '+ str(row[1])) 
+               raise exceptions.ValidationError(str(row['Contador monocromatico'])+' '+ str(row['Número de serie'])+' '+str(row['Contador color'])) 
            #with open(self.csvD, newline='') as csvfile:
                 #reader = csv.DictReader(base64.b64decode(self.csvD))
                 #raise exceptions.ValidationError("Nada que generar "+str(base64.b64decode(self.csvD))+' '+str(self.csvD))
