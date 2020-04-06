@@ -455,7 +455,7 @@ class contadores(models.Model):
     estado=fields.Selection(selection=[('Abierto', 'Abierto'),('Incompleto', 'Incompleto'),('Valido','Valido')],widget="statusbar", default='Abierto')  
     dom=fields.Char(readonly="1",invisible="1")
     order_line = fields.One2many('contadores.lines','ticket',string='Order Lines')
-    servicio=fields.Integer(string='Servicio')
+    
     
     
     
@@ -657,6 +657,7 @@ class detalleContadores(models.Model):
       archivo=fields.Binary(store='True',string='Archivo')
       modelo=fields.Text(string="Modelo")
       ubi=fields.Text(string="Ubicacion")
+      servicio=fields.Integer(string='Servicio')
         
 
 
