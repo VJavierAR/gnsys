@@ -486,7 +486,7 @@ class contadores(models.Model):
     @api.onchange('csvD')
     def carga_csv(self):
         if self.csvD:
-           myreader = csv.reader(base64.b64decode(self.csvD).splitlines())
+           myreader = csv.reader(str(base64.b64decode(self.csvD)).splitlines())
            for row in myreader:
                raise exceptions.ValidationError(str(row[0])+' '+ str(row[1])) 
            #with open(self.csvD, newline='') as csvfile:
