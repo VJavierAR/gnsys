@@ -2454,6 +2454,23 @@ class helpdesk_update(models.Model):
         }
 
     @api.multi
+    def cancelar_con_comentario_wizard(self):
+        wiz = self.env['helpdesk.comentario.cancelar'].create({'ticket_id':self.id })
+        view = self.env.ref('helpdesk_update.view_helpdesk_cancelar_con_comentario')
+        return {
+            'name': _('Cancelar'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'helpdesk.comentario.cancelar',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            'context': self.env.context,
+        }
+
+    @api.multi
     def contadores_wizard(self):
         wiz = self.env['helpdesk.contadores'].create({'ticket_id':self.id})
         view = self.env.ref('helpdesk_update.view_helpdesk_contadores')

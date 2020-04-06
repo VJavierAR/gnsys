@@ -103,6 +103,57 @@
 
 
 
+    <record id="view_helpdesk_cancelar_con_comentario" model="ir.ui.view">
+        <field name="model">helpdesk.comentario.cancelar</field>
+        <field name="arch" type="xml">
+            <form string="Cancelar ticket">
+                <group>
+                    <group>
+                        <field name="estado" readonly="1"/>
+                        <field name="comentario" attrs='{"readonly": [["estado","=","Cerrado"]]}'/>
+                    </group>
+                    <group>
+                        <field name="check" attrs='{"readonly": [["estado","=","Cerrado"]]}'/>
+                        <field name="evidencia" widget="many2many_binary" attrs='{"readonly": [["estado","=","Cerrado"]]}'/>
+                        
+                    </group>
+                </group>
+
+                <field name="diagnostico_id" options="{'no_create': True}" readonly="1">
+                    <tree>
+                        <field name="create_date" string='Creado el' readonly="1"/>
+                        <field name="estadoTicket" readonly="1"/>
+                        <field name="comentario" string='Diagnostico / Comentario'/>
+                        <field name="create_uid" readonly="1" string='Encargado'/>
+                        <field name="evidencia" widget="many2many_binary"/>
+                        <field name="mostrarComentario" />
+                    </tree>
+                    <form>
+                        <group>
+                            <group>
+                                <field name="ticketRelacion" can_create="true" can_write="true" modifiers="{}" invisible="1"/>
+                                <field name="estadoTicket" modifiers="{}" readonly="1"/>
+                                <field name="comentario" modifiers="{}"/>
+                            </group>
+                            <group>
+                                <field name="evidencia" can_create="true" can_write="true" modifiers="{}" widget="many2many_binary"/>
+                                <field name="mostrarComentario" modifiers="{}"/>
+                            </group>
+                        </group>
+                    </form>
+                </field>
+
+                <footer>
+                    <button name="cancelarTicketConComentario" string="Confirmar" type="object" class="oe_highlight" attrs='{"invisible": [["estado","=","Cerrado"]]}'/>
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+
+
 
     <record id="view_helpdesk_contadores" model="ir.ui.view">
         <field name="model">helpdesk.contadores</field>
