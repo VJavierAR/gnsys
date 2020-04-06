@@ -486,13 +486,13 @@ class contadores(models.Model):
         # Start from the first cell. 
         # Rows and columns are zero indexed. 
         row = 0
-        column = 0  
-        content = ["ankit", "rahul", "priya", "harshita","sumit", "neeraj", "shivam"]   
-        # iterating through content list 
-        for item in content :   
-        # write operation perform 
-            worksheet.write(row, column, item)   
+        column = 0        
+        content = ["No.", "Localidad", "Modelo", "No. Serie","B/N "+self.mes, "Color "++self.mes,"B/N ", "Color", "Impresiones B/N", "Impresiones Color","Subtotal","IVA","Total","Ubucación"]        
+        i=0
+        for item in content :           
+            worksheet.write(row, i, item)   
             row += 1
+            i=i+1
       
         workbook.close()
         #fp = StringIO()
@@ -559,7 +559,8 @@ class contadores(models.Model):
                                                        , 'lecturaAnteriorColor': currentPA.contadorColor                                                             
                                                        #, 'paginasProcesadasColor': colorp
                                                        , 'bnColor':a.x_studio_color_bn
-                                                       , 'indice': i             
+                                                       , 'indice': i
+                                                       , 'modelo':a.product_id.name
                                                        })
                 i=1+i
                 #rr.write({'contadores':id})
@@ -624,6 +625,9 @@ class detalleContadores(models.Model):
       periodoA = fields.Text(string="Periodo Anterior")
       comentario = fields.Text(string="Comentario")
       archivo=fields.Binary(store='True',string='Archivo')
+      modelo=fields.Text(string="Modelo")
+      ubi=fields.Text(string="Ubicacion")
+        
 
 
         
