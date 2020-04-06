@@ -424,6 +424,7 @@ class helpdesk_contadores(TransientModel):
     contadorBNMesa = fields.Integer(string='Contador B/N Mesa', compute="_compute_contadorBNMesa")
     contadorBNActual = fields.Integer(string='Contador B/N Actual', default = 0)
     contadorColorMesa = fields.Integer(string='Contador Color Mesa', compute = '_compute_actualizaContadorColorMesa')
+    contadorColorActual = fields.Integer(string='Contador Color Actual', default = 0)
     negroProcentaje = fields.Integer(string='% Negro')
     bnColor = fields.Text(string='Color o BN', compute = '_compute_actualizaColor')
     
@@ -462,7 +463,9 @@ class helpdesk_contadores(TransientModel):
                                                     , 'fuente':q
                                                   })                  
                     self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.ticket_id.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario': 'bn '+str(c.x_studio_contador_bn_a_capturar)})
-
+                    self.ticket_id.write({'x_studio_contadores': '</br> Equipo BN o Color: ' + str(self.bnColor) + ' </br></br> Contador BN: ' + str(self.contadorBNActual) + '</br></br> Contador Color: ' + str(self.contadorColorMesa)})
+                    #self.ticket_id.write({'contadorBNWizard': self.contadorBNActual
+                    #                    })
                     mensajeTitulo = "Contador capturado!!!"
                     mensajeCuerpo = "Se capturo el contador."
                     wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
@@ -492,12 +495,16 @@ class helpdesk_contadores(TransientModel):
                     rr=self.env['dcas.dcas'].create({'serie' : c.id
                                                     , 'contadorMono' : self.contadorBNActual
                                                     ,'x_studio_contador_color_anterior':colort
-                                                    , 'contadorColor' :self.contadorColorMesa
+                                                    , 'contadorColor' :self.contadorColorActual
                                                     ,'x_studio_tickett':self.ticket_id.id
                                                     ,'x_studio_contador_mono_anterior_1':negrot
                                                     ,'fuente':q
                                                   })   
-                    self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.ticket_id.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario': 'bn '+str(c.x_studio_contador_bn_a_capturar)+' color '+str(c.x_studio_contador_color_a_capturar)})
+                    self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.ticket_id.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario': 'bn ' + str(c.x_studio_contador_bn_a_capturar) +' color ' + str(c.x_studio_contador_color_a_capturar)})
+                    self.ticket_id.write({'x_studio_contadores': '</br> Equipo BN o Color: ' + str(self.bnColor) + ' </br></br> Contador BN: ' + str(self.contadorBNActual) + '</br></br> Contador Color: ' + str(self.contadorColorActual)})
+                    #self.ticket_id.write({'contadorBNWizard': self.contadorBNActual
+                    #                    , 'contadorColorWizard': self.contadorColorActual
+                    #                    })
                     mensajeTitulo = "Contador capturado!!!"
                     mensajeCuerpo = "Se capturo el contador."
                     wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})

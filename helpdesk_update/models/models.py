@@ -140,6 +140,30 @@ class helpdesk_update(models.Model):
         }
 
 
+    #contadorBNWizard = fields.Integer(string = 'Contador B/N generado desde wizard', default = 0)
+    #contadorColorWizard = fields.Integer(string = 'Contador Color generado desde wizard', default = 0)
+
+
+    @api.onchange('x_studio_equipo_por_nmero_de_serie')
+    def actualiza_contadores_lista(self):
+        if self.team_id != 8 and len(self.x_studio_equipo_por_nmero_de_serie) == 1:
+            self.x_studio_contadores = '</br> Equipo BN o Color: ' + str(self.x_studio_equipo_por_nmero_de_serie[0].x_studio_color_bn) + ' </br></br> Contador BN: ' + str(self.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_bn_mesa) + '</br></br> Contador Color: ' + str(self.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_color_mesa)
+            
+
+    """
+    @api.depends('x_studio_equipo_por_nmero_de_serie', 'x_studio_ultima_nota', 'contadorBNWizard', 'contadorColorWizard')
+    def actualiza_contadores_lista(self):
+        for r in self:
+            if r.contadorBNWizard == 0 or r.contadorColorWizard == 0:
+                if r.team_id != 8 and len(r.x_studio_equipo_por_nmero_de_serie) == 1:
+                    r['x_studio_contadores'] = '</br> Equipo BN o Color: ' + str(r.x_studio_equipo_por_nmero_de_serie[0].x_studio_color_bn) + ' </br> Contador BN: ' + str(r.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_bn_mesa) + '</br> Contador Color: ' + str(r.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_color_mesa)
+            else:
+                if r.team_id != 8 and len(r.x_studio_equipo_por_nmero_de_serie) == 1:
+                    r['x_studio_contadores'] = '</br> Equipo BN o Color: ' + str(r.x_studio_equipo_por_nmero_de_serie[0].x_studio_color_bn) + ' </br> Contador BN: ' + str(r.contadorBNWizard) + '</br> Contador Color: ' + str(r.contadorColorWizard)
+                    r['contadorBNWizard'] = 0
+                    r['contadorColorWizard'] = 0
+    """
+
     telefonoLocalidadContacto = fields.Text(string = 'Telefono de localidad', compute = '_compute_telefonoLocalidad')
     movilLocalidadContacto = fields.Text(string = 'Movil de localidad', compute = '_compute_movilLocalidad')
     correoLocalidadContacto = fields.Text(string = 'Correo de localidad', compute = '_compute_correoLocalidad')
