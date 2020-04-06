@@ -487,7 +487,9 @@ class contadores(models.Model):
             worksheet.write(row, column, item)   
             row += 1
       
-        workbook.close() 
+        workbook.close()
+        return workbook
+        
     
     
     @api.multi
