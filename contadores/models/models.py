@@ -486,7 +486,8 @@ class contadores(models.Model):
     @api.onchange('csvD')
     def carga_csv(self):
         if self.csvD:
-           myreader = csv.reader(base64.b64decode(self.csvD))
+           #myreader = csv.reader(base64.b64decode(self.csvD))
+           myreader = csv.reader(self.csvD)
            a=''
            for row in myreader:
                a=row[0]+'    '+a
