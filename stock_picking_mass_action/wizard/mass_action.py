@@ -281,7 +281,6 @@ class ComemtarioTicket(TransientModel):
             self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.pick.sale_id.x_studio_field_bxHgp.id
                                         ,'comentario': self.comentario
                                         ,'estadoTicket': self.pick.sale_id.x_studio_field_bxHgp.stage_id.name
-                                        ,'evidencia': [(4,self.evidencia)]
                                         ,'mostrarComentario': False
                                         })
 
