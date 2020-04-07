@@ -481,75 +481,7 @@ class contadores(models.Model):
                                                 })                    
     
     #@api.onchange('mes')
-    
-    @api.multi
-    @api.onchange('csvD')
-    def carga_csv(self):
-        if self.csvD:           
-           with open("a1.csv","w") as f:
-                f.write(base64.b64decode(self.csvD).decode("utf-8"))
-           f.close()     
-           file = open("a1.csv", "r") 
-           reader = csv.reader(file)
-           j=0
-           #sc.write({'name' : str(self.cliente.name)+' '+str(periodoAnterior)+' a '+str(perido)}) 
-           for row in reader:                                             
-               if j>0 and j<30:                   
-                   a=self.env['stock.production.lot'].search([('name','=',row[3])])
-                   date = row[6]
-                   fecha = date.split('-')[0].split('/')
-                   mes=fecha[1]
-                   anio=fecha[2]
-                   i=0
-                   for f in valores:                
-                       if f[0]==str(mes):                
-                          mesaA=str(valores[i-1][0])
-                       i=i+1
-                   anios=get_years()
-                   i=0
-                   for e in anios:
-                       if e[0]==int(anio) and str(mes)=='01':
-                          anioA=str(anios[i-1][0])
-                       else:
-                          anioA=str(anio)                
-                       i=i+1                
-                   periodoAnterior= anioA+'-'+mesaA
-                   i=0
-                   for f in valores:                
-                       if f[0]==str(mes):                
-                          mesaC=str(valores[i][0])
-                       i=i+1                   
-                   periodo= anio+'-'+mesaC
-                   self.anio=anio
-                   self.mes=mes
-                   if row[7]=='':
-                      bn=0
-                   else:
-                      bn=int(row[7])
-                   if row[8]=='':
-                      cc=0                    
-                   else:
-                      cc=int(row[8])
-                   currentPA=self.env['dcas.dcas'].search([('serie','=',a.name),('x_studio_field_no6Rb', '=', periodoAnterior)],order='x_studio_fecha desc',limit=1)                
-                   rr=self.env['contadores.contadores.detalle'].create({'contadores': self.id
-                                                       , 'producto': a.id
-                                                       , 'serieEquipo': a.name
-                                                       , 'locacion':a.x_studio_locacion_recortada
-                                                       , 'periodo':periodo                                                              
-                                                       , 'ultimaLecturaBN': bn
-                                                       , 'lecturaAnteriorBN': currentPA.contadorMono
-                                                       #, 'paginasProcesadasBN': bnp                                                   
-                                                       , 'periodoA':periodoAnterior            
-                                                       , 'ultimaLecturaColor': cc
-                                                       , 'lecturaAnteriorColor': currentPA.contadorColor                                                             
-                                                       #, 'paginasProcesadasColor': colorp
-                                                       , 'bnColor':a.x_studio_color_bn
-                                                       , 'indice': i
-                                                       , 'modelo':a.product_id.name
-                                                       , 'servicio':a.servicio.id
-                                                       , 'ubi':row[5]                 
-                                                       })
-               j=1+j 
+        
     
     
     @api.multi
@@ -690,6 +622,71 @@ class contadores(models.Model):
     
     @api.multi
     def carga_contadores(self):
+        if self.csvD:           
+           with open("a1.csv","w") as f:
+                f.write(base64.b64decode(self.csvD).decode("utf-8"))
+           f.close()     
+           file = open("a1.csv", "r") 
+           reader = csv.reader(file)
+           j=0
+           #sc.write({'name' : str(self.cliente.name)+' '+str(periodoAnterior)+' a '+str(perido)}) 
+           for row in reader:                                             
+               if j>0 and j<30:                   
+                   a=self.env['stock.production.lot'].search([('name','=',row[3])])
+                   date = row[6]
+                   fecha = date.split('-')[0].split('/')
+                   mes=fecha[1]
+                   anio=fecha[2]
+                   i=0
+                   for f in valores:                
+                       if f[0]==str(mes):                
+                          mesaA=str(valores[i-1][0])
+                       i=i+1
+                   anios=get_years()
+                   i=0
+                   for e in anios:
+                       if e[0]==int(anio) and str(mes)=='01':
+                          anioA=str(anios[i-1][0])
+                       else:
+                          anioA=str(anio)                
+                       i=i+1                
+                   periodoAnterior= anioA+'-'+mesaA
+                   i=0
+                   for f in valores:                
+                       if f[0]==str(mes):                
+                          mesaC=str(valores[i][0])
+                       i=i+1                   
+                   periodo= anio+'-'+mesaC
+                   self.anio=anio
+                   self.mes=mes
+                   if row[7]=='':
+                      bn=0
+                   else:
+                      bn=int(row[7])
+                   if row[8]=='':
+                      cc=0                    
+                   else:
+                      cc=int(row[8])
+                   currentPA=self.env['dcas.dcas'].search([('serie','=',a.name),('x_studio_field_no6Rb', '=', periodoAnterior)],order='x_studio_fecha desc',limit=1)                
+                   rr=self.env['contadores.contadores.detalle'].create({'contadores': self.id
+                                                       , 'producto': a.id
+                                                       , 'serieEquipo': a.name
+                                                       , 'locacion':a.x_studio_locacion_recortada
+                                                       , 'periodo':periodo                                                              
+                                                       , 'ultimaLecturaBN': bn
+                                                       , 'lecturaAnteriorBN': currentPA.contadorMono
+                                                       #, 'paginasProcesadasBN': bnp                                                   
+                                                       , 'periodoA':periodoAnterior            
+                                                       , 'ultimaLecturaColor': cc
+                                                       , 'lecturaAnteriorColor': currentPA.contadorColor                                                             
+                                                       #, 'paginasProcesadasColor': colorp
+                                                       , 'bnColor':a.x_studio_color_bn
+                                                       , 'indice': i
+                                                       , 'modelo':a.product_id.name
+                                                       , 'servicio':a.servicio.id
+                                                       , 'ubi':row[5]                 
+                                                       })
+               j=1+j                        
         if self.anio:
             perido=str(self.anio)+'-'+str(self.mes)
             periodoAnterior=''
@@ -737,8 +734,7 @@ class contadores(models.Model):
                                                        , 'modelo':a.product_id.name
                                                        , 'servicio':a.servicio.id
                                                        })
-                i=1+i
-                #rr.write({'contadores':id})
+                i=1+i                
             
         
             
