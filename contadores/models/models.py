@@ -490,7 +490,7 @@ class contadores(models.Model):
                 f.write(base64.b64decode(self.csvD).decode("utf-8"))
            f.close()     
            file = open("a1.csv", "r") 
-           reader = csv.DictReader(csvfile)
+           reader = csv.DictReader(file)
            i=0
            for row in reader:
                if i>0:
