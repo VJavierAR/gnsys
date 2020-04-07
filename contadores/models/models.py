@@ -679,7 +679,7 @@ class contadores(models.Model):
            j=0
            #sc.write({'name' : str(self.cliente.name)+' '+str(periodoAnterior)+' a '+str(perido)}) 
            for row in reader:                                             
-               if j>0 and j<30:                   
+               if j>0 :                   
                    a=self.env['stock.production.lot'].search([('name','=',row[3])])
                    date = row[6]
                    fecha = date.split('-')[0].split('/')
