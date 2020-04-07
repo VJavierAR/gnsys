@@ -492,17 +492,53 @@ class contadores(models.Model):
            file = open("a1.csv", "r") 
            reader = csv.reader(file)
            i=0
-           for row in reader:
-               if i>0:
-                  raise exceptions.ValidationError("Nada que generar " + str(row))    
-               i=i+1 
-                
-           #myreader = csv.reader(base64.b64decode(self.csvD))
-           #myreader = csv.reader(self.csvD)
-           #with open(self.csvD, newline='') as csvfile:
-                #reader = csv.DictReader(base64.b64decode(self.csvD))
-           #raise exceptions.ValidationError("Nada que generar "+str(base64.b64decode(str(self.csvD).encode('utf-8')))+'   '+a)
-                
+           for row in reader:                                             
+               if i>0:                   
+                   a=self.env['stock.production.lot'].search([('name','=',row[3])])
+                   date = row[6]
+                   fecha = date.split('-')[0].split('/')
+                   mes=fecha[1]
+                   anio=fecha[2] 
+                   for f in valores:                
+                       if f[0]==str(mes):                
+                          mesaA=str(valores[i-1][0])
+                       i=i+1
+                   anios=get_years()
+                   i=0
+                   for e in anios:
+                       if e[0]==int(anio) and str(mes)=='01':
+                          anioA=str(anios[i-1][0])
+                       else:
+                          anioA=str(anio)                
+                       i=i+1                
+                   periodoAnterior= anioA+'-'+mesaA
+                   for f in valores:                
+                       if f[0]==str(mes):                
+                          mesaC=str(valores[i][0])
+                       i=i+1                   
+                   periodo= anio+'-'+mesaC
+                   self.anio=anio
+                   self.mes=mes 
+                   currentPA=self.env['dcas.dcas'].search([('serie','=',a.name),('x_studio_field_no6Rb', '=', periodoAnterior)],order='x_studio_fecha desc',limit=1)                
+                   rr=self.env['contadores.contadores.detalle'].create({'contadores': self.id
+                                                       , 'producto': a.id
+                                                       , 'serieEquipo': a.name
+                                                       , 'locacion':a.x_studio_locacion_recortada
+                                                       , 'periodo':periodo                                                              
+                                                       , 'ultimaLecturaBN': int(row[7])
+                                                       , 'lecturaAnteriorBN': currentPA.contadorMono
+                                                       #, 'paginasProcesadasBN': bnp                                                   
+                                                       , 'periodoA':periodoAnterior            
+                                                       , 'ultimaLecturaColor': int(row[8])                                                       
+                                                       , 'lecturaAnteriorColor': currentPA.contadorColor                                                             
+                                                       #, 'paginasProcesadasColor': colorp
+                                                       , 'bnColor':a.x_studio_color_bn
+                                                       , 'indice': i
+                                                       , 'modelo':a.product_id.name
+                                                       , 'servicio':a.servicio.id
+                                                       , 'ubi':row[5]                 
+                                                       })
+               i=1+i 
     
     
     @api.multi
