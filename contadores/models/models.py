@@ -512,6 +512,7 @@ class contadores(models.Model):
                           anioA=str(anio)                
                        i=i+1                
                    periodoAnterior= anioA+'-'+mesaA
+                   i=0
                    for f in valores:                
                        if f[0]==str(mes):                
                           mesaC=str(valores[i][0])
