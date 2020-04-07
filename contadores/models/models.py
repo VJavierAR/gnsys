@@ -519,18 +519,26 @@ class contadores(models.Model):
                        i=i+1                   
                    periodo= anio+'-'+mesaC
                    self.anio=anio
-                   self.mes=mes 
+                   self.mes=mes
+                   if row[7]=='':
+                      bn=0
+                   else:
+                      bn=int(row[7])
+                   if row[8]=='':
+                      cc=0                    
+                   else:
+                      cc=int(row[8])
                    currentPA=self.env['dcas.dcas'].search([('serie','=',a.name),('x_studio_field_no6Rb', '=', periodoAnterior)],order='x_studio_fecha desc',limit=1)                
                    rr=self.env['contadores.contadores.detalle'].create({'contadores': self.id
                                                        , 'producto': a.id
                                                        , 'serieEquipo': a.name
                                                        , 'locacion':a.x_studio_locacion_recortada
                                                        , 'periodo':periodo                                                              
-                                                       , 'ultimaLecturaBN': int(row[7])
+                                                       , 'ultimaLecturaBN': bn
                                                        , 'lecturaAnteriorBN': currentPA.contadorMono
                                                        #, 'paginasProcesadasBN': bnp                                                   
                                                        , 'periodoA':periodoAnterior            
-                                                       , 'ultimaLecturaColor': int(row[8])                                                       
+                                                       , 'ultimaLecturaColor': cc
                                                        , 'lecturaAnteriorColor': currentPA.contadorColor                                                             
                                                        #, 'paginasProcesadasColor': colorp
                                                        , 'bnColor':a.x_studio_color_bn
