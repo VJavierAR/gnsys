@@ -494,7 +494,7 @@ class contadores(models.Model):
            i=0
            for row in reader:
                if i>0:
-                  raise exceptions.ValidationError("Nada que generar " + row[0]+' '+row[3])    
+                  raise exceptions.ValidationError("Nada que generar " + row['Grupo'])    
                i=i+1 
                 
            #myreader = csv.reader(base64.b64decode(self.csvD))
