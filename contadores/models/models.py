@@ -498,7 +498,8 @@ class contadores(models.Model):
                    date = row[6]
                    fecha = date.split('-')[0].split('/')
                    mes=fecha[1]
-                   anio=fecha[2] 
+                   anio=fecha[2]
+                   i=0
                    for f in valores:                
                        if f[0]==str(mes):                
                           mesaA=str(valores[i-1][0])
