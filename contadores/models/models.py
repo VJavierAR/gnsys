@@ -487,7 +487,7 @@ class contadores(models.Model):
     def carga_csv(self):
         if self.csvD:           
            with open("a1.csv","w") as f:
-                f.write(self.csvD)
+                f.write(base64.b64decode(self.csvD).decode("utf-8"))
            #myreader = csv.reader(base64.b64decode(self.csvD))
            #myreader = csv.reader(self.csvD)
            #with open(self.csvD, newline='') as csvfile:
