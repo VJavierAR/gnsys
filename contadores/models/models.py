@@ -681,7 +681,7 @@ class contadores(models.Model):
            for row in reader:                                             
                if j>0 :                   
                    a=self.env['stock.production.lot'].search([('name','=',row[3])])
-                   date = row[6]
+                   date = row[1]
                    fecha = date.split('-')[0].split('/')
                    mes=fecha[1]
                    anio=fecha[2]
