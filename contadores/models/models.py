@@ -732,7 +732,8 @@ class contadores(models.Model):
                                                        , 'indice': i
                                                        , 'modelo':a.product_id.name
                                                        , 'servicio':a.servicio.id
-                                                       , 'ubi':row[5]                 
+                                                       , 'ubi':row[5]
+                                                       , 'capturar':'t'                 
                                                        })
                j=1+j                        
                         
