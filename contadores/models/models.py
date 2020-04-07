@@ -489,10 +489,13 @@ class contadores(models.Model):
            with open("a1.csv","w") as f:
                 f.write(base64.b64decode(self.csvD).decode("utf-8"))
            f.close()     
-           with open('a1.csv', newline='') as csvfile:
-                reader = csv.DictReader(csvfile)
+           file = open('a1.csv', r) 
+           reader = csv.DictReader(csvfile)
+           i=0
            for row in reader:
-               raise exceptions.ValidationError("Nada que generar " + row['Grupo']+' '+row['Número de serie'])    
+               if i>0:
+                  raise exceptions.ValidationError("Nada que generar " + row[0]+' '+row[3])    
+               i=i+1 
                 
            #myreader = csv.reader(base64.b64decode(self.csvD))
            #myreader = csv.reader(self.csvD)
