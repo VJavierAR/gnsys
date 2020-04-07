@@ -462,7 +462,7 @@ class helpdesk_contadores(TransientModel):
                                                     , 'x_studio_contador_mono_anterior_1':negrot  
                                                     , 'fuente':q
                                                   })                  
-                    self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.ticket_id.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario': 'bn '+str(c.x_studio_contador_bn_a_capturar)})
+                    self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.ticket_id.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario': 'Contador BN anterior: ' + str(negrot) + '\nContador BN capturado: ' + str(self.contadorBNActual)})
                     self.ticket_id.write({'contadores_anteriores': '</br>Equipo BN o Color: ' + str(self.bnColor) + ' </br></br>Contador BN: ' + str(self.contadorBNActual) + '</br></br>Contador Color: ' + str(self.contadorColorMesa)})
                     #self.ticket_id.write({'contadorBNWizard': self.contadorBNActual
                     #                    })
@@ -500,7 +500,7 @@ class helpdesk_contadores(TransientModel):
                                                     ,'x_studio_contador_mono_anterior_1':negrot
                                                     ,'fuente':q
                                                   })   
-                    self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.ticket_id.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario': 'bn ' + str(c.x_studio_contador_bn_a_capturar) +' color ' + str(c.x_studio_contador_color_a_capturar)})
+                    self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.ticket_id.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario': 'Contador BN anterior: ' + str(negrot) + '\nContador BN capturado: ' + str(self.contadorBNActual) + '\nContador color anterior: ' + str(colort) + '\nContador color capturado: ' + str(self.contadorColorActual)})
                     self.ticket_id.write({'contadores_anteriores': '</br>Equipo BN o Color: ' + str(self.bnColor) + ' </br></br>Contador BN: ' + str(self.contadorBNActual) + '</br></br>Contador Color: ' + str(self.contadorColorActual)})
                     #self.ticket_id.write({'contadorBNWizard': self.contadorBNActual
                     #                    , 'contadorColorWizard': self.contadorColorActual
