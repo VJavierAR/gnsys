@@ -485,14 +485,11 @@ class contadores(models.Model):
     @api.multi
     @api.onchange('csvD')
     def carga_csv(self):
-        if self.csvD:
+        if self.csvD:           
+           with open("a1.csv","w") as f:
+                f.write(base64.b64decode(str(self.csvD).encode('utf-8')))
            #myreader = csv.reader(base64.b64decode(self.csvD))
-           myreader = csv.reader(self.csvD)
-           a=''
-           next(myreader)
-           #for row in myreader:
-           #    a=row[0]+'    '+a
-           raise exceptions.ValidationError("Nada que generar "+ str(list(myreader)))
+           #myreader = csv.reader(self.csvD)
            #with open(self.csvD, newline='') as csvfile:
                 #reader = csv.DictReader(base64.b64decode(self.csvD))
            #raise exceptions.ValidationError("Nada que generar "+str(base64.b64decode(str(self.csvD).encode('utf-8')))+'   '+a)
