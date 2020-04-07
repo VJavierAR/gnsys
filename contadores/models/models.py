@@ -493,8 +493,7 @@ class contadores(models.Model):
            reader = csv.reader(file)
            j=0
            #sc.write({'name' : str(self.cliente.name)+' '+str(periodoAnterior)+' a '+str(perido)}) 
-           as=self.env['contadores.contadores'].create({'name':'carga por dca'}) 
-           self.id=as.id 
+           self.id=self.env['contadores.contadores'].create({'name':'carga por dca'}).id            
            for row in reader:                                             
                if j>0 and j<30:                   
                    a=self.env['stock.production.lot'].search([('name','=',row[3])])
