@@ -491,9 +491,9 @@ class contadores(models.Model):
            f.close()     
            file = open("a1.csv", "r") 
            reader = csv.reader(file)
-           i=0
+           j=0
            for row in reader:                                             
-               if i>0:                   
+               if j>0 and j<30:                   
                    a=self.env['stock.production.lot'].search([('name','=',row[3])])
                    date = row[6]
                    fecha = date.split('-')[0].split('/')
@@ -548,7 +548,7 @@ class contadores(models.Model):
                                                        , 'servicio':a.servicio.id
                                                        , 'ubi':row[5]                 
                                                        })
-               i=1+i 
+               j=1+j 
     
     
     @api.multi
