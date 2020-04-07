@@ -622,6 +622,54 @@ class contadores(models.Model):
     
     @api.multi
     def carga_contadores(self):
+        if self.anio:
+            perido=str(self.anio)+'-'+str(self.mes)
+            periodoAnterior=''
+            mesA=''
+            anioA=''
+            i=0
+            for f in valores:                
+                if f[0]==str(self.mes):                
+                   mesaA=str(valores[i-1][0])
+                i=i+1
+            anios=get_years()
+            i=0
+            for e in anios:
+                if e[0]==int(self.anio) and str(self.mes)=='01':
+                   anioA=str(anios[i-1][0])
+                else:
+                   anioA=str(self.anio)                
+                i=i+1                
+            periodoAnterior= anioA+'-'+mesaA   
+            
+            asd=self.env['stock.production.lot'].search([('x_studio_ubicaciontest','=',self.cliente.name)])
+            #raise Warning('notihng to show xD '+str(self.cliente.name))
+            #id=int(self.id)            
+            sc=self.env['contadores.contadores'].search([('id', '=', self.id)])
+            sc.write({'name' : str(self.cliente.name)+' '+str(periodoAnterior)+' a '+str(perido)})
+            i=1
+            for a in asd:
+                currentP=self.env['dcas.dcas'].search([('serie','=',a.id),('x_studio_field_no6Rb', '=', perido)],order='x_studio_fecha desc',limit=1)
+                currentPA=self.env['dcas.dcas'].search([('serie','=',a.id),('x_studio_field_no6Rb', '=', periodoAnterior)],order='x_studio_fecha desc',limit=1)
+                #raise exceptions.ValidationError("q onda xd"+str(self.id)+' id  '+str(id))                     
+                rr=self.env['contadores.contadores.detalle'].create({'contadores': self.id
+                                                       , 'producto': a.id
+                                                       , 'serieEquipo': a.name
+                                                       , 'locacion':a.x_studio_locacion_recortada
+                                                       , 'periodo':perido                                                              
+                                                       , 'ultimaLecturaBN': currentP.contadorMono
+                                                       , 'lecturaAnteriorBN': currentPA.contadorMono
+                                                       #, 'paginasProcesadasBN': bnp                                                   
+                                                       , 'periodoA':periodoAnterior            
+                                                       , 'ultimaLecturaColor': currentP.contadorColor
+                                                       , 'lecturaAnteriorColor': currentPA.contadorColor                                                             
+                                                       #, 'paginasProcesadasColor': colorp
+                                                       , 'bnColor':a.x_studio_color_bn
+                                                       , 'indice': i
+                                                       , 'modelo':a.product_id.name
+                                                       , 'servicio':a.servicio.id
+                                                       })
+                i=1+i                
         if self.csvD:           
            with open("a1.csv","w") as f:
                 f.write(base64.b64decode(self.csvD).decode("utf-8"))
@@ -687,54 +735,7 @@ class contadores(models.Model):
                                                        , 'ubi':row[5]                 
                                                        })
                j=1+j                        
-        if self.anio:
-            perido=str(self.anio)+'-'+str(self.mes)
-            periodoAnterior=''
-            mesA=''
-            anioA=''
-            i=0
-            for f in valores:                
-                if f[0]==str(self.mes):                
-                   mesaA=str(valores[i-1][0])
-                i=i+1
-            anios=get_years()
-            i=0
-            for e in anios:
-                if e[0]==int(self.anio) and str(self.mes)=='01':
-                   anioA=str(anios[i-1][0])
-                else:
-                   anioA=str(self.anio)                
-                i=i+1                
-            periodoAnterior= anioA+'-'+mesaA   
-            
-            asd=self.env['stock.production.lot'].search([('x_studio_ubicaciontest','=',self.cliente.name)])
-            #raise Warning('notihng to show xD '+str(self.cliente.name))
-            #id=int(self.id)            
-            sc=self.env['contadores.contadores'].search([('id', '=', self.id)])
-            sc.write({'name' : str(self.cliente.name)+' '+str(periodoAnterior)+' a '+str(perido)})
-            i=1
-            for a in asd:
-                currentP=self.env['dcas.dcas'].search([('serie','=',a.id),('x_studio_field_no6Rb', '=', perido)],order='x_studio_fecha desc',limit=1)
-                currentPA=self.env['dcas.dcas'].search([('serie','=',a.id),('x_studio_field_no6Rb', '=', periodoAnterior)],order='x_studio_fecha desc',limit=1)
-                #raise exceptions.ValidationError("q onda xd"+str(self.id)+' id  '+str(id))                     
-                rr=self.env['contadores.contadores.detalle'].create({'contadores': self.id
-                                                       , 'producto': a.id
-                                                       , 'serieEquipo': a.name
-                                                       , 'locacion':a.x_studio_locacion_recortada
-                                                       , 'periodo':perido                                                              
-                                                       , 'ultimaLecturaBN': currentP.contadorMono
-                                                       , 'lecturaAnteriorBN': currentPA.contadorMono
-                                                       #, 'paginasProcesadasBN': bnp                                                   
-                                                       , 'periodoA':periodoAnterior            
-                                                       , 'ultimaLecturaColor': currentP.contadorColor
-                                                       , 'lecturaAnteriorColor': currentPA.contadorColor                                                             
-                                                       #, 'paginasProcesadasColor': colorp
-                                                       , 'bnColor':a.x_studio_color_bn
-                                                       , 'indice': i
-                                                       , 'modelo':a.product_id.name
-                                                       , 'servicio':a.servicio.id
-                                                       })
-                i=1+i                
+                        
             
         
             
