@@ -266,7 +266,7 @@ class ComemtarioTicket(TransientModel):
     _name = 'comentario.ticket'
     _description = 'Comemtario de Ticket'
     comentario=fields.Char(string='Comentario')
-    evidencia=fields.Binary(string='Evidencia')
+    evidencia=fields.Many2many('ir.attachment', string="Evidencias")
     pick=fields.Many2one('stock.picking')
     ruta=fields.Integer(related='pick.ruta_id.id')
 
@@ -281,7 +281,7 @@ class ComemtarioTicket(TransientModel):
             self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.pick.sale_id.x_studio_field_bxHgp.id
                                         ,'comentario': self.comentario
                                         ,'estadoTicket': self.pick.sale_id.x_studio_field_bxHgp.stage_id.name
-                                        ,'evidencia': [(4,self.evidencia)]
+                                        ,'evidencia': [(6,0,self.evidencia.ids)]
                                         ,'mostrarComentario': False
                                         })
 
