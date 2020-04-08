@@ -29,18 +29,8 @@ odoo.define('invoice.action_button', function (require) {
                 view_id: 'view_stock_quant_action_form',
                 views: [[false, 'form']],
                 target: 'new',
-            }, {
-                on_reverse_breadcrumb: function () {
-                    self.update_control_panel({clear: true, hidden: true});
-                }
-            });
-
-
-            rpc.query({
-                model: 'stock.picking',
-                method: 'inter_wizard',
-                args: [[user],{'id':user}],
-            });
+            
+            });}
         },
 
 
