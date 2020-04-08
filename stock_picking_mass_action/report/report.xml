@@ -1,4 +1,5 @@
 <odoo>
+	<data>
 <report
     id="partner_xlsx"
     model="stock.move.line"
@@ -15,4 +16,5 @@
     name="existencias.report"
     file="Reporte de Existencias"
     attachment_use="False"/>
+</data>
 </odoo>
