@@ -497,7 +497,7 @@ class StockPicking(Model):
                 'type': 'ir.actions.act_window',
                 'view_type': 'form',
                 'view_mode': 'form',
-                'res_model': 'transferencia.interna',
+                'res_model': 'stock.picking.mass.action',
                 'views': [(view.id, 'form')],
                 'view_id': view.id,
                 'target': 'new',
