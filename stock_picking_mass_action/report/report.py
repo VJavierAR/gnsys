@@ -63,7 +63,7 @@ class PartnerXlsx(models.AbstractModel):
         workbook.close()
 
 class ExistenciasXML(models.AbstractModel):
-    _name = 'existencias.report'
+    _name = 'report.existencias.report'
     _inherit = 'report.report_xlsx.abstract'
 
     def generate_xlsx_report(self, workbook, data, partners):
