@@ -61,3 +61,20 @@ class PartnerXlsx(models.AbstractModel):
             i=i+1
         sheet.add_table('A2:O'+str((i)),{'style': 'Table Style Medium 9','columns': [{'header': 'Categoria'},{'header': 'Fecha'},{'header': 'Almacen'},{'header':'Tipo'},{'header': 'Modelo'},{'header': 'No Parte'},{'header': 'Cantidad'},{'header': 'Serie'},{'header': 'Cliente'},{'header': 'Localidad'},{'header': 'Comentario'},{'header': 'Documento Origen'},{'header': 'Estado'},{'header': 'Delegación'},{'header': 'Usuario'}]})
         workbook.close()
+
+class ExistenciasXML(models.AbstractModel):
+    _name = 'existencias.report'
+    _inherit = 'report.report_xlsx.abstract'
+
+    def generate_xlsx_report(self, workbook, data, partners):
+        quants=self.env['stock.quant'].browse(eval(partners.x_studio_arreglo))
+        merge_format = workbook.add_format({'bold': 1,'border': 1,'align': 'center','valign': 'vcenter','fg_color': 'blue'})
+        report_name = 'Existencias'
+        bold = workbook.add_format({'bold': True})
+        sheet = workbook.add_worksheet('Existencias')
+        sheet.merge_range('A1:O1', 'Existencias', merge_format)
+        for obj in quants:
+            sheet.write(i, 0, obj.name, bold)
+            
+
+

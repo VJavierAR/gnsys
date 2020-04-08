@@ -2,9 +2,17 @@
 <report
     id="partner_xlsx"
     model="stock.move.line"
-    string="Print to XLSX"
+    string="Reporte de Movimientos"
     report_type="xlsx"
     name="requisicion.partner_xlsx"
     file="Movimientos"
+    attachment_use="False"/>
+<report
+    id="partner_xlsx"
+    model="stock.quant"
+    string="Reporte de Existencias"
+    report_type="xlsx"
+    name="existencias.report"
+    file="Reporte de Existencias"
     attachment_use="False"/>
 </odoo>

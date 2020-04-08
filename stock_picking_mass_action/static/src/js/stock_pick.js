@@ -14,8 +14,35 @@ odoo.define('invoice.action_button', function (require) {
             if (this.$buttons) {
                 this.$buttons.find('.oe_action_button').click(this.proxy('action_inter2'));
                 this.$buttons.find('.oe_action_button_move_line').click(this.proxy('action_inter1'));
+                this.$buttons.find('.oe_action_button_stock_quant').click(this.proxy('action_inter3'));
             }
         },
+        action_inter3: function (e) {
+            var self = this
+            var user = session.uid;
+            self.do_action({
+                name: _t('Existencias'),
+                type : 'ir.actions.act_window',
+                res_model: 'stock.quant.action',
+                view_type: 'form',
+                view_mode: 'form',
+                view_id: 'view_stock_quant_action_form',
+                views: [[false, 'form']],
+                target: 'new',
+            }, {
+                on_reverse_breadcrumb: function () {
+                    self.update_control_panel({clear: true, hidden: true});
+                }
+            });
+
+
+            rpc.query({
+                model: 'stock.picking',
+                method: 'inter_wizard',
+                args: [[user],{'id':user}],
+            });
+        },
+
 
         action_inter2: function (e) {
             var self = this

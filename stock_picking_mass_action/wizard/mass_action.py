@@ -498,4 +498,12 @@ class StockPickingMassAction(TransientModel):
         if(d==False):
             raise UserError(_("No hay registros para la selecion actual"))
 
+class StockQuantMassAction(TransientModel):
+    _name = 'stock.quant.action'
+    _description = 'Reporte de Existencias'
+    quant_ids = fields.Many2many(comodel_name="stock.quant")
+    almacen=fields.Many2one('stock.warehouse')
+    categoria=fields.Many2one('product.category')
+    tipo=fields.Selection([["Entrada","Entrada"],["Salida","Salida"],["Todos","Todos"]],default="Todos")
+    fecha=fields.Datetime()
 
