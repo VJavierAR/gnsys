@@ -487,7 +487,7 @@ class StockPicking(Model):
     def cierre(self):
         if(self.x_studio_evidencia_a_ticket):
             #self.sudo().action_done()
-            wiz=self.env['stock.picking.mass.action'].create({'picking_ids':[(4,self.id)]})
+            wiz=self.env['stock.picking.mass.action'].create({'picking_ids':[(4,self.id)],'confirm':True,'check_availability':True,'transfer':True})
             #_logger.info(str(self.id))
             #obj.mass_action()
             #view_stock_picking_mass_action_form
