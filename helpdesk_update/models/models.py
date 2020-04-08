@@ -1547,22 +1547,24 @@ class helpdesk_update(models.Model):
         res = {}             
         g = str(self.x_studio_nombretmp)
         
-        if g !='False':
-            list = ast.literal_eval(g)        
-            idf = self.team_id.id
-            tam = len(list)
-            if idf == 8 or idf == 13 :  
-               res['domain']={'x_studio_productos':[('categ_id', '=', 5),('x_studio_toner_compatible.id','in',list)]}
-            if idf == 9:
-               res['domain']={'x_studio_productos':[('categ_id', '=', 7),('x_studio_toner_compatible.id','=',list[0])]}
-            if idf != 9 and idf != 8:
-               res['domain']={'x_studio_productos':[('categ_id', '!=', 5),('x_studio_toner_compatible.id','=',list[0])]}
-            #if idf 55:
-            #   _logger.info("Cotizacion xD" + g)
-            #   res['domain'] = {'x_studio_productos':[('x_studio_toner_compatible.id', '=', list[0]),('x_studio_toner_compatible.property_stock_inventory.id', '=', 121),('x_studio_toner_compatible.id property_stock_inventory.id', '=', 121)] }
-            #   _logger.info("res"+str(res))
+        if self.x_studio_activar_compatibilidad:
+            if g !='False':
+                list = ast.literal_eval(g)        
+                idf = self.team_id.id
+                tam = len(list)
+                if idf == 8 or idf == 13 :  
+                   res['domain']={'x_studio_productos':[('categ_id', '=', 5),('x_studio_toner_compatible.id','in',list)]}
+                if idf == 9:
+                   res['domain']={'x_studio_productos':[('categ_id', '=', 7),('x_studio_toner_compatible.id','=',list[0])]}
+                if idf != 9 and idf != 8:
+                   res['domain']={'x_studio_productos':[('categ_id', '!=', 5),('x_studio_toner_compatible.id','=',list[0])]}
+                #if idf 55:
+                #   _logger.info("Cotizacion xD" + g)
+                #   res['domain'] = {'x_studio_productos':[('x_studio_toner_compatible.id', '=', list[0]),('x_studio_toner_compatible.property_stock_inventory.id', '=', 121),('x_studio_toner_compatible.id property_stock_inventory.id', '=', 121)] }
+                #   _logger.info("res"+str(res))
         else:
             res['domain']={'x_studio_productos':[('categ_id', '!=', 5)]}
+
         return res
         
     @api.onchange('x_studio_zona')
