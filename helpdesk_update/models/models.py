@@ -1563,7 +1563,7 @@ class helpdesk_update(models.Model):
                 #   res['domain'] = {'x_studio_productos':[('x_studio_toner_compatible.id', '=', list[0]),('x_studio_toner_compatible.property_stock_inventory.id', '=', 121),('x_studio_toner_compatible.id property_stock_inventory.id', '=', 121)] }
                 #   _logger.info("res"+str(res))
         else:
-            res['domain']={'x_studio_productos':[('categ_id', '!=', 5)]}
+            res['domain']={'x_studio_productos':[('categ_id', '=', 7)]}
 
         return res
         
