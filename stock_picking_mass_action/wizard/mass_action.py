@@ -179,8 +179,8 @@ class StockCambio(TransientModel):
                         if(i==0):
                             self.env.cr.execute("update stock_picking set state='draft' where sale_id="+str(self.pick.sale_id.id)+";")
                         i=i+1
-                        l=self.env['stock.production.lot'].search([['name','=',d[0]['serie']]])
-                        datos={'x_studio_field_9nQhR':l.id,'order_id':self.pick.sale_id.id,'product_id':d[0]['producto2']['id'],'product_uom':d[0]['producto2']['uom_id']['id'],'product_uom_qty':d[0]['cantidad'],'name':d[0]['producto2']['description'] if(d[0]['producto2']['description']) else '/','price_unit':0.00}
+                        #l=self.env['stock.production.lot'].search([['name','=',d[0]['serie']]])
+                        datos={'x_studio_field_9nQhR':d[0]['serie']['id'],'order_id':self.pick.sale_id.id,'product_id':d[0]['producto2']['id'],'product_uom':d[0]['producto2']['uom_id']['id'],'product_uom_qty':d[0]['cantidad'],'name':d[0]['producto2']['description'] if(d[0]['producto2']['description']) else '/','price_unit':0.00}
                         ss=self.env['sale.order.line'].sudo().create(datos)
                         if(d[0]['almacen']['id']):
                             self.env['stock.move'].search([['sale_id','=',self.pick.sale_id.id],['product_id','=',d[0]['producto2']['id']]]).write({'location_id':d[0]['almacen']['lot_stock_id']['id']})
@@ -229,7 +229,7 @@ class StockCambioLine(TransientModel):
     producto2=fields.Many2one('product.product')
     cantidad=fields.Float()
     rel_cambio=fields.Many2one('cambio.toner')
-    serie=fields.Char()
+    serie=fields.Many2one('stock.production.lot')
     almacen=fields.Many2one('stock.warehouse',string='Almacen')
     existencia1=fields.Integer(compute='nuevo',string='Existencia Nuevo')
     existencia2=fields.Integer(compute='nuevo',string='Existencia Usado')
