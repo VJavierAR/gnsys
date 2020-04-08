@@ -524,7 +524,7 @@ class StockQuantMassAction(TransientModel):
         _logger.info(str(d))
         data=self.env['stock.quant'].search(d)
         _logger.info(str(data.mapped('id')))
-        data.write({'x_studio_arreglo':str(data.mapped('id'))})
-        return self.env.ref('stock_picking_mass_action.quant_xlsx').report_action(data)        
+        data[0].write({'x_studio_arreglo':str(data.mapped('id'))})
+        return self.env.ref('stock_picking_mass_action.quant_xlsx').report_action(data[0])        
 
 
