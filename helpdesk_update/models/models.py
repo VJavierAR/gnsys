@@ -88,7 +88,7 @@ class helpdesk_update(models.Model):
     agregarContactoCheck = fields.Boolean(string="Añadir contacto", default=False)
     
     idLocalidadAyuda = fields.Integer(compute='_compute_id_localidad',string='Id Localidad Ayuda', store=False) 
-    user_id = fields.Many2one('res.users','Ejecutivo', default=lambda self: self.env.user)
+    user_id = fields.Many2one('res.users','Ejecutivo', default=lambda self: self.env.user.id)
     ultimoEvidencia = fields.Many2many('ir.attachment', string="Ultima evidencia",readonly=True,store=False)    
     cambiarDatosClienteCheck = fields.Boolean(string="Editar cliente", default=False)
     
@@ -97,6 +97,8 @@ class helpdesk_update(models.Model):
 
     #name = fields.Text(string = 'Descripción del reporte', default = lambda self: self._compute_descripcion())
     name = fields.Text(string = 'Descripción del reporte')
+
+    abiertoPor = fields.Text(string = 'Ticket abierto por', store = True, default = lambda self: self.env.user.name)
 
     x_studio_contadores = fields.Text(string = 'Contadores Anteriores', store = True, default = lambda self: self.contadoresAnteriores())
 
