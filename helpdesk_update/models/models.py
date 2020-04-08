@@ -198,16 +198,19 @@ class helpdesk_update(models.Model):
     correoClienteContacto = fields.Text(string = 'Correo de contacto cliente', compute = '_compute_correoCliente')
 
     @api.one
+    @api.depends('clienteContactos')
     def _compute_telefonoCliente(self):
         if self.clienteContactos:
             self.telefonoClienteContacto = self.clienteContactos.phone
 
     @api.one
+    @api.depends('clienteContactos')
     def _compute_movilCliente(self):
         if self.clienteContactos:
             self.movilClienteContacto = self.clienteContactos.mobile
 
     @api.one
+    @api.depends('clienteContactos')
     def _compute_correoCliente(self):
         if self.clienteContactos:
             self.correoClienteContacto = self.clienteContactos.email
@@ -218,16 +221,19 @@ class helpdesk_update(models.Model):
     correoLocalidadContacto = fields.Text(string = 'Correo de localidad', compute = '_compute_correoLocalidad')
 
     @api.one
+    @api.depends('localidadContacto')
     def _compute_telefonoLocalidad(self):
         if self.localidadContacto:
             self.telefonoLocalidadContacto = self.localidadContacto.phone
 
     @api.one
+    @api.depends('localidadContacto')
     def _compute_movilLocalidad(self):
         if self.localidadContacto:
             self.movilLocalidadContacto = self.localidadContacto.mobile
 
     @api.one
+    @api.depends('localidadContacto')
     def _compute_correoLocalidad(self):
         if self.localidadContacto:
             self.correoLocalidadContacto = self.localidadContacto.email
