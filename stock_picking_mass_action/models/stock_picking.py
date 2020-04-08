@@ -428,7 +428,7 @@ class StockPicking(Model):
             'context': self.env.context,
         }
     @api.multi
-    def validacionRuta(self):
+    def cierre(self):
         if(len(self.x_studio_evidencia_a_ticket)>0):
             self.sudo().action_done()
             #obj=self.env['stock.picking.mass.action'].create({'picking_ids':[(4,self.id)]})
