@@ -118,6 +118,8 @@ class helpdesk_update(models.Model):
         #_logger.info("Informacion 1: " + str(vals))
         #_logger.info("Informacion 2: " + str(ticket.x_studio_equipo_por_nmero_de_serie))
         ticket.x_studio_id_ticket = ticket.id
+        ticket.abiertoPor = self.env.user.name
+        ticket.user_id = self.env.user.id
         if self.x_studio_empresas_relacionadas:
             ticket.x_studio_field_6furK = ticket.x_studio_empresas_relacionadas.x_studio_field_SqU5B
             ticket.write({'x_studio_field_6furK': ticket.x_studio_empresas_relacionadas.x_studio_field_SqU5B})
