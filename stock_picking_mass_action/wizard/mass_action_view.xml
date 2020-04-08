@@ -34,7 +34,7 @@
                 <group>
                     <field name="almacen"/>
                     <field name="categoria"/>
-                    <field name="tipo" required="1"/>
+                    <field name="tipo" />
                 </group>
                 <footer>
                     <button name="report" string="Reporte" type="object" class="oe_highlight"/>
