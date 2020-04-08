@@ -9,7 +9,7 @@
     file="Movimientos"
     attachment_use="False"/>
 <report
-    id="partner_xlsx"
+    id="quant_xlsx"
     model="stock.quant"
     string="Reporte de Existencias"
     report_type="xlsx"
