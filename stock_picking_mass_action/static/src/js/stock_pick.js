@@ -30,7 +30,7 @@ odoo.define('invoice.action_button', function (require) {
                 views: [[false, 'form']],
                 target: 'new',
             
-            });}
+            });
         },
 
 
