@@ -427,15 +427,7 @@ class StockPicking(Model):
             'res_id': wiz.id,
             'context': self.env.context,
         }
-    @api.multi
-    def cierre(self):
-        if(self.x_studio_evidencia_a_ticket):
-            #self.sudo().action_done()
-            obj=self.env['stock.picking.mass.action'].create({'picking_ids':[(4,self.id)]})
-            #_logger.info(str(self.id))
-            obj.mass_action()
-        else:
-            raise UserError(_('Se requiere evidencia'))
+
 
     # @api.depends('move_type', 'move_lines.state', 'move_lines.picking_id')
     # @api.one
@@ -491,7 +483,15 @@ class StockPicking(Model):
     #                 self.sale_id.x_studio_field_bxHgp.stage_id=93
     #             if(self.state=="confirmed"):
     #                 self.estado='confirmed'
-
+    @api.multi
+    def cierre(self):
+        if(self.x_studio_evidencia_a_ticket):
+            #self.sudo().action_done()
+            obj=self.env['stock.picking.mass.action'].create({'picking_ids':[(4,self.id)]})
+            #_logger.info(str(self.id))
+            obj.mass_action()
+        else:
+            raise UserError(_('Se requiere evidencia'))
 
 class StockPicking(Model):
     _inherit = 'stock.move'
