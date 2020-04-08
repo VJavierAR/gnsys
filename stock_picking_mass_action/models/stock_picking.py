@@ -427,7 +427,7 @@ class StockPicking(Model):
             'res_id': wiz.id,
             'context': self.env.context,
         }
-    
+    @api.multi
     def validacionRuta(self):
         if(len(self.x_studio_evidencia_a_ticket)>0):
             self.sudo().action_done()
