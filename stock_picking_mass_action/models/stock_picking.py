@@ -428,8 +428,12 @@ class StockPicking(Model):
             'context': self.env.context,
         }
     def validacionRuta(self):
-        obj=self.env['stock.picking.mass.action'].create({'picking_ids':[(4,self.id)]})
-        obj.mass_action()
+        if(len(self.x_studio_evidencia_a_ticket)>0):
+            obj=self.env['stock.picking.mass.action'].create({'picking_ids':[(4,self.id)]})
+            obj.mass_action()
+        else:
+            raise UserError(_('Se requiere evidencia'))
+
     # @api.depends('move_type', 'move_lines.state', 'move_lines.picking_id')
     # @api.one
     # def _compute_state(self):
