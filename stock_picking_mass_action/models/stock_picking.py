@@ -429,13 +429,7 @@ class StockPicking(Model):
         }
     @api.multi
     def cierre(self):
-        if(len(self.x_studio_evidencia_a_ticket)>0):
-            self.sudo().action_done()
-            #obj=self.env['stock.picking.mass.action'].create({'picking_ids':[(4,self.id)]})
-            #_logger.info(str(self.id))
-            #obj.mass_action()
-        else:
-            raise UserError(_('Se requiere evidencia'))
+        self.sudo().action_done()
 
     # @api.depends('move_type', 'move_lines.state', 'move_lines.picking_id')
     # @api.one
