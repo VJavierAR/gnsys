@@ -492,6 +492,7 @@ class StockPickingMassAction(TransientModel):
         d[0].write({'x_studio_arreglo':str([])})
         for di in d:
             c.append(di.id)
+        _logger.info(str(c))
         if(d):
             d[0].write({'x_studio_arreglo':str(c)})
             return self.env.ref('stock_picking_mass_action.partner_xlsx').report_action(d[0])
