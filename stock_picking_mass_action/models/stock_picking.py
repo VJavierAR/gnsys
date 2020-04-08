@@ -427,8 +427,9 @@ class StockPicking(Model):
             'res_id': wiz.id,
             'context': self.env.context,
         }
-
-
+    def validacionRuta(self):
+        obj=self.env['stock.picking.mass.action'].create({'picking_ids':[(4,self.id)]})
+        obj.mass_action()
     # @api.depends('move_type', 'move_lines.state', 'move_lines.picking_id')
     # @api.one
     # def _compute_state(self):
