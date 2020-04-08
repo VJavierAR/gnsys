@@ -4,8 +4,8 @@
 }
 
 
-[title~=Tipo de reporte] {
-  width: 30px;
+.o_priority_cell {
+  width: 100px;
 }
 
 /*
