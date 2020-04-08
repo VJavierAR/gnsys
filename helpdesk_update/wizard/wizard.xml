@@ -369,7 +369,7 @@
                     </group>
                     <group string='Buscar por cliente y localidad'>
                         <field name='clienteRelacion' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" attrs='{"domain": [["clienteRelacion.company_type","=","company"]]}' force_save = "1"/>
-                        <field name='localidadRelacion' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain='[["parent_id.id","=",idCliente],["type","=","delivery"]]' force_save = "1"/>
+                        <field name='localidadRelacion' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain='[["parent_id.id","=",idCliente],"|",["type","=","delivery"], ["type","=","contact"]]' force_save = "1"/>
                     </group>
                 </group>
                 
