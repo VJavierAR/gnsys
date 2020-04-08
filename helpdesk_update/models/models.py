@@ -105,7 +105,7 @@ class helpdesk_update(models.Model):
     idClienteAyuda = fields.Integer(compute = '_compute_id_cliente', store = True)
 
     @api.depends('partner_id')
-    def _compute_id_localidad(self):
+    def _compute_id_cliente(self):
         for record in self:
             if record.partner_id:
                 record['idClienteAyuda'] = record.partner_id.id
