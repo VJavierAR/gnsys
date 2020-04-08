@@ -193,6 +193,26 @@ class helpdesk_update(models.Model):
                     r['contadorColorWizard'] = 0
     """
 
+    telefonoClienteContacto = fields.Text(string = 'Telefono de contacto cliente', compute = '_compute_telefonoCliente')
+    movilClienteContacto = fields.Text(string = 'Movil de contacto cliente', compute = '_compute_movilCliente')
+    correoClienteContacto = fields.Text(string = 'Correo de contacto cliente', compute = '_compute_correoCliente')
+
+    @api.one
+    def _compute_telefonoCliente(self):
+        if self.clienteContactos:
+            self.telefonoClienteContacto = self.clienteContactos.phone
+
+    @api.one
+    def _compute_movilCliente(self):
+        if self.clienteContactos:
+            self.movilClienteContacto = self.clienteContactos.mobile
+
+    @api.one
+    def _compute_correoCliente(self):
+        if self.clienteContactos:
+            self.correoClienteContacto = self.clienteContactos.email
+
+
     telefonoLocalidadContacto = fields.Text(string = 'Telefono de localidad', compute = '_compute_telefonoLocalidad')
     movilLocalidadContacto = fields.Text(string = 'Movil de localidad', compute = '_compute_movilLocalidad')
     correoLocalidadContacto = fields.Text(string = 'Correo de localidad', compute = '_compute_correoLocalidad')
