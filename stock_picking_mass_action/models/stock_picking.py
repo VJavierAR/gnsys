@@ -487,9 +487,23 @@ class StockPicking(Model):
     def cierre(self):
         if(self.x_studio_evidencia_a_ticket):
             #self.sudo().action_done()
-            obj=self.env['stock.picking.mass.action'].create({'picking_ids':[(4,self.id)]})
+            wiz=self.env['stock.picking.mass.action'].create({'picking_ids':[(4,self.id)]})
             #_logger.info(str(self.id))
-            obj.mass_action()
+            #obj.mass_action()
+            view_stock_picking_mass_action_form
+            view = self.env.ref('stock_picking_mass_action.view_stock_picking_mass_action_form')
+            return {
+                'name': _('Serie'),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'transferencia.interna',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'res_id': wiz.id,
+                'context': self.env.context,
+            }
         else:
             raise UserError(_('Se requiere evidencia'))
 
