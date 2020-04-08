@@ -57,7 +57,7 @@ class StockPickingMassAction(TransientModel):
                 check=2
             if(s.picking_type_id.id==29314):
                 check=1
-    @api.multi
+    
     def mass_action(self):
         self.ensure_one()
         # Get draft pickings and confirm them if asked
