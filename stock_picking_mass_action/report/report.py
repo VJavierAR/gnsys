@@ -75,7 +75,7 @@ class ExistenciasXML(models.AbstractModel):
         sheet = workbook.add_worksheet('Existencias')
         sheet.merge_range('A1:O1', 'Existencias', merge_format)
         for obj in partners:
-            sheet.write(i, 0, obj.name, bold)
+            sheet.write(i, 0, obj.x_studio_no_parte, bold)
             i=i+1
 
 
