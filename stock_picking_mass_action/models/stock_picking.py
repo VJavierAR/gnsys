@@ -430,7 +430,7 @@ class StockPicking(Model):
     
     def validacionRuta(self):
         if(len(self.x_studio_evidencia_a_ticket)>0):
-            self.action_done()
+            self.sudo().action_done()
             #obj=self.env['stock.picking.mass.action'].create({'picking_ids':[(4,self.id)]})
             #_logger.info(str(self.id))
             #obj.mass_action()
