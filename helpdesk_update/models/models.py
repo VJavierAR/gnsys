@@ -100,6 +100,16 @@ class helpdesk_update(models.Model):
 
     abiertoPor = fields.Text(string = 'Ticket abierto por', store = True, default = lambda self: self.env.user.name)
 
+    clienteContactos = fields.Many2one('res.partner', string = 'Contactos de cliente', store = True)
+
+    idClienteAyuda = fields.Integer(compute = '_compute_id_cliente', store = True)
+
+    @api.depends('partner_id')
+    def _compute_id_localidad(self):
+        for record in self:
+            if record.partner_id:
+                record['idClienteAyuda'] = record.partner_id.id
+
     x_studio_contadores = fields.Text(string = 'Contadores Anteriores', store = True, default = lambda self: self.contadoresAnteriores())
 
     contadores_anteriores = fields.Text(string = 'Contadores Anteriores', store = True, default = lambda self: self.contadoresAnteriores())
