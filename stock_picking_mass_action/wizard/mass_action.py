@@ -505,6 +505,25 @@ class StockQuantMassAction(TransientModel):
     quant_ids = fields.Many2many(comodel_name="stock.quant")
     almacen=fields.Many2one('stock.warehouse')
     categoria=fields.Many2one('product.category')
-    tipo=fields.Selection([["Entrada","Entrada"],["Salida","Salida"],["Todos","Todos"]],default="Todos")
-    fecha=fields.Datetime()
+    tipo=fields.Many2one('product.product',string='Modelo')
+
+    def report(self):
+        d=[]
+        if(self.almacen):
+            d.append(['x_studio_almacn','=',self.almacen.id])
+        if(self.categoria):
+            d.append(['x_studio_categoria','=',self.categoria.id])
+        if(self.tipo):
+            d.append(['product_id','=',tipo.id])
+        if(self.almacen.id==False):
+            d.append(['x_studio_almacn','!=',False])
+        if(self.categoria.id==False):
+            d.append(['x_studio_categoria','!=',False])
+        if(self.tipo.id==False):
+            d.append(['product_id','!=',False])
+        _logger.info(str(d))
+        data=self.env['stock.quant'].search([],limit=1)
+        data.write({'x_studio_arreglo':str(d)})
+        return self.env.ref('stock_picking_mass_action.quant_xlsx').report_action(data)        
+
 

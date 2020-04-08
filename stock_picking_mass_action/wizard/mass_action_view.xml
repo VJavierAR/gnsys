@@ -35,7 +35,6 @@
                     <field name="almacen"/>
                     <field name="categoria"/>
                     <field name="tipo" required="1"/>
-                    <field name="fecha" string="Fecha de solicitud" required="1"/>
                 </group>
                 <footer>
                     <button name="report" string="Reporte" type="object" class="oe_highlight"/>
