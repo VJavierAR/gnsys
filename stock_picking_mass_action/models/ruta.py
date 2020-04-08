@@ -16,6 +16,7 @@ class CreacionRuta(Model):
 	odometro=fields.Integer()
 	nivel_tanque=fields.Selection([["reserva","Reserva"],[".25","1/4"],[".5","1/2"],[".75","3/4"],["1","Lleno"]])
 	tipo=fields.Selection([["local","Local"],["foraneo","Foraneo"]])
+	EstadoPais=fields.Many2one('res.country.state',string="Estado")
 
 
 	@api.multi

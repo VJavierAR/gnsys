@@ -64,10 +64,11 @@ class StockPicking(Model):
         for r in self:
             if(r.partner_id):
                 if(r.partner_id.state_id):
-                    if(r.partner_id.state_id.code in 'DIF'):
-                        r.tipo='local'
-                    else:
-                        r.tipo='foraneo'
+                    r.tipo=r.partner_id.state_id.name
+                    #if(r.partner_id.state_id.code in 'DIF'):
+                    #    r.tipo='local'
+                    #else:
+                    #    r.tipo='foraneo'
 
     @api.onchange('carrier_tracking_ref')
     def agregarNumeroGuiaATicketOSolicitud(self):
