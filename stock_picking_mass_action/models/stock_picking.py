@@ -490,10 +490,10 @@ class StockPicking(Model):
             wiz=self.env['stock.picking.mass.action'].create({'picking_ids':[(4,self.id)]})
             #_logger.info(str(self.id))
             #obj.mass_action()
-            view_stock_picking_mass_action_form
+            #view_stock_picking_mass_action_form
             view = self.env.ref('stock_picking_mass_action.view_stock_picking_mass_action_form')
             return {
-                'name': _('Serie'),
+                'name': _('Transferencia'),
                 'type': 'ir.actions.act_window',
                 'view_type': 'form',
                 'view_mode': 'form',
