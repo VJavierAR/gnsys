@@ -162,7 +162,7 @@
                 <group>
                     <group string="Contadores anteriores">
                         <field name="contadorBNMesa" readonly="1"/>
-                        <field name="contadorColorMesa" readonly="1"/>
+                        <field name="contadorColorMesa" readonly="1" attrs='{"invisible": [["bnColor", "=", "B/N"]]}'/>
                         <field name="bnColor" readonly="1"/>
                         
                     </group>
