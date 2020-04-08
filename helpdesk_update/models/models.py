@@ -1556,7 +1556,7 @@ class helpdesk_update(models.Model):
             if idf == 9:
                res['domain']={'x_studio_productos':[('categ_id', '=', 7),('x_studio_toner_compatible.id','=',list[0])]}
             if idf != 9 and idf != 8:
-               res['domain']={'x_studio_productos':[('x_studio_toner_compatible.id','=',list[0])]}
+               res['domain']={'x_studio_productos':[('categ_id', '!=', 5),('x_studio_toner_compatible.id','=',list[0])]}
             #if idf 55:
             #   _logger.info("Cotizacion xD" + g)
             #   res['domain'] = {'x_studio_productos':[('x_studio_toner_compatible.id', '=', list[0]),('x_studio_toner_compatible.property_stock_inventory.id', '=', 121),('x_studio_toner_compatible.id property_stock_inventory.id', '=', 121)] }
