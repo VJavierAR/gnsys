@@ -149,7 +149,7 @@ class StockPickingMassAction(TransientModel):
     def vales(self):
         assigned_picking_lst2 = self.picking_ids.\
         filtered(lambda x: x.picking_type_id.id == 3 and x.state == 'done')
-        return self.env.ref('stock.action_report_delivery').report_action(assigned_picking_lst2)
+        return self.env.ref('studio_customization.vale_de_entrega_56cdb2f0-51e3-447e-8a67-6e5c7a6b3af9').report_action(assigned_picking_lst2)
     @api.multi
     def etiquetas(self):
         assigned_picking_lst2 = self.picking_ids.\
