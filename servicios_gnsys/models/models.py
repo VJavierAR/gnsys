@@ -19,7 +19,7 @@ class servicios_gnsys(models.Model):
     fechaDeFinDeServicio = fields.Datetime(string = 'Fecha de finalización de servicio',track_visibility='onchange')
     descripcion = fields.Text(string="Descripción")
     rentaMensual = fields.Text(string="Renta mensual")
-    tipo = fields.Selection([('1','SERVICIO DE PCOUNTER'),('2','RENTA MENSUAL DE LICENCIA EMBEDED'),('3','Arrendamiento')],string="Tipo de servicio")
+    tipo = fields.Selection([('1','SERVICIO DE PCOUNTER'),('2','RENTA MENSUAL DE LICENCIA EMBEDED'),('3','Arrendamiento Base'),('4','Arrendamiento Global')],string="Tipo de servicio")
     bolsaBN = fields.Integer(string="Bolsa B/N")
     clickExcedenteBN = fields.Float(string="Click")
     procesadoBN = fields.Integer(string="Procesado B/N")
