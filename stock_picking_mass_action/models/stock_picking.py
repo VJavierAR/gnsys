@@ -427,9 +427,11 @@ class StockPicking(Model):
             'res_id': wiz.id,
             'context': self.env.context,
         }
+    @api.multi
     def validacionRuta(self):
         if(len(self.x_studio_evidencia_a_ticket)>0):
-            obj=self.env['stock.picking.mass.action'].create({'picking_ids':[(4,self.id)]})
+            obj=self.env['stock.picking.mass.action'].create({'picking_ids':[(6,0,[self.id])]})
+            _logger.info(str(len(obj.picking_ids)))
             obj.mass_action()
         else:
             raise UserError(_('Se requiere evidencia'))
