@@ -522,8 +522,8 @@ class StockQuantMassAction(TransientModel):
         if(self.tipo.id==False):
             d.append(['product_id','!=',False])
         _logger.info(str(d))
-        data=self.env['stock.quant'].search([],limit=1)
-        data.write({'x_studio_arreglo':str(d)})
+        data=self.env['stock.quant'].search(d,limit=1)
+        data.write({'x_studio_arreglo':str(data.mapped('id'))})
         return self.env.ref('stock_picking_mass_action.quant_xlsx').report_action(data)        
 
 
