@@ -4,6 +4,10 @@
 }
 
 
+[title~=Tipo de reporte] {
+  width: 30px;
+}
+
 /*
 .fa-user-md:hover {
 	font-size: 30px;
