@@ -514,7 +514,7 @@ class StockQuantMassAction(TransientModel):
         if(self.categoria):
             d.append(['x_studio_categoria','=',self.categoria.id])
         if(self.tipo):
-            d.append(['product_id','=',tipo.id])
+            d.append(['product_id','=',self.tipo.id])
         if(self.almacen.id==False):
             d.append(['x_studio_almacn','!=',False])
         if(self.categoria.id==False):
