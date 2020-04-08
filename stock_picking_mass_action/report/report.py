@@ -67,14 +67,14 @@ class ExistenciasXML(models.AbstractModel):
     _inherit = 'report.report_xlsx.abstract'
 
     def generate_xlsx_report(self, workbook, data, partners):
-        quants=self.env['stock.quant'].browse(eval(partners.x_studio_arreglo))
+        #quants=self.env['stock.quant'].browse(eval(partners.x))
         merge_format = workbook.add_format({'bold': 1,'border': 1,'align': 'center','valign': 'vcenter','fg_color': 'blue'})
         report_name = 'Existencias'
         bold = workbook.add_format({'bold': True})
         sheet = workbook.add_worksheet('Existencias')
         sheet.merge_range('A1:O1', 'Existencias', merge_format)
-        for obj in quants:
+        for obj in partners:
             sheet.write(i, 0, obj.name, bold)
-            
+
 
 
