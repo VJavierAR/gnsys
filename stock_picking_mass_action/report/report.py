@@ -88,7 +88,7 @@ class ExistenciasXML(models.AbstractModel):
                 sheet.write(i, 6, obj.reserved_quantity, bold)
                 sheet.write(i, 7, obj.x_studio_field_kUc4x.x_name, bold)
                 i=i+1
-            sheet.add_table('A2:G'+str((i)),{'style': 'Table Style Medium 9','columns': [{'header': 'Almacen'},{'header': 'Modelo'},{'header': 'No Parte'},{'header':'Descripción'}{'header':'No Serie'},{'header': 'Estado'},{'header': 'Apartados'},{'header': 'Ubicación'}]}) 
+            sheet.add_table('A2:G'+str((i)),{'style': 'Table Style Medium 9','columns': [{'header': 'Almacen'},{'header': 'Modelo'},{'header': 'No Parte'},{'header':'Descripción'},{'header':'No Serie'},{'header': 'Estado'},{'header': 'Apartados'},{'header': 'Ubicación'}]}) 
         else:
             sheet = workbook.add_worksheet('Existencias Equipos')
             sheet.merge_range('A1:G1', 'Existencias Equipos', merge_format)    
