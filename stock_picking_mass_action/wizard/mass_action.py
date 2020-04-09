@@ -405,7 +405,8 @@ class StockPickingMassAction(TransientModel):
     almacen=fields.Many2one('stock.warehouse')
     categoria=fields.Many2one('product.category')
     tipo=fields.Selection([["Entrada","Entrada"],["Salida","Salida"],["Todos","Todos"]],default="Todos")
-    fecha=fields.Datetime()
+    fechaInicial=fields.Datetime()
+    fechaFinal=fields.Datetime()
 
     def report(self):
         i=[]
@@ -414,8 +415,11 @@ class StockPickingMassAction(TransientModel):
         e=0
         origenes=[]
         destinos=[]
-        if(self.fecha):
-            m=['date','>=',self.fecha]
+        if(self.fechaInicial):
+            m=['date','>=',self.fechaInicial]
+            i.append(m)
+        if(self.fechaFinal):
+            m=['date','<=',self.fechaFinal]
             i.append(m)
         i.append(l)
         _logger.info(str(self.almacen.id))
