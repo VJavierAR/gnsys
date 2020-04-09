@@ -132,5 +132,5 @@ class PartnerXlsx(models.AbstractModel):
                 sheet.write(i, 12, obj.x_studio_tipo_de_solicitud, bold)
                 sheet.write(i, 13, str(str(obj.state)+'/'+write_uid.name), bold)
                 sheet.write(i, 14, create_uid.name, bold)
-                sheet.write(i, 15, 'Asignado' if(obj.user_id) 'No Asignado', bold)
+                sheet.write(i, 15, 'Asignado' if(obj.user_id) else 'No Asignado', bold)
                 sheet.write(i, 16, obj.note, bold)
