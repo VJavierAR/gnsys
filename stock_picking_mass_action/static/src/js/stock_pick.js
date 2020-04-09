@@ -15,7 +15,7 @@ odoo.define('invoice.action_button', function (require) {
                 this.$buttons.find('.oe_action_button').click(this.proxy('action_inter2'));
                 this.$buttons.find('.oe_action_button_move_line').click(this.proxy('action_inter1'));
                 this.$buttons.find('.oe_action_button_stock_quant').click(this.proxy('action_inter3'));
-                this.$buttons.find('.oe_action_button_sale_reportt').click(this.proxy('action_inter4'));
+                this.$buttons.find('.oe_action_button_sale_report').click(this.proxy('action_inter4'));
             }
         },
         action_inter4: function (e) {
