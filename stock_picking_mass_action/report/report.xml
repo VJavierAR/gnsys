@@ -16,7 +16,6 @@
     name="existencias.report"
     file="Reporte de Existencias"
     attachment_use="False"/>
-</data>
 <report
     id="sale_xlsx"
     model="sale.order"
