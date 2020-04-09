@@ -68,7 +68,7 @@ class ExistenciasXML(models.AbstractModel):
 
     def generate_xlsx_report(self, workbook, data, quants):
         quants=self.env['stock.quant'].browse(eval(quants.x_studio_arreglo)) if(quants) else []
-        t=quants.filter(lambda x:x.lot_id!=False)
+        t=quants.filtered(lambda x:x.lot_id!=False)
         i=2
         merge_format = workbook.add_format({'bold': 1,'border': 1,'align': 'center','valign': 'vcenter','fg_color': 'blue'})
         report_name = 'Existencias'
