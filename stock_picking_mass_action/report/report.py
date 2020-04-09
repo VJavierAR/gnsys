@@ -78,7 +78,7 @@ class ExistenciasXML(models.AbstractModel):
         if(len(t)>0):
             sheet = workbook.add_worksheet('Existencias Componentes')
             sheet.merge_range('A1:I1', 'Existencias Componentes', merge_format)
-             for obj in quants:
+            for obj in quants:
                 sheet.write(i, 0, obj.x_studio_almacn.name, bold)
                 sheet.write(i, 1, obj.product_id.name, bold)
                 sheet.write(i, 2, obj.product_id.default_code, bold)
