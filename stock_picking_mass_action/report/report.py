@@ -73,15 +73,15 @@ class ExistenciasXML(models.AbstractModel):
         report_name = 'Existencias'
         bold = workbook.add_format({'bold': True})
         sheet = workbook.add_worksheet('Existencias')
-        sheet.merge_range('A1:O1', 'Existencias', merge_format)
+        sheet.merge_range('A1:G1', 'Existencias', merge_format)
         for obj in quants:
             sheet.write(i, 0, obj.x_studio_almacn.name, bold)
-            sheet.write(i, 0, obj.product_id.name, bold)
-            sheet.write(i, 0, obj.product_id.default_code, bold)
-            sheet.write(i, 0, obj.product_id.description, bold)
-            sheet.write(i, 0, obj.quantity, bold)
-            sheet.write(i, 0, obj.reserved_quantity, bold)
-            sheet.write(i, 0, obj.x_studio_field_kUc4x.x_name, bold)
+            sheet.write(i, 1, obj.product_id.name, bold)
+            sheet.write(i, 2, obj.product_id.default_code, bold)
+            sheet.write(i, 3, obj.product_id.description, bold)
+            sheet.write(i, 4, obj.quantity, bold)
+            sheet.write(i, 5, obj.reserved_quantity, bold)
+            sheet.write(i, 6, obj.x_studio_field_kUc4x.x_name, bold)
             i=i+1
         sheet.add_table('A2:G'+str((i)),{'style': 'Table Style Medium 9','columns': [{'header': 'Almacen'},{'header': 'Modelo'},{'header': 'No Parte'},{'header':'Descripción'},{'header': 'Existencia'},{'header': 'Apartados'},{'header': 'Ubicación'}]})
         workbook.close()
