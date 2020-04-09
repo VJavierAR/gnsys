@@ -31,6 +31,7 @@ class servicios_gnsys(models.Model):
     series = fields.One2many('stock.production.lot', 'servicio', string="Series")
     
     color_bn = fields.Integer(string="Color - B/N")
+    idtec = fields.Integer(string="Id otro sistema")
 
     lecAntBN = fields.Integer(string="Lectura anterior B/N")
     lecActualBN = fields.Integer(string="Lectura actual B/N")
