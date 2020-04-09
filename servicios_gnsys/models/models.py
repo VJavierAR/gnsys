@@ -11,7 +11,6 @@ _logger = logging.getLogger(__name__)
 class servicios_gnsys(models.Model):
     _name = 'servicios'
     _inherit = 'mail.thread'
-    _inherit = 'contrato'
     _description = 'Servicios GNSYS'
     
     
