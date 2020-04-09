@@ -493,7 +493,7 @@ class StockPickingMassAction(TransientModel):
         d=self.env['stock.move.line'].search(j,order='date desc')
         h=d if(d!=[]) else self.env['stock.move.line']
         c=[]
-        d[0].write({'x_studio_arreglo':str([])})
+        #d[0].write({'x_studio_arreglo':str([])})
         for di in d:
             c.append(di.id)
         _logger.info(str(c))
