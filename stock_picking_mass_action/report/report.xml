@@ -17,4 +17,13 @@
     file="Reporte de Existencias"
     attachment_use="False"/>
 </data>
+<report
+    id="sale_xlsx"
+    model="sale.order"
+    string="Reporte de Solicitudes"
+    report_type="xlsx"
+    name="solicitudes.report"
+    file="Reporte de Solicitudes"
+    attachment_use="False"/>
+</data>
 </odoo>

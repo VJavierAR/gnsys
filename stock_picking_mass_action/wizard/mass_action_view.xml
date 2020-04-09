@@ -8,6 +8,21 @@
         <field name="target">new</field>
         <field name="binding_model_id" ref="stock.model_stock_move_line" />
     </record>
+    <record id="view_sale_order_action_form" model="ir.ui.view">
+        <field name="model">sale.order.action</field>
+        <field name="arch" type="xml">
+            <form string="Mass Action for the selected sale order">
+                <group>
+                    <field name="fechaInicial" string="Fecha Inicial" required="1"/>
+                    <field name="fechaFinal" string="Fecha Inicial" required="1"/>
+                </group>
+                <footer>
+                    <button name="report" string="Reporte" type="object" class="oe_highlight"/>
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
 
     <record id="view_stock_move_action_form" model="ir.ui.view">
         <field name="model">stock.move.action</field>

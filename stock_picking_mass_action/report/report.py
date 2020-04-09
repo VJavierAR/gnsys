@@ -103,3 +103,34 @@ class ExistenciasXML(models.AbstractModel):
         workbook.close()
 
 
+class PartnerXlsx(models.AbstractModel):
+    _name = 'report.solicitudes.report'
+    _inherit = 'report.report_xlsx.abstract'
+
+    def generate_xlsx_report(self, workbook, data, sale):
+        i=2
+        d=[]
+        sale=self.env['sale.order'].browse(eval(sale.x_studio_arreglo)) if(sale) else []
+        merge_format = workbook.add_format({'bold': 1,'border': 1,'align': 'center','valign': 'vcenter','fg_color': 'blue'})
+        report_name = 'Solicitudes'
+        bold = workbook.add_format({'bold': True})
+        sheet = workbook.add_worksheet('Solicitudes')
+        sheet.merge_range('A1:R1', 'Solicitudes', merge_format)
+        for obj in sale:
+                sheet.write(i, 0, obj.name, bold)
+                sheet.write(i, 1, obj.write_date, bold)
+                sheet.write(i, 2, obj.partner_id.name, bold)
+                sheet.write(i, 3, obj.partner_shipping_id.name, bold)
+                sheet.write(i, 4, obj.wharehouse_id.name, bold)
+                sheet.write(i, 5, obj.x_studio_status, bold)
+                sheet.write(i, 6, str(obj.order_line.filtered(lambda x:x.product_id.categ_id.id==13).mapped('product_id.name')), bold)
+                sheet.write(i, 7, str(self.env['stock.move.line'].search(['sale_id','=',obj.id],['lot_id','!=',False]).mapped('lot_id.name')), bold)
+                sheet.write(i, 8, str(obj.order_line.filtered(lambda x:x.product_id.categ_id.id==11).mapped('product_id.name')), bold)
+                sheet.write(i, 9, str(obj.order_line.filtered(lambda x:x.product_id.categ_id.id==5).mapped('product_id.name')), bold)
+                sheet.write(i, 10, len(obj.order_line.filtered(lambda x:x.product_id.categ_id.id==13).mapped('product_id.name')), bold)
+                sheet.write(i, 11, len(obj.order_line.filtered(lambda x:x.product_id.categ_id.id!=13).mapped('product_id.name')), bold)
+                sheet.write(i, 12, obj.x_studio_tipo_de_solicitud, bold)
+                sheet.write(i, 13, str(str(obj.state)+'/'+write_uid.name), bold)
+                sheet.write(i, 14, create_uid.name, bold)
+                sheet.write(i, 15, 'Asignado' if(obj.user_id) 'No Asignado', bold)
+                sheet.write(i, 16, obj.note, bold)
