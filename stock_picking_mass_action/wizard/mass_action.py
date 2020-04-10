@@ -562,7 +562,7 @@ class SaleOrderMassAction(TransientModel):
             m=['write_date','<=',self.fechaFinal]
             i.append(m)
         i.append(['x_studio_field_bxHgp','=',False])
-        d=self.env['sale.order'].search(i,order='write_date desc')
+        d=self.env['sale.order'].search(i,order='write_date asc')
         _logger.info(str(len(d)))
         if(len(d)>0):
             d[0].write({'x_studio_arreglo':str(d.mapped('id'))})
