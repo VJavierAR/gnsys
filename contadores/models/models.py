@@ -494,12 +494,16 @@ class contadores(models.Model):
         row = 0
         column = 0        
         content = ["No.", "Localidad", "Modelo", "No. Serie","B/N "+str(self.mes), "Color "+str(self.mes),"B/N ", "Color", "Impresiones B/N", "Impresiones Color","Subtotal","IVA","Total","Ubucación"]        
-        i=0
+        
+        worksheet.write(0, i, "Cliente:")            
+        
+        
+        i=1
         for item in content :           
             worksheet.write(0, i, item)            
             row += 1
             i=i+1
-        i=1
+        i=2
         worksheet.set_column('B:B', 40)
         #worksheet.set_column(2, 2, 40)
         worksheet.set_column('C:C', 30)
