@@ -553,7 +553,6 @@ class SaleOrderMassAction(TransientModel):
     fechaFinal=fields.Datetime()
 
     def report(self):
-        d=[]
         i=[]
         if(self.fechaInicial):
             m=['write_date','>=',self.fechaInicial]
