@@ -561,6 +561,7 @@ class contadores(models.Model):
             st=0
             iva=0
             ttt=0
+            g=6
             if int(ser.rentaMensual)==0:
                 if ebn>bolsabn:                
                    stbn=round((ebn-bolsabn)*clickbn,2)                   
@@ -580,37 +581,37 @@ class contadores(models.Model):
             tiva=iva+tiva
             total=ttt+total
             i=i+1   
-        worksheet.write(len(self.detalle)+1, 8, tbn)
-        worksheet.write(len(self.detalle)+1, 9, tc)
-        worksheet.write(len(self.detalle)+1, 10, '$'+str(round(tsubt,2)))
-        worksheet.write(len(self.detalle)+1, 11, '$'+str(round(tiva,2)))
-        worksheet.write(len(self.detalle)+1, 12, '$'+str(round(total,2)))
+        worksheet.write(len(self.detalle)+g, 8, tbn)
+        worksheet.write(len(self.detalle)+g, 9, tc)
+        worksheet.write(len(self.detalle)+g, 10, '$'+str(round(tsubt,2)))
+        worksheet.write(len(self.detalle)+g, 11, '$'+str(round(tiva,2)))
+        worksheet.write(len(self.detalle)+g, 12, '$'+str(round(total,2)))
         
         if int(ser.rentaMensual)>0 and ser.bolsaBN < tbn :            
            bnae=round((tbn-bolsabn)*clickbn,2)
            tsubt=bnae
            tiva=round(tsubt*.16,2)
            total=tsubt+tiva
-           worksheet.write(len(self.detalle)+1, 10, '$'+str(tsubt))
-           worksheet.write(len(self.detalle)+1, 11, '$'+str(tiva))
-           worksheet.write(len(self.detalle)+1, 12, '$'+str(total))        
+           worksheet.write(len(self.detalle)+g, 10, '$'+str(tsubt))
+           worksheet.write(len(self.detalle)+g, 11, '$'+str(tiva))
+           worksheet.write(len(self.detalle)+g, 12, '$'+str(total))        
         if int(ser.rentaMensual)>0 and ser.bolsaColor < tc :                        
            cae= round((tc-bolsaColor)*clickc,2)
            tsubt=cae           
            tiva=round(tsubt*.16,2)
            total=tsubt+tiva            
-           worksheet.write(len(self.detalle)+1, 10, '$'+str(tsubt))
-           worksheet.write(len(self.detalle)+1, 11, '$'+str(tiva))
-           worksheet.write(len(self.detalle)+1, 12, '$'+str(total))
+           worksheet.write(len(self.detalle)+g, 10, '$'+str(tsubt))
+           worksheet.write(len(self.detalle)+g, 11, '$'+str(tiva))
+           worksheet.write(len(self.detalle)+g, 12, '$'+str(total))
         if int(ser.rentaMensual)>0 and ser.bolsaBN < tbn and ser.bolsaColor < tc:
            bnae=round((tbn-bolsabn)*clickbn,2) 
            cae= round((tc-bolsaColor)*clickc,2)
            tsubt=bnae+cae
            tiva=round(tsubt*.16,2)
            total=tsubt+tiva            
-           worksheet.write(len(self.detalle)+1, 10, '$'+str(tsubt))
-           worksheet.write(len(self.detalle)+1, 11, '$'+str(tiva))
-           worksheet.write(len(self.detalle)+1, 12, '$'+str(total))                                        
+           worksheet.write(len(self.detalle)+g, 10, '$'+str(tsubt))
+           worksheet.write(len(self.detalle)+g, 11, '$'+str(tiva))
+           worksheet.write(len(self.detalle)+g, 12, '$'+str(total))                                        
         workbook.close()
         #fp = StringIO()
         #workbook.save(fp)
