@@ -554,6 +554,7 @@ class SaleOrderMassAction(TransientModel):
 
     def report(self):
         i=[]
+        d=[]
         if(self.fechaInicial):
             m=['write_date','>=',self.fechaInicial]
             i.append(m)
