@@ -497,7 +497,7 @@ class contadores(models.Model):
         if self.cliente:
            worksheet.write(0, 0, "CLIENTE: "+str(self.cliente.name))
            dir=self.serie=self.env['res.partner'].search([['parent_id','=',self.cliente.id],["type","=","invoice"]],order='create_date desc',limit=1)        
-           worksheet.write(0, 1, "DIRECCIÓN: "+str(dir.street_name))
+           worksheet.write(1, 1, "DIRECCIÓN: "+str(dir.street_name))
            
         
         
