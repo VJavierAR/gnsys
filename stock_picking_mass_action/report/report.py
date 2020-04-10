@@ -134,3 +134,6 @@ class PartnerXlsx(models.AbstractModel):
                 sheet.write(i, 14, obj.create_uid.name, bold)
                 sheet.write(i, 15, 'Asignado' if(obj.user_id) else 'No Asignado', bold)
                 sheet.write(i, 16, obj.note, bold)
+                i=i+1
+        sheet.add_table('A2:R'+str((i)),{'style': 'Table Style Medium 9','columns': [{'header': 'Numero de solicitud'},{'header': 'Fecha'},{'header': 'Cliente'},{'header':'Localidades'},{'header': 'Almacen'},{'header': 'Status'},{'header': 'Modelo'},{'header': 'No. De serie'},{'header': 'Accesorio'},{'header': 'Toner'},{'header': 'Número de equipos'},{'header': 'Número de componentes'},{'header': 'Tipo'},{'header': 'Status'},{'header': 'Usuario Creación'},{'header': 'Asignado'},{'header': 'Comentarios'}]}) 
+        workbook.close()
