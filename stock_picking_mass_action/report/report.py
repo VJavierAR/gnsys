@@ -121,7 +121,7 @@ class PartnerXlsx(models.AbstractModel):
                 sheet.write(i, 1, obj.write_date, bold)
                 sheet.write(i, 2, obj.partner_id.name, bold)
                 sheet.write(i, 3, obj.partner_shipping_id.name, bold)
-                sheet.write(i, 4, obj.wharehouse_id.name, bold)
+                sheet.write(i, 4, obj.warehouse_id.name, bold)
                 sheet.write(i, 5, obj.x_studio_status, bold)
                 sheet.write(i, 6, str(obj.order_line.filtered(lambda x:x.product_id.categ_id.id==13).mapped('product_id.name')), bold)
                 sheet.write(i, 7, str(self.env['stock.move.line'].search(['sale_id','=',obj.id],['lot_id','!=',False]).mapped('lot_id.name')), bold)
