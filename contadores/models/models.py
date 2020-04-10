@@ -495,7 +495,7 @@ class contadores(models.Model):
         column = 0        
         content = ["No.", "Localidad", "Modelo", "No. Serie","B/N "+str(self.mes), "Color "+str(self.mes),"B/N ", "Color", "Impresiones B/N", "Impresiones Color","Subtotal","IVA","Total","Ubucación"]        
         
-        worksheet.write(0, i, "Cliente:")            
+        worksheet.write(0, 0, "Cliente:")            
         
         
         i=1
