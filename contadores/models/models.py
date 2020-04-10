@@ -517,6 +517,8 @@ class contadores(models.Model):
         #worksheet.set_column(2, 2, 40)
         worksheet.set_column('C:C', 30)
         worksheet.set_column('D:D', 30)
+        worksheet.write('A2', 'Insert an image in a cell:')
+        worksheet.insert_image('M2', 'gnsys.png')
         if len(self.detalle)>0: 
             ser=self.serie=self.env['servicios'].search([['id','=',self.detalle[0].servicio]])        
         else:
