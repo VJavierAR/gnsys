@@ -500,7 +500,7 @@ class contadores(models.Model):
         
         i=1
         for item in content :           
-            worksheet.write(0, i, item)            
+            worksheet.write(1, i, item)            
             row += 1
             i=i+1
         i=2
