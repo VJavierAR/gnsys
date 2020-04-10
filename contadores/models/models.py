@@ -494,16 +494,19 @@ class contadores(models.Model):
         row = 0
         column = 0        
         content = ["No.", "Localidad", "Modelo", "No. Serie","B/N "+str(self.mes), "Color "+str(self.mes),"B/N ", "Color", "Impresiones B/N", "Impresiones Color","Subtotal","IVA","Total","Ubucación"]        
+        if self.cliente:
+           worksheet.write(0, 0, "CLIENTE: "+str(self.cliente.name))
+           dir=self.serie=self.env['res.partner'].search([['parthner_id','=',self.cliente.id],["type","=","invoice"]])        
+           worksheet.write(0, 1, "DIRECCIÓN: "+str(dir.street_name))
+           
         
-        worksheet.write(0, 0, "Cliente:")            
         
-        
-        i=1
+        i=2
         for item in content :           
-            worksheet.write(1, i, item)            
+            worksheet.write(2, i, item)            
             row += 1
             i=i+1
-        i=2
+        i=3
         worksheet.set_column('B:B', 40)
         #worksheet.set_column(2, 2, 40)
         worksheet.set_column('C:C', 30)
