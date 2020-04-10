@@ -115,7 +115,7 @@ class PartnerXlsx(models.AbstractModel):
         report_name = 'Solicitudes'
         bold = workbook.add_format({'bold': True})
         sheet = workbook.add_worksheet('Solicitudes')
-        sheet.merge_range('A1:R1', 'Solicitudes', merge_format)
+        sheet.merge_range('A1:Q1', 'Solicitudes', merge_format)
         for obj in sale:
                 sheet.write(i, 0, obj.name, bold)
                 sheet.write(i, 1, obj.write_date, bold)
@@ -133,7 +133,7 @@ class PartnerXlsx(models.AbstractModel):
                 sheet.write(i, 13, str(str(obj.state)+'/'+obj.write_uid.name), bold)
                 sheet.write(i, 14, obj.create_uid.name, bold)
                 sheet.write(i, 15, 'Asignado' if(obj.user_id) else 'No Asignado', bold)
-                sheet.write(i, 16, obj.note, bold)
+                sheet.write(i, 16, str(obj.note), bold)
                 i=i+1
         sheet.add_table('A2:Q'+str(i),{'style': 'Table Style Medium 9','columns': [{'header': 'Numero de solicitud'},{'header': 'Fecha'},{'header': 'Cliente'},{'header':'Localidades'},{'header': 'Almacen'},{'header': 'Status'},{'header': 'Modelo'},{'header': 'No. De serie'},{'header': 'Accesorio'},{'header': 'Toner'},{'header': 'Número de equipos'},{'header': 'Número de componentes'},{'header': 'Tipo'},{'header': 'Status'},{'header': 'Usuario Creación'},{'header': 'Asignado'},{'header': 'Comentarios'}]}) 
         workbook.close()
