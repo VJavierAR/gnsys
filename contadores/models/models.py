@@ -496,7 +496,7 @@ class contadores(models.Model):
         content = ["No.", "Localidad", "Modelo", "No. Serie","B/N "+str(self.mes), "Color "+str(self.mes),"B/N ", "Color", "Impresiones B/N", "Impresiones Color","Subtotal","IVA","Total","Ubucación"]        
         if self.cliente:
            worksheet.write(0, 0, "CLIENTE: "+str(self.cliente.name))
-           dir=self.serie=self.env['res.partner'].search([['parthner_id','=',self.cliente.id],["type","=","invoice"]])        
+           dir=self.serie=self.env['res.partner'].search([['partner_id','=',self.cliente.id],["type","=","invoice"]])        
            worksheet.write(0, 1, "DIRECCIÓN: "+str(dir.street_name))
            
         
