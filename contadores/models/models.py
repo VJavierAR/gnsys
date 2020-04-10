@@ -509,7 +509,7 @@ class contadores(models.Model):
         
         i=5
         for item in content :           
-            worksheet.write(5, i, item)            
+            worksheet.write(0, i, item)            
             row += 1
             i=i+1
         i=6
