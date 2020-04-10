@@ -110,7 +110,7 @@ class PartnerXlsx(models.AbstractModel):
     def generate_xlsx_report(self, workbook, data, sale):
         i=2
         d=[]
-        sale=self.env['sale.order'].browse(eval(sale.x_studio_arreglo)) if(sale) else []
+        sale=self.env['sale.order'].browse(eval(sale.x_studio_arreglo)).sorted(key=write_date,reverse=True) if(sale) else []
         merge_format = workbook.add_format({'bold': 1,'border': 1,'align': 'center','valign': 'vcenter','fg_color': 'blue'})
         report_name = 'Solicitudes'
         bold = workbook.add_format({'bold': True})
