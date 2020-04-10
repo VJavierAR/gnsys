@@ -118,7 +118,7 @@ class PartnerXlsx(models.AbstractModel):
         sheet.merge_range('A1:Q1', 'Solicitudes', merge_format)
         for obj in sale:
                 sheet.write(i, 0, obj.name, bold)
-                sheet.write(i, 1, obj.write_date, bold)
+                sheet.write(i, 1, obj.write_date.strftime("%Y/%m/%d"), bold)
                 sheet.write(i, 2, obj.partner_id.name, bold)
                 sheet.write(i, 3, obj.partner_shipping_id.name, bold)
                 sheet.write(i, 4, obj.warehouse_id.name, bold)
