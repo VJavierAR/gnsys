@@ -39,27 +39,27 @@ class PartnerXlsx(models.AbstractModel):
             sheet.write(i, 4, obj.product_id.name, bold)
             sheet.write(i, 5, obj.product_id.default_code, bold)
             sheet.write(i, 6, obj.qty_done, bold)
-            if(obj.lot_id):
-                sheet.write(i, 7, obj.lot_id.name, bold)
             if(obj.lot_id==False):
-                sheet.write(i, 7, obj.move_id.x_studio_serieorderline, bold)
+                sheet.write(i, 7, obj.product_id.default_code, bold)
             sheet.write(i, 8, obj.move_id.picking_id.partner_id.parent_id.name, bold)
             sheet.write(i, 9, obj.move_id.picking_id.partner_id.name, bold)
             sheet.write(i, 10, obj.move_id.picking_id.x_studio_comentario_1, bold)
             if(obj.x_studio_ticket):
                 sheet.write(i,11, obj.x_studio_ticket, bold)
             if(obj.x_studio_ticket==False):
-                sheet.write(i, 11, obj.x_studio_ticket, bold) 
-            sheet.write(i, 12, obj.move_id.picking_id.partner_id.city, bold)            
-            sheet.write(i, 13, obj.move_id.picking_id.partner_id.state_id.name, bold)
+                sheet.write(i, 11, obj.x_studio_ticket, bold)
+            sheet.write(i, 12, obj.lot_id.name, bold)            
+            sheet.write(i, 13, obj.lot_id.product_id.name, bold)                 
+            sheet.write(i, 14, obj.move_id.picking_id.partner_id.city, bold)            
+            sheet.write(i, 15, obj.move_id.picking_id.partner_id.state_id.name, bold)
             user=self.env['stock.picking'].search(['&',['sale_id','=',obj.picking_id.sale_id.id],['location_id','=',obj.x_studio_field_3lDS0.lot_stock_id.id]])
             if(len(user)>1):
-                sheet.write(i, 14, user[0].write_uid.name, bold)
+                sheet.write(i, 16, user[0].write_uid.name, bold)
             if(len(user)<=1):
-                sheet.write(i, 14, user.write_uid.name, bold)
+                sheet.write(i, 16, user.write_uid.name, bold)
 
             i=i+1
-        sheet.add_table('A2:O'+str((i)),{'style': 'Table Style Medium 9','columns': [{'header': 'Categoria'},{'header': 'Fecha'},{'header': 'Almacen'},{'header':'Tipo'},{'header': 'Modelo'},{'header': 'No Parte'},{'header': 'Cantidad'},{'header': 'Serie'},{'header': 'Cliente'},{'header': 'Localidad'},{'header': 'Comentario'},{'header': 'Documento Origen'},{'header': 'Estado'},{'header': 'Delegación'},{'header': 'Usuario'}]})
+        sheet.add_table('A2:O'+str((i)),{'style': 'Table Style Medium 9','columns': [{'header': 'Categoria'},{'header': 'Fecha'},{'header': 'Almacen'},{'header':'Tipo'},{'header': 'Modelo'},{'header': 'No Parte'},{'header': 'Cantidad'},{'header': 'Serie'},{'header': 'Cliente'},{'header': 'Localidad'},{'header': 'Comentario'},{'header': 'Documento Origen'},{'header': 'Serie Destino'},{'header': 'Modelo Destino'},{'header': 'Estado'},{'header': 'Delegación'},{'header': 'Usuario'}]})
         workbook.close()
 
 class ExistenciasXML(models.AbstractModel):
