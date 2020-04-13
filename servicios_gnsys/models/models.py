@@ -243,7 +243,7 @@ class contratos(models.Model):
             self.direccion = self.cliente.contact_address
             self.ejecutivoDeCuenta = self.cliente.x_studio_ejecutivo
             self.vendedor = self.cliente.x_studio_vendedor
-            self.rfcCliente = self.cliente.vat
+            self.rfcCliente = str(self.cliente.vat)
 
     @api.onchange('fechaDeFinDeContrato')
     @api.multi
