@@ -2,6 +2,7 @@ from odoo import _,fields, api
 from odoo.models import TransientModel
 import logging, ast
 import datetime, time
+from odoo.exceptions import UserError,RedirectWarning
 from odoo.tools.float_utils import float_compare
 _logger = logging.getLogger(__name__)
 
