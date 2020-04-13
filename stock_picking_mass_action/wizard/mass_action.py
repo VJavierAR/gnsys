@@ -301,18 +301,34 @@ class TransferInter(TransientModel):
 
         pick_origin = self.env['stock.picking'].create({'picking_type_id' : origen.id,'almacenOrigen':self.almacenOrigen.id,'almacenDestino':self.almacenDestino.id,'location_id':self.almacenOrigen.lot_stock_id.id,'location_dest_id':17})
         pick_dest = self.env['stock.picking'].create({'picking_type_id' : destino.id, 'location_id':17,'almacenOrigen':self.almacenOrigen.id,'almacenDestino':self.almacenDestino.id,'location_dest_id':self.almacenDestino.lot_stock_id.id})
-        
+        v=0
+        e=[]
+        e1=[]
         for l in self.lines:
             datos1={'product_id' : l.producto.id, 'product_uom_qty' : l.cantidad,'name':l.producto.description,'product_uom':l.unidad.id,'location_id':self.almacenOrigen.lot_stock_id.id,'location_dest_id':17}
             datos1['picking_id']= pick_origin.id
             datos2={'product_id' : l.producto.id, 'product_uom_qty' : l.cantidad,'name':l.producto.description,'product_uom':l.unidad.id,'location_id':17,'location_dest_id':self.almacenDestino.lot_stock_id.id}
             datos2['picking_id']= pick_dest.id
-            self.env['stock.move'].create(datos1)
-            self.env['stock.move'].create(datos2)
+            a=self.env['stock.move'].create(datos1)
+            b=self.env['stock.move'].create(datos2)
+            if(l.producto.categ_id.id==13):
+                v=1
+                e.append(a.id)
+                e1.append(b.id)
         pick_origin.action_confirm()
         pick_origin.action_assign()
         pick_dest.action_confirm()
         pick_dest.action_assign()
+        if(v==1):
+            p=self.lines.filtered(lambda x:x.producto.categ_id.id==13).sorted(key='id')
+            e2=self.env['stock.move.line'].search([['move_id','in',e]]).sorted(key='move_id')
+            e3=self.env['stock.move.line'].search([['move_id','in',e1]]).sorted(key='move_id')
+            for ee in p:
+              e2.write({'lot_id':ee.serie.id})
+              e3.write({'lot_id':ee.serie.id})  
+  
+
+
         name = 'Picking'
         res_model = 'stock.picking' 
         view_name = 'stock.view_picking_form'
