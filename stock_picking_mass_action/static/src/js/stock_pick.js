@@ -14,14 +14,20 @@ odoo.define('invoice.action_button', function (require) {
             if (this.$buttons) {
                 if (typeof this.actionViews !== 'undefined' && this.actionViews.length > 0) {
                     if (this.actionViews[0].viewID == 2940) {
+                        this.$buttons.find('.o_button_import').hide();
+                        this.$buttons.find('.o_list_button_add').hide();
                         this.$buttons.find('.oe_action_button_ticket_report').click(this.proxy('action_inter5'));
                     }
+                    if (this.actionViews[0].viewID == 2941) {
+                        this.$buttons.find('.o_button_import').hide();
+                        this.$buttons.find('.o_list_button_add').hide();
+                        this.$buttons.find('.oe_action_button').click(this.proxy('action_inter2'));                    }
                     else{
-                         this.$buttons.find('.oe_action_button_ticket_report').hide();
-                        this.$buttons.find('.oe_action_button').click(this.proxy('action_inter2'));
-                this.$buttons.find('.oe_action_button_move_line').click(this.proxy('action_inter1'));
-                this.$buttons.find('.oe_action_button_stock_quant').click(this.proxy('action_inter3'));
-                this.$buttons.find('.oe_action_button_sale_report').click(this.proxy('action_inter4'));
+                        this.$buttons.find('.oe_action_button_ticket_report').hide();
+                        this.$buttons.find('.oe_action_button').hide();
+                        this.$buttons.find('.oe_action_button_move_line').click(this.proxy('action_inter1'));
+                        this.$buttons.find('.oe_action_button_stock_quant').click(this.proxy('action_inter3'));
+                        this.$buttons.find('.oe_action_button_sale_report').click(this.proxy('action_inter4'));
                     }
                 }
                 
