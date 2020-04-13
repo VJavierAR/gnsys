@@ -16,7 +16,7 @@ class PartnerXlsx(models.AbstractModel):
         report_name = 'Movimientos'
         bold = workbook.add_format({'bold': True})
         sheet = workbook.add_worksheet('Movimientos')
-        sheet.merge_range('A1:O1', 'Movimientos de Almacen', merge_format)
+        sheet.merge_range('A1:Q1', 'Movimientos de Almacen', merge_format)
         #header1 = '&CHere is some centered text.'
         #sheet.set_header('A1', {'image_left': '/home/odoo/logo.png'})
         #image_file = open('/home/odoo/logo.png', 'rb')
@@ -59,7 +59,7 @@ class PartnerXlsx(models.AbstractModel):
                 sheet.write(i, 16, user.write_uid.name, bold)
 
             i=i+1
-        sheet.add_table('A2:O'+str((i)),{'style': 'Table Style Medium 9','columns': [{'header': 'Categoria'},{'header': 'Fecha'},{'header': 'Almacen'},{'header':'Tipo'},{'header': 'Modelo'},{'header': 'No Parte'},{'header': 'Cantidad'},{'header': 'Serie'},{'header': 'Cliente'},{'header': 'Localidad'},{'header': 'Comentario'},{'header': 'Documento Origen'},{'header': 'Serie Destino'},{'header': 'Modelo Destino'},{'header': 'Estado'},{'header': 'Delegación'},{'header': 'Usuario'}]})
+        sheet.add_table('A2:Q'+str((i)),{'style': 'Table Style Medium 9','columns': [{'header': 'Categoria'},{'header': 'Fecha'},{'header': 'Almacen'},{'header':'Tipo'},{'header': 'Modelo'},{'header': 'No Parte'},{'header': 'Cantidad'},{'header': 'Serie'},{'header': 'Cliente'},{'header': 'Localidad'},{'header': 'Comentario'},{'header': 'Documento Origen'},{'header': 'Serie Destino'},{'header': 'Modelo Destino'},{'header': 'Estado'},{'header': 'Delegación'},{'header': 'Usuario'}]})
         workbook.close()
 
 class ExistenciasXML(models.AbstractModel):

@@ -348,7 +348,7 @@ class TransferInterMoveTemp(TransientModel):
     transfer=fields.Many2one('transferencia.interna')
     unidad=fields.Many2one('uom.uom',related='producto.uom_id')
     categoria=fields.Many2one('product.category')
-    serie=fields.Many2one('stock.production.lot')
+    serie=fields.Many2one('stock.production.lot',store=True)
 
     #lock=fields.Boolean('lock')
     #serieDestino=fields.Many2one('stock.production.lot')
