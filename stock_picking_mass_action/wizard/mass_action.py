@@ -348,23 +348,29 @@ class TransferInterMoveTemp(TransientModel):
     transfer=fields.Many2one('transferencia.interna')
     unidad=fields.Many2one('uom.uom',related='producto.uom_id')
     categoria=fields.Many2one('product.category')
+    serie=fields.Many2one('stock.production.lot')
 
     #lock=fields.Boolean('lock')
     #serieDestino=fields.Many2one('stock.production.lot')
-    
+
     @api.onchange('producto')
     def quant(self):
+
         if(self.producto):
             self.disponible=0
             h=self.env['stock.quant'].search([['product_id','=',self.producto.id],['location_id','=',self.ubicacion.id],['quantity','>',0]])
-            if(len(h)>0):
+            if(len(h)>0 and self.producto.categ_id.id!=13):
                 self.stock=h.id
-            if(len(h)==0):
+            if(len(h)==0 and self.producto.categ_id.id!=13):
                 d=self.env['stock.location'].search([['location_id','=',self.ubicacion.id]])
                 for di in d:
                     i=self.env['stock.quant'].search([['product_id','=',self.producto.id],['location_id','=',di.id],['quantity','>',0]])
                     if(len(i)>0):
                         self.stock=i.id
+            if(self.producto.categ_id.id==13):
+                res['domain']={'serie':[('id','in',h.mapped('lot_id.id'))]}
+                return res
+                
 
 
 
