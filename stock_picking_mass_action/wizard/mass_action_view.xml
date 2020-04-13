@@ -215,7 +215,7 @@
                             <field name="categoria" invisible="1" />
                             <field name="modelo"/>
                             <field name="noParte"/>
-                            <field name="serie" attrs="{'invisible': [['categoria', '!=', 13]]}"/>
+                            <field name="serie" attrs="{'invisible': [['categoria.id', '!=', 13]]}"/>
                             <field name="ubicacion" invisible="1"/>
                             <field name="descripcion"/>
                             <field name="disponible"/>

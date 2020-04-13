@@ -48,8 +48,8 @@ class PartnerXlsx(models.AbstractModel):
                 sheet.write(i,11, obj.x_studio_ticket, bold)
             if(obj.x_studio_ticket==False):
                 sheet.write(i, 11, obj.x_studio_ticket, bold)
-            sheet.write(i, 12, obj.lot_id.name, bold)            
-            sheet.write(i, 13, obj.lot_id.product_id.name, bold)                 
+            sheet.write(i, 12, obj.x_studio_serie_destino_1, bold)            
+            sheet.write(i, 13, obj.x_studio_modelo_equipo, bold)                 
             sheet.write(i, 14, obj.move_id.picking_id.partner_id.city, bold)            
             sheet.write(i, 15, obj.move_id.picking_id.partner_id.state_id.name, bold)
             user=self.env['stock.picking'].search(['&',['sale_id','=',obj.picking_id.sale_id.id],['location_id','=',obj.x_studio_field_3lDS0.lot_stock_id.id]])
