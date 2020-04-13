@@ -340,7 +340,7 @@ class TransferInterMoveTemp(TransientModel):
     modelo=fields.Char(related='producto.name',string='Modelo')
     noParte=fields.Char(related='producto.default_code',string='No. Parte')
     descripcion=fields.Text(related='producto.description',string='Descripción')
-    stock=fields.Many2one('stock.quant',string='Existencia')
+    stoc=fields.Many2one('stock.quant',string='Existencia')
     cantidad=fields.Integer('Demanda Inicial')
     almacen=fields.Many2one('stock.warehouse','Almacén Origen')
     ubicacion=fields.Many2one('stock.location','Ubicación')
@@ -360,13 +360,13 @@ class TransferInterMoveTemp(TransientModel):
             self.disponible=0
             h=self.env['stock.quant'].search([['product_id','=',self.producto.id],['location_id','=',self.ubicacion.id],['quantity','>',0]])
             if(len(h)>0 and self.producto.categ_id.id!=13):
-                self.stock=h.id
+                self.stoc=h.id
             if(len(h)==0 and self.producto.categ_id.id!=13):
                 d=self.env['stock.location'].search([['location_id','=',self.ubicacion.id]])
                 for di in d:
                     i=self.env['stock.quant'].search([['product_id','=',self.producto.id],['location_id','=',di.id],['quantity','>',0]])
                     if(len(i)>0):
-                        self.stock=i.id
+                        self.stoc=i.id
             if(self.producto.categ_id.id==13):
                 res['domain']={'serie':[('id','in',h.mapped('lot_id.id'))]}
                 return res
