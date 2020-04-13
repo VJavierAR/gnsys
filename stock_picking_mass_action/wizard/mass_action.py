@@ -319,6 +319,10 @@ class TransferInter(TransientModel):
         pick_origin.action_assign()
         pick_dest.action_confirm()
         pick_dest.action_assign()
+        pick_origin.action_confirm()
+        pick_origin.action_assign()
+        pick_dest.action_confirm()
+        pick_dest.action_assign()
         if(v==1):
             p=self.lines.filtered(lambda x:x.producto.categ_id.id==13).sorted(key='id')
             e2=self.env['stock.move.line'].search([['move_id','in',e]]).sorted(key='move_id')
