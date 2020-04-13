@@ -602,6 +602,8 @@ class HelpdeskTicketMassAction(TransientModel):
     _description = 'Reporte de Tickets'
     fechaInicial=fields.Datetime()
     fechaFinal=fields.Datetime()
+    estado=fields.Many2one('helpdesk.state')
+    area=fields.Many2one('helpdesk.team')
 
 def report(self):
     i=[]
