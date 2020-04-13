@@ -314,7 +314,7 @@ class ejecutivo_de_cuenta_contratos(models.Model):
 class Valores_Impresion(models.Model):
     _name = 'servicios.valores'
     _description = 'Valores para impresión de factura'
-    servicio = fields.Many2one('servicios', string = "Servicio", track_visibility='onchange')
+    servicio = fields.Many2one('contrato', string = "Servicio", track_visibility='onchange')
 
     #En la vista de techra así estan clasificados los campos 
     campo       = fields.Char()
