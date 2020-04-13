@@ -369,6 +369,7 @@ class TransferInterMoveTemp(TransientModel):
                         self.stoc=i.id
             if(self.producto.categ_id.id==13):
                 self.disponible=len(h)
+                self.cantidad=1
                 res['domain']={'serie':[('id','in',h.mapped('lot_id.id'))]}
                 return res
                 
