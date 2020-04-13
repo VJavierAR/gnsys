@@ -219,7 +219,7 @@
                             <field name="ubicacion" invisible="1"/>
                             <field name="descripcion"/>
                             <field name="disponible"/>
-                            <field name="stock" invisible="1"/>
+                            <field name="stoc" invisible="1"/>
                             <field name="cantidad"/>
                         </tree>
                     </field>
