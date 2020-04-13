@@ -604,11 +604,10 @@ class HelpdeskTicketMassAction(TransientModel):
     fechaFinal=fields.Datetime()
     estado=fields.Many2one('helpdesk.state')
     area=fields.Many2one('helpdesk.team')
-
-def report(self):
-    i=[]
-    d=[]
-    return UserError(_("Test"))
+    def report(self):
+        i=[]
+        d=[]
+        return UserError(_("Test"))
 
 
 
