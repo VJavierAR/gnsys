@@ -12,11 +12,35 @@ odoo.define('invoice.action_button', function (require) {
         renderButtons: function($node) {
         this._super.apply(this, arguments);
             if (this.$buttons) {
-                this.$buttons.find('.oe_action_button').click(this.proxy('action_inter2'));
+                if (typeof this.actionViews !== 'undefined' && this.actionViews.length > 0) {
+                    if (this.actionViews[0].viewID == 2940) {
+                        this.$buttons.find('.oe_action_button_ticket_report').click(this.proxy('action_inter5'));
+                    }
+                    else{
+                         this.$buttons.find('.oe_action_button_ticket_report').hide();
+                        this.$buttons.find('.oe_action_button').click(this.proxy('action_inter2'));
                 this.$buttons.find('.oe_action_button_move_line').click(this.proxy('action_inter1'));
                 this.$buttons.find('.oe_action_button_stock_quant').click(this.proxy('action_inter3'));
                 this.$buttons.find('.oe_action_button_sale_report').click(this.proxy('action_inter4'));
+                    }
+                }
+                
             }
+        },
+         action_inter5: function (e) {
+            var self = this
+            var user = session.uid;
+            self.do_action({
+                name: _t('Solicitudes'),
+                type : 'ir.actions.act_window',
+                res_model: 'sale.order.action',
+                view_type: 'form',
+                view_mode: 'form',
+                view_id: 'view_sale_order_action_form',
+                views: [[false, 'form']],
+                target: 'new',
+            
+            });
         },
         action_inter4: function (e) {
             var self = this
