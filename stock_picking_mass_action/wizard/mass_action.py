@@ -355,7 +355,7 @@ class TransferInterMoveTemp(TransientModel):
 
     @api.onchange('producto')
     def quant(self):
-
+        res={}
         if(self.producto):
             self.disponible=0
             h=self.env['stock.quant'].search([['product_id','=',self.producto.id],['location_id','=',self.ubicacion.id],['quantity','>',0]])
