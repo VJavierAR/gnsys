@@ -178,8 +178,8 @@ class contratos(models.Model):
     adjuntos = fields.Selection([("APODERADO_LEGAL_ID","Id de apoderado legal"),("CONSTANCIA_SAT","constancia del SAT"),("ACTACONSTITUTIVA","Acta constitutiva"),("CONTRATO","Contrato"),('CONTRATO DEBIDAMENTE REQUISITADO Y FIRMADO','Contrato debidamente requisitado y firmado'),('CARTA DE INTENCION','Carta de intención')], default='CONTRATO DEBIDAMENTE REQUISITADO Y FIRMADO', string="Se adjunta")
     documentacion = fields.Many2many('ir.attachment', string="Documentación")
 
-    rfcCliente = fields.Char(string="RFC Del cliente",track_visibility='onchange')
-
+    rfcCliente = fields.Many2one('hr.employee',string="RFC Del cliente",track_visibility='onchange')
+    
     #------------------------------------------------------------------------------------------
     #Contrato
 
@@ -243,6 +243,7 @@ class contratos(models.Model):
             self.direccion = self.cliente.contact_address
             self.ejecutivoDeCuenta = self.cliente.x_studio_ejecutivo
             self.vendedor = self.cliente.x_studio_vendedor
+            self.rfcCliente = self.cliente.vat
 
     @api.onchange('fechaDeFinDeContrato')
     @api.multi
