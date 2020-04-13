@@ -112,7 +112,7 @@ class servicios_gnsys(models.Model):
                     }
                 return {'warning': mess}
     
-    rfcCliente = fields.Text(string="RFC Cliente",track_visibility='onchange') 
+    rfcCliente = fields.Char(string="RFC Cliente",track_visibility='onchange') 
     @api.onchange('contrato')
     def cambiarRFC(self):
         if self.contrato:
