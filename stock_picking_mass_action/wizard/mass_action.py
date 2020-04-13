@@ -597,8 +597,16 @@ class SaleOrderMassAction(TransientModel):
         if(len(d)==0):
             raise UserError(_("No hay registros para la selecion actual"))
 
+class HelpdeskTicketMassAction(TransientModel):
+    _name = 'helpdesk.ticket.action'
+    _description = 'Reporte de Tickets'
+    fechaInicial=fields.Datetime()
+    fechaFinal=fields.Datetime()
 
-
+def report(self):
+    i=[]
+    d=[]
+    return UserError(_("Test"))
 
 
 

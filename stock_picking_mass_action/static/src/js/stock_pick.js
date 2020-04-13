@@ -37,12 +37,12 @@ odoo.define('invoice.action_button', function (require) {
             var self = this
             var user = session.uid;
             self.do_action({
-                name: _t('Solicitudes'),
+                name: _t('Tickets'),
                 type : 'ir.actions.act_window',
-                res_model: 'sale.order.action',
+                res_model: 'helpdesk.ticket.action',
                 view_type: 'form',
                 view_mode: 'form',
-                view_id: 'view_sale_order_action_form',
+                view_id: 'view_helpdesk_ticket_action_form',
                 views: [[false, 'form']],
                 target: 'new',
             
@@ -84,7 +84,7 @@ odoo.define('invoice.action_button', function (require) {
             var self = this
             var user = session.uid;
             self.do_action({
-                name: _t('Serie'),
+                name: _t('Transferencias Internas'),
                 type : 'ir.actions.act_window',
                 res_model: 'transferencia.interna',
                 view_type: 'form',
