@@ -18,7 +18,7 @@ odoo.define('invoice.action_button', function (require) {
                         this.$buttons.find('.o_list_button_add').hide();
                         this.$buttons.find('.oe_action_button_ticket_report').click(this.proxy('action_inter5'));
                     }
-                    if (this.actionViews[0].viewID == 2941) {
+                    else if(this.actionViews[0].viewID == 2941) {
                         this.$buttons.find('.o_button_import').hide();
                         this.$buttons.find('.o_list_button_add').hide();
                         this.$buttons.find('.oe_action_button').click(this.proxy('action_inter2'));
