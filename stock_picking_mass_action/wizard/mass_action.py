@@ -372,8 +372,6 @@ class TransferInterMoveTemp(TransientModel):
                 return res
                 
 
-
-
 class PickingSerie(TransientModel):
     _name='picking.serie'
     _description='Seleccion Serie'    
