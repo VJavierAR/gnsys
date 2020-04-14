@@ -11,7 +11,10 @@ class PartnerXlsx(models.AbstractModel):
     def generate_xlsx_report(self, workbook, data, partners):
         i=2
         d=[]
-        partners=self.env['stock.move.line'].browse(eval(partners.x_studio_arreglo)) if(partners) else []
+        if(len(partners)==1 and partners.x_studio_arreglo!='/'):
+            copia=partners
+            partners=self.env['stock.move.line'].browse(eval(partners.x_studio_arreglo))
+            copia.write({'x_studio_arreglo':'/'})
         merge_format = workbook.add_format({'bold': 1,'border': 1,'align': 'center','valign': 'vcenter','fg_color': 'blue'})
         report_name = 'Movimientos'
         bold = workbook.add_format({'bold': True})
@@ -67,7 +70,10 @@ class ExistenciasXML(models.AbstractModel):
     _inherit = 'report.report_xlsx.abstract'
 
     def generate_xlsx_report(self, workbook, data, quants):
-        quants=self.env['stock.quant'].browse(eval(quants.x_studio_arreglo)) if(quants) else []
+        if(len(quants)==1 and quants.x_studio_arreglo!='/'):
+            copia=quants
+            quants=self.env['stock.quant'].browse(eval(quants.x_studio_arreglo))
+            copia.write({'x_studio_arreglo':'/'})
         t=quants[0].lot_id.id
         i=2
         merge_format = workbook.add_format({'bold': 1,'border': 1,'align': 'center','valign': 'vcenter','fg_color': 'blue'})
@@ -110,7 +116,10 @@ class PartnerXlsx(models.AbstractModel):
     def generate_xlsx_report(self, workbook, data, sale):
         i=2
         d=[]
-        sale=self.env['sale.order'].browse(eval(sale.x_studio_arreglo)).sorted(key='write_date',reverse=True) if(sale) else []
+        if(len(sale)==1 and sale.x_studio_arreglo!='/'):
+            copia=sale
+            sale=self.env['sale.order'].browse(eval(sale.x_studio_arreglo)).sorted(key='write_date',reverse=True) 
+            copia.write({'x_studio_arreglo':'/'})
         merge_format = workbook.add_format({'bold': 1,'border': 1,'align': 'center','valign': 'vcenter','fg_color': 'blue'})
         report_name = 'Solicitudes'
         bold = workbook.add_format({'bold': True})
@@ -137,3 +146,11 @@ class PartnerXlsx(models.AbstractModel):
                 i=i+1
         sheet.add_table('A2:Q'+str(i),{'style': 'Table Style Medium 9','columns': [{'header': 'Numero de solicitud'},{'header': 'Fecha'},{'header': 'Cliente'},{'header':'Localidades'},{'header': 'Almacen'},{'header': 'Estado'},{'header': 'Modelo'},{'header': 'No. De serie'},{'header': 'Accesorio'},{'header': 'Toner'},{'header': 'Número de equipos'},{'header': 'Número de componentes'},{'header': 'Tipo'},{'header': 'Status'},{'header': 'Usuario Creación'},{'header': 'Asignado'},{'header': 'Comentarios'}]}) 
         workbook.close()
+
+class PartnerXlsx(models.AbstractModel):
+    _name = 'report.tickets.report'
+    _inherit = 'report.report_xlsx.abstract'
+
+    def generate_xlsx_report(self, workbook, data, ticket):
+        i=2
+        d=[]

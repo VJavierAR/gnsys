@@ -25,4 +25,13 @@
     file="Reporte de Solicitudes"
     attachment_use="False"/>
 </data>
+<report
+    id="ticket_xlsx"
+    model="helpdesk.ticket"
+    string="Reporte de Tickets"
+    report_type="xlsx"
+    name="tickets.report"
+    file="Reporte de Tickets"
+    attachment_use="False"/>
+</data>
 </odoo>

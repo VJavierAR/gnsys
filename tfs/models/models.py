@@ -160,7 +160,11 @@ class tfs(models.Model):
                 _logger.info('hhhhhhhhhhhhhhhhhh'+str(dc))
                 _logger.info('x_studio_toner_'+str(record.tipo).lower())
                 if(len(dc)>0):
-                    record['contadorAnterior']=dc[0].id 
+                    record['contadorAnterior']=dc[0].id
+                if(len(dc)==0):
+                    dc=self.env['dcas.dcas'].search([['serie','=',record.serie.id]]).sorted(key='create_date',reverse=True)
+                    if(len(dc)>0):
+                        record['contadorAnterior']=dc[0].id
 
     @api.depends('almacen')
     def cambio(self):
