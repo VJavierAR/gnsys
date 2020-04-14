@@ -117,7 +117,11 @@ class helpdesk_update(models.Model):
     @api.model
     def contadoresAnteriores(self):
         if self.x_studio_equipo_por_nmero_de_serie and self.team_id != 8:
-            return '</br> Equipo BN o Color: ' + str(self.x_studio_equipo_por_nmero_de_serie[0].x_studio_color_bn) + ' </br></br> Contador BN: ' + str(self.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_bn_mesa) + '</br></br> Contador Color: ' + str(self.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_color_mesa)
+            if str(self.x_studio_equipo_por_nmero_de_serie[0].x_studio_color_bn) == 'B/N':
+                return '</br> Equipo BN o Color: ' + str(self.x_studio_equipo_por_nmero_de_serie[0].x_studio_color_bn) + ' </br></br> Contador BN: ' + str(self.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_bn_mesa) + '</br></br> Contador Color: ' + str(self.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_color_mesa)
+            else:
+                return '</br> Equipo BN o Color: ' + str(self.x_studio_equipo_por_nmero_de_serie[0].x_studio_color_bn) + ' </br></br> Contador BN: ' + str(self.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_bn_mesa)
+
 
     @api.model
     def create(self, vals):
