@@ -603,6 +603,7 @@ class HelpdeskTicketMassAction(TransientModel):
     fechaInicial=fields.Datetime()
     fechaFinal=fields.Datetime()
     estado=fields.Many2one('helpdesk.state')
+    tipo=fields.Seleccion([["Falla","Falla"],["Toner","Toner"]])
     area=fields.Many2one('helpdesk.team')
     def report(self):
         i=[]
