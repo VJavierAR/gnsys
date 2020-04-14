@@ -17,7 +17,7 @@ import logging, ast
 _logger = logging.getLogger(__name__)
 
 class tfs(models.Model):
-    _inherit = ['mail.thread', 'mail.activity.mixin']    
+    _inherit = ['mail.thread', 'mail.activity.mixin', 'portal.mixin']    
     _name = 'tfs.tfs'
     _description='tfs'
     name = fields.Char()
