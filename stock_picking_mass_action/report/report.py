@@ -178,7 +178,7 @@ class PartnerXlsx(models.AbstractModel):
                 sheet.write(i, 12, obj.x_studio_ultima_nota, bold)
                 sheet.write(i, 13, obj.write_date.strftime("%Y/%m/%d"), bold)
                 sheet.write(i, 14, obj.x_studio_tcnico.name, bold)
-                sheet.write_string(i, 15, str(str(obj.x_studio_empresas_relacionadas.street_name)+" No. Ext. "+str(obj.x_studio_empresas_relacionadas.street_number)+" No. Int. "+str(obj.x_studio_empresas_relacionadas.street_number2)+" ,COL. "+str(obj.x_studio_empresas_relacionadas.l10n_mx_edi_colony)+" "+str(obj.x_studio_empresas_relacionadas.city)+" México, "+obj.x_studio_empresas_relacionadas.state_id.name+"C.P "+str(obj.x_studio_empresas_relacionadas.zip)))
+                sheet.write_string(i, 15, str(obj.x_studio_empresas_relacionadas.street_name+" No. Ext. "+obj.x_studio_empresas_relacionadas.street_number+" No. Int. "+obj.x_studio_empresas_relacionadas.street_number2+" ,COL. "+obj.x_studio_empresas_relacionadas.l10n_mx_edi_colony+" "+obj.x_studio_empresas_relacionadas.city+" México, "+obj.x_studio_empresas_relacionadas.state_id.name+"C.P "+obj.x_studio_empresas_relacionadas.zip))
                 sheet.write(i, 16, obj.x_studio_nmero_de_ticket_cliente, bold)
                 i=i+1
         sheet.add_table('A2:Q'+str(i),{'style': 'Table Style Medium 9','columns': [{'header': 'Ticket'},{'header': 'Tipo de Reporte'},{'header': 'Dias de atraso'},{'header':'Cliente'},{'header': 'Localidad'},{'header': 'Estado'},{'header': 'Serie'},{'header': 'Modelo'},{'header': 'Area de Atención'},{'header': 'Zona'},{'header': 'Falla'},{'header': 'Último estatus ticket'},{'header': 'Última nota'},{'header': 'Fecha nota'},{'header': 'Tecnico'},{'header': 'Dirección'},{'header': 'No. Ticket cliente'}]}) 
