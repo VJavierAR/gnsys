@@ -30,8 +30,28 @@ class HelpDeskComentario(TransientModel):
             self.ticket_id.write({'x_studio_zona': self.zona
                                 , 'x_studio_field_6furK': self.zona
                                 })
-        if self.ticket_id.env.user.has_group('studio_customization.grupo_de_tecnicos_fi_6cce8af2-f2d0-4449-b629-906fb2c16636') and self.evidencia:
-            self.ticket_id.write({'stage_id': 3})
+        if self.ultimaEvidencia:
+          if self.evidencia:
+            self.ticket_id.write({'stage_id': 3 })
+          else:
+            mess = 'Favor de agregar una o mas evidencias antes de pasar a resuelto el ticket.'
+            wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mess})
+            view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+            return {
+                'name': _('Problema al agregar Diagnostico / Comentario!!!'),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'helpdesk.alerta',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'res_id': wiz.id,
+                'context': self.env.context,
+            }
+
+        #if self.ticket_id.env.user.has_group('studio_customization.grupo_de_tecnicos_fi_6cce8af2-f2d0-4449-b629-906fb2c16636') and self.evidencia:
+        #    self.ticket_id.write({'stage_id': 3})
         mess = 'Diagnostico / Comentario añadido al ticket "' + str(self.ticket_id.id) + '" de forma exitosa. \n\nComentario agregado: ' + str(self.comentario) + '. \n\nGenerado en el estado: ' + self.ticket_id.stage_id.name
         wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mess})
         view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
