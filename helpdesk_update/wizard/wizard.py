@@ -53,21 +53,8 @@ class HelpDeskComentario(TransientModel):
                 'context': self.env.context,
             }
           else:
-            mess = 'Favor de agregar una o mas evidencias antes de pasar a resuelto el ticket.'
-            wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mess})
-            view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
-            return {
-                'name': _('Problema al agregar Diagnostico / Comentario!!!'),
-                'type': 'ir.actions.act_window',
-                'view_type': 'form',
-                'view_mode': 'form',
-                'res_model': 'helpdesk.alerta',
-                'views': [(view.id, 'form')],
-                'view_id': view.id,
-                'target': 'new',
-                'res_id': wiz.id,
-                'context': self.env.context,
-            }
+            raise exceptions.ValidationError('Favor de agregar una o mas evidencias antes de pasar a resuelto el ticket.')
+            
       else:
         self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.ticket_id.id
                                                 ,'comentario': self.comentario
