@@ -86,9 +86,21 @@ class fac_order(models.Model):
                   colorp=0  
                   for k in p:
                       currentP=self.env['dcas.dcas'].search([('serie','=',k.id),('x_studio_field_no6Rb', '=', perido)])
-                      currentPA=self.env['dcas.dcas'].search([('serie','=',k.id),('x_studio_field_no6Rb', '=', periodoAnterior)])                      
-                      bnp=abs(int(currentPA.contadorMono)-int(currentP.contadorMono))
-                      colorp=abs(int(currentPA.contadorColor)-int(currentP.contadorColor))                        
+                      currentPA=self.env['dcas.dcas'].search([('serie','=',k.id),('x_studio_field_no6Rb', '=', periodoAnterior)])
+                      cng=int(currentP.contadorMono)
+                      cngc=int(currentP.contadorColor)
+                    
+                      if cng==0:
+                         bnp=0
+                      else:
+                         bnp=abs(int(currentPA.contadorMono)-int(currentP.contadorMono))
+                      if cng==0:
+                         colorp=0
+                      else:
+                         colorp=abs(int(currentPA.contadorColor)-int(currentP.contadorColor))                        
+                    
+                      
+                        
                       self.env['sale.order.detalle'].create({'saleOrder': sale.id
                                                                ,'producto': k.product_id.display_name
                                                                ,'serieEquipo': k.name
