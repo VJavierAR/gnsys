@@ -32,7 +32,9 @@ class HelpDeskComentario(TransientModel):
                                 })
         if self.ultimaEvidencia:
           if self.evidencia:
-            self.ticket_id.write({'stage_id': 3 })
+            self.ticket_id.write({'stage_id': 3 
+                                , 'team_id': 9
+                                })
           else:
             mess = 'Favor de agregar una o mas evidencias antes de pasar a resuelto el ticket.'
             wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mess})
