@@ -608,7 +608,34 @@ class HelpdeskTicketMassAction(TransientModel):
     def report(self):
         i=[]
         d=[]
-        return UserError(_("Test"))
+        if(self.fechaInicial):
+            m=['write_date','>=',self.fechaInicial]
+            i.append(m)
+        if(self.fechaFinal):
+            m=['write_date','<=',self.fechaFinal]
+            i.append(m)
+        if(tipo):
+            if(self.tipo=="Toner"):
+                m=['x_studio_tipo_de_vale','=','Requerimiento']
+                i.append(m)
+                m=['team_id','=',8]
+                i.append(m)
+            else:
+                m=['x_studio_tipo_de_vale','=',self.tipo]
+                i.append(m)
+                m=['team_id','=',8]
+                i.append(m)
+        if(tipo==False):
+            m=['x_studio_tipo_de_vale','=','Requerimiento']
+            i.append(m)
+            m=['x_studio_tipo_de_vale','=',self.tipo]
+            i.append(m)
+        d=self.env['helpdesk.ticket'].search(i,order='create_date asc')
+        if(len(d)>0):
+            d[0].write({'x_studio_arreglo':str(d.mapped('id'))})
+            return self.env.ref('stock_picking_mass_action.ticket_xlsx').report_action(d[0])
+        if(len(d)==0):
+            raise UserError(_("No hay registros para la selecion actual"))
 
 
 
