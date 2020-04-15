@@ -120,6 +120,12 @@ class fac_order(models.Model):
                          if k.x_studio_color_bn=='Color':
                             self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_field_9nQhR':k.id,'product_id':11340,'product_uom_qty':colorp,'price_unit':m.clickExcedenteColor})
                          self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_field_9nQhR':k.id,'product_id':11340,'product_uom_qty':1,'price_unit':m.rentaMensual})                                                    
+                      if m.nombreAnte=='Renta base con páginas incluidas BN o color + pag. excedentes':
+                         if k.x_studio_color_bn=='B/N':
+                            self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_field_9nQhR':k.id,'product_id':11340,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN})                                                    
+                         if k.x_studio_color_bn=='Color':
+                            self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_field_9nQhR':k.id,'product_id':11340,'product_uom_qty':colorp,'price_unit':m.clickExcedenteColor})
+                         self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_field_9nQhR':k.id,'product_id':11340,'product_uom_qty':1,'price_unit':m.rentaMensual})                                                                            
                       if k.x_studio_color_bn=='B/N':
                          procesadasColorBN=bnp+procesadasColorBN                  
                       if k.x_studio_color_bn=='Color':
