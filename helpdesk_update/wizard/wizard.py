@@ -429,71 +429,72 @@ class helpdesk_contadores(TransientModel):
     bnColor = fields.Text(string='Color o BN', compute = '_compute_actualizaColor', store = True, default = ' ')
     textoInformativo = fields.Text(string = ' ', default = ' ', store = True, compute = '_compute_textoInformativo')
 
-    @api.one
+    #@api.one
     @api.depends('contadorBNActual', 'contadorColorActual')
     def _compute_textoInformativo(self):
-      if self.bnColor == "B/N":
-        if self.contadorBNActual != 0 or self.contadorBNActual != False:
-          self.textoInformativo = """
-                                    <div class='alert alert-warning' role='alert'>
-                                      <h4 class="alert-heading">Advertencia!!!</h4>
+      for record in self:
+        if record.bnColor == "B/N":
+          if record.contadorBNActual != 0 or record.contadorBNActual != False:
+            record.textoInformativo = """
+                                      <div class='alert alert-warning' role='alert'>
+                                        <h4 class="alert-heading">Advertencia!!!</h4>
 
-                                      <p>El contador capturado negro será: <strong>""" + str(self.contadorBNActual) + """</strong></p>
-                                      <br/>
-                                      <p>La diferencia con el contador actual es de: <strong>""" + str(self.contadorBNActual - self.contadorBNMesa) + """</strong></p>
+                                        <p>El contador capturado negro será: <strong>""" + str(record.contadorBNActual) + """</strong></p>
+                                        <br/>
+                                        <p>La diferencia con el contador actual es de: <strong>""" + str(record.contadorBNActual - record.contadorBNMesa) + """</strong></p>
 
+                                        
+                                      </div>
                                       
-                                    </div>
-                                    
-                                  """
+                                    """
+          else:
+            record.textoInformativo = """ """
         else:
-          self.textoInformativo = """ """
-      else:
-        if self.contadorBNActual != 0 or self.contadorBNActual != False:
-          self.textoInformativo = """
-                                    <div class='alert alert-warning' role='alert'>
-                                      <h4 class="alert-heading">Advertencia!!!</h4>
+          if record.contadorBNActual != 0 or record.contadorBNActual != False:
+            record.textoInformativo = """
+                                      <div class='alert alert-warning' role='alert'>
+                                        <h4 class="alert-heading">Advertencia!!!</h4>
 
-                                      <p>El contador capturado negro será: <strong>""" + str(self.contadorBNActual) + """</strong></p>
-                                      <br/>
-                                      <p>La diferencia con el contador negro actual es de: <strong>""" + str(self.contadorBNActual - self.contadorBNMesa) + """</strong></p>
+                                        <p>El contador capturado negro será: <strong>""" + str(record.contadorBNActual) + """</strong></p>
+                                        <br/>
+                                        <p>La diferencia con el contador negro actual es de: <strong>""" + str(record.contadorBNActual - record.contadorBNMesa) + """</strong></p>
 
+                                        
+                                      </div>
                                       
-                                    </div>
-                                    
-                                  """
-        elif self.contadorColorActual != 0 or self.contadorColorActual != False:
-          self.textoInformativo = """
-                                    <div class='alert alert-warning' role='alert'>
-                                      <h4 class="alert-heading">Advertencia!!!</h4>
+                                    """
+          elif record.contadorColorActual != 0 or record.contadorColorActual != False:
+            record.textoInformativo = """
+                                      <div class='alert alert-warning' role='alert'>
+                                        <h4 class="alert-heading">Advertencia!!!</h4>
 
-                                      <p>El contador color capturado será: <strong>""" + str(self.contadorColorActual) + """</strong></p>
-                                      <br/>
-                                      <p>La diferencia con el contador color actual es de: <strong>""" + str(self.contadorColorActual - self.contadorColorMesa) + """</strong></p>
+                                        <p>El contador color capturado será: <strong>""" + str(record.contadorColorActual) + """</strong></p>
+                                        <br/>
+                                        <p>La diferencia con el contador color actual es de: <strong>""" + str(record.contadorColorActual - record.contadorColorMesa) + """</strong></p>
 
+                                        
+                                      </div>
                                       
-                                    </div>
-                                    
-                                  """
-        elif (self.contadorBNActual != 0 or self.contadorBNActual != False) and (self.contadorColorActual != 0 or self.contadorColorActual != False):
-          self.textoInformativo = """
-                                    <div class='alert alert-warning' role='alert'>
-                                      <h4 class="alert-heading">Advertencia!!!</h4>
+                                    """
+          elif (record.contadorBNActual != 0 or record.contadorBNActual != False) and (record.contadorColorActual != 0 or record.contadorColorActual != False):
+            record.textoInformativo = """
+                                      <div class='alert alert-warning' role='alert'>
+                                        <h4 class="alert-heading">Advertencia!!!</h4>
 
-                                      <p>El contador capturado negro será: <strong>""" + str(self.contadorBNActual) + """</strong></p>
-                                      <br/>
-                                      <p>La diferencia con el contador negro actual es de: <strong>""" + str(self.contadorBNActual - self.contadorBNMesa) + """</strong></p>
-                                      <br/>
-                                      <p>El contador color capturado será: <strong>""" + str(self.contadorColorActual) + """</strong></p>
-                                      <br/>
-                                      <p>La diferencia con el contador color actual es de: <strong>""" + str(self.contadorColorActual - self.contadorColorMesa) + """</strong></p>
+                                        <p>El contador capturado negro será: <strong>""" + str(record.contadorBNActual) + """</strong></p>
+                                        <br/>
+                                        <p>La diferencia con el contador negro actual es de: <strong>""" + str(record.contadorBNActual - record.contadorBNMesa) + """</strong></p>
+                                        <br/>
+                                        <p>El contador color capturado será: <strong>""" + str(record.contadorColorActual) + """</strong></p>
+                                        <br/>
+                                        <p>La diferencia con el contador color actual es de: <strong>""" + str(record.contadorColorActual - record.contadorColorMesa) + """</strong></p>
 
+                                        
+                                      </div>
                                       
-                                    </div>
-                                    
-                                  """
-        else:
-          self.textoInformativo = """ """
+                                    """
+          else:
+            record.textoInformativo = """ """
 
 
     @api.depends('ticket_id')
