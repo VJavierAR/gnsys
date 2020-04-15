@@ -450,7 +450,25 @@ class helpdesk_contadores(TransientModel):
           else:
             record.textoInformativo = """ """
         else:
-          if record.contadorBNActual != 0 or record.contadorBNActual != False:
+          if (record.contadorBNActual != 0 or record.contadorBNActual != False) and (record.contadorColorActual != 0 or record.contadorColorActual != False):
+            record.textoInformativo = """
+                                      <div class='alert alert-warning' role='alert'>
+                                        <h4 class="alert-heading">Advertencia!!!</h4>
+
+                                        <p>El contador capturado negro será: <strong>""" + str(record.contadorBNActual) + """</strong></p>
+                                        <br/>
+                                        <p>La diferencia con el contador negro actual es de: <strong>""" + str(record.contadorBNActual - record.contadorBNMesa) + """</strong></p>
+                                        <br/>
+                                        <p>El contador color capturado será: <strong>""" + str(record.contadorColorActual) + """</strong></p>
+                                        <br/>
+                                        <p>La diferencia con el contador color actual es de: <strong>""" + str(record.contadorColorActual - record.contadorColorMesa) + """</strong></p>
+
+                                        
+                                      </div>
+                                      
+                                    """
+
+          elif record.contadorBNActual != 0 or record.contadorBNActual != False:
             record.textoInformativo = """
                                       <div class='alert alert-warning' role='alert'>
                                         <h4 class="alert-heading">Advertencia!!!</h4>
@@ -468,23 +486,6 @@ class helpdesk_contadores(TransientModel):
                                       <div class='alert alert-warning' role='alert'>
                                         <h4 class="alert-heading">Advertencia!!!</h4>
 
-                                        <p>El contador color capturado será: <strong>""" + str(record.contadorColorActual) + """</strong></p>
-                                        <br/>
-                                        <p>La diferencia con el contador color actual es de: <strong>""" + str(record.contadorColorActual - record.contadorColorMesa) + """</strong></p>
-
-                                        
-                                      </div>
-                                      
-                                    """
-          elif (record.contadorBNActual != 0 or record.contadorBNActual != False) and (record.contadorColorActual != 0 or record.contadorColorActual != False):
-            record.textoInformativo = """
-                                      <div class='alert alert-warning' role='alert'>
-                                        <h4 class="alert-heading">Advertencia!!!</h4>
-
-                                        <p>El contador capturado negro será: <strong>""" + str(record.contadorBNActual) + """</strong></p>
-                                        <br/>
-                                        <p>La diferencia con el contador negro actual es de: <strong>""" + str(record.contadorBNActual - record.contadorBNMesa) + """</strong></p>
-                                        <br/>
                                         <p>El contador color capturado será: <strong>""" + str(record.contadorColorActual) + """</strong></p>
                                         <br/>
                                         <p>La diferencia con el contador color actual es de: <strong>""" + str(record.contadorColorActual - record.contadorColorMesa) + """</strong></p>

@@ -173,9 +173,7 @@
                 </group>
                 <!--<group attrs="{'invisible': ['|', &quot;&amp;&quot;, &quot;&amp;&quot;, ('bnColor', '=', 'B/N'),('contadorBNActual', '=', 0)]}">-->
                 <group>
-                    <group>
-                    </group>
-                    <group>
+                    <group class='text-center'>
                         <field name='textoInformativo' id='textoInformativo' readonly='1' widget='html' force_save='1'/>
                     </group>
                 </group>
