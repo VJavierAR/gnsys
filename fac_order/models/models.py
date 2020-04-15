@@ -59,7 +59,6 @@ class fac_order(models.Model):
             else:    
                 anioA=str(self.year)
             periodoAnterior= anioA+'-'+mesaA
-            #raise exceptions.ValidationError( str(periodoAnterior) + ' ante '+ str(perido) )
 
             if self.x_studio_dividir_servicios:
                fac = self.env['sale.order'].create({'partner_id' : self.partner_id.id
@@ -146,7 +145,6 @@ class fac_order(models.Model):
                               if k.x_studio_color_bn=='Color':
                                 procesadasColorTotal=colorp+procesadasColorTotal
                                 procesadasColorBN=bnp+procesadasColorBN                                  
-                          #g=self.env['servicios'].search([('contrato', '=', m.id)])
                               for j in ff:                      
                                   if j.nombreAnte=='Renta global con páginas incluidas BN o color + pag. Excedentes':                        
                                     self.env['sale.order.line'].create({'order_id': sale.id,'product_id':11340,'product_uom_qty':1.0,'price_unit':j.rentaMensual})                                                    
@@ -160,173 +158,7 @@ class fac_order(models.Model):
                                        self.env['sale.order.line'].create({'order_id': sale.id,'product_id':11340,'product_uom_qty':abs(bolsacolor-procesadasColorTotal),'price_unit':j.clickExcedenteColor,'x_studio_bolsa':j.bolsaColor})                   
                                   if str(j.tipo)=='6':
                                     self.env['sale.order.line'].create({'order_id': sale.id,'product_id':11340,'product_uom_qty':1.0,'price_unit':j.rentaMensual})                                                    
-
-
-                        
-                        
-                        
-                        
-                        
-                  """
-                  vv=set(v)
-                  if 10740 in vv:                          
-                        for s in g:
-                            pp=s.product_id.name
-                            if pp=='Clic excedente monocromático':    
-                               eBN=s.price_unit
-                            if pp=='Clic excedente color':    
-                               eColor=s.price_unit
-                            if pp=='Clic monocromática':
-                               bolsabn=s.quantity
-                               serUNO=s.product_id.id
-                            if pp=='Clic color':
-                               bolsacolor=s.quantity
-                               serDOS=s.product_id.id
-                            if s.price_subtotal>3.0:
-                               serTRES=s.product_id.id
-                               serTRESp=s.price_unit
-                               self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serTRES,'product_uom_qty':1.0,'price_unit':serTRESp})                                                    
-                        if procesadasColorBN< bolsabn:
-                           self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serUNO,'product_uom_qty':0.0,'price_unit':eBN,'x_studio_bolsa':bolsabn})
-                        if procesadasColorBN > bolsabn:
-                           self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serUNO,'product_uom_qty':abs(bolsabn-procesadasColorBN),'price_unit':eBN,'x_studio_bolsa':bolsabn})
-                        if procesadasColorTotal<bolsacolor:            
-                           self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serDOS,'product_uom_qty':0.0,'price_unit':eColor,'x_studio_bolsa':bolsacolor})
-                        if procesadasColorTotal > bolsacolor:
-                           self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serDOS,'product_uom_qty':abs(bolsacolor-procesadasColorTotal),'price_unit':eColor,'x_studio_bolsa':bolsacolor})                  
-                  #xds aqui se divide la renta base y los axecentes se crean 2 facturas xD
-                  if 10742 in vv:                          
-                        for s in g:
-                            pp=s.product_id.name
-                            if pp=='Clic excedente monocromático':    
-                               eBN=s.price_unit
-                            if pp=='Clic excedente color':    
-                               eColor=s.price_unit
-                            if pp=='Clic monocromática':
-                               bolsabn=s.quantity
-                               serUNO=s.product_id.id
-                               unidadpreciobn=s.price_unit                        
-                            if pp=='Clic color':
-                               bolsacolor=s.quantity
-                               serDOS=s.product_id.id
-                               unidadprecioColor=s.price_unit  
-                            if s.price_subtotal>3.0:
-                               serTRES=s.product_id.id
-                               serTRESp=s.price_unit
-                               self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serTRES,'product_uom_qty':1.0,'price_unit':serTRESp})
-                        for j in p:
-                              #self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serTRES,'x_studio_field_9nQhR':j.id,'product_uom_qty':1.0,'price_unit':serTRESp})                      
-                              if j.x_studio_pg_proc > 0:
-                                 self.env['sale.order.line'].create({'order_id': sale.id,'product_id':j.product_id.id,'product_uom_qty':j.x_studio_pg_proc,'price_unit':unidadpreciobn,'x_studio_bolsa':0.0})
-                              if j.x_studio_pg_proc_color > 0:
-                                 self.env['sale.order.line'].create({'order_id': sale.id,'product_id':j.product_id.id,'product_uom_qty':j.x_studio_pg_proc_color,'price_unit':unidadprecioColor,'x_studio_bolsa':0.0})
-
-                  if 10744 in vv:                          
-                        for s in g:
-                            pp=s.product_id.name
-                            if pp=='Clic excedente monocromático':    
-                               eBN=s.price_unit
-                            if pp=='Clic excedente color':    
-                               eColor=s.price_unit
-                            if pp=='Clic monocromática':
-                               bolsabn=s.quantity
-                               serUNO=s.product_id.id
-                            if pp=='Clic color':
-                               bolsacolor=s.quantity
-                               serDOS=s.product_id.id
-                            if s.price_subtotal>3.0:                        
-                               serTRES=s.product_id.id
-                               serTRESp=s.price_unit                                              
-                        for j in p:
-                              self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serTRES,'x_studio_field_9nQhR':j.id,'product_uom_qty':1.0,'price_unit':serTRESp})                      
-                              if j.x_studio_pg_proc > bolsabn:
-                                 self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serUNO,'product_uom_qty':abs(bolsabn-procesadasColorBN),'price_unit':eBN,'x_studio_bolsa':bolsabn})
-                              if j.x_studio_pg_proc_color > bolsacolor:
-                                 self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serDOS,'product_uom_qty':abs(bolsacolor-procesadasColorTotal),'price_unit':eColor,'x_studio_bolsa':bolsacolor})
-                  if 10749 in vv or 10748 in vv :                          
-                        for s in g:
-                            pp=s.product_id.name
-                            if pp=='Clic excedente monocromático':    
-                               eBN=s.price_unit
-                            if pp=='Clic excedente color':    
-                               eColor=s.price_unit
-                            if pp=='Clic monocromática':
-                               bolsabn=s.price_unit
-                               serUNO=s.product_id.id
-                            if pp=='Clic color':
-                               bolsacolor=s.price_unit
-                               serDOS=s.product_id.id
-                            if s.price_subtotal>3.0:                        
-                               serTRES=s.product_id.id
-                               serTRESp=s.price_unit                                              
-                        for j in p:
-                              self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serTRES,'x_studio_field_9nQhR':j.id,'product_uom_qty':1.0,'price_unit':serTRESp})                      
-                              if j.x_studio_pg_proc > 0:
-                                 self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serUNO,'product_uom_qty':j.x_studio_pg_proc,'price_unit':bolsabn,'x_studio_bolsa':0.0})
-                              if j.x_studio_pg_proc_color > 0:
-                                 self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serDOS,'product_uom_qty':j.x_studio_pg_proc_color,'price_unit':bolsacolor,'x_studio_bolsa':0.0})
-
-                  if 10750 in vv:                          
-                        for s in g:
-                            pp=s.product_id.name
-                            if pp=='Clic excedente monocromático':    
-                               eBN=s.price_unit
-                            if pp=='Clic excedente color':    
-                               eColor=s.price_unit
-                            if pp=='Clic monocromática':
-                               bolsabn=s.quantity
-                               serUNO=s.product_id.id
-                            if pp=='Clic color':
-                               bolsacolor=s.quantity
-                               serDOS=s.product_id.id
-                            if pp=='ProcesadosBN':
-                               proBN=s.price_unit
-                               proBNS=s.product_id.id
-                            if pp=='ProcesadosColor':
-                               proColor=s.price_unit
-                               proColorS=s.product_id.id                        
-                            if s.price_subtotal>3.0:
-                               serTRES=s.product_id.id
-                               serTRESp=s.price_unit
-                               self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serTRES,'product_uom_qty':1.0,'price_unit':serTRESp})
-                        if procesadasColorBN>0:
-                           self.env['sale.order.line'].create({'order_id': sale.id,'product_id':proBNS,'product_uom_qty':procesadasColorBN,'price_unit':proBN,'x_studio_bolsa':0.0})
-                        if procesadasColorTotal>0:            
-                           self.env['sale.order.line'].create({'order_id': sale.id,'product_id':proColorS,'product_uom_qty':procesadasColorTotal,'price_unit':proColor,'x_studio_bolsa':0.0})
-
-                  if 10759 in vv:                          
-                        for s in g:
-                            pp=s.product_id.name
-                            if pp=='Clic excedente monocromático':    
-                               eBN=s.price_unit
-                            if pp=='Clic excedente color':    
-                               eColor=s.price_unit
-                            if pp=='Clic monocromática':
-                               bolsabn=s.quantity
-                               serUNO=s.product_id.id
-                            if pp=='Clic color':
-                               bolsacolor=s.quantity
-                               serDOS=s.product_id.id
-                               clickColor=s.price_unit
-
-                            if s.price_subtotal>3.0:
-                               serTRES=s.product_id.id
-                               serTRESp=s.price_unit
-                               self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serTRES,'product_uom_qty':1.0,'price_unit':serTRESp})
-                        if bolsabn<procesadasColorBN:
-                           self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serUNO,'product_uom_qty':0.0,'price_unit':eBN,'x_studio_bolsa':bolsabn})
-                        if procesadasColorBN > bolsabn:
-                           self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serUNO,'product_uom_qty':abs(bolsabn-procesadasColorBN),'price_unit':eBN,'x_studio_bolsa':bolsabn})                  
-                        if procesadasColorTotal>0:            
-                           self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serDOS,'product_uom_qty':procesadasColorTotal,'price_unit':clickColor,'x_studio_bolsa':0.0})
-                  if 10458 in vv:                          
-                        for s in g:                        
-                            if s.price_subtotal>3.0:
-                               serTRES=s.product_id.id
-                               serTRESp=s.price_unit
-                               self.env['sale.order.line'].create({'order_id': sale.id,'product_id':serTRES,'product_uom_qty':1.0,'price_unit':serTRESp})                                                                          
-                  """             
-                                         
+               
            
                  
       detalle =  fields.One2many('sale.order.detalle', 'saleOrder', string='Order Lines')
