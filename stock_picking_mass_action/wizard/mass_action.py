@@ -609,26 +609,26 @@ class HelpdeskTicketMassAction(TransientModel):
         i=[]
         d=[]
         if(self.fechaInicial):
-            m=['write_date','>=',self.fechaInicial]
+            m=['create_date','>=',self.fechaInicial]
             i.append(m)
         if(self.fechaFinal):
-            m=['write_date','<=',self.fechaFinal]
+            m=['create_date','<=',self.fechaFinal]
             i.append(m)
         if(self.tipo):
             if(self.tipo=="Toner"):
-                m=['x_studio_tipo_de_vale','=','Requerimiento']
+                m=['x_studio_tipo_de_vale','=','Falla']
                 i.append(m)
                 m=['team_id','=',8]
                 i.append(m)
             else:
-                m=['x_studio_tipo_de_vale','=',self.tipo]
+                m=['x_studio_tipo_de_vale','=','Requerimiento']
                 i.append(m)
                 m=['team_id','=',8]
                 i.append(m)
         if(self.tipo==False):
             m=['x_studio_tipo_de_vale','=','Requerimiento']
             i.append(m)
-            m=['x_studio_tipo_de_vale','=',self.tipo]
+            m=['x_studio_tipo_de_vale','=','Falla']
             i.append(m)
         d=self.env['helpdesk.ticket'].search(i,order='create_date asc')
         if(len(d)>0):

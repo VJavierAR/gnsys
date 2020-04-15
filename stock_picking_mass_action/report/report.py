@@ -163,7 +163,7 @@ class PartnerXlsx(models.AbstractModel):
         bold = workbook.add_format({'bold': True})
         sheet = workbook.add_worksheet('Tickets')
         sheet.merge_range('A1:Q1', 'Tickets', merge_format)
-        for obj in sale:
+        for obj in ticket:
                 sheet.write(i, 0, obj.name, bold)
                 sheet.write(i, 1, obj.x_studio_tipo_de_vale, bold)
                 sheet.write(i, 2, obj.create_date.strftime("%Y/%m/%d"), bold)
