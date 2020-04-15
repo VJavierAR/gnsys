@@ -614,7 +614,7 @@ class HelpdeskTicketMassAction(TransientModel):
         if(self.fechaFinal):
             m=['write_date','<=',self.fechaFinal]
             i.append(m)
-        if(tipo):
+        if(self.tipo):
             if(self.tipo=="Toner"):
                 m=['x_studio_tipo_de_vale','=','Requerimiento']
                 i.append(m)
@@ -625,7 +625,7 @@ class HelpdeskTicketMassAction(TransientModel):
                 i.append(m)
                 m=['team_id','=',8]
                 i.append(m)
-        if(tipo==False):
+        if(self.tipo==False):
             m=['x_studio_tipo_de_vale','=','Requerimiento']
             i.append(m)
             m=['x_studio_tipo_de_vale','=',self.tipo]
