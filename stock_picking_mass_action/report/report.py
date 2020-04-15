@@ -175,7 +175,7 @@ class PartnerXlsx(models.AbstractModel):
                 sheet.write(i, 8, obj.team_id.name, bold)
                 sheet.write(i, 9,obj.x_studio_empresas_relacionadas.state_id.name , bold)
                 sheet.write(i, 10, obj.description, bold)
-                sheet.write(i, 11, obj.state_id.name, bold)
+                sheet.write(i, 11, obj.stage_id.name, bold)
                 sheet.write(i, 12, obj.x_studio_ultima_nota, bold)
                 sheet.write(i, 13, obj.write_date.strftime("%Y/%m/%d"), bold)
                 sheet.write(i, 14, obj.x_studio_tcnico.name, bold)
