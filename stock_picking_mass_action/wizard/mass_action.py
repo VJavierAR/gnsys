@@ -54,11 +54,18 @@ class StockPickingMassAction(TransientModel):
     @api.depends('picking_ids')
     def che(self):
         for s in self.picking_ids:
-            if(s.picking_type_id.id==3 or  s.picking_type_id.id==2):
+            #Almacen
+            if(s.picking_type_id.id==3):
                 self.check=2
+            #refacion
             if(s.picking_type_id.id==29314):
                 self.check=1
-    
+            #ruta
+            if(s.picking_type_id.id==2):
+                self.check=3
+            #distribucion
+            if(s.picking_type_id.id==29302):
+                self.check=4
     def mass_action(self):
         self.ensure_one()
         # Get draft pickings and confirm them if asked

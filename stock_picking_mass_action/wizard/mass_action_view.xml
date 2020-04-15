@@ -96,9 +96,9 @@
                     <field name="confirm" invisible="1"/>
                     <field name="check_availability" invisible="1"/>
                     <field name="transfer" invisible="1"/>
-                    <field name="check"/>
+                    <field name="check" invisible="1"/>
                     <field name="tecnico" invisible="1"  domain="['|',['job_id.name','=','TÉCNICO '],['job_id.name','=','SOFTWARE']]"   attrs="{'invisible':[['check','=',1]]}"/>
-                    <field name="picking_ids" attrs="{'invisible':[['check','=',2]]}">
+                    <field name="picking_ids" attrs="{'invisible':['|',['check','=',2],['chek','=',3]]}">
                         <tree editable="bottom">
                                 <field name="id" invisible="1" readonly="1" attrs="{'invisible':[['picking_type_id','!=',29314]]}"/>
                                 <field name="picking_type_id" invisible="1"/>
@@ -116,8 +116,8 @@
                 </group>
                 <footer>
                     <button name="mass_action" string="Apply" type="object" class="oe_highlight"/>
-                    <button name="vales" string="Vale de Entrega" type="object" class="oe_highlight"/>
-                    <button name="etiquetas" string="Etiquetas" type="object" attrs="{'invisible':[['check','=',2]]}" class="oe_highlight"/>
+                    <button name="vales" string="Vale de Entrega" type="object" class="oe_highlight" attrs="{'invisible':['|',['check','=',2],['check','=',3]]}"/>
+                    <button name="etiquetas" string="Etiquetas" type="object" attrs="{'invisible':['|',['check','=',2],['check','=',3]]}" class="oe_highlight"/>
                     <button string="Cancel" class="oe_link" special="cancel"/>
                 </footer>
             </form>
