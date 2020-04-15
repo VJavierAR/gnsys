@@ -631,7 +631,7 @@ class HelpdeskTicketMassAction(TransientModel):
             i.append(m)
             m=['x_studio_tipo_de_vale','=','Falla']
             i.append(m)
-        for ii in range(len(i-1)):
+        for ii in range(len(i)-1):
             j.append('|')
         j.extend(i)
 
