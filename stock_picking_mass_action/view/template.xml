@@ -7,7 +7,7 @@
 
             <xpath expr="." positio="inside">
             <script type="text/javascript" src="/stock_picking_mass_action/static/src/js/stock_pick.js"></script>
-            <!--<script type="text/javascript">
+            <script type="text/javascript">
 
                 odoo.define('web.csrf', function (require) {
 
@@ -19,7 +19,7 @@
 
                 });
 
-            </script>-->
+            </script>
              </xpath>
         </template>
         <!-- <template id="listing"> -->
