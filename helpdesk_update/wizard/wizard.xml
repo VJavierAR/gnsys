@@ -431,4 +431,24 @@
         </field>
     </record>
 
+    <record id="view_helpdesk_reincidencia" model="ir.ui.view">
+        <field name="model">helpdesk.reincidencia</field>
+        <field name="arch" type="xml">
+            <form string="Reincidencia">
+                <group>
+                    <group>
+                        <field name='motivo'/>
+                    </group>
+                    <group>
+                    </group>
+                </group>
+                <footer>
+                    <button name="crearTicket" string="Crear" type="object" class="oe_highlight"/>
+                    <button special="cancel" string="Cerrar" class="oe_highlight" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
 </odoo>

@@ -31,6 +31,9 @@ class helpdesk_update(models.Model):
     #seriesDCA = fields.One2many('dcas.dcas', 'tickete', string="Series")
 
     
+    esReincidencia = fields.Boolean(string = "¿Es reincidencia?", default = False)
+    ticketDeReincidencia = fields.Text(string = 'Ticket de provenencia')
+
     days_difference = fields.Integer(compute='_compute_difference',string='días de atraso')
 
     localidadContacto = fields.Many2one('res.partner'
@@ -2608,6 +2611,22 @@ class helpdesk_update(models.Model):
             'context': self.env.context,
         }        
 
+    @api.multi
+    def reincidencia_wizard(self):
+        wiz = self.env['helpdesk.reincidencia'].create({'ticket_id':self.id})
+        view = self.env.ref('helpdesk_update.view_helpdesk_reincidencia')
+        return {
+            'name': _('Generar reincidencia'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'helpdesk.reincidencia',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            'context': self.env.context,
+        }   
 
 class helpdes_diagnostico(models.Model):
     _name = "helpdesk.diagnostico"

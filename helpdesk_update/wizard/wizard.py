@@ -1053,3 +1053,113 @@ class helpdesk_crearconserie(TransientModel):
                   'res_id': wiz.id,
                   'context': self.env.context,
                   }
+
+
+
+
+
+class HelpDeskReincidencia(TransientModel):
+    _name = 'helpdesk.reincidencia'
+    _description = 'HelpDesk Reincidencia'
+    
+    ticket_id = fields.Many2one("helpdesk.ticket")
+    motivo = fields.Text(string = 'Motivo de reincidencia')
+
+    def crearTicket(self):
+        if ticket_id.x_studio_equipo_por_nmero_de_serie:
+          ticket = self.env['helpdesk.ticket'].create({'stage_id': 89 
+                                                      ,'x_studio_equipo_por_nmero_de_serie': [(6,0,self.ticket_id.x_studio_equipo_por_nmero_de_serie.ids)]
+                                                      ,'partner_id': int(ticket_id.partner_id.id)
+                                                      ,'x_studio_empresas_relacionadas': int(ticket_id.x_studio_empresas_relacionadas.id)
+                                                      ,'team_id': 9
+                                                      ,'x_studio_field_6furK': ticket_id.x_studio_field_6furK
+                                                      ,'esReincidencia': True
+                                                      ,'ticketDeReincidencia': "<a href='https://gnsys-corp.odoo.com/web#id=" + str(ticket_id.id) + "&action=1137&model=helpdesk.ticket&view_type=form&menu_id=406' target='_blank'>" + str(ticket_id.id) + "</a>"
+                                                      ,'user_id': self.env.user.id
+                                                      })
+          ticket.write({'partner_id': int(ticket_id.partner_id.id)
+                      ,'x_studio_empresas_relacionadas': int(ticket_id.x_studio_empresas_relacionadas.id)
+                      ,'team_id': 9
+                      ,'x_studio_field_6furK': ticket_id.x_studio_field_6furK
+                      ,'esReincidencia': True
+                      ,'ticketDeReincidencia': "<a href='https://gnsys-corp.odoo.com/web#id=" + str(ticket_id.id) + "&action=1137&model=helpdesk.ticket&view_type=form&menu_id=406' target='_blank'>" + str(ticket_id.id) + "</a>"
+                      })
+          query = "update helpdesk_ticket set \"partner_id\" = " + str(ticket_id.partner_id.id) + ", \"x_studio_empresas_relacionadas\" =" + str(ticket_id.x_studio_empresas_relacionadas.id) + " where id = " + str(ticket.id) + ";"
+          self.env.cr.execute(query)
+          self.env.cr.commit()
+          ticket._compute_datosCliente()
+
+          self.env['helpdesk.diagnostico'].create({'ticketRelacion': ticket.id
+                                                  ,'comentario': 'Ticket creado por reincidencia. Número de ticket relacionado: ' + str(ticket_id.id) + ' Motivo: ' self.motivo
+                                                  ,'estadoTicket': ticket.stage_id.name
+                                                  #,'evidencia': [(6,0,self.evidencia.ids)]
+                                                  ,'mostrarComentario': True
+                                                  })
+
+
+          mensajeTitulo = "Ticket generado!!!"
+          mensajeCuerpo = 'Ticket ' + ticket.id + ' generado por reincidencia'
+          wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
+          
+          view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+          return {
+                  'name': _(mensajeTitulo),
+                  'type': 'ir.actions.act_window',
+                  'view_type': 'form',
+                  'view_mode': 'form',
+                  'res_model': 'helpdesk.alerta',
+                  'views': [(view.id, 'form')],
+                  'view_id': view.id,
+                  'target': 'new',
+                  'res_id': wiz.id,
+                  'context': self.env.context,
+                  }
+        else:
+          ticket = self.env['helpdesk.ticket'].create({'stage_id': 89 
+                                                        #,'x_studio_equipo_por_nmero_de_serie': [(6,0,self.ticket_id.x_studio_equipo_por_nmero_de_serie.ids)]
+                                                        ,'partner_id': int(ticket_id.partner_id.id)
+                                                        ,'x_studio_empresas_relacionadas': int(ticket_id.x_studio_empresas_relacionadas.id)
+                                                        ,'team_id': 9
+                                                        ,'x_studio_field_6furK': ticket_id.x_studio_field_6furK
+                                                        ,'esReincidencia': True
+                                                        ,'ticketDeReincidencia': "<a href='https://gnsys-corp.odoo.com/web#id=" + str(ticket_id.id) + "&action=1137&model=helpdesk.ticket&view_type=form&menu_id=406' target='_blank'>" + str(ticket_id.id) + "</a>"
+                                                        ,'user_id': self.env.user.id
+                                                        })
+            ticket.write({'partner_id': int(ticket_id.partner_id.id)
+                        ,'x_studio_empresas_relacionadas': int(ticket_id.x_studio_empresas_relacionadas.id)
+                        ,'team_id': 9
+                        ,'x_studio_field_6furK': ticket_id.x_studio_field_6furK
+                        ,'esReincidencia': True
+                        ,'ticketDeReincidencia': "<a href='https://gnsys-corp.odoo.com/web#id=" + str(ticket_id.id) + "&action=1137&model=helpdesk.ticket&view_type=form&menu_id=406' target='_blank'>" + str(ticket_id.id) + "</a>"
+                        })
+            query = "update helpdesk_ticket set \"partner_id\" = " + str(ticket_id.partner_id.id) + ", \"x_studio_empresas_relacionadas\" =" + str(ticket_id.x_studio_empresas_relacionadas.id) + " where id = " + str(ticket.id) + ";"
+            self.env.cr.execute(query)
+            self.env.cr.commit()
+            ticket._compute_datosCliente()
+
+            self.env['helpdesk.diagnostico'].create({'ticketRelacion': ticket.id
+                                                    ,'comentario': 'Ticket creado por reincidencia. Número de ticket relacionado: ' + str(ticket_id.id) + ' Motivo: ' self.motivo
+                                                    ,'estadoTicket': ticket.stage_id.name
+                                                    #,'evidencia': [(6,0,self.evidencia.ids)]
+                                                    ,'mostrarComentario': True
+                                                    })
+
+
+            mensajeTitulo = "Ticket generado!!!"
+            mensajeCuerpo = 'Ticket ' + ticket.id + ' generado por reincidencia'
+            wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
+            
+            view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+            return {
+                    'name': _(mensajeTitulo),
+                    'type': 'ir.actions.act_window',
+                    'view_type': 'form',
+                    'view_mode': 'form',
+                    'res_model': 'helpdesk.alerta',
+                    'views': [(view.id, 'form')],
+                    'view_id': view.id,
+                    'target': 'new',
+                    'res_id': wiz.id,
+                    'context': self.env.context,
+                    }
+        
