@@ -1067,31 +1067,31 @@ class HelpDeskReincidencia(TransientModel):
 
 
     def crearTicket(self):
-        if ticket_id.x_studio_equipo_por_nmero_de_serie:
+        if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
           ticket = self.env['helpdesk.ticket'].create({'stage_id': 89 
                                                       ,'x_studio_equipo_por_nmero_de_serie': [(6,0,self.ticket_id.x_studio_equipo_por_nmero_de_serie.ids)]
-                                                      ,'partner_id': int(ticket_id.partner_id.id)
-                                                      ,'x_studio_empresas_relacionadas': int(ticket_id.x_studio_empresas_relacionadas.id)
+                                                      ,'partner_id': int(self.ticket_id.partner_id.id)
+                                                      ,'x_studio_empresas_relacionadas': int(self.ticket_id.x_studio_empresas_relacionadas.id)
                                                       ,'team_id': 9
-                                                      ,'x_studio_field_6furK': ticket_id.x_studio_field_6furK
+                                                      ,'x_studio_field_6furK': self.ticket_id.x_studio_field_6furK
                                                       ,'esReincidencia': True
-                                                      ,'ticketDeReincidencia': "<a href='https://gnsys-corp.odoo.com/web#id=" + str(ticket_id.id) + "&action=1137&model=helpdesk.ticket&view_type=form&menu_id=406' target='_blank'>" + str(ticket_id.id) + "</a>"
+                                                      ,'ticketDeReincidencia': "<a href='https://gnsys-corp.odoo.com/web#id=" + str(self.ticket_id.id) + "&action=1137&model=helpdesk.ticket&view_type=form&menu_id=406' target='_blank'>" + str(self.ticket_id.id) + "</a>"
                                                       ,'user_id': self.env.user.id
                                                       })
-          ticket.write({'partner_id': int(ticket_id.partner_id.id)
-                      ,'x_studio_empresas_relacionadas': int(ticket_id.x_studio_empresas_relacionadas.id)
+          ticket.write({'partner_id': int(self.ticket_id.partner_id.id)
+                      ,'x_studio_empresas_relacionadas': int(self.ticket_id.x_studio_empresas_relacionadas.id)
                       ,'team_id': 9
-                      ,'x_studio_field_6furK': ticket_id.x_studio_field_6furK
+                      ,'x_studio_field_6furK': self.ticket_id.x_studio_field_6furK
                       ,'esReincidencia': True
-                      ,'ticketDeReincidencia': "<a href='https://gnsys-corp.odoo.com/web#id=" + str(ticket_id.id) + "&action=1137&model=helpdesk.ticket&view_type=form&menu_id=406' target='_blank'>" + str(ticket_id.id) + "</a>"
+                      ,'ticketDeReincidencia': "<a href='https://gnsys-corp.odoo.com/web#id=" + str(self.ticket_id.id) + "&action=1137&model=helpdesk.ticket&view_type=form&menu_id=406' target='_blank'>" + str(self.ticket_id.id) + "</a>"
                       })
-          query = "update helpdesk_ticket set \"partner_id\" = " + str(ticket_id.partner_id.id) + ", \"x_studio_empresas_relacionadas\" =" + str(ticket_id.x_studio_empresas_relacionadas.id) + " where id = " + str(ticket.id) + ";"
+          query = "update helpdesk_ticket set \"partner_id\" = " + str(self.ticket_id.partner_id.id) + ", \"x_studio_empresas_relacionadas\" =" + str(self.ticket_id.x_studio_empresas_relacionadas.id) + " where id = " + str(ticket.id) + ";"
           self.env.cr.execute(query)
           self.env.cr.commit()
           ticket._compute_datosCliente()
 
           self.env['helpdesk.diagnostico'].create({'ticketRelacion': ticket.id
-                                                  ,'comentario': 'Ticket creado por reincidencia. Número de ticket relacionado: ' + str(ticket_id.id) + ' Motivo: ' + self.motivo
+                                                  ,'comentario': 'Ticket creado por reincidencia. Número de ticket relacionado: ' + str(self.ticket_id.id) + ' Motivo: ' + self.motivo
                                                   ,'estadoTicket': ticket.stage_id.name
                                                   #,'evidencia': [(6,0,self.evidencia.ids)]
                                                   ,'mostrarComentario': True
@@ -1118,28 +1118,28 @@ class HelpDeskReincidencia(TransientModel):
         else:
           ticket = self.env['helpdesk.ticket'].create({'stage_id': 89 
                                                         #,'x_studio_equipo_por_nmero_de_serie': [(6,0,self.ticket_id.x_studio_equipo_por_nmero_de_serie.ids)]
-                                                        ,'partner_id': int(ticket_id.partner_id.id)
-                                                        ,'x_studio_empresas_relacionadas': int(ticket_id.x_studio_empresas_relacionadas.id)
+                                                        ,'partner_id': int(self.ticket_id.partner_id.id)
+                                                        ,'x_studio_empresas_relacionadas': int(self.ticket_id.x_studio_empresas_relacionadas.id)
                                                         ,'team_id': 9
-                                                        ,'x_studio_field_6furK': ticket_id.x_studio_field_6furK
+                                                        ,'x_studio_field_6furK': self.ticket_id.x_studio_field_6furK
                                                         ,'esReincidencia': True
-                                                        ,'ticketDeReincidencia': "<a href='https://gnsys-corp.odoo.com/web#id=" + str(ticket_id.id) + "&action=1137&model=helpdesk.ticket&view_type=form&menu_id=406' target='_blank'>" + str(ticket_id.id) + "</a>"
+                                                        ,'ticketDeReincidencia': "<a href='https://gnsys-corp.odoo.com/web#id=" + str(self.ticket_id.id) + "&action=1137&model=helpdesk.ticket&view_type=form&menu_id=406' target='_blank'>" + str(self.ticket_id.id) + "</a>"
                                                         ,'user_id': self.env.user.id
                                                         })
-          ticket.write({'partner_id': int(ticket_id.partner_id.id)
-                      ,'x_studio_empresas_relacionadas': int(ticket_id.x_studio_empresas_relacionadas.id)
+          ticket.write({'partner_id': int(self.ticket_id.partner_id.id)
+                      ,'x_studio_empresas_relacionadas': int(self.ticket_id.x_studio_empresas_relacionadas.id)
                       ,'team_id': 9
-                      ,'x_studio_field_6furK': ticket_id.x_studio_field_6furK
+                      ,'x_studio_field_6furK': self.ticket_id.x_studio_field_6furK
                       ,'esReincidencia': True
-                      ,'ticketDeReincidencia': "<a href='https://gnsys-corp.odoo.com/web#id=" + str(ticket_id.id) + "&action=1137&model=helpdesk.ticket&view_type=form&menu_id=406' target='_blank'>" + str(ticket_id.id) + "</a>"
+                      ,'ticketDeReincidencia': "<a href='https://gnsys-corp.odoo.com/web#id=" + str(self.ticket_id.id) + "&action=1137&model=helpdesk.ticket&view_type=form&menu_id=406' target='_blank'>" + str(self.ticket_id.id) + "</a>"
                       })
-          query = "update helpdesk_ticket set \"partner_id\" = " + str(ticket_id.partner_id.id) + ", \"x_studio_empresas_relacionadas\" =" + str(ticket_id.x_studio_empresas_relacionadas.id) + " where id = " + str(ticket.id) + ";"
+          query = "update helpdesk_ticket set \"partner_id\" = " + str(self.ticket_id.partner_id.id) + ", \"x_studio_empresas_relacionadas\" =" + str(self.ticket_id.x_studio_empresas_relacionadas.id) + " where id = " + str(ticket.id) + ";"
           self.env.cr.execute(query)
           self.env.cr.commit()
           ticket._compute_datosCliente()
 
           self.env['helpdesk.diagnostico'].create({'ticketRelacion': ticket.id
-                                                  ,'comentario': 'Ticket creado por reincidencia. Número de ticket relacionado: ' + str(ticket_id.id) + ' Motivo: ' + self.motivo
+                                                  ,'comentario': 'Ticket creado por reincidencia. Número de ticket relacionado: ' + str(self.ticket_id.id) + ' Motivo: ' + self.motivo
                                                   ,'estadoTicket': ticket.stage_id.name
                                                   #,'evidencia': [(6,0,self.evidencia.ids)]
                                                   ,'mostrarComentario': True
