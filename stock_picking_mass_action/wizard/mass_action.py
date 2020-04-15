@@ -608,6 +608,7 @@ class HelpdeskTicketMassAction(TransientModel):
     def report(self):
         i=[]
         d=[]
+        j=[]
         if(self.fechaInicial):
             m=['create_date','>=',self.fechaInicial]
             i.append(m)
@@ -630,7 +631,11 @@ class HelpdeskTicketMassAction(TransientModel):
             i.append(m)
             m=['x_studio_tipo_de_vale','=','Falla']
             i.append(m)
-        d=self.env['helpdesk.ticket'].search(i,order='create_date asc')
+        for ii in range(len(i-1)):
+            j.append('|')
+        j.extend(i)
+
+        d=self.env['helpdesk.ticket'].search(j,order='create_date asc')
         if(len(d)>0):
             d[0].write({'x_studio_arreglo':str(d.mapped('id'))})
             return self.env.ref('stock_picking_mass_action.ticket_xlsx').report_action(d[0])
