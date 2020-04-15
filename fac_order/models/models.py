@@ -104,7 +104,7 @@ class fac_order(models.Model):
                          if k.x_studio_color_bn=='B/N':
                             self.env['sale.order.line'].create({'order_id': sale.id,'product_id':11340,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN})                                                    
                          if k.x_studio_color_bn=='Color':
-                            self.env['sale.order.line'].create({'order_id': sale.id,'product_id':11340,'product_uom_qty':colorp,'price_unit':m.clickExcedenteBN})                                                    
+                            self.env['sale.order.line'].create({'order_id': sale.id,'product_id':11340,'product_uom_qty':colorp,'price_unit':m.clickExcedenteColor})                                                    
                           
                       if k.x_studio_color_bn=='B/N':
                          procesadasColorBN=bnp+procesadasColorBN                  
