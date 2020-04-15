@@ -431,7 +431,7 @@ class helpdesk_contadores(TransientModel):
 
     @api.depends('contadorBNActual', 'contadorColorActual')
     def _compute_textoInformativo(self):
-      if self.bnColor == 'B/N':
+      if str(self.bnColor) == 'B/N':
         if self.contadorBNActual != 0 or self.contadorBNActual != False:
           self.textoInformativo = """
                                     <div class='alert alert-warning' role='alert'>
