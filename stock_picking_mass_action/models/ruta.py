@@ -27,7 +27,7 @@ class CreacionRuta(Model):
 			self.ordenes.write({'estado':'ruta'})
 			self.ordenes.write({'ajusta':True})
 			self.estado="valido"
-			if(self.odometro==0):
+			if(self.odometro==0 and self.tipo.lower()=="local"):
 				raise UserError(_('Tiene que ingresas el Odometro'))
 			for o in self.ordenes:
 				if(o.sale_id.x_studio_field_bxHgp):
