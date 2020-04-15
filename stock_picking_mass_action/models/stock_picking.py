@@ -486,7 +486,7 @@ class StockPicking(Model):
     #                 self.estado='confirmed'
     @api.multi
     def cierre(self):
-        if(self.x_studio_evidencia_a_ticket):
+        if(len(self.x_studio_evidencia_a_ticket)>0 and self.partner_id.state_id.name in ["Estado de México","Ciudad de México"]):
             #self.sudo().action_done()
             wiz=self.env['stock.picking.mass.action'].create({'picking_ids':[(4,self.id)],'confirm':True,'check_availability':True,'transfer':True})
             #_logger.info(str(self.id))
