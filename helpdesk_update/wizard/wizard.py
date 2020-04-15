@@ -426,12 +426,12 @@ class helpdesk_contadores(TransientModel):
     contadorColorMesa = fields.Integer(string='Contador Color Mesa', compute = '_compute_actualizaContadorColorMesa')
     contadorColorActual = fields.Integer(string='Contador Color Actual', default = 0)
     negroProcentaje = fields.Integer(string='% Negro')
-    bnColor = fields.Text(string='Color o BN', compute = '_compute_actualizaColor')
-    textoInformativo = fields.Text(string = ' ', store = True, compute = '_compute_textoInformativo')
+    bnColor = fields.Text(string='Color o BN', default = ' ', compute = '_compute_actualizaColor')
+    textoInformativo = fields.Text(string = ' ', default = ' ', store = True, compute = '_compute_textoInformativo')
 
     @api.depends('contadorBNActual', 'contadorColorActual')
     def _compute_textoInformativo(self):
-      if str(self.bnColor) == 'B/N':
+      if self.bnColor == 'B/N':
         if self.contadorBNActual != 0 or self.contadorBNActual != False:
           self.textoInformativo = """
                                     <div class='alert alert-warning' role='alert'>
