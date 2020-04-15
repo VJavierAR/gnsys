@@ -163,12 +163,12 @@
                     <group string="Contadores anteriores">
                         <field name="contadorBNMesa" readonly="1"/>
                         <field name="contadorColorMesa" readonly="1" attrs='{"invisible": [["bnColor", "=", "B/N"]]}'/>
-                        <field name="bnColor" readonly="1"/>
+                        <field name="bnColor" readonly="1" force_save='1'/>
                         
                     </group>
                     <group string="Contador actual">
-                        <field name="contadorBNActual"/>
-                        <field name="contadorColorActual" attrs='{"invisible": [["bnColor", "=", "B/N"]]}'/>
+                        <field name="contadorBNActual" id='contadorBNActual'/>
+                        <field name="contadorColorActual" id='contadorColorActual' attrs='{"invisible": [["bnColor", "=", "B/N"]]}'/>
                     </group>
                 </group>
                 <!--<group attrs="{'invisible': ['|', &quot;&amp;&quot;, &quot;&amp;&quot;, ('bnColor', '=', 'B/N'),('contadorBNActual', '=', 0)]}">-->
@@ -176,7 +176,7 @@
                     <group>
                     </group>
                     <group>
-                        <field name='textoInformativo' readonly='1' widget='html' force_save='1'/>
+                        <field name='textoInformativo' id='textoInformativo' readonly='1' widget='html' force_save='1'/>
                     </group>
                 </group>
                 <footer>

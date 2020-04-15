@@ -91,6 +91,11 @@ odoo.define('invoice.action_button_helpdesk', function (require) {
         },
 	});
 
+    $('#contadorBNActual').on('change', function(e) {
+        console.log("Entro en el onchange")
+        $('#textoInformativo').val('Hola mundo')
+    });
+
     /*$(document).ready(function() {
         console.log("Entrando al cargar...")
         //var x = document.getElementById("hidden_box");
