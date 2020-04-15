@@ -94,7 +94,7 @@
             <form string="Mass Action for the selected stock picking">
                 <group>
                     <field name="check" invisible="1"/>
-                    <h2 attrs="{'invisible':[['check','=',1]]}">Se transferiran las Ordenes Selecionadas</h2>
+                    <h2 attrs="{'invisible':[['check','!=',1]]}">Se Transferiran las Ordenes Selecionadas</h2>
                     <field name="confirm" invisible="1"/>
                     <field name="check_availability" invisible="1"/>
                     <field name="transfer" invisible="1"/>
