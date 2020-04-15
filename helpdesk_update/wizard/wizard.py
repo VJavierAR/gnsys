@@ -1065,6 +1065,7 @@ class HelpDeskReincidencia(TransientModel):
     ticket_id = fields.Many2one("helpdesk.ticket")
     motivo = fields.Text(string = 'Motivo de reincidencia')
 
+    """
     def crearTicket(self):
         if ticket_id.x_studio_equipo_por_nmero_de_serie:
           ticket = self.env['helpdesk.ticket'].create({'stage_id': 89 
@@ -1162,4 +1163,4 @@ class HelpDeskReincidencia(TransientModel):
                     'res_id': wiz.id,
                     'context': self.env.context,
                     }
-        
+    """
