@@ -474,7 +474,7 @@ class helpdesk_contadores(TransientModel):
                                     </div>
                                     
                                   """
-        elif self.contadorBNActual != 0 or self.contadorBNActual != False && self.contadorColorActual != 0 or self.contadorColorActual != False:
+        elif self.contadorBNActual != 0 or self.contadorBNActual != False and self.contadorColorActual != 0 or self.contadorColorActual != False:
           self.textoInformativo = """
                                     <div class='alert alert-warning' role='alert'>
                                       <h4 class="alert-heading">Advertencia!!!</h4>
