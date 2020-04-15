@@ -96,7 +96,7 @@
                     <field name="confirm" invisible="1"/>
                     <field name="check_availability" invisible="1"/>
                     <field name="transfer" invisible="1"/>
-                    <field name="check" invisible="1"/>
+                    <field name="check"/>
                     <field name="tecnico" invisible="1"  domain="['|',['job_id.name','=','TÉCNICO '],['job_id.name','=','SOFTWARE']]"   attrs="{'invisible':[['check','=',1]]}"/>
                     <field name="picking_ids" attrs="{'invisible':[['check','=',2]]}">
                         <tree editable="bottom">
