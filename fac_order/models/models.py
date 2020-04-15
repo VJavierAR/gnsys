@@ -55,9 +55,9 @@ class fac_order(models.Model):
             anios=get_years()
             i=0
             if str(self.month)=='01':
-                anioA=str(int(self.anio)-1)
+                anioA=str(int(self.year)-1)
             else:    
-                anioA=str(self.anio)
+                anioA=str(self.year)
             periodoAnterior= anioA+'-'+mesaA
             #raise exceptions.ValidationError( str(periodoAnterior) + ' ante '+ str(perido) )    
             for m in ff:              
