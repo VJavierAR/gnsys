@@ -13,7 +13,7 @@
                     <group>
                         <field name="check" attrs='{"readonly": [["estado","=","Cerrado"]]}'/>
                         <field name="evidencia" widget="many2many_binary" attrs='{"readonly": [["estado","=","Cerrado"]]}'/>
-                        <field name="ultimaEvidencia" force_save = "1"  attrs='{"readonly": [["estado","=","Cerrado"]]}'/>
+                        <field name="ultimaEvidencia" force_save = "1" groups="studio_customization.grupo_de_tecnicos_fi_6cce8af2-f2d0-4449-b629-906fb2c16636" attrs='{"readonly": [["estado","=","Cerrado"]]}'/>
                         <field name="editarZona" force_save = "1" groups="studio_customization.responsables_de_area_0126b8d9-62a9-425c-b125-0540213a8390" attrs='{"readonly": [["estado","=","Cerrado"]]}'/>
                         <field name="zona" attrs='{"invisible": [["editarZona","=",False]]}' force_save = "1"/>
                     </group>
