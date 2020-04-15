@@ -1063,7 +1063,7 @@ class HelpDeskReincidencia(TransientModel):
     _description = 'HelpDesk Reincidencia'
     
     ticket_id = fields.Many2one("helpdesk.ticket")
-    motivo = fields.Text(string = 'Motivo de reincidencia')
+    motivo = fields.Text(string = 'Motivo de reincidencia') 
 
     """
     def crearTicket(self):
