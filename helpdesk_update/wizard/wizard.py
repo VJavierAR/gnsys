@@ -427,7 +427,74 @@ class helpdesk_contadores(TransientModel):
     contadorColorActual = fields.Integer(string='Contador Color Actual', default = 0)
     negroProcentaje = fields.Integer(string='% Negro')
     bnColor = fields.Text(string='Color o BN', compute = '_compute_actualizaColor')
-    
+    textoInformativo = fields.Text(string = ' ', store = True, compute = '_compute_textoInformativo')
+
+    @api.depends('contadorBNActual', 'contadorColorActual')
+    def _compute_textoInformativo(self):
+      if self.bnColor == 'B/N':
+        if self.contadorBNActual != 0 or self.contadorBNActual != False:
+          self.textoInformativo = """
+                                    <div class='alert alert-warning' role='alert'>
+                                      <h4 class="alert-heading">Advertencia!!!</h4>
+
+                                      <p>El contador capturado negro será: <strong>""" + str(self.contadorBNActual) + """</strong></p>
+                                      <br/>
+                                      <p>La diferencia con el contador actual es de: <strong>""" + str(self.contadorBNActual - self.contadorBNMesa) + """</strong></p>
+
+                                      
+                                    </div>
+                                    
+                                  """
+        else:
+          self.textoInformativo = """ """
+      else:
+        if self.contadorBNActual != 0 or self.contadorBNActual != False:
+          self.textoInformativo = """
+                                    <div class='alert alert-warning' role='alert'>
+                                      <h4 class="alert-heading">Advertencia!!!</h4>
+
+                                      <p>El contador capturado negro será: <strong>""" + str(self.contadorBNActual) + """</strong></p>
+                                      <br/>
+                                      <p>La diferencia con el contador negro actual es de: <strong>""" + str(self.contadorBNActual - self.contadorBNMesa) + """</strong></p>
+
+                                      
+                                    </div>
+                                    
+                                  """
+        elif self.contadorColorActual != 0 or self.contadorColorActual != False:
+          self.textoInformativo = """
+                                    <div class='alert alert-warning' role='alert'>
+                                      <h4 class="alert-heading">Advertencia!!!</h4>
+
+                                      <p>El contador color capturado será: <strong>""" + str(self.contadorColorActual) + """</strong></p>
+                                      <br/>
+                                      <p>La diferencia con el contador color actual es de: <strong>""" + str(self.contadorColorActual - self.contadorColorMesa) + """</strong></p>
+
+                                      
+                                    </div>
+                                    
+                                  """
+        elif self.contadorBNActual != 0 or self.contadorBNActual != False && self.contadorColorActual != 0 or self.contadorColorActual != False:
+          self.textoInformativo = """
+                                    <div class='alert alert-warning' role='alert'>
+                                      <h4 class="alert-heading">Advertencia!!!</h4>
+
+                                      <p>El contador capturado negro será: <strong>""" + str(self.contadorBNActual) + """</strong></p>
+                                      <br/>
+                                      <p>La diferencia con el contador negro actual es de: <strong>""" + str(self.contadorBNActual - self.contadorBNMesa) + """</strong></p>
+                                      <br/>
+                                      <p>El contador color capturado será: <strong>""" + str(self.contadorColorActual) + """</strong></p>
+                                      <br/>
+                                      <p>La diferencia con el contador color actual es de: <strong>""" + str(self.contadorColorActual - self.contadorColorMesa) + """</strong></p>
+
+                                      
+                                    </div>
+                                    
+                                  """
+        else:
+          self.textoInformativo = """ """
+
+
     @api.depends('ticket_id')
     def _compute_contadorBNMesa(self):
         if self.ticket_id.x_studio_equipo_por_nmero_de_serie:

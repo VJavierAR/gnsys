@@ -171,6 +171,14 @@
                         <field name="contadorColorActual" attrs='{"invisible": [["bnColor", "=", "B/N"]]}'/>
                     </group>
                 </group>
+                <!--<group attrs="{'invisible': ['|', &quot;&amp;&quot;, &quot;&amp;&quot;, ('bnColor', '=', 'B/N'),('contadorBNActual', '=', 0)]}">-->
+                <group>
+                    <group>
+                    </group>
+                    <group>
+                        <field name='textoInformativo' readonly='1' widget='html' force_save='1'/>
+                    </group>
+                </group>
                 <footer>
                     <button name="modificarContadores" string="Confirmar" type="object" class="oe_highlight"/>
                     <button string="Cancel" class="oe_link" special="cancel"/>
