@@ -25,6 +25,8 @@ class StockPicking(Model):
     sale_child=fields.Many2one('sale.order')
     tipo=fields.Char(compute='cliente',store=True)
     oculta=fields.Boolean(store=True)
+    estadoRuta=fields.Selection([["borrador","Borrador"],["valido","Confirmado"]])
+
     #documentosDistro = fields.Many2many('ir.attachment', string="Evidencias ")
     #historialTicket = fields.One2many('ir.attachment','res_id',string='Evidencias al ticket',store=True,track_visibility='onchange')
 
