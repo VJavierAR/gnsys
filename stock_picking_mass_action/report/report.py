@@ -11,7 +11,7 @@ class PartnerXlsx(models.AbstractModel):
     def generate_xlsx_report(self, workbook, data, partners):
         i=2
         d=[]
-        if(len(partners)==1 and partners.x_studio_arreglo!='/'):
+        if(len(partners)==1 and partners.x_studio_arreglo!='/' and partners.x_studio_arreglo!=False):
             copia=partners
             partners=self.env['stock.move.line'].browse(eval(partners.x_studio_arreglo))
             copia.write({'x_studio_arreglo':'/'})
@@ -70,7 +70,7 @@ class ExistenciasXML(models.AbstractModel):
     _inherit = 'report.report_xlsx.abstract'
 
     def generate_xlsx_report(self, workbook, data, quants):
-        if(len(quants)==1 and quants.x_studio_arreglo!='/'):
+        if(len(quants)==1 and quants.x_studio_arreglo!='/' and quants.x_studio_arreglo!=False):
             copia=quants
             quants=self.env['stock.quant'].browse(eval(quants.x_studio_arreglo))
             copia.write({'x_studio_arreglo':'/'})
@@ -116,7 +116,7 @@ class PartnerXlsx(models.AbstractModel):
     def generate_xlsx_report(self, workbook, data, sale):
         i=2
         d=[]
-        if(len(sale)==1 and sale.x_studio_arreglo!='/'):
+        if(len(sale)==1 and sale.x_studio_arreglo!='/' and sale.x_studio_arreglo!=False):
             copia=sale
             sale=self.env['sale.order'].browse(eval(sale.x_studio_arreglo)).sorted(key='write_date',reverse=True) 
             copia.write({'x_studio_arreglo':'/'})
