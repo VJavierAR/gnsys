@@ -489,7 +489,7 @@ class StockPicking(Model):
         if(self.x_studio_evidencia_a_ticket and self.partner_id.state_id.name in ["Estado de México","Ciudad de México"]):
             #self.sudo().action_done()
             wiz=self.env['stock.picking.mass.action'].create({'picking_ids':[(4,self.id)],'confirm':True,'check_availability':True,'transfer':True})
-            #_logger.info(str(self.id))
+            _logger.info(str(self.id))
             #obj.mass_action()
             #view_stock_picking_mass_action_form
             view = self.env.ref('stock_picking_mass_action.view_stock_picking_mass_action_form')
@@ -505,8 +505,26 @@ class StockPicking(Model):
                 'res_id': wiz.id,
                 'context': self.env.context,
             }
-        else:
-            raise UserError(_('Se requiere evidencia'))
+        if(self.partner_id.state_id.name not in ["Estado de México","Ciudad de México"]):
+            wiz=self.env['stock.picking.mass.action'].create({'picking_ids':[(4,self.id)],'confirm':True,'check_availability':True,'transfer':True})
+            _logger.info(str(self.id))
+            #obj.mass_action()
+            #view_stock_picking_mass_action_form
+            view = self.env.ref('stock_picking_mass_action.view_stock_picking_mass_action_form')
+            return {
+                'name': _('Transferencia'),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'stock.picking.mass.action',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'res_id': wiz.id,
+                'context': self.env.context,
+            }
+            else:
+                raise UserError(_('Se requiere evidencia'))
 
 class StockPicking(Model):
     _inherit = 'stock.move'
