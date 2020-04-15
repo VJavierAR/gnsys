@@ -15,7 +15,7 @@ class HelpDeskComentario(TransientModel):
     estado = fields.Char('Estado', compute = "_compute_estadoTicket")
     comentario = fields.Text('Comentario')
     evidencia = fields.Many2many('ir.attachment', string="Evidencias")
-    ultimaEvidencia = fields.Boolean(string = 'Última evidencia', store=True, default=False, help='En caso de que se genere un diagnostico con este campo activado, se movera el ticket a resuelto.')
+    ultimaEvidencia = fields.Boolean(string = '¿Última evidencia?', store=True, default=False)
     editarZona = fields.Boolean(string = 'Editar zona', store=True, default=False)
     zona = fields.Selection([('SUR','SUR'),('NORTE','NORTE'),('PONIENTE','PONIENTE'),('ORIENTE','ORIENTE'),('CENTRO','CENTRO'),('DISTRIBUIDOR','DISTRIBUIDOR'),('MONTERREY','MONTERREY'),('CUERNAVACA','CUERNAVACA'),('GUADALAJARA','GUADALAJARA'),('QUERETARO','QUERETARO'),('CANCUN','CANCUN'),('VERACRUZ','VERACRUZ'),('PUEBLA','PUEBLA'),('TOLUCA','TOLUCA'),('LEON','LEON'),('COMODIN','COMODIN'),('VILLAHERMOSA','VILLAHERMOSA'),('MERIDA','MERIDA'),('ALTAMIRA','ALTAMIRA'),('COMODIN','COMODIN'),('DF00','DF00'),('SAN LP','SAN LP'),('ESTADO DE MÉXICO','ESTADO DE MÉXICO'),('Foraneo Norte','Foraneo Norte'),('Foraneo Sur','Foraneo Sur')], string = 'Zona', store = True)
 
