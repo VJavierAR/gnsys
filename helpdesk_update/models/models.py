@@ -31,8 +31,8 @@ class helpdesk_update(models.Model):
     #seriesDCA = fields.One2many('dcas.dcas', 'tickete', string="Series")
 
     
-    esReincidencia = fields.Boolean(string = "¿Es reincidencia?", default = False)
-    ticketDeReincidencia = fields.Text(string = 'Ticket de provenencia')
+    esReincidencia = fields.Boolean(string = "¿Es reincidencia?", default = False, store = True)
+    ticketDeReincidencia = fields.Text(string = 'Ticket de provenencia', store = True)
 
     days_difference = fields.Integer(compute='_compute_difference',string='días de atraso')
 
