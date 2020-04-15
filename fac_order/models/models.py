@@ -142,7 +142,8 @@ class fac_order(models.Model):
                     
                       for d in self.order_line:
                           if d.x_studio_bolsa:  
-                             self.env['sale.order.line'].create({'order_id': fac.id,'product_id':11340,'product_uom_qty':d.product_uom_qty,'price_unit':d.price_unit,'x_studio_bolsa':d.x_studio_bolsa})                                                
+                             self.env['sale.order.line'].create({'order_id': fac.id,'product_id':11340,'product_uom_qty':d.product_uom_qty,'price_unit':d.price_unit,'x_studio_bolsa':d.x_studio_bolsa})
+                             self.env.cr.execute("delete from sale_order_line where order_id = " + str(fac.id) +";")   
                   else:
                       for j in ff:                      
                           if j.nombreAnte=='Renta global con páginas incluidas BN o color + pag. Excedentes':                        
