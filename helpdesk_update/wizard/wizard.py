@@ -1065,7 +1065,7 @@ class HelpDeskReincidencia(TransientModel):
     ticket_id = fields.Many2one("helpdesk.ticket")
     motivo = fields.Text(string = 'Motivo de reincidencia')
 
-    
+
     def crearTicket(self):
         if ticket_id.x_studio_equipo_por_nmero_de_serie:
           ticket = self.env['helpdesk.ticket'].create({'stage_id': 89 
@@ -1091,7 +1091,7 @@ class HelpDeskReincidencia(TransientModel):
           ticket._compute_datosCliente()
 
           self.env['helpdesk.diagnostico'].create({'ticketRelacion': ticket.id
-                                                  ,'comentario': 'Ticket creado por reincidencia. Número de ticket relacionado: ' + str(ticket_id.id) + ' Motivo: ' self.motivo
+                                                  ,'comentario': 'Ticket creado por reincidencia. Número de ticket relacionado: ' + str(ticket_id.id) + ' Motivo: ' + self.motivo
                                                   ,'estadoTicket': ticket.stage_id.name
                                                   #,'evidencia': [(6,0,self.evidencia.ids)]
                                                   ,'mostrarComentario': True
@@ -1139,7 +1139,7 @@ class HelpDeskReincidencia(TransientModel):
             ticket._compute_datosCliente()
 
             self.env['helpdesk.diagnostico'].create({'ticketRelacion': ticket.id
-                                                    ,'comentario': 'Ticket creado por reincidencia. Número de ticket relacionado: ' + str(ticket_id.id) + ' Motivo: ' self.motivo
+                                                    ,'comentario': 'Ticket creado por reincidencia. Número de ticket relacionado: ' + str(ticket_id.id) + ' Motivo: ' + self.motivo
                                                     ,'estadoTicket': ticket.stage_id.name
                                                     #,'evidencia': [(6,0,self.evidencia.ids)]
                                                     ,'mostrarComentario': True
