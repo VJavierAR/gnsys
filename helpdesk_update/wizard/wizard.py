@@ -1099,7 +1099,7 @@ class HelpDeskReincidencia(TransientModel):
 
 
           mensajeTitulo = "Ticket generado!!!"
-          mensajeCuerpo = 'Ticket ' + ticket.id + ' generado por reincidencia'
+          mensajeCuerpo = 'Ticket ' + str(ticket.id) + ' generado por reinsidencia'
           wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
           
           view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
@@ -1147,7 +1147,7 @@ class HelpDeskReincidencia(TransientModel):
 
 
           mensajeTitulo = "Ticket generado!!!"
-          mensajeCuerpo = 'Ticket ' + ticket.id + ' generado por reincidencia'
+          mensajeCuerpo = 'Ticket ' + str(ticket.id) + ' generado por reinsidencia'
           wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
           
           view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
