@@ -55,9 +55,9 @@ class StockPickingMassAction(TransientModel):
     def che(self):
         for s in self.picking_ids:
             if(s.picking_type_id.id==3 or  s.picking_type_id.id==2):
-                check=2
+                self.check=2
             if(s.picking_type_id.id==29314):
-                check=1
+                self.check=1
     
     def mass_action(self):
         self.ensure_one()
