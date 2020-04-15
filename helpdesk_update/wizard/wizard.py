@@ -429,7 +429,7 @@ class helpdesk_contadores(TransientModel):
     bnColor = fields.Text(string='Color o BN', compute = '_compute_actualizaColor', store = True)
     textoInformativo = fields.Text(string = ' ', default = ' ', store = True, compute = '_compute_textoInformativo')
 
-    #@api.one
+    #@api.one 
     @api.depends('contadorBNActual', 'contadorColorActual')
     def _compute_textoInformativo(self):
       for record in self:
