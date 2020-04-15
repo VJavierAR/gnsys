@@ -497,7 +497,7 @@ class helpdesk_contadores(TransientModel):
           else:
             record.textoInformativo = """ """
 
-    @api.one
+    
     @api.depends('ticket_id')
     def _compute_contadorBNMesa(self):
         if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
