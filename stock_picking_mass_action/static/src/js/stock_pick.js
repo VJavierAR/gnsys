@@ -13,28 +13,52 @@ odoo.define('invoice.action_button', function (require) {
         this._super.apply(this, arguments);
             if (this.$buttons) {
                 if (typeof this.actionViews !== 'undefined' && this.actionViews.length > 0) {
-                    if (this.actionViews[0].viewID == 2940) {
-                        this.$buttons.find('.o_button_import').hide();
+                    switch (this.actionViews[0].viewID) {
+  case 2940:
+    this.$buttons.find('.o_button_import').hide();
                         this.$buttons.find('.o_list_button_add').hide();
                         this.$buttons.find('.oe_action_button_ticket_report').click(this.proxy('action_inter5'));
-                    }
-                    else if(this.actionViews[0].viewID == 2941) {
-                        this.$buttons.find('.o_button_import').hide();
+    break;
+  case 2941: // foo es 0, por lo tanto se cumple la condición y se ejecutara el siguiente bloque
+                            this.$buttons.find('.o_button_import').hide();
                         this.$buttons.find('.o_list_button_add').hide();
                         this.$buttons.find('.oe_action_button').click(this.proxy('action_inter2'));
-                    }
-                    else{
-                        this.$buttons.find('.oe_action_button_ticket_report').hide();
+    // NOTA: el "break" olvidado debería estar aquí
+  case 646: // No hay sentencia "break" en el 'case 0:', por lo tanto este caso también será ejecutado
+  this.$buttons.find('.o_button_import').hide();
+  this.$buttons.find('.oe_action_button_stock_inventory').click(this.proxy('action_inter6'));
+    
+    break; // Al encontrar un "break", no será ejecutado el 'case 2:'
+  default:
+                            this.$buttons.find('.oe_action_button_ticket_report').hide();
                         this.$buttons.find('.oe_action_button').hide();
                         this.$buttons.find('.oe_action_button_move_line').click(this.proxy('action_inter1'));
                         this.$buttons.find('.oe_action_button_stock_quant').click(this.proxy('action_inter3'));
                         this.$buttons.find('.oe_action_button_sale_report').click(this.proxy('action_inter4'));
-                    }
+
+}
+                    // if (this.actionViews[0].viewID == 2940) {
+                    //     this.$buttons.find('.o_button_import').hide();
+                    //     this.$buttons.find('.o_list_button_add').hide();
+                    //     this.$buttons.find('.oe_action_button_ticket_report').click(this.proxy('action_inter5'));
+                    // }
+                    // else if(this.actionViews[0].viewID == 2941) {
+                    //     this.$buttons.find('.o_button_import').hide();
+                    //     this.$buttons.find('.o_list_button_add').hide();
+                    //     this.$buttons.find('.oe_action_button').click(this.proxy('action_inter2'));
+                    // }
+                    // else{
+                    //     this.$buttons.find('.oe_action_button_ticket_report').hide();
+                    //     this.$buttons.find('.oe_action_button').hide();
+                    //     this.$buttons.find('.oe_action_button_move_line').click(this.proxy('action_inter1'));
+                    //     this.$buttons.find('.oe_action_button_stock_quant').click(this.proxy('action_inter3'));
+                    //     this.$buttons.find('.oe_action_button_sale_report').click(this.proxy('action_inter4'));
+                    // }
                 }
-                else if (this.actionViews[0].viewID == 646) {
-                        this.$buttons.find('.o_button_import').hide();
-                        this.$buttons.find('.oe_action_button_stock_inventory').click(this.proxy('action_inter6'));
-                    }
+                // else if (this.actionViews[0].viewID == 646) {
+                //         this.$buttons.find('.o_button_import').hide();
+                //         this.$buttons.find('.oe_action_button_stock_inventory').click(this.proxy('action_inter6'));
+                //     }
                 
             }
         },
