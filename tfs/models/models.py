@@ -61,58 +61,114 @@ class tfs(models.Model):
     estado=fields.Selection([('borrador','Borrador'),('xValidar','Por Validar'),('Valido','Valido'),('Confirmado','Confirmado')])
 
     colorBN=fields.Selection(related='serie.x_studio_color_bn')
-    
+    arreglo=fields.Char()
     @api.multi
     def confirm(self):
         for record in self:
             if(len(record.evidencias)==0):
                 raise exceptions.UserError("No hay evidencias registradas")                
             if(len(record.inventario)>0):
-                In=self.inventario.search([['product_id.name','=',self.producto.name],['location_id','=',self.almacen.lot_stock_id.id]]).sorted(key='quantity',reverse=True)
-                #for qua in record.inventario:
-                #    qua.product_id.id==self.producto.id
-                #    if(qua.product_id.id==self.producto.id):
-                if(len(In)>0 and In[0].quantity>0):
-                    if(self.tipo=='Negro'):
-                        rendimientoMono=self.actualMonocromatico-self.contadorAnteriorMono
-                        porcentaje=(100*rendimientoMono)/self.producto.x_studio_rendimiento_toner if self.producto.x_studio_rendimiento_toner>0 else 1
-                        _logger.info('porcentaje'+str(porcentaje))
-                        self.actualporcentajeNegro=porcentaje
-                        if(porcentaje<60):
+                if(record.colorBN=="B/N"):
+                    In=self.inventario.search([['product_id.name','=',self.productoNegro.name],['location_id','=',self.almacen.lot_stock_id.id]]).sorted(key='quantity',reverse=True)
+                    if(len(In)>0 and In[0].quantity>0):
+                        self.arreglo=str([In[0].id])
+                        if(record.actualporcentajeNegro<60):
                             self.write({'estado':'xValidar'})
                         else:
                             self.write({'estado':'Valido'})
-                            self.env['dcas.dcas'].create({'x_studio_toner_'+str(self.tipo).lower():1,'serie':record.serie.id,'contadorMono':record.actualMonocromatico,'contadorColor':record.actualColor,'fuente':'tfs.tfs','porcentajeMagenta':self.actualporcentajeMagenta,'porcentajeNegro':self.actualporcentajeNegro,'porcentajeAmarillo':self.actualporcentajeAmarillo,'porcentajeCian':self.actualporcentajeCian})
-                            #In[0].write({'quantity':In[0].quantity-1})
                     else:
-                        rendimientoColor=self.actualColor-self.contadorAnteriorColor
-                        porcentaje=(100*rendimientoColor)/self.producto.x_studio_rendimiento_toner if self.producto.x_studio_rendimiento_toner>0 else 1
-                        
-                        self.write({'actualporcentaje'+str(self.Tipo):porcentaje})
-                        if(porcentaje<60):
-                            self.write({'estado':'xValidar'})
-                        else:
-                            self.write({'estado':'Valido'})
-                            #_logger.info(In[0])
-                            #In[0].write({'quantity':In[0].quantity-1})
-                            self.env['dcas.dcas'].create({'x_studio_toner_'+str(self.tipo).lower():1,'serie':record.serie.id,'contadorMono':record.actualMonocromatico,'contadorColor':record.actualColor,'fuente':'tfs.tfs','porcentajeMagenta':self.actualporcentajeMagenta,'porcentajeNegro':self.actualporcentajeNegro,'porcentajeAmarillo':self.actualporcentajeAmarillo,'porcentajeCian':self.actualporcentajeCian})
+                        self.arreglo=str([])
+                        raise exceptions.UserError("No existen cantidades en el almacen para el producto " + self.productoNegro.name)
                 else:
-                    raise exceptions.UserError("No existen cantidades en el almacen para el producto " + self.producto.name)
+                    d=[]
+                    i=0
+                    suma=0
+                    if(record.productoNegro):
+                        In=self.inventario.search([['product_id.name','=',self.productoNegro.name],['location_id','=',self.almacen.lot_stock_id.id]]).sorted(key='quantity',reverse=True)
+                        if(len(In)>0 and In[0].quantity>0):
+                            d.append(In[0].id)
+                            i=i+1
+                            suma=suma+record.actualporcentajeNegro
+                        else:
+                            raise exceptions.UserError("No existen cantidades en el almacen para el producto " + self.productoNegro.name)
+                    if(record.productoCian):
+                        In=self.inventario.search([['product_id.name','=',self.productoCian.name],['location_id','=',self.almacen.lot_stock_id.id]]).sorted(key='quantity',reverse=True)
+                        if(len(In)>0 and In[0].quantity>0):
+                            d.append(In[0].id)
+                            i=i+1
+                            suma=suma+record.actualporcentajeCian
+                        else:
+                            raise exceptions.UserError("No existen cantidades en el almacen para el producto " + self.productoCian.name)
+                    if(record.productoMagenta):
+                        In=self.inventario.search([['product_id.name','=',self.productoMagenta.name],['location_id','=',self.almacen.lot_stock_id.id]]).sorted(key='quantity',reverse=True)
+                        if(len(In)>0 and In[0].quantity>0):
+                            d.append(In[0].id)
+                            i=i+1
+                            suma=suma+record.actualporcentajeMagenta
+                        else:
+                            raise exceptions.UserError("No existen cantidades en el almacen para el producto " + self.productoMagenta.name)
+                    if(record.productoAmarillo):
+                        In=self.inventario.search([['product_id.name','=',self.productoNegro.name],['location_id','=',self.almacen.lot_stock_id.id]]).sorted(key='quantity',reverse=True)
+                        if(len(In)>0 and In[0].quantity>0):
+                            d.append(In[0].id)
+                            i=i+1
+                            suma=suma+record.actualporcentajeAmarillo
+                        else:
+                            raise exceptions.UserError("No existen cantidades en el almacen para el producto " + self.productoAmarillo.name)
+                    final=suma/i
+                    if(final<60):
+                        self.write({'estado':'xValidar'})
+                    else:
+                        self.write({'estado':'Valido'})
+                    self.arreglo=str(d)
+
+                
+                # if(len(In)>0 and In[0].quantity>0):
+                #     if(self.tipo=='Negro'):
+                #         rendimientoMono=self.actualMonocromatico-self.contadorAnteriorMono
+                #         porcentaje=(100*rendimientoMono)/self.producto.x_studio_rendimiento_toner if self.producto.x_studio_rendimiento_toner>0 else 1
+                #         _logger.info('porcentaje'+str(porcentaje))
+                #         self.actualporcentajeNegro=porcentaje
+                #         if(porcentaje<60):
+                #             self.write({'estado':'xValidar'})
+                #         else:
+                #             self.write({'estado':'Valido'})
+                #             self.env['dcas.dcas'].create({'x_studio_toner_'+str(self.tipo).lower():1,'serie':record.serie.id,'contadorMono':record.actualMonocromatico,'contadorColor':record.actualColor,'fuente':'tfs.tfs','porcentajeMagenta':self.actualporcentajeMagenta,'porcentajeNegro':self.actualporcentajeNegro,'porcentajeAmarillo':self.actualporcentajeAmarillo,'porcentajeCian':self.actualporcentajeCian})
+                #             #In[0].write({'quantity':In[0].quantity-1})
+                #     else:
+                #         rendimientoColor=self.actualColor-self.contadorAnteriorColor
+                #         porcentaje=(100*rendimientoColor)/self.producto.x_studio_rendimiento_toner if self.producto.x_studio_rendimiento_toner>0 else 1
+                        
+                #         self.write({'actualporcentaje'+str(self.Tipo):porcentaje})
+                #         if(porcentaje<60):
+                #             self.write({'estado':'xValidar'})
+                #         else:
+                #             self.write({'estado':'Valido'})
+                #             #_logger.info(In[0])
+                #             #In[0].write({'quantity':In[0].quantity-1})
+                #             self.env['dcas.dcas'].create({'x_studio_toner_'+str(self.tipo).lower():1,'serie':record.serie.id,'contadorMono':record.actualMonocromatico,'contadorColor':record.actualColor,'fuente':'tfs.tfs','porcentajeMagenta':self.actualporcentajeMagenta,'porcentajeNegro':self.actualporcentajeNegro,'porcentajeAmarillo':self.actualporcentajeAmarillo,'porcentajeCian':self.actualporcentajeCian})
+
             else:
                     raise exceptions.UserError("No hay inventario en la ubicación selecionada")
+
+
     def test(self):
         i=self.env['tfs.tfs'].search([[]])
         raise RedirectWarning('mensaje',i[0],_('Test'))
+    
+
+
     @api.multi
     def valida(self):
         view = self.env.ref('tfs.view_tfs_ticket')
         wiz = self.env['tfs.ticket'].create({'tfs_ids': [(4, self.id)]})
         self.write({'estado':'Confirmado'})
         #self.env['dcas.dcas'].create({'serie':self.serie.id,'contadorMono':self.actualMonocromatico,'contadorColor':self.actualColor,'fuente':'tfs.tfs'})
-        In=self.inventario.search([['product_id.name','=',self.producto.name],['location_id','=',self.almacen.lot_stock_id.id]]).sorted(key='quantity',reverse=True)
-        if(len(In)>0):
-            In[0].write({'quantity':In[0].quantity-1})
-
+        dat=eval(self.arreglo)
+        if(dat!=[]):
+            quants=self.env['stock.quant'].browse(dat)
+            for q in quants:
+                q.write({'quantity':q.quantity-1})            
         return {
                 'name': _('Alerta'),
                 'type': 'ir.actions.act_window',
