@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="view_stock.inventory_action_form" model="ir.ui.view">
+    <record id="view_stock_inventory_action_form" model="ir.ui.view">
         <field name="model">stock.inventory.action</field>
         <field name="arch" type="xml">
             <form string="Mass Action for the selected sale order">

@@ -47,7 +47,7 @@ odoo.define('invoice.action_button', function (require) {
                 res_model: 'stock.inventory.action',
                 view_type: 'form',
                 view_mode: 'form',
-                view_id: 'view_stock.inventory_action_form',
+                view_id: 'view_stock_inventory_action_form',
                 views: [[false, 'form']],
                 target: 'new',
             
