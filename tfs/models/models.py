@@ -169,15 +169,15 @@ class tfs(models.Model):
     @api.onchange('actualColor')
     def _onchange_color(self):
         if(self.productoCian):
-            rendimientoMono=self.actualMonocromatico-self.contadorAnteriorMono
-            porcentaje=(100*rendimientoMono)/self.productoNegro.x_studio_rendimiento_toner if self.productoCian.x_studio_rendimiento_toner>0 else 1
-            self.actualporcentajeNegro=porcentaje
+            rendimientoMono=self.actualColor-self.contadorAnteriorCian
+            porcentaje=(100*rendimientoMono)/self.productoCian.x_studio_rendimiento_toner if self.productoCian.x_studio_rendimiento_toner>0 else 1
+            self.actualporcentajeCian=porcentaje
         if(self.productoAmarillo):
-            rendimientoMono=self.actualAmarillo-self.contadorAnteriorAmarillo
+            rendimientoMono=self.actualColor-self.contadorAnteriorAmarillo
             porcentaje=(100*rendimientoMono)/self.productoAmarillo.x_studio_rendimiento_toner if self.productoAmarillo.x_studio_rendimiento_toner>0 else 1
             self.actualporcentajeAmarillo=porcentaje
         if(self.productoMagenta):
-            rendimientoMono=self.actualMagenta-self.contadorAnteriorMagenta
+            rendimientoMono=self.actualColor-self.contadorAnteriorMagenta
             porcentaje=(100*rendimientoMono)/self.productoMagenta.x_studio_rendimiento_toner if self.productoMagenta.x_studio_rendimiento_toner>0 else 1
             self.actualporcentajeMagenta=porcentaje
     
