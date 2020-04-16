@@ -35,9 +35,9 @@ class tfs(models.Model):
     productoAmarillo=fields.Many2one('product.product',string='Toner Amarillo')
 
     contadorMono=fields.Many2one('dcas.dcas',string='Anterior Monocromatico',store=True)
-    contadorCian=fields.Many2one('dcas.dcas',string='Anterior Cian')
-    contadorMagenta=fields.Many2one('dcas.dcas',string='Anterior Magenta')
-    contadorAmarillo=fields.Many2one('dcas.dcas',string='Anterior Amarillo')
+    contadorCian=fields.Many2one('dcas.dcas',string='Anterior Cian',store=True)
+    contadorMagenta=fields.Many2one('dcas.dcas',string='Anterior Magenta',store=True)
+    contadorAmarillo=fields.Many2one('dcas.dcas',string='Anterior Amarillo',store=True)
     
     contadorAnteriorMono=fields.Integer(related='contadorMono.contadorMono',string='Anterior Monocromatico')
     contadorAnteriorCian=fields.Integer(related='contadorCian.contadorColor',string='Anterior Cian')

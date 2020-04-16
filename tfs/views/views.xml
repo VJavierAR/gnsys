@@ -40,11 +40,14 @@
             <page name="Contadores" string="Contadores">
                 <group>
                     <group name="a"  string="Contadores Monocromatico">
+                        <field name="contadorMono" invisible="1"/>
                         <field name="contadorAnteriorMono"/>
                         <field name="actualporcentajeNegro" widget="percentpie"/>
                         <field name="porcentajeAnteriorNegro" widget="percentpie"/>
                     </group>
                     <group name="b" string="Contadores Cian" attrs="{'invisible': ['|',('colorBN','=','B/N'),('serie','=',False)]}">
+                        <field name="contadorCian" invisible="1"/>
+
                         <field name="contadorAnteriorCian"/>
                         <field name="actualporcentajeCian" widget="percentpie"/>
                         <field name="porcentajeAnteriorCian" widget="percentpie"/>
@@ -52,11 +55,15 @@
                 </group>
                 <group>
                     <group name="c" string="Contadores Amarillo" attrs="{'invisible': ['|',('colorBN','=','B/N'),('serie','=',False)]}">
+                        <field name="contadorAmarillo" invisible="1"/>
+
                         <field name="contadorAnteriorAmarillo"/>
                         <field name="actualporcentajeAmarillo" widget="percentpie"/>
                         <field name="porcentajeAnteriorAmarillo" widget="percentpie"/>
                     </group>
                     <group name="d" string="Contadores Magenta" attrs="{'invisible': ['|',('colorBN','=','B/N'),('serie','=',False)]}">
+                                                <field name="contadorMagenta" invisible="1"/>
+
                         <field name="contadorAnteriorMagenta"/>
                         <field name="actualporcentajeMagenta" widget="percentpie"/>
                         <field name="porcentajeAnteriorMagenta" widget="percentpie"/>
