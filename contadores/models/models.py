@@ -650,10 +650,10 @@ class contadores(models.Model):
                 i=i+1
             anios=get_years()
             i=0
-             if str(self.month)=='01':
-                anioA=str(int(self.anio)-1)
+            if str(self.month)=='01':
+               anioA=str(int(self.anio)-1)
             else:    
-                anioA=str(self.anio)              
+               anioA=str(self.anio)              
             periodoAnterior= anioA+'-'+mesaA   
             
             asd=self.env['stock.production.lot'].search([('x_studio_ubicaciontest','=',self.cliente.name)])
