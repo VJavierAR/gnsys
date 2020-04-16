@@ -727,4 +727,20 @@ class SolicitudestockInventoryMassAction(TransientModel):
             else:
                 raise UserError(_("Archivo invalido"))
 
+class PickingsAComprasMassAction(TransientModel):
+    _name = 'stock.pickings.compras'
+    _description = 'Picking a compras'
+    
+    def _default_picking_ids(self):
+        return self.env['stock.picking'].browse(
+            self.env.context.get('active_ids'))
+
+    picking_ids = fields.Many2many(
+        string='Pickings',
+        comodel_name="stock.picking",
+        default=lambda self: self._default_picking_ids(),
+        help="",
+    )
+
+    def cofirmar(self):
 
