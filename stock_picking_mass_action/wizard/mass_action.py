@@ -694,6 +694,7 @@ class SolicitudestockInventoryMassAction(TransientModel):
     _description = 'Importacion Inventario'
     almacen=fields.Many2one('stock.warehouse',domain="[('x_studio_cliente','=',False)]")
     archivo=fields.Binary()
+    comentario=fields.Char()
 
 
     def importacion(self):
@@ -708,7 +709,7 @@ class SolicitudestockInventoryMassAction(TransientModel):
                 header=[]
                 arr=[]
                 i=0
-                id3=self.env['stock.inventory'].create({'name':'Diferencia de Inventarios'+str(self.almacen.name), 'location_id':self.almacen.lot_stock_id.id,'x_studio_field_8gltH':self.almacen.id,'state':'done'})
+                id3=self.env['stock.inventory'].create({'name':str(self.comentario)+' '+str(self.almacen.name), 'location_id':self.almacen.lot_stock_id.id,'x_studio_field_8gltH':self.almacen.id,'state':'done'})
                 for row_num, row in enumerate(sheet.get_rows()):
                     if(i>0):
                         template=self.env['product.template'].search([('default_code','=',str(row[1].value).replace('.0',''))])

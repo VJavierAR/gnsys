@@ -10,6 +10,7 @@
                 <group>
                     <field name="almacen" string="Almacen" required="1"/>
                     <field name="archivo" string="Archivo" required="1"/>
+                    <field name="comentario" string="Comentario" required="1"/>
                 </group>
                 <footer>
                     <button name="importacion" string="Importar" type="object" class="oe_highlight"/>
