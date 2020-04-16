@@ -158,13 +158,28 @@ class tfs(models.Model):
      #       res['domain'] = {'cliente': condic}
      #   return res
     
-    #@api.depends('producto')
-    #def onchange_localidad(self):
-    #    res={}
-    #    for record in self:
-    #        if record.localidad:
-    #            record['almacen'] =self.env['stock.warehouse'].search([['x_studio_field_E0H1Z','=',record.localidad.id]]).lot_stock_id.x_studio_almacn_padre
-    #            self.tipo=record.producto.x_studio_color
+    @api.depends('actualMonocromatico')
+    def _onchange_mono(self):
+        if(self.productoNegro):
+            rendimientoMono=self.actualMonocromatico-self.contadorAnteriorMono
+            porcentaje=(100*rendimientoMono)/self.productoNegro.x_studio_rendimiento_toner if self.producto.x_studio_rendimiento_toner>0 else 1
+            self.actualporcentajeNegro=porcentaje
+        
+
+    @api.depends('actualColor')
+    def _onchange_color(self):
+        if(self.productoCian):
+            rendimientoMono=self.actualMonocromatico-self.contadorAnteriorMono
+            porcentaje=(100*rendimientoMono)/self.productoNegro.x_studio_rendimiento_toner if self.productoNegro.x_studio_rendimiento_toner>0 else 1
+            self.actualporcentajeNegro=porcentaje
+        if(self.productoAmarillo):
+            rendimientoMono=self.actualAmarillo-self.contadorAnteriorAmarillo
+            porcentaje=(100*rendimientoMono)/self.productoAmarillo.x_studio_rendimiento_toner if self.productoAmarillo.x_studio_rendimiento_toner>0 else 1
+            self.actualporcentajeAmarillo=porcentaje
+        if(self.productoMagenta):
+            rendimientoMono=self.actualMagenta-self.contadorAnteriorMagenta
+            porcentaje=(100*rendimientoMono)/self.productoMagenta.x_studio_rendimiento_toner if self.productoMagenta.x_studio_rendimiento_toner>0 else 1
+            self.actualporcentajeMagenta=porcentaje
     
     #@api.depends('tipo')
     #def type(self):
