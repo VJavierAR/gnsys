@@ -42,7 +42,7 @@ class tfs(models.Model):
     contadorAnteriorMono=fields.Integer(related='contadorMono.contadorMono',store=True)
     contadorAnteriorCian=fields.Integer(related='contadorCian.contadorColor',string='Anterior Cian')
     contadorAnteriorMagenta=fields.Integer(related='contadorMagenta.contadorColor',string='Anterior Magenta')
-    contadorAnteriorAmarillo=fields.Integer(related='contadorAmarillo.contador',string='Anterior Amarillo')
+    contadorAnteriorAmarillo=fields.Integer(related='contadorAmarillo.contadorAmarillo',string='Anterior Amarillo')
 
     porcentajeAnteriorNegro=fields.Integer(related='contadorMono.porcentajeNegro',string='Negro',store=True)
     porcentajeAnteriorCian=fields.Integer(related='contadorCian.porcentajeCian',string='Cian',store=True)
