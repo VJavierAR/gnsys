@@ -715,7 +715,7 @@ class SolicitudestockInventoryMassAction(TransientModel):
                         productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
                         quant={'product_id':productid.id,'reserved_quantity':'0','quantity':row[2].value, 'location_id':self.almacen.lot_stock_id.id}
                         inventoty={'inventory_id':id3.id, 'partner_id':'1','product_id':productid.id,'product_uom_id':'1','product_qty':row[2].value, 'location_id':self.almacen.lot_stock_id.id}
-                        self.env['stock.inventoty.line'].create(inventoty)
+                        self.env['stock.inventory.line'].create(inventoty)
                         busqueda=self.env['stock.quant'].search([['product_id','='.productid.id],['location_id','=',self.almacen.lot_stock_id.id]])
                         if(busqueda):
                             busqueda.sudo().write({'quantity':row[2].value})
