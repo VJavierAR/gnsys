@@ -652,4 +652,8 @@ class HelpdeskTicketMassAction(TransientModel):
             raise UserError(_("No hay registros para la selecion actual"))
 
 
-
+class SolicitudestockInventoryMassAction(TransientModel):
+    _name = 'stock.inventory.action'
+    _description = 'Importacion Inventario'
+    almacen=fields.Many2one('stock.warehouse',domain="[('x_studio_cliente','=',False)]")
+    archivo=fields.Binary()

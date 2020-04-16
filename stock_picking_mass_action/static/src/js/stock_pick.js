@@ -30,9 +30,28 @@ odoo.define('invoice.action_button', function (require) {
                         this.$buttons.find('.oe_action_button_stock_quant').click(this.proxy('action_inter3'));
                         this.$buttons.find('.oe_action_button_sale_report').click(this.proxy('action_inter4'));
                     }
+                    if (this.actionViews[0].viewID == 2434) {
+                        this.$buttons.find('.o_button_import').hide();
+                        this.$buttons.find('.oe_action_button_stock_inventory').click(this.proxy('action_inter6'));
+                    }
                 }
                 
             }
+        },
+        action_inter6: function (e) {
+            var self = this
+            var user = session.uid;
+            self.do_action({
+                name: _t('Inventario'),
+                type : 'ir.actions.act_window',
+                res_model: 'stock.inventory.action',
+                view_type: 'form',
+                view_mode: 'form',
+                view_id: 'view_stock.inventory_action_form',
+                views: [[false, 'form']],
+                target: 'new',
+            
+            });
         },
          action_inter5: function (e) {
             var self = this

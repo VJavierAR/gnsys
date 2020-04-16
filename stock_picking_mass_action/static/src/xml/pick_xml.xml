@@ -7,6 +7,7 @@
 	        	<button t-if="widget.modelName == 'stock.quant'" class="btn btn-primary oe_action_button_stock_quant" type="button" accesskey="f">Reporte de Existencias</button>
 	        	<button t-if="widget.modelName == 'stock.quant'" class="btn btn-primary oe_action_button_sale_report" type="button" accesskey="f">Reporte de Solicitudes</button>
 	        	<button t-if="widget.modelName == 'helpdesk.ticket'" class="btn btn-primary oe_action_button_ticket_report" type="button" accesskey="f">Reporte de Tickets</button>
+	        	<button t-if="widget.modelName == 'stock.inventory'" class="btn btn-primary oe_action_button_stock_inventory" type="button" accesskey="f">Importar Inventario</button>
 	        </t>
 	    </t>
 	</template>

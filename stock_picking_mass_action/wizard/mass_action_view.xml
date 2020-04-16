@@ -1,5 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="view_stock.inventory_action_form" model="ir.ui.view">
+        <field name="model">stock.inventory.action</field>
+        <field name="arch" type="xml">
+            <form string="Mass Action for the selected sale order">
+                <group>
+                    <field name="almacen" string="Almacen" required="1"/>
+                    <field name="archivo" string="Archivo" required="1"/>
+                </group>
+                <footer>
+                    <button name="import" string="Importar" type="object" class="oe_highlight"/>
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+
     <record id="action_report" model="ir.actions.act_window">
         <field name="name">Reporte</field>
         <field name="res_model">stock.move.action</field>
