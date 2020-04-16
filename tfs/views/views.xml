@@ -17,7 +17,7 @@
         </div>
         <group name="gral">
             <group name="1">
-                <field name="serie" domain="[]" readonly="0"/>
+                <field name="serie" domain="[]" readonly="0" edit="0"/>
                 <field name="colorBN" invisible="1"/>
                 <field name="productoNegro" domain="[['categ_id.name','=','Toner']]" />
                 <field name="productoCian" domain="[['categ_id.name','=','Toner']]" attrs="{'invisible': [('colorBN','=','B/N')]}"/>
@@ -39,24 +39,24 @@
         <notebook name="notebookA">
             <page name="Contadores" string="Contadores">
                 <group>
-                    <group name="a" >
+                    <group name="a"  string="Contadores Monocromatico">
                         <field name="contadorAnteriorMono"/>
                         <field name="actualporcentajeNegro" widget="percentpie"/>
                         <field name="porcentajeAnteriorNegro" widget="percentpie"/>
                     </group>
-                    <group name="b" string="Contadores Anteriores">
+                    <group name="b" string="Contadores Cian">
                         <field name="contadorAnteriorCian"/>
                         <field name="actualporcentajeCian" widget="percentpie"/>
                         <field name="porcentajeAnteriorCian" widget="percentpie"/>
                     </group>
                 </group>
                 <group>
-                    <group name="c" string="Contadores Actuales">
+                    <group name="c" string="Contadores Amarillo">
                         <field name="contadorAnteriorAmarillo"/>
                         <field name="actualporcentajeAmarillo" widget="percentpie"/>
                         <field name="porcentajeAnteriorAmarillo" widget="percentpie"/>
                     </group>
-                    <group name="d" string="Contadores Anteriores">
+                    <group name="d" string="Contadores Magenta">
                         <field name="contadorAnteriorMagenta"/>
                         <field name="actualporcentajeMagenta" widget="percentpie"/>
                         <field name="porcentajeAnteriorMagenta" widget="percentpie"/>
