@@ -701,6 +701,7 @@ class SolicitudestockInventoryMassAction(TransientModel):
             f2=base64.b64decode(self.archivo)
             H=StringIO(f2)
             mimetype = guess_mimetype(f2 or b'')
+            _logger.info(str(mimetype))
             if(mimetype=='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'):
                 book = xlrd.open_workbook(file_contents=f2 or b'')
                 sheet = book.sheet_by_index(0)
