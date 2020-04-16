@@ -742,6 +742,6 @@ class PickingsAComprasMassAction(TransientModel):
         help="",
     )
 
-    def cofirmar(self):
+    def confirmar(self):
         _logger.info("Test")
 
