@@ -702,7 +702,7 @@ class SolicitudestockInventoryMassAction(TransientModel):
             H=StringIO(f2)
             mimetype = guess_mimetype(f2 or b'')
             _logger.info(str(mimetype))
-            if(mimetype=='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'):
+            if(mimetype=='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' or mimetype=='application/vnd.ms-excel'):
                 book = xlrd.open_workbook(file_contents=f2 or b'')
                 sheet = book.sheet_by_index(0)
                 header=[]
