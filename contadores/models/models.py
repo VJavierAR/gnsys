@@ -650,7 +650,7 @@ class contadores(models.Model):
                 i=i+1
             anios=get_years()
             i=0
-            if str(self.month)=='01':
+            if str(self.mes)=='01':
                anioA=str(int(self.anio)-1)
             else:    
                anioA=str(self.anio)              
@@ -705,13 +705,11 @@ class contadores(models.Model):
                           mesaA=str(valores[i-1][0])
                        i=i+1
                    anios=get_years()
-                   i=0
-                   for e in anios:
-                       if e[0]==int(anio) and str(mes)=='01':
-                          anioA=str(anios[i-1][0])
-                       else:
-                          anioA=str(anio)                
-                       i=i+1                
+                   i=0                   
+                   if str(mes)=='01':
+                      anioA=str(int(anio)-1)
+                   else:    
+                      anioA=str(anio)                     
                    periodoAnterior= anioA+'-'+mesaA
                    i=0
                    for f in valores:                
