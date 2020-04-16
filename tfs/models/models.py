@@ -39,7 +39,7 @@ class tfs(models.Model):
     contadorMagenta=fields.Many2one('dcas.dcas',string='Anterior Magenta')
     contadorAmarillo=fields.Many2one('dcas.dcas',string='Anterior Amarillo')
     
-    contadorAnteriorMono=fields.Integer(related='contadorMono.contadorMono',string='Anterior Monocromatico',store=True)
+    contadorAnteriorMono=fields.Integer(related='contadorMono.contadorMono',string='Anterior Monocromatico')
     contadorAnteriorCian=fields.Integer(related='contadorCian.contadorColor',string='Anterior Cian')
     contadorAnteriorMagenta=fields.Integer(related='contadorMagenta.contadorColor',string='Anterior Magenta')
     contadorAnteriorAmarillo=fields.Integer(related='contadorAmarillo.contadorColor',string='Anterior Amarillo')
