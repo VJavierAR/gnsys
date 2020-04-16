@@ -39,23 +39,23 @@ class tfs(models.Model):
     contadorMagenta=fields.Many2one('dcas.dcas',string='Anterior Magenta')
     contadorAmarillo=fields.Many2one('dcas.dcas',string='Anterior Amarillo')
     
-    contadorAnteriorMono=fields.Integer(related='contadorMono.contadorMono',store=True)
+    contadorAnteriorMono=fields.Integer(related='contadorMono.contadorMono',string='Anterior Monocromatico',store=True)
     contadorAnteriorCian=fields.Integer(related='contadorCian.contadorColor',string='Anterior Cian')
     contadorAnteriorMagenta=fields.Integer(related='contadorMagenta.contadorColor',string='Anterior Magenta')
     contadorAnteriorAmarillo=fields.Integer(related='contadorAmarillo.contadorColor',string='Anterior Amarillo')
 
-    porcentajeAnteriorNegro=fields.Integer(related='contadorMono.porcentajeNegro',string='Negro',store=True)
-    porcentajeAnteriorCian=fields.Integer(related='contadorCian.porcentajeCian',string='Cian',store=True)
-    porcentajeAnteriorAmarillo=fields.Integer(related='contadorAmarillo.porcentajeAmarillo',string='Amarillo',store=True)
-    porcentajeAnteriorMagenta=fields.Integer(related='contadorMagenta.porcentajeMagenta',string='Magenta',store=True)
+    porcentajeAnteriorNegro=fields.Integer(related='contadorMono.porcentajeNegro',string='Anterior Monocromatico',store=True)
+    porcentajeAnteriorCian=fields.Integer(related='contadorCian.porcentajeCian',string='Anterior Cian',store=True)
+    porcentajeAnteriorAmarillo=fields.Integer(related='contadorAmarillo.porcentajeAmarillo',string='Anterior Amarillo',store=True)
+    porcentajeAnteriorMagenta=fields.Integer(related='contadorMagenta.porcentajeMagenta',string='Anterior Magenta',store=True)
     
     actualMonocromatico=fields.Integer(string='Contador Monocromatico')
     actualColor=fields.Integer(string='Contador Color')
     
-    actualporcentajeNegro=fields.Integer(string='Toner Negro %')
-    actualporcentajeAmarillo=fields.Integer(string='Toner Amarillo %')
-    actualporcentajeCian=fields.Integer(string='Toner Cian %')
-    actualporcentajeMagenta=fields.Integer(string='Toner Magenta%')
+    actualporcentajeNegro=fields.Integer(string='Actual Monocromatico')
+    actualporcentajeAmarillo=fields.Integer(string='Actual Amarillo')
+    actualporcentajeCian=fields.Integer(string='Actual Cian ')
+    actualporcentajeMagenta=fields.Integer(string='Actual Magenta')
     
     evidencias=fields.One2many('tfs.evidencia',string='Evidencias',inverse_name='tfs_id')
     estado=fields.Selection([('borrador','Borrador'),('xValidar','Por Validar'),('Valido','Valido'),('Confirmado','Confirmado')])
@@ -189,7 +189,7 @@ class tfs(models.Model):
         res={}
         for record in self:
             if record.serie:
-                if(recor.serie.x_studio_mini==False):
+                if(record.serie.x_studio_mini==False):
                     raise exceptions.UserError("El No. de Serie"+ record.serie.name+"no corresponde a Mini Almacen" )
                 if(len(record.serie.x_studio_move_line)>0):
                     cliente = record.serie.x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id if(len(record.serie.x_studio_move_line)>1) else record.serie.x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
