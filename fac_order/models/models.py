@@ -170,7 +170,7 @@ class fac_order(models.Model):
                               if k.x_studio_color_bn=='Color':
                                 procesadasColorTotal=colorp+procesadasColorTotal
                                 procesadasColorBN=bnp+procesadasColorBN                                  
-                              for j in ff:                      
+                          for j in ff:                      
                                   if j.nombreAnte=='Renta global con páginas incluidas BN o color + pag. Excedentes':                        
                                     self.env['sale.order.line'].create({'order_id': sale.id,'product_id':11340,'product_uom_qty':1.0,'price_unit':j.rentaMensual})                                                    
                                     if procesadasColorBN< j.bolsaBN:
