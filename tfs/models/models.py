@@ -158,7 +158,7 @@ class tfs(models.Model):
      #       res['domain'] = {'cliente': condic}
      #   return res
     
-    @api.depends('actualMonocromatico')
+    @api.onchange('actualMonocromatico')
     def _onchange_mono(self):
         if(self.productoNegro):
             rendimientoMono=self.actualMonocromatico-self.contadorAnteriorMono
@@ -166,7 +166,7 @@ class tfs(models.Model):
             self.actualporcentajeNegro=porcentaje
         
 
-    @api.depends('actualColor')
+    @api.onchange('actualColor')
     def _onchange_color(self):
         if(self.productoCian):
             rendimientoMono=self.actualMonocromatico-self.contadorAnteriorMono
