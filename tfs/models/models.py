@@ -189,6 +189,8 @@ class tfs(models.Model):
         res={}
         for record in self:
             if record.serie:
+                if(recor.serie.x_studio_mini==False):
+                    raise exceptions.UserError("El No. de Serie"+ record.serie.name+"no corresponde a Mini Almacen" )
                 if(len(record.serie.x_studio_move_line)>0):
                     cliente = record.serie.x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id if(len(record.serie.x_studio_move_line)>1) else record.serie.x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
                     localidad=record.serie.x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id if(len(record.serie.x_studio_move_line)>1) else record.serie.x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
@@ -215,7 +217,6 @@ class tfs(models.Model):
                     record['contadorAmarillo'] =dc1[0].id if(len(dc1)>0) else self.env['dcas.dcas'].search([['serie','=',record.serie.id]]).sorted(key='create_date',reverse=True)[0].id
                     record['contadorCian'] =dc2[0].id if(len(dc2)>0) else self.env['dcas.dcas'].search([['serie','=',record.serie.id]]).sorted(key='create_date',reverse=True)[0].id
                     record['contadorMagenta'] =d3[0].id if(len(dc3)>0) else self.env['dcas.dcas'].search([['serie','=',record.serie.id]]).sorted(key='create_date',reverse=True)[0].id
-
                 
   
             #if record.localidad:
