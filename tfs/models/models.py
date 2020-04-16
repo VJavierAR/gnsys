@@ -127,8 +127,6 @@ class tfs(models.Model):
             }
 
 
-    
-    
     #@api.onchange('cliente')
     #def onchange_cliente(self):
     #    res = {}
