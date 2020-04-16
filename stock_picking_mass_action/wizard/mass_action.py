@@ -1,10 +1,47 @@
 from odoo import _,fields, api
 from odoo.models import TransientModel
-import logging, ast
 import datetime, time
 from odoo.exceptions import UserError,RedirectWarning
 from odoo.tools.float_utils import float_compare
+from PIL import Image, ImageEnhance, ImageFilter
+import pytesseract
+from pdf2image import convert_from_path, convert_from_bytes
+import os
+import re
+from PyPDF2 import PdfFileMerger, PdfFileReader,PdfFileWriter
+from io import BytesIO as StringIO
+import base64
+import datetime
+from odoo.tools.mimetypes import guess_mimetype
+import logging, ast
+from odoo.tools import config, DEFAULT_SERVER_DATE_FORMAT, DEFAULT_SERVER_DATETIME_FORMAT, pycompat
 _logger = logging.getLogger(__name__)
+
+
+try:
+    import xlrd
+    try:
+        from xlrd import xlsx
+    except ImportError:
+        xlsx = None
+except ImportError:
+    xlrd = xlsx = None
+
+try:
+    from . import odf_ods_reader
+except ImportError:
+    odf_ods_reader = None
+
+FILE_TYPE_DICT = {
+    'text/csv': ('csv', True, None),
+    'application/vnd.ms-excel': ('xls', xlrd, 'xlrd'),
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ('xlsx', xlsx, 'xlrd >= 1.0.0'),
+    'application/vnd.oasis.opendocument.spreadsheet': ('ods', odf_ods_reader, 'odfpy')
+}
+EXTENSIONS = {
+    '.' + ext: handler
+    for mime, (ext, handler, req) in FILE_TYPE_DICT.items()
+}
 
 class StockPickingMassAction(TransientModel):
     _name = 'stock.picking.mass.action'
@@ -657,3 +694,33 @@ class SolicitudestockInventoryMassAction(TransientModel):
     _description = 'Importacion Inventario'
     almacen=fields.Many2one('stock.warehouse',domain="[('x_studio_cliente','=',False)]")
     archivo=fields.Binary()
+
+    def importar(self):
+        if(self.archivo):
+            f2=base64.b64decode(self.archivo)
+            H=StringIO(f2)
+            mimetype = guess_mimetype(f2 or b'')
+            if(mimetype=='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'):
+                book = xlrd.open_workbook(file_contents=f2 or b'')
+                sheet = book.sheet_by_index(0)
+                header=[]
+                arr=[]
+                i=0
+                id3=self.env['stock.inventory'].create({'name':'Diferencia de Inventarios'+str(self.almacen.name), 'location_id':self.almacen.lot_stock_id.id,'x_studio_field_8gltH':self.almacen.id,'state':'done'})
+                for row_num, row in enumerate(sheet.get_rows()):
+                    if(i>0):
+                        template=self.env['product.template'].search([('default_code','=',str(row[1].value).replace('.0',''))])
+                        productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
+                        quant={'product_id':productid.id,'reserved_quantity':'0','quantity':row[2].value, 'location_id':self.almacen.lot_stock_id.id}
+                        inventoty={'inventory_id':id3.id, 'partner_id':'1','product_id':productid.id,'product_uom_id':'1','product_qty':row[2].value, 'location_id':self.almacen.lot_stock_id.id}
+                        self.env['stock.inventoty.line'].create(inventoty)
+                        busqueda=self.env['stock.quant'].search([['product_id','='.productid.id],['location_id','=',self.almacen.lot_stock_id.id]])
+                        if(busqueda):
+                            busqueda.sudo().write({'quantity':row[2].value})
+                        if(busqueda==False):
+                            self.env['stock.quant'].sudo().create(quant)
+                    i=i+1
+            else:
+                raise UserError(_("Archivo invalido"))
+
+
