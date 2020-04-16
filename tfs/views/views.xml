@@ -16,12 +16,15 @@
             </span>
         </div>
         <group name="gral">
-            <group name="a">
+            <group name="1">
                 <field name="serie" domain="[]" readonly="0"/>
-                <field name="tipo"/>
-                <field name="producto" domain="[['categ_id.name','=','Toner']]"/>
+                <field name="colorBN" invisible="1"/>
+                <field name="productoNegro" domain="[['categ_id.name','=','Toner']]" />
+                <field name="productoCian" domain="[['categ_id.name','=','Toner']]" attrs="{'invisible': [('colorBN','=','B/N')]}"/>
+                <field name="productoAmarillo" domain="[['categ_id.name','=','Toner']]" attrs="{'invisible': [('colorBN','=','B/N')]}"/>
+                <field name="productoMagenta" domain="[['categ_id.name','=','Toner']]" attrs="{'invisible': [('colorBN','=','B/N')]}"/>
             </group>
-            <group name="b">
+            <group name="2">
                 <field name="usuario" invisible="1"/>
                 <field name="almacen" invisible="1"/>
                 <field name="cliente"/>
@@ -29,24 +32,33 @@
                 <field name="domi" invisible="1"/>
             </group>
         </group>
+        <group name="gral1">
+            <field name="actualMonocromatico"/>
+            <field name="actualColor"/>
+        </group>
         <notebook name="notebookA">
             <page name="Contadores" string="Contadores">
                 <group>
+                    <group name="a" >
+                        <field name="contadorAnteriorMono"/>
+                        <field name="actualporcentajeNegro" widget="percentpie"/>
+                        <field name="porcentajeAnteriorNegro" widget="percentpie"/>
+                    </group>
+                    <group name="b" string="Contadores Anteriores">
+                        <field name="contadorAnteriorCian"/>
+                        <field name="actualporcentajeCian" widget="percentpie"/>
+                        <field name="porcentajeAnteriorCian" widget="percentpie"/>
+                    </group>
+                </group>
+                <group>
                     <group name="c" string="Contadores Actuales">
-                        <field name="actualMonocromatico"/>
-                        <field name="actualColor"/>
-                        <field name="actualporcentajeNegro"/>
-                        <field name="actualporcentajeAmarillo"/>
-                        <field name="actualporcentajeCian"/>
-                        <field name="actualporcentajeMagenta"/>
+                        <field name="contadorAnteriorAmarillo"/>
+                        <field name="actualporcentajeAmarillo" widget="percentpie"/>
+                        <field name="porcentajeAnteriorAmarillo" widget="percentpie"/>
                     </group>
                     <group name="d" string="Contadores Anteriores">
-                        <field name="contadorAnterior" invisible="1"/>
-                        <field name="contadorAnteriorMono"/>
-                        <field name="contadorAnteriorColor"/>
-                        <field name="porcentajeAnteriorNegro" widget="percentpie"/>
-                        <field name="porcentajeAnteriorAmarillo" widget="percentpie"/>
-                        <field name="porcentajeAnteriorCian" widget="percentpie"/>
+                        <field name="contadorAnteriorMagenta"/>
+                        <field name="actualporcentajeMagenta" widget="percentpie"/>
                         <field name="porcentajeAnteriorMagenta" widget="percentpie"/>
                     </group>
                 </group>

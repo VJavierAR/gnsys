@@ -21,7 +21,7 @@ class tfs(models.Model):
     _name = 'tfs.tfs'
     _description='tfs'
     name = fields.Char()
-    almacen = fields.Many2one('stock.warehouse', "Almacen",store='True',compute='onchange_localidad')
+    almacen = fields.Many2one('stock.warehouse', "Almacen",store='True')
     tipo = fields.Selection([('Cian', 'Cian'),('Magenta','Magenta'),('Amarillo','Amarillo'),('Negro','Negro')])
     usuario = fields.Many2one('res.partner')
     inventario = fields.One2many(comodel='stock.quant',related='almacen.lot_stock_id.quant_ids', string="Quants")
@@ -29,22 +29,38 @@ class tfs(models.Model):
     localidad=fields.Many2one('res.partner',store='True',string='Localidad')
     serie=fields.Many2one('stock.production.lot',string='Numero de Serie',store='True')
     domi=fields.Integer()
-    producto=fields.Many2one('product.product',string='Toner')
-    contadorAnterior=fields.Many2one('dcas.dcas',string='Anterior',compute='type',store=True)
-    contadorAnteriorMono=fields.Integer(related='contadorAnterior.contadorMono',string='Monocromatico',store=True)
-    contadorAnteriorColor=fields.Integer(related='contadorAnterior.contadorColor',string='Color',store=True)
-    porcentajeAnteriorNegro=fields.Integer(related='contadorAnterior.porcentajeNegro',string='Negro',store=True)
-    porcentajeAnteriorCian=fields.Integer(related='contadorAnterior.porcentajeCian',string='Cian',store=True)
-    porcentajeAnteriorAmarillo=fields.Integer(related='contadorAnterior.porcentajeAmarillo',string='Amarillo',store=True)
-    porcentajeAnteriorMagenta=fields.Integer(related='contadorAnterior.porcentajeMagenta',string='Magenta',store=True)
+    productoNegro=fields.Many2one('product.product',string='Toner Monocromatico')
+    productoCian=fields.Many2one('product.product',string='Toner Cian')
+    productoMagenta=fields.Many2one('product.product',string='Toner Magenta')
+    productoAmarillo=fields.Many2one('product.product',string='Toner Amarillo')
+
+    contadorMono=fields.Many2one('dcas.dcas',string='Anterior Monocromatico',store=True)
+    contadorCian=fields.Many2one('dcas.dcas',string='Anterior Cian')
+    contadorMagenta=fields.Many2one('dcas.dcas',string='Anterior Magenta')
+    contadorAmarillo=fields.Many2one('dcas.dcas',string='Anterior Amarillo')
+    
+    contadorAnteriorMono=fields.Integer(related='contadorMono.contadorMono',store=True)
+    contadorAnteriorCian=fields.Integer(related='contadorCian.contadorColor',string='Anterior Cian')
+    contadorAnteriorMagenta=fields.Integer(related='contadorMagenta.contadorColor',string='Anterior Magenta')
+    contadorAnteriorAmarillo=fields.Integer(related='contadorAmarillo.contador',string='Anterior Amarillo')
+
+    porcentajeAnteriorNegro=fields.Integer(related='contadorMono.porcentajeNegro',string='Negro',store=True)
+    porcentajeAnteriorCian=fields.Integer(related='contadorCian.porcentajeCian',string='Cian',store=True)
+    porcentajeAnteriorAmarillo=fields.Integer(related='contadorAmarillo.porcentajeAmarillo',string='Amarillo',store=True)
+    porcentajeAnteriorMagenta=fields.Integer(related='contadorMagenta.porcentajeMagenta',string='Magenta',store=True)
+    
     actualMonocromatico=fields.Integer(string='Contador Monocromatico')
     actualColor=fields.Integer(string='Contador Color')
+    
     actualporcentajeNegro=fields.Integer(string='Toner Negro %')
     actualporcentajeAmarillo=fields.Integer(string='Toner Amarillo %')
     actualporcentajeCian=fields.Integer(string='Toner Cian %')
     actualporcentajeMagenta=fields.Integer(string='Toner Magenta%')
+    
     evidencias=fields.One2many('tfs.evidencia',string='Evidencias',inverse_name='tfs_id')
     estado=fields.Selection([('borrador','Borrador'),('xValidar','Por Validar'),('Valido','Valido'),('Confirmado','Confirmado')])
+
+    colorBN=fields.Selection(related='serie.x_studio_color_bn')
     
     @api.multi
     def confirm(self):
@@ -144,34 +160,26 @@ class tfs(models.Model):
      #       res['domain'] = {'cliente': condic}
      #   return res
     
-    @api.depends('producto')
-    def onchange_localidad(self):
-        res={}
-        for record in self:
-            if record.localidad:
-                record['almacen'] =self.env['stock.warehouse'].search([['x_studio_field_E0H1Z','=',record.localidad.id]]).lot_stock_id.x_studio_almacn_padre
-                self.tipo=record.producto.x_studio_color
+    #@api.depends('producto')
+    #def onchange_localidad(self):
+    #    res={}
+    #    for record in self:
+    #        if record.localidad:
+    #            record['almacen'] =self.env['stock.warehouse'].search([['x_studio_field_E0H1Z','=',record.localidad.id]]).lot_stock_id.x_studio_almacn_padre
+    #            self.tipo=record.producto.x_studio_color
     
-    @api.depends('tipo')
-    def type(self):
-        for record in self:
-            if(record.tipo):
-                dc=self.env['dcas.dcas'].search([['serie','=',record.serie.id],['fuente','=','tfs.tfs'],['x_studio_toner_'+str(record.tipo).lower(),'=',1]]).sorted(key='create_date',reverse=True)
-                _logger.info('hhhhhhhhhhhhhhhhhh'+str(dc))
-                _logger.info('x_studio_toner_'+str(record.tipo).lower())
-                if(len(dc)>0):
-                    record['contadorAnterior']=dc[0].id
-                if(len(dc)==0):
-                    dc=self.env['dcas.dcas'].search([['serie','=',record.serie.id]]).sorted(key='create_date',reverse=True)
-                    if(len(dc)>0):
-                        record['contadorAnterior']=dc[0].id
+    #@api.depends('tipo')
+    #def type(self):
+    #    for record in self:
+    #        if(record.tipo):
 
-    @api.depends('almacen')
-    def cambio(self):
-        res={}
-        for record in self:
-            if record.almacen:
-                record['domi']=0
+
+    #@api.depends('almacen')
+    #def cambio(self):
+    #    res={}
+    #    for record in self:
+    #        if record.almacen:
+    #            record['domi']=0
                 #record.almacenlot_stock_id.id
                 
                 #res['domain'] = {'serie': [('x_studio_ubicacion_id', '=', record.almacen.lot_stock_id.id)]}
@@ -182,20 +190,29 @@ class tfs(models.Model):
         i=0
         res={}
         for record in self:
-            lista=[]
             if record.serie:
-                for toner in record.serie.product_id.x_studio_toner_compatible:
-                    if('Toner' in toner.categ_id.name):
-                        lista.append(str(toner.id))
-                #record['name']=str(lista)
-                res['domain'] = {'producto': [('id', 'in', lista)]}
-                for move_line in record.serie.x_studio_move_line:
-                    if(i==0):
-                        cliente = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
-                        localidad=move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
-                        record['cliente'] = cliente
-                        record['localidad'] = localidad
-                        i=1    
+                if(len(record.serie.x_studio_move_line)>0):
+                    cliente = record.serie.x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id if(len(record.serie.x_studio_move_line)>1) else record.serie.x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
+                    localidad=record.serie.x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id if(len(record.serie.x_studio_move_line)>1) else record.serie.x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
+                    record['cliente'] = cliente
+                    record['localidad'] = localidad
+                    record['almacen'] =self.env['stock.warehouse'].search([['x_studio_field_E0H1Z','=',localidad.id]]).lot_stock_id.x_studio_almacn_padre
+
+                if(record.colorBN=="B/N"):
+                    data=record.serie.product_id.x_studio_toner_compatible.filtered(lambda x: 'Toner' in x.categ_id.name).mapped('id')
+                    res['domain'] = {'productoNegro': [('id', 'in', data)]}
+                    dc=self.env['dcas.dcas'].search([['serie','=',record.serie.id],['fuente','=','tfs.tfs'],['x_studio_toner_negro','=',1]]).sorted(key='create_date',reverse=True)
+                    record['contadorMono'] =dc[0].id if(len(dc)>0) else self.env['dcas.dcas'].search([['serie','=',record.serie.id]]).sorted(key='create_date',reverse=True)[0].id
+
+                if(record.colorBN=="Color"):
+                    negro=record.serie.product_id.x_studio_toner_compatible.filtered(lambda x: 'Toner' in x.categ_id.name and x.x_studio_color=='Negro').mapped('id')
+                    cian=record.serie.product_id.x_studio_toner_compatible.filtered(lambda x: 'Toner' in x.categ_id.name and x.x_studio_color=='Cian').mapped('id')
+                    amarillo=record.serie.product_id.x_studio_toner_compatible.filtered(lambda x: 'Toner' in x.categ_id.name and x.x_studio_color=='Amarillo').mapped('id')
+                    magenta=record.serie.product_id.x_studio_toner_compatible.filtered(lambda x: 'Toner' in x.categ_id.name and x.x_studio_color=='Magenta').mapped('id')                    
+                    res['domain'] = {'productoNegro': [('id', 'in', negro)],'productoCian': [('id', 'in', cian)],'productoAmarillo': [('id', 'in', amarillo)],'productoMagenta': [('id', 'in', magenta)]}
+
+                
+  
             #if record.localidad:
              #   record['almacen'] =self.env['stock.warehouse'].search([['x_studio_field_E0H1Z','=',record.localidad.id]])
             #self.onchange_localidad()
