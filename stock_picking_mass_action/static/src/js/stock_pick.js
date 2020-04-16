@@ -30,11 +30,11 @@ odoo.define('invoice.action_button', function (require) {
                         this.$buttons.find('.oe_action_button_stock_quant').click(this.proxy('action_inter3'));
                         this.$buttons.find('.oe_action_button_sale_report').click(this.proxy('action_inter4'));
                     }
-                    if (this.actionViews[0].viewID == 646) {
+                }
+                else if (this.actionViews[0].viewID == 646) {
                         this.$buttons.find('.o_button_import').hide();
                         this.$buttons.find('.oe_action_button_stock_inventory').click(this.proxy('action_inter6'));
                     }
-                }
                 
             }
         },
