@@ -162,7 +162,7 @@ class tfs(models.Model):
     def _onchange_mono(self):
         if(self.productoNegro):
             rendimientoMono=self.actualMonocromatico-self.contadorAnteriorMono
-            porcentaje=(100*rendimientoMono)/self.productoNegro.x_studio_rendimiento_toner if self.producto.x_studio_rendimiento_toner>0 else 1
+            porcentaje=(100*rendimientoMono)/self.productoNegro.x_studio_rendimiento_toner if self.productoNegro.x_studio_rendimiento_toner>0 else 1
             self.actualporcentajeNegro=porcentaje
         
 
@@ -170,7 +170,7 @@ class tfs(models.Model):
     def _onchange_color(self):
         if(self.productoCian):
             rendimientoMono=self.actualMonocromatico-self.contadorAnteriorMono
-            porcentaje=(100*rendimientoMono)/self.productoNegro.x_studio_rendimiento_toner if self.productoNegro.x_studio_rendimiento_toner>0 else 1
+            porcentaje=(100*rendimientoMono)/self.productoNegro.x_studio_rendimiento_toner if self.productoCian.x_studio_rendimiento_toner>0 else 1
             self.actualporcentajeNegro=porcentaje
         if(self.productoAmarillo):
             rendimientoMono=self.actualAmarillo-self.contadorAnteriorAmarillo
