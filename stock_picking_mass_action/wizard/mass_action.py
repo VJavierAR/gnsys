@@ -718,7 +718,7 @@ class SolicitudestockInventoryMassAction(TransientModel):
                         self.env['stock.inventory.line'].create(inventoty)
                         busqueda=self.env['stock.quant'].search([['product_id','=',productid.id],['location_id','=',self.almacen.lot_stock_id.id]])
                         _logger.info(str(busqueda))
-                        if(busqueda):
+                        if(busqueda.id):
                             busqueda.sudo().write({'quantity':row[2].value})
                         if(busqueda==False):
                             self.env['stock.quant'].sudo().create(quant)
