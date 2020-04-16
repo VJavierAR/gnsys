@@ -695,6 +695,7 @@ class SolicitudestockInventoryMassAction(TransientModel):
     almacen=fields.Many2one('stock.warehouse',domain="[('x_studio_cliente','=',False)]")
     archivo=fields.Binary()
 
+    
     def importar(self):
         if(self.archivo):
             f2=base64.b64decode(self.archivo)
