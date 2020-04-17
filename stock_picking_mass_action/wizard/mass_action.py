@@ -766,6 +766,20 @@ class PickingsAComprasMassAction(TransientModel):
             for r in requLin:
                 r['req_rel']=requisicion.id
                 self.env['product.rel.requisicion'].create(r)
+            view = self.env.ref('studio_customization.default_form_view_fo_24cee64e-ad11-4f19-a7f6-fceca5375726')
+            return {
+                    'name': _('Transferencia'),
+                    'type': 'ir.actions.act_window',
+                    'view_type': 'form',
+                    'view_mode': 'form',
+                    'res_model': 'requisicion.requisicion',
+                    #'views': [(view.id, 'form')],
+                    'view_id': view.id,
+                    'target': 'current',
+                    'res_id': requisicion.id,
+                    'nodestroy': True
+                    }
+
 
 
 
