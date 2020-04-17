@@ -69,7 +69,7 @@ class fac_order(models.Model):
                                                                  , 'team_id' : 1                                                                  
                                                                 })
                       
-               self.excedente="<a href='https://gnsys-corp.odoo.com/web?#id=2322&action="+str(fac.id)+"&model=sale.order&view_type=form&menu_id=406' target='_blank'>"+str(fac.name)+"</a>"
+               self.excedente="<a href='https://gnsys-corp.odoo.com/web#id=2322&action="+str(fac.id)+"&model=sale.order&view_type=form&menu_id=406' target='_blank'>"+str(fac.name)+"</a>"
                for d in self.order_line:
                    if d.x_studio_bolsa:  
                       self.env['sale.order.line'].create({'order_id': fac.id,'product_id':11340,'product_uom_qty':d.product_uom_qty,'price_unit':d.price_unit,'x_studio_bolsa':d.x_studio_bolsa})
