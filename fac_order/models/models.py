@@ -71,7 +71,7 @@ class fac_order(models.Model):
                       
                self.excedente="<a href='https://gnsys-corp.odoo.com/web#id="+str(fac.id)+"&action=1167&model=sale.order&view_type=form&menu_id=406' target='_blank'>"+str(fac.name)+"</a>"
                for d in self.order_line:
-                   if d.x_studio_bolsa:  
+                   if d.x_studio_bolsa and d.x_studio_excedente == 'si':  
                       self.env['sale.order.line'].create({'order_id': fac.id,'product_id':11340,'product_uom_qty':d.product_uom_qty,'price_unit':d.price_unit,'x_studio_bolsa':d.x_studio_bolsa})
                       self.env['sale.order.line'].search([('id', '=', d.id)]).unlink()
                       #self.env.cr.execute("delete from sale_order_line where id = " + str(d.id) +";")   
@@ -157,14 +157,14 @@ class fac_order(models.Model):
                                  if k.x_studio_color_bn=='B/N':
                                     if m.bolsaBN<bnp:
                                        bnp=bnp-m.bolsaBN
-                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_field_9nQhR':k.id,'product_id':11340,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN,'x_studio_bolsa':m.bolsaBN})                                                    
+                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_field_9nQhR':k.id,'product_id':11340,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN,'x_studio_bolsa':m.bolsaBN,'x_studio_excedente':'si'})                                                    
                                  if k.x_studio_color_bn=='Color':
                                     if m.bolsaBN<bnp:
                                        bnp=bnp-m.bolsaBN
-                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_field_9nQhR':k.id,'product_id':11340,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN,'x_studio_bolsa':m.bolsaBN})                                                    
+                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_field_9nQhR':k.id,'product_id':11340,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN,'x_studio_bolsa':m.bolsaBN,'x_studio_excedente':'si'})                                                    
                                     if m.bolsaColor<colorp:
                                        colorp=colorp-m.bolsaColor                                    
-                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_field_9nQhR':k.id,'product_id':11340,'product_uom_qty':colorp,'price_unit':m.clickExcedenteColor,'x_studio_bolsa':m.bolsaColor})
+                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_field_9nQhR':k.id,'product_id':11340,'product_uom_qty':colorp,'price_unit':m.clickExcedenteColor,'x_studio_bolsa':m.bolsaColor,'x_studio_excedente':'si'})
                                  self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_field_9nQhR':k.id,'product_id':11340,'product_uom_qty':1,'price_unit':m.rentaMensual})                                                                            
                               
                             
@@ -179,11 +179,11 @@ class fac_order(models.Model):
                         if procesadasColorBN< j.bolsaBN:
                            self.env['sale.order.line'].create({'order_id': sale.id,'product_id':11340,'product_uom_qty':0.0,'price_unit':j.clickExcedenteBN,'x_studio_bolsa':j.bolsaBN})
                         if procesadasColorBN > j.bolsaBN:
-                           self.env['sale.order.line'].create({'order_id': sale.id,'product_id':11340,'product_uom_qty':abs(bolsabn-procesadasColorBN),'price_unit':j.clickExcedenteBN,'x_studio_bolsa':j.bolsaBN})
+                           self.env['sale.order.line'].create({'order_id': sale.id,'product_id':11340,'product_uom_qty':abs(bolsabn-procesadasColorBN),'price_unit':j.clickExcedenteBN,'x_studio_bolsa':j.bolsaBN,'x_studio_excedente':'si'})
                         if procesadasColorTotal<j.bolsaColor:            
                            self.env['sale.order.line'].create({'order_id': sale.id,'product_id':11340,'product_uom_qty':0.0,'price_unit':j.clickExcedenteColor,'x_studio_bolsa':j.bolsaColor})
                         if procesadasColorTotal > j.bolsaColor:
-                           self.env['sale.order.line'].create({'order_id': sale.id,'product_id':11340,'product_uom_qty':abs(bolsacolor-procesadasColorTotal),'price_unit':j.clickExcedenteColor,'x_studio_bolsa':j.bolsaColor})                   
+                           self.env['sale.order.line'].create({'order_id': sale.id,'product_id':11340,'product_uom_qty':abs(bolsacolor-procesadasColorTotal),'price_unit':j.clickExcedenteColor,'x_studio_bolsa':j.bolsaColor,'x_studio_excedente':'si'})                   
                      if j.nombreAnte=='Renta global + costo de página procesada BN o color':                        
                         self.env['sale.order.line'].create({'order_id': sale.id,'product_id':11340,'product_uom_qty':1.0,'price_unit':j.rentaMensual})                                                                                                    
                      if j.tipo=='1':                        
