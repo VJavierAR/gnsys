@@ -779,6 +779,12 @@ class PickingsAComprasMassAction(TransientModel):
                     'res_id': requisicion.id,
                     'nodestroy': True
                     }
+        else:
+            return {'warning': {
+            'title': _('Alerta'),
+            'message': _('Las ordenes selcciondas tiene existencias o ya se encuntran con una requisicion.')
+                    }
+
 
 
 
