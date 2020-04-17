@@ -71,7 +71,8 @@ class fac_order(models.Model):
                for d in self.order_line:
                    if d.x_studio_bolsa:  
                       self.env['sale.order.line'].create({'order_id': fac.id,'product_id':11340,'product_uom_qty':d.product_uom_qty,'price_unit':d.price_unit,'x_studio_bolsa':d.x_studio_bolsa})
-                      self.env.cr.execute("delete from sale_order_line where id = " + str(d.id) +";")   
+                      self.env['sale.order.line'].search([('id', '=', d.id)]).unlink()
+                      #self.env.cr.execute("delete from sale_order_line where id = " + str(d.id) +";")   
                              
             else:             
                for m in ff:              
