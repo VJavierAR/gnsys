@@ -754,9 +754,8 @@ class PickingsAComprasMassAction(TransientModel):
             if(pick.id not in test):
                 for move in pick.move_ids_without_package:
                     d=self.env['stock.quant'].search([['location_id','=',move.location_id.id],['product_id','=',move.product_id.id]]).sorted(key='quantity',reverse=True)
-                    
                     if(d.quantity==0):
-                        requisicionline={'product':move.product_id.id,'cantidad':move.product_uom_qty,'costo':0}
+                        requisicionline={'cliente':picking_id.partner_id.id,'ticket':picking_id.x_studio_ticket_relacionado.id,'product':move.product_id.id,'cantidad':move.product_uom_qty,'costo':0}
                         #i=self.env['product.rel.requisicion'].create(requisicionline)
                         requLin.append(requisicionline)
                         e.append(move.picking_id.id)
