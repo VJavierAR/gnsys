@@ -782,5 +782,5 @@ class PickingsAComprasMassAction(TransientModel):
         else:
             return {'warning': {
             'title': _('Alerta'),
-            'message': _('Las ordenes selcciondas tiene existencias o ya se encuntran con una requisicion.')
+            'message': ('Las ordenes selcciondas tiene existencias o ya se encuntran con una requisicion.')
                     }}
