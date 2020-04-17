@@ -784,11 +784,3 @@ class PickingsAComprasMassAction(TransientModel):
             'title': _('Alerta'),
             'message': _('Las ordenes selcciondas tiene existencias o ya se encuntran con una requisicion.')
                     }}
-
-
-
-
-
-            
-
-
