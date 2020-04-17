@@ -37,7 +37,8 @@ class requisicion(models.Model):
     state = fields.Selection([('draft','Nuevo'),('open','Proceso'), ('done','Hecho')],'State')
     origen=fields.Char()
     orden=fields.Char('Orden de Compra')
-    picking_ids=fields.Many2many('stock.picking')
+    picking_ids=fields.Many2many('stock.picking','picking_req_rel','picking_id','req_id')
+    
     @api.one
     def update_estado(self):
         self.write({'state':'open'})

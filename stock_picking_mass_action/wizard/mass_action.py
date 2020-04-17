@@ -745,13 +745,25 @@ class PickingsAComprasMassAction(TransientModel):
     def confirmar(self):
         _logger.info("Test")
         requLin=[]
-        for pick in self.picking_ids:
-            for move in pick.move_ids_without_package:
-                d=self.env['stock.quant'].search([['location_id','=',move.location_id.id],['product_id','=',move.product_id.id]]).sorted(key='quantity',reverse=True)
-                if(d.quantity==0):
-                    requisicionline={'product':move.product_id.id,'cantidad':move.product_uom_qty,'costo':0}
-                    i=self.env['product.rel.requisicion'].create(requisicionline)
-                    requLin.append(i.id)
+        pi=[]
+        requisiociones=self.env['requisicion.requisicion'].search([])
+        test=requisiociones.mapped('picking_ids.id')
+        _logger.info(str(test))
+        # for pick in self.picking_ids:
+        #     e=[]
+        #     for move in pick.move_ids_without_package:
+        #         d=self.env['stock.quant'].search([['location_id','=',move.location_id.id],['product_id','=',move.product_id.id]]).sorted(key='quantity',reverse=True)
+                
+        #         if(d.quantity==0):
+        #             requisicionline={'product':move.product_id.id,'cantidad':move.product_uom_qty,'costo':0}
+        #             i=self.env['product.rel.requisicion'].create(requisicionline)
+        #             requLin.append(i.id)
+        #             e.append(move.picking_id.id)
+        #     if(e!=[]):
+        #         pi.append(e[0])
+
+
+
             
 
 
