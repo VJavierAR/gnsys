@@ -749,18 +749,24 @@ class PickingsAComprasMassAction(TransientModel):
         requisiociones=self.env['requisicion.requisicion'].search([])
         test=requisiociones.mapped('picking_ids.id')
         _logger.info(str(test))
-        # for pick in self.picking_ids:
-        #     e=[]
-        #     for move in pick.move_ids_without_package:
-        #         d=self.env['stock.quant'].search([['location_id','=',move.location_id.id],['product_id','=',move.product_id.id]]).sorted(key='quantity',reverse=True)
-                
-        #         if(d.quantity==0):
-        #             requisicionline={'product':move.product_id.id,'cantidad':move.product_uom_qty,'costo':0}
-        #             i=self.env['product.rel.requisicion'].create(requisicionline)
-        #             requLin.append(i.id)
-        #             e.append(move.picking_id.id)
-        #     if(e!=[]):
-        #         pi.append(e[0])
+        for pick in self.picking_ids:
+            e=[]
+            if(pick.id not in test):
+                for move in pick.move_ids_without_package:
+                    d=self.env['stock.quant'].search([['location_id','=',move.location_id.id],['product_id','=',move.product_id.id]]).sorted(key='quantity',reverse=True)
+                    
+                    if(d.quantity==0):
+                        requisicionline={'product':move.product_id.id,'cantidad':move.product_uom_qty,'costo':0}
+                        #i=self.env['product.rel.requisicion'].create(requisicionline)
+                        requLin.append(requisicionline)
+                        e.append(move.picking_id.id)
+                if(e!=[]):
+                    pi.append(e[0])
+        if(len(requLin)>0):
+            requisicion=self.env['requisicion.requisicion'].create({'area':'Almacen','fecha_prevista':datetime.datetime.now(),'justificacion':'Falta de stock','state':'open','picking_ids':[(6,0,pi)]})
+            for r in requLin:
+                r['req_rel']=requisicion.id
+                self.env['product.rel.requisicion'].create(r)
 
 
 
