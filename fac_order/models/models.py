@@ -60,8 +60,17 @@ class fac_order(models.Model):
             else:    
                 anioA=str(self.year)
             periodoAnterior= anioA+'-'+mesaA
-            """
+            
             if self.x_studio_dividir_servicios_1:
+               
+               serviciosd=self.order_line
+               srd=[] 
+               for ser in serviciosd:
+                   srd.append(ser.x_studio_servicios)
+               list_set = set(srd)
+               raise exceptions.ValidationError( " despues "+str(list_ser) + ' ante '+ str(srd) )    
+               
+                
                fac = self.env['sale.order'].create({'partner_id' : self.partner_id.id
                                                                  ,'origin' : "dividir por excedentes: " + str(self.name)
                                                                  , 'x_studio_tipo_de_solicitud' : 'Arrendamiento'
@@ -71,7 +80,7 @@ class fac_order(models.Model):
                
                
                #self.excedente="<a href='https://gnsys-corp.odoo.com/web#id="+str(fac.id)+"&action=1167&model=sale.order&view_type=form&menu_id=406' target='_blank'>"+str(fac.name)+"</a>"
-            """   
+               
             if self.x_studio_dividir_servicios:
                fac = self.env['sale.order'].create({'partner_id' : self.partner_id.id
                                                                  ,'origin' : "dividir por excedentes: " + str(self.name)
