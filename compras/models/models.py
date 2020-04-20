@@ -50,22 +50,22 @@ class compras(models.Model):
     nam=fields.Char()
     
     
-    @api.multi
-    def button_confirm(self):
-        for order in self:
-            if order.state not in ['draft', 'sent']:
-                continue
-            order._add_supplier_to_product()
-            # Deal with double validation process
-            if order.company_id.po_double_validation == 'one_step'\
-                    or (order.company_id.po_double_validation == 'two_step'\
-                        and order.amount_total < self.env.user.company_id.currency_id._convert(
-                            order.company_id.po_double_validation_amount, order.currency_id, order.company_id, order.date_order or fields.Date.today()))\
-                    or order.user_has_groups('studio_customization.compras_aa157cfb-bb8b-4fcd-85da-04451cb98845'):
-                order.button_approve()
-            else:
-                order.write({'state': 'to approve'})
-        return True
+    # @api.multi
+    # def button_confirm(self):
+    #     for order in self:
+    #         if order.state not in ['draft', 'sent']:
+    #             continue
+    #         order._add_supplier_to_product()
+    #         # Deal with double validation process
+    #         if order.company_id.po_double_validation == 'one_step'\
+    #                 or (order.company_id.po_double_validation == 'two_step'\
+    #                     and order.amount_total < self.env.user.company_id.currency_id._convert(
+    #                         order.company_id.po_double_validation_amount, order.currency_id, order.company_id, order.date_order or fields.Date.today()))\
+    #                 or order.user_has_groups('studio_customization.compras_aa157cfb-bb8b-4fcd-85da-04451cb98845'):
+    #             order.button_approve()
+    #         else:
+    #             order.write({'state': 'to approve'})
+    #     return True
 
     
     
@@ -98,19 +98,22 @@ class compras(models.Model):
                             d = string.split('\n')
                             n=len(d)
                             arreglo=[]
-                            producto={}
+                            product={}
+                            i=0
                             for x in d:
                                 f=x
                                 serial=''
-                                if(len(re.findall(r"\d{2}\/\d{2}\/\d{4}\s*", f))>0):
-                                    serial=f.split('-')[0].replace(' ','')
-                                    product['serial']=serial
-                                    arreglo.append(product)
+                                #if(len(re.findall(r"\d{2}\/\d{2}\/\d{4}\s*", f))>0):
+                                #    serial=f.split('-')
+                                #    if(len(serial)>0):
+                                #        product['serial']=serial[0].replace(' ','')
+                                    #arreglo.append(product)
                                 if ('PIEZA' in f):
                                     cantidad = f.split('PIEZA')[0]
                                     l = f.split('PIEZA')[1].split(' -',1)
                                     #id = l[0]
-                                    id = l[0].split('    ')[1]
+                                    _logger.info(str(i+1))
+                                    id = l[0].replace(' ','')
                                     casi = l[1].split('.')
                                     casii = casi[1].split(' ')[0]
                                     tam = casi[0].split(' ')
@@ -120,6 +123,7 @@ class compras(models.Model):
                                     template=self.env['product.template'].search([('default_code','=',id)])
                                     productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
                                     product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':cantidad,'price_unit':precio,'taxes_id':[10],'name':productid.description}
+                                    arreglo.append(product)
                             if(len(arreglo)>0):
                                 self.order_line=[(5,0,0)]
                             self.order_line=arreglo
@@ -134,17 +138,20 @@ class compras(models.Model):
                             qty=""
                             arr=[]
                             for o in b:
+                                product={}
                                 if('#' in o ):
                                    r = o.split("#")
                                    q = r[1].split(' ')[1]       
-                                if('Customer Pick' in o ):
+                                if('Customer' in o ):
                                    s = o.split("$")
                                    h=float(s[2])
                                    g=float(s[1].split(' ')[0])
                                    qty=round(h/g)
                                    template=self.env['product.template'].search([('default_code','=',q)])
                                    productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
-                                   product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':qty,'price_unit':g,'name':productid.description}
+                                   desc=productid.description if(productid.description) else '|'
+                                   product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':qty,'price_unit':g}
+                                   product['name']=desc
                                    arr.append(product)
                             if(len(arr)>0):
                                 self.order_line=[(5,0,0)]
@@ -153,16 +160,47 @@ class compras(models.Model):
                     book = xlrd.open_workbook(file_contents=f2 or b'')
                     sheet = book.sheet_by_index(0)
                     header=[]
+                    arr=[]
                     for row_num, row in enumerate(sheet.get_rows()):
-                        for cell in row:
+                        #_logger.info()
+                        #_logger.info(str(self.partner_id.name))
+                        #_logger.info(str(row[0].value))
+
+
+                        if(row[0].value in self.partner_id.name.replace(' ','') and str(row[0].ctype)!='0'):
+                            product={}
+                            producto=row[2].value
+                            precio=float(row[12].value)
+                            #_logger.info(row[10].value)
+                            cantidad=int(row[10].value) if(row[10].ctype!=0) else 0
+                            #_logger.info(str(producto).replace(' ',''))
+                            template=self.env['product.template'].search([('default_code','=',str(producto).replace('.0',''))])
+                            productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
+                            product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':cantidad,'price_unit':precio,'name':productid.description}
+                            product['taxes_id']=[10]
+                            if("KATUN" in row[0].value):
+                                product['price_unit']=float(row[12].value)-(float(row[12].value)*.02)
+                                product['taxes_id']=[10]
+                            if("CTR" in row[0].value):
+                                descuento=float(row[15].value) if(row[15].ctype!=0) else 0
+                                product['price_unit']=(float(row[13].value)-descuento)/cantidad if(cantidad>0) else float(row[12].value)
+                                product['taxes_id']=[10]
+                            arr.append(product)
+                    if(len(arr)>0):
+                        self.order_line=[(5,0,0)]
+                    self.order_line=arr
+                            #header.append(str(row))
+                        #for cell in row:
                         #  print(row)  # Print out the header
-                            if(cell.value!=None or cell.value!=''):
-                                header.append(str(cell.value))
+                            #if(cell.value!=None or cell.value!=''):
+                                
                         # emulate Sheet.get_rows for pre-0.9.4
                         #for row in pycompat.imap(sheet.row, range(sheet.nrows)):
                         #    values = []
                     #    for cell in row:
-                    _logger.info(str(header))
+                    #_logger.info(str(header))
+                    _logger.info(str(arr))
+
 
 
             

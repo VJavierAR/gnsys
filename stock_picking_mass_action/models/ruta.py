@@ -16,6 +16,8 @@ class CreacionRuta(Model):
 	odometro=fields.Integer()
 	nivel_tanque=fields.Selection([["reserva","Reserva"],[".25","1/4"],[".5","1/2"],[".75","3/4"],["1","Lleno"]])
 	tipo=fields.Selection([["local","Local"],["foraneo","Foraneo"]])
+	EstadoPais=fields.Many2one('res.country.state',string="Estado")
+	EstadoPaisName=fields.Char(related='EstadoPais.name',string="Estado")
 
 
 	@api.multi
@@ -25,7 +27,7 @@ class CreacionRuta(Model):
 			self.ordenes.write({'estado':'ruta'})
 			self.ordenes.write({'ajusta':True})
 			self.estado="valido"
-			if(self.odometro==0):
+			if(self.odometro==0 and self.tipo.lower()=="local"):
 				raise UserError(_('Tiene que ingresas el Odometro'))
 			for o in self.ordenes:
 				if(o.sale_id.x_studio_field_bxHgp):

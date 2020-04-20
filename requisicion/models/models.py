@@ -13,7 +13,8 @@ class product_requisicion(models.Model):
     direccion=fields.Char(compute='direc')
     cliente=fields.Many2one('res.partner')
     solicitar=fields.Boolean('Solicitar',default=True)
-    pedido=fields.Char('Pedido',)
+    pedido=fields.Char('Pedido')
+
 
     @api.depends('cliente')
     def direc(self):
@@ -36,6 +37,8 @@ class requisicion(models.Model):
     state = fields.Selection([('draft','Nuevo'),('open','Proceso'), ('done','Hecho')],'State')
     origen=fields.Char()
     orden=fields.Char('Orden de Compra')
+    picking_ids=fields.Many2many('stock.picking','picking_req_rel','picking_id','req_id')
+    
     @api.one
     def update_estado(self):
         self.write({'state':'open'})

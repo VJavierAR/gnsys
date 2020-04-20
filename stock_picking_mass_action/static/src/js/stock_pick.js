@@ -1,17 +1,4 @@
 
-/*
-function test() {
-    console.log("Hola mundo");
-    
-    ///html/body/div[3]/div/div/div/div[5]/div[5]/h1/span
-    var a=document.evaluate('/html/body/div[3]/div/div/div/div[5]/div[6]/table[1]/tbody/tr[19]/td[2]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.innerHTML;
-    alert(a);
-    //document.getElementsByClassName("o_field_char o_field_widget o_required_modifier field_name").style.color = "red";    
-    
-}
-*/
-
-
 odoo.define('invoice.action_button', function (require) {
 "use strict";
 
@@ -25,15 +12,100 @@ odoo.define('invoice.action_button', function (require) {
         renderButtons: function($node) {
         this._super.apply(this, arguments);
             if (this.$buttons) {
-                this.$buttons.find('.oe_action_button').click(this.proxy('action_inter2'));
+                if (typeof this.actionViews !== 'undefined' && this.actionViews.length > 0) {
+                    switch (this.actionViews[0].viewID) {
+                      case 2940:
+                        this.$buttons.find('.o_button_import').hide();
+                        this.$buttons.find('.o_list_button_add').hide();
+                        this.$buttons.find('.oe_action_button_ticket_report').click(this.proxy('action_inter5'));
+                        break;
+                      case 2941:
+                        this.$buttons.find('.o_button_import').hide();
+                        this.$buttons.find('.o_list_button_add').hide();
+                        this.$buttons.find('.oe_action_button').click(this.proxy('action_inter2'));
+                        break; 
+                      case 646:
+                        this.$buttons.find('.o_button_import').hide();
+                        this.$buttons.find('.oe_action_button_stock_inventory').click(this.proxy('action_inter6'));
+                        break; 
+                      default:
+                        this.$buttons.find('.oe_action_button_ticket_report').hide();
+                        this.$buttons.find('.oe_action_button').hide();
+                        this.$buttons.find('.oe_action_button_move_line').click(this.proxy('action_inter1'));
+                        this.$buttons.find('.oe_action_button_stock_quant').click(this.proxy('action_inter3'));
+                        this.$buttons.find('.oe_action_button_sale_report').click(this.proxy('action_inter4'));
+                    }
+                }
+                
             }
         },
+        action_inter6: function (e) {
+            var self = this
+            var user = session.uid;
+            self.do_action({
+                name: _t('Inventario'),
+                type : 'ir.actions.act_window',
+                res_model: 'stock.inventory.action',
+                view_type: 'form',
+                view_mode: 'form',
+                view_id: 'view_stock_inventory_action_form',
+                views: [[false, 'form']],
+                target: 'new',
+            
+            });
+        },
+         action_inter5: function (e) {
+            var self = this
+            var user = session.uid;
+            self.do_action({
+                name: _t('Tickets'),
+                type : 'ir.actions.act_window',
+                res_model: 'helpdesk.ticket.action',
+                view_type: 'form',
+                view_mode: 'form',
+                view_id: 'view_helpdesk_ticket_action_form',
+                views: [[false, 'form']],
+                target: 'new',
+            
+            });
+        },
+        action_inter4: function (e) {
+            var self = this
+            var user = session.uid;
+            self.do_action({
+                name: _t('Solicitudes'),
+                type : 'ir.actions.act_window',
+                res_model: 'sale.order.action',
+                view_type: 'form',
+                view_mode: 'form',
+                view_id: 'view_sale_order_action_form',
+                views: [[false, 'form']],
+                target: 'new',
+            
+            });
+        },
+        action_inter3: function (e) {
+            var self = this
+            var user = session.uid;
+            self.do_action({
+                name: _t('Existencias'),
+                type : 'ir.actions.act_window',
+                res_model: 'stock.quant.action',
+                view_type: 'form',
+                view_mode: 'form',
+                view_id: 'view_stock_quant_action_form',
+                views: [[false, 'form']],
+                target: 'new',
+            
+            });
+        },
+
 
         action_inter2: function (e) {
             var self = this
             var user = session.uid;
             self.do_action({
-                name: _t('Serie'),
+                name: _t('Transferencias Internas'),
                 type : 'ir.actions.act_window',
                 res_model: 'transferencia.interna',
                 view_type: 'form',
@@ -54,7 +126,21 @@ odoo.define('invoice.action_button', function (require) {
                 args: [[user],{'id':user}],
             });
         },
-
+        action_inter1: function (e) {
+            var self = this
+            var user = session.uid;
+            self.do_action({
+                name: _t('Movimientos'),
+                type : 'ir.actions.act_window',
+                res_model: 'stock.move.action',
+                view_type: 'form',
+                view_mode: 'form',
+                view_id: 'view_stock_move_action_form',
+                views: [[false, 'form']],
+                target: 'new',
+            
+            });
+        },
         receive_invoice: function () {
             var self = this
             var user = session.uid;
@@ -75,59 +161,4 @@ odoo.define('invoice.action_button', function (require) {
                 });
         },
     });
-
-    /*
-    var ListView = require('web.ListView');
-    var QWeb = core.qweb;
-    ListView.include({
-        render_buttons: function($node) {
-            var self = this;
-            this._super($node);
-                this.$buttons.find('.o_list_tender_button_create').click(this.proxy('tree_view_action'));
-        },
-        tree_view_action: function () {
-            this.do_action({
-                    type: "ir.actions.act_window",
-                    name: "Series",
-                    res_model: "helpdesk.ticket",
-                    views: [[false,'form']],
-                    target: 'current',
-                    view_type : 'form',
-                    view_mode : 'form',
-                    flags: {'form': {'action_buttons': true, 'options': {'mode': 'edit'}}}
-            });
-            return { 'type': 'ir.actions.client'
-                    ,'tag': 'reload', } 
-        }
-    });
-    */
 });
-
-
-    // $(document).ready(function() {
-    //     console.log("Entrando al cargar...")
-    //     //var x = document.getElementById("hidden_box");
-    //     //var x=document.getElementsByClassName('blockUI blockMsg blockPage');
-    //     //var y=document.getElementsByClassName('blockUI');
-    //     //var z=document.getElementsByClassName('blockUI blockOverlay');
-
-       
-    //     var intervalo = setInterval( function borraBlock() {
-    //                 var x=document.getElementsByClassName('blockUI blockMsg blockPage');
-    //     var y=document.getElementsByClassName('blockUI');
-    //     var z=document.getElementsByClassName('blockUI blockOverlay');
-    //         console.log(x)
-    //         if (x){
-    //             x.parentNode.replaceChild(x,'');
-    //             y.parentNode.replaceChild(y,'');
-    //             z.parentNode.replaceChild(z,'');
-    //                     //document.body.removeChild(x);
-    //     //document.body.removeChild(y);
-    //     //document.body.removeChild(z);
-    //     //i=x.remove();
-    //     //j=y.remove();
-    //     //k=z.remove();
-    //         }
-    //     }, 3000)
-        
-    // });

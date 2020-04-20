@@ -25,10 +25,29 @@ class StockPicking(Model):
     sale_child=fields.Many2one('sale.order')
     tipo=fields.Char(compute='cliente',store=True)
     oculta=fields.Boolean(store=True)
+    estadoRuta=fields.Selection([["borrador","Borrador"],["valido","Confirmado"]],default="borrador")
+
     #documentosDistro = fields.Many2many('ir.attachment', string="Evidencias ")
     #historialTicket = fields.One2many('ir.attachment','res_id',string='Evidencias al ticket',store=True,track_visibility='onchange')
 
-
+    def devolver(self):
+        if(self.ruta_id):
+            self.ruta_id=False
+            self.estado='Xenrutar'
+            wiz = self.env['comentario.ticket'].create({'pick':self.id})
+            view = self.env.ref('stock_picking_mass_action.view_comentario_ticket')
+            return {
+                'name': _('Comentario'),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'comentario.ticket',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'res_id': wiz.id,
+                'context': self.env.context,
+            }
 
 
     @api.depends('move_ids_without_package','state')
@@ -47,10 +66,11 @@ class StockPicking(Model):
         for r in self:
             if(r.partner_id):
                 if(r.partner_id.state_id):
-                    if(r.partner_id.state_id.code in 'DIF'):
-                        r.tipo='local'
-                    else:
-                        r.tipo='foraneo'
+                    r.tipo=r.partner_id.state_id.name
+                    #if(r.partner_id.state_id.code in 'DIF'):
+                    #    r.tipo='local'
+                    #else:
+                    #    r.tipo='foraneo'
 
     @api.onchange('carrier_tracking_ref')
     def agregarNumeroGuiaATicketOSolicitud(self):
@@ -85,7 +105,7 @@ class StockPicking(Model):
 
         # If no lots when needed, raise error
         picking_type = self.picking_type_id
-        if(picking_type.id==2 and len(self.x_studio_evidencia_a_ticket)<1):
+        if(picking_type.id==2 and self.x_studio_evidencia_a_ticket==False):
             raise UserError(_('Se requiere la Evidencia.'))
             
         precision_digits = self.env['decimal.precision'].precision_get('Product Unit of Measure')
@@ -321,7 +341,7 @@ class StockPicking(Model):
         d=[]
         wiz = self.env['cambio.toner'].create({'display_name':'h','pick':self.id})
         for p in self.move_ids_without_package:
-            data={'rel_cambio':wiz.id,'producto1':p.product_id.id,'producto2':p.product_id.id,'cantidad':p.product_uom_qty,'serie':p.x_studio_serieorderline}
+            data={'rel_cambio':wiz.id,'producto1':p.product_id.id,'producto2':p.product_id.id,'cantidad':p.product_uom_qty,'serie':p.x_studio_serie_destino.id,'tipo':self.picking_type_id.id}
             self.env['cambio.toner.line'].create(data)
             #d.append(data)
         
@@ -466,7 +486,47 @@ class StockPicking(Model):
     #                 self.sale_id.x_studio_field_bxHgp.stage_id=93
     #             if(self.state=="confirmed"):
     #                 self.estado='confirmed'
-
+    @api.multi
+    def cierre(self):
+        if(self.x_studio_evidencia_a_ticket and self.partner_id.state_id.name in ["Estado de México","Ciudad de México"]):
+            #self.sudo().action_done()
+            wiz=self.env['stock.picking.mass.action'].create({'picking_ids':[(4,self.id)],'confirm':True,'check_availability':True,'transfer':True})
+            _logger.info(str(self.id))
+            #obj.mass_action()
+            #view_stock_picking_mass_action_form
+            view = self.env.ref('stock_picking_mass_action.view_stock_picking_mass_action_form')
+            return {
+                'name': _('Transferencia'),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'stock.picking.mass.action',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'res_id': wiz.id,
+                'context': self.env.context,
+            }
+        if(self.partner_id.state_id.name not in ["Estado de México","Ciudad de México"]):
+            wiz=self.env['stock.picking.mass.action'].create({'picking_ids':[(4,self.id)],'confirm':True,'check_availability':True,'transfer':True})
+            _logger.info(str(self.id))
+            #obj.mass_action()
+            #view_stock_picking_mass_action_form
+            view = self.env.ref('stock_picking_mass_action.view_stock_picking_mass_action_form')
+            return {
+                'name': _('Transferencia'),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'stock.picking.mass.action',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'res_id': wiz.id,
+                'context': self.env.context,
+            }
+        else:
+            raise UserError(_('Se requiere evidencia'))
 
 class StockPicking(Model):
     _inherit = 'stock.move'

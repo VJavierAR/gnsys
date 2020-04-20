@@ -1,0 +1,36 @@
+<odoo>
+	<data>
+<report
+    id="partner_xlsx"
+    model="stock.move.line"
+    string="Reporte de Movimientos"
+    report_type="xlsx"
+    name="requisicion.partner_xlsx"
+    file="Movimientos"
+    attachment_use="False"/>
+<report
+    id="quant_xlsx"
+    model="stock.quant"
+    string="Reporte de Existencias"
+    report_type="xlsx"
+    name="existencias.report"
+    file="Reporte de Existencias"
+    attachment_use="False"/>
+<report
+    id="sale_xlsx"
+    model="sale.order"
+    string="Reporte de Solicitudes"
+    report_type="xlsx"
+    name="solicitudes.report"
+    file="Reporte de Solicitudes"
+    attachment_use="False"/>
+<report
+    id="ticket_xlsx"
+    model="helpdesk.ticket"
+    string="Reporte de Tickets"
+    report_type="xlsx"
+    name="tickets.report"
+    file="Reporte de Tickets"
+    attachment_use="False"/>
+</data>
+</odoo>

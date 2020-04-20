@@ -1,19 +1,160 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="view_stock_inventory_action_form" model="ir.ui.view">
+        <field name="model">stock.inventory.action</field>
+        <field name="arch" type="xml">
+            <form string="Mass Action for the selected sale order">
+                <group>
+                    <field name="almacen" string="Almacen" required="1"/>
+                    <field name="archivo" string="Archivo" required="1"/>
+                    <field name="comentario" string="Comentario" required="1"/>
+                </group>
+                <footer>
+                    <button name="importacion" string="Importar" type="object" class="oe_highlight"/>
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_picking_purchase" model="ir.actions.act_window">
+        <field name="name">A Compras</field>
+        <field name="res_model">stock.pickings.compras</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="stock.model_stock_picking" />
+    </record>
+    <record id="view_stock_pickings_compras_form" model="ir.ui.view">
+        <field name="model">stock.pickings.compras</field>
+        <field name="arch" type="xml">
+            <form string="Mass Action for the selected stock picking">
+                <h2 >Se Verificaran las Ordenes Selecionadas</h2>
+
+                <footer>
+                    <button name="confirmar" string="Apply" type="object" class="oe_highlight"/>
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+
+
+
+
+
+    <record id="view_helpdesk_ticket_action_form" model="ir.ui.view">
+        <field name="model">helpdesk.ticket.action</field>
+        <field name="arch" type="xml">
+            <form string="Mass Action for the selected sale order">
+                <group>
+                    <group>
+                    <field name="fechaInicial" string="Fecha Inicial" required="1"/>
+                    <field name="fechaFinal" string="Fecha Inicial" required="1"/>
+                </group>
+                <group>
+                    <field name="tipo" string="Tipo"/>
+                </group>
+                </group>
+                <footer>
+                    <button name="report" string="Reporte" type="object" class="oe_highlight"/>
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="view_sale_order_action_form" model="ir.ui.view">
+        <field name="model">sale.order.action</field>
+        <field name="arch" type="xml">
+            <form string="Mass Action for the selected sale order">
+                <group>
+                    <field name="fechaInicial" string="Fecha Inicial" required="1"/>
+                    <field name="fechaFinal" string="Fecha Inicial" required="1"/>
+                </group>
+                <footer>
+                    <button name="report" string="Reporte" type="object" class="oe_highlight"/>
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_stock_move_action_form" model="ir.ui.view">
+        <field name="model">stock.move.action</field>
+        <field name="arch" type="xml">
+            <form string="Mass Action for the selected stock picking">
+                <group>
+                    <group>
+                    <field name="fechaInicial" string="Fecha Inicial" required="1"/>
+                    <field name="fechaFinal" string="Fecha Inicial" required="1"/>
+                    </group>
+                    <group>
+                    <field name="almacen"/>
+                    <field name="categoria"/>
+                    <field name="tipo" required="1"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="report" string="Reporte" type="object" class="oe_highlight"/>
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_stock_quant_action_form" model="ir.ui.view">
+        <field name="model">stock.quant.action</field>
+        <field name="arch" type="xml">
+            <form string="Mass Action for the selected stock quant">
+                <group>
+                    <field name="almacen"/>
+                    <field name="categoria"/>
+                    <field name="tipo" />
+                    <field name="equipo" />
+                </group>
+                <footer>
+                    <button name="report" string="Reporte" type="object" class="oe_highlight"/>
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+
 
     <record id="view_stock_picking_mass_action_form" model="ir.ui.view">
         <field name="model">stock.picking.mass.action</field>
         <field name="arch" type="xml">
             <form string="Mass Action for the selected stock picking">
                 <group>
+                    <field name="check" invisible="1"/>
+                    <h2 attrs="{'invisible':[['check','!=',1]]}">Se Transferiran las Ordenes Selecionadas</h2>
                     <field name="confirm" invisible="1"/>
                     <field name="check_availability" invisible="1"/>
                     <field name="transfer" invisible="1"/>
+                    <field name="picking_ids" attrs="{'invisible':[['check','!=',1]]}">
+                        <tree editable="bottom">
+                                <field name="id" invisible="1" readonly="1" attrs="{'invisible':[['picking_type_id','!=',29314]]}"/>
+                                <field name="picking_type_id" invisible="1"/>
+                                <field name="name" invisible="1" readonly="1" attrs="{'invisible':[['picking_type_id','!=',29314]]}"/>
+                                <!--<field name="x_studio_ticket" string="Ticket" readonly="1" attrs="{'invisible':[['picking_type_id','=',29314]]}"/>-->
+                                <field name="origin" string="Orden" readonly="1" attrs="{'invisible':[['picking_type_id','=',29314]]}"/>
+                                <field name="partner_id" readonly="1" attrs="{'invisible':[['picking_type_id','!=',29314]]}"/>
+                                <field name="scheduled_date" readonly="1" attrs="{'invisible':[['picking_type_id','!=',29314]]}"/>
+                                <field name="x_studio_toneres" widget="html" string="productos" readonly="1" attrs="{'invisible':[['picking_type_id','!=',29314]]}"/>
+                                <field name="x_studio_tecnico"  domain="['|',['job_id.name','=','TÉCNICO '],['job_id.name','=','SOFTWARE']]" attrs="{'invisible':[['picking_type_id','!=',29314]]}"/>
+                                <field name="estado"  readonly="1" attrs="{'invisible':[['picking_type_id','!=',29314]]}"/>
+                                <field name="date_done" readonly="1" attrs="{'invisible':[['picking_type_id','!=',29314]]}"/>
+                        </tree>
+                    </field>
                 </group>
                 <footer>
                     <button name="mass_action" string="Apply" type="object" class="oe_highlight"/>
-                    <button name="vales" string="Vale" type="object" class="oe_highlight"/>
-                    <button name="etiquetas" string="Etiquetas" type="object" class="oe_highlight"/>
+                    <button name="vales" string="Vale de Entrega" type="object" class="oe_highlight" attrs="{'invisible':[['check','!=',2]]}"/>
+                    <button name="etiquetas" string="Etiquetas" type="object" attrs="{'invisible':[['check','!=',2]]}" class="oe_highlight"/>
                     <button string="Cancel" class="oe_link" special="cancel"/>
                 </footer>
             </form>
@@ -61,8 +202,9 @@
                     <field name="pro_ids">
                         <tree editable="bottom">
                         <field name="producto1" readonly="1" string="Registro Original"/>
-                        <field name="producto2" string="Registro a Cambiar" readonly="1" invisible="1"/>
-                        <field name="almacen"/>
+                        <field name="tipo" invisible="1"/>
+                        <field name="producto2" string="Registro a Cambiar"  attrs="{'invisible':[['tipo','!=',3]]}"/>
+                        <field name="almacen" domain="[['x_studio_cliente','=',False]]"/>
                         <field name="existeciaAlmacen" readonly="1"/>                        
                         <field name="existencia1" readonly="1"/>
                         <field name="existencia2" readonly="1"/>
@@ -100,7 +242,8 @@
             <form string="Evidencia">
                 <group>
                     <field name="comentario"/>
-                    <field name="evidencia"/>
+                    <field name="ruta" invisible="1"/>
+                    <field name="evidencia" widget="many2many_binary" attrs="{'invisible': [['ruta', '=', False]]}"/>
                 </group>
                 <footer>
                     <button name="confirmar" string="Confirmar" type="object" class="oe_highlight"/>
@@ -116,22 +259,25 @@
         <field name="arch" type="xml">
             <form string="Transferencia Interna">
                 <group>
-                    <field name="almacenOrigen"/>
+                    <field name="almacenOrigen" required="1"/>
                     <field name="ubicacion" invisible="1"/>
-                    <field name="almacenDestino"/>
+                    <field name="almacenDestino" required="1"/>
+                    <field name="categoria"/>
                 </group>
                 <notebook>
-                <page>
-                    <field name="lines" context="{'default_ubicacion': ubicacion}">
+                <page string="Productos">
+                    <field name="lines" attrs="{'invisible': [['categoria', '=', False]]}"  context="{'default_ubicacion': ubicacion,'default_categoria':categoria}">
                         <tree editable="bottom">
-                            <field name="producto"/>
+                            <field name="producto" domain="[['categ_id','=',categoria]]"/>
+                            <field name="categoria" invisible="1" />
                             <field name="modelo"/>
                             <field name="noParte"/>
+                            <field name="serie" editable="1" attrs="{'invisible': [['categoria', '!=', 13]]}"/>
                             <field name="ubicacion" invisible="1"/>
                             <field name="descripcion"/>
                             <field name="disponible"/>
-                            <field name="stock" invisible="1"/>
-                            <field name="cantidad"/>
+                            <field name="stoc" invisible="1"/>
+                            <field name="cantidad"  attrs="{'invisible': [['categoria', '!=', 13]]}"/>
                         </tree>
                     </field>
                 </page>

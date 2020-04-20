@@ -25,13 +25,12 @@ odoo.define('invoice.action_button_helpdesk', function (require) {
 	ListController.include({
 		renderButtons: function($node) {
 		this._super.apply(this, arguments);
-			console.log($node)
-			console.log(this)
-			console.log(arguments)
-
+			//console.log($node)
+			//console.log(this)
+			//console.log(arguments)
 			if (this.$buttons) {
 				//console.log(this);
-		    	//console.log(this.actionViews[0].viewID);
+		    	//console.log("Test: " + this.actionViews[0].viewID);
 		    	if (typeof this.actionViews !== 'undefined' && this.actionViews.length > 0) {
 			    	if (this.actionViews[0].viewID == 2766) {
 			    		this.$buttons.find('.o_button_import').hide();
@@ -42,21 +41,6 @@ odoo.define('invoice.action_button_helpdesk', function (require) {
 			    		this.$buttons.find('.oe_action_button_helpdesk').hide();
 			    	}
 		    	}
-		    	//var div_blockUI = this.__parentedParent.el.lastElementChild.previousElementSibling.previousElementSibling
-		    	//var div_blockUI_blockOverlay = this.__parentedParent.el.lastElementChild.previousElementSibling
-		    	//var div_blockUI_blockMsg_blockPage = this.__parentedParent.el.lastElementChild
-		    	/*
-		    	if (this.__parentedParent.__parentedParent.el.lastElementChild.previousElementSibling.previousElementSibling.previousElementSibling != null){
-			    	var div_blockUI = this.__parentedParent.__parentedParent.el.lastElementChild.previousElementSibling.previousElementSibling.previousElementSibling.previousSibling
-			    	var div_blockUI_blockOverlay = this.__parentedParent.__parentedParent.el.lastElementChild.previousElementSibling.previousElementSibling.previousElementSibling
-			    	var div_blockUI_blockMsg_blockPage = this.__parentedParent.__parentedParent.el.lastElementChild.previousElementSibling.previousElementSibling
-			    	if (div_blockUI[0]) {
-				    	div_blockUI.remove()
-				    	div_blockUI_blockOverlay.remove()
-				    	div_blockUI_blockMsg_blockPage.remove()
-			    	}
-			    }
-			    */
 		   	}
 		},
 
@@ -107,7 +91,12 @@ odoo.define('invoice.action_button_helpdesk', function (require) {
         },
 	});
 
-    $(document).ready(function() {
+    $('#contadorBNActual').on('change', function(e) {
+        console.log("Entro en el onchange")
+        $('#textoInformativo').val('Hola mundo')
+    });
+
+    /*$(document).ready(function() {
         console.log("Entrando al cargar...")
         //var x = document.getElementById("hidden_box");
         var x = $('.blockUI blockOverlay');
@@ -121,7 +110,7 @@ odoo.define('invoice.action_button_helpdesk', function (require) {
             }
         }
         //var intervalo = setInterval("borraBlock()", 3000)
-    });
+    });*/
 
 	/*
 	var ListView = require('web.ListView');
