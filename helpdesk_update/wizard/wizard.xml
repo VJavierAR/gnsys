@@ -397,7 +397,7 @@
                     <group string="Cliente y localidad">
                         <field name='cliente' readonly='1' force_save = "1"/>
                         <field name='idCliente' readonly='1' invisible='1' force_save = "1"/>
-                        <field name='estatus' readonly = '1' force_save = '1' />
+                        <field name='estatus' readonly = '1' force_save = '1' invisible='[["clienteRelacion", "=", False]]'/>
                         <field name='localidad' readonly='1' force_save = "1"/>
                         <field name='zonaLocalidad' readonly='1' force_save = "1"/>
                         <field name='idLocaliidad' readonly='1' invisible='1' force_save = "1"/>
