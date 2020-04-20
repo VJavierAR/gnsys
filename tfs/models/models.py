@@ -204,6 +204,8 @@ class tfs(models.Model):
         result = super(tfs, self).create(vals)
         return result
     
+
+    
     #@api.onchange('usuario')
     #def onchange_user(self):
     #    res={}
