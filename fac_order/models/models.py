@@ -68,7 +68,7 @@ class fac_order(models.Model):
                for ser in serviciosd:
                    srd.append(ser.x_studio_servicio)
                list_set = set(srd)
-               raise exceptions.ValidationError( " despues "+str(list_ser) + ' ante '+ str(srd) )    
+               raise exceptions.ValidationError( " despues "+str(list_set) + ' ante '+ str(srd) )    
                
                 
                fac = self.env['sale.order'].create({'partner_id' : self.partner_id.id
