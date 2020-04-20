@@ -674,6 +674,8 @@ class helpdesk_crearconserie(TransientModel):
     ticket_id_existente = fields.Integer(string = 'Ticket existente', default = 0, store = True)
     textoTicketExistente = fields.Text(string = ' ', store = True)
 
+    estatus = fields.Selection([('No disponible','No disponible'),('Moroso','Moroso'),('Al corriente','Al corriente')], string = 'Estatus', store = True)
+
     def abrirTicket(self):
         return {
                 "type": "ir.actions.act_url",
@@ -792,28 +794,35 @@ class helpdesk_crearconserie(TransientModel):
     
     @api.onchange('clienteRelacion')
     def cambia_cliente(self):
-      if not self.clienteRelacion:
-        self.localidadRelacion = ''
-        self.serie = ''
+        if not self.clienteRelacion:
+            self.localidadRelacion = ''
+            self.serie = ''
 
-        self.cliente = ''
-        self.localidad = ''
-        self.zonaLocalidad = ''
-        self.idLocaliidad = ''
+            self.cliente = ''
+            self.localidad = ''
+            self.zonaLocalidad = ''
+            self.idLocaliidad = ''
 
-        self.nombreContactoLocalidad = ''
-        self.telefonoContactoLocalidad = ''
-        self.movilContactoLocalidad = ''
-        self.correoContactoLocalidad = ''
+            self.nombreContactoLocalidad = ''
+            self.telefonoContactoLocalidad = ''
+            self.movilContactoLocalidad = ''
+            self.correoContactoLocalidad = ''
 
-        self.direccionCalleNombre = ''
-        self.direccionNumeroExterior = ''
-        self.direccionNumeroInterior = ''
-        self.direccionColonia = ''
-        self.direccionLocalidad = ''
-        self.direccionCiudad = ''
-        self.direccionEstado = ''
-        self.direccionCodigoPostal = ''
+            self.direccionCalleNombre = ''
+            self.direccionNumeroExterior = ''
+            self.direccionNumeroInterior = ''
+            self.direccionColonia = ''
+            self.direccionLocalidad = ''
+            self.direccionCiudad = ''
+            self.direccionEstado = ''
+            self.direccionCodigoPostal = ''
+
+            self.estatus = 'No disponible'
+        else:
+            if self.clienteRelacion.x_studio_moroso:
+                self.estatus = 'Moroso'
+            else:
+                self.estatus = 'Al corriente'
     
 
     @api.onchange('serie')
