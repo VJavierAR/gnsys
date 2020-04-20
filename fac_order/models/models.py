@@ -107,7 +107,7 @@ class fac_order(models.Model):
                    if d.x_studio_bolsa and d.x_studio_excedente == 'si':  
                       self.env['sale.order.line'].create({'order_id': fac.id,'product_id':11340,'product_uom_qty':d.product_uom_qty,'price_unit':d.price_unit,'x_studio_bolsa':d.x_studio_bolsa})
                       self.env['sale.order.line'].search([('id', '=', d.id)]).unlink()                             
-            if !self.x_studio_dividir_servicios or !self.x_studio_dividir_servicios_1:
+            if self.x_studio_dividir_servicios==False and self.x_studio_dividir_servicios_1==False and len(self.order.lines)<1:
                _logger.info("Informacion entre: ") 
                for m in ff:              
                           p=self.env['stock.production.lot'].search([('servicio', '=', m.id)])                  
