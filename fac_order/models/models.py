@@ -68,7 +68,9 @@ class fac_order(models.Model):
                for ser in serviciosd:
                    srd.append(ser.x_studio_servicio)
                list_set = set(srd)
-               lenset=len(list_set)
+               asts = list(list_set) 
+               lenset=len(asts)
+               
                servicioshtml='' 
                if lenset==1:
                   raise exceptions.ValidationError( "no se puede dividir más solo tiene un servicio")    
@@ -82,11 +84,11 @@ class fac_order(models.Model):
                                                                 })
                       servicioshtml=str(fac.id)+' '+servicioshtml
                       for d in self.order_line:
-                          _logger.info("Informacion entre:"+str(lenset[rs])+" "+str(d.x_studio_servicio))
-                          if lenset[rs]==d.x_studio_servicio:  
+                          _logger.info("Informacion entre:"+str(asts[rs])+" "+str(d.x_studio_servicio))
+                          if asts[rs]==d.x_studio_servicio:  
                              self.env['sale.order.line'].create({'order_id': fac.id,'x_studio_field_9nQhR':d.id,'product_id':d.product_id,'product_uom_qty':d.product_uom_qty,'price_unit':d.price_unit,'x_studio_bolsa':d.x_studio_bolsa})
                                 
-                  dejar= srd[lenset-1]                               
+                  dejar= asts[lenset-1]                               
                   for quitar in self.order_line:
                       if dejar!=quitar.x_studio_servicio:
                          self.env['sale.order.line'].search([('id', '=', quitar.id)]).unlink()                             
