@@ -93,6 +93,7 @@ class fac_order(models.Model):
                       for det in self.detalle:
                           _logger.info("Informacion entre:"+str(asts[rs])+" "+str(det.servicio))
                           if asts[rs]==det.servicio:
+                             _logger.info("Informacion entre:"+str(asts[rs])+" "+str(det.servicio))
                              self.env['sale.order.detalle'].create({'saleOrder': fac.id
                                                                        ,'producto': det.producto
                                                                        ,'serieEquipo': det.serieEquipo
@@ -113,6 +114,7 @@ class fac_order(models.Model):
                          self.env['sale.order.line'].search([('id', '=', quitar.id)]).unlink()
                   for quitard in self.detalle:
                       if dejar!=quitard.servicio:
+                         _logger.info("Informacion entre:"+str(dejar)+" "+str(quitard.servicio))   
                          self.env['sale.order.detalle'].search([('id', '=', quitard.id)]).unlink()
           
                             
