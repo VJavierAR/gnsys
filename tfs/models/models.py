@@ -153,12 +153,51 @@ class tfs(models.Model):
                     raise exceptions.UserError("No hay inventario en la ubicación selecionada")
 
 
-    def test(self):
-        i=self.env['tfs.tfs'].search([[]])
-        raise RedirectWarning('mensaje',i[0],_('Test'))
-    
-
-
+    def reglas(self,almacen=[]):
+        if(almacen==[]):
+            almacenes=self.env['stock.warehouse'].search([['x_studio_mini','=',True]])
+        if(almacen!=[]):
+            almacenes=self.env['stock.warehouse'].browse(almacen)           
+        i=0
+        for al in almacenes:
+            quants=self.env['stock.quant'].search([['location_id','=',al.lot_stock_id.id]])
+            reglas=self.env['stock.warehouse.orderpoint'].search([['warehouse_id','=',al.id]])
+            productos=[]
+            pickOrigen=[]
+            pickDestino=[]
+            for re in reglas:
+                i=i+1
+                productos.append(re.product_id.id)
+                quant=quants.\
+                filtered(lambda x: x.product_id.id == re.product_id.id)
+                if(len(quant)==0):
+                    datos1={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':41911,'location_dest_id':re.location_id.id}
+                    datos2={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':re.location_id.id,'location_dest_id':41911}
+                    pickOrigen.append(datos1)
+                    pickDestino.append(datos2)
+                if(len(quant)>0):
+                    if(quant.quantity<=re.product_min_qty):
+                        datos1={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':41911,'location_dest_id':re.location_id.id}
+                        datos2={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':re.location_id.id,'location_dest_id':41911}
+                        pickOrigen.append(datos1)
+                        pickDestino.append(datos2)
+            if(len(pickOrigen)>0):
+                origen=self.env['stock.picking.type'].search([['name','=','Internal Transfers'],['warehouse_id','=',6299]])
+                destino=self.env['stock.picking.type'].search([['name','=','Internal Transfers'],['warehouse_id','=',al.id]])
+                pick_origin = self.env['stock.picking'].create({'picking_type_id' : origen.id,'almacenOrigen':6299,'almacenDestino':al.id,'location_id':41911,'location_dest_id':17})
+                pick_dest = self.env['stock.picking'].create({'picking_type_id' : destino.id, 'location_id':17,'almacenOrigen':al.id,'almacenDestino':6299,'location_dest_id':al.lot_stock_id.id})
+                for ori in pickOrigen:
+                    ori['picking_id']=pick_origin.id
+                    self.env['stock.move'].create(ori)
+                for des in pickDestino:
+                    des['picking_id']=pick_dest.id
+                    self.env['stock.move'].create(des)
+                pick_origin.action_confirm()
+                pick_origin.action_assign()
+                pick_dest.action_confirm()
+                pick_dest.action_assign()
+            _logger.info(str(len(pickOrigen)))
+            
     @api.multi
     def valida(self):
         view = self.env.ref('tfs.view_tfs_ticket')
