@@ -91,18 +91,18 @@ class fac_order(models.Model):
                           if asts[rs]==d.x_studio_servicio:  
                              self.env['sale.order.line'].create({'order_id': fac.id,'x_studio_servicio':d.x_studio_servicio,'x_studio_field_9nQhR':d.x_studio_field_9nQhR.id,'product_id':d.product_id.id,'product_uom_qty':d.product_uom_qty,'price_unit':d.price_unit,'x_studio_bolsa':d.x_studio_bolsa})
                       for det in self.detalle:
-                          if asts[rs]==d.servicio:
+                          if asts[rs]==det.servicio:
                              self.env['sale.order.detalle'].create({'saleOrder': fac.id
-                                                                       ,'producto': d.producto
-                                                                       ,'serieEquipo': d.serieEquipo
-                                                                       ,'locacion':d.locacion
-                                                                       , 'ultimaLecturaBN': d.ultimaLecturaBN
-                                                                       , 'lecturaAnteriorBN': d.lecturaAnteriorBN
-                                                                       , 'paginasProcesadasBN': d.paginasProcesadasBN
-                                                                       , 'ultimaLecturaColor': d.ultimaLecturaColor
-                                                                       , 'lecturaAnteriorColor': d.lecturaAnteriorColor
-                                                                       , 'paginasProcesadasColor': d.paginasProcesadasColor
-                                                                       , 'servicio':d.servicio
+                                                                       ,'producto': det.producto
+                                                                       ,'serieEquipo': det.serieEquipo
+                                                                       ,'locacion':det.locacion
+                                                                       , 'ultimaLecturaBN': det.ultimaLecturaBN
+                                                                       , 'lecturaAnteriorBN': det.lecturaAnteriorBN
+                                                                       , 'paginasProcesadasBN': det.paginasProcesadasBN
+                                                                       , 'ultimaLecturaColor': det.ultimaLecturaColor
+                                                                       , 'lecturaAnteriorColor': det.lecturaAnteriorColor
+                                                                       , 'paginasProcesadasColor': det.paginasProcesadasColor
+                                                                       , 'servicio':det.servicio
                                                                       })   
                              #self.env['sale.order.detalle'].create({'order_id': fac.id,'x_studio_servicio':d.x_studio_servicio,'x_studio_field_9nQhR':d.x_studio_field_9nQhR.id,'product_id':d.product_id.id,'product_uom_qty':d.product_uom_qty,'price_unit':d.price_unit,'x_studio_bolsa':d.x_studio_bolsa})
                                 
@@ -110,9 +110,9 @@ class fac_order(models.Model):
                   for quitar in self.order_line:
                       if dejar!=quitar.x_studio_servicio:
                          self.env['sale.order.line'].search([('id', '=', quitar.id)]).unlink()
-                  for quitar in self.detalle:
-                      if dejar!=quitar.servicio:
-                         self.env['sale.order.detalle'].search([('id', '=', quitar.id)]).unlink()
+                  for quitard in self.detalle:
+                      if dejar!=quitard.servicio:
+                         self.env['sale.order.detalle'].search([('id', '=', quitard.id)]).unlink()
           
                             
 
