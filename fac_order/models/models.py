@@ -68,7 +68,10 @@ class fac_order(models.Model):
                for ser in serviciosd:
                    srd.append(ser.x_studio_servicio)
                list_set = set(srd)
-               asts = list(list_set) 
+               asts=[]
+               for sett in list_set:
+                   asts.append(sett)  
+                
                lenset=len(asts)
                
                servicioshtml='' 
