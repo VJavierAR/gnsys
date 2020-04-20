@@ -89,7 +89,7 @@ class fac_order(models.Model):
                       for d in self.order_line:
                           _logger.info("Informacion entre:"+str(asts[rs])+" "+str(d.x_studio_servicio))
                           if asts[rs]==d.x_studio_servicio:  
-                             self.env['sale.order.line'].create({'order_id': fac.id,'x_studio_field_9nQhR':d.x_studio_field_9nQhR,'product_id':d.product_id,'product_uom_qty':d.product_uom_qty,'price_unit':d.price_unit,'x_studio_bolsa':d.x_studio_bolsa})
+                             self.env['sale.order.line'].create({'order_id': fac.id,'x_studio_field_9nQhR':d.x_studio_field_9nQhR.id,'product_id':d.product_id.id,'product_uom_qty':d.product_uom_qty,'price_unit':d.price_unit,'x_studio_bolsa':d.x_studio_bolsa})
                                 
                   dejar= asts[lenset-1]                               
                   for quitar in self.order_line:
