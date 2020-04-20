@@ -766,6 +766,7 @@ class PickingsAComprasMassAction(TransientModel):
             for r in requLin:
                 r['req_rel']=requisicion.id
                 self.env['product.rel.requisicion'].create(r)
+            self.env['stock.picking'].browse(pi).write({'estado':'compras'})
             view = self.env.ref('studio_customization.default_form_view_fo_24cee64e-ad11-4f19-a7f6-fceca5375726')
             return {
                     'name': _('Transferencia'),
