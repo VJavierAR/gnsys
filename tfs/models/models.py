@@ -29,6 +29,7 @@ class tfs(models.Model):
     localidad=fields.Many2one('res.partner',store='True',string='Localidad')
     serie=fields.Many2one('stock.production.lot',string='Numero de Serie',store='True')
     domi=fields.Integer()
+
     productoNegro=fields.Many2one('product.product',string='Toner Monocromatico')
     productoCian=fields.Many2one('product.product',string='Toner Cian')
     productoMagenta=fields.Many2one('product.product',string='Toner Magenta')
@@ -168,7 +169,15 @@ class tfs(models.Model):
         if(dat!=[]):
             quants=self.env['stock.quant'].browse(dat)
             for q in quants:
-                q.write({'quantity':q.quantity-1})            
+                q.write({'quantity':q.quantity-1})
+        if(self.productoNegro):
+            self.env['dcas.dcas'].create({'serie':self.serie.id,'contadorMono':self.actualMonocromatico,'contadorColor':self.actualColor,'fuente':'tfs.tfs','x_studio_contador_color_anterior':self.contadorMono.contadorColor,'x_studio_contador_mono_anterior_1':self.contadorAnteriorMono,'x_studio_toner_negro':1})
+        if(self.productoMagenta):
+            self.env['dcas.dcas'].create({'serie':self.serie.id,'contadorMono':self.actualMonocromatico,'contadorColor':self.actualColor,'fuente':'tfs.tfs','x_studio_contador_color_anterior':self.contadorMagenta.contadorColor,'x_studio_contador_mono_anterior_1':self.contadorMagenta.contadorMono,'x_studio_toner_magenta':1})
+        if(self.productoAmarillo):
+            self.env['dcas.dcas'].create({'serie':self.serie.id,'contadorMono':self.actualMonocromatico,'contadorColor':self.actualColor,'fuente':'tfs.tfs','x_studio_contador_color_anterior':self.contadorAmarillo.contadorColor,'x_studio_contador_mono_anterior_1':self.contadorAmarillo.contadorMono,'x_studio_toner_amarillo':1})
+        if(self.productoCian):           
+            self.env['dcas.dcas'].create({'serie':self.serie.id,'contadorMono':self.actualMonocromatico,'contadorColor':self.actualColor,'fuente':'tfs.tfs','x_studio_contador_color_anterior':self.contadorCian.contadorColor,'x_studio_contador_mono_anterior_1':self.contadorCian.contadorMono,'x_studio_toner_cian':1})
         return {
                 'name': _('Alerta'),
                 'type': 'ir.actions.act_window',
