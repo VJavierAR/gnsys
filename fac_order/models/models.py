@@ -66,7 +66,7 @@ class fac_order(models.Model):
                serviciosd=self.order_line
                srd=[] 
                for ser in serviciosd:
-                   srd.append(ser.x_studio_servicios)
+                   srd.append(ser.x_studio_servicio)
                list_set = set(srd)
                raise exceptions.ValidationError( " despues "+str(list_ser) + ' ante '+ str(srd) )    
                
