@@ -82,8 +82,8 @@ class fac_order(models.Model):
                                                                 })
                       servicioshtml=str(fac.id)+' '+servicioshtml
                       for d in self.order_line:
-                          _logger.info("Informacion entre:"+str(rs)+" "+str(d.x_studio_servicio))
-                          if rs==d.x_studio_servicio:  
+                          _logger.info("Informacion entre:"+str(lenset[rs])+" "+str(d.x_studio_servicio))
+                          if lenset[rs]==d.x_studio_servicio:  
                              self.env['sale.order.line'].create({'order_id': fac.id,'x_studio_field_9nQhR':d.id,'product_id':d.product_id,'product_uom_qty':d.product_uom_qty,'price_unit':d.price_unit,'x_studio_bolsa':d.x_studio_bolsa})
                                 
                   dejar= srd[lenset-1]                               
