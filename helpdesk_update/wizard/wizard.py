@@ -674,7 +674,7 @@ class helpdesk_crearconserie(TransientModel):
     ticket_id_existente = fields.Integer(string = 'Ticket existente', default = 0, store = True)
     textoTicketExistente = fields.Text(string = ' ', store = True)
 
-    estatus = fields.Selection([('No disponible','No disponible'),('Moroso','Moroso'),('Al corriente','Al corriente')], string = 'Estatus', store = True)
+    estatus = fields.Selection([('No disponible','No disponible'),('Moroso','Moroso'),('Al corriente','Al corriente')], string = 'Estatus', store = True, default = 'No disponible')
 
     def abrirTicket(self):
         return {
