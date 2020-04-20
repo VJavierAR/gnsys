@@ -87,14 +87,34 @@ class fac_order(models.Model):
                                                                 })
                       servicioshtml="<a href='https://gnsys-corp.odoo.com/web#id="+str(fac.id)+"&action=1167&model=sale.order&view_type=form&menu_id=406' target='_blank'>"+str(fac.name)+"</a>"+'<br> '+servicioshtml
                       for d in self.order_line:
-                          _logger.info("Informacion entre:"+str(asts[rs])+" "+str(d.x_studio_servicio))
+                          #_logger.info("Informacion entre:"+str(asts[rs])+" "+str(d.x_studio_servicio))
                           if asts[rs]==d.x_studio_servicio:  
                              self.env['sale.order.line'].create({'order_id': fac.id,'x_studio_servicio':d.x_studio_servicio,'x_studio_field_9nQhR':d.x_studio_field_9nQhR.id,'product_id':d.product_id.id,'product_uom_qty':d.product_uom_qty,'price_unit':d.price_unit,'x_studio_bolsa':d.x_studio_bolsa})
+                      for det in self.detalle:
+                          if asts[rs]==d.servicio:
+                             self.env['sale.order.detalle'].create({'saleOrder': fac.id
+                                                                       ,'producto': d.producto
+                                                                       ,'serieEquipo': d.serieEquipo
+                                                                       ,'locacion':d.locacion
+                                                                       , 'ultimaLecturaBN': d.ultimaLecturaBN
+                                                                       , 'lecturaAnteriorBN': d.lecturaAnteriorBN
+                                                                       , 'paginasProcesadasBN': d.paginasProcesadasBN
+                                                                       , 'ultimaLecturaColor': d.ultimaLecturaColor
+                                                                       , 'lecturaAnteriorColor': d.lecturaAnteriorColor
+                                                                       , 'paginasProcesadasColor': d.paginasProcesadasColor
+                                                                       , 'servicio':d.servicio
+                                                                      })   
+                             #self.env['sale.order.detalle'].create({'order_id': fac.id,'x_studio_servicio':d.x_studio_servicio,'x_studio_field_9nQhR':d.x_studio_field_9nQhR.id,'product_id':d.product_id.id,'product_uom_qty':d.product_uom_qty,'price_unit':d.price_unit,'x_studio_bolsa':d.x_studio_bolsa})
                                 
                   dejar= asts[lenset-1]                               
                   for quitar in self.order_line:
                       if dejar!=quitar.x_studio_servicio:
-                         self.env['sale.order.line'].search([('id', '=', quitar.id)]).unlink()                             
+                         self.env['sale.order.line'].search([('id', '=', quitar.id)]).unlink()
+                  for quitar in self.detalle:
+                      if dejar!=quitar.servicio:
+                         self.env['sale.order.detalle'].search([('id', '=', quitar.id)]).unlink()
+          
+                            
 
                       
                   self.excedente=servicioshtml 
