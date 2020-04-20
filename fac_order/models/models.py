@@ -68,17 +68,30 @@ class fac_order(models.Model):
                for ser in serviciosd:
                    srd.append(ser.x_studio_servicio)
                list_set = set(srd)
-               raise exceptions.ValidationError( " despues "+str(list_set) + ' ante '+ str(srd) )    
-               
-                
-               fac = self.env['sale.order'].create({'partner_id' : self.partner_id.id
-                                                                 ,'origin' : "dividir por excedentes: " + str(self.name)
+               lenset=len(list_set)
+               servicioshtml='' 
+               if lenset==1:
+                  raise exceptions.ValidationError( "no se puede dividir más solo tiene un servicio")    
+               else:
+                  for rs in range(lenset-1):
+                      fac = self.env['sale.order'].create({'partner_id' : self.partner_id.id
+                                                                 ,'origin' : "dividir por servicios: " + str(self.name)
                                                                  , 'x_studio_tipo_de_solicitud' : 'Arrendamiento'
                                                                  , 'x_studio_requiere_instalacin' : True                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
                                                                  , 'team_id' : 1                                                                  
                                                                 })
-               
-               
+                      servicioshtml=str(fac.id)+' '+servicioshtml
+                      for d in self.order_line:
+                          if rs==d.x_studio_servicio:  
+                             self.env['sale.order.line'].create({'order_id': fac.id,'x_studio_field_9nQhR':d.id,'product_id':d.product_id,'product_uom_qty':d.product_uom_qty,'price_unit':d.price_unit,'x_studio_bolsa':d.x_studio_bolsa})
+                                
+                  dejar= srd[lenset-1]                               
+                  for quitar in self.order_line:
+                      if dejar!=quitar.x_studio_servicio:
+                         self.env['sale.order.line'].search([('id', '=', quitar.id)]).unlink()                             
+
+                      
+                  self.excedente=servicioshtml 
                #self.excedente="<a href='https://gnsys-corp.odoo.com/web#id="+str(fac.id)+"&action=1167&model=sale.order&view_type=form&menu_id=406' target='_blank'>"+str(fac.name)+"</a>"
                
             if self.x_studio_dividir_servicios:
