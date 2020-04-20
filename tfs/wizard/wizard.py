@@ -20,7 +20,7 @@ class StockImmediateTransfer(models.TransientModel):
 
     def crear_ticket(self):
     	for r in self.tfs_ids:
-            self.env['helpdesk.ticket'].create({'name':'Falla en rendimiento <60% '+'Serie: '+r.serie.name,'x_studio_equipo_por_nmero_de_serie':[(4,r.serie.id)]})
+            self.env['helpdesk.ticket'].create({'team_id':9,'diagnosticos':[(0,0,{'estadoTicket':'Abierto','comentario':'Falla en rendimiento <60%'})],'stage_id':89,'name':'Falla en rendimiento <60% '+'Serie: '+r.serie.name,'x_studio_equipo_por_nmero_de_serie':[(4,r.serie.id)]})
             r.write({'estado':'Confirmado'})
     		#else:
     		#	raise exceptions.UserError("No existen cantidades en el almacen para el producto " + r.producto.name)
