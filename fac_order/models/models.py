@@ -163,6 +163,7 @@ class fac_order(models.Model):
                                                                        , 'ultimaLecturaColor': currentP.contadorColor
                                                                        , 'lecturaAnteriorColor': currentPA.contadorColor
                                                                        , 'paginasProcesadasColor': colorp
+                                                                       , 'servicio':m.id
                                                                       })
                               if m.nombreAnte=='Costo por página procesada BN o color':
                                  if k.x_studio_color_bn=='B/N':
@@ -248,6 +249,8 @@ class detalle(models.Model):
       paginasProcesadasColor = fields.Integer(string='Páginas procesadas color')
      
       periodo = fields.Text(string="Periodo")
+      servicio=fields.Integer(string='Servicio')
+    
      
      
       @api.multi
