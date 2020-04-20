@@ -190,8 +190,6 @@ class tfs(models.Model):
                 'res_id': wiz.id,
                 'context': self.env.context,
             }
-
-
     #@api.onchange('cliente')
     #def onchange_cliente(self):
     #    res = {}
