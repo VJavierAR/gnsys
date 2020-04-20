@@ -91,6 +91,7 @@ class fac_order(models.Model):
                           if asts[rs]==d.x_studio_servicio:  
                              self.env['sale.order.line'].create({'order_id': fac.id,'x_studio_servicio':d.x_studio_servicio,'x_studio_field_9nQhR':d.x_studio_field_9nQhR.id,'product_id':d.product_id.id,'product_uom_qty':d.product_uom_qty,'price_unit':d.price_unit,'x_studio_bolsa':d.x_studio_bolsa})
                       for det in self.detalle:
+                          _logger.info("Informacion entre:"+str(asts[rs])+" "+str(det.servicio))
                           if asts[rs]==det.servicio:
                              self.env['sale.order.detalle'].create({'saleOrder': fac.id
                                                                        ,'producto': det.producto
