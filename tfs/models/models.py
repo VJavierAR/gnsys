@@ -182,7 +182,9 @@ class tfs(models.Model):
                         pickOrigen.append(datos1)
                         pickDestino.append(datos2)
             if(len(pickOrigen)>0):
-                origen=self.env['stock.picking.type'].search([['name','=','Internal Transfers'],['warehouse_id','=',6299]])
+                origen1=self.env['stock.picking.type'].search([['name','=','Pick'],['warehouse_id','=',6299]])
+                origen2=self.env['stock.picking.type'].search([['name','=','Distribucion'],['warehouse_id','=',1]])
+                origen3=self.env['stock.picking.type'].search([['name','=','Transito'],['warehouse_id','=',1]])
                 destino=self.env['stock.picking.type'].search([['name','=','Internal Transfers'],['warehouse_id','=',al.id]])
                 pick_origin = self.env['stock.picking'].create({'picking_type_id' : origen.id,'almacenOrigen':6299,'almacenDestino':al.id,'location_id':41911,'location_dest_id':17})
                 pick_dest = self.env['stock.picking'].create({'picking_type_id' : destino.id, 'location_id':17,'almacenOrigen':al.id,'almacenDestino':6299,'location_dest_id':al.lot_stock_id.id})
@@ -197,7 +199,7 @@ class tfs(models.Model):
                 pick_dest.action_confirm()
                 pick_dest.action_assign()
             _logger.info(str(len(pickOrigen)))
-            
+
     @api.multi
     def valida(self):
         view = self.env.ref('tfs.view_tfs_ticket')
