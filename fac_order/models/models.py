@@ -90,9 +90,8 @@ class fac_order(models.Model):
                           #_logger.info("Informacion entre:"+str(asts[rs])+" "+str(d.x_studio_servicio))
                           if asts[rs]==d.x_studio_servicio:  
                              self.env['sale.order.line'].create({'order_id': fac.id,'x_studio_servicio':d.x_studio_servicio,'x_studio_field_9nQhR':d.x_studio_field_9nQhR.id,'product_id':d.product_id.id,'product_uom_qty':d.product_uom_qty,'price_unit':d.price_unit,'x_studio_bolsa':d.x_studio_bolsa})
-                      for det in self.detalle:
-                          _logger.info("Informacion entre:"+str(asts[rs])+" "+str(det.servicio))
-                          if asts[rs]==det.servicio:
+                      for det in self.detalle:                                                    
+                          if int(asts[rs])==int(det.servicio):  
                              _logger.info("Informacion entre a crear:"+str(asts[rs])+" "+str(det.servicio))
                              self.env['sale.order.detalle'].create({'saleOrder': fac.id
                                                                        ,'producto': det.producto
@@ -108,14 +107,17 @@ class fac_order(models.Model):
                                                                       })   
                              #self.env['sale.order.detalle'].create({'order_id': fac.id,'x_studio_servicio':d.x_studio_servicio,'x_studio_field_9nQhR':d.x_studio_field_9nQhR.id,'product_id':d.product_id.id,'product_uom_qty':d.product_uom_qty,'price_unit':d.price_unit,'x_studio_bolsa':d.x_studio_bolsa})
                                 
-                  dejar= asts[lenset-1]                               
+                  dejar= asts[lenset-1]
+                  qs=[]
+                  qd=[]
                   for quitar in self.order_line:
                       if dejar!=quitar.x_studio_servicio:
-                         self.env['sale.order.line'].search([('id', '=', quitar.id)]).unlink()
+                         qs.append(quitar.id)  
+                  self.env['sale.order.line'].search([('id', 'in', qs)]).unlink()
                   for quitard in self.detalle:
-                      if dejar!=quitard.servicio:
-                         _logger.info("Informacion entre a borrar:"+str(dejar)+" "+str(quitard.servicio))   
-                         self.env['sale.order.detalle'].search([('id', '=', quitard.id)]).unlink()
+                      if int(dejar)!=int(quitard.servicio):
+                         qd.append(quitard.id)                         
+                  self.env['sale.order.detalle'].search([('id', 'in', qd)]).unlink()
           
                             
 
@@ -219,14 +221,14 @@ class fac_order(models.Model):
                                  if k.x_studio_color_bn=='B/N':
                                     if m.bolsaBN<bnp:
                                        bnp=bnp-m.bolsaBN
-                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':11340,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN,'x_studio_bolsa':m.bolsaBN,'x_studio_excedente':'si'})                                                    
+                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':11396,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN,'x_studio_bolsa':m.bolsaBN,'x_studio_excedente':'si'})                                                    
                                  if k.x_studio_color_bn=='Color':
                                     if m.bolsaBN<bnp:
                                        bnp=bnp-m.bolsaBN
-                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':11340,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN,'x_studio_bolsa':m.bolsaBN,'x_studio_excedente':'si'})                                                    
+                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':11396,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN,'x_studio_bolsa':m.bolsaBN,'x_studio_excedente':'si'})                                                    
                                     if m.bolsaColor<colorp:
                                        colorp=colorp-m.bolsaColor                                    
-                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':11340,'product_uom_qty':colorp,'price_unit':m.clickExcedenteColor,'x_studio_bolsa':m.bolsaColor,'x_studio_excedente':'si'})
+                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':11397,'product_uom_qty':colorp,'price_unit':m.clickExcedenteColor,'x_studio_bolsa':m.bolsaColor,'x_studio_excedente':'si'})
                                  self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':11398,'product_uom_qty':1,'price_unit':m.rentaMensual})                                                                            
                               
                             
