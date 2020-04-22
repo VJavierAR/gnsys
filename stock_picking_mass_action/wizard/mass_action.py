@@ -599,15 +599,15 @@ class StockQuantMassAction(TransientModel):
                 d.append(['x_studio_categoria','=',self.categoria.id])
             if(self.tipo):
                 d.append(['product_id','=',self.tipo.id])
-            if(self.almacen.id==False):
-                d.append(['x_studio_almacn','!=',False])
-            if(self.categoria.id==False):
-                d.append(['x_studio_categoria','!=',False])
-            if(self.tipo.id==False):
-                d.append(['product_id','!=',False])
+            # if(self.almacen.id==False):
+            #     d.append(['x_studio_almacn','!=',False])
+            # if(self.categoria.id==False):
+            #     d.append(['x_studio_categoria','!=',False])
+            # if(self.tipo.id==False):
+            #     d.append(['product_id','!=',False])
             d.append(['x_studio_almacn.x_studio_cliente','=',False])
             d.append(['lot_id','=',False])
-        #_logger.info(str(d))
+        _logger.info(str(d))
         data=self.env['stock.quant'].search(d)
         #_logger.info(str(data.mapped('id')))
         if(len(data)>0):
