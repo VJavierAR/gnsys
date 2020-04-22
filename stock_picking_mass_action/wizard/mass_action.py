@@ -605,7 +605,7 @@ class StockQuantMassAction(TransientModel):
             #     d.append(['x_studio_categoria','!=',False])
             # if(self.tipo.id==False):
             #     d.append(['product_id','!=',False])
-            d.append(['x_studio_almacn.x_studio_cliente','=',False])
+            #d.append(['x_studio_almacn.x_studio_cliente','=',False])
             d.append(['lot_id','=',False])
         _logger.info(str(d))
         data=self.env['stock.quant'].search(d)
