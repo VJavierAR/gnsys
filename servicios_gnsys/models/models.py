@@ -44,6 +44,11 @@ class servicios_gnsys(models.Model):
     modelo = fields.Text(string="Modelo")
     
     contrato = fields.Many2one('contrato', string="Contrato")
+    tarifa = fields.Integer(string="Tarifa")
+    tipo = fields.Text(string="Tipo")
+    estado = fields.Text(string="Estado")
+    
+    
     
     
     
