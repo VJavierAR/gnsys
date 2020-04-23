@@ -737,7 +737,6 @@ class helpdesk_crearconserie(TransientModel):
 
     
 
-    
     @api.onchange('localidadRelacion')
     def cambia_localidad(self):
       if self.localidadRelacion:
@@ -790,8 +789,7 @@ class helpdesk_crearconserie(TransientModel):
         self.direccionCodigoPostal = ''
 
   
-
-    
+        
     @api.onchange('clienteRelacion')
     def cambia_cliente(self):
         if not self.clienteRelacion:
@@ -821,6 +819,11 @@ class helpdesk_crearconserie(TransientModel):
         else:
             if self.clienteRelacion.x_studio_moroso:
                 self.estatus = 'Moroso'
+                textoHtml = []
+                #textoHtml.append("<br/>")
+                #textoHtml.append("<br/>")
+                textoHtml.append("<h2>El cliente es moroso.</h2>")
+                self.textoTicketExistente =  ''.join(textoHtml)
             else:
                 self.estatus = 'Al corriente'
     
@@ -897,6 +900,10 @@ class helpdesk_crearconserie(TransientModel):
                   textoHtml.append("<br/>")
                   textoHtml.append("<br/>")
                   textoHtml.append("<h3 class='text-center'>El ticket en proceso es: " + str(informacion[0][0]) + "</h3>")
+                  if self.clienteRelacion.x_studio_moroso:
+                    textoHtml.append("<br/>")
+                    textoHtml.append("<br/>")
+                    textoHtml.append("<h2>El cliente es moroso.</h2>")
                   #textoHtml.append("<script> function test() { alert('Hola') }</script>")
                   self.textoTicketExistente =  ''.join(textoHtml)
                   #self.textoTicketExistente = textoHtml2
