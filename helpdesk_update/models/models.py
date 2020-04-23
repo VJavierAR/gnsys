@@ -622,7 +622,7 @@ class helpdesk_update(models.Model):
 
                 ultimaEvidenciaTec = []
                 ultimoComentario = ''
-                if self.diagnosticos != []:
+                if self.diagnosticos:
                     if self.diagnosticos[-1].evidencia.ids:
                         ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                     ultimoComentario = self.diagnosticos[-1].comentario
@@ -688,9 +688,9 @@ class helpdesk_update(models.Model):
                 ss = self.env.cr.execute(query)
                 ultimaEvidenciaTec = []
                 ultimoComentario = ''
-                if self.diagnosticos != []:
+                if self.diagnosticos:
                     _logger.info("*********************************Entre")
-                    _logger.info("*********************************Entre: " + str(self.diagnosticos[1]))
+                    _logger.info("*********************************Entre: " + str(self.diagnosticos[-1].evidencia))
                     if self.diagnosticos[-1].evidencia.ids:
                         ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                     ultimoComentario = self.diagnosticos[-1].comentario
@@ -768,7 +768,7 @@ class helpdesk_update(models.Model):
                 #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
                 ultimaEvidenciaTec = []
                 ultimoComentario = ''
-                if self.diagnosticos != []:
+                if self.diagnosticos:
                     if self.diagnosticos[-1].evidencia.ids:
                         ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                     ultimoComentario = self.diagnosticos[-1].comentario
@@ -799,7 +799,7 @@ class helpdesk_update(models.Model):
             #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
             ultimaEvidenciaTec = []
             ultimoComentario = ''
-            if self.diagnosticos != []:
+            if self.diagnosticos:
                 if self.diagnosticos[-1].evidencia.ids:
                     ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                 ultimoComentario = self.diagnosticos[-1].comentario
@@ -830,7 +830,7 @@ class helpdesk_update(models.Model):
             #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
             ultimaEvidenciaTec = []
             ultimoComentario = ''
-            if self.diagnosticos != []:
+            if self.diagnosticos:
                 if self.diagnosticos[-1].evidencia.ids:
                     ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                 ultimoComentario = self.diagnosticos[-1].comentario
@@ -858,7 +858,7 @@ class helpdesk_update(models.Model):
             #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
             ultimaEvidenciaTec = []
             ultimoComentario = ''
-            if self.diagnosticos != []:
+            if self.diagnosticos:
                 if self.diagnosticos[-1].evidencia.ids:
                     ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                 ultimoComentario = self.diagnosticos[-1].comentario
@@ -886,7 +886,7 @@ class helpdesk_update(models.Model):
             #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
             ultimaEvidenciaTec = []
             ultimoComentario = ''
-            if self.diagnosticos != []:
+            if self.diagnosticos:
                 if self.diagnosticos[-1].evidencia.ids:
                     ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                 ultimoComentario = self.diagnosticos[-1].comentario
@@ -915,7 +915,7 @@ class helpdesk_update(models.Model):
             #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
             ultimaEvidenciaTec = []
             ultimoComentario = ''
-            if self.diagnosticos != []:
+            if self.diagnosticos:
                 if self.diagnosticos[-1].evidencia.ids:
                     ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                 ultimoComentario = self.diagnosticos[-1].comentario
@@ -1023,7 +1023,7 @@ class helpdesk_update(models.Model):
                             #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
                         ultimaEvidenciaTec = []
                         ultimoComentario = ''
-                        if self.diagnosticos != []:
+                        if self.diagnosticos:
                             if self.diagnosticos[-1].evidencia.ids:
                                 ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                             ultimoComentario = self.diagnosticos[-1].comentario
@@ -1094,7 +1094,7 @@ class helpdesk_update(models.Model):
                         ss = self.env.cr.execute(query)
                         ultimaEvidenciaTec = []
                         ultimoComentario = ''
-                        if self.diagnosticos != []:
+                        if self.diagnosticos:
                             if self.diagnosticos[-1].evidencia.ids:
                                 ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                             ultimoComentario = self.diagnosticos[-1].comentario
@@ -1601,7 +1601,7 @@ class helpdesk_update(models.Model):
                         ss=self.env.cr.execute(query)
                         ultimaEvidenciaTec = []
                         ultimoComentario = ''
-                        if self.diagnosticos != []:
+                        if self.diagnosticos:
                             if self.diagnosticos[-1].evidencia.ids:
                                 ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                             ultimoComentario = self.diagnosticos[-1].comentario
@@ -1614,7 +1614,7 @@ class helpdesk_update(models.Model):
                         ss=self.env.cr.execute(query)
                         ultimaEvidenciaTec = []
                         ultimoComentario = ''
-                        if self.diagnosticos != []:
+                        if self.diagnosticos:
                             if self.diagnosticos[-1].evidencia.ids:
                                 ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                             ultimoComentario = self.diagnosticos[-1].comentario
