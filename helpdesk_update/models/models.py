@@ -689,8 +689,8 @@ class helpdesk_update(models.Model):
                 ultimaEvidenciaTec = []
                 ultimoComentario = ''
                 if self.diagnosticos:
-                    _logger.info("*********************************Entre")
-                    _logger.info("*********************************Entre: " + str(self.diagnosticos[-1].evidencia))
+                    #_logger.info("*********************************Entre")
+                    #_logger.info("*********************************Entre: " + str(self.diagnosticos[-1].evidencia))
                     if self.diagnosticos[-1].evidencia.ids:
                         ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                     ultimoComentario = self.diagnosticos[-1].comentario
