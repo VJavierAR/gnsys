@@ -689,14 +689,14 @@ class helpdesk_update(models.Model):
                 ss = self.env.cr.execute(query)
                 ultimaEvidenciaTec = []
                 ultimoComentario = ''
-                if self.diagnosticos:
+                if self.diagnosticos != []:
                     _logger.info("*********************************Entre")
                     ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                     ultimoComentario = self.diagnosticos[-1].comentario
-                    _logger.info("*********************************Entre: " + str(ultimoComentario))
+                    
                     #if self.diagnosticos.evidencia:
                     #    ultimaEvidenciaTec += self.diagnosticos.evidencia.ids
-                    
+                _logger.info("*********************************Entre: " + str(ultimoComentario))    
                 self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'evidencia': [(6,0,ultimaEvidenciaTec)], 'write_uid':  self.env.user.name})
                 #self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name})
                 self.estadoAsignacion = True
