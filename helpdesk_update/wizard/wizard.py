@@ -673,6 +673,7 @@ class helpdesk_crearconserie(TransientModel):
 
     ticket_id_existente = fields.Integer(string = 'Ticket existente', default = 0, store = True)
     textoTicketExistente = fields.Text(string = ' ', store = True)
+    textoClienteMoroso = fields.Text(string = ' ', store = True)
 
     estatus = fields.Selection([('No disponible','No disponible'),('Moroso','Moroso'),('Al corriente','Al corriente')], string = 'Estatus', store = True, default = 'No disponible')
 
@@ -823,9 +824,10 @@ class helpdesk_crearconserie(TransientModel):
                 #textoHtml.append("<br/>")
                 #textoHtml.append("<br/>")
                 textoHtml.append("<h2>El cliente es moroso.</h2>")
-                self.textoTicketExistente =  ''.join(textoHtml)
+                self.textoClienteMoroso = ''.join(textoHtml)
             else:
                 self.estatus = 'Al corriente'
+                self.textoClienteMoroso = ''
     
 
     @api.onchange('serie')
@@ -901,9 +903,11 @@ class helpdesk_crearconserie(TransientModel):
                   textoHtml.append("<br/>")
                   textoHtml.append("<h3 class='text-center'>El ticket en proceso es: " + str(informacion[0][0]) + "</h3>")
                   if self.clienteRelacion.x_studio_moroso:
-                    textoHtml.append("<br/>")
-                    textoHtml.append("<br/>")
-                    textoHtml.append("<h2>El cliente es moroso.</h2>")
+                    textoHtmlMoroso = []
+                    textoHtmlMoroso.append("<h2>El cliente es moroso.</h2>")
+                    self.textoClienteMoroso = ''.join(textoHtmlMoroso)
+                  else:
+                    self.textoClienteMoroso = ''
                   #textoHtml.append("<script> function test() { alert('Hola') }</script>")
                   self.textoTicketExistente =  ''.join(textoHtml)
                   #self.textoTicketExistente = textoHtml2

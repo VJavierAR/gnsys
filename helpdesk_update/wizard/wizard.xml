@@ -388,6 +388,10 @@
                     <field name='ticket_id_existente' invisible='1' readonly='1' force_save = "1"/>
                 </group>
 
+                <group attrs="{'invisible': [['estatus', '!=', 'Moroso']]}">
+                    <field name='textoClienteMoroso' readonly='1' widget='html' force_save = "1"/>
+                </group>
+
                 <group>
                     <group class='text-center' string = 'Datos de busqueda'>
                     </group>
