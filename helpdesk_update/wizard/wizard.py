@@ -538,13 +538,13 @@ class helpdesk_contadores(TransientModel):
     @api.depends('ticket_id')
     def _compute_contadorBNMesa(self):
         if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
-            if self.contadorBNActual == 0:
-                for serie in self.ticket_id.x_studio_equipo_por_nmero_de_serie:
-                    self.contadorBNMesa = int(serie.x_studio_contador_bn_mesa)
-                    self.contadorColorMesa = int(serie.x_studio_contador_color_mesa)
-                    self.bnColor = serie.x_studio_color_bn
-            else:
-                self.contadorBNMesa = self.contadorBNActual
+            #if self.contadorBNActual == 0:
+            for serie in self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+                self.contadorBNMesa = int(serie.x_studio_contador_bn_mesa)
+                self.contadorColorMesa = int(serie.x_studio_contador_color_mesa)
+                self.bnColor = serie.x_studio_color_bn
+            #else:
+            #    self.contadorBNMesa = self.contadorBNActual
 
     def _compute_actualizaColor(self):
       for record in self:
@@ -640,7 +640,7 @@ class helpdesk_contadores(TransientModel):
                             'context': self.env.context,
                             }
                 else:
-                    raise exceptions.ValidationError("Error al capturar debe ser mayor")
+                    raise exceptions.ValidationError("Error al capturar contador, el contador capturado debe ser mayor.")
 
 
 
