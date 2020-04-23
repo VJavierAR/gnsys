@@ -60,7 +60,6 @@ class PartnerXlsx(models.AbstractModel):
                 sheet.write(i, 16, user[0].write_uid.name if(user[0].write_uid.name) else '', bold)
             if(len(user)<=1):
                 sheet.write(i, 16, user.write_uid.name if(user.write_uid.name) else '', bold)
-
             i=i+1
         sheet.add_table('A2:Q'+str((i)),{'style': 'Table Style Medium 9','columns': [{'header': 'Categoria'},{'header': 'Fecha'},{'header': 'Almacen'},{'header':'Tipo'},{'header': 'Modelo'},{'header': 'No Parte'},{'header': 'Cantidad'},{'header': 'Serie'},{'header': 'Cliente'},{'header': 'Localidad'},{'header': 'Comentario'},{'header': 'Documento Origen'},{'header': 'Serie Destino'},{'header': 'Modelo Destino'},{'header': 'Estado'},{'header': 'Delegación'},{'header': 'Usuario'}]})
         workbook.close()
