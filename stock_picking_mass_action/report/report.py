@@ -44,6 +44,8 @@ class PartnerXlsx(models.AbstractModel):
             sheet.write(i, 6, obj.qty_done, bold)
             if(obj.lot_id==False):
                 sheet.write(i, 7, obj.product_id.default_code, bold)
+            if(obj.lot_id!=False):
+                sheet.write(i, 7, obj.lot_id.name, bold)
             sheet.write(i, 8, obj.x_studio_cliente_1 if(obj.x_studio_cliente_1) else '', bold)
             sheet.write(i, 9, obj.x_studio_localidad if(obj.x_studio_localidad) else '', bold)
             sheet.write(i, 10, obj.move_id.picking_id.x_studio_comentario_1 if(obj.move_id.picking_id.x_studio_comentario_1) else '', bold)
