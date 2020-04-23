@@ -623,7 +623,7 @@ class helpdesk_update(models.Model):
                 ultimaEvidenciaTec = []
                 ultimoComentario = ''
                 if self.diagnosticos != []:
-                    if self.diagnosticos[-1].evidencia != []:
+                    if self.diagnosticos[-1].evidencia.ids != []:
                         ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                     ultimoComentario = self.diagnosticos[-1].comentario
 
@@ -690,7 +690,7 @@ class helpdesk_update(models.Model):
                 ultimoComentario = ''
                 if self.diagnosticos != []:
                     _logger.info("*********************************Entre")
-                    if self.diagnosticos[-1].evidencia != []:
+                    if self.diagnosticos[-1].evidencia.ids != []:
                         ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                     ultimoComentario = self.diagnosticos[-1].comentario
                     
@@ -768,7 +768,7 @@ class helpdesk_update(models.Model):
                 ultimaEvidenciaTec = []
                 ultimoComentario = ''
                 if self.diagnosticos != []:
-                    if self.diagnosticos[-1].evidencia != []:
+                    if self.diagnosticos[-1].evidencia.ids != []:
                         ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                     ultimoComentario = self.diagnosticos[-1].comentario
                     
@@ -799,7 +799,7 @@ class helpdesk_update(models.Model):
             ultimaEvidenciaTec = []
             ultimoComentario = ''
             if self.diagnosticos != []:
-                if self.diagnosticos[-1].evidencia != []:
+                if self.diagnosticos[-1].evidencia.ids != []:
                     ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                 ultimoComentario = self.diagnosticos[-1].comentario
                     
@@ -830,7 +830,7 @@ class helpdesk_update(models.Model):
             ultimaEvidenciaTec = []
             ultimoComentario = ''
             if self.diagnosticos != []:
-                if self.diagnosticos[-1].evidencia != []:
+                if self.diagnosticos[-1].evidencia.ids != []:
                     ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                 ultimoComentario = self.diagnosticos[-1].comentario
                     
@@ -858,7 +858,7 @@ class helpdesk_update(models.Model):
             ultimaEvidenciaTec = []
             ultimoComentario = ''
             if self.diagnosticos != []:
-                if self.diagnosticos[-1].evidencia != []:
+                if self.diagnosticos[-1].evidencia.ids != []:
                     ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                 ultimoComentario = self.diagnosticos[-1].comentario
                 
@@ -886,7 +886,7 @@ class helpdesk_update(models.Model):
             ultimaEvidenciaTec = []
             ultimoComentario = ''
             if self.diagnosticos != []:
-                if self.diagnosticos[-1].evidencia != []:
+                if self.diagnosticos[-1].evidencia.ids != []:
                     ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                 ultimoComentario = self.diagnosticos[-1].comentario
                 
@@ -915,7 +915,7 @@ class helpdesk_update(models.Model):
             ultimaEvidenciaTec = []
             ultimoComentario = ''
             if self.diagnosticos != []:
-                if self.diagnosticos[-1].evidencia != []:
+                if self.diagnosticos[-1].evidencia.ids != []:
                     ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                 ultimoComentario = self.diagnosticos[-1].comentario
                 
@@ -1023,7 +1023,7 @@ class helpdesk_update(models.Model):
                         ultimaEvidenciaTec = []
                         ultimoComentario = ''
                         if self.diagnosticos != []:
-                            if self.diagnosticos[-1].evidencia != []:
+                            if self.diagnosticos[-1].evidencia.ids != []:
                                 ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                             ultimoComentario = self.diagnosticos[-1].comentario
                             
@@ -1094,7 +1094,7 @@ class helpdesk_update(models.Model):
                         ultimaEvidenciaTec = []
                         ultimoComentario = ''
                         if self.diagnosticos != []:
-                            if self.diagnosticos[-1].evidencia != []:
+                            if self.diagnosticos[-1].evidencia.ids != []:
                                 ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                             ultimoComentario = self.diagnosticos[-1].comentario
                             
@@ -1601,7 +1601,7 @@ class helpdesk_update(models.Model):
                         ultimaEvidenciaTec = []
                         ultimoComentario = ''
                         if self.diagnosticos != []:
-                            if self.diagnosticos[-1].evidencia != []:
+                            if self.diagnosticos[-1].evidencia.ids != []:
                                 ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                             ultimoComentario = self.diagnosticos[-1].comentario
                             
@@ -1614,7 +1614,7 @@ class helpdesk_update(models.Model):
                         ultimaEvidenciaTec = []
                         ultimoComentario = ''
                         if self.diagnosticos != []:
-                            if self.diagnosticos[-1].evidencia != []:
+                            if self.diagnosticos[-1].evidencia.ids != []:
                                 ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                             ultimoComentario = self.diagnosticos[-1].comentario
                             
