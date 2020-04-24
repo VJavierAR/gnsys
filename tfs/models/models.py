@@ -162,7 +162,7 @@ class tfs(models.Model):
         for al in almacenes:
             quants=self.env['stock.quant'].search([['location_id','=',al.lot_stock_id.id]])
             reglasabs=self.env['stock.warehouse.orderpoint'].search([['warehouse_id','=',al.id],['active','=',False]])
-            _logger.info(str(len(reglas)))
+            #_logger.info(str(len(reglas)))
             productos=[]
             pickOrigen=[]
             pickDestino=[]
