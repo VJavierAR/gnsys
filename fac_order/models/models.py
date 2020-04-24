@@ -22,8 +22,8 @@ class fac_order(models.Model):
       _inherit = 'sale.order'
 
       nameDos = fields.Char()
-      month = fields.Selection(valores,string='Mes')
-      year = fields.Selection(get_years(), string='Año')
+      month = fields.Selection(valores,string='Mes',default='04')
+      year = fields.Selection(get_years(), string='Año',default=2020)
       excedente=fields.Text(string='Excedentes')
                              
      
@@ -90,9 +90,10 @@ class fac_order(models.Model):
                           #_logger.info("Informacion entre:"+str(asts[rs])+" "+str(d.x_studio_servicio))
                           if asts[rs]==d.x_studio_servicio:  
                              self.env['sale.order.line'].create({'order_id': fac.id,'x_studio_servicio':d.x_studio_servicio,'x_studio_field_9nQhR':d.x_studio_field_9nQhR.id,'product_id':d.product_id.id,'product_uom_qty':d.product_uom_qty,'price_unit':d.price_unit,'x_studio_bolsa':d.x_studio_bolsa})
-                      for det in self.detalle:                                                    
-                          if int(asts[rs])==int(det.servicio):  
-                             _logger.info("Informacion entre a crear:"+str(asts[rs])+" "+str(det.servicio))
+                      for det in self.detalle:
+                          _logger.info("Informacion entre:"+str(asts[rs])+" "+str(det.servicio))
+                          if int(asts[rs])==int(det.servicio):
+                             
                              self.env['sale.order.detalle'].create({'saleOrder': fac.id
                                                                        ,'producto': det.producto
                                                                        ,'serieEquipo': det.serieEquipo
@@ -112,11 +113,14 @@ class fac_order(models.Model):
                   qd=[]
                   for quitar in self.order_line:
                       if dejar!=quitar.x_studio_servicio:
-                         qs.append(quitar.id)  
+                         qs.append(quitar.id)   
+                  
                   self.env['sale.order.line'].search([('id', 'in', qs)]).unlink()
+                  #    return werkzeug.utils.redirect('/signage/admin/menu/%s/edit' % signage.id)
                   for quitard in self.detalle:
-                      if int(dejar)!=int(quitard.servicio):
-                         qd.append(quitard.id)                         
+                      if int(dejar)!=int(quitard.servicio):                            
+                         qd.append(quitard.id)
+                  _logger.info("Informacion entre detalle: dejar qdd"+str(qd))
                   self.env['sale.order.detalle'].search([('id', 'in', qd)]).unlink()
           
                             
@@ -139,7 +143,7 @@ class fac_order(models.Model):
                       self.env['sale.order.line'].create({'order_id': fac.id,'product_id':11340,'product_uom_qty':d.product_uom_qty,'price_unit':d.price_unit,'x_studio_bolsa':d.x_studio_bolsa})
                       self.env['sale.order.line'].search([('id', '=', d.id)]).unlink()                             
             if self.x_studio_dividir_servicios==False and self.x_studio_dividir_servicios_1==False and len(self.order_line)<1:
-               _logger.info("Informacion entre: ") 
+               
                for m in ff:              
                           p=self.env['stock.production.lot'].search([('servicio', '=', m.id)])                  
                           procesadasColorTotal=0
@@ -204,32 +208,32 @@ class fac_order(models.Model):
                                     self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':11396,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN})                                                                                  
                               if m.nombreAnte=='Renta base + costo de página procesada BN o color':
                                  if k.x_studio_color_bn=='B/N':
-                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':11396,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN})                                                    
+                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':11396,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN,'name':'PAGINAS IMPRESAS NEGRO SERIE:'+k.name +' MODELO: '+ k.product_id.name})                                                    
                                  if k.x_studio_color_bn=='Color':
-                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':11397,'product_uom_qty':colorp,'price_unit':m.clickExcedenteColor})
-                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':11396,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN})                                                    
-                                 self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':11398,'product_uom_qty':1,'price_unit':m.rentaMensual})                                                    
+                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':11397,'product_uom_qty':colorp,'price_unit':m.clickExcedenteColor,'name':'PAGINAS IMPRESAS COLOR SERIE:'+k.name +' MODELO: '+ k.product_id.name})
+                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':11396,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN,'name':'PAGINAS IMPRESAS NEGRO SERIE:'+k.name +' MODELO: '+ k.product_id.name})                                                    
+                                 self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':11398,'product_uom_qty':1,'price_unit':m.rentaMensual,'name':'RENTA EQUIPO ' +k.x_studio_locacion_recortada+' SERIE: '+k.name +' MODELO: '+ k.product_id.name+" Período "+perido})                                                    
                               if m.nombreAnte=='Renta base con páginas incluidas BN o color + pag. excedentes':
                                  if k.x_studio_color_bn=='B/N':
-                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':11396,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN,'x_studio_bolsa':m.bolsaBN})                                                    
+                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':11396,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN,'x_studio_bolsa':m.bolsaBN,'name':'PAGINAS IMPRESAS NEGRO SERIE:'+k.name +' MODELO: '+ k.product_id.name})                                                    
                                  if k.x_studio_color_bn=='Color':
-                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':11397,'product_uom_qty':colorp,'price_unit':m.clickExcedenteColor,'x_studio_bolsa':m.bolsaColor})
-                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':11396,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN,'x_studio_bolsa':m.bolsaBN})                                                    
-                                 self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':11398,'product_uom_qty':1,'price_unit':m.rentaMensual})                                                                            
+                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':11397,'product_uom_qty':colorp,'price_unit':m.clickExcedenteColor,'x_studio_bolsa':m.bolsaColor,'name':'PAGINAS IMPRESAS COLOR SERIE:'+k.name +' MODELO: '+ k.product_id.name })
+                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':11396,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN,'x_studio_bolsa':m.bolsaBN,'name':'PAGINAS IMPRESAS NEGRO SERIE:'+k.name +' MODELO: '+ k.product_id.name})                                                    
+                                 self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':11398,'product_uom_qty':1,'price_unit':m.rentaMensual,'name':'RENTA EQUIPO ' +k.x_studio_locacion_recortada+' SERIE: '+k.name +' MODELO: '+ k.product_id.name+" Período "+perido })                                                                            
                              
                               if m.nombreAnte=='Renta base con ML incluidas BN o color + ML. excedentes':
                                  if k.x_studio_color_bn=='B/N':
                                     if m.bolsaBN<bnp:
                                        bnp=bnp-m.bolsaBN
-                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':11396,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN,'x_studio_bolsa':m.bolsaBN,'x_studio_excedente':'si'})                                                    
+                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':11396,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN,'x_studio_bolsa':m.bolsaBN,'x_studio_excedente':'si','name':'PAGINAS IMPRESAS NEGRO SERIE:'+k.name +' MODELO: '+ k.product_id.name})                                                    
                                  if k.x_studio_color_bn=='Color':
                                     if m.bolsaBN<bnp:
                                        bnp=bnp-m.bolsaBN
-                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':11396,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN,'x_studio_bolsa':m.bolsaBN,'x_studio_excedente':'si'})                                                    
+                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':11396,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN,'x_studio_bolsa':m.bolsaBN,'x_studio_excedente':'si','name':'PAGINAS IMPRESAS NEGRO SERIE:'+k.name +' MODELO: '+ k.product_id.name})                                                    
                                     if m.bolsaColor<colorp:
                                        colorp=colorp-m.bolsaColor                                    
-                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':11397,'product_uom_qty':colorp,'price_unit':m.clickExcedenteColor,'x_studio_bolsa':m.bolsaColor,'x_studio_excedente':'si'})
-                                 self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':11398,'product_uom_qty':1,'price_unit':m.rentaMensual})                                                                            
+                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':11397,'product_uom_qty':colorp,'price_unit':m.clickExcedenteColor,'x_studio_bolsa':m.bolsaColor,'x_studio_excedente':'si','name':'PAGINAS IMPRESAS COLOR SERIE:'+k.name +' MODELO: '+ k.product_id.name})
+                                 self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':11398,'product_uom_qty':1,'price_unit':m.rentaMensual,'name':'RENTA EQUIPO ' +k.x_studio_locacion_recortada+' SERIE: '+k.name +' MODELO: '+ k.product_id.name+" Período "+perido})                                                                            
                               
                             
                               if k.x_studio_color_bn=='B/N':
@@ -239,7 +243,7 @@ class fac_order(models.Model):
                                 procesadasColorBN=bnp+procesadasColorBN                                  
                for j in ff:                      
                      if j.nombreAnte=='Renta global con páginas incluidas BN o color + pag. Excedentes':                        
-                        self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'product_id':11395,'product_uom_qty':1.0,'price_unit':j.rentaMensual})                                                    
+                        self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'product_id':11395,'product_uom_qty':1.0,'price_unit':j.rentaMensual,'name':'RENTA '+ str(len(p))+' EQUIPOS EN GENERAL.'})                                                    
                         if procesadasColorBN< j.bolsaBN:
                            self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'product_id':11396,'product_uom_qty':0.0,'price_unit':j.clickExcedenteBN,'x_studio_bolsa':j.bolsaBN})
                         if procesadasColorBN > j.bolsaBN:
