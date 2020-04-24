@@ -169,7 +169,7 @@ class tfs(models.Model):
             rule=[]
             for re in reglas:
                 i=i+1
-                pickPosibles=self.env['stock.picking'].search([['state','!=','done'],['location_id','=',41911]]).mapped('reglas.id')
+                pickPosibles=self.env['stock.picking'].search([['state','!=','done'],['location_id','=',41911]]).mapped('reglas.stock_warehouse_orderpoint_id')
                 _logger.info(str(pickPosibles))
                 if(re.id not in pickPosibles):
                     productos.append(re.product_id.id)
