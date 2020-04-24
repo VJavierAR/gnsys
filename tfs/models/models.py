@@ -166,12 +166,16 @@ class tfs(models.Model):
             productos=[]
             pickOrigen=[]
             pickDestino=[]
+            rule2=[]
             rule=[]
+            pickPosibles=self.env['stock.picking'].search([['state','!=','done'],['location_id','=',41911]])
+            for pix in pickPosibles:
+                for rl in pix.reglas:
+                    rule2.append(rl.id)
             for re in reglas:
                 i=i+1
-                pickPosibles=self.env['stock.picking'].search([['state','!=','done'],['location_id','=',41911]]).mapped('reglas.id')
-                _logger.info(str(pickPosibles))
-                if(re.id not in pickPosibles):
+                _logger.info(str(rule2))
+                if(re.id not in rule2):
                     productos.append(re.product_id.id)
                     quant=quants.\
                     filtered(lambda x: x.product_id.id == re.product_id.id)
