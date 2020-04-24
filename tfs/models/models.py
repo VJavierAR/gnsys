@@ -192,7 +192,7 @@ class tfs(models.Model):
                 origen2=self.env['stock.picking.type'].search([['name','=','Distribucion'],['warehouse_id','=',1]])
                 origen3=self.env['stock.picking.type'].search([['name','=','Transito'],['warehouse_id','=',1]])
                 destino=self.env['stock.picking.type'].search([['name','=','Receipts'],['warehouse_id','=',al.id]])
-
+                _logger(str(origen2.default_location_src_id.id))
                 pick_origin1= self.env['stock.picking'].create({'picking_type_id' : origen1.id,'almacenOrigen':6299,'almacenDestino':al.id,'location_id':origen1.default_location_src_id.id,'location_dest_id':origen2.default_location_src_id.id,'reglas':[(6,0,rule)]})
                 pick_origin2= self.env['stock.picking'].create({'picking_type_id' : origen2.id,'almacenOrigen':6299,'almacenDestino':al.id,'location_id':origen2.default_location_src_id.id,'location_dest_id':origen3.default_location_src_id.id})
                 pick_origin3= self.env['stock.picking'].create({'picking_type_id' : origen3.id,'almacenOrigen':6299,'almacenDestino':al.id,'location_id':origen3.default_location_src_id.id,'location_dest_id':17})
