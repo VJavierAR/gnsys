@@ -189,8 +189,8 @@ class tfs(models.Model):
                             rule.append(re.id)
             if(len(pickOrigen)>0):
                 origen1=self.env['stock.picking.type'].search([['name','=','Pick'],['warehouse_id','=',6299]])
-                origen2=self.env['stock.picking.type'].search([['name','=','Distribucion'],['warehouse_id','=',1]])
-                origen3=self.env['stock.picking.type'].search([['name','=','Transito'],['warehouse_id','=',1]])
+                origen2=self.env['stock.picking.type'].search([['name','=','Distribución'],['warehouse_id','=',1]])
+                origen3=self.env['stock.picking.type'].search([['name','=','Tránsito'],['warehouse_id','=',1]])
                 destino=self.env['stock.picking.type'].search([['name','=','Receipts'],['warehouse_id','=',al.id]])
                 _logger(str(origen2.default_location_src_id.id))
                 pick_origin1= self.env['stock.picking'].create({'picking_type_id' : origen1.id,'almacenOrigen':6299,'almacenDestino':al.id,'location_id':origen1.default_location_src_id.id,'location_dest_id':origen2.default_location_src_id.id,'reglas':[(6,0,rule)]})
