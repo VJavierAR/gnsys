@@ -165,40 +165,70 @@ class tfs(models.Model):
             productos=[]
             pickOrigen=[]
             pickDestino=[]
+            rule=[]
             for re in reglas:
                 i=i+1
-                productos.append(re.product_id.id)
-                quant=quants.\
-                filtered(lambda x: x.product_id.id == re.product_id.id)
-                if(len(quant)==0):
-                    datos1={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':41911,'location_dest_id':re.location_id.id}
-                    datos2={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':re.location_id.id,'location_dest_id':41911}
-                    pickOrigen.append(datos1)
-                    pickDestino.append(datos2)
-                if(len(quant)>0):
-                    if(quant.quantity<=re.product_min_qty):
+                pickPosibles=self.env['stock.picking'].search([['state','!=','done'],['location_id','=',41911]]).mapped('reglas.id')
+                if(re.id not in pickPosibles):
+                    productos.append(re.product_id.id)
+                    quant=quants.\
+                    filtered(lambda x: x.product_id.id == re.product_id.id)
+                    if(len(quant)==0):
                         datos1={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':41911,'location_dest_id':re.location_id.id}
                         datos2={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':re.location_id.id,'location_dest_id':41911}
                         pickOrigen.append(datos1)
                         pickDestino.append(datos2)
+                        rule.append(re.id)
+                    if(len(quant)>0):
+                        if(quant.quantity<=re.product_min_qty):
+                            datos1={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':41911,'location_dest_id':re.location_id.id}
+                            datos2={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':re.location_id.id,'location_dest_id':41911}
+                            pickOrigen.append(datos1)
+                            pickDestino.append(datos2)
+                            rule.append(re.id)
             if(len(pickOrigen)>0):
                 origen1=self.env['stock.picking.type'].search([['name','=','Pick'],['warehouse_id','=',6299]])
                 origen2=self.env['stock.picking.type'].search([['name','=','Distribucion'],['warehouse_id','=',1]])
                 origen3=self.env['stock.picking.type'].search([['name','=','Transito'],['warehouse_id','=',1]])
-                destino=self.env['stock.picking.type'].search([['name','=','Internal Transfers'],['warehouse_id','=',al.id]])
-                pick_origin = self.env['stock.picking'].create({'picking_type_id' : origen.id,'almacenOrigen':6299,'almacenDestino':al.id,'location_id':41911,'location_dest_id':17})
+                destino=self.env['stock.picking.type'].search([['name','=','Receipts'],['warehouse_id','=',al.id]])
+
+                pick_origin1= self.env['stock.picking'].create({'picking_type_id' : origen1.id,'almacenOrigen':6299,'almacenDestino':al.id,'location_id':origen1.default_location_src_id.id,'location_dest_id':origen2.default_location_src_id.id,'reglas':[(6,0,rule)]})
+                pick_origin2= self.env['stock.picking'].create({'picking_type_id' : origen2.id,'almacenOrigen':6299,'almacenDestino':al.id,'location_id':origen2.default_location_src_id.id,'location_dest_id':origen3.default_location_src_id.id})
+                pick_origin3= self.env['stock.picking'].create({'picking_type_id' : origen3.id,'almacenOrigen':6299,'almacenDestino':al.id,'location_id':origen3.default_location_src_id.id,'location_dest_id':17})
+
                 pick_dest = self.env['stock.picking'].create({'picking_type_id' : destino.id, 'location_id':17,'almacenOrigen':al.id,'almacenDestino':6299,'location_dest_id':al.lot_stock_id.id})
+                
                 for ori in pickOrigen:
-                    ori['picking_id']=pick_origin.id
+                    
+                    #1
+                    ori['picking_id']=pick_origin1.id
+                    ori['location_id']=pick_origin1.location_id.id
+                    ori['location_dest_id']=pick_origin1.location_dest_id.id
                     self.env['stock.move'].create(ori)
+                    #2
+                    ori['picking_id']=pick_origin2.id
+                    ori['location_id']=pick_origin2.location_id.id
+                    ori['location_dest_id']=pick_origin2.location_dest_id.id
+                    self.env['stock.move'].create(ori)
+                    #3
+                    ori['picking_id']=pick_origin3.id
+                    ori['location_id']=pick_origin3.location_id.id
+                    ori['location_dest_id']=pick_origin3.location_dest_id.id
+                    self.env['stock.move'].create(ori)
+
                 for des in pickDestino:
                     des['picking_id']=pick_dest.id
                     self.env['stock.move'].create(des)
-                pick_origin.action_confirm()
-                pick_origin.action_assign()
+                
+                pick_origin1.action_confirm()
+                pick_origin1.action_assign()
+                pick_origin2.action_confirm()
+                pick_origin2.action_assign()
+                pick_origin3.action_confirm()
+                pick_origin3.action_assign()
                 pick_dest.action_confirm()
                 pick_dest.action_assign()
-            _logger.info(str(len(pickOrigen)))
+            #_logger.info(str(len(pickOrigen)))
 
     @api.multi
     def valida(self):
