@@ -170,6 +170,7 @@ class tfs(models.Model):
             for re in reglas:
                 i=i+1
                 pickPosibles=self.env['stock.picking'].search([['state','!=','done'],['location_id','=',41911]]).mapped('reglas.id')
+                _logger.info(str(pickPosibles))
                 if(re.id not in pickPosibles):
                     productos.append(re.product_id.id)
                     quant=quants.\
@@ -235,7 +236,7 @@ class tfs(models.Model):
     def valida(self):
         view = self.env.ref('tfs.view_tfs_ticket')
         wiz = self.env['tfs.ticket'].create({'tfs_ids': [(4, self.id)]})
-        self.write({'estado':'Confirmado'})
+        #self.write({'estado':'Confirmado'})
         #self.env['dcas.dcas'].create({'serie':self.serie.id,'contadorMono':self.actualMonocromatico,'contadorColor':self.actualColor,'fuente':'tfs.tfs'})
         dat=eval(self.arreglo)
         if(dat!=[]):
