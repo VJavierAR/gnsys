@@ -170,7 +170,7 @@ class tfs(models.Model):
             rule=[]
             pickPosibles=self.env['stock.picking'].search([['state','!=','done'],['location_id','=',41911]])
             for pix in pickPosibles:
-                for rl in pix.reglas:
+                for rl in pix.reglas.search([['active','=',False]]):
                     rule2.append(rl.id)
             for re in reglasabs:
                 i=i+1
