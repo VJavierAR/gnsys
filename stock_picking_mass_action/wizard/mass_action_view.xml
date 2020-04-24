@@ -277,7 +277,7 @@
                             <field name="descripcion"/>
                             <field name="disponible"/>
                             <field name="stoc" invisible="1"/>
-                            <field name="cantidad"  attrs="{'invisible': [['categoria', '!=', 13]]}"/>
+                            <field name="cantidad"  attrs="{'invisible': [['categoria', '=', 13]]}"/>
                         </tree>
                     </field>
                 </page>
