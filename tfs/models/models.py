@@ -228,7 +228,7 @@ class tfs(models.Model):
                 pick_origin3.action_assign()
                 pick_dest.action_confirm()
                 pick_dest.action_assign()
-            #_logger.info(str(len(pickOrigen)))
+            _logger.info(str(len(pickOrigen)))
 
     @api.multi
     def valida(self):
