@@ -297,6 +297,7 @@ class tfs(models.Model):
     @api.onchange('actualMonocromatico')
     def _onchange_mono(self):
         if(self.productoNegro):
+            _logger.info(str(self.productoNegro.x_studio_rendimiento_toner))
             rendimientoMono=self.actualMonocromatico-self.contadorAnteriorMono
             porcentaje=(100*rendimientoMono)/self.productoNegro.x_studio_rendimiento_toner if self.productoNegro.x_studio_rendimiento_toner>0 else 1
             self.actualporcentajeNegro=porcentaje
