@@ -120,7 +120,6 @@ class fac_order(models.Model):
                   for quitard in self.detalle:
                       if int(dejar)!=int(quitard.servicio):                            
                          qd.append(quitard.id)
-                  _logger.info("Informacion entre detalle: dejar qdd"+str(qd))
                   self.env['sale.order.detalle'].search([('id', 'in', qd)]).unlink()
           
                             
@@ -253,7 +252,7 @@ class fac_order(models.Model):
                         if procesadasColorTotal > j.bolsaColor:
                            self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'product_id':11397,'product_uom_qty':abs(bolsacolor-procesadasColorTotal),'price_unit':j.clickExcedenteColor,'x_studio_bolsa':j.bolsaColor,'x_studio_excedente':'si'})                   
                      if j.nombreAnte=='Renta global + costo de página procesada BN o color':                        
-                        self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'product_id':11395,'product_uom_qty':1.0,'price_unit':j.rentaMensual})                                                                                                    
+                        self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'product_id':11395,'product_uom_qty':1.0,'price_unit':j.rentaMensual,'name':'RENTA '+ str(len(p))+' EQUIPOS EN GENERAL.'})                                                                                                    
                      if j.tipo=='1':                        
                         self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'product_id':11325,'product_uom_qty':1.0,'price_unit':j.rentaMensual})                                                                                                    
                  
