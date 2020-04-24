@@ -161,7 +161,7 @@ class tfs(models.Model):
         i=0
         for al in almacenes:
             quants=self.env['stock.quant'].search([['location_id','=',al.lot_stock_id.id]])
-            reglas=self.env['stock.warehouse.orderpoint'].search([['warehouse_id','=',al.id],['active','=',False]])
+            reglasabs=self.env['stock.warehouse.orderpoint'].search([['warehouse_id','=',al.id],['active','=',False]])
             _logger.info(str(len(reglas)))
             productos=[]
             pickOrigen=[]
@@ -172,7 +172,7 @@ class tfs(models.Model):
             for pix in pickPosibles:
                 for rl in pix.reglas:
                     rule2.append(rl.id)
-            for re in reglas:
+            for re in reglasabs:
                 i=i+1
                 _logger.info(str(rule2))
                 if(re.id not in rule2):
