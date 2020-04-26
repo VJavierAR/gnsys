@@ -675,6 +675,7 @@ class contadores(models.Model):
                                                        , 'producto': a.id
                                                        , 'serieEquipo': a.name
                                                        , 'locacion':a.x_studio_locacion_recortada
+                                                       , 'ubi':a.x_studio_centro_de_costos
                                                        , 'periodo':perido                                                              
                                                        , 'ultimaLecturaBN': currentP.contadorMono
                                                        , 'lecturaAnteriorBN': currentPA.contadorMono
