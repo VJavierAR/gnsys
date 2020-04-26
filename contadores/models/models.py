@@ -444,8 +444,8 @@ class contadores(models.Model):
     _description = 'Contadores Cliente'
     name = fields.Char()
     
-    mes=fields.Selection(valores,string='Mes')
-    anio= fields.Selection(get_years(), string='Año')
+    mes=fields.Selection(valores,string='Mes',default='04')
+    anio= fields.Selection(get_years(), string='Año',default=2020)
     archivoglobal = fields.Many2many('ir.attachment',string="Evidencia global")    
     excelD = fields.Binary(string="Documento Excel")      
     dca = fields.One2many('dcas.dcas',inverse_name='contador_id',string='DCAS')
@@ -478,7 +478,12 @@ class contadores(models.Model):
                                                  ,'fuente':'dcas.dcas'
                                                  ,'x_studio_field_no6Rb':str(self.anio)+'-'+str(self.mes)
                                                  ,'x_studio_fecha_texto_anio':str(valores[int(self.mes[1])-1][1])+' de '+str(self.anio)
-                                                })                    
+                                                })
+            ff=self.env['contrato'].search([('cliente', '=',self.cliente.id)])
+            for rs in ff:
+                a=self.env['sale.order'].create({'partner_id':self.cliente.id,'x_studio_factura':'si','month':self.mes,'year':self.anio})
+                self.env.cr.execute("insert into x_contrato_sale_order_rel (sale_order_id, contrato_id) values (" +str(a.id) + ", " +  str(rs.id) + ");")    
+                
     
     #@api.onchange('mes')
         
