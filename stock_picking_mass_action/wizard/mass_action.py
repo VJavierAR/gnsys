@@ -860,7 +860,7 @@ class ProductAltaAction(TransientModel):
                         unidad=self.env['uom.uom'].search([('name','=','Unidad(es)' if(row[3].value.lower()=='pieza') else row[3].value)])
                         producto=self.env['product.product'].create({'default_code':row[1].value,'x_studio_field_ry7nQ':productid.id,'description':row[4].value,'name':row[4].value,'uom_id':unidad.id if(unidad.id) else False})
                         if(check):
-                            if(almacen):
+                            if(self.almacen):
                                 quant={'product_id':producto.id,'reserved_quantity':'0','quantity':row[2].value, 'location_id':self.almacen.lot_stock_id.id}
                                 inventoty={'inventory_id':id3.id, 'partner_id':'1','product_id':productid.id,'product_uom_id':'1','product_qty':row[2].value, 'location_id':self.almacen.lot_stock_id.id}
                                 self.env['stock.quant'].sudo().create(quant)
