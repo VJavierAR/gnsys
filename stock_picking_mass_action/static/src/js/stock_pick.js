@@ -30,6 +30,7 @@ odoo.define('invoice.action_button', function (require) {
                         break; 
                       default:
                         this.$buttons.find('.oe_action_button_ticket_report').hide();
+                        this.$buttons.find('.o_button_import').hide();
                         this.$buttons.find('.oe_action_button').hide();
                         this.$buttons.find('.oe_action_button_move_line').click(this.proxy('action_inter1'));
                         this.$buttons.find('.oe_action_button_product_product').click(this.proxy('action_inter7'));
