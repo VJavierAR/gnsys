@@ -334,7 +334,8 @@ class ComemtarioTicket(TransientModel):
 class TransferInter(TransientModel):
     _name='transferencia.interna'
     _description='Transferencia Interna'    
-    almacenOrigen=fields.Many2one('stock.warehouse','Almacen Origen')
+    almacenPadre=fields.Many2one('stock.warehouse','Almacen Padre')
+    almacenOrigen=fields.Many2one('stock.warehouse','Almacen Hijo',domain="[('x_studio_almacn_padre','=',almacenPadre)]")
     ubicacion=fields.Many2one(related='almacenOrigen.lot_stock_id')
     almacenDestino=fields.Many2one('stock.warehouse','Almacen Destino')
     lines=fields.One2many('transferencia.interna.temp','transfer')
