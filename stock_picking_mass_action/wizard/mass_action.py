@@ -861,11 +861,12 @@ class ProductAltaAction(TransientModel):
                         template=self.env['product.template'].search([('name','=',str(row[0].value).replace('.0','')),('categ_id', '=',13)])
                         productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
                         unidad=self.env['uom.uom'].search([('name','=','Unidad(es)' if(row[3].value.lower()=='pieza') else row[3].value)])
-                        producto=self.env['product.product'].search([['default_code','=',str(row[1].value).replace(' ','')]])
+                        producto=self.env['product.product'].search([['default_code','=',str(row[1].value).replace('.0','')]])
                         inventario=self.env['stock.quant'].search([['product_id','=',producto.id],['location_id','=',self.almacen.lot_stock_id.id]])
-                        categoria=self.env['product.category'].search([['name','like',row[5].value]])
+                        categoria=self.env['product.category'].search([['name','=',row[5].value]])
+                        _logger.info(str(categoria.name))
                         if(producto.id==False):
-                            producto=self.env['product.product'].create({'default_code':row[1].value,'categ_id':categoria.id,'x_studio_field_ry7nQ':productid.id,'description':row[4].value,'name':row[4].value,'uom_id':unidad.id if(unidad.id) else False})
+                            producto=self.env['product.product'].create({'default_code':str(row[1].value).replace('.0',''),'categ_id':categoria.id,'x_studio_field_ry7nQ':productid.id,'description':row[4].value,'name':row[4].value,'uom_id':unidad.id if(unidad.id) else False})
                         if(check):
                             if(self.almacen):
                                 quant={'product_id':producto.id,'reserved_quantity':'0','quantity':row[2].value, 'location_id':self.almacen.lot_stock_id.id}
