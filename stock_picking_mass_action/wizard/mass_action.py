@@ -842,8 +842,9 @@ class ProductAltaAction(TransientModel):
                 check=False
                 for row_num, row in enumerate(sheet.get_rows()):
                     if(row[2].ctype!=0):
-                        if(row[2].value>0):
-                            check=True
+                        if(row[2].value!=''):
+                            if(int(row[2].value)>0):
+                                check=True
                 id3=None
                 if(check and self.almacen.id==False):
                     raise UserError(_("Se requiere almacen para cargar las existencias"))
