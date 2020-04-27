@@ -278,7 +278,7 @@
                     <field name="almacenOrigen" required="1" attrs="{'invisible':[['almacenPadre','=',False]]}"/>
                     <field name="ubicacion" invisible="1"/>
                     <field name="almacenDestino" required="1"/>
-                    <field name="categoria"/>
+                    <field name="categoria" string="Tipo de Componentes"/>
                 </group>
                 <notebook>
                 <page string="Productos">
