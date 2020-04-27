@@ -861,7 +861,7 @@ class ProductAltaAction(TransientModel):
                         template=self.env['product.template'].search([('name','=',str(row[0].value).replace('.0','')),('categ_id', '=',13)])
                         productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
                         unidad=self.env['uom.uom'].search([('name','=','Unidad(es)' if(row[3].value.lower()=='pieza') else row[3].value)])
-                        producto=self.env['product.product'].search([['default_code','=',row[1].value.replace(' ','')]])
+                        producto=self.env['product.product'].search([['default_code','=',str(row[1].value).replace(' ','')]])
                         inventario=self.env['stock.quant'].search([['product_id','=',producto.id],['location_id','=',self.almacen.lot_stock_id.id]])
                         categoria=self.env['product.category'].search([['name','like',row[5].value]])
                         if(product.id==False):
