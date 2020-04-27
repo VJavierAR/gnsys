@@ -872,7 +872,7 @@ class ProductAltaAction(TransientModel):
                                 quant={'product_id':producto.id,'reserved_quantity':'0','quantity':row[2].value, 'location_id':self.almacen.lot_stock_id.id}
                                 inventoty={'inventory_id':id3.id, 'partner_id':'1','product_id':productid.id,'product_uom_id':'1','product_qty':row[2].value, 'location_id':self.almacen.lot_stock_id.id}
                                 if(inventario.id):
-                                    inventario.write({'quantity':row[2].value.replace('.0','')})
+                                    inventario.write({'quantity':row[2]})
                                 if(inventario.id==False):
                                     self.env['stock.quant'].sudo().create(quant)
                                 self.env['stock.inventory.line'].create(inventoty)
