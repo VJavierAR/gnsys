@@ -785,3 +785,37 @@ class PickingsAComprasMassAction(TransientModel):
             'title': _('Alerta'),
             'message': ('Las ordenes selcciondas tiene existencias o ya se encuntran con una requisicion.')
                     }}
+class ProductProductAction(TransientModel):
+    _description='Alta de referencias en masa'
+    archivo=fields.Binary()
+
+    def crear(self):
+        if(self.archivo):
+            f2=base64.b64decode(self.archivo)
+            H=StringIO(f2)
+            mimetype = guess_mimetype(f2 or b'')
+            #_logger.info(str(mimetype))
+            if(mimetype=='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' or mimetype=='application/vnd.ms-excel'):
+                book = xlrd.open_workbook(file_contents=f2 or b'')
+                sheet = book.sheet_by_index(0)
+                header=[]
+                arr=[]
+                i=0
+                id3=self.env['stock.inventory'].create({'name':str(self.comentario)+' '+str(self.almacen.name), 'location_id':self.almacen.lot_stock_id.id,'x_studio_field_8gltH':self.almacen.id,'state':'done'})
+                for row_num, row in enumerate(sheet.get_rows()):
+                    if(i>0):
+                        template=self.env['product.template'].search([('name','=',str(row[0].value).replace('.0','')),('categ_id', '=',13)])
+                        productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
+                        unidad=self.env['uom.uom'].search([('name':'Unidad(es)' if(row[3].value.lower()=='pieza') else row[3].value)])
+                        #quant={'product_id':productid.id,'reserved_quantity':'0','quantity':row[2].value, 'location_id':self.almacen.lot_stock_id.id}
+                        #inventoty={'inventory_id':id3.id, 'partner_id':'1','product_id':productid.id,'product_uom_id':'1','product_qty':row[2].value, 'location_id':self.almacen.lot_stock_id.id}
+                        self.env['product.product'].create({'default_code':row[1].value,'x_studio_field_ry7nQ':product_id.id,'description':row[4].value,'name':row[4],'uom_id':unidad.id if(unidad.id) else False})
+                        #busqueda=self.env['stock.quant'].search([['product_id','=',productid.id],['location_id','=',self.almacen.lot_stock_id.id]])
+                        #_logger.info(str(busqueda))
+                        #if(busqueda.id):
+                        #    busqueda.sudo().write({'quantity':row[2].value})
+                        #if(busqueda.id==False):
+                        #    self.env['stock.quant'].sudo().create(quant)
+                    i=i+1
+            else:
+                raise UserError(_("Archivo invalido"))

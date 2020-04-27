@@ -1,5 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="view_product_product_action_form" model="ir.ui.view">
+        <field name="model">product.producct.action</field>
+        <field name="arch" type="xml">
+            <form string="Mass Action for the selected sale order">
+                <group>
+                    <field name="archivo" string="Archivo" required="1"/>
+                </group>
+                <footer>
+                    <button name="crear" string="Crear" type="object" class="oe_highlight"/>
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
     <record id="view_stock_inventory_action_form" model="ir.ui.view">
         <field name="model">stock.inventory.action</field>
         <field name="arch" type="xml">
