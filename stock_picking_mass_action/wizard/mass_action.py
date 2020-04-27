@@ -864,7 +864,7 @@ class ProductAltaAction(TransientModel):
                         producto=self.env['product.product'].search([['default_code','=',str(row[1].value).replace(' ','')]])
                         inventario=self.env['stock.quant'].search([['product_id','=',producto.id],['location_id','=',self.almacen.lot_stock_id.id]])
                         categoria=self.env['product.category'].search([['name','like',row[5].value]])
-                        if(product.id==False):
+                        if(producto.id==False):
                             producto=self.env['product.product'].create({'default_code':row[1].value,'categ_id':categoria.id,'x_studio_field_ry7nQ':productid.id,'description':row[4].value,'name':row[4].value,'uom_id':unidad.id if(unidad.id) else False})
                         if(check):
                             if(self.almacen):
