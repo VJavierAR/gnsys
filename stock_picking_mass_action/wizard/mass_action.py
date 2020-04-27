@@ -852,7 +852,7 @@ class ProductAltaAction(TransientModel):
                 if(check and self.almacen.id==False):
                     raise UserError(_("Se requiere almacen para cargar las existencias"))
                 if(check and self.almacen.id!=False):
-                    id3=self.env['stock.inventory'].create({'name':str(self.comentario)+' '+str(self.almacen.name), 'location_id':self.almacen.lot_stock_id.id,'x_studio_field_8gltH':self.almacen.id,'state':'done'})
+                    id3=self.env['stock.inventory'].create({'name':'Carga de creacion'+str(self.almacen.name), 'location_id':self.almacen.lot_stock_id.id,'x_studio_field_8gltH':self.almacen.id,'state':'done'})
                 for row_num, row in enumerate(sheet.get_rows()):
                     if(i>0):
                         template=self.env['product.template'].search([('name','=',str(row[0].value).replace('.0','')),('categ_id', '=',13)])
