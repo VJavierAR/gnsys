@@ -347,6 +347,9 @@ class TransferInter(TransientModel):
         pick_origin1=[]
         pick_origin2=[]
         pick_origin3=[]
+        if(self.almacenOrigen.id==False):
+            self.almacenOrigen=self.almacenPadre.id
+
         if(self.almacenDestino.x_studio_almacn_padre):
             if('Foraneo' in self.almacenDestino.x_studio_almacn_padre.name):
                 origen1=self.env['stock.picking.type'].search([['name','=','Pick'],['warehouse_id','=',self.almacenOrigen.id]])
