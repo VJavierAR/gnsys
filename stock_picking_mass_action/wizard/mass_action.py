@@ -806,7 +806,7 @@ class ProductProductAction(TransientModel):
                     if(i>0):
                         template=self.env['product.template'].search([('name','=',str(row[0].value).replace('.0','')),('categ_id', '=',13)])
                         productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
-                        unidad=self.env['uom.uom'].search([('name',''=',Unidad(es)' if(row[3].value.lower()=='pieza') else row[3].value)])
+                        unidad=self.env['uom.uom'].search([('name','=','Unidad(es)' if(row[3].value.lower()=='pieza') else row[3].value)])
                         #quant={'product_id':productid.id,'reserved_quantity':'0','quantity':row[2].value, 'location_id':self.almacen.lot_stock_id.id}
                         #inventoty={'inventory_id':id3.id, 'partner_id':'1','product_id':productid.id,'product_uom_id':'1','product_qty':row[2].value, 'location_id':self.almacen.lot_stock_id.id}
                         self.env['product.product'].create({'default_code':row[1].value,'x_studio_field_ry7nQ':product_id.id,'description':row[4].value,'name':row[4],'uom_id':unidad.id if(unidad.id) else False})
