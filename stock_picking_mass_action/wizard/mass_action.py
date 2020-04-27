@@ -785,7 +785,7 @@ class PickingsAComprasMassAction(TransientModel):
             'title': _('Alerta'),
             'message': ('Las ordenes selcciondas tiene existencias o ya se encuntran con una requisicion.')
                     }}
-class ProductProductAction(TransientModel):
+class ProductAltaAction(TransientModel):
     _description='Alta de referencias en masa'
     archivo=fields.Binary()
 
