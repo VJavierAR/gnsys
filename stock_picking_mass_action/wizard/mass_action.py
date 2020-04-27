@@ -425,7 +425,7 @@ class TransferInter(TransientModel):
             #'views': [(view.id, 'form')],
             'view_id': view.id,
             'target': 'current',
-            'res_id': pick_origin.id if(pick_origin.id) else pick_origin1.id,
+            'res_id': pick_origin.id if(pick_origin!=[]) else pick_origin1.id,
             'nodestroy': True
         }
 
