@@ -105,6 +105,7 @@ class fac_order(models.Model):
                                                                        , 'lecturaAnteriorColor': det.lecturaAnteriorColor
                                                                        , 'paginasProcesadasColor': det.paginasProcesadasColor
                                                                        , 'servicio':det.servicio
+                                                                      , 'ubicacion':det.ubicacion
                                                                       })   
                              #self.env['sale.order.detalle'].create({'order_id': fac.id,'x_studio_servicio':d.x_studio_servicio,'x_studio_field_9nQhR':d.x_studio_field_9nQhR.id,'product_id':d.product_id.id,'product_uom_qty':d.product_uom_qty,'price_unit':d.price_unit,'x_studio_bolsa':d.x_studio_bolsa})
                                 
@@ -139,7 +140,7 @@ class fac_order(models.Model):
                self.excedente="<a href='https://gnsys-corp.odoo.com/web#id="+str(fac.id)+"&action=1167&model=sale.order&view_type=form&menu_id=406' target='_blank'>"+str(fac.name)+"</a>"
                for d in self.order_line:
                    if d.x_studio_bolsa and d.x_studio_excedente == 'si':  
-                      self.env['sale.order.line'].create({'order_id': fac.id,'product_id':11340,'product_uom_qty':d.product_uom_qty,'price_unit':d.price_unit,'x_studio_bolsa':d.x_studio_bolsa})
+                      self.env['sale.order.line'].create({'order_id': fac.id,'product_id':11396,'product_uom_qty':d.product_uom_qty,'price_unit':d.price_unit,'x_studio_bolsa':d.x_studio_bolsa})
                       self.env['sale.order.line'].search([('id', '=', d.id)]).unlink()                             
             if self.x_studio_dividir_servicios==False and self.x_studio_dividir_servicios_1==False and len(self.order_line)<1:
                
@@ -192,6 +193,7 @@ class fac_order(models.Model):
                                                                        , 'lecturaAnteriorColor': currentPA.contadorColor
                                                                        , 'paginasProcesadasColor': colorp
                                                                        , 'servicio':m.id
+                                                                       , 'ubicacion':k.x_studio_centro_de_costos
                                                                       })
                               if m.nombreAnte=='Costo por página procesada BN o color':
                                  if k.x_studio_color_bn=='B/N':
@@ -267,6 +269,7 @@ class detalle(models.Model):
       serieEquipo = fields.Text(string="Serie")
       producto = fields.Text(string="Producto")
       locacion = fields.Text(string="Locación")
+      ubicacion = fields.Text(string="ubicación")
      
       ultimaLecturaBN = fields.Integer(string='Última lectura monocromatico')
       lecturaAnteriorBN = fields.Integer(string='Lectura anterior monocromatico')
