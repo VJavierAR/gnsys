@@ -841,7 +841,7 @@ class ProductAltaAction(TransientModel):
                 i=0
                 check=False
                 for row_num, row in enumerate(sheet.get_rows()):
-                    if(row[2].type!=0):
+                    if(row[2].ctype!=0):
                         if(row[2].value>0):
                             check=True
                 id3=None
