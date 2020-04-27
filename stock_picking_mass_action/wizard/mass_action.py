@@ -385,7 +385,7 @@ class TransferInter(TransientModel):
                 datos1['location_dest_id']=pick_origin3.location_dest_id.id
                 self.env['stock.move'].create(datos1)
 
-                datos2 = ['picking_id']=pick_dest.id
+                datos2['picking_id']=pick_dest.id
                 self.env['stock.move'].create(datos2)
 
             else:    
