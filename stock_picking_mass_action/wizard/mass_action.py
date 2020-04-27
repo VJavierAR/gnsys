@@ -370,7 +370,7 @@ class TransferInter(TransientModel):
             if('Foraneo' in self.almacenDestino.x_studio_almacn_padre.name):
                 datos1['picking_id']=pick_origin1.id
                 datos1['location_id']=pick_origin1.location_id.id
-                ori['location_dest_id']=pick_origin1.location_dest_id.id
+                datos1['location_dest_id']=pick_origin1.location_dest_id.id
                 self.env['stock.move'].create(datos1)
                 #2
                 datos1['picking_id']=pick_origin2.id
@@ -425,7 +425,7 @@ class TransferInter(TransientModel):
             #'views': [(view.id, 'form')],
             'view_id': view.id,
             'target': 'current',
-            'res_id': pick_origin.id,
+            'res_id': pick_origin.id if(pick_origin.id) else pick_origin1.id,
             'nodestroy': True
         }
 
