@@ -227,14 +227,14 @@ class fac_order(models.Model):
                                  if k.x_studio_color_bn=='B/N':
                                     if m.bolsaBN<bnp:
                                        bnp=bnp-m.bolsaBN
-                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':11396,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN,'x_studio_bolsa':m.bolsaBN,'x_studio_excedente':'si','name':'Bolsa ('+m.bolsaBN+') PAGINAS IMPRESAS NEGRO SERIE:'+k.name +' MODELO: '+ k.product_id.name})                                                    
+                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':11396,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN,'x_studio_bolsa':m.bolsaBN,'x_studio_excedente':'si','name':'Bolsa ('+str(m.bolsaBN)+') PAGINAS IMPRESAS NEGRO SERIE:'+k.name +' MODELO: '+ k.product_id.name})                                                    
                                  if k.x_studio_color_bn=='Color':
                                     if m.bolsaBN<bnp:
                                        bnp=bnp-m.bolsaBN
-                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':11396,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN,'x_studio_bolsa':m.bolsaBN,'x_studio_excedente':'si','name':'Bolsa ('+m.bolsaBN+') PAGINAS IMPRESAS NEGRO SERIE:'+k.name +' MODELO: '+ k.product_id.name})                                                    
+                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':11396,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN,'x_studio_bolsa':m.bolsaBN,'x_studio_excedente':'si','name':'Bolsa ('+str(m.bolsaBN)+') PAGINAS IMPRESAS NEGRO SERIE:'+k.name +' MODELO: '+ k.product_id.name})                                                    
                                     if m.bolsaColor<colorp:
                                        colorp=colorp-m.bolsaColor                                    
-                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':11397,'product_uom_qty':colorp,'price_unit':m.clickExcedenteColor,'x_studio_bolsa':m.bolsaColor,'x_studio_excedente':'si','name':'Bolsa ('+m.bolsaBN+') PAGINAS IMPRESAS COLOR SERIE:'+k.name +' MODELO: '+ k.product_id.name})
+                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':11397,'product_uom_qty':colorp,'price_unit':m.clickExcedenteColor,'x_studio_bolsa':m.bolsaColor,'x_studio_excedente':'si','name':'Bolsa ('+str(m.bolsaBN)+') PAGINAS IMPRESAS COLOR SERIE:'+k.name +' MODELO: '+ k.product_id.name})
                                  self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':11398,'product_uom_qty':1,'price_unit':m.rentaMensual,'name':'RENTA EQUIPO ' +k.x_studio_locacion_recortada+' SERIE: '+k.name +' MODELO: '+ k.product_id.name+" Período "+perido})                                                                            
                               
                             
