@@ -922,7 +922,7 @@ class helpdesk_update(models.Model):
                 
             self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Cancelado", 'evidencia': [(6,0,ultimaEvidenciaTec)], 'write_uid':  self.env.user.name})
             #self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': "Cancelado", 'write_uid':  self.env.user.name})
-
+            
 
 
             message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Cancelado' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
