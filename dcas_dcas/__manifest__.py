@@ -22,7 +22,7 @@
     # any module necessary for this one to work correctly
     'depends': [
         'base',
-        'DCAS'
+        'dcas_dcas'
     ],
 
     # always loaded
