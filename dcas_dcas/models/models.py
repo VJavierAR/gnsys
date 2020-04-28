@@ -1,12 +1,18 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api
+from odoo import _, models, fields, api, tools
+from email.utils import formataddr
+from odoo.exceptions import UserError,RedirectWarning
+from odoo import exceptions, _
+import logging, ast
+import datetime, time
+_logger = logging.getLogger(__name__)
 
- class dcas_dcas(models.Model):
-     _name = 'dcas_update'
-     _inherit = 'dcas.dcas'
+class dcas_dcas(models.Model):
+	_name = 'dcas_update'
+	_inherit = 'dcas.dcas'
 
-     active = fields.Boolean(string = 'Active', default = True)
+	active = fields.Boolean(string = 'Active', default = True)
 
 
      
