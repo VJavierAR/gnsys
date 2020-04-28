@@ -894,6 +894,7 @@ class  DevolverPick(TransientModel):
 
     def confirmar(self):
         pic=self.env['stock.picking'].search([['id','=',self.picking.id]])
-        _logger.info(pic.__dict__)
+        i=pic.copy()
+        _logger.info(str(i.id))
         
         
