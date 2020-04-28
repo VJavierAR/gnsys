@@ -53,7 +53,8 @@ class servicios_gnsys(models.Model):
     retencion = fields.Text(string="Retencion")
     totalRetencion=fields.Text(string="Total con retencion")
     nivelfactu=fields.Text(string="Nivel de facturación")
-    
+    codigosg=fields.Text(string="codigo texto")
+
     
     
     
