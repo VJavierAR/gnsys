@@ -893,6 +893,6 @@ class  DevolverPick(TransientModel):
     picking=fields.Many2one('stock.picking')
 
     def confirmar(self):
-        _logger.info(self.picking.default_get(self.picking))
+        _logger.info(self.picking.default_get('name'))
         
         
