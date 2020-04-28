@@ -13,6 +13,6 @@ class dcas_dcas(models.Model):
 	_inherit = 'dcas.dcas'
 
 	active = fields.Boolean(string = 'Active', default = True)
-
+	
 
      
