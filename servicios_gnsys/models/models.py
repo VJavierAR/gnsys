@@ -48,6 +48,16 @@ class servicios_gnsys(models.Model):
     tipo = fields.Text(string="Tipo")
     estado = fields.Text(string="Estado")
     
+    cantidad = fields.Text(string="cantidad")
+    importe = fields.Text(string="Importe")
+    retencion = fields.Text(string="Retencion")
+    totalRetencion=fields.Text(string="Total con retencion")
+    nivelfactu=fields.Text(string="Nivel de facturación")
+    
+    
+    
+    
+    
     
     
     
