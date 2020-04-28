@@ -885,3 +885,13 @@ class ProductAltaAction(TransientModel):
                     i=i+1
             else:
                 raise UserError(_("Archivo invalido"))
+class  DevolverPick(TransientModel):
+    _name='devolver.action'
+    _description='devolucion a almacen'
+    fecha=fields.Datetime()
+    comentario=fields.Char()
+    picking=fields.Many2one('stock.picking')
+
+    def confirmar(self):
+        
+        
