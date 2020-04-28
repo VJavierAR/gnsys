@@ -6,7 +6,7 @@
             <form string="Mass Action for the selected sale order">
                 <group>
                     <field name="archivo" string="Archivo" required="1"/>
-                    <field name="almacen" string="Almacen"/>
+                    <field name="almacen" string="Almacen" domain="[['x_studio_cliente','=',False]]"/>
                 </group>
                 <footer>
                     <button name="crear" string="Crear" type="object" class="oe_highlight"/>
@@ -21,7 +21,7 @@
         <field name="arch" type="xml">
             <form string="Mass Action for the selected sale order">
                 <group>
-                    <field name="almacen" string="Almacen" required="1"/>
+                    <field name="almacen" string="Almacen" required="1" domain="[['x_studio_cliente','=',False]]"/>
                     <field name="archivo" string="Archivo" required="1"/>
                     <field name="comentario" string="Comentario" required="1"/>
                 </group>
@@ -107,7 +107,7 @@
                     <field name="fechaFinal" string="Fecha Inicial" required="1"/>
                     </group>
                     <group>
-                    <field name="almacen"/>
+                    <field name="almacen" domain="[['x_studio_cliente','=',False]]"/>
                     <field name="categoria"/>
                     <field name="tipo" required="1"/>
                     </group>
