@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="view_devolver_action_form" model="ir.ui.view">
+        <field name="model">devolver.action</field>
+        <field name="arch" type="xml">
+            <form string="Mass Action for the selected sale order">
+                <group>
+                    <field name="fecha" string="Fecha de nueva salida" required="1"/>
+                    <field name="comentario" string="Comentario" required="1"/>
+                </group>
+                <footer>
+                    <button name="confirmar" string="Confirmar" type="object" class="oe_highlight"/>
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
     <record id="view_product_product_action_form" model="ir.ui.view">
         <field name="model">product.product.action</field>
         <field name="arch" type="xml">
@@ -54,12 +70,6 @@
             </form>
         </field>
     </record>
-
-
-
-
-
-
 
     <record id="view_helpdesk_ticket_action_form" model="ir.ui.view">
         <field name="model">helpdesk.ticket.action</field>
@@ -137,9 +147,6 @@
             </form>
         </field>
     </record>
-
-
-
 
     <record id="view_stock_picking_mass_action_form" model="ir.ui.view">
         <field name="model">stock.picking.mass.action</field>
