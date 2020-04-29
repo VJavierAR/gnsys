@@ -918,7 +918,7 @@ class  DevolverPick(TransientModel):
         self.picking.action_done()
         s.write({'x_studio_fecha_de_entrega':self.fecha})
         self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : self.picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id, 'estadoTicket' : "Devuelto a Almacen", 'comentario':self.comentario}) 
-        s.action_confirm()
+        #s.action_confirm()
         self.picking.x_studio_ticket_relacionado.write({'x_studio_field_0OAPP':[(4,s.id)]})
         #_logger.info(str(i.id))
         
