@@ -8,10 +8,9 @@ import logging, ast
 import datetime, time
 _logger = logging.getLogger(__name__)
 
-class dcas_dcas(models.Model):
+class DcasUpdate(models.Model):
 	#_name = 'dcas_update'
 	_inherit = 'dcas.dcas'
-
 	active = fields.Boolean(string = 'Active', default = True)
 	
 
