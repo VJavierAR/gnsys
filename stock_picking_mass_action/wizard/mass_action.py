@@ -123,7 +123,7 @@ class StockPickingMassAction(TransientModel):
             pickings_to_check.sudo().action_assign()
         # Get all pickings ready to transfer and transfer them if asked
         if self.transfer:
-            _logger.info("Hola")
+            _logger.info("Hola ando subiendo info ya te avise en el grupo y en privadoxD")
             assigned_picking_lst = self.picking_ids.\
                 filtered(lambda x: x.state == 'assigned').\
                 sorted(key=lambda r: r.scheduled_date)
