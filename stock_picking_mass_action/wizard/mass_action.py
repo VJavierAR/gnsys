@@ -906,7 +906,7 @@ class  DevolverPick(TransientModel):
             for m in moves:
                 self.env['stock.move.line'].search([['move_id','=',m.id]]).write({'location_dest_id':17})
         if(len(moves)==1):
-            self.env['stock.move.line'].search([['move_id','=',move.id]]).write({'location_dest_id':17})
+            self.env['stock.move.line'].search([['move_id','=',moves.id]]).write({'location_dest_id':17})
 
         i=pic.copy()
         i.write({'picking_type_id':destino.id})
