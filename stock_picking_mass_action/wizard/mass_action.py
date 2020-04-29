@@ -895,7 +895,7 @@ class  DevolverPick(TransientModel):
     def confirmar(self):
         pic=self.env['stock.picking'].search([['id','=',self.picking.id]])
         destino=None
-        sale=self.env['stock.picking'].search([['id','=',self.picking.sale_id.id]])
+        sale=self.env['sale.order'].search([['id','=',self.picking.sale_id.id]])
         s=sale.copy()
         if(self.picking.picking_type_id.warehouse_id.id==1):
             destino=self.env['stock.picking.type'].search([['name','=','Recepciones'],['warehouse_id','=',self.picking.picking_type_id.warehouse_id.id]])
