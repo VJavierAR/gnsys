@@ -896,7 +896,11 @@ class  DevolverPick(TransientModel):
         pic=self.env['stock.picking'].search([['id','=',self.picking.id]])
         destino=None
         sale=self.env['sale.order'].search([['id','=',self.picking.sale_id.id]])
+        ticket_id=sale.x_studio_field_bxHgp.id
+        sale.write({'x_studio_field_bxHgp':False})
         s=sale.copy()
+        s.write({'x_studio_field_bxHgp':ticket_id})
+        sale.write({'x_studio_field_bxHgp':ticket_id})
         if(self.picking.picking_type_id.warehouse_id.id==1):
             destino=self.env['stock.picking.type'].search([['name','=','Recepciones'],['warehouse_id','=',self.picking.picking_type_id.warehouse_id.id]])
         if(self.picking.picking_type_id.warehouse_id.id!=1):
