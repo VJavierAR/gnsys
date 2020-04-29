@@ -907,7 +907,7 @@ class  DevolverPick(TransientModel):
         i=pic.copy()
         i.write({'picking_type_id':destino.id})
         i.write({'location_id':17})
-        i.write({'location_dest_id':self.picking.warehouse_id.lot_stock_id.id})
+        i.write({'location_dest_id':self.picking.picking_type_id.warehouse_id.lot_stock_id.id})
         i.move_ids_without_package.write({'location_dest_id':self.picking.warehouse_id.lot_stock_id.id})
         i.action_confirm()
         i.action_assign()
