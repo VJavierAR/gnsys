@@ -904,7 +904,7 @@ class  DevolverPick(TransientModel):
         pick_origin1= self.env['stock.picking'].create({'picking_type_id' : destino.id,'almacenOrigen':self.picking.picking_type_id.warehouse_id.id,'almacenDestino':self.picking.picking_type_id.warehouse_id.id,'location_id':self.picking.location_id.id,'location_dest_id':self.picking.picking_type_id.warehouse_id.lot_stock_id.id})
         for l in self.picking.move_ids_without_package:
             datos1={'picking_id':pick_origin1.id,'product_id' : l.product_id.id, 'product_uom_qty' : l.product_uom_qty,'name':l.name if(l.product_id.description) else '/','product_uom':l.product_uom,'location_id':self.picking.location_id.id,'location_dest_id':self.picking.picking_type_id.warehouse_id.lot_stock_id.id}
-            self['stock.move'].create(datos1)
+            self.env['stock.move'].create(datos1)
         #self.picking.write({'location_dest_id':17})
         #self.picking.move_ids_without_package.write({'location_dest_id':17})
         #moves=self.picking.move_ids_without_package.mapped('id')
