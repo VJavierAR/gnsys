@@ -893,8 +893,27 @@ class  DevolverPick(TransientModel):
     picking=fields.Many2one('stock.picking')
 
     def confirmar(self):
-        pic=self.env['stock.picking'].search([['id','=',self.picking.id]])
+        #pic=self.env['stock.picking'].search([['id','=',self.picking.id]])
+        destino=None
+        if(self.picking.warehouse_id.id==1):
+            destino=self.env['stock.picking.type'].search([['name','=','Recepciones'],['warehouse_id','=',self.picking.warehouse_id.id]])
+        if(self.picking.warehouse_id.id!=1):
+            destino=self.env['stock.picking.type'].search([['name','=','Receipts'],['warehouse_id','=',self.picking.warehouse_id.id]])
+        self.picking.write({'location_dest_id':17})
+        self.picking.move_ids_without_package.write({'location_dest_id':17})
+        moves=self.picking.move_ids_without_package.mapped('id')
+        for m in moves:
+            self.env['stock.move.line'].search([['move_id','=',m.id]]).write({'location_dest_id':17})
         i=pic.copy()
-        _logger.info(str(i.id))
+        i.write({'picking_type_id':destino.id})
+        i.write({'location_id':17})
+        i.write({'location_dest_id':self.picking.warehouse_id.lot_stock_id.id})
+        i.move_ids_without_package.write({'location_dest_id':self.picking.warehouse_id.lot_stock_id.id})
+        i.action_confirm()
+        i.action_assign()
+        self.picking.action_done()
+        s=self.picking.sale_id.copy()
+        s.action_confirm()
+        #_logger.info(str(i.id))
         
         
