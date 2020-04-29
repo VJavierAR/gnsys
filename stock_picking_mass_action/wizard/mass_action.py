@@ -911,6 +911,8 @@ class  DevolverPick(TransientModel):
         i.move_ids_without_package.write({'location_dest_id':self.picking.picking_type_id.warehouse_id.lot_stock_id.id})
         i.action_confirm()
         i.action_assign()
+        self.picking.action_confirm()
+        self.picking.action_assign()
         self.picking.action_done()
         s=self.picking.sale_id.copy()
         s.write({'x_studio_fecha_de_entrega':self.fecha})
