@@ -909,25 +909,14 @@ class  DevolverPick(TransientModel):
         for l in self.picking.move_ids_without_package:
             datos1={'picking_id':pick_origin1.id,'product_id' : l.product_id.id, 'product_uom_qty' : l.product_uom_qty,'name':l.name if(l.product_id.description) else '/','product_uom':l.product_uom.id,'location_id':self.picking.location_id.id,'location_dest_id':self.picking.picking_type_id.warehouse_id.lot_stock_id.id}
             self.env['stock.move'].create(datos1)
-        #self.picking.write({'location_dest_id':17})
-        #self.picking.move_ids_without_package.write({'location_dest_id':17})
-        #moves=self.picking.move_ids_without_package.mapped('id')
-        #for m in moves:
-        #    self.env['stock.move.line'].search([['move_id','=',m]]).write({'location_dest_id':17})
-        #i=pic.copy()
-        #i.write({'picking_type_id':destino.id})
-        #i.write({'location_id':9})
-        #i.write({'location_dest_id':self.picking.picking_type_id.warehouse_id.lot_stock_id.id})
-        #i.move_ids_without_package.write({'location_dest_id':self.picking.picking_type_id.warehouse_id.lot_stock_id.id})
-        #i.action_confirm()
-        #i.action_assign()
         self.picking.action_cancel()
+        pick_origin1.write({'x_studio_ticket':s.origin})
+        pick_origin1.write({'partner_id':self.picking.partner_id.id})
         pick_origin1.action_assign()
         pick_origin1.action_confirm()
         s.write({'x_studio_fecha_de_entrega':self.fecha})
         self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : self.picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id, 'estadoTicket' : "Devuelto a Almacen", 'comentario':self.comentario}) 
         s.action_confirm()
         self.picking.x_studio_ticket_relacionado.write({'x_studio_field_0OAPP':[(4,s.id)]})
-        #_logger.info(str(i.id))
         
         
