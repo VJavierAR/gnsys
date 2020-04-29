@@ -913,6 +913,7 @@ class  DevolverPick(TransientModel):
         i.action_assign()
         self.picking.action_done()
         s=self.picking.sale_id.copy()
+        self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : self.picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id, 'estadoTicket' : "Devuelto a Almacen", 'comentario':self.comentario}) 
         s.action_confirm()
         #_logger.info(str(i.id))
         
