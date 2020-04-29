@@ -897,28 +897,28 @@ class  DevolverPick(TransientModel):
         destino=None
         sale=self.env['sale.order'].search([['id','=',self.picking.sale_id.id]])
         s=sale.copy()
-        if(self.picking.picking_type_id.warehouse_id.id==1):
-            destino=self.env['stock.picking.type'].search([['name','=','Recepciones'],['warehouse_id','=',self.picking.picking_type_id.warehouse_id.id]])
-        if(self.picking.picking_type_id.warehouse_id.id!=1):
-            destino=self.env['stock.picking.type'].search([['name','=','Receipts'],['warehouse_id','=',self.picking.picking_type_id.warehouse_id.id]])
+        #if(self.picking.picking_type_id.warehouse_id.id==1):
+        #    destino=self.env['stock.picking.type'].search([['name','=','Recepciones'],['warehouse_id','=',self.picking.picking_type_id.warehouse_id.id]])
+        #if(self.picking.picking_type_id.warehouse_id.id!=1):
+        #    destino=self.env['stock.picking.type'].search([['name','=','Receipts'],['warehouse_id','=',self.picking.picking_type_id.warehouse_id.id]])
         #self.picking.write({'location_dest_id':17})
         #self.picking.move_ids_without_package.write({'location_dest_id':17})
         #moves=self.picking.move_ids_without_package.mapped('id')
         #for m in moves:
         #    self.env['stock.move.line'].search([['move_id','=',m]]).write({'location_dest_id':17})
-        i=pic.copy()
-        i.write({'picking_type_id':destino.id})
-        i.write({'location_id':9})
-        i.write({'location_dest_id':self.picking.picking_type_id.warehouse_id.lot_stock_id.id})
-        i.move_ids_without_package.write({'location_dest_id':self.picking.picking_type_id.warehouse_id.lot_stock_id.id})
-        i.action_confirm()
-        i.action_assign()
+        #i=pic.copy()
+        #i.write({'picking_type_id':destino.id})
+        #i.write({'location_id':9})
+        #i.write({'location_dest_id':self.picking.picking_type_id.warehouse_id.lot_stock_id.id})
+        #i.move_ids_without_package.write({'location_dest_id':self.picking.picking_type_id.warehouse_id.lot_stock_id.id})
+        #i.action_confirm()
+        #i.action_assign()
         self.picking.action_confirm()
         self.picking.action_assign()
         self.picking.action_done()
         s.write({'x_studio_fecha_de_entrega':self.fecha})
-        self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : self.picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id, 'estadoTicket' : "Devuelto a Almacen", 'comentario':self.comentario}) 
-        #s.action_confirm()
+        #self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : self.picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id, 'estadoTicket' : "Devuelto a Almacen", 'comentario':self.comentario}) 
+        s.action_confirm()
         self.picking.x_studio_ticket_relacionado.write({'x_studio_field_0OAPP':[(4,s.id)]})
         #_logger.info(str(i.id))
         
