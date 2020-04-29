@@ -897,7 +897,7 @@ class  DevolverPick(TransientModel):
         destino=None
         if(self.picking.picking_type_id.warehouse_id.id==1):
             destino=self.env['stock.picking.type'].search([['name','=','Recepciones'],['warehouse_id','=',self.picking.picking_type_id.warehouse_id.id]])
-        if(self.picking.warehouse_id.id!=1):
+        if(self.picking.picking_type_id.warehouse_id.id!=1):
             destino=self.env['stock.picking.type'].search([['name','=','Receipts'],['warehouse_id','=',self.picking.picking_type_id.warehouse_id.id]])
         self.picking.write({'location_dest_id':17})
         self.picking.move_ids_without_package.write({'location_dest_id':17})
