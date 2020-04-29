@@ -893,7 +893,7 @@ class  DevolverPick(TransientModel):
     picking=fields.Many2one('stock.picking')
 
     def confirmar(self):
-        #pic=self.env['stock.picking'].search([['id','=',self.picking.id]])
+        pic=self.env['stock.picking'].search([['id','=',self.picking.id]])
         destino=None
         if(self.picking.picking_type_id.warehouse_id.id==1):
             destino=self.env['stock.picking.type'].search([['name','=','Recepciones'],['warehouse_id','=',self.picking.picking_type_id.warehouse_id.id]])
