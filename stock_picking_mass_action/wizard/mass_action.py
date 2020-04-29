@@ -902,11 +902,11 @@ class  DevolverPick(TransientModel):
         self.picking.write({'location_dest_id':17})
         self.picking.move_ids_without_package.write({'location_dest_id':17})
         moves=self.picking.move_ids_without_package.mapped('id')
-        for m in moves:
-            self.env['stock.move.line'].search([['move_id','=',m]]).write({'location_dest_id':17})
+        #for m in moves:
+        #    self.env['stock.move.line'].search([['move_id','=',m]]).write({'location_dest_id':17})
         i=pic.copy()
         i.write({'picking_type_id':destino.id})
-        i.write({'location_id':17})
+        i.write({'location_id':9})
         i.write({'location_dest_id':self.picking.picking_type_id.warehouse_id.lot_stock_id.id})
         i.move_ids_without_package.write({'location_dest_id':self.picking.picking_type_id.warehouse_id.lot_stock_id.id})
         i.action_confirm()
