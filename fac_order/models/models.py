@@ -327,17 +327,6 @@ class fac_order(models.Model):
                               
       detalle =  fields.One2many('sale.order.detalle', 'saleOrder', string='Order Lines')
 
-      @api.onchange('x_studio_tipo_de_solicitud')
-      def ChangeContext(self):
-        ctx={}
-        if(self.x_studio_tipo_de_solicitud):
-          if(self.x_studio_tipo_de_solicitud=="Retiro"):
-            ctx = self.env.context.copy()
-            ctx.get('order_line',False)
-            ctx.update({'default_x_studio_cliente':self.partner_shipping_id.display_name})
-            #ctx['context']={'order_line': {'default_x_studio_cliente':self.partner_shipping_id.display_name,'default_x_studio_categoria':'Equipo'}}
-        return ctx
-
 class detalle(models.Model):
       _name = 'sale.order.detalle'
       _description = 'Detalle Orden'
