@@ -328,6 +328,7 @@ class fac_order(models.Model):
       detalle =  fields.One2many('sale.order.detalle', 'saleOrder', string='Order Lines')
 
       def retiro(self):
+        self.action_confirm()
         _logger.info('Test')
                  
 class detalle(models.Model):
