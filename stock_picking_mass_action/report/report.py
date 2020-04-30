@@ -44,23 +44,24 @@ class PartnerXlsx(models.AbstractModel):
             sheet.write(i, 6, obj.qty_done, bold)
             if(obj.lot_id==False):
                 sheet.write(i, 7, obj.product_id.default_code, bold)
-            sheet.write(i, 8, obj.move_id.picking_id.partner_id.parent_id.name, bold)
-            sheet.write(i, 9, obj.move_id.picking_id.partner_id.name, bold)
-            sheet.write(i, 10, obj.move_id.picking_id.x_studio_comentario_1, bold)
+            if(obj.lot_id!=False):
+                sheet.write(i, 7, obj.lot_id.name, bold)
+            sheet.write(i, 8, obj.x_studio_cliente_1 if(obj.x_studio_cliente_1) else '', bold)
+            sheet.write(i, 9, obj.x_studio_localidad if(obj.x_studio_localidad) else '', bold)
+            sheet.write(i, 10, obj.move_id.picking_id.x_studio_comentario_1 if(obj.move_id.picking_id.x_studio_comentario_1) else '', bold)
             if(obj.x_studio_ticket):
-                sheet.write(i,11, obj.x_studio_ticket, bold)
+                sheet.write(i,11, obj.x_studio_ticket if(obj.x_studio_ticket) else '', bold)
             if(obj.x_studio_ticket==False):
-                sheet.write(i, 11, obj.x_studio_ticket, bold)
-            sheet.write(i, 12, obj.x_studio_serie_destino_1, bold)            
-            sheet.write(i, 13, obj.x_studio_modelo_equipo, bold)                 
-            sheet.write(i, 14, obj.move_id.picking_id.partner_id.city, bold)            
-            sheet.write(i, 15, obj.move_id.picking_id.partner_id.state_id.name, bold)
+                sheet.write(i, 11, obj.x_studio_orden_de_venta if(obj.x_studio_orden_de_venta) else '', bold)
+            sheet.write(i, 12, obj.x_studio_serie_destino_1 if(obj.x_studio_serie_destino_1) else '', bold)            
+            sheet.write(i, 13, obj.x_studio_modelo_equipo if(obj.x_studio_modelo_equipo) else '', bold)                 
+            sheet.write(i, 14, obj.move_id.picking_id.partner_id.city if(obj.move_id.picking_id.partner_id.city) else '', bold)            
+            sheet.write(i, 15, obj.move_id.picking_id.partner_id.state_id.name if(obj.move_id.picking_id.partner_id.state_id.name) else '', bold)
             user=self.env['stock.picking'].search(['&',['sale_id','=',obj.picking_id.sale_id.id],['location_id','=',obj.x_studio_field_3lDS0.lot_stock_id.id]])
             if(len(user)>1):
-                sheet.write(i, 16, user[0].write_uid.name, bold)
+                sheet.write(i, 16, user[0].write_uid.name if(user[0].write_uid.name) else '', bold)
             if(len(user)<=1):
-                sheet.write(i, 16, user.write_uid.name, bold)
-
+                sheet.write(i, 16, user.write_uid.name if(user.write_uid.name) else '', bold)
             i=i+1
         sheet.add_table('A2:Q'+str((i)),{'style': 'Table Style Medium 9','columns': [{'header': 'Categoria'},{'header': 'Fecha'},{'header': 'Almacen'},{'header':'Tipo'},{'header': 'Modelo'},{'header': 'No Parte'},{'header': 'Cantidad'},{'header': 'Serie'},{'header': 'Cliente'},{'header': 'Localidad'},{'header': 'Comentario'},{'header': 'Documento Origen'},{'header': 'Serie Destino'},{'header': 'Modelo Destino'},{'header': 'Estado'},{'header': 'Delegación'},{'header': 'Usuario'}]})
         workbook.close()

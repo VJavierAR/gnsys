@@ -153,17 +153,94 @@ class tfs(models.Model):
                     raise exceptions.UserError("No hay inventario en la ubicación selecionada")
 
 
-    def test(self):
-        i=self.env['tfs.tfs'].search([[]])
-        raise RedirectWarning('mensaje',i[0],_('Test'))
-    
+    def reglas(self,almacen=[]):
+        if(almacen==[]):
+            almacenes=self.env['stock.warehouse'].search([['x_studio_mini','=',True]])
+        if(almacen!=[]):
+            almacenes=self.env['stock.warehouse'].browse(almacen)           
+        i=0
+        for al in almacenes:
+            quants=self.env['stock.quant'].search([['location_id','=',al.lot_stock_id.id]])
+            reglasabs=self.env['stock.warehouse.orderpoint'].search([['warehouse_id','=',al.id],['active','=',False]])
+            #_logger.info(str(len(reglas)))
+            productos=[]
+            pickOrigen=[]
+            pickDestino=[]
+            rule2=[]
+            rule=[]
+            pickPosibles=self.env['stock.picking'].search([['state','!=','done'],['location_id','=',41911]])
+            for pix in pickPosibles:
+                for rl in pix.reglas.search([['active','=',False]]):
+                    rule2.append(rl.id)
+            for re in reglasabs:
+                i=i+1
+                _logger.info(str(rule2))
+                if(re.id not in rule2):
+                    productos.append(re.product_id.id)
+                    quant=quants.\
+                    filtered(lambda x: x.product_id.id == re.product_id.id)
+                    if(len(quant)==0):
+                        datos1={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':41911,'location_dest_id':re.location_id.id}
+                        datos2={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':re.location_id.id,'location_dest_id':41911}
+                        pickOrigen.append(datos1)
+                        pickDestino.append(datos2)
+                        rule.append(re.id)
+                    if(len(quant)>0):
+                        if(quant.quantity<=re.product_min_qty):
+                            datos1={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':41911,'location_dest_id':re.location_id.id}
+                            datos2={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':re.location_id.id,'location_dest_id':41911}
+                            pickOrigen.append(datos1)
+                            pickDestino.append(datos2)
+                            rule.append(re.id)
+            if(len(pickOrigen)>0):
+                origen1=self.env['stock.picking.type'].search([['name','=','Pick'],['warehouse_id','=',6299]])
+                origen2=self.env['stock.picking.type'].search([['name','=','Distribución'],['warehouse_id','=',1]])
+                origen3=self.env['stock.picking.type'].search([['name','=','Tránsito'],['warehouse_id','=',1]])
+                destino=self.env['stock.picking.type'].search([['name','=','Receipts'],['warehouse_id','=',al.id]])
+                _logger.info(str(origen2.default_location_src_id.id))
+                pick_origin1= self.env['stock.picking'].create({'picking_type_id' : origen1.id,'almacenOrigen':6299,'almacenDestino':al.id,'location_id':origen1.default_location_src_id.id,'location_dest_id':origen2.default_location_src_id.id,'reglas':[(6,0,rule)]})
+                pick_origin2= self.env['stock.picking'].create({'picking_type_id' : origen2.id,'almacenOrigen':6299,'almacenDestino':al.id,'location_id':origen2.default_location_src_id.id,'location_dest_id':origen3.default_location_src_id.id})
+                pick_origin3= self.env['stock.picking'].create({'picking_type_id' : origen3.id,'almacenOrigen':6299,'almacenDestino':al.id,'location_id':origen3.default_location_src_id.id,'location_dest_id':17})
 
+                pick_dest = self.env['stock.picking'].create({'picking_type_id' : destino.id, 'location_id':17,'almacenOrigen':al.id,'almacenDestino':6299,'location_dest_id':al.lot_stock_id.id})
+                
+                for ori in pickOrigen:
+                    
+                    #1
+                    ori['picking_id']=pick_origin1.id
+                    ori['location_id']=pick_origin1.location_id.id
+                    ori['location_dest_id']=pick_origin1.location_dest_id.id
+                    self.env['stock.move'].create(ori)
+                    #2
+                    ori['picking_id']=pick_origin2.id
+                    ori['location_id']=pick_origin2.location_id.id
+                    ori['location_dest_id']=pick_origin2.location_dest_id.id
+                    self.env['stock.move'].create(ori)
+                    #3
+                    ori['picking_id']=pick_origin3.id
+                    ori['location_id']=pick_origin3.location_id.id
+                    ori['location_dest_id']=pick_origin3.location_dest_id.id
+                    self.env['stock.move'].create(ori)
+
+                for des in pickDestino:
+                    des['picking_id']=pick_dest.id
+                    self.env['stock.move'].create(des)
+                
+                pick_origin1.action_confirm()
+                pick_origin1.action_assign()
+                pick_origin2.action_confirm()
+                pick_origin2.action_assign()
+                pick_origin3.action_confirm()
+                pick_origin3.action_assign()
+                pick_dest.action_confirm()
+                pick_dest.action_assign()
+            _logger.info(str(len(pickOrigen)))
 
     @api.multi
     def valida(self):
         view = self.env.ref('tfs.view_tfs_ticket')
         wiz = self.env['tfs.ticket'].create({'tfs_ids': [(4, self.id)]})
-        self.write({'estado':'Confirmado'})
+        #self.write({'estado':'Confirmado'})
         #self.env['dcas.dcas'].create({'serie':self.serie.id,'contadorMono':self.actualMonocromatico,'contadorColor':self.actualColor,'fuente':'tfs.tfs'})
         dat=eval(self.arreglo)
         if(dat!=[]):
@@ -225,11 +302,13 @@ class tfs(models.Model):
     
     @api.onchange('actualMonocromatico')
     def _onchange_mono(self):
-        if(self.productoNegro):
-            rendimientoMono=self.actualMonocromatico-self.contadorAnteriorMono
-            porcentaje=(100*rendimientoMono)/self.productoNegro.x_studio_rendimiento_toner if self.productoNegro.x_studio_rendimiento_toner>0 else 1
-            self.actualporcentajeNegro=porcentaje
-        
+        for record in self:
+            if(record.productoNegro):
+                _logger.info(str(record.productoNegro.x_studio_rendimiento_toner))
+                rendimientoMono=record.actualMonocromatico-record.contadorAnteriorMono
+                porcentaje=(100*rendimientoMono)/record.productoNegro.x_studio_rendimiento_toner if record.productoNegro.x_studio_rendimiento_toner>0 else 1
+                record['actualporcentajeNegro']=porcentaje
+            
 
     @api.onchange('actualColor')
     def _onchange_color(self):
@@ -296,7 +375,7 @@ class tfs(models.Model):
                     record['contadorMono'] =dc[0].id if(len(dc)>0) else self.env['dcas.dcas'].search([['serie','=',record.serie.id]]).sorted(key='create_date',reverse=True)[0].id
                     record['contadorAmarillo'] =dc1[0].id if(len(dc1)>0) else self.env['dcas.dcas'].search([['serie','=',record.serie.id]]).sorted(key='create_date',reverse=True)[0].id
                     record['contadorCian'] =dc2[0].id if(len(dc2)>0) else self.env['dcas.dcas'].search([['serie','=',record.serie.id]]).sorted(key='create_date',reverse=True)[0].id
-                    record['contadorMagenta'] =d3[0].id if(len(dc3)>0) else self.env['dcas.dcas'].search([['serie','=',record.serie.id]]).sorted(key='create_date',reverse=True)[0].id
+                    record['contadorMagenta'] =dc3[0].id if(len(dc3)>0) else self.env['dcas.dcas'].search([['serie','=',record.serie.id]]).sorted(key='create_date',reverse=True)[0].id
                 
   
             #if record.localidad:

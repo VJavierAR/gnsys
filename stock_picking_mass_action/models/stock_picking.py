@@ -26,9 +26,26 @@ class StockPicking(Model):
     tipo=fields.Char(compute='cliente',store=True)
     oculta=fields.Boolean(store=True)
     estadoRuta=fields.Selection([["borrador","Borrador"],["valido","Confirmado"]],default="borrador")
+    reglas=fields.Many2many('stock.warehouse.orderpoint')
+    internas=fields.Boolean()
 
     #documentosDistro = fields.Many2many('ir.attachment', string="Evidencias ")
     #historialTicket = fields.One2many('ir.attachment','res_id',string='Evidencias al ticket',store=True,track_visibility='onchange')
+    def regresoAlmacen(self):
+        wiz = self.env['devolver.action'].create({'picking':self.id})
+        view = self.env.ref('stock_picking_mass_action.view_devolver_action_form')
+        return {
+            'name': _('Devolver'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'devolver.action',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            'context': self.env.context,
+        }
 
     def devolver(self):
         if(self.ruta_id):

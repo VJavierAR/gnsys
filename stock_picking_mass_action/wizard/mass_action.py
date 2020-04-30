@@ -123,7 +123,7 @@ class StockPickingMassAction(TransientModel):
             pickings_to_check.sudo().action_assign()
         # Get all pickings ready to transfer and transfer them if asked
         if self.transfer:
-            _logger.info("Hola")
+            _logger.info("Hola ando subiendo info ya te avise en el grupo y en privadoxD")
             assigned_picking_lst = self.picking_ids.\
                 filtered(lambda x: x.state == 'assigned').\
                 sorted(key=lambda r: r.scheduled_date)
@@ -334,50 +334,93 @@ class ComemtarioTicket(TransientModel):
 class TransferInter(TransientModel):
     _name='transferencia.interna'
     _description='Transferencia Interna'    
-    almacenOrigen=fields.Many2one('stock.warehouse','Almacen Origen')
+    almacenPadre=fields.Many2one('stock.warehouse','Almacen Padre')
+    almacenOrigen=fields.Many2one('stock.warehouse','Almacen Hijo',domain="[('x_studio_almacn_padre','=',almacenPadre)]")
     ubicacion=fields.Many2one(related='almacenOrigen.lot_stock_id')
     almacenDestino=fields.Many2one('stock.warehouse','Almacen Destino')
     lines=fields.One2many('transferencia.interna.temp','transfer')
     categoria=fields.Many2one('product.category','Categoria de productos')
 
     def confirmar(self):
-        origen=self.env['stock.picking.type'].search([['name','=','Internal Transfers'],['warehouse_id','=',self.almacenOrigen.id]])
-        destino=self.env['stock.picking.type'].search([['name','=','Internal Transfers'],['warehouse_id','=',self.almacenDestino.id]])
+        pick_dest=[]
+        pick_origin=[]
+        pick_origin1=[]
+        pick_origin2=[]
+        pick_origin3=[]
+        if(self.almacenOrigen.id==False):
+            self.almacenOrigen=self.almacenPadre.id
 
-        pick_origin = self.env['stock.picking'].create({'picking_type_id' : origen.id,'almacenOrigen':self.almacenOrigen.id,'almacenDestino':self.almacenDestino.id,'location_id':self.almacenOrigen.lot_stock_id.id,'location_dest_id':17})
-        pick_dest = self.env['stock.picking'].create({'picking_type_id' : destino.id, 'location_id':17,'almacenOrigen':self.almacenOrigen.id,'almacenDestino':self.almacenDestino.id,'location_dest_id':self.almacenDestino.lot_stock_id.id})
+        if(self.almacenDestino.x_studio_almacn_padre):
+            if('Foraneo' in self.almacenDestino.x_studio_almacn_padre.name):
+                origen1=None
+                if(self.almacenOrigen.id==1):
+                    origen1=self.env['stock.picking.type'].search([['name','=','Surtir'],['warehouse_id','=',self.almacenOrigen.id]])
+                if(self.almacenOrigen.id!=1):
+                    origen1=self.env['stock.picking.type'].search([['name','=','Pick'],['warehouse_id','=',self.almacenOrigen.id]])
+                origen2=self.env['stock.picking.type'].search([['name','=','Distribución'],['warehouse_id','=',1]])
+                origen3=self.env['stock.picking.type'].search([['name','=','Tránsito'],['warehouse_id','=',1]])
+                destino=self.env['stock.picking.type'].search([['name','=','Receipts'],['warehouse_id','=',self.almacenDestino.id]])
+                pick_origin1= self.env['stock.picking'].create({'internas':True,'picking_type_id' : origen1.id,'almacenOrigen':self.almacenOrigen.id,'almacenDestino':self.almacenDestino.id,'location_id':origen1.default_location_src_id.id,'location_dest_id':origen2.default_location_src_id.id})
+                pick_origin2= self.env['stock.picking'].create({'internas':True,'picking_type_id' : origen2.id,'almacenOrigen':self.almacenOrigen.id,'almacenDestino':self.almacenDestino.id,'location_id':origen2.default_location_src_id.id,'location_dest_id':origen3.default_location_src_id.id})
+                pick_origin3= self.env['stock.picking'].create({'internas':True,'picking_type_id' : origen3.id,'almacenOrigen':self.almacenOrigen.id,'almacenDestino':self.almacenDestino.id,'location_id':origen3.default_location_src_id.id,'location_dest_id':17})
+                pick_dest = self.env['stock.picking'].create({'internas':True,'picking_type_id' : destino.id, 'location_id':17,'almacenOrigen':self.almacenOrigen.id,'almacenDestino':self.almacenDestino.id,'location_dest_id':self.almacenDestino.lot_stock_id.id})
+        else:    
+            origen=self.env['stock.picking.type'].search([['name','=','Internal Transfers'],['warehouse_id','=',self.almacenOrigen.id]])
+            destino=self.env['stock.picking.type'].search([['name','=','Internal Transfers'],['warehouse_id','=',self.almacenDestino.id]])
+            pick_origin = self.env['stock.picking'].create({'internas':True,'picking_type_id' : origen.id,'almacenOrigen':self.almacenOrigen.id,'almacenDestino':self.almacenDestino.id,'location_id':self.almacenOrigen.lot_stock_id.id,'location_dest_id':17})
+            pick_dest = self.env['stock.picking'].create({'internas':True,'picking_type_id' : destino.id, 'location_id':17,'almacenOrigen':self.almacenOrigen.id,'almacenDestino':self.almacenDestino.id,'location_dest_id':self.almacenDestino.lot_stock_id.id})
         v=0
         e=[]
         e1=[]
         for l in self.lines:
             datos1={'product_id' : l.producto.id, 'product_uom_qty' : l.cantidad,'name':l.producto.description if(l.producto.description) else '/','product_uom':l.unidad.id,'location_id':self.almacenOrigen.lot_stock_id.id,'location_dest_id':17}
-            datos1['picking_id']= pick_origin.id
             datos2={'product_id' : l.producto.id, 'product_uom_qty' : l.cantidad,'name':l.producto.description if(l.producto.description) else '/','product_uom':l.unidad.id,'location_id':17,'location_dest_id':self.almacenDestino.lot_stock_id.id}
-            datos2['picking_id']= pick_dest.id
-            a=self.env['stock.move'].create(datos1)
-            b=self.env['stock.move'].create(datos2)
+            if(self.almacenDestino.x_studio_almacn_padre):
+                if('Foraneo' in self.almacenDestino.x_studio_almacn_padre.name):
+                    datos1['picking_id']=pick_origin1.id
+                    datos1['location_id']=pick_origin1.location_id.id
+                    datos1['location_dest_id']=pick_origin1.location_dest_id.id
+                    self.env['stock.move'].create(datos1)
+                    #2
+                    datos1['picking_id']=pick_origin2.id
+                    datos1['location_id']=pick_origin2.location_id.id
+                    datos1['location_dest_id']=pick_origin2.location_dest_id.id
+                    self.env['stock.move'].create(datos1)
+                    #3
+                    datos1['picking_id']=pick_origin3.id
+                    datos1['location_id']=pick_origin3.location_id.id
+                    datos1['location_dest_id']=pick_origin3.location_dest_id.id
+                    self.env['stock.move'].create(datos1)
+
+                    datos2['picking_id']=pick_dest.id
+                    self.env['stock.move'].create(datos2)
+
+            else:
+                datos1['picking_id']= pick_origin.id
+                datos2['picking_id']= pick_dest.id
+                a=self.env['stock.move'].create(datos1)
+                b=self.env['stock.move'].create(datos2)
+                pick_origin.action_confirm()
+                pick_origin.action_assign()
+                pick_dest.action_confirm()
+                pick_dest.action_assign()
+                pick_origin.action_confirm()
+                pick_origin.action_assign()
+                pick_dest.action_confirm()
+                pick_dest.action_assign()
             if(l.producto.categ_id.id==13):
                 v=1
                 e.append(a.id)
                 e1.append(b.id)
-        pick_origin.action_confirm()
-        pick_origin.action_assign()
-        pick_dest.action_confirm()
-        pick_dest.action_assign()
-        pick_origin.action_confirm()
-        pick_origin.action_assign()
-        pick_dest.action_confirm()
-        pick_dest.action_assign()
-        if(v==1):
-            p=self.lines.filtered(lambda x:x.producto.categ_id.id==13).sorted(key='id')
-            e2=self.env['stock.move.line'].search([['move_id','in',e]]).sorted(key='move_id')
-            e3=self.env['stock.move.line'].search([['move_id','in',e1]]).sorted(key='move_id')
-            for ee in p:
-              e2.write({'lot_id':ee.serie.id})
-              e3.write({'lot_id':ee.serie.id})  
+
+        #if(v==1):
+        #    p=self.lines.filtered(lambda x:x.producto.categ_id.id==13).sorted(key='id')
+        #    e2=self.env['stock.move.line'].search([['move_id','in',e]]).sorted(key='move_id')
+        #    e3=self.env['stock.move.line'].search([['move_id','in',e1]]).sorted(key='move_id')
+        #    for ee in p:
+        #      e2.write({'lot_id':ee.serie.id})
+        #      e3.write({'lot_id':ee.serie.id})  
   
-
-
         name = 'Picking'
         res_model = 'stock.picking' 
         view_name = 'stock.view_picking_form'
@@ -391,7 +434,7 @@ class TransferInter(TransientModel):
             #'views': [(view.id, 'form')],
             'view_id': view.id,
             'target': 'current',
-            'res_id': pick_origin.id,
+            'res_id': pick_origin.id if(pick_origin!=[]) else pick_origin1.id,
             'nodestroy': True
         }
 
@@ -599,15 +642,15 @@ class StockQuantMassAction(TransientModel):
                 d.append(['x_studio_categoria','=',self.categoria.id])
             if(self.tipo):
                 d.append(['product_id','=',self.tipo.id])
-            if(self.almacen.id==False):
-                d.append(['x_studio_almacn','!=',False])
-            if(self.categoria.id==False):
-                d.append(['x_studio_categoria','!=',False])
-            if(self.tipo.id==False):
-                d.append(['product_id','!=',False])
-            d.append(['x_studio_almacn.x_studio_cliente','=',False])
+            # if(self.almacen.id==False):
+            #     d.append(['x_studio_almacn','!=',False])
+            # if(self.categoria.id==False):
+            #     d.append(['x_studio_categoria','!=',False])
+            # if(self.tipo.id==False):
+            #     d.append(['product_id','!=',False])
+            #d.append(['x_studio_almacn.x_studio_cliente','=',False])
             d.append(['lot_id','=',False])
-        #_logger.info(str(d))
+        _logger.info(str(d))
         data=self.env['stock.quant'].search(d)
         #_logger.info(str(data.mapped('id')))
         if(len(data)>0):
@@ -766,6 +809,7 @@ class PickingsAComprasMassAction(TransientModel):
             for r in requLin:
                 r['req_rel']=requisicion.id
                 self.env['product.rel.requisicion'].create(r)
+            self.env['stock.picking'].browse(pi).write({'estado':'compras'})
             view = self.env.ref('studio_customization.default_form_view_fo_24cee64e-ad11-4f19-a7f6-fceca5375726')
             return {
                     'name': _('Transferencia'),
@@ -784,3 +828,95 @@ class PickingsAComprasMassAction(TransientModel):
             'title': _('Alerta'),
             'message': ('Las ordenes selcciondas tiene existencias o ya se encuntran con una requisicion.')
                     }}
+class ProductAltaAction(TransientModel):
+    _name = 'product.product.action'
+    _description='Alta de referencias en masa'
+    archivo=fields.Binary()
+    almacen=fields.Many2one('stock.warehouse')
+
+    def crear(self):
+        if(self.archivo):
+            f2=base64.b64decode(self.archivo)
+            H=StringIO(f2)
+            mimetype = guess_mimetype(f2 or b'')
+            #_logger.info(str(mimetype))
+            if(mimetype=='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' or mimetype=='application/vnd.ms-excel'):
+                book = xlrd.open_workbook(file_contents=f2 or b'')
+                sheet = book.sheet_by_index(0)
+                header=[]
+                arr=[]
+                i=0
+                j=0
+                check=False
+                for row_num, row in enumerate(sheet.get_rows()):
+                    if(j>0):
+                        if(row[2].ctype!=0):
+                            if(row[2].value!=''):
+                                if(int(row[2].value)>0):
+                                    check=True
+                    j=j+1
+                id3=None
+                if(check and self.almacen.id==False):
+                    raise UserError(_("Se requiere almacen para cargar las existencias"))
+                if(check and self.almacen.id!=False):
+                    id3=self.env['stock.inventory'].create({'name':'Carga de creacion'+str(self.almacen.name), 'location_id':self.almacen.lot_stock_id.id,'x_studio_field_8gltH':self.almacen.id,'state':'done'})
+                for row_num, row in enumerate(sheet.get_rows()):
+                    if(i>0):
+                        template=self.env['product.template'].search([('name','=',str(row[0].value).replace('.0','')),('categ_id', '=',13)])
+                        productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
+                        unidad=self.env['uom.uom'].search([('name','=','Unidad(es)' if(row[3].value.lower()=='pieza') else row[3].value)])
+                        producto=self.env['product.product'].search([['default_code','=',str(row[1].value).replace('.0','')]])
+                        inventario=self.env['stock.quant'].search([['product_id','=',producto.id],['location_id','=',self.almacen.lot_stock_id.id]])
+                        categoria=self.env['product.category'].search([['name','=',row[5].value]])
+                        _logger.info(str(categoria.name))
+                        if(producto.id==False):
+                            producto=self.env['product.product'].create({'default_code':str(row[1].value).replace('.0',''),'categ_id':categoria.id,'x_studio_field_ry7nQ':productid.id,'description':row[4].value,'name':row[4].value,'uom_id':unidad.id if(unidad.id) else False})
+                        if(check):
+                            if(self.almacen):
+                                quant={'product_id':producto.id,'reserved_quantity':'0','quantity':row[2].value, 'location_id':self.almacen.lot_stock_id.id}
+                                inventoty={'inventory_id':id3.id, 'partner_id':'1','product_id':productid.id,'product_uom_id':'1','product_qty':row[2].value, 'location_id':self.almacen.lot_stock_id.id}
+                                if(inventario.id):
+                                    inventario.write({'quantity':row[2].value})
+                                if(inventario.id==False):
+                                    self.env['stock.quant'].sudo().create(quant)
+                                self.env['stock.inventory.line'].create(inventoty)
+                            else:
+                                raise UserError(_("Se requiere almacen para cargar las existencias"))
+                    i=i+1
+            else:
+                raise UserError(_("Archivo invalido"))
+class  DevolverPick(TransientModel):
+    _name='devolver.action'
+    _description='devolucion a almacen'
+    fecha=fields.Datetime()
+    comentario=fields.Char()
+    picking=fields.Many2one('stock.picking')
+
+    def confirmar(self):
+        pic=self.env['stock.picking'].search([['id','=',self.picking.id]])
+        destino=None
+        sale=self.env['sale.order'].search([['id','=',self.picking.sale_id.id]])
+        ticket_id=sale.x_studio_field_bxHgp.id
+        sale.write({'x_studio_field_bxHgp':False})
+        s=sale.copy()
+        s.write({'x_studio_field_bxHgp':ticket_id})
+        sale.write({'x_studio_field_bxHgp':ticket_id})
+        if(self.picking.picking_type_id.warehouse_id.id==1):
+            destino=self.env['stock.picking.type'].search([['name','=','Recepciones'],['warehouse_id','=',self.picking.picking_type_id.warehouse_id.id]])
+        if(self.picking.picking_type_id.warehouse_id.id!=1):
+            destino=self.env['stock.picking.type'].search([['name','=','Receipts'],['warehouse_id','=',self.picking.picking_type_id.warehouse_id.id]])
+        pick_origin1= self.env['stock.picking'].create({'picking_type_id' : destino.id,'almacenOrigen':self.picking.picking_type_id.warehouse_id.id,'almacenDestino':self.picking.picking_type_id.warehouse_id.id,'location_id':self.picking.location_id.id,'location_dest_id':self.picking.picking_type_id.warehouse_id.lot_stock_id.id})
+        for l in self.picking.move_ids_without_package:
+            datos1={'picking_id':pick_origin1.id,'product_id' : l.product_id.id, 'product_uom_qty' : l.product_uom_qty,'name':l.name if(l.product_id.description) else '/','product_uom':l.product_uom.id,'location_id':self.picking.location_id.id,'location_dest_id':self.picking.picking_type_id.warehouse_id.lot_stock_id.id}
+            self.env['stock.move'].create(datos1)
+        self.picking.action_cancel()
+        pick_origin1.write({'x_studio_ticket':s.origin})
+        pick_origin1.write({'partner_id':self.picking.partner_id.id})
+        pick_origin1.action_assign()
+        pick_origin1.action_confirm()
+        s.write({'x_studio_fecha_de_entrega':self.fecha})
+        self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : self.picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id, 'estadoTicket' : "Devuelto a Almacen", 'comentario':self.comentario}) 
+        s.action_confirm()
+        self.picking.x_studio_ticket_relacionado.write({'x_studio_field_0OAPP':[(4,s.id)]})
+        
+        

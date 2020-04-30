@@ -538,13 +538,13 @@ class helpdesk_contadores(TransientModel):
     @api.depends('ticket_id')
     def _compute_contadorBNMesa(self):
         if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
-            if self.contadorBNActual == 0:
-                for serie in self.ticket_id.x_studio_equipo_por_nmero_de_serie:
-                    self.contadorBNMesa = int(serie.x_studio_contador_bn_mesa)
-                    self.contadorColorMesa = int(serie.x_studio_contador_color_mesa)
-                    self.bnColor = serie.x_studio_color_bn
-            else:
-                self.contadorBNMesa = self.contadorBNActual
+            #if self.contadorBNActual == 0:
+            for serie in self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+                self.contadorBNMesa = int(serie.x_studio_contador_bn_mesa)
+                self.contadorColorMesa = int(serie.x_studio_contador_color_mesa)
+                self.bnColor = serie.x_studio_color_bn
+            #else:
+            #    self.contadorBNMesa = self.contadorBNActual
 
     def _compute_actualizaColor(self):
       for record in self:
@@ -640,7 +640,7 @@ class helpdesk_contadores(TransientModel):
                             'context': self.env.context,
                             }
                 else:
-                    raise exceptions.ValidationError("Error al capturar debe ser mayor")
+                    raise exceptions.ValidationError("Error al capturar contador, el contador capturado debe ser mayor.")
 
 
 
@@ -673,6 +673,7 @@ class helpdesk_crearconserie(TransientModel):
 
     ticket_id_existente = fields.Integer(string = 'Ticket existente', default = 0, store = True)
     textoTicketExistente = fields.Text(string = ' ', store = True)
+    textoClienteMoroso = fields.Text(string = ' ', store = True)
 
     estatus = fields.Selection([('No disponible','No disponible'),('Moroso','Moroso'),('Al corriente','Al corriente')], string = 'Estatus', store = True, default = 'No disponible')
 
@@ -737,7 +738,6 @@ class helpdesk_crearconserie(TransientModel):
 
     
 
-    
     @api.onchange('localidadRelacion')
     def cambia_localidad(self):
       if self.localidadRelacion:
@@ -790,8 +790,7 @@ class helpdesk_crearconserie(TransientModel):
         self.direccionCodigoPostal = ''
 
   
-
-    
+        
     @api.onchange('clienteRelacion')
     def cambia_cliente(self):
         if not self.clienteRelacion:
@@ -821,8 +820,14 @@ class helpdesk_crearconserie(TransientModel):
         else:
             if self.clienteRelacion.x_studio_moroso:
                 self.estatus = 'Moroso'
+                textoHtml = []
+                #textoHtml.append("<br/>")
+                #textoHtml.append("<br/>")
+                textoHtml.append("<h2>El cliente es moroso.</h2>")
+                self.textoClienteMoroso = ''.join(textoHtml)
             else:
                 self.estatus = 'Al corriente'
+                self.textoClienteMoroso = ''
     
 
     @api.onchange('serie')
@@ -897,6 +902,12 @@ class helpdesk_crearconserie(TransientModel):
                   textoHtml.append("<br/>")
                   textoHtml.append("<br/>")
                   textoHtml.append("<h3 class='text-center'>El ticket en proceso es: " + str(informacion[0][0]) + "</h3>")
+                  if self.clienteRelacion.x_studio_moroso:
+                    textoHtmlMoroso = []
+                    textoHtmlMoroso.append("<h2>El cliente es moroso.</h2>")
+                    self.textoClienteMoroso = ''.join(textoHtmlMoroso)
+                  else:
+                    self.textoClienteMoroso = ''
                   #textoHtml.append("<script> function test() { alert('Hola') }</script>")
                   self.textoTicketExistente =  ''.join(textoHtml)
                   #self.textoTicketExistente = textoHtml2

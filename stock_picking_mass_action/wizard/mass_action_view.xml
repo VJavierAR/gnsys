@@ -1,11 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="view_devolver_action_form" model="ir.ui.view">
+        <field name="model">devolver.action</field>
+        <field name="arch" type="xml">
+            <form string="Mass Action for the selected sale order">
+                <group>
+                    <field name="fecha" string="Fecha de nueva salida" required="1"/>
+                    <field name="comentario" string="Comentario" required="1"/>
+                </group>
+                <footer>
+                    <button name="confirmar" string="Confirmar" type="object" class="oe_highlight"/>
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_product_product_action_form" model="ir.ui.view">
+        <field name="model">product.product.action</field>
+        <field name="arch" type="xml">
+            <form string="Mass Action for the selected sale order">
+                <group>
+                    <field name="archivo" string="Archivo" required="1"/>
+                    <field name="almacen" string="Almacen" domain="[['x_studio_cliente','=',False]]"/>
+                </group>
+                <footer>
+                    <button name="crear" string="Crear" type="object" class="oe_highlight"/>
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
     <record id="view_stock_inventory_action_form" model="ir.ui.view">
         <field name="model">stock.inventory.action</field>
         <field name="arch" type="xml">
             <form string="Mass Action for the selected sale order">
                 <group>
-                    <field name="almacen" string="Almacen" required="1"/>
+                    <field name="almacen" string="Almacen" required="1" domain="[['x_studio_cliente','=',False]]"/>
                     <field name="archivo" string="Archivo" required="1"/>
                     <field name="comentario" string="Comentario" required="1"/>
                 </group>
@@ -38,12 +70,6 @@
             </form>
         </field>
     </record>
-
-
-
-
-
-
 
     <record id="view_helpdesk_ticket_action_form" model="ir.ui.view">
         <field name="model">helpdesk.ticket.action</field>
@@ -91,7 +117,7 @@
                     <field name="fechaFinal" string="Fecha Inicial" required="1"/>
                     </group>
                     <group>
-                    <field name="almacen"/>
+                    <field name="almacen" domain="[['x_studio_cliente','=',False]]"/>
                     <field name="categoria"/>
                     <field name="tipo" required="1"/>
                     </group>
@@ -121,9 +147,6 @@
             </form>
         </field>
     </record>
-
-
-
 
     <record id="view_stock_picking_mass_action_form" model="ir.ui.view">
         <field name="model">stock.picking.mass.action</field>
@@ -259,10 +282,11 @@
         <field name="arch" type="xml">
             <form string="Transferencia Interna">
                 <group>
-                    <field name="almacenOrigen" required="1"/>
+                    <field name="almacenPadre" required="1" domain="[['x_studio_cliente','=',False]]"/>
+                    <field name="almacenOrigen" attrs="{'invisible':[['almacenPadre','=',False]]}"/>
                     <field name="ubicacion" invisible="1"/>
-                    <field name="almacenDestino" required="1"/>
-                    <field name="categoria"/>
+                    <field name="almacenDestino" required="1" domain="[['x_studio_cliente','=',False]]"/>
+                    <field name="categoria" string="Tipo de Componentes"/>
                 </group>
                 <notebook>
                 <page string="Productos">
@@ -277,7 +301,7 @@
                             <field name="descripcion"/>
                             <field name="disponible"/>
                             <field name="stoc" invisible="1"/>
-                            <field name="cantidad"  attrs="{'invisible': [['categoria', '!=', 13]]}"/>
+                            <field name="cantidad"  attrs="{'invisible': [['categoria', '=', 13]]}"/>
                         </tree>
                     </field>
                 </page>

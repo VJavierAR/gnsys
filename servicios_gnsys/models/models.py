@@ -19,7 +19,7 @@ class servicios_gnsys(models.Model):
     fechaDeFinDeServicio = fields.Datetime(string = 'Fecha de finalización de servicio',track_visibility='onchange')
     descripcion = fields.Text(string="Descripción")
     rentaMensual = fields.Text(string="Renta mensual")
-    tipo = fields.Selection([('1','SERVICIO DE PCOUNTER'),('2','RENTA MENSUAL DE LICENCIA EMBEDED'),('3','Arrendamiento Base'),('4','Arrendamiento Global')],string="Tipo de servicio")
+    tipo = fields.Selection([('1','SERVICIO DE PCOUNTER'),('2','RENTA MENSUAL DE LICENCIA EMBEDED'),('3','Arrendamiento Base'),('4','Arrendamiento Global'),('4','Costo por página procesada')],string="Tipo de servicio")
     bolsaBN = fields.Integer(string="Bolsa B/N")
     clickExcedenteBN = fields.Float(string="Click")
     procesadoBN = fields.Integer(string="Procesado B/N")
@@ -44,6 +44,22 @@ class servicios_gnsys(models.Model):
     modelo = fields.Text(string="Modelo")
     
     contrato = fields.Many2one('contrato', string="Contrato")
+    tarifa = fields.Integer(string="Tarifa")
+    tipo = fields.Text(string="Tipo")
+    estado = fields.Text(string="Estado")
+    
+    cantidad = fields.Text(string="cantidad")
+    importe = fields.Text(string="Importe")
+    retencion = fields.Text(string="Retencion")
+    totalRetencion=fields.Text(string="Total con retencion")
+    nivelfactu=fields.Text(string="Nivel de facturación")
+    codigosg=fields.Text(string="codigo texto")
+
+    
+    
+    
+    
+    
     
     
     
