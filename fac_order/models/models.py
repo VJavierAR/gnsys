@@ -332,7 +332,9 @@ class fac_order(models.Model):
         ctx={}
         if(self.x_studio_tipo_de_solicitud):
           if(self.x_studio_tipo_de_solicitud=="Retiro"):
-            self.order_line.context.update({'default_x_studio_cliente':self.partner_shipping_id.display_name})
+            ctx = self.env.context.copy()
+            ctx.get('order_line',False)
+            ctx.update({'default_x_studio_cliente':self.partner_shipping_id.display_name})
             #ctx['context']={'order_line': {'default_x_studio_cliente':self.partner_shipping_id.display_name,'default_x_studio_categoria':'Equipo'}}
         return ctx
 
