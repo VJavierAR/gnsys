@@ -310,10 +310,11 @@ class fac_order(models.Model):
                             if k.x_studio_color_bn=='Color':
                                self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':11397,'product_uom_qty':colorp,'price_unit':m.clickExcedenteColor})                                                    
                                self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':11396,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN})                                                                                  
-                        self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'product_id':11395,'product_uom_qty':1.0,'price_unit':j.rentaMensual,'name':'RENTA '+ str(len(p))+' EQUIPOS EN GENERAL.'})                                                                                                    
-                     if j.nombreAnte=='SERVICIO DE PCOUNTER' or j.nombreAnte=='SERVICIO DE PCOUNTER1' or j.nombreAnte=='ADMINISTRACION DE DOCUMENTOS CON PCOUNTER' or j.nombreAnte=='SERVICIO DE MANTENIMIENTO DE PCOUNTER' or j.nombreAnte=='SERVICIO DE MANTENIMIENTO PCOUNTER' or j.nombreAnte=='RENTA DE LICENCIAMIENTO PCOUNTER':                        
-                        self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'product_id':11325 ,'product_uom_qty':1.0,'price_unit':j.rentaMensual})                                                                                                    
-                 
+                        self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'product_id':11395,'product_uom_qty':1.0,'price_unit':j.rentaMensual,'name':'RENTA '+ str(len(p))+' EQUIPOS EN GENERAL.'})                                                                                                                         
+               for s in self.x_studio_servicios:
+                     if s.nombreAnte=='SERVICIO DE PCOUNTER' or s.nombreAnte=='SERVICIO DE PCOUNTER1' or s.nombreAnte=='ADMINISTRACION DE DOCUMENTOS CON PCOUNTER' or s.nombreAnte=='SERVICIO DE MANTENIMIENTO DE PCOUNTER' or s.nombreAnte=='SERVICIO DE MANTENIMIENTO PCOUNTER' or s.nombreAnte=='RENTA DE LICENCIAMIENTO PCOUNTER':                        
+                        self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':s.id,'product_id':11325 ,'product_uom_qty':1.0,'price_unit':s.rentaMensual})                                                                                                    
+                
       detalle =  fields.One2many('sale.order.detalle', 'saleOrder', string='Order Lines')
                  
 class detalle(models.Model):
