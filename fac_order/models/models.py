@@ -326,6 +326,13 @@ class fac_order(models.Model):
                         self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':s.id,'product_id':11423 ,'product_uom_qty':1.0,'price_unit':s.rentaMensual})                                                                                                    
                               
       detalle =  fields.One2many('sale.order.detalle', 'saleOrder', string='Order Lines')
+
+      @api.onchange('x_studio_tipo_de_solicitud')
+      def ChangeContext(self):
+        ctx={}
+        if(self.x_studio_tipo_de_solicitud):
+          if(self.x_studio_tipo_de_solicitud=="Retiro"):
+            ctx['domain']={'order_line': ['&',('product_id.categ_id.id', '=', 13),('x_studio_field_9nQhR.x_studio_ultima_ubicacin', '=', self.partner_shipping_id.display_name)]}
                  
 class detalle(models.Model):
       _name = 'sale.order.detalle'
