@@ -333,7 +333,7 @@ class fac_order(models.Model):
         if(self.x_studio_tipo_de_solicitud):
           if(self.x_studio_tipo_de_solicitud=="Retiro"):
             ctx['domain']={'order_line': ['&',('product_id.categ_id.id', '=', 13),('x_studio_field_9nQhR.x_studio_ultima_ubicacin', '=', self.partner_shipping_id.display_name)]}
-                 
+        return ctx   
 class detalle(models.Model):
       _name = 'sale.order.detalle'
       _description = 'Detalle Orden'
