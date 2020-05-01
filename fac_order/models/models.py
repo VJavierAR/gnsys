@@ -332,11 +332,11 @@ class fac_order(models.Model):
         picks=self.env['stock.picking'].search([['sale_id','=',self.id]])
         almacen=self.env['stock.warehouse'].search([['x_studio_field_E0H1Z','=',self.partner_shipping_id.id]])
         for pic in picks:
-          if('Pick' in pick.name or 'Su' in pick.name):
+          if('Pick' in pic.name or 'Su' in pic.name):
             pic.write({'location_id':almacen.lot_stock_id.id})
             pic.move_ids_without_package.write({'location_id':almacen.lot_stock_id.id})
             self.env['stock.move.line'].search([['picking_id','=',pic.id]]).write({'location_id':almacen.lot_stock_id.id})
-          if('Out' in pick.name or 'Tra'):
+          if('Out' in pic.name or 'Tra'):
             pic.write({'location_dest_id':self.warehouse_id.lot_stock_id.id})
             pic.move_ids_without_package.write({'location_dest_id':self.warehouse_id.lot_stock_id.id})
             self.env['stock.move.line'].search([['picking_id','=',pic.id]]).write({'location_dest_id':self.warehouse_id.lot_stock_id.id})
