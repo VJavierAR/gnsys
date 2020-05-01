@@ -329,7 +329,8 @@ class fac_order(models.Model):
 
       def retiro(self):
         self.action_confirm()
-        _logger.info('Test')
+
+        _logger.info(str(self.id))
                  
 class detalle(models.Model):
       _name = 'sale.order.detalle'
