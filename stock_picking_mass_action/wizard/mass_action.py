@@ -912,6 +912,7 @@ class  DevolverPick(TransientModel):
         self.picking.action_cancel()
         pick_origin1.write({'x_studio_ticket':s.origin})
         pick_origin1.write({'partner_id':self.picking.partner_id.id})
+        pick_origin1.write({'distribucion':True})
         pick_origin1.action_assign()
         pick_origin1.action_confirm()
         s.write({'x_studio_fecha_de_entrega':self.fecha})
