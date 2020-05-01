@@ -335,11 +335,11 @@ class fac_order(models.Model):
           if('Pick' in pick.name or 'Su' in pick.name):
             pic.write({'location_id':almacen.lot_stock_id.id})
             pic.move_ids_without_package.write({'location_id':almacen.lot_stock_id.id})
-            self.env['stock.move.line'].search([['picking_id':pic.id]]).write({'location_id':almacen.lot_stock_id.id})
+            self.env['stock.move.line'].search([['picking_id','=',pic.id]]).write({'location_id':almacen.lot_stock_id.id})
           if('Out' in pick.name or 'Tra'):
             pic.write({'location_dest_id':self.warehouse_id.lot_stock_id.id})
             pic.move_ids_without_package.write({'location_dest_id':self.warehouse_id.lot_stock_id.id})
-            self.env['stock.move.line'].search([['picking_id':pic.id]]).write({'location_dest_id':self.warehouse_id.lot_stock_id.id})
+            self.env['stock.move.line'].search([['picking_id','=',pic.id]]).write({'location_dest_id':self.warehouse_id.lot_stock_id.id})
                  
 class detalle(models.Model):
       _name = 'sale.order.detalle'
