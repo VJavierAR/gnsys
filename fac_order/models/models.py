@@ -330,7 +330,7 @@ class fac_order(models.Model):
       def retiro(self):
         self.action_confirm()
         picks=self.env['stock.picking'].search([['sale_id','=',self.id]])
-        almacen=self.env['stock.warehouse'].search([['x_studio_ubicacin','=',self.partner_shipping_id.id]])
+        almacen=self.env['stock.warehouse'].search([['x_studio_field_E0H1Z','=',self.partner_shipping_id.id]])
         for pic in picks:
           if('Pick' in pick.name or 'Su' in pick.name):
             pic.write({'location_id':almacen.lot_stock_id.id})
