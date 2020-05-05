@@ -19,51 +19,82 @@ class PartnerXlsx(models.AbstractModel):
         report_name = 'Movimientos'
         bold = workbook.add_format({'bold': True})
         sheet = workbook.add_worksheet('Movimientos')
-        sheet.merge_range('A1:Q1', 'Movimientos de Almacen', merge_format)
-        #header1 = '&CHere is some centered text.'
-        #sheet.set_header('A1', {'image_left': '/home/odoo/logo.png'})
-        #image_file = open('/home/odoo/logo.png', 'rb')
-        #image_data = xlsxwriter.compatibility.BytesIO(image_file.read())
-        #sheet.set_header('&C', {'image_center': image_data})
-        #sheet.insert_image('A1', 'logo.png')
-        for obj in partners:
-            e=[]
-            d.append(e)
-            # One sheet by partner
-            
-            #_logger.info('work')
-            sheet.write(i, 0, obj.x_studio_field_aVMhn.name, bold)
-            sheet.write(i, 1, obj.date.strftime("%Y/%m/%d"), bold)
-            sheet.write(i, 2, obj.x_studio_field_3lDS0.name, bold)
-            if(obj.location_id.id==obj.x_studio_field_3lDS0.wh_input_stock_loc_id.id):
-                sheet.write(i, 3, "Entrada", bold)
-            if(obj.location_id.id!=obj.x_studio_field_3lDS0.wh_input_stock_loc_id.id):
-                sheet.write(i, 3, "Salida", bold)
-            sheet.write(i, 4, obj.product_id.name, bold)
-            sheet.write(i, 5, obj.product_id.default_code, bold)
-            sheet.write(i, 6, obj.qty_done, bold)
-            if(obj.lot_id==False):
-                sheet.write(i, 7, obj.product_id.default_code, bold)
-            if(obj.lot_id!=False):
-                sheet.write(i, 7, obj.lot_id.name, bold)
-            sheet.write(i, 8, obj.x_studio_cliente_1 if(obj.x_studio_cliente_1) else '', bold)
-            sheet.write(i, 9, obj.x_studio_localidad if(obj.x_studio_localidad) else '', bold)
-            sheet.write(i, 10, obj.move_id.picking_id.x_studio_comentario_1 if(obj.move_id.picking_id.x_studio_comentario_1) else '', bold)
-            if(obj.x_studio_ticket):
-                sheet.write(i,11, obj.x_studio_ticket if(obj.x_studio_ticket) else '', bold)
-            if(obj.x_studio_ticket==False):
-                sheet.write(i, 11, obj.x_studio_orden_de_venta if(obj.x_studio_orden_de_venta) else '', bold)
-            sheet.write(i, 12, obj.x_studio_serie_destino_1 if(obj.x_studio_serie_destino_1) else '', bold)            
-            sheet.write(i, 13, obj.x_studio_modelo_equipo if(obj.x_studio_modelo_equipo) else '', bold)                 
-            sheet.write(i, 14, obj.move_id.picking_id.partner_id.city if(obj.move_id.picking_id.partner_id.city) else '', bold)            
-            sheet.write(i, 15, obj.move_id.picking_id.partner_id.state_id.name if(obj.move_id.picking_id.partner_id.state_id.name) else '', bold)
-            user=self.env['stock.picking'].search(['&',['sale_id','=',obj.picking_id.sale_id.id],['location_id','=',obj.x_studio_field_3lDS0.lot_stock_id.id]])
-            if(len(user)>1):
-                sheet.write(i, 16, user[0].write_uid.name if(user[0].write_uid.name) else '', bold)
-            if(len(user)<=1):
-                sheet.write(i, 16, user.write_uid.name if(user.write_uid.name) else '', bold)
-            i=i+1
-        sheet.add_table('A2:Q'+str((i)),{'style': 'Table Style Medium 9','columns': [{'header': 'Categoria'},{'header': 'Fecha'},{'header': 'Almacen'},{'header':'Tipo'},{'header': 'Modelo'},{'header': 'No Parte'},{'header': 'Cantidad'},{'header': 'Serie'},{'header': 'Cliente'},{'header': 'Localidad'},{'header': 'Comentario'},{'header': 'Documento Origen'},{'header': 'Serie Destino'},{'header': 'Modelo Destino'},{'header': 'Estado'},{'header': 'Delegación'},{'header': 'Usuario'}]})
+        if(13 in partners.mapped('x_studio_field_aVMhn.id')):
+            sheet.merge_range('A1:Q1', 'Movimientos de Almacen', merge_format)
+            for obj in partners:
+                e=[]
+                d.append(e)
+                # One sheet by partner
+                
+                #_logger.info('work')
+                sheet.write(i, 0, obj.x_studio_field_aVMhn.name, bold)
+                sheet.write(i, 1, obj.date.strftime("%Y/%m/%d"), bold)
+                sheet.write(i, 2, obj.x_studio_field_3lDS0.name, bold)
+                if(obj.location_id.id==obj.x_studio_field_3lDS0.wh_input_stock_loc_id.id):
+                    sheet.write(i, 3, "Entrada", bold)
+                if(obj.location_id.id!=obj.x_studio_field_3lDS0.wh_input_stock_loc_id.id):
+                    sheet.write(i, 3, "Salida", bold)
+                sheet.write(i, 4, obj.product_id.name, bold)
+                sheet.write(i, 5, obj.product_id.default_code, bold)
+                sheet.write(i, 6, obj.qty_done, bold)
+                if(obj.lot_id==False):
+                    sheet.write(i, 7, obj.product_id.default_code, bold)
+                if(obj.lot_id!=False):
+                    sheet.write(i, 7, obj.lot_id.name, bold)
+                sheet.write(i, 8, obj.x_studio_cliente_1 if(obj.x_studio_cliente_1) else '', bold)
+                sheet.write(i, 9, obj.x_studio_localidad if(obj.x_studio_localidad) else '', bold)
+                sheet.write(i, 10, obj.move_id.picking_id.x_studio_comentario_1 if(obj.move_id.picking_id.x_studio_comentario_1) else '', bold)
+                if(obj.x_studio_ticket):
+                    sheet.write(i,11, obj.x_studio_ticket if(obj.x_studio_ticket) else '', bold)
+                if(obj.x_studio_ticket==False):
+                    sheet.write(i, 11, obj.x_studio_orden_de_venta if(obj.x_studio_orden_de_venta) else '', bold)
+                sheet.write(i, 12, obj.x_studio_serie_destino_1 if(obj.x_studio_serie_destino_1) else '', bold)            
+                sheet.write(i, 13, obj.x_studio_modelo_equipo if(obj.x_studio_modelo_equipo) else '', bold)                 
+                sheet.write(i, 14, obj.move_id.picking_id.partner_id.city if(obj.move_id.picking_id.partner_id.city) else '', bold)            
+                sheet.write(i, 15, obj.move_id.picking_id.partner_id.state_id.name if(obj.move_id.picking_id.partner_id.state_id.name) else '', bold)
+                user=self.env['stock.picking'].search(['&',['sale_id','=',obj.picking_id.sale_id.id],['location_id','=',obj.x_studio_field_3lDS0.lot_stock_id.id]])
+                if(len(user)>1):
+                    sheet.write(i, 16, user[0].write_uid.name if(user[0].write_uid.name) else '', bold)
+                if(len(user)<=1):
+                    sheet.write(i, 16, user.write_uid.name if(user.write_uid.name) else '', bold)
+                i=i+1
+            sheet.add_table('A2:Q'+str((i)),{'style': 'Table Style Medium 9','columns': [{'header': 'Categoria'},{'header': 'Fecha'},{'header': 'Almacen'},{'header':'Tipo'},{'header': 'Modelo'},{'header': 'No Parte'},{'header': 'Cantidad'},{'header': 'Serie'},{'header': 'Cliente'},{'header': 'Localidad'},{'header': 'Comentario'},{'header': 'Documento Origen'},{'header': 'Serie Destino'},{'header': 'Modelo Destino'},{'header': 'Estado'},{'header': 'Delegación'},{'header': 'Usuario'}]})
+        if(13 not in partners.mapped('x_studio_field_aVMhn.id')):
+            sheet.merge_range('A1:P1', 'Movimientos de Almacen', merge_format)
+            for obj in partners:
+                e=[]
+                d.append(e)
+                # One sheet by partner
+                
+                #_logger.info('work')
+                sheet.write(i, 0, obj.x_studio_field_aVMhn.name, bold)
+                sheet.write(i, 1, obj.date.strftime("%Y/%m/%d"), bold)
+                sheet.write(i, 2, obj.x_studio_field_3lDS0.name, bold)
+                if(obj.location_id.id==obj.x_studio_field_3lDS0.wh_input_stock_loc_id.id):
+                    sheet.write(i, 3, "Entrada", bold)
+                if(obj.location_id.id!=obj.x_studio_field_3lDS0.wh_input_stock_loc_id.id):
+                    sheet.write(i, 3, "Salida", bold)
+                sheet.write(i, 4, obj.product_id.name, bold)
+                sheet.write(i, 5, obj.product_id.default_code, bold)
+                sheet.write(i, 6, obj.qty_done, bold)
+                sheet.write(i, 7, obj.x_studio_cliente_1 if(obj.x_studio_cliente_1) else '', bold)
+                sheet.write(i, 8, obj.x_studio_localidad if(obj.x_studio_localidad) else '', bold)
+                sheet.write(i, 9, obj.move_id.picking_id.x_studio_comentario_1 if(obj.move_id.picking_id.x_studio_comentario_1) else '', bold)
+                if(obj.x_studio_ticket):
+                    sheet.write(i,10, obj.x_studio_ticket if(obj.x_studio_ticket) else '', bold)
+                if(obj.x_studio_ticket==False):
+                    sheet.write(i, 10, obj.x_studio_orden_de_venta if(obj.x_studio_orden_de_venta) else '', bold)
+                sheet.write(i, 11, obj.x_studio_serie_destino_1 if(obj.x_studio_serie_destino_1) else '', bold)            
+                sheet.write(i, 12, obj.x_studio_modelo_equipo if(obj.x_studio_modelo_equipo) else '', bold)                 
+                sheet.write(i, 13, obj.move_id.picking_id.partner_id.city if(obj.move_id.picking_id.partner_id.city) else '', bold)            
+                sheet.write(i, 14, obj.move_id.picking_id.partner_id.state_id.name if(obj.move_id.picking_id.partner_id.state_id.name) else '', bold)
+                user=self.env['stock.picking'].search(['&',['sale_id','=',obj.picking_id.sale_id.id],['location_id','=',obj.x_studio_field_3lDS0.lot_stock_id.id]])
+                if(len(user)>1):
+                    sheet.write(i, 15, user[0].write_uid.name if(user[0].write_uid.name) else '', bold)
+                if(len(user)<=1):
+                    sheet.write(i, 15, user.write_uid.name if(user.write_uid.name) else '', bold)
+                i=i+1
+            sheet.add_table('A2:P'+str((i)),{'style': 'Table Style Medium 9','columns': [{'header': 'Categoria'},{'header': 'Fecha'},{'header': 'Almacen'},{'header':'Tipo'},{'header': 'Modelo'},{'header': 'No Parte'},{'header': 'Cantidad'},{'header': 'Cliente'},{'header': 'Localidad'},{'header': 'Comentario'},{'header': 'Documento Origen'},{'header': 'Serie Destino'},{'header': 'Modelo Destino'},{'header': 'Estado'},{'header': 'Delegación'},{'header': 'Usuario'}]})
         workbook.close()
 
 class ExistenciasXML(models.AbstractModel):
