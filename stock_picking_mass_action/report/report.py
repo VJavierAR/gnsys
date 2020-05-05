@@ -54,7 +54,7 @@ class PartnerXlsx(models.AbstractModel):
                 sheet.write(i, 15, obj.move_id.picking_id.partner_id.state_id.name if(obj.move_id.picking_id.partner_id.state_id.name) else '', bold)
                 user=self.env['stock.picking'].search(['&',['sale_id','=',obj.picking_id.sale_id.id],['location_id','=',obj.x_studio_field_3lDS0.lot_stock_id.id]])
                 if(obj.x_studio_coment):
-                    sheet.write(i, 16, obj.obj.x_studio_coment, bold)
+                    sheet.write(i, 16, obj.x_studio_coment, bold)
                 if(obj.x_studio_coment==False):
                     sheet.write(i, 16, user.write_uid.name if(len(user)==1) else '', user[0].write_uid.name)
                 i=i+1
@@ -90,7 +90,7 @@ class PartnerXlsx(models.AbstractModel):
                 sheet.write(i, 14, obj.x_studio_colonia_destino if(obj.x_studio_colonia_destino) else '', bold)
                 user=self.env['stock.picking'].search(['&',['sale_id','=',obj.picking_id.sale_id.id],['location_id','=',obj.x_studio_field_3lDS0.lot_stock_id.id]])
                 if(obj.x_studio_coment):
-                    sheet.write(i, 15, obj.obj.x_studio_coment, bold)
+                    sheet.write(i, 15, obj.x_studio_coment, bold)
                 if(obj.x_studio_coment==False):
                     sheet.write(i, 15, user.write_uid.name if(len(user)==1) else '', user[0].write_uid.name)
                 i=i+1
