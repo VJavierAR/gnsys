@@ -551,13 +551,13 @@ class StockPickingMassAction(TransientModel):
             if(self.tipo=="Salida"):
                 origenes.append(b)
         if(self.categoria):
-            mov=mov.filtered(lambda x: x.x_studio_field_aVMhn==self.categoria.id)
+            mov=mov.filtered(lambda x: x.x_studio_field_aVMhn.id==self.categoria.id)
         _logger.info('info'+str(len(mov)))
         if(self.categoria==False):
             categorias=self.env['product.category'].search([[]]).mapped('id')
-            mov=mov.filtered(lambda x: x.x_studio_field_aVMhn in categorias)
+            mov=mov.filtered(lambda x: x.x_studio_field_aVMhn.id in categorias)
         _logger.info('info'+str(len(mov)))
-        mov=mov.filtered(lambda x: x.location_id in origenes or x.location_dest_id in destinos)
+        mov=mov.filtered(lambda x: x.location_id.id in origenes or x.location_dest_id.id in destinos)
         _logger.info('info'+str(len(mov)))
         if(len(mov)>1):
             mov[0].write({'x_studio_arreglo':mov.mapped('id')})
