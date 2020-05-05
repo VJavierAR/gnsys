@@ -53,10 +53,10 @@ class PartnerXlsx(models.AbstractModel):
                 sheet.write(i, 14, obj.move_id.picking_id.partner_id.city if(obj.move_id.picking_id.partner_id.city) else '', bold)            
                 sheet.write(i, 15, obj.move_id.picking_id.partner_id.state_id.name if(obj.move_id.picking_id.partner_id.state_id.name) else '', bold)
                 user=self.env['stock.picking'].search(['&',['sale_id','=',obj.picking_id.sale_id.id],['location_id','=',obj.x_studio_field_3lDS0.lot_stock_id.id]])
-                if(len(user)>1):
-                    sheet.write(i, 16, user[0].write_uid.name if(user[0].write_uid.name) else '', bold)
-                if(len(user)<=1):
-                    sheet.write(i, 16, user.write_uid.name if(user.write_uid.name) else '', bold)
+                if(obj.x_studio_coment):
+                    sheet.write(i, 16, obj.obj.x_studio_coment, bold)
+                if(obj.x_studio_coment==False):
+                    sheet.write(i, 16, user.write_uid.name if(len(user)==1) else '', user[0].write_uid.name)
                 i=i+1
             sheet.add_table('A2:Q'+str((i)),{'style': 'Table Style Medium 9','columns': [{'header': 'Categoria'},{'header': 'Fecha'},{'header': 'Almacen'},{'header':'Tipo'},{'header': 'Modelo'},{'header': 'No Parte'},{'header': 'Cantidad'},{'header': 'Serie'},{'header': 'Cliente'},{'header': 'Localidad'},{'header': 'Comentario'},{'header': 'Documento Origen'},{'header': 'Serie Destino'},{'header': 'Modelo Destino'},{'header': 'Estado'},{'header': 'Delegación'},{'header': 'Usuario'}]})
         if(13 not in partners.mapped('x_studio_field_aVMhn.id')):
@@ -86,13 +86,13 @@ class PartnerXlsx(models.AbstractModel):
                     sheet.write(i, 10, obj.x_studio_orden_de_venta if(obj.x_studio_orden_de_venta) else '', bold)
                 sheet.write(i, 11, obj.x_studio_serie_destino_1 if(obj.x_studio_serie_destino_1) else '', bold)            
                 sheet.write(i, 12, obj.x_studio_modelo_equipo if(obj.x_studio_modelo_equipo) else '', bold)                 
-                sheet.write(i, 13, obj.move_id.picking_id.partner_id.city if(obj.move_id.picking_id.partner_id.city) else '', bold)            
-                sheet.write(i, 14, obj.move_id.picking_id.partner_id.state_id.name if(obj.move_id.picking_id.partner_id.state_id.name) else '', bold)
+                sheet.write(i, 13, obj.x_studio_estado_destino if(obj.x_studio_estado_destino) else '', bold)            
+                sheet.write(i, 14, obj.x_studio_colonia_destino if(obj.x_studio_colonia_destino) else '', bold)
                 user=self.env['stock.picking'].search(['&',['sale_id','=',obj.picking_id.sale_id.id],['location_id','=',obj.x_studio_field_3lDS0.lot_stock_id.id]])
-                if(len(user)>1):
-                    sheet.write(i, 15, user[0].write_uid.name if(user[0].write_uid.name) else '', bold)
-                if(len(user)<=1):
-                    sheet.write(i, 15, user.write_uid.name if(user.write_uid.name) else '', bold)
+                if(obj.x_studio_coment):
+                    sheet.write(i, 15, obj.obj.x_studio_coment, bold)
+                if(obj.x_studio_coment==False):
+                    sheet.write(i, 15, user.write_uid.name if(len(user)==1) else '', user[0].write_uid.name)
                 i=i+1
             sheet.add_table('A2:P'+str((i)),{'style': 'Table Style Medium 9','columns': [{'header': 'Categoria'},{'header': 'Fecha'},{'header': 'Almacen'},{'header':'Tipo'},{'header': 'Modelo'},{'header': 'No Parte'},{'header': 'Cantidad'},{'header': 'Cliente'},{'header': 'Localidad'},{'header': 'Comentario'},{'header': 'Documento Origen'},{'header': 'Serie Destino'},{'header': 'Modelo Destino'},{'header': 'Estado'},{'header': 'Delegación'},{'header': 'Usuario'}]})
         workbook.close()
