@@ -524,8 +524,8 @@ class StockPickingMassAction(TransientModel):
 
     def report(self):
         move=None
-        mov=self.env['stock.move.line'].search([['state','=','done']])
-        move=mov.filtered(lambda x: x.date >= self.fechaInicial or x.date <= self.fechaFinal)
+        mov=self.env['stock.move.line'].search([['state','=','done']]).filtered(lambda x: x.date >= self.fechaInicial or x.date <= self.fechaFinal)
+        move=mov
         origenes=[]
         destinos=[]
         _logger.info('info'+str(len(move)))
