@@ -523,98 +523,42 @@ class StockPickingMassAction(TransientModel):
     fechaFinal=fields.Datetime()
 
     def report(self):
-        i=[]
-        k=0
-        l=['state','=','done']
-        e=0
+        mov=self.env['stock.move.line'].search([['state','=','done']])
+        mov=mov.filtered(lambda x: x.date >= self.fechaInicial or x.date <= self.fechaFinal)
         origenes=[]
         destinos=[]
-        if(self.fechaInicial):
-            m=['date','>=',self.fechaInicial]
-            i.append(m)
-        if(self.fechaFinal):
-            m=['date','<=',self.fechaFinal]
-            i.append(m)
-        i.append(l)
-        _logger.info(str(self.almacen.id))
         if(self.almacen.id==False):
             almacenes=self.env['stock.warehouse'].search([['x_studio_cliente','=',False]])
             for alm in almacenes:
                 b=alm.wh_output_stock_loc_id.id
                 c=alm.wh_input_stock_loc_id.id
                 if(self.tipo=="Todos"):
-                    #i.append('|')
                     origenes.append(b)
                     destinos.append(c)
-                    #i.append(b)
-                    #i.append(c)
-                    e=e+1
-                    k=k+2
                 if(self.tipo=="Entrada"):
                     destinos.append(c)
-                    #i.append(c)
                 if(self.tipo=="Salida"):
                     origenes.append(b)
         if(self.almacen.id):
             b=self.almacen.wh_output_stock_loc_id.id
             c=self.almacen.wh_input_stock_loc_id.id
-
             if(self.tipo=="Todos"):
-                #i.append('|')
-                #i.append(b)
-                #i.append(c)
                 origenes.append(b)
                 destinos.append(c)
-                e=e+1
-                k=k+2
             if(self.tipo=="Entrada"):
-                #i.append(c)
                 destinos.append(c)
             if(self.tipo=="Salida"):
-                #i.append(b)
                 origenes.append(b)
         if(self.categoria):
-            a=['x_studio_field_aVMhn','=',self.categoria.id]
-            i.append(a)
+            mov=mov.filtered(lambda x: x.x_studio_field_aVMhn==self.categoria.id)
         if(self.categoria==False):
-            categorias=self.env['product.category'].search([[]])
-            for cat in categorias:
-                ca=['x_studio_field_aVMhn','=',cat.id]
-                i.append(ca)
-        j=[]
-        for l in range(len(i)):
-            if(l==0):
-                j.append('|')
-            else:
-                j.append('&')
-
-        f=[]
-        k=0
-        if(len(origenes)>0 and len(destinos)>0):
-            j.append('|')
-            i.append(['location_id','in',origenes])
-            i.append(['location_dest_id','in',destinos])
-        if(len(origenes)>0 and len(destinos)==0):
-            i.append(['location_id','in',origenes])
-        if(len(destinos)>0 and len(origenes)==0):
-            i.append(['location_dest_id','in',destinos])
-
-        #for ci in range(e-1):
-        #    f.append('|')
-        #j.extend(f)
-        j.extend(i)
-        _logger.info(str(j))
-        d=self.env['stock.move.line'].search(j,order='date desc')
-        h=d if(d!=[]) else self.env['stock.move.line']
-        c=[]
-        #d[0].write({'x_studio_arreglo':str([])})
-        for di in d:
-            c.append(di.id)
-        _logger.info(str(c))
-        if(len(d)>0):
-            d[0].write({'x_studio_arreglo':str(c)})
-            return self.env.ref('stock_picking_mass_action.partner_xlsx').report_action(d[0])
-        if(len(d)==0):
+            categorias=self.env['product.category'].search([[]]).mapped('id')
+            mov=mov.filtered(lambda x: x.x_studio_field_aVMhn in categorias)
+        mov=mov.filtered(lambda x: x.location_id in origenes or x.location_dest_id in destinos)
+        if(len(mov)>1):
+            mov[0].write({'x_studio_arreglo':mov.mapped('id')})
+            return self.env.ref('stock_picking_mass_action.partner_xlsx').report_action(mov[0])
+        if(len(mov)==0):
             raise UserError(_("No hay registros para la selecion actual"))
 
 class StockQuantMassAction(TransientModel):
