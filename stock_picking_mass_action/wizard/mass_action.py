@@ -523,11 +523,12 @@ class StockPickingMassAction(TransientModel):
     fechaFinal=fields.Datetime()
 
     def report(self):
+        move=None
         mov=self.env['stock.move.line'].search([['state','=','done']])
-        mov=mov.filtered(lambda x: x.date >= self.fechaInicial or x.date <= self.fechaFinal)
+        move=mov.filtered(lambda x: x.date >= self.fechaInicial or x.date <= self.fechaFinal)
         origenes=[]
         destinos=[]
-        _logger.info('info'+str(len(mov)))
+        _logger.info('info'+str(len(move)))
         if(self.almacen.id==False):
             almacenes=self.env['stock.warehouse'].search([['x_studio_cliente','=',False]])
             for alm in almacenes:
