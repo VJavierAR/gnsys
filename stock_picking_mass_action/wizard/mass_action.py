@@ -582,7 +582,7 @@ class StockPickingMassAction(TransientModel):
                 ca=['x_studio_field_aVMhn','=',cat.id]
                 i.append(ca)
         j=[]
-        for l in range(len(i)-1):
+        for l in range(len(i)):
             if(l==0):
                 j.append('|')
             else:
