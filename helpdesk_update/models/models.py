@@ -1292,7 +1292,8 @@ class helpdesk_update(models.Model):
                                , 'product_uom_qty' : 1
                                , 'x_studio_field_9nQhR': c.serie.id 
                                , 'price_unit': 0 
-                               , 'customer_lead' : 0}
+                               , 'customer_lead' : 0
+                               , 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id}
                         if(gen['qty_available']<=0):
                             datos['route_id']=1
                             datos['product_id']=c.serie.x_studio_toner_compatible.id
@@ -1312,7 +1313,8 @@ class helpdesk_update(models.Model):
                                , 'product_uom_qty' : 1
                                , 'x_studio_field_9nQhR': c.serie.id
                                , 'price_unit': 0 
-                               , 'customer_lead' : 0}
+                               , 'customer_lead' : 0
+                               , 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id}
                         if(gen['qty_available']<=0):
                             datos['route_id']=1
                             datos['product_id']=c.x_studio_cartucho_amarillo.id
@@ -1332,7 +1334,8 @@ class helpdesk_update(models.Model):
                                , 'product_uom_qty' : 1
                                , 'x_studio_field_9nQhR': c.serie.id 
                                , 'price_unit': 0 
-                               , 'customer_lead' : 0}
+                               , 'customer_lead' : 0
+                               , 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id}
                         if(gen['qty_available']<=0):
                             datos['route_id']=1
                             datos['product_id']=c.x_studio_cartucho_cian_1.id
@@ -1352,7 +1355,8 @@ class helpdesk_update(models.Model):
                                , 'product_uom_qty' : 1
                                , 'x_studio_field_9nQhR': c.serie.id 
                                , 'price_unit': 0 
-                               , 'customer_lead' : 0}
+                               , 'customer_lead' : 0
+                               , 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id}
                         if(gen['qty_available']<=0):
                             datos['route_id']=1
                             datos['product_id']=c.x_studio_cartucho_magenta.id
@@ -1424,7 +1428,8 @@ class helpdesk_update(models.Model):
                                , 'product_uom_qty' : 1
                                , 'x_studio_field_9nQhR': c.serie.id 
                                , 'price_unit': 0 
-                               , 'customer_lead' : 0}
+                               , 'customer_lead' : 0
+                               , 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id}
                         if(gen['qty_available']<=0):
                             datos['route_id']=1
                             datos['product_id']=c.serie.x_studio_toner_compatible.id
@@ -1447,7 +1452,8 @@ class helpdesk_update(models.Model):
                                , 'product_uom_qty' : 1
                                , 'x_studio_field_9nQhR': c.serie.id
                                , 'price_unit': 0 
-                               , 'customer_lead' : 0}
+                               , 'customer_lead' : 0
+                               , 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id}
                         if(gen['qty_available']<=0):
                             datos['route_id']=1
                             datos['product_id']=c.x_studio_cartucho_amarillo.id
@@ -1467,7 +1473,8 @@ class helpdesk_update(models.Model):
                                , 'product_uom_qty' : 1
                                , 'x_studio_field_9nQhR': c.serie.id 
                                , 'price_unit': 0 
-                               , 'customer_lead' : 0}
+                               , 'customer_lead' : 0
+                               , 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id}
                         if(gen['qty_available']<=0):
                             datos['route_id']=1
                             datos['product_id']=c.x_studio_cartucho_cian_1.id
@@ -1487,7 +1494,8 @@ class helpdesk_update(models.Model):
                                , 'product_uom_qty' : 1
                                , 'x_studio_field_9nQhR': c.serie.id 
                                , 'price_unit': 0 
-                               , 'customer_lead' : 0}
+                               , 'customer_lead' : 0
+                               , 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id}
                         if(gen['qty_available']<=0):
                             datos['route_id']=1
                             datos['product_id']=c.x_studio_cartucho_magenta.id
