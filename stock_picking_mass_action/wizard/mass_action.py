@@ -574,23 +574,32 @@ class StockQuantMassAction(TransientModel):
     categoria=fields.Many2one('product.category')
     tipo=fields.Many2one('product.product',string='Modelo')
     equipo =fields.Boolean('Equipos')
+    estado=fields.Selection([["Obsoleto","Obsoleto"],["Usado","Usado"],["Hueso","Hueso"],["Para reparación","Para reparación"],["Nuevo","Nuevo"],["Buenas condiciones","Buenas condiciones"],["Excelentes condiciones","Excelentes condiciones"],["Back-up","Back-up"],["Dañado","Dañado"]])
 
     def report(self):
         d=[]
-        if(self.equipo):
-            d.append(['x_studio_almacn.x_studio_cliente','=',False])
-            if(self.almacen):
-                d.append(['x_studio_almacn','=',self.almacen.id])
-            if(self.almacen.id==False):
-                d.append(['x_studio_almacn','!=',False])
-            d.append(['lot_id','!=',False])
-        else:
-            if(self.almacen):
-                d.append(['x_studio_almacn','=',self.almacen.id])
-            if(self.categoria):
-                d.append(['x_studio_categoria','=',self.categoria.id])
-            if(self.tipo):
-                d.append(['product_id','=',self.tipo.id])
+        # if(self.equipo):
+        #     d.append(['x_studio_almacn.x_studio_cliente','=',False])
+        #     if(self.almacen):
+        #         d.append(['x_studio_almacn','=',self.almacen.id])
+        #     if(self.almacen.id==False):
+        #         d.append(['x_studio_almacn','!=',False])
+        #     #d.append(['lot_id','!=',False])
+        # else:
+        if(self.almacen):
+            d.append(['x_studio_almacn','=',self.almacen.id])
+        if(self.categoria):
+            d.append(['x_studio_categoria','=',self.categoria.id])
+            if(self.categoria.id==13):
+                d.append(['x_studio_almacn.x_studio_cliente','=',False])
+                if(self.almacen):
+                    d.append(['x_studio_almacn','=',self.almacen.id])
+                if(self.almacen.id==False):
+                    d.append(['x_studio_almacn','!=',False])
+        if(self.tipo):
+            d.append(['product_id','=',self.tipo.id])
+        if(self.estado):
+            d.append(['lot_id.x_studio_estado','='self.estado])
             # if(self.almacen.id==False):
             #     d.append(['x_studio_almacn','!=',False])
             # if(self.categoria.id==False):
@@ -598,7 +607,7 @@ class StockQuantMassAction(TransientModel):
             # if(self.tipo.id==False):
             #     d.append(['product_id','!=',False])
             #d.append(['x_studio_almacn.x_studio_cliente','=',False])
-            d.append(['lot_id','=',False])
+            #d.append(['lot_id','=',False])
         _logger.info(str(d))
         data=self.env['stock.quant'].search(d)
         #_logger.info(str(data.mapped('id')))

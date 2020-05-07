@@ -135,10 +135,10 @@
         <field name="arch" type="xml">
             <form string="Mass Action for the selected stock quant">
                 <group>
-                    <field name="almacen"/>
+                    <field name="almacen" domain="[['x_studio_cliente','=',False]]"/>
                     <field name="categoria"/>
-                    <field name="tipo" />
-                    <field name="equipo" />
+                    <field name="tipo"  attrs="{'invisible':[['categoria','!=',13]]}"/>
+                    <field name="estado" attrs="{'invisible':[['categoria','!=',13]]}"/>
                 </group>
                 <footer>
                     <button name="report" string="Reporte" type="object" class="oe_highlight"/>
