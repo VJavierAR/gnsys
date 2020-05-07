@@ -651,7 +651,9 @@ class helpdesk_crearconserie(TransientModel):
     serie = fields.Many2many('stock.production.lot', string = 'Serie', store = True)
     clienteRelacion = fields.Many2one('res.partner', string = 'Cliente', default=False, store = True)
     localidadRelacion = fields.Many2one('res.partner', string = 'Localidad', store = True)
+    contactoInterno = fields.Many2one('res.partner', string = 'Contacto interno', default=False, store = True)
 
+    idContactoInterno = fields.Text(string = 'idContactoInterno', store=True, default=0)
     cliente = fields.Text(string = 'Cliente', store = True)
     idCliente = fields.Text(string = 'idCliente', store=True, default=0)
     localidad = fields.Text(string = 'Localidad', store = True)
@@ -683,6 +685,19 @@ class helpdesk_crearconserie(TransientModel):
                 "url": "https://gnsys-corp.odoo.com/web#id= " + str(self.ticket_id_existente) + " &action=400&active_id=9&model=helpdesk.ticket&view_type=form&menu_id=406",
                 "target": "new",
                 }
+
+    @api.onchange('contactoInterno')
+    def actualiza_datos_contacto_interno(self):
+        if not self.contactoInterno:
+            self.nombreContactoLocalidad = ''
+            self.telefonoContactoLocalidad = ''
+            self.movilContactoLocalidad = ''
+            self.correoContactoLocalidad = ''
+        else:
+            self.nombreContactoLocalidad = self.contactoInterno.name
+            self.telefonoContactoLocalidad = self.contactoInterno.phone
+            self.movilContactoLocalidad = self.contactoInterno.mobile
+            self.correoContactoLocalidad = self.contactoInterno.email
 
 
     @api.onchange('clienteRelacion', 'localidadRelacion')
@@ -828,6 +843,9 @@ class helpdesk_crearconserie(TransientModel):
             else:
                 self.estatus = 'Al corriente'
                 self.textoClienteMoroso = ''
+            #if self.clienteRelacion.name == 'GN SYS CORPORATIVO SA DE CV':
+
+
     
 
     @api.onchange('serie')
