@@ -196,13 +196,14 @@ class PartnerXlsx(models.AbstractModel):
         sheet = workbook.add_worksheet('Tickets')
         sheet.merge_range('A1:Q1', 'Tickets', merge_format)
         for obj in ticket:
+            if(len(obj.x_studio_equipo_por_nmero_de_serie_1)==1 or len(obj.x_studio_equipo_por_nmero_de_serie)==1):
                 sheet.write(i, 0, obj.name, bold)
                 sheet.write(i, 1, obj.x_studio_tipo_de_vale if(obj.x_studio_tipo_de_vale) else '', bold)
                 sheet.write(i, 2, obj.create_date.strftime("%Y/%m/%d"), bold)
                 sheet.write(i, 3, obj.days_difference, bold)
                 sheet.write(i, 4, obj.partner_id.name if(obj.partner_id) else '', bold)
                 sheet.write(i, 5, obj.x_studio_empresas_relacionadas.name if(obj.x_studio_empresas_relacionadas) else '', bold)
-                sheet.write(i, 6, str(obj.x_studio_equipo_por_nmero_de_serie_1.sorted(key='id').mapped('serie.name')) if(obj.team_id.id==8) else str(obj.x_studio_equipo_por_nmero_de_serie.sorted(key='id').mapped('name')), bold)
+                sheet.write(i, 6, str(obj.x_studio_equipo_por_nmero_de_serie_1.sorted(key='id').serie.name if(obj.team_id.id==8) else str(obj.x_studio_equipo_por_nmero_de_serie.sorted(key='id').name), bold)
                 sheet.write(i, 7, str(obj.x_studio_equipo_por_nmero_de_serie_1.sorted(key='id').mapped('serie.product_id.name')) if(obj.team_id.id==8) else str(obj.x_studio_equipo_por_nmero_de_serie.sorted(key='id').mapped('product_id.name')), bold)
                 sheet.write(i, 8, obj.team_id.name, bold)
                 sheet.write(i, 9,obj.x_studio_empresas_relacionadas.state_id.name if(obj.x_studio_empresas_relacionadas.state_id) else '' , bold)
