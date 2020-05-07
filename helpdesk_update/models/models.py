@@ -30,7 +30,8 @@ class helpdesk_update(models.Model):
     productos = fields.One2many('product.product','id',string='Solicitudes',store=True)
     #seriesDCA = fields.One2many('dcas.dcas', 'tickete', string="Series")
 
-    
+    contactoInterno = fields.Many2one('res.partner', string = 'Contacto interno', default=False, store = True)
+
     esReincidencia = fields.Boolean(string = "¿Es reincidencia?", default = False, store = True)
     ticketDeReincidencia = fields.Text(string = 'Ticket de provenencia', store = True)
 
@@ -271,6 +272,8 @@ class helpdesk_update(models.Model):
             contactoDeLocalidad = str(rec.localidadContacto.name)
             if contactoDeLocalidad == 'False':
                 contactoDeLocalidad = 'No disponible'
+            elif self.contactoInterno:
+                contactoDeLocalidad = contactoInterno.name
 
             estadoLocalidad = str(rec.x_studio_estado_de_localidad)
             if estadoLocalidad == 'False':
@@ -283,14 +286,20 @@ class helpdesk_update(models.Model):
             telefonoLocalidad = str(rec.telefonoLocalidadContacto)
             if telefonoLocalidad == 'False':
                 telefonoLocalidad = 'No disponible'
+            elif self.contactoInterno:
+                contactoDeLocalidad = contactoInterno.phone
 
             movilLocalidad = str(rec.movilLocalidadContacto)
             if movilLocalidad == 'False':
                 movilLocalidad = 'No disponible'
+            elif self.contactoInterno:
+                contactoDeLocalidad = contactoInterno.mobile
 
             correoElectronicoLocalidad = str(rec.correoLocalidadContacto)
             if correoElectronicoLocalidad == 'False':
                 correoElectronicoLocalidad = 'No disponible'
+            elif self.contactoInterno:
+                contactoDeLocalidad = contactoInterno.email
             
             datos = 'Cliente: ' + nombreCliente + ' \nLocalidad: ' + localidad + ' \nLocalidad contacto: ' + contactoDeLocalidad + ' \nEstado de localidad: ' + estadoLocalidad + '\nZona localidad: ' + zonaLocalidad + ' \nTeléfono de localidad: ' + telefonoLocalidad + ' \nMóvil localidad contacto: ' + movilLocalidad + ' \nCorreo electrónico localidad contacto: ' + correoElectronicoLocalidad
             #datos = 'Cliente: ' + nombreCliente + ' \nLocalidad: ' + localidad + ' \nLocalidad contacto: ' + contactoDeLocalidad + ' \nEstado de localidad: ' + estadoLocalidad 
