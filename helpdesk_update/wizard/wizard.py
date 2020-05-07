@@ -1180,7 +1180,6 @@ class HelpDeskReincidencia(TransientModel):
                                                         ,'ticketDeReincidencia': "<a href='https://gnsys-corp.odoo.com/web#id=" + str(self.ticket_id.id) + "&action=1137&model=helpdesk.ticket&view_type=form&menu_id=406' target='_blank'>" + str(self.ticket_id.id) + "</a>"
                                                         ,'user_id': self.env.user.id
                                                         ,'contactoInterno' : self.contactoInterno.id
-                                                        ,'contactoInterno' : self.contactoInterno.id
                                                         })
           ticket.write({'partner_id': int(self.ticket_id.partner_id.id)
                       ,'x_studio_empresas_relacionadas': int(self.ticket_id.x_studio_empresas_relacionadas.id)
