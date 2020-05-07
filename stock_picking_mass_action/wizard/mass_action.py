@@ -654,17 +654,17 @@ class HelpdeskTicketMassAction(TransientModel):
         j.append('|')
         if(self.tipo):
             if(self.tipo=="Toner"):
-                m=['x_studio_tipo_de_vale','=','Falla']
-                i.append(m)
+                #m=['x_studio_tipo_de_vale','=','Falla']
+                #i.append(m)
                 m=['team_id.id','=',8]
                 i.append(m)
-                j.append('&')
+                #j.append('&')
             else:
-                m=['x_studio_tipo_de_vale','=','Requerimiento']
+                #m=['x_studio_tipo_de_vale','=','Requerimiento']
+                #i.append(m)
+                m=['team_id.id','!=',8]
                 i.append(m)
-                m=['team_id.id','=',8]
-                i.append(m)
-                j.append('&')
+                #j.append('&')
         if(self.tipo==False):
             m=['x_studio_tipo_de_vale','in',['Requerimiento','Falla']]
             i.append(m)
