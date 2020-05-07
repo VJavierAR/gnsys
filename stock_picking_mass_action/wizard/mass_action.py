@@ -656,13 +656,13 @@ class HelpdeskTicketMassAction(TransientModel):
             if(self.tipo=="Toner"):
                 m=['x_studio_tipo_de_vale','=','Falla']
                 i.append(m)
-                m=['team_id','=',8]
+                m=['team_id.id','=',8]
                 i.append(m)
                 j.append('&')
             else:
                 m=['x_studio_tipo_de_vale','=','Requerimiento']
                 i.append(m)
-                m=['team_id','=',8]
+                m=['team_id.id','=',8]
                 i.append(m)
                 j.append('&')
         if(self.tipo==False):
