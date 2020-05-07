@@ -248,7 +248,7 @@ class helpdesk_update(models.Model):
 
     datosCliente = fields.Text(string="Cliente datos", compute='_compute_datosCliente')
 
-    @api.depends('x_studio_equipo_por_nmero_de_serie','x_studio_equipo_por_nmero_de_serie_1')
+    @api.depends('x_studio_equipo_por_nmero_de_serie','x_studio_equipo_por_nmero_de_serie_1', 'contactoInterno')
     def _compute_datosCliente(self):
         for rec in self:
             if rec.x_studio_empresas_relacionadas and not rec.localidadContacto:
