@@ -673,7 +673,7 @@ class HelpdeskTicketMassAction(TransientModel):
         i.append(['x_studio_field_nO7Xg','!=',False])
         #j.extend(i)
 
-        d=self.env['helpdesk.ticket'].search(i,order='create_date asc').filtered(lambda x:x.x_studio_equipo_por_nmero_de_serie_1!=False or x.x_studio_equipo_por_nmero_de_serie!=False)
+        d=self.env['helpdesk.ticket'].search(i,order='create_date asc').filtered(lambda x:len(x.x_studio_equipo_por_nmero_de_serie_1)>0 or len(x.x_studio_equipo_por_nmero_de_serie)>0)
         if(len(d)>0):
             d[0].write({'x_studio_arreglo':str(d.mapped('id'))})
             return self.env.ref('stock_picking_mass_action.ticket_xlsx').report_action(d[0])
