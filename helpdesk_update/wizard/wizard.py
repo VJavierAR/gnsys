@@ -840,9 +840,11 @@ class helpdesk_crearconserie(TransientModel):
                 raise exceptions.Warning(mensajeCuerpo)
             else:
                 query = "select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.stage_id!=18 and h.team_id!=8 and  h.active='t' and stock_production_lot_id = " +  str(self.serie[0].id) + " limit 1;"
+                _logger.info("test query: " + str(query))
                 #query = "select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!=" + str(ticket.x_studio_id_ticket) + "  and h.stage_id!=18 and h.team_id!=8 and  h.active='t' and stock_production_lot_id = " +  str(self.serie[0].id) + " limit 1;"
-                self.env.cr.execute(query)                        
+                self.env.cr.execute(query)
                 informacion = self.env.cr.fetchall()
+                _logger.info("test informacion: " + str(informacion))
                 if len(informacion) > 0:
                   textoHtml2 = """ 
                                 <!-- Button trigger modal -->
@@ -915,6 +917,10 @@ class helpdesk_crearconserie(TransientModel):
                 else:
                   self.ticket_id_existente = 0
                   self.textoTicketExistente = ''
+                _logger.info("test serie: " + str(self.serie))
+                _logger.info("test serie: " + str(self.serie[0]))
+                _logger.info("test serie: " + str(self.serie[0].x_studio_move_line))
+                _logger.info()
                 if self.serie[0].x_studio_move_line:
                     self.cliente = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.name
                     self.idCliente = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
