@@ -1035,6 +1035,10 @@ class helpdesk_crearconserie(TransientModel):
                         ,'team_id': 9
                         ,'x_studio_field_6furK': self.zonaLocalidad
                         })
+            if self.contactoInterno:
+                query = "update helpdesk_ticket set \"contactoInterno\" = " + str(self.contactoInterno.id) + " where id = " + str(ticket.id) + ";"
+                self.env.cr.execute(query)
+                self.env.cr.commit()
             query = "update helpdesk_ticket set \"partner_id\" = " + str(self.idCliente) + ", \"x_studio_empresas_relacionadas\" =" + str(self.idLocaliidad) + " where id = " + str(ticket.id) + ";"
             self.env.cr.execute(query)
             self.env.cr.commit()
@@ -1079,6 +1083,10 @@ class helpdesk_crearconserie(TransientModel):
                       ,'team_id': 9
                       ,'x_studio_field_6furK': self.zonaLocalidad
                       })
+          if self.contactoInterno:
+                query = "update helpdesk_ticket set \"contactoInterno\" = " + str(self.contactoInterno.id) + " where id = " + str(ticket.id) + ";"
+                self.env.cr.execute(query)
+                self.env.cr.commit()
           #query = "update helpdesk_ticket set \"partner_id\" = " + str(self.idCliente) + ", \"x_studio_empresas_relacionadas\" =" + str(self.idLocaliidad) + " where id = " + str(ticket.id) + ";"
           #self.env.cr.execute(query)
           #self.env.cr.commit()
