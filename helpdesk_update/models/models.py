@@ -272,8 +272,8 @@ class helpdesk_update(models.Model):
             contactoDeLocalidad = str(rec.localidadContacto.name)
             if contactoDeLocalidad == 'False':
                 contactoDeLocalidad = 'No disponible'
-            elif self.contactoInterno:
-                contactoDeLocalidad = contactoInterno.name
+            elif rec.contactoInterno:
+                contactoDeLocalidad = rec.contactoInterno.name
 
             estadoLocalidad = str(rec.x_studio_estado_de_localidad)
             if estadoLocalidad == 'False':
@@ -286,20 +286,20 @@ class helpdesk_update(models.Model):
             telefonoLocalidad = str(rec.telefonoLocalidadContacto)
             if telefonoLocalidad == 'False':
                 telefonoLocalidad = 'No disponible'
-            elif self.contactoInterno:
-                contactoDeLocalidad = contactoInterno.phone
+            elif rec.contactoInterno:
+                contactoDeLocalidad = rec.contactoInterno.phone
 
             movilLocalidad = str(rec.movilLocalidadContacto)
             if movilLocalidad == 'False':
                 movilLocalidad = 'No disponible'
-            elif self.contactoInterno:
-                contactoDeLocalidad = contactoInterno.mobile
+            elif rec.contactoInterno:
+                contactoDeLocalidad = rec.contactoInterno.mobile
 
             correoElectronicoLocalidad = str(rec.correoLocalidadContacto)
             if correoElectronicoLocalidad == 'False':
                 correoElectronicoLocalidad = 'No disponible'
-            elif self.contactoInterno:
-                contactoDeLocalidad = contactoInterno.email
+            elif rec.contactoInterno:
+                contactoDeLocalidad = rec.contactoInterno.email
             
             datos = 'Cliente: ' + nombreCliente + ' \nLocalidad: ' + localidad + ' \nLocalidad contacto: ' + contactoDeLocalidad + ' \nEstado de localidad: ' + estadoLocalidad + '\nZona localidad: ' + zonaLocalidad + ' \nTeléfono de localidad: ' + telefonoLocalidad + ' \nMóvil localidad contacto: ' + movilLocalidad + ' \nCorreo electrónico localidad contacto: ' + correoElectronicoLocalidad
             #datos = 'Cliente: ' + nombreCliente + ' \nLocalidad: ' + localidad + ' \nLocalidad contacto: ' + contactoDeLocalidad + ' \nEstado de localidad: ' + estadoLocalidad 
