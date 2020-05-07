@@ -920,7 +920,7 @@ class helpdesk_crearconserie(TransientModel):
                 _logger.info("test serie: " + str(self.serie))
                 _logger.info("test serie: " + str(self.serie[0]))
                 _logger.info("test serie: " + str(self.serie[0].x_studio_move_line))
-                self.serie.reverse()
+                #self.serie.reverse()
                 _logger.info("test serie reverse: " + str(self.serie[0].x_studio_move_line))
                 if self.serie[0].x_studio_move_line:
                     _logger.info("test dato: " + str(self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id))
