@@ -1137,6 +1137,8 @@ class HelpDeskReincidencia(TransientModel):
                       ,'esReincidencia': True
                       ,'ticketDeReincidencia': "<a href='https://gnsys-corp.odoo.com/web#id=" + str(self.ticket_id.id) + "&action=1137&model=helpdesk.ticket&view_type=form&menu_id=406' target='_blank'>" + str(self.ticket_id.id) + "</a>"
                       })
+          if self.contactoInterno:
+            ticket.write({'contactoInterno' : self.contactoInterno.id})
           query = "update helpdesk_ticket set \"partner_id\" = " + str(self.ticket_id.partner_id.id) + ", \"x_studio_empresas_relacionadas\" =" + str(self.ticket_id.x_studio_empresas_relacionadas.id) + " where id = " + str(ticket.id) + ";"
           self.env.cr.execute(query)
           self.env.cr.commit()
@@ -1187,6 +1189,8 @@ class HelpDeskReincidencia(TransientModel):
                       ,'esReincidencia': True
                       ,'ticketDeReincidencia': "<a href='https://gnsys-corp.odoo.com/web#id=" + str(self.ticket_id.id) + "&action=1137&model=helpdesk.ticket&view_type=form&menu_id=406' target='_blank'>" + str(self.ticket_id.id) + "</a>"
                       })
+          if self.contactoInterno:
+            ticket.write({'contactoInterno' : self.contactoInterno.id})
           query = "update helpdesk_ticket set \"partner_id\" = " + str(self.ticket_id.partner_id.id) + ", \"x_studio_empresas_relacionadas\" =" + str(self.ticket_id.x_studio_empresas_relacionadas.id) + " where id = " + str(ticket.id) + ";"
           self.env.cr.execute(query)
           self.env.cr.commit()
