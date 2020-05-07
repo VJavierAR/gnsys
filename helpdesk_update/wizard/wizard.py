@@ -1139,7 +1139,7 @@ class HelpDeskReincidencia(TransientModel):
                       })
           if self.contactoInterno:
             ticket.write({'contactoInterno' : self.contactoInterno.id})
-          query = "update helpdesk_ticket set \"partner_id\" = " + str(self.ticket_id.partner_id.id) + ", \"x_studio_empresas_relacionadas\" =" + str(self.ticket_id.x_studio_empresas_relacionadas.id) + " where id = " + str(ticket.id) + ";"
+          query = "update helpdesk_ticket set \"partner_id\" = " + str(self.ticket_id.partner_id.id) + ", \"x_studio_empresas_relacionadas\" =" + str(self.ticket_id.x_studio_empresas_relacionadas.id) + ", \"contactoInterno\" = " + str(self.contactoInterno.id) + " where id = " + str(ticket.id) + ";"
           self.env.cr.execute(query)
           self.env.cr.commit()
           ticket._compute_datosCliente()
@@ -1191,7 +1191,7 @@ class HelpDeskReincidencia(TransientModel):
                       })
           if self.contactoInterno:
             ticket.write({'contactoInterno' : self.contactoInterno.id})
-          query = "update helpdesk_ticket set \"partner_id\" = " + str(self.ticket_id.partner_id.id) + ", \"x_studio_empresas_relacionadas\" =" + str(self.ticket_id.x_studio_empresas_relacionadas.id) + " where id = " + str(ticket.id) + ";"
+          query = "update helpdesk_ticket set \"partner_id\" = " + str(self.ticket_id.partner_id.id) + ", \"x_studio_empresas_relacionadas\" =" + str(self.ticket_id.x_studio_empresas_relacionadas.id) + ", \"contactoInterno\" = " + str(self.contactoInterno.id) + " where id = " + str(ticket.id) + ";"
           self.env.cr.execute(query)
           self.env.cr.commit()
           ticket._compute_datosCliente()
