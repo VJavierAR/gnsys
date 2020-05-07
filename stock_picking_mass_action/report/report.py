@@ -203,7 +203,7 @@ class PartnerXlsx(models.AbstractModel):
                 sheet.write(i, 3, obj.days_difference, bold)
                 sheet.write(i, 4, obj.partner_id.name if(obj.partner_id) else '', bold)
                 sheet.write(i, 5, obj.x_studio_empresas_relacionadas.name if(obj.x_studio_empresas_relacionadas) else '', bold)
-                sheet.write(i, 6, str(obj.x_studio_equipo_por_nmero_de_serie_1.serie.name if(obj.team_id.id==8) else str(obj.x_studio_equipo_por_nmero_de_serie.name), bold)
+                sheet.write(i, 6, str(obj.x_studio_equipo_por_nmero_de_serie_1.serie.name) if(obj.team_id.id==8) else str(obj.x_studio_equipo_por_nmero_de_serie.name), bold)
                 sheet.write(i, 7, str(obj.x_studio_equipo_por_nmero_de_serie_1.serie.product_id.name) if(obj.team_id.id==8) else str(obj.x_studio_equipo_por_nmero_de_serie.product_id.name), bold)
                 sheet.write(i, 8, obj.team_id.name, bold)
                 sheet.write(i, 9,obj.x_studio_empresas_relacionadas.state_id.name if(obj.x_studio_empresas_relacionadas.state_id) else '' , bold)
