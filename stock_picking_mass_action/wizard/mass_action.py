@@ -570,7 +570,7 @@ class StockQuantMassAction(TransientModel):
     _name = 'stock.quant.action'
     _description = 'Reporte de Existencias'
     quant_ids = fields.Many2many(comodel_name="stock.quant")
-    almacen=fields.Many2one('stock.warehouse')
+    almacen=fields.Many2many('stock.warehouse')
     categoria=fields.Many2one('product.category')
     tipo=fields.Many2one('product.product',string='Modelo')
     equipo =fields.Boolean('Equipos')
@@ -586,8 +586,8 @@ class StockQuantMassAction(TransientModel):
         #         d.append(['x_studio_almacn','!=',False])
         #     #d.append(['lot_id','!=',False])
         # else:
-        if(self.almacen):
-            d.append(['x_studio_almacn','=',self.almacen.id])
+        if(len(self.almacen)>0):
+            d.append(['x_studio_almacn','in',self.almacen.mapped('id')])
         if(self.categoria):
             d.append(['x_studio_categoria','=',self.categoria.id])
             if(self.categoria.id==13):
