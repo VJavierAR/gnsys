@@ -504,7 +504,7 @@ class contadores(models.Model):
         
     
     
-    @api.multi
+  @api.multi
     def genera_excel(self):
         workbook = xlsxwriter.Workbook('Example2.xlsx') 
         worksheet = workbook.add_worksheet()   
@@ -513,7 +513,7 @@ class contadores(models.Model):
         # Rows and columns are zero indexed. 
         row = 0
         column = 0        
-        content = ["No.", "Localidad", "Modelo", "No. Serie","B/N "+str(self.mes), "Color "+str(self.mes),"B/N ", "Color", "Impresiones B/N", "Impresiones Color","Subtotal","IVA","Total","Ubucación"]        
+        content = ["No.", "Localidad", "Modelo", "No. Serie","B/N "+str(self.mes), "Color "+str(self.mes),"B/N ", "Color", "Impresiones B/N", "Impresiones Color","Excedentes B&N","Excedentes Color","Subtotal","IVA","Total","Ubicación"]        
         #abajo 0 derecha 0
         if self.cliente:
            worksheet.write(0, 0, "CLIENTE: "+str(self.cliente.name))
@@ -526,7 +526,7 @@ class contadores(models.Model):
             
            
         
-        
+        #falta costo y renta global y cosot por click bn 
         i=0
         for item in content :           
             worksheet.write(5, i, item)            
@@ -538,9 +538,9 @@ class contadores(models.Model):
         worksheet.set_column('C:C', 30)
         worksheet.set_column('D:D', 30)
        
-        worksheet.insert_image('O2', 'gnsys.png')
+        #worksheet.insert_image('O2', 'gnsys.png')
         if len(self.detalle)>0: 
-            ser=self.serie=self.env['servicios'].search([['id','=',self.detalle[0].servicio]])        
+            ser=self.serie=self.env['servicios'].search([['id','=',self.detalle[0].servicio]])
         else:
             raise exceptions.ValidationError("Nada que generar ")
         rgl=0
@@ -548,113 +548,348 @@ class contadores(models.Model):
         tc=0
         tsubt=0
         tiva=0
-        total=0        
-        for rpt in self.detalle :
-            #agrupar por servicios y generar 2 paginas de excel xD
-            worksheet.write(i, 0, rpt.indice)
-            worksheet.write(i, 1, rpt.locacion)
-            worksheet.write(i, 2, rpt.modelo)
-            worksheet.write(i, 3, rpt.serieEquipo)            
-            worksheet.write(i, 4, rpt.lecturaAnteriorBN)
-            worksheet.write(i, 5, rpt.lecturaAnteriorColor)                        
-            worksheet.write(i, 6, rpt.ultimaLecturaBN)
-            worksheet.write(i, 7, rpt.ultimaLecturaColor)
-            if rpt.ultimaLecturaBN==0:
-               ebn=0
-            else:
-               ebn=rpt.ultimaLecturaBN-rpt.lecturaAnteriorBN
-            if rpt.ultimaLecturaColor==0:
-               ec=0
-            else:                
-               ec=rpt.ultimaLecturaColor-rpt.lecturaAnteriorColor
-            
-            worksheet.write(i, 8, ebn)
-            worksheet.write(i, 9, ec)
-            clickbn=ser.clickExcedenteBN
-            clickc=ser.clickExcedenteColor         
-            bolsabn=ser.bolsaBN
-            bolsac=ser.bolsaColor
-            #subtotal
-            #reta
-            tbn=ebn+tbn
-            tc=ec+tc
-            stbn=0
-            stc=0
-            st=0
-            iva=0
-            ttt=0
-            g=6
-            if int(ser.rentaMensual)==0:
-                if ebn>bolsabn:                
-                   stbn=round((ebn-bolsabn)*clickbn,2)                   
-                if ec>bolsac:
-                   stc=round((ec-bolsac)*clickc,2) 
-                st=stbn+stc
-                worksheet.write(i, 10, '$ '+str(st))
-                iva=round(st*.16,2)
-                worksheet.write(i, 11,'$ '+str(iva) )
-                ttt=round(st+iva,2)
-                worksheet.write(i, 12,'$ '+str(ttt) )            
-            else:
-                worksheet.write(i, 10, '$ '+str(0))
-                worksheet.write(i, 11, '$ '+str(0))                
-                worksheet.write(i, 12, '$ '+str(0))                
-            tsubt=st+tsubt
-            tiva=iva+tiva
-            total=ttt+total
-            i=i+1   
-        worksheet.write(len(self.detalle)+g, 8, tbn)
-        worksheet.write(len(self.detalle)+g, 9, tc)
-        worksheet.write(len(self.detalle)+g, 10, '$'+str(round(tsubt,2)))
-        worksheet.write(len(self.detalle)+g, 11, '$'+str(round(tiva,2)))
-        worksheet.write(len(self.detalle)+g, 12, '$'+str(round(total,2)))
-        
-        if int(ser.rentaMensual)>0 and ser.bolsaBN < tbn :            
-           bnae=round((tbn-bolsabn)*clickbn,2)
-           tsubt=bnae
-           tiva=round(tsubt*.16,2)
-           total=tsubt+tiva
-           worksheet.write(len(self.detalle)+g, 10, '$'+str(tsubt))
-           worksheet.write(len(self.detalle)+g, 11, '$'+str(tiva))
-           worksheet.write(len(self.detalle)+g, 12, '$'+str(total))        
-        if int(ser.rentaMensual)>0 and ser.bolsaColor < tc :                        
-           cae= round((tc-bolsaColor)*clickc,2)
-           tsubt=cae           
-           tiva=round(tsubt*.16,2)
-           total=tsubt+tiva            
-           worksheet.write(len(self.detalle)+g, 10, '$'+str(tsubt))
-           worksheet.write(len(self.detalle)+g, 11, '$'+str(tiva))
-           worksheet.write(len(self.detalle)+g, 12, '$'+str(total))
-        if int(ser.rentaMensual)>0 and ser.bolsaBN < tbn and ser.bolsaColor < tc:
-           bnae=round((tbn-bolsabn)*clickbn,2) 
-           cae= round((tc-bolsaColor)*clickc,2)
-           tsubt=bnae+cae
-           tiva=round(tsubt*.16,2)
-           total=tsubt+tiva            
-           worksheet.write(len(self.detalle)+g, 10, '$'+str(tsubt))
-           worksheet.write(len(self.detalle)+g, 11, '$'+str(tiva))
-           worksheet.write(len(self.detalle)+g, 12, '$'+str(total))                                        
+        total=0
+        re=self.env['servicios'].search([['contrato','=',self.x_studio_contrato.id]])
+        g=6
+        totalsr=0
+        ivatt=0
+        ttotal=0
+        eebn=0
+        eec=0
+        for rd in re:
+            if rd.nombreAnte=='Renta global con páginas incluidas BN o color + pag. Excedentes' :                    
+               for rpt in self.detalle :
+                   if rpt.servicio==rd.id :
+                        worksheet.write(i, 0, rpt.indice)
+                        worksheet.write(i, 1, rpt.locacion)
+                        worksheet.write(i, 2, rpt.modelo)
+                        worksheet.write(i, 3, rpt.serieEquipo)            
+                        worksheet.write(i, 4, rpt.lecturaAnteriorBN)
+                        worksheet.write(i, 5, rpt.lecturaAnteriorColor)                        
+                        worksheet.write(i, 6, rpt.ultimaLecturaBN)
+                        worksheet.write(i, 7, rpt.ultimaLecturaColor)                                        
+                        if rpt.ultimaLecturaBN==0:
+                           ebn=0
+                        else:
+                           ebn=rpt.ultimaLecturaBN-rpt.lecturaAnteriorBN
+                        if rpt.ultimaLecturaColor==0:
+                           ec=0
+                        else:                
+                           ec=rpt.ultimaLecturaColor-rpt.lecturaAnteriorColor                    
+                        worksheet.write(i, 15, rpt.ubi)                                                            
+                        worksheet.write(i, 8, ebn)
+                        worksheet.write(i, 9, ec)                                            
+                        if rpt.bnColor=='B/N':                                                         
+                           eebn=ebn+eebn
+                        if rpt.bnColor=='Color':                                                         
+                           eebn=ebn+eebn                                                                                   
+                           eec=ec+eec               
+                        i=i+1
+               if eebn>rd.bolsaBN:
+                   resto=eebn-rd.bolsaBN
+                   totalsr=resto*rd.clickExcedenteBN+totalsr
+                   ivatt=round(resto*rd.clickExcedenteBN*.16,2)+ivatt
+                   ttotal=round(resto*rd.clickExcedenteBN*.16,2) +resto*rd.clickExcedenteBN+ttotal
+               if eec>rd.bolsaColor:
+                   restoc=eec-rd.bolsaColor
+                   totalsr=restoc*rd.clickExcedenteColor+totalsr
+                   ivatt=round(restoc*rd.clickExcedenteColor*.16,2)+ivatt
+                   ttotal=round(restoc*rd.clickExcedenteColor*.16,2)+restoc*rd.clickExcedenteColor+ttotal                            
+                   
+               totalsr=float(rd.rentaMensual)+totalsr
+               ivatt=round(float(rd.rentaMensual)*.16,2)+ivatt
+               ttotal=round(float(rd.rentaMensual)*.16,2) +float(rd.rentaMensual)+ttotal
+            if rd.nombreAnte=='Renta global + costo de página procesada BN o color':                    
+               for rpt in self.detalle :
+                   if rpt.servicio==rd.id :
+                        worksheet.write(i, 0, rpt.indice)
+                        worksheet.write(i, 1, rpt.locacion)
+                        worksheet.write(i, 2, rpt.modelo)
+                        worksheet.write(i, 3, rpt.serieEquipo)            
+                        worksheet.write(i, 4, rpt.lecturaAnteriorBN)
+                        worksheet.write(i, 5, rpt.lecturaAnteriorColor)                        
+                        worksheet.write(i, 6, rpt.ultimaLecturaBN)
+                        worksheet.write(i, 7, rpt.ultimaLecturaColor)                                        
+                        if rpt.ultimaLecturaBN==0:
+                           ebn=0
+                        else:
+                           ebn=rpt.ultimaLecturaBN-rpt.lecturaAnteriorBN
+                        if rpt.ultimaLecturaColor==0:
+                           ec=0
+                        else:                
+                           ec=rpt.ultimaLecturaColor-rpt.lecturaAnteriorColor                    
+                        worksheet.write(i, 15, rpt.ubi)
+                        worksheet.write(i, 16, len(rd))                                                            
+                        worksheet.write(i, 8, ebn)
+                        worksheet.write(i, 9, ec)                        
+                        if rpt.bnColor=='B/N':                                    
+                           bs= (ebn*rd.clickExcedenteBN)
+                           eebn=ebn+eebn
+                           worksheet.write(i, 12, bs)
+                           iva=round(bs*.16,2)
+                           ivatt=iva+ivatt
+                           worksheet.write(i, 13,'$ '+str(iva) )
+                           worksheet.write(i, 14,'$ '+str(iva +bs) )
+                           totalsr=bs+totalsr
+                           ttotal=(iva +bs)+ttotal                        
+                        if rpt.bnColor=='Color':
+                           bsc=(ec*rd.clickExcedenteColor)+(ebn*rd.clickExcedenteBN)
+                           eec=ec+eec
+                           worksheet.write(i, 12, bsc) 
+                           iva=round(bsc*.16,2)
+                           ivatt=iva+ivatt
+                           worksheet.write(i, 13,'$ '+str(iva) ) 
+                           worksheet.write(i, 14,'$ '+str(iva +bsc) )
+                           totalsr=bsc+totalsr
+                           ttotal=(iva +bsc)+ttotal                            
+                        if rpt.bnColor=='B/N':                                                         
+                           eebn=ebn+eebn
+                        if rpt.bnColor=='Color':                                                         
+                           eebn=ebn+eebn                                                                                   
+                           eec=ec+eec               
+                        i=i+1      
+               totalsr=float(rd.rentaMensual)+totalsr
+               ivatt=round(float(rd.rentaMensual)*.16,2)+ivatt
+               ttotal=round(float(rd.rentaMensual)*.16,2) +float(rd.rentaMensual)+ttotal
+               #raise exceptions.ValidationError("Nada que generar "+str(ttotal))                                     
+        for rd in re:
+            for rpt in self.detalle :
+                if rpt.servicio==rd.id :                                        
+                    if rpt.ultimaLecturaBN==0:
+                       ebn=0
+                    else:
+                       ebn=rpt.ultimaLecturaBN-rpt.lecturaAnteriorBN
+                    if rpt.ultimaLecturaColor==0:
+                       ec=0
+                    else:                
+                       ec=rpt.ultimaLecturaColor-rpt.lecturaAnteriorColor                    
+                    
+                    if rd.nombreAnte=='Renta base con ML incluidas BN o color + ML. excedentes' or rd.nombreAnte=='Renta base con páginas incluidas BN o color + pag. excedentes':
+                        worksheet.write(i, 0, rpt.indice)
+                        worksheet.write(i, 1, rpt.locacion)
+                        worksheet.write(i, 2, rpt.modelo)
+                        worksheet.write(i, 3, rpt.serieEquipo)            
+                        worksheet.write(i, 4, rpt.lecturaAnteriorBN)
+                        worksheet.write(i, 5, rpt.lecturaAnteriorColor)                        
+                        worksheet.write(i, 6, rpt.ultimaLecturaBN)
+                        worksheet.write(i, 7, rpt.ultimaLecturaColor)                                        
+                        worksheet.write(i, 15, rpt.ubi)                                        
+                        worksheet.write(i, 8, ebn)
+                        worksheet.write(i, 9, ec)
+                        worksheet.write(i, 10, ebn)
+                        worksheet.write(i, 11, ec)                    
+                        if rpt.bnColor=='B/N':
+                           if rd.bolsaBN<ebn:
+                              ebn=ebn-rd.bolsaBN
+                              eebn=ebn+eebn  
+                              cal=float(rd.rentaMensual)+(ebn*rd.clickExcedenteBN)  
+                              worksheet.write(i, 12, cal)
+                              iva=round(cal*.16,2)
+                              worksheet.write(i, 13,'$ '+str(iva) )
+                              worksheet.write(i, 14,'$ '+str(iva +cal) )  
+                              ivatt=iva+ivatt  
+                              totalsr=(float(rd.rentaMensual)+(ebn*rd.clickExcedenteBN))+totalsr
+                              ttotal=(iva +cal)+ttotal
+                        if rpt.bnColor=='Color':
+                           if rd.bolsaBN<ebn:
+                              ebn=ebn-rd.bolsaBN
+                              eebn=ebn+eebn  
+                              ebnx=(ebn*rd.clickExcedenteBN)                                      
+                           if rd.bolsaColor<ec:
+                              ec=ec-rd.bolsaColor
+                              eec=ec+eec  
+                              call=float(rd.rentaMensual)+(ec*rd.clickExcedenteColor)+ebnx  
+                              worksheet.write(i, 12, call)
+                              iva=round(call*.16,2)
+                              ivatt=iva+ivatt
+                              worksheet.write(i, 13,'$ '+str(iva) )     
+                              worksheet.write(i, 14,'$ '+str(iva +call) )
+                              totalsr=call+totalsr
+                              ttotal=(iva +call)+ttotal
+                        i=i+1   
+                    if rd.nombreAnte=='Costo por página procesada BN o color':
+                        worksheet.write(i, 0, rpt.indice)
+                        worksheet.write(i, 1, rpt.locacion)
+                        worksheet.write(i, 2, rpt.modelo)
+                        worksheet.write(i, 3, rpt.serieEquipo)            
+                        worksheet.write(i, 4, rpt.lecturaAnteriorBN)
+                        worksheet.write(i, 5, rpt.lecturaAnteriorColor)                        
+                        worksheet.write(i, 6, rpt.ultimaLecturaBN)
+                        worksheet.write(i, 7, rpt.ultimaLecturaColor)                                        
+                        worksheet.write(i, 8, ebn)
+                        worksheet.write(i, 9, ec)
+                        worksheet.write(i, 10, ebn)
+                        worksheet.write(i, 11, ec)
+                        worksheet.write(i, 15, rpt.ubi)                                        
+                        if rpt.bnColor=='B/N':                                    
+                           bs= (ebn*rd.clickExcedenteBN)
+                           eebn=ebn+eebn
+                           worksheet.write(i, 12, bs)
+                           iva=round(bs*.16,2)
+                           ivatt=iva+ivatt
+                           worksheet.write(i, 13,'$ '+str(iva) )
+                           worksheet.write(i, 14,'$ '+str(iva +bs) )
+                           totalsr=bs+totalsr
+                           ttotal=(iva +bs)+ttotal                        
+                        if rpt.bnColor=='Color':
+                           bsc=(ec*rd.clickExcedenteColor)+(ebn*rd.clickExcedenteBN)
+                           eec=ec+eec
+                           worksheet.write(i, 12, bsc) 
+                           iva=round(bsc*.16,2)
+                           ivatt=iva+ivatt
+                           worksheet.write(i, 13,'$ '+str(iva) ) 
+                           worksheet.write(i, 14,'$ '+str(iva +bsc) )
+                           totalsr=bsc+totalsr
+                           ttotal=(iva +bsc)+ttotal                                                                                                                  
+                        i=i+1            
+                    if rd.nombreAnte=='Renta base + costo de página procesada BN o color':
+                        worksheet.write(i, 0, rpt.indice)
+                        worksheet.write(i, 1, rpt.locacion)
+                        worksheet.write(i, 2, rpt.modelo)
+                        worksheet.write(i, 3, rpt.serieEquipo)            
+                        worksheet.write(i, 4, rpt.lecturaAnteriorBN)
+                        worksheet.write(i, 5, rpt.lecturaAnteriorColor)                        
+                        worksheet.write(i, 6, rpt.ultimaLecturaBN)
+                        worksheet.write(i, 7, rpt.ultimaLecturaColor)                                        
+                        worksheet.write(i, 8, ebn)
+                        worksheet.write(i, 9, ec)
+                        worksheet.write(i, 10, ebn)
+                        worksheet.write(i, 11, ec)
+                        worksheet.write(i, 15, rpt.ubi)                                        
+                    
+                        if rpt.bnColor=='B/N':
+                           bs= float(rd.rentaMensual)+(ebn*rd.clickExcedenteBN)
+                           eebn=ebn+eebn
+                           worksheet.write(i, 12, bs)
+                           iva=round(bs*.16,2)
+                           ivatt=iva+ivatt
+                           worksheet.write(i, 13,'$ '+str(iva) )
+                           worksheet.write(i, 14,'$ '+str(iva +bs) )
+                           totalsr=bs+totalsr
+                           ttotal=(iva +bs)+ttotal
+                        if rpt.bnColor=='Color':
+                           bsc=float(rd.rentaMensual)+(ec*rd.clickExcedenteColor)+(ebn*rd.clickExcedenteBN)
+                           eec=ec+eec
+                           worksheet.write(i, 12, bsc) 
+                           iva=round(bsc*.16,2)
+                           ivatt=iva+ivatt
+                           worksheet.write(i, 13,'$ '+str(iva) ) 
+                           worksheet.write(i, 14,'$ '+str(iva +bsc) )
+                           totalsr=bsc+totalsr
+                           ttotal=(iva +bsc)+ttotal                                                                               
+                        i=i+1
+                     
+        for rd in re:            
+            if rd.nombreAnte=='SERVICIO DE PCOUNTER' or rd.nombreAnte=='SERVICIO DE PCOUNTER1' or rd.nombreAnte=='ADMINISTRACION DE DOCUMENTOS CON PCOUNTER' or rd.nombreAnte=='SERVICIO DE MANTENIMIENTO DE PCOUNTER' or rd.nombreAnte=='SERVICIO DE MANTENIMIENTO PCOUNTER' or rd.nombreAnte=='RENTA DE LICENCIAMIENTO PCOUNTER':
+               worksheet.write(i, 0, rd.nombreAnte)
+               worksheet.write(i, 12, '$'+rd.rentaMensual)
+               worksheet.write(i, 13, '$'+str(round(float(rd.rentaMensual)*.16,2)))       
+               worksheet.write(i, 14, '$'+str(round(float(rd.rentaMensual)*.16,2)+float(rd.rentaMensual)))
+               totalsr=float(rd.rentaMensual)+totalsr 
+               ivatt=round(float(rd.rentaMensual)*.16,2)+ivatt 
+               ttotal=(round(float(rd.rentaMensual)*.16,2)+float(rd.rentaMensual))+ttotal 
+            if rd.nombreAnte=='SERVICIO DE TFS' or rd.nombreAnte=='OPERADOR TFS' or rd.nombreAnte=='TFS' or rd.nombreAnte=='SERVICIO DE TFS ' :
+               worksheet.write(i, 0, rd.nombreAnte)
+               tfs=float(rd.rentaMensual)*int(rd.cantidad)
+               worksheet.write(i, 12, '$'+str(tfs))
+               worksheet.write(i, 13, '$'+str(round(tfs*.16,2)))       
+               worksheet.write(i, 14, '$'+str(round(tfs*.16,2)+tfs))
+               totalsr = tfs + totalsr                                
+               ivatt=round(float(tfs)*.16,2)+ivatt 
+               ttotal=round(tfs*.16,2)+tfs+ttotal                 
+            if rd.nombreAnte=='SERVICIO DE MANTENIMIENTO':                        
+               worksheet.write(i, 0, rd.nombreAnte)
+               worksheet.write(i, 12, '$'+rd.rentaMensual)
+               worksheet.write(i, 13, '$'+str(round(float(rd.rentaMensual)*.16,2)))       
+               worksheet.write(i, 14, '$'+str(round(float(rd.rentaMensual)*.16,2)+float(rd.rentaMensual)))
+               totalsr=float(rd.rentaMensual)+totalsr                 
+               ivatt=round(float(rd.rentaMensual)*.16,2)+ivatt 
+               ttotal=(round(float(rd.rentaMensual)*.16,2)+float(rd.rentaMensual))+ttotal  
+            if rd.nombreAnte=='SERVICIO DE ADMINISTRADOR KM NET MANAGER':
+               worksheet.write(i, 0, rd.nombreAnte)
+               worksheet.write(i, 12, '$'+rd.rentaMensual)
+               worksheet.write(i, 13, '$'+str(round(float(rd.rentaMensual)*.16,2)))       
+               worksheet.write(i, 14, '$'+str(round(float(rd.rentaMensual)*.16,2)+float(rd.rentaMensual)))
+               totalsr=float(rd.rentaMensual)+totalsr                                
+               ivatt=round(float(rd.rentaMensual)*.16,2)+ivatt 
+               ttotal=(round(float(rd.rentaMensual)*.16,2)+float(rd.rentaMensual))+ttotal
+            if rd.nombreAnte=='PAGINAS IMPRESAS EN BN ':
+               importe=float(rd.rentaMensual)*int(rd.cantidad)
+               worksheet.write(i, 0, rd.nombreAnte)
+               worksheet.write(i, 12, '$'+str(importe))
+               worksheet.write(i, 13, '$'+str(round(float(importe)*.16,2)))       
+               worksheet.write(i, 14, '$'+str(round(float(importe)*.16,2)+float(importe)))
+               totalsr=importe+totalsr                 
+               ivatt=round(float(importe)*.16,2)+ivatt                                
+               ttotal=(round(float(importe)*.16,2)+float(importe))+ttotal
+            if rd.nombreAnte=='RENTA MENSUAL DE LICENCIA  7 EMBEDED' or rd.nombreAnte=='RENTA MENSUAL DE LICENCIA  14 EMBEDED' or  rd.nombreAnte=='RENTA MENSUAL DE LICENCIA  2 EMBEDED':                        
+               worksheet.write(i, 0, rd.nombreAnte)
+               tfs=float(rd.rentaMensual)*int(rd.cantidad)
+               worksheet.write(i, 12, '$'+str(tfs))
+               worksheet.write(i, 13, '$'+str(round(tfs*.16,2)))       
+               worksheet.write(i, 14, '$'+str(round(tfs*.16,2)+tfs))
+               totalsr = tfs + totalsr                                
+               ivatt=round(float(tfs)*.16,2)+ivatt 
+               ttotal=round(tfs*.16,2)+tfs+ttotal 
+
+            i=i+1    
+        """
+            if rd.nombreAnte=='SERVICIO DE TFS' or rd.nombreAnte=='OPERADOR TFS' or rd.nombreAnte=='TFS' or rd.nombreAnte=='SERVICIO DE TFS ' :                        
+                        
+            if rd.nombreAnte=='SERVICIO DE MANTENIMIENTO':                        
+                        
+            if rd.nombreAnte=='SERVICIO DE ADMINISTRADOR KM NET MANAGER':                        
+                        
+            if rd.nombreAnte=='PAGINAS IMPRESAS EN BN':                        
+                        
+            if rd.nombreAnte=='RENTA MENSUAL DE LICENCIA  7 EMBEDED' or rd.nombreAnte=='RENTA MENSUAL DE LICENCIA  14 EMBEDED' or  rd.nombreAnte=='RENTA MENSUAL DE LICENCIA  2 EMBEDED':                        
+                                                          
+               for rpt in self.detalle :
+                   if rpt.servicio==rd.id :
+                        worksheet.write(i, 0, rpt.indice)
+                        worksheet.write(i, 1, rpt.locacion)
+                        worksheet.write(i, 2, rpt.modelo)
+                        worksheet.write(i, 3, rpt.serieEquipo)            
+                        worksheet.write(i, 4, rpt.lecturaAnteriorBN)
+                        worksheet.write(i, 5, rpt.lecturaAnteriorColor)                        
+                        worksheet.write(i, 6, rpt.ultimaLecturaBN)
+                        worksheet.write(i, 7, rpt.ultimaLecturaColor)                                        
+                        if rpt.ultimaLecturaBN==0:
+                           ebn=0
+                        else:
+                           ebn=rpt.ultimaLecturaBN-rpt.lecturaAnteriorBN
+                        if rpt.ultimaLecturaColor==0:
+                           ec=0
+                        else:                
+                           ec=rpt.ultimaLecturaColor-rpt.lecturaAnteriorColor                    
+                        worksheet.write(i, 15, rpt.ubi)                                                            
+                        worksheet.write(i, 8, ebn)
+                        worksheet.write(i, 9, ec)                                            
+                        if rpt.bnColor=='B/N':                                                         
+                           eebn=ebn+eebn
+                        if rpt.bnColor=='Color':                                                         
+                           eebn=ebn+eebn                                                                                   
+                           eec=ec+eec
+                        i=i+1    
+               totalsr=float(rd.rentaMensual)+totalsr
+               ivatt=round(float(rd.rentaMensual)*.16,2)+ivatt
+               ttotal=round(float(rd.rentaMensual)*.16,2) +float(rd.rentaMensual)+ttotal
+        """            
+        worksheet.write(i, 10, eebn)
+        worksheet.write(i, 11, eec)                
+        worksheet.write(i, 12, '$'+str(totalsr))        
+        worksheet.write(i, 13, '$'+str(ivatt))        
+        worksheet.write(i, 14, '$'+str(round(ttotal,2)))        
         workbook.close()
-        #fp = StringIO()
-        #workbook.save(fp)
-        #fp.seek(0)
         data = open('Example2.xlsx', 'rb').read()
         base64_encoded = base64.b64encode(data).decode('UTF-8')
-        
+
         self.excelD=base64_encoded
-        
-        """
-        self.env['ir.attachment'].create({
-                  'name': self.name+'.xlsx',
-                    'type': 'binary',
-                    'datas': base64_encoded,
-            
-                    'res_model': 'contadores.contadores'                                        
-                    })
-        """
-        
+
+
         
     
+
     
     @api.multi
     def carga_contadores(self):
