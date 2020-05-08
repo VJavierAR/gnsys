@@ -2200,8 +2200,7 @@ class helpdesk_update(models.Model):
     #@api.multi
     @api.onchange('x_studio_equipo_por_nmero_de_serie','x_studio_equipo_por_nmero_de_serie_1.serie','x_studio_equipo_por_nmero_de_serie_1')
     #@api.depends('x_studio_equipo_por_nmero_de_serie')
-    def actualiza_datos_cliente(self):        
-        
+    def actualiza_datos_cliente(self):
         v = {}
         ids = []
         localidad = []
@@ -2277,9 +2276,23 @@ class helpdesk_update(models.Model):
                 for numeros_serie in record.x_studio_equipo_por_nmero_de_serie_1:
                     ids.append(numeros_serie.serie.id)
 
-                    for move_line in numeros_serie.serie.x_studio_move_line:
+                    #Cliente
+                    clienteId = numeros_serie.serie.x_studio_move_line[-1].x_studio_field_E0H1Z.parent_id
+                    self.partner_id = clienteId.id
+                    self.x_studio_nivel_del_cliente = clienteId.x_studio_nivel_del_cliente
+                    #Localidad
+                    localidadTemp = numeros_serie.serie.x_studio_move_line[-1].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z
+                    self.localidadContacto = localidadTemp.id
+                    self.x_studio_field_6furK = localidadTemp.x_studio_field_SqU5B
+                    self.x_studio_estado_de_localidad = localidadTemp.state_id.name
+                    self.telefonoLocalidadContacto = localidadTemp.phone
+                    self.movilLocalidadContacto = localidadTemp.mobile
+                    self.correoLocalidadContacto = localidadTemp.email
 
-                        #move_line.para.almacen.ubicacion.
+
+
+                    """
+                    for move_line in numeros_serie.serie.x_studio_move_line:
 
                         cliente = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
                         _logger.info('record_feliz : ' + str(cliente))
@@ -2297,8 +2310,6 @@ class helpdesk_update(models.Model):
                         if cliente_telefono != []:
                             srtt="update helpdesk_ticket set x_studio_telefono = '" + str(cliente_telefono) + "' where  id = " + str(idM) + ";"
 
-                            #s=self.env.cr.execute("update helpdesk_ticket set x_studio_telefono = '" + str(cliente_telefono) + "' where  id = " + str(idM) + ";")
-                            #_logger.info("update gacho 2 "+str(s))
                         v['x_studio_telefono'] = cliente_telefono
 
                         cliente_movil = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.mobile
@@ -2315,56 +2326,20 @@ class helpdesk_update(models.Model):
                             self.env.cr.execute("update helpdesk_ticket set x_studio_nivel_del_cliente = '" + str(cliente_nivel) + "' where  id = " + idM + ";")
                         v['x_studio_nivel_del_cliente'] = cliente_nivel
 
-                        #localidad datos
+                        
 
                         localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
 
                         self._origin.sudo().write({'x_studio_empresas_relacionadas' : localidad})
                         record.x_studio_empresas_relacionadas = localidad
 
-                        
-                        #telefono_localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.phone
-                        #self._origin.sudo().write({x_studio_telefono_localidad : telefono_localidad})
-                        
-                        #movil_localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.mobile
-                        #self._origin.sudo().write({x_studio_movil_localidad : movil_localidad})
-                        
-                        #email_localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.email
-                        #self._origin.sudo().write({x_studio_correo_electrnico_de_localidad : email_localidad})
-
-                        #
-                        #_logger.info(move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.)
-
-                    #self._origin.sudo().write({x_studio_responsable_de_equipo : responsable_equipo_de_distribucion})
-
-                    #_logger.info(record['x_studio_equipo_por_nmero_de_serie'])
-                    
-                    #record['x_studio_equipo_por_nmero_de_serie'] = (6, 0, [ids])
-                    #record.sudo().write({x_studio_equipo_por_nmero_de_serie : [(6, 0, [ids])] })
-                    #self._origin.sudo().write({'x_studio_equipo_por_nmero_de_serie' : (4, ids) })
+                    """  
                     lista_ids = []
                     for id in ids:
                         lista_ids.append((4,id))
-                    #v['x_studio_equipo_por_nmero_de_serie'] = [(4, ids[0]), (4, ids[1])]
-                    #as v['x_studio_equipo_por_nmero_de_serie_1.serie'] = lista_ids
-                    #as self._origin.sudo().write({'x_studio_equipo_por_nmero_de_serie_1.serie' : lista_ids})
-                    #as record.x_studio_equipo_por_nmero_de_serie_1.serie = lista_ids
-                    """
-                    if localidad != []:
-                        srtt="update helpdesk_ticket set x_studio_empresas_relacionadas = " + str(localidad) + " where  id = " + str(idM )+ ";"
-                        _logger.info("update gacho localidad " + srtt)
-                        record.x_studio_empresas_relacionadas = localidad
-                        record['x_studio_empresas_relacionadas'] = localidad
-                        self.env.cr.execute(srtt)
-                        #self.env.cr.commit()
-                        v['x_studio_empresas_relacionadas'] = localidad        
-                    """
                     
-                    #self._origin.env['helpdesk.ticket'].sudo().write(v)
 
-                    #res = super(helpdesk_update, self).sudo().write(v)
-                    #return res
-                    #return {'value': v}
+
         if int(self.x_studio_tamao_lista) > 0 and self.team_id.id != 8:
             
             query="select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!="+str(self.x_studio_id_ticket)+"  and h.stage_id!=18 and h.team_id!=8 and  h.active='t' and stock_production_lot_id = "+str(self.x_studio_equipo_por_nmero_de_serie[0].id)+" limit 1;"            
