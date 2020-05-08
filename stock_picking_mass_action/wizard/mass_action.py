@@ -580,7 +580,7 @@ class StockQuantMassAction(TransientModel):
     @api.onchange('almacen')
     def cambio(self):
         if(self.almacen):
-            self.almacenes=[(4,self.almacen)]
+            self.almacenes=[(4,self.almacen.id)]
 
 
 
