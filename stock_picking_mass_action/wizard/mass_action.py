@@ -570,18 +570,18 @@ class StockQuantMassAction(TransientModel):
     _name = 'stock.quant.action'
     _description = 'Reporte de Existencias'
     quant_ids = fields.Many2many(comodel_name="stock.quant")
-    almacen=fields.Many2one('stock.warehouse')
+    almacen=fields.Many2many('stock.warehouse')
     categoria=fields.Many2one('product.category')
     tipo=fields.Many2one('product.product',string='Modelo')
     equipo =fields.Boolean('Equipos')
     estado=fields.Selection([["Obsoleto","Obsoleto"],["Usado","Usado"],["Hueso","Hueso"],["Para reparación","Para reparación"],["Nuevo","Nuevo"],["Buenas condiciones","Buenas condiciones"],["Excelentes condiciones","Excelentes condiciones"],["Back-up","Back-up"],["Dañado","Dañado"]])
-    almacenes=fields.Many2many('stock.warehouse')
+    #almacenes=fields.Many2many('stock.warehouse')
 
-    
-    @api.onchange('almacen')
-    def cambio(self):
-        if(self.almacen):
-            self.almacenes=[(4,self.almacen.id)]
+
+    #@api.onchange('almacen')
+    #def cambio(self):
+    #    if(self.almacen):
+    #        self.almacenes=[(4,self.almacen.id)]
 
 
 

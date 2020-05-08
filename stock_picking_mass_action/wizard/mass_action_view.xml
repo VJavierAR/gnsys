@@ -38,7 +38,6 @@
             <form string="Mass Action for the selected sale order">
                 <group>
                     <field name="almacen" string="Almacen" editable="bottom" options="{'no_create_edit': True}" required="1" domain="[['x_studio_cliente','=',False]]"/>
-                    <field name="almacenes" string="Almacen" editable="bottom" options="{'no_create_edit': True}" required="1" domain="[['x_studio_cliente','=',False]]"/>
                     <field name="archivo" string="Archivo" required="1"/>
                     <field name="comentario" string="Comentario" required="1"/>
                 </group>
@@ -136,7 +135,7 @@
         <field name="arch" type="xml">
             <form string="Mass Action for the selected stock quant">
                 <group>
-                    <field name="almacen" domain="[['x_studio_cliente','=',False]]"/>
+                    <field name="almacen" widget="many2many_tags" domain="[['x_studio_cliente','=',False]]"/>
                     <field name="categoria"/>
                     <field name="tipo" domain="[['categ_id','=',13]]" attrs="{'invisible':[['categoria','!=',13]]}"/>
                     <field name="estado" attrs="{'invisible':[['categoria','!=',13]]}"/>
