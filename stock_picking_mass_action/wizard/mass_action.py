@@ -609,7 +609,7 @@ class StockQuantMassAction(TransientModel):
             #d.append(['x_studio_almacn.x_studio_cliente','=',False])
             #d.append(['lot_id','=',False])
         _logger.info(str(d))
-        data=self.env['stock.quant'].search(d)
+        data=self.env['stock.quant'].search(d,order="x_studio_almacn")
         #_logger.info(str(data.mapped('id')))
         if(len(data)>0):
             data[0].write({'x_studio_arreglo':str(data.mapped('id'))})
