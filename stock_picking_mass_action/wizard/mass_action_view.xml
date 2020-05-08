@@ -38,6 +38,7 @@
             <form string="Mass Action for the selected sale order">
                 <group>
                     <field name="almacen" string="Almacen" editable="bottom" options="{'no_create_edit': True}" required="1" domain="[['x_studio_cliente','=',False]]"/>
+                    <field name="almacenes" string="Almacen" editable="bottom" options="{'no_create_edit': True}" required="1" domain="[['x_studio_cliente','=',False]]"/>
                     <field name="archivo" string="Archivo" required="1"/>
                     <field name="comentario" string="Comentario" required="1"/>
                 </group>
