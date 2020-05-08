@@ -53,6 +53,7 @@ class helpdesk_update(models.Model):
             idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_subtipo', '=', 'Contacto de localidad']], order='create_date desc', limit=1).id
             self.localidadContacto = idLoc
             self.x_studio_field_6furK = self.x_studio_empresas_relacionadas.x_studio_field_SqU5B
+            _logger.info("Entre por toner idLoc: " + str(idLoc))
             if idLoc:
                 #query = "update helpdesk_ticket set \"localidadContacto\" = " + str(idLoc) + " where id = " + str(self.x_studio_id_ticket) + ";"
                 query = "update helpdesk_ticket set \"localidadContacto\" = " + str(idLoc) + ", \"x_studio_field_6furK\" = '" + str(self.x_studio_empresas_relacionadas.x_studio_field_SqU5B) + "' where id = " + str(self.x_studio_id_ticket) + ";"
@@ -2284,6 +2285,7 @@ class helpdesk_update(models.Model):
                     localidadTemp = numeros_serie.serie.x_studio_move_line[-1].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z
                     self.x_studio_empresas_relacionadas = localidadTemp.id
                     self.x_studio_field_6furK = localidadTemp.x_studio_field_SqU5B
+                    #self.localidadContacto = 
                     self.x_studio_estado_de_localidad = localidadTemp.state_id.name
                     self.telefonoLocalidadContacto = localidadTemp.phone
                     self.movilLocalidadContacto = localidadTemp.mobile
