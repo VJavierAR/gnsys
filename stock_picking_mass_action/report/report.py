@@ -124,7 +124,7 @@ class ExistenciasXML(models.AbstractModel):
                 sheet.write(i, 4, obj.lot_id.name, bold)
                 sheet.write(i, 5, obj.lot_id.x_studio_estado, bold)
                 sheet.write(i, 6, obj.reserved_quantity, bold)
-                sheet.write(i, 7, obj.x_studio_field_kUc4x.x_name, bold)
+                sheet.write(i, 7, obj.x_studio_field_kUc4x.x_name if(obj.x_studio_field_kUc4x.x_name) else '', bold)
                 i=i+1
             sheet.add_table('A2:H'+str((i)),{'style': 'Table Style Medium 9','columns': [{'header': 'Almacen'},{'header': 'Modelo'},{'header': 'No Parte'},{'header':'Descripción'},{'header':'No Serie'},{'header': 'Estado'},{'header': 'Apartados'},{'header': 'Ubicación'}]}) 
         else:
@@ -137,7 +137,7 @@ class ExistenciasXML(models.AbstractModel):
                 sheet.write(i, 3, obj.product_id.description, bold)
                 sheet.write(i, 4, obj.quantity, bold)
                 sheet.write(i, 5, obj.reserved_quantity, bold)
-                sheet.write(i, 6, obj.x_studio_field_kUc4x.x_name, bold)
+                sheet.write(i, 6, obj.x_studio_field_kUc4x.x_name if(obj.x_studio_field_kUc4x.x_name) else '', bold)
                 i=i+1
             sheet.add_table('A2:G'+str((i)),{'style': 'Table Style Medium 9','columns': [{'header': 'Almacen'},{'header': 'Modelo'},{'header': 'No Parte'},{'header':'Descripción'},{'header': 'Existencia'},{'header': 'Apartados'},{'header': 'Ubicación'}]}) 
         workbook.close()
