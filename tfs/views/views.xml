@@ -29,6 +29,7 @@
                 <field name="almacen" invisible="1"/>
                 <field name="cliente"/>
                 <field name="localidad"/>
+                <field name="direccion"/>
                 <field name="domi" invisible="1"/>
             </group>
         </group>
