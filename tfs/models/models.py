@@ -63,6 +63,7 @@ class tfs(models.Model):
 
     colorBN=fields.Selection(related='serie.x_studio_color_bn')
     arreglo=fields.Char()
+    direccion=fields.Char(widget="html")
     @api.multi
     def confirm(self):
         for record in self:
@@ -356,6 +357,7 @@ class tfs(models.Model):
                     localidad=moveli[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id if(len(record.serie.x_studio_move_line)>1) else record.serie.x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
                     record['cliente'] = cliente
                     record['localidad'] = localidad
+                    record['direccion']="<table><tr><td>Calle</td><td>"+str(localidad.street)+"</td></tr><tr><td>No.Exterior</td><td>"+str(localidad.street)+"</td></tr><tr><td>No. Interior</td><td>"+str(localidad.street_number)+"</td></tr><tr><td>Cp</td><td>"+str(localidad.zip)+"</td></tr><tr><td>Estado</td><td>"+str(localidad.state_id.name)+"</td></tr><tr><td>Delegación</td><td>"+str(localidad.city)+"</td></tr></table>"
                     #_logger.info(str(localidad.name))
                     record['almacen'] =self.env['stock.warehouse'].search([['x_studio_field_E0H1Z','=',localidad]]).lot_stock_id.x_studio_almacn_padre.id
                 if(record.colorBN=="B/N"):
