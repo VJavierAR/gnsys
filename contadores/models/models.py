@@ -500,11 +500,9 @@ class contadores(models.Model):
                                  
                     
     
-    #@api.onchange('mes')
-        
+                
     
-    
-  @api.multi
+    @api.multi
     def genera_excel(self):
         workbook = xlsxwriter.Workbook('Example2.xlsx') 
         worksheet = workbook.add_worksheet()   
