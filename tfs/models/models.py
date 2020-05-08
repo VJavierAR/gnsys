@@ -356,7 +356,7 @@ class tfs(models.Model):
                     localidad=moveli[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id if(len(record.serie.x_studio_move_line)>1) else record.serie.x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
                     record['cliente'] = cliente
                     record['localidad'] = localidad
-                    _logger.info(str(localidad.name))
+                    #_logger.info(str(localidad.name))
                     record['almacen'] =self.env['stock.warehouse'].search([['x_studio_field_E0H1Z','=',localidad]]).lot_stock_id.x_studio_almacn_padre.id
                 if(record.colorBN=="B/N"):
                     data=record.serie.product_id.x_studio_toner_compatible.filtered(lambda x: 'Toner' in x.categ_id.name).mapped('id')
