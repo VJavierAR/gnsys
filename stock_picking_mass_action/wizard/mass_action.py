@@ -570,7 +570,7 @@ class StockQuantMassAction(TransientModel):
     _name = 'stock.quant.action'
     _description = 'Reporte de Existencias'
     quant_ids = fields.Many2many(comodel_name="stock.quant")
-    almacen=fields.One2many('stock.warehouse')
+    almacen=fields.Many2one('stock.warehouse')
     almacenes=fields.Many2many('stock.warehouse')
     categoria=fields.Many2one('product.category')
     tipo=fields.Many2one('product.product',string='Modelo')
