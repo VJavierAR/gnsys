@@ -2277,7 +2277,7 @@ class helpdesk_update(models.Model):
                     ids.append(numeros_serie.serie.id)
 
                     #Cliente
-                    clienteId = numeros_serie.serie.x_studio_move_line[-1].x_studio_field_E0H1Z.parent_id
+                    clienteId = numeros_serie.serie.x_studio_move_line[-1].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id
                     self.partner_id = clienteId.id
                     self.x_studio_nivel_del_cliente = clienteId.x_studio_nivel_del_cliente
                     #Localidad
