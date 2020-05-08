@@ -637,7 +637,7 @@ class helpdesk_update(models.Model):
                         ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                     ultimoComentario = self.diagnosticos[-1].comentario
 
-                self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Abierto", 'evidencia': [(6,0,ultimaEvidenciaTec)], 'write_uid':  self.env.user.name})
+                self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Abierto", 'evidencia': [(0,0,ultimaEvidenciaTec)], 'write_uid':  self.env.user.name})
 
                 message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Abierto' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
                 mess= {
@@ -708,7 +708,7 @@ class helpdesk_update(models.Model):
                     #if self.diagnosticos.evidencia:
                     #    ultimaEvidenciaTec += self.diagnosticos.evidencia.ids
                 _logger.info("*********************************Entre: " + str(ultimoComentario))    
-                self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'evidencia': [(6,0,ultimaEvidenciaTec)], 'write_uid':  self.env.user.name})
+                self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'evidencia': [(0,0,ultimaEvidenciaTec)], 'write_uid':  self.env.user.name})
                 #self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name})
                 self.estadoAsignacion = True
                 message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Asignado' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
@@ -783,7 +783,7 @@ class helpdesk_update(models.Model):
                         ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                     ultimoComentario = self.diagnosticos[-1].comentario
                     
-                self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Atención", 'evidencia': [(6,0,ultimaEvidenciaTec)], 'write_uid':  self.env.user.name})
+                self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Atención", 'evidencia': [(0,0,ultimaEvidenciaTec)], 'write_uid':  self.env.user.name})
                 #self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket,'estadoTicket': "Atención", 'write_uid':  self.env.user.name})
                 message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Atención' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
                 mess= {
@@ -814,7 +814,7 @@ class helpdesk_update(models.Model):
                     ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                 ultimoComentario = self.diagnosticos[-1].comentario
                     
-            self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Resuelto", 'evidencia': [(6,0,ultimaEvidenciaTec)], 'write_uid':  self.env.user.name})
+            self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Resuelto", 'evidencia': [(0,0,ultimaEvidenciaTec)], 'write_uid':  self.env.user.name})
             #self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': "Resuelto", 'write_uid':  self.env.user.name})
             message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Resuelto' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
             mess= {
@@ -845,7 +845,7 @@ class helpdesk_update(models.Model):
                     ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                 ultimoComentario = self.diagnosticos[-1].comentario
                     
-            self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Cotización", 'evidencia': [(6,0,ultimaEvidenciaTec)], 'write_uid':  self.env.user.name})
+            self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Cotización", 'evidencia': [(0,0,ultimaEvidenciaTec)], 'write_uid':  self.env.user.name})
             #self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': "Cotización", 'write_uid':  self.env.user.name})
             message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Cotización' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
             mess= {
@@ -873,7 +873,7 @@ class helpdesk_update(models.Model):
                     ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                 ultimoComentario = self.diagnosticos[-1].comentario
                 
-            self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Resuelto", 'evidencia': [(6,0,ultimaEvidenciaTec)], 'write_uid':  self.env.user.name})
+            self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Resuelto", 'evidencia': [(0,0,ultimaEvidenciaTec)], 'write_uid':  self.env.user.name})
             #self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': "Resuelto", 'write_uid':  self.env.user.name})
             message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Resuelto' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
             mess= {
@@ -901,7 +901,7 @@ class helpdesk_update(models.Model):
                     ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                 ultimoComentario = self.diagnosticos[-1].comentario
                 
-            self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Cerrado", 'evidencia': [(6,0,ultimaEvidenciaTec)], 'write_uid':  self.env.user.name})
+            self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Cerrado", 'evidencia': [(0,0,ultimaEvidenciaTec)], 'write_uid':  self.env.user.name})
             #self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': "Cerrado", 'write_uid':  self.env.user.name})
             message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Cerrado' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
             mess= {
@@ -930,7 +930,7 @@ class helpdesk_update(models.Model):
                     ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                 ultimoComentario = self.diagnosticos[-1].comentario
                 
-            self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Cancelado", 'evidencia': [(6,0,ultimaEvidenciaTec)], 'write_uid':  self.env.user.name})
+            self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Cancelado", 'evidencia': [(0,0,ultimaEvidenciaTec)], 'write_uid':  self.env.user.name})
             #self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': "Cancelado", 'write_uid':  self.env.user.name})
             
 
@@ -1049,7 +1049,7 @@ class helpdesk_update(models.Model):
                                 ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                             ultimoComentario = self.diagnosticos[-1].comentario
                             
-                        self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Solicitud de refacción", 'evidencia': [(6,0,ultimaEvidenciaTec)], 'write_uid':  self.env.user.name})
+                        self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Solicitud de refacción", 'evidencia': [(0,0,ultimaEvidenciaTec)], 'write_uid':  self.env.user.name})
                         #self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': "Solicitud de refacción", 'write_uid':  self.env.user.name})
                         message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Solicitud de refacción' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
                         mess= {
@@ -1120,7 +1120,7 @@ class helpdesk_update(models.Model):
                                 ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                             ultimoComentario = self.diagnosticos[-1].comentario
                             
-                        self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Refacción Autorizada", 'evidencia': [(6,0,ultimaEvidenciaTec)], 'write_uid':  self.env.user.name})
+                        self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Refacción Autorizada", 'evidencia': [(0,0,ultimaEvidenciaTec)], 'write_uid':  self.env.user.name})
                         #self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': "Refacción Autorizada", 'write_uid':  self.env.user.name})
                         
                         message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Refacción Autorizada' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
@@ -1635,7 +1635,7 @@ class helpdesk_update(models.Model):
                                 ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                             ultimoComentario = self.diagnosticos[-1].comentario
                             
-                        self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Autorizado", 'evidencia': [(6,0,ultimaEvidenciaTec)], 'write_uid':  self.env.user.name})
+                        self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Autorizado", 'evidencia': [(0,0,ultimaEvidenciaTec)], 'write_uid':  self.env.user.name})
                         #self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': "Autorizado", 'write_uid':  self.env.user.name})
 
                         #En almacen
@@ -1648,7 +1648,7 @@ class helpdesk_update(models.Model):
                                 ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                             ultimoComentario = self.diagnosticos[-1].comentario
                             
-                        self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "En almacén", 'evidencia': [(6,0,ultimaEvidenciaTec)], 'write_uid':  self.env.user.name})
+                        self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "En almacén", 'evidencia': [(0,0,ultimaEvidenciaTec)], 'write_uid':  self.env.user.name})
                         #self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': "En almacén", 'write_uid':  self.env.user.name})
 
                         estadoAntes = str(self.stage_id.name)
