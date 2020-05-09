@@ -736,7 +736,7 @@ class helpdesk_update(models.Model):
                         'evidencia': [(6,0,linea.evidencia.ids)],
                         'mostrarComentario': linea.mostrarComentario
                     }
-                    lienas.append([0, 0, val])
+                    lineas.append([0, 0, val])
                 lineas.append([0, 0, {'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'evidencia': [(6,0,ultimaEvidenciaTec)], 'write_uid':  self.env.user.name}])
                 self.diagnosticos = lineas
                 #self.sudo().write({'diagnosticos': [(0, 0, {'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name})]})
