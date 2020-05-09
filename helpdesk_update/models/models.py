@@ -732,7 +732,7 @@ class helpdesk_update(models.Model):
                     val = {
                         'ticketRelacion': linea.ticketRelacion,
                         'comentario': linea.comentario,
-                        'estadoTicket': liena.estadoTicket,
+                        'estadoTicket': linea.estadoTicket,
                         'evidencia': [(6,0,linea.evidencia.ids)],
                         'mostrarComentario': linea.mostrarComentario
                     }
