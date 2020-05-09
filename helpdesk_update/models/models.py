@@ -688,7 +688,7 @@ class helpdesk_update(models.Model):
     #Añadir al XML 
     estadoAsignacion = fields.Boolean(string="Paso por estado asignación", default=False)
     
-    def crearDiagnostico(self):
+    def crearDiagnostico():
         if self.diagnosticos:
             #_logger.info("*********************************Entre")
             #_logger.info("*********************************Entre: " + str(self.diagnosticos[-1].evidencia))
@@ -727,7 +727,18 @@ class helpdesk_update(models.Model):
                     #if self.diagnosticos.evidencia:
                     #    ultimaEvidenciaTec += self.diagnosticos.evidencia.ids
                 _logger.info("*********************************Entre: " + str(ultimoComentario))
-                self.crearDiagnostico(self)
+                lineas = []
+                for linea in self.diagnosticos:
+                    val = {
+                        'ticketRelacion': linea.ticketRelacion,
+                        'comentario': linea.comentario,
+                        'estadoTicket': liena.estadoTicket,
+                        'evidencia': [(6,0,linea.evidencia.ids)],
+                        'mostrarComentario': linea.mostrarComentario
+                    }
+                    lienas.append([0, 0, val])
+                lineas.append([0, 0, {'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'evidencia': [(6,0,ultimaEvidenciaTec)], 'write_uid':  self.env.user.name}])
+                self.diagnosticos = lineas
                 #self.sudo().write({'diagnosticos': [(0, 0, {'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name})]})
                 #self.diagnosticos = [(0, 0, {'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name})]
                 #diagnosticoCreado = self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name})
