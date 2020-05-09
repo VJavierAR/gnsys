@@ -708,7 +708,7 @@ class helpdesk_update(models.Model):
                     #if self.diagnosticos.evidencia:
                     #    ultimaEvidenciaTec += self.diagnosticos.evidencia.ids
                 _logger.info("*********************************Entre: " + str(ultimoComentario))
-                self.sudo().write({'diagnosticos': [(1, int(self.x_studio_id_ticket), {'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name})]})
+                self.sudo().write({'diagnosticos': [(0, 0, {'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name})]})
                 #self.diagnosticos = [(0, 0, {'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name})]
                 #diagnosticoCreado = self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name})
                 #for eviden in ultimaEvidenciaTec:
