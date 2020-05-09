@@ -727,7 +727,7 @@ class helpdesk_update(models.Model):
                     #if self.diagnosticos.evidencia:
                     #    ultimaEvidenciaTec += self.diagnosticos.evidencia.ids
                 _logger.info("*********************************Entre: " + str(ultimoComentario))
-                lineas = []
+                lineas = [(5, 0, 0)]
                 for linea in self.diagnosticos:
                     val = {
                         'ticketRelacion': linea.ticketRelacion,
