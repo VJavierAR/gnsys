@@ -688,6 +688,25 @@ class helpdesk_update(models.Model):
     #Añadir al XML 
     estadoAsignacion = fields.Boolean(string="Paso por estado asignación", default=False)
     
+    def crearDiagnostico(self):
+        if self.diagnosticos:
+                    #_logger.info("*********************************Entre")
+                    #_logger.info("*********************************Entre: " + str(self.diagnosticos[-1].evidencia))
+                    if self.diagnosticos[-1].evidencia.ids:
+                        ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
+                    ultimoComentario = self.diagnosticos[-1].comentario
+                    
+                    #if self.diagnosticos.evidencia:
+                    #    ultimaEvidenciaTec += self.diagnosticos.evidencia.ids
+                _logger.info("*********************************Entre: " + str(ultimoComentario))
+
+                #self.sudo().write({'diagnosticos': [(0, 0, {'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name})]})
+                #self.diagnosticos = [(0, 0, {'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name})]
+                diagnosticoCreado = self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name})
+                #for eviden in ultimaEvidenciaTec:
+                #    diagnosticoCreado.write({'evidencia': [(4,eviden)] })
+                #self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name})
+
     @api.onchange('team_id')
     def asignacion(self):
         if self.x_studio_id_ticket:
@@ -708,7 +727,7 @@ class helpdesk_update(models.Model):
                     #if self.diagnosticos.evidencia:
                     #    ultimaEvidenciaTec += self.diagnosticos.evidencia.ids
                 _logger.info("*********************************Entre: " + str(ultimoComentario))
-                self.sudo().write({'diagnosticos': [(4, self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name}) )]})
+                self.crearDiagnostico()
                 #self.sudo().write({'diagnosticos': [(0, 0, {'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name})]})
                 #self.diagnosticos = [(0, 0, {'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name})]
                 #diagnosticoCreado = self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name})
