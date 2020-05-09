@@ -709,8 +709,8 @@ class helpdesk_update(models.Model):
                     #    ultimaEvidenciaTec += self.diagnosticos.evidencia.ids
                 _logger.info("*********************************Entre: " + str(ultimoComentario))
                 diagnosticoCreado = self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name})
-                for eviden in ultimaEvidenciaTec:
-                    diagnosticoCreado.write({'evidencia': [(4,eviden)] })
+                #for eviden in ultimaEvidenciaTec:
+                #    diagnosticoCreado.write({'evidencia': [(4,eviden)] })
                 #self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name})
                 self.estadoAsignacion = True
                 message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Asignado' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
