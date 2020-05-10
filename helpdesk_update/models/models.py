@@ -727,17 +727,45 @@ class helpdesk_update(models.Model):
                     #if self.diagnosticos.evidencia:
                     #    ultimaEvidenciaTec += self.diagnosticos.evidencia.ids
                 _logger.info("*********************************Entre: " + str(ultimoComentario))
-                lineas = [(5, 0, 0)] 
-                for linea in self.diagnosticos:
-                    val = {
-                        'ticketRelacion': linea.ticketRelacion,
-                        'comentario': linea.comentario,
-                        'estadoTicket': linea.estadoTicket,
-                        'evidencia': [(6,0,linea.evidencia.ids)],
-                        'mostrarComentario': linea.mostrarComentario
-                    }
-                    lineas.append([0, 0, val])
-                lineas.append([0, 0, {'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'evidencia': [(6,0,ultimaEvidenciaTec)], 'write_uid':  self.env.user.name}])
+                lineas = [(5, 0, 0)]
+                if ultimaEvidenciaTec != []:
+                    for linea in self.diagnosticos:
+                        if linea.evidencia.ids != []:
+                            val = {
+                                'ticketRelacion': linea.ticketRelacion,
+                                'comentario': linea.comentario,
+                                'estadoTicket': linea.estadoTicket,
+                                'evidencia': [(6,0,linea.evidencia.ids)],
+                                'mostrarComentario': linea.mostrarComentario
+                            }
+                        else:
+                            val = {
+                                'ticketRelacion': linea.ticketRelacion,
+                                'comentario': linea.comentario,
+                                'estadoTicket': linea.estadoTicket,
+                                'mostrarComentario': linea.mostrarComentario
+                            }
+                        lineas.append([0, 0, val])
+                    lineas.append([0, 0, {'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'evidencia': [(6,0,ultimaEvidenciaTec)], 'write_uid':  self.env.user.name}])
+                else:
+                    for linea in self.diagnosticos:
+                        if linea.evidencia.ids != []:
+                            val = {
+                                'ticketRelacion': linea.ticketRelacion,
+                                'comentario': linea.comentario,
+                                'estadoTicket': linea.estadoTicket,
+                                'evidencia': [(6,0,linea.evidencia.ids)],
+                                'mostrarComentario': linea.mostrarComentario
+                            }
+                        else:
+                            val = {
+                                'ticketRelacion': linea.ticketRelacion,
+                                'comentario': linea.comentario,
+                                'estadoTicket': linea.estadoTicket,
+                                'mostrarComentario': linea.mostrarComentario
+                            }
+                        lineas.append([0, 0, val])
+                    lineas.append([0, 0, {'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name}])
                 self.diagnosticos = lineas
                 #self.sudo().write({'diagnosticos': [(0, 0, {'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name})]})
                 #self.diagnosticos = [(0, 0, {'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name})]
