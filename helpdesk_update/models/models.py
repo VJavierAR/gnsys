@@ -774,7 +774,7 @@ class helpdesk_update(models.Model):
                             lineas.append((0, 0, val))
                         lineas.append((0, 0, {'ticketRelacion': int(self.x_studio_id_ticket), 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.id}))
                         _logger.info("datos lineas: " + str(lineas))
-                    record.sudo().write({'diagnosticos': [(0, 0, {'ticketRelacion': int(self.x_studio_id_ticket), 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.id})]})
+                    record.sudo().write({'diagnosticos': [(0, 0, {'ticketRelacion': int(self.x_studio_id_ticket), 'comentario': ultimoComentario, 'estadoTicket': "Asignado"})]})
                     #record.diagnosticos = lineas
                     #self.env['helpdesk.diagnostico'].create({'ticketRelacion': int(self.x_studio_id_ticket), 'comentario': ultimoComentario, 'estadoTicket': 'Asignado'})
                     #self.diagnosticos = [(6, 0, [])]
