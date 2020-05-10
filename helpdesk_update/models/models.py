@@ -748,8 +748,8 @@ class helpdesk_update(models.Model):
                                 'mostrarComentario': linea.mostrarComentario
                             }
                         _logger.info("datos val: " + str(val))
-                        lineas.append([0, 0, val])
-                    lineas.append([0, 0, {'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'evidencia': [(6,0,ultimaEvidenciaTec)], 'write_uid':  self.env.user.name}])
+                        lineas.append((0, 0, val))
+                    lineas.append((0, 0, {'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'evidencia': [(6,0,ultimaEvidenciaTec)], 'write_uid':  self.env.user.name}))
                 else:
                     for linea in self.diagnosticos:
                         val = {}
@@ -769,8 +769,8 @@ class helpdesk_update(models.Model):
                                 'mostrarComentario': linea.mostrarComentario
                             }
                         _logger.info("datos val: " + str(val))
-                        lineas.append([0, 0, val])
-                    lineas.append([0, 0, {'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name}])
+                        lineas.append((0, 0, val))
+                    lineas.append((0, 0, {'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name}))
                     _logger.info("datos lineas: " + str(lineas))
                 self.diagnosticos = lineas
                 #self.sudo().write({'diagnosticos': [(0, 0, {'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name})]})
