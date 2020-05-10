@@ -709,98 +709,99 @@ class helpdesk_update(models.Model):
 
     @api.onchange('team_id')
     def asignacion(self):
-        if self.x_studio_id_ticket:
-            estadoAntes = str(self.stage_id.name)
-            #if self.stage_id.name == 'Abierto' and self.estadoAsignacion == False and self.team_id.id != False:
-            if self.estadoAsignacion == False and self.team_id.id != False:
-                query = "update helpdesk_ticket set stage_id = 2 where id = " + str(self.x_studio_id_ticket) + ";"
-                ss = self.env.cr.execute(query)
-                ultimaEvidenciaTec = []
-                ultimoComentario = ''
-                if self.diagnosticos:
-                    #_logger.info("*********************************Entre")
-                    #_logger.info("*********************************Entre: " + str(self.diagnosticos[-1].evidencia))
-                    if self.diagnosticos[-1].evidencia.ids:
-                        ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
-                    ultimoComentario = self.diagnosticos[-1].comentario
+        for record in self:
+            if self.x_studio_id_ticket:
+                estadoAntes = str(self.stage_id.name)
+                #if self.stage_id.name == 'Abierto' and self.estadoAsignacion == False and self.team_id.id != False:
+                if self.estadoAsignacion == False and self.team_id.id != False:
+                    query = "update helpdesk_ticket set stage_id = 2 where id = " + str(self.x_studio_id_ticket) + ";"
+                    ss = self.env.cr.execute(query)
+                    ultimaEvidenciaTec = []
+                    ultimoComentario = ''
+                    if self.diagnosticos:
+                        #_logger.info("*********************************Entre")
+                        #_logger.info("*********************************Entre: " + str(self.diagnosticos[-1].evidencia))
+                        if self.diagnosticos[-1].evidencia.ids:
+                            ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
+                        ultimoComentario = self.diagnosticos[-1].comentario
+                        
+                        #if self.diagnosticos.evidencia:
+                        #    ultimaEvidenciaTec += self.diagnosticos.evidencia.ids
+                    _logger.info("*********************************Entre: " + str(ultimoComentario))
+                    lineas = [(5, 0, 0)]
+                    if ultimaEvidenciaTec != []:
+                        for linea in self.diagnosticos:
+                            #_logger.info("Dato ticketRelacion: " + str(linea.ticketRelacion) + " comentario: " + str(linea.comentario) + " estadoTicket: " + str(linea.estadoTicket) + " evidencia: " + str(linea.evidencia.ids) + " mostrarComentario: " + str(linea.mostrarComentario))
+                            val = {}
+                            if linea.evidencia.ids != []:
+                                val = {
+                                    'ticketRelacion': self.x_studio_id_ticket,
+                                    'comentario': linea.comentario,
+                                    'estadoTicket': linea.estadoTicket,
+                                    'evidencia': [(6,0,linea.evidencia.ids)],
+                                    'mostrarComentario': linea.mostrarComentario
+                                }
+                            else:
+                                val = {
+                                    'ticketRelacion': self.x_studio_id_ticket,
+                                    'comentario': linea.comentario,
+                                    'estadoTicket': linea.estadoTicket,
+                                    'mostrarComentario': linea.mostrarComentario
+                                }
+                            _logger.info("datos val: " + str(val))
+                            lineas.append((0, 0, val))
+                        lineas.append((0, 0, {'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'evidencia': [(6,0,ultimaEvidenciaTec)], 'write_uid':  self.env.user.name}))
+                    else:
+                        for linea in self.diagnosticos:
+                            val = {}
+                            if linea.evidencia.ids != []:
+                                val = {
+                                    'ticketRelacion': self.x_studio_id_ticket,
+                                    'comentario': linea.comentario,
+                                    'estadoTicket': linea.estadoTicket,
+                                    'evidencia': [(6,0,linea.evidencia.ids)],
+                                    'mostrarComentario': linea.mostrarComentario
+                                }
+                            else:
+                                val = {
+                                    'ticketRelacion': self.x_studio_id_ticket,
+                                    'comentario': linea.comentario,
+                                    'estadoTicket': linea.estadoTicket,
+                                    'mostrarComentario': linea.mostrarComentario
+                                }
+                            _logger.info("datos val: " + str(val))
+                            lineas.append((0, 0, val))
+                        lineas.append((0, 0, {'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name}))
+                        _logger.info("datos lineas: " + str(lineas))
+                    record.diagnosticos = lineas
+                    #self.sudo().write({'diagnosticos': [(0, 0, {'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name})]})
+                    #self.diagnosticos = [(0, 0, {'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name})]
+                    #diagnosticoCreado = self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name})
+                    #for eviden in ultimaEvidenciaTec:
+                    #    diagnosticoCreado.write({'evidencia': [(4,eviden)] })
+                    #self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name})
+                    self.estadoAsignacion = True
+                    message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Asignado' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
+                    mess= {
+                            'title': _('Estado de ticket actualizado!!!'),
+                            'message' : message
+                        }
                     
-                    #if self.diagnosticos.evidencia:
-                    #    ultimaEvidenciaTec += self.diagnosticos.evidencia.ids
-                _logger.info("*********************************Entre: " + str(ultimoComentario))
-                lineas = [(5, 0, 0)]
-                if ultimaEvidenciaTec != []:
-                    for linea in self.diagnosticos:
-                        #_logger.info("Dato ticketRelacion: " + str(linea.ticketRelacion) + " comentario: " + str(linea.comentario) + " estadoTicket: " + str(linea.estadoTicket) + " evidencia: " + str(linea.evidencia.ids) + " mostrarComentario: " + str(linea.mostrarComentario))
-                        val = {}
-                        if linea.evidencia.ids != []:
-                            val = {
-                                'ticketRelacion': self.x_studio_id_ticket,
-                                'comentario': linea.comentario,
-                                'estadoTicket': linea.estadoTicket,
-                                'evidencia': [(6,0,linea.evidencia.ids)],
-                                'mostrarComentario': linea.mostrarComentario
-                            }
-                        else:
-                            val = {
-                                'ticketRelacion': self.x_studio_id_ticket,
-                                'comentario': linea.comentario,
-                                'estadoTicket': linea.estadoTicket,
-                                'mostrarComentario': linea.mostrarComentario
-                            }
-                        _logger.info("datos val: " + str(val))
-                        lineas.append((0, 0, val))
-                    lineas.append((0, 0, {'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'evidencia': [(6,0,ultimaEvidenciaTec)], 'write_uid':  self.env.user.name}))
-                else:
-                    for linea in self.diagnosticos:
-                        val = {}
-                        if linea.evidencia.ids != []:
-                            val = {
-                                'ticketRelacion': self.x_studio_id_ticket,
-                                'comentario': linea.comentario,
-                                'estadoTicket': linea.estadoTicket,
-                                'evidencia': [(6,0,linea.evidencia.ids)],
-                                'mostrarComentario': linea.mostrarComentario
-                            }
-                        else:
-                            val = {
-                                'ticketRelacion': self.x_studio_id_ticket,
-                                'comentario': linea.comentario,
-                                'estadoTicket': linea.estadoTicket,
-                                'mostrarComentario': linea.mostrarComentario
-                            }
-                        _logger.info("datos val: " + str(val))
-                        lineas.append((0, 0, val))
-                    lineas.append((0, 0, {'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name}))
-                    _logger.info("datos lineas: " + str(lineas))
-                self.diagnosticos = lineas
-                #self.sudo().write({'diagnosticos': [(0, 0, {'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name})]})
-                #self.diagnosticos = [(0, 0, {'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name})]
-                #diagnosticoCreado = self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name})
-                #for eviden in ultimaEvidenciaTec:
-                #    diagnosticoCreado.write({'evidencia': [(4,eviden)] })
-                #self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name})
-                self.estadoAsignacion = True
-                message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Asignado' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
-                mess= {
-                        'title': _('Estado de ticket actualizado!!!'),
-                        'message' : message
-                    }
-                
-                res = {}
-                idEquipoDeAsistencia = self.team_id.id
-                query = "select * from helpdesk_team_res_users_rel where helpdesk_team_id = " + str(idEquipoDeAsistencia) + ";"
-                self.env.cr.execute(query)
-                informacion = self.env.cr.fetchall()
-                listaUsuarios = []
-                #res['domain']={'x_studio_productos':[('categ_id', '=', 5),('x_studio_toner_compatible.id','in',list)]}
-                for idUsuario in informacion:
-                    listaUsuarios.append(idUsuario[1])
-                
-                dominio = [('id', 'in', listaUsuarios)]
-                
-                return {'warning': mess, 'domain': {'user_id': dominio}}
-            #else:
-                #reasingado
+                    res = {}
+                    idEquipoDeAsistencia = self.team_id.id
+                    query = "select * from helpdesk_team_res_users_rel where helpdesk_team_id = " + str(idEquipoDeAsistencia) + ";"
+                    self.env.cr.execute(query)
+                    informacion = self.env.cr.fetchall()
+                    listaUsuarios = []
+                    #res['domain']={'x_studio_productos':[('categ_id', '=', 5),('x_studio_toner_compatible.id','in',list)]}
+                    for idUsuario in informacion:
+                        listaUsuarios.append(idUsuario[1])
+                    
+                    dominio = [('id', 'in', listaUsuarios)]
+                    
+                    return {'warning': mess, 'domain': {'user_id': dominio}}
+                #else:
+                    #reasingado
                 
         
         if self.team_id.id != False:
