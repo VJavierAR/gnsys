@@ -736,7 +736,7 @@ class helpdesk_update(models.Model):
                             val = {}
                             if linea.evidencia.ids != []:
                                 val = {
-                                    'ticketRelacion': self.x_studio_id_ticket,
+                                    'ticketRelacion': int(self.x_studio_id_ticket),
                                     'comentario': linea.comentario,
                                     'estadoTicket': linea.estadoTicket,
                                     'evidencia': [(6,0,linea.evidencia.ids)],
@@ -744,20 +744,20 @@ class helpdesk_update(models.Model):
                                 }
                             else:
                                 val = {
-                                    'ticketRelacion': self.x_studio_id_ticket,
+                                    'ticketRelacion': int(self.x_studio_id_ticket),
                                     'comentario': linea.comentario,
                                     'estadoTicket': linea.estadoTicket,
                                     'mostrarComentario': linea.mostrarComentario
                                 }
                             _logger.info("datos val: " + str(val))
                             lineas.append((0, 0, val))
-                        lineas.append((0, 0, {'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'evidencia': [(6,0,ultimaEvidenciaTec)], 'write_uid':  self.env.user.name}))
+                        lineas.append((0, 0, {'ticketRelacion': int(self.x_studio_id_ticket), 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'evidencia': [(6,0,ultimaEvidenciaTec)], 'write_uid':  self.env.user.id}))
                     else:
                         for linea in self.diagnosticos:
                             val = {}
                             if linea.evidencia.ids != []:
                                 val = {
-                                    'ticketRelacion': self.x_studio_id_ticket,
+                                    'ticketRelacion': int(self.x_studio_id_ticket),
                                     'comentario': linea.comentario,
                                     'estadoTicket': linea.estadoTicket,
                                     'evidencia': [(6,0,linea.evidencia.ids)],
@@ -765,14 +765,14 @@ class helpdesk_update(models.Model):
                                 }
                             else:
                                 val = {
-                                    'ticketRelacion': self.x_studio_id_ticket,
+                                    'ticketRelacion': int(self.x_studio_id_ticket),
                                     'comentario': linea.comentario,
                                     'estadoTicket': linea.estadoTicket,
                                     'mostrarComentario': linea.mostrarComentario
                                 }
                             _logger.info("datos val: " + str(val))
                             lineas.append((0, 0, val))
-                        lineas.append((0, 0, {'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name}))
+                        lineas.append((0, 0, {'ticketRelacion': int(self.x_studio_id_ticket), 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.id}))
                         _logger.info("datos lineas: " + str(lineas))
                     record.sudo().update({'diagnosticos': lineas})
                     #record.diagnosticos = lineas
