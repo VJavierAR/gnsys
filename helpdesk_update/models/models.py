@@ -775,9 +775,9 @@ class helpdesk_update(models.Model):
                         lineas.append([0, 0, {'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name}])
                         _logger.info("datos lineas: " + str(lineas))
                     #record.diagnosticos = lineas
-                    self.diagnosticos = [(6, 0, [])]
-                    self.diagnosticos = lineas
-                    #self.sudo().write({'diagnosticos' : lineas}) 
+                    #self.diagnosticos = [(6, 0, [])]
+                    #self.diagnosticos = lineas
+                    self.sudo().write({'diagnosticos' : [(0, _, {'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': 'Asignado', 'write_uid':  self.env.user.name})]})
                     #self.sudo().write({'diagnosticos': [(0, 0, {'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name})]})
                     #self.diagnosticos = [(0, 0, {'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name})]
                     #diagnosticoCreado = self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name})
