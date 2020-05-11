@@ -48,7 +48,7 @@ class PartnerXlsx(models.AbstractModel):
                     sheet.write(i,11, str(obj.x_studio_ticket) if(obj.x_studio_ticket) else '', bold)
                 if(obj.x_studio_ticket==False):
                     sheet.write(i, 11, str(obj.x_studio_orden_de_venta) if(obj.x_studio_orden_de_venta) else '', bold)
-                sheet.write(i, 12, obj.x_studio_field_y5FBs if(obj.x_studio_field_y5FBs==0) else '', bold)
+                sheet.write(i, 12, obj.x_studio_field_y5FBs if(obj.x_studio_field_y5FBs!=0) else '', bold)
                 sheet.write(i, 13, obj.x_studio_serie_destino_1 if(obj.x_studio_serie_destino_1) else '', bold)            
                 sheet.write(i, 14, obj.x_studio_modelo_equipo if(obj.x_studio_modelo_equipo) else '', bold)                 
                 sheet.write(i, 15, obj.move_id.picking_id.partner_id.city if(obj.move_id.picking_id.partner_id.city) else '', bold)            
@@ -85,7 +85,7 @@ class PartnerXlsx(models.AbstractModel):
                     sheet.write(i,10, obj.x_studio_ticket if(obj.x_studio_ticket) else '', bold)
                 if(obj.x_studio_ticket==False):
                     sheet.write(i, 10, obj.x_studio_orden_de_venta if(obj.x_studio_orden_de_venta) else '', bold)
-                sheet.write(i, 11, obj.x_studio_field_y5FBs if(obj.x_studio_field_y5FBs==0) else '', bold)
+                sheet.write(i, 11, obj.x_studio_field_y5FBs if(obj.x_studio_field_y5FBs!=0) else '', bold)
                 sheet.write(i, 12, obj.x_studio_serie_destino_1 if(obj.x_studio_serie_destino_1) else '', bold)            
                 sheet.write(i, 13, obj.x_studio_modelo_equipo if(obj.x_studio_modelo_equipo) else '', bold)                 
                 sheet.write(i, 14, obj.x_studio_estado_destino if(obj.x_studio_estado_destino) else '', bold)            
