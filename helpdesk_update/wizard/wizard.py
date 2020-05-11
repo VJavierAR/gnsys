@@ -102,12 +102,16 @@ class HelpDeskNoValidarConComentario(TransientModel):
     estado = fields.Char('Estado', compute = "_compute_estadoTicket")
     comentario = fields.Text('Comentario')
     evidencia = fields.Many2many('ir.attachment', string = "Evidencias")
-    productosACambiar = fields.Many2many('product.product', string = "Productos")
+    productosACambiar = fields.Many2many('product.product', string = "Productos", compute = '_compute_productos')
     solicitud = fields.Many2one('sale.order', strinf = 'solicitud de refacción', compute = '_compute_solicitud')
     activarCompatibilidad = fields.Boolean(string = 'Activar compatibilidad', default = False)
+    serieTexto = fields.Text('Serie', compute = '_compute_serie_text')
     
     def _compute_solicitud(self):
         self.solicitud = self.ticket_id.x_studio_field_nO7Xg.id
+
+    def _compute_serie_text(self):
+        self.serieTexto = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].name
 
     def _compute_productos(self):
         self.productosACambiar = [(6, 0, self.ticket_id.x_studio_productos.ids)]
@@ -134,7 +138,7 @@ class HelpDeskNoValidarConComentario(TransientModel):
                 #   _logger.info("res"+str(res))
         else:
             res['domain']={'productosACambiar':[('categ_id', '=', 7)]}
-
+        _logger.info("res dominio productos wizard: " + str(res))
         return res
 
     def noValidarConComentario(self):

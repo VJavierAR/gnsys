@@ -59,6 +59,7 @@
                 
                 <group>
                     <group>
+                        <field name='serieTexto' readonly='1' />
                         <field name='solicitud' readonly = '1'/>
 
                         <field name='activarCompatibilidad' />
