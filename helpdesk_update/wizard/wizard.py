@@ -122,6 +122,7 @@ class HelpDeskNoValidarConComentario(TransientModel):
         g = str(self.ticket_id.x_studio_nombretmp)
         
         if self.activarCompatibilidad:
+            _logger.info("res g: " + str(g))
             if g !='False':
                 list = ast.literal_eval(g)        
                 idf = self.ticket_id.team_id.id
@@ -155,6 +156,7 @@ class HelpDeskNoValidarConComentario(TransientModel):
             self.env['sale.order.line'].create(datosr)
             self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(self.ticket_id.x_studio_field_nO7Xg.id) + ";")
 
+      self.ticket_id.x_studio_productos = [(6, 0, self.productosACambiar.ids)]
 
       ultimaEvidenciaTec = []
       if self.ticket_id.diagnosticos:
