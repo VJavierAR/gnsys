@@ -108,7 +108,7 @@ class HelpDeskNoValidarConComentario(TransientModel):
     anadirComentario = fields.Boolean(string = 'Añadir comentario', default = False)
     serieTexto = fields.Text('Serie', compute = '_compute_serie_text')
     idProductoEnSerie = fields.Integer('id Producto En Serie', compute = '_compute_serie_producto_id')
-    
+
     def _compute_solicitud(self):
         self.solicitud = self.ticket_id.x_studio_field_nO7Xg.id
 
@@ -153,9 +153,15 @@ class HelpDeskNoValidarConComentario(TransientModel):
         _logger.info("res dominio productos wizard: " + str(res))
         return res
 
+    @api.onchange('productosACambiar.x_studio_cantidad_pedida')
+    def cambiaCantidad(self):
+        _logger.info('res cantidad pedida: ' + str(self.productosACambiar[-1].x_studio_cantidad_pedida))
+        
+
     @api.multi
     def noValidarConComentario(self):
       if self.ticket_id.x_studio_field_nO7Xg.id != False and self.ticket_id.x_studio_field_nO7Xg.state == 'sale':
+        i = 0
         for producto in self.productosACambiar:
             datosr = {
                 'order_id' : solicitud.id,
@@ -167,6 +173,7 @@ class HelpDeskNoValidarConComentario(TransientModel):
                 datosr['route_id'] = 22548
             self.env['sale.order.line'].create(datosr)
             self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(self.ticket_id.x_studio_field_nO7Xg.id) + ";")
+            i += 1
 
       #self.ticket_id.x_studio_productos = [(6, 0, self.productosACambiar.ids)]
       _logger.info("res ids productos: " + str(self.productosACambiar.ids))
