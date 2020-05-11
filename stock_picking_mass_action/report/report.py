@@ -242,7 +242,7 @@ class PartnerXlsx(models.AbstractModel):
                 sheet.write(i, 11, obj.stage_id.name, bold)
                 sheet.write(i, 12, obj.x_studio_ultima_nota if(obj.x_studio_ultima_nota) else '', bold)
                 sheet.write(i, 13, obj.write_date.strftime("%Y/%m/%d"), bold)
-                sheet.write(i, 14, obj.x_studio_tcnico.name if(obj.x_studio_tcnico) else '', bold)
+                sheet.write(i, 14, obj.x_studio_tecnico if(obj.x_studio_tecnico) else '', bold)
                 sheet.write(i, 15, str(str(obj.x_studio_empresas_relacionadas.street_name)+" No. Ext. "+str(obj.x_studio_empresas_relacionadas.street_number)+" No. Int. "+str(obj.x_studio_empresas_relacionadas.street_number2)+" ,COL. "+str(obj.x_studio_empresas_relacionadas.l10n_mx_edi_colony)+" "+str(obj.x_studio_empresas_relacionadas.city)+" México, "+str(obj.x_studio_empresas_relacionadas.state_id.name)+"C.P "+str(obj.x_studio_empresas_relacionadas.zip)), bold)
                 sheet.write(i, 16, obj.x_studio_nmero_de_ticket_cliente if(obj.x_studio_nmero_de_ticket_cliente) else '', bold)
                 i=i+1
