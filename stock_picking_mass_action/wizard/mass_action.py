@@ -643,7 +643,7 @@ class SaleOrderMassAction(TransientModel):
             m=['write_date','<=',self.fechaFinal]
             i.append(m)
         i.append(['x_studio_field_bxHgp','=',False])
-        d=self.env['sale.order'].search(i,order='write_date asc').filtered(lambda x:x.origin==False and x.x_studio_factura==False and len(x.order_id)>0)
+        d=self.env['sale.order'].search(i,order='write_date asc').filtered(lambda x:x.origin==False and x.x_studio_factura==False and len(x.order_line)>0)
         _logger.info(str(len(d)))
         if(len(d)>0):
             d[0].write({'x_studio_arreglo':str(d.mapped('id'))})
