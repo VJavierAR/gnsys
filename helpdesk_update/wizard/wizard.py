@@ -129,7 +129,7 @@ class HelpDeskNoValidarConComentario(TransientModel):
         if self.productosACambiar:
             for producto in self.productosACambiar:
                 lista.append(self.productosACambiar.x_studio_cantidad_pedida)
-                global listatmp.append(self.productosACambiar.x_studio_cantidad_pedida)
+                #global listatmp.append(self.productosACambiar.x_studio_cantidad_pedida)
         _logger.info("res global variable: " + str(listatmp))
         self.listaDeCantidaes = str(lista)
 
