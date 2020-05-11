@@ -179,7 +179,7 @@ class PartnerXlsx(models.AbstractModel):
                     sheet.write(i, 10, len(obj.order_line.filtered(lambda x:x.product_id.categ_id.id==13).mapped('product_id.name')), bold)
                     sheet.write(i, 11, len(obj.order_line.filtered(lambda x:x.product_id.categ_id.id!=13).mapped('product_id.name')), bold)
                     sheet.write(i, 12, obj.x_studio_tipo_de_solicitud if(obj.x_studio_tipo_de_solicitud) else '', bold)
-                    sheet.write(i, 13, obj.x_studio_status_1 if(obj.x_studio_status_1) else '',, bold)
+                    sheet.write(i, 13, obj.x_studio_status_1 if(obj.x_studio_status_1) else '', bold)
                     sheet.write(i, 14, obj.x_studio_usuario_creacion_1, bold)
                     sheet.write(i, 15, 'Asignado' if(obj.x_studio_asignado) else 'No Asignado', bold)
                     sheet.write(i, 16, str(obj.note) if(obj.note) else '', bold)
