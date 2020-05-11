@@ -188,7 +188,7 @@ class PartnerXlsx(models.AbstractModel):
                 sheet.write(i, 0, obj.name, bold)
                 sheet.write(i, 1, obj.confirmation_date.strftime("%Y/%m/%d"), bold)
                 sheet.write(i, 2, obj.partner_id.name, bold)
-                sheet.write(i, 3, obj.x_studio_localidades.name, bold)
+                sheet.write(i, 3, obj.x_studio_localidades, bold)
                 sheet.write(i, 4, obj.warehouse_id.name, bold)
                 sheet.write(i, 5, obj.x_studio_status if(obj.x_studio_status) else '', bold)
                 sheet.write(i, 6, equ.name if(equ.name) else '', bold)
