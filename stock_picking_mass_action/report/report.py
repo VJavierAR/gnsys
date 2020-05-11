@@ -97,7 +97,7 @@ class PartnerXlsx(models.AbstractModel):
                     sheet.write(i, 16, user.write_uid.name if(len(user)==1) else '', user[0].write_uid.name)
                 i=i+1
             sheet.add_table('A2:Q'+str(i),{'style': 'Table Style Medium 9','columns': [{'header': 'Categoria'},{'header': 'Fecha'},{'header': 'Almacen'},{'header':'Tipo'},{'header': 'Modelo'},{'header': 'No Parte'},{'header': 'Cantidad'},{'header': 'Cliente'},{'header': 'Localidad'},{'header': 'Comentario'},{'header': 'Documento Origen'},{'header': 'Documento Origen'},{'header': 'Serie Destino'},{'header': 'Modelo Destino'},{'header': 'Estado'},{'header': 'Delegación'},{'header': 'Usuario'}]})
-        workbook.close()
+        #workbook.close()
 
 class ExistenciasXML(models.AbstractModel):
     _name = 'report.existencias.report'
