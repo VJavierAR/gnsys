@@ -153,6 +153,7 @@ class HelpDeskNoValidarConComentario(TransientModel):
         _logger.info("res dominio productos wizard: " + str(res))
         return res
 
+    @api.multi
     def noValidarConComentario(self):
       if self.ticket_id.x_studio_field_nO7Xg.id != False and self.ticket_id.x_studio_field_nO7Xg.state == 'sale':
         for producto in self.productosACambiar:
