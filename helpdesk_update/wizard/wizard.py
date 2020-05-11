@@ -170,8 +170,8 @@ class HelpDeskNoValidarConComentario(TransientModel):
 
       #self.ticket_id.x_studio_productos = [(6, 0, self.productosACambiar.ids)]
       _logger.info("res ids productos: " + str(self.productosACambiar))
-      #self.sudo().ticket_id.write({'x_studio_productos': [(6, 0, self.productosACambiar.ids)]})
-      self.sudo().ticket_id.x_studio_productos = [(6, 0, self.productosACambiar.ids)]
+      self.sudo().ticket_id.write({'x_studio_productos': [(6, 0, self.productosACambiar.ids)]})
+      #self.sudo().ticket_id.x_studio_productos = [(6, 0, self.productosACambiar.ids)]
 
 
       if self.anadirComentario:
