@@ -45,9 +45,9 @@ class PartnerXlsx(models.AbstractModel):
                 sheet.write(i, 9, obj.x_studio_localidad if(obj.x_studio_localidad) else '', bold)
                 sheet.write(i, 10, obj.move_id.picking_id.x_studio_comentario_1 if(obj.move_id.picking_id.x_studio_comentario_1) else '', bold)
                 if(obj.x_studio_ticket):
-                    sheet.write(i,11, obj.x_studio_ticket if(obj.x_studio_ticket) else '', bold)
+                    sheet.write(i,11, str(obj.x_studio_ticket) if(obj.x_studio_ticket) else '', bold)
                 if(obj.x_studio_ticket==False):
-                    sheet.write(i, 11, obj.x_studio_orden_de_venta if(obj.x_studio_orden_de_venta) else '', bold)
+                    sheet.write(i, 11, str(obj.x_studio_orden_de_venta) if(obj.x_studio_orden_de_venta) else '', bold)
                 sheet.write(i, 12, obj.x_studio_field_y5FBs if(obj.x_studio_field_y5FBs==0) else '', bold)
                 sheet.write(i, 13, obj.x_studio_serie_destino_1 if(obj.x_studio_serie_destino_1) else '', bold)            
                 sheet.write(i, 14, obj.x_studio_modelo_equipo if(obj.x_studio_modelo_equipo) else '', bold)                 
@@ -152,7 +152,7 @@ class PartnerXlsx(models.AbstractModel):
         d=[]
         if(len(sale)==1 and sale.x_studio_arreglo!='/' and sale.x_studio_arreglo!=False):
             copia=sale
-            sale=self.env['sale.order'].browse(eval(sale.x_studio_arreglo)).sorted(key='write_date',reverse=True) 
+            sale=self.env['sale.order'].browse(eval(sale.x_studio_arreglo)).sorted(key='confirmation_date',reverse=True).filtered(lambda x:x.x_area==True) 
             copia.write({'x_studio_arreglo':'/'})
         merge_format = workbook.add_format({'bold': 1,'border': 1,'align': 'center','valign': 'vcenter','fg_color': 'blue'})
         report_name = 'Solicitudes'
@@ -164,14 +164,14 @@ class PartnerXlsx(models.AbstractModel):
             if(len(equ)>1):
                 for eq in equ:
                     sheet.write(i, 0, obj.name, bold)
-                    sheet.write(i, 1, obj.write_date.strftime("%Y/%m/%d"), bold)
+                    sheet.write(i, 1, obj.confirmation_date.strftime("%Y/%m/%d"), bold)
                     sheet.write(i, 2, obj.partner_id.name, bold)
-                    sheet.write(i, 3, obj.partner_shipping_id.name, bold)
+                    sheet.write(i, 3, obj.x_studio_localidades, bold)
                     sheet.write(i, 4, obj.warehouse_id.name, bold)
                     sheet.write(i, 5, obj.x_studio_status if(obj.x_studio_status) else '', bold)
                     sheet.write(i, 6, eq.name if(eq.name) else '', bold)
-                    m=self.env['stock.move.line'].search([['picking_id.sale_id','=',obj.id],['lot_id','=',eq.x_studio_field_9nQhR.id]]).lot_id.name
-                    sheet.write(i, 7, str(m) if(m) else '', bold)
+                    #m=self.env['stock.move.line'].search([['picking_id.sale_id','=',obj.id],['lot_id','=',eq.x_studio_field_9nQhR.id]]).lot_id.name
+                    sheet.write(i, 7, str(eq.x_studio_field_9nQhR.name) if(eq.x_studio_field_9nQhR.name) else '', bold)
                     a=obj.order_line.filtered(lambda x:x.product_id.categ_id.id==11).mapped('product_id.name')
                     sheet.write(i, 8, str(a) if(a!=[]) else '', bold)
                     b=obj.order_line.filtered(lambda x:x.product_id.categ_id.id==5).mapped('product_id.name')
@@ -179,21 +179,21 @@ class PartnerXlsx(models.AbstractModel):
                     sheet.write(i, 10, len(obj.order_line.filtered(lambda x:x.product_id.categ_id.id==13).mapped('product_id.name')), bold)
                     sheet.write(i, 11, len(obj.order_line.filtered(lambda x:x.product_id.categ_id.id!=13).mapped('product_id.name')), bold)
                     sheet.write(i, 12, obj.x_studio_tipo_de_solicitud if(obj.x_studio_tipo_de_solicitud) else '', bold)
-                    sheet.write(i, 13, str(str(obj.state)+'/'+obj.write_uid.name), bold)
-                    sheet.write(i, 14, obj.create_uid.name, bold)
-                    sheet.write(i, 15, 'Asignado' if(self.env['stock.move.line'].search([['picking_id.sale_id','=',obj.id],['lot_id','=',eq.x_studio_field_9nQhR.id]]).lot_id.name) else 'No Asignado', bold)
+                    sheet.write(i, 13, obj.x_studio_status_1 if(obj.x_studio_status_1) else '',, bold)
+                    sheet.write(i, 14, obj.x_studio_usuario_creacion_1, bold)
+                    sheet.write(i, 15, 'Asignado' if(obj.x_studio_asignado) else 'No Asignado', bold)
                     sheet.write(i, 16, str(obj.note) if(obj.note) else '', bold)
                     i=i+1
             else:
                 sheet.write(i, 0, obj.name, bold)
-                sheet.write(i, 1, obj.write_date.strftime("%Y/%m/%d"), bold)
+                sheet.write(i, 1, obj.confirmation_date.strftime("%Y/%m/%d"), bold)
                 sheet.write(i, 2, obj.partner_id.name, bold)
-                sheet.write(i, 3, obj.partner_shipping_id.name, bold)
+                sheet.write(i, 3, obj.x_studio_localidades.name, bold)
                 sheet.write(i, 4, obj.warehouse_id.name, bold)
                 sheet.write(i, 5, obj.x_studio_status if(obj.x_studio_status) else '', bold)
                 sheet.write(i, 6, equ.name if(equ.name) else '', bold)
-                m=self.env['stock.move.line'].search([['picking_id.sale_id','=',obj.id],['lot_id','=',equ.x_studio_field_9nQhR.id]]).lot_id.name
-                sheet.write(i, 7, str(m) if(m) else '', bold)
+                #m=self.env['stock.move.line'].search([['picking_id.sale_id','=',obj.id],['lot_id','=',equ.x_studio_field_9nQhR.id]]).lot_id.name
+                sheet.write(i, 7, str(equ.x_studio_field_9nQhR.name) if(equ.x_studio_field_9nQhR.id) else '', bold)
                 a=obj.order_line.filtered(lambda x:x.product_id.categ_id.id==11).mapped('product_id.name')
                 sheet.write(i, 8, str(a) if(a!=[]) else '', bold)
                 b=obj.order_line.filtered(lambda x:x.product_id.categ_id.id==5).mapped('product_id.name')
@@ -201,9 +201,9 @@ class PartnerXlsx(models.AbstractModel):
                 sheet.write(i, 10, len(obj.order_line.filtered(lambda x:x.product_id.categ_id.id==13).mapped('product_id.name')), bold)
                 sheet.write(i, 11, len(obj.order_line.filtered(lambda x:x.product_id.categ_id.id!=13).mapped('product_id.name')), bold)
                 sheet.write(i, 12, obj.x_studio_tipo_de_solicitud if(obj.x_studio_tipo_de_solicitud) else '', bold)
-                sheet.write(i, 13, str(str(obj.state)+'/'+obj.write_uid.name), bold)
-                sheet.write(i, 14, obj.create_uid.name, bold)
-                sheet.write(i, 15, 'Asignado' if(self.env['stock.move.line'].search([['picking_id.sale_id','=',obj.id],['lot_id','=',equ.x_studio_field_9nQhR.id]]).lot_id.name) else 'No Asignado', bold)
+                sheet.write(i, 13, obj.x_studio_status_1 if(obj.x_studio_status_1) else '', bold)
+                sheet.write(i, 14, obj.x_studio_usuario_creacion_1, bold)
+                sheet.write(i, 15, 'Asignado' if(obj.x_studio_asignado) else 'No Asignado', bold)
                 sheet.write(i, 16, str(obj.note) if(obj.note) else '', bold)
                 i=i+1
 
