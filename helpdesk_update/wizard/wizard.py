@@ -169,7 +169,7 @@ class HelpDeskNoValidarConComentario(TransientModel):
 
       self.ticket_id.x_studio_productos = [(6, 0, self.productosACambiar.ids)]
 
-      if anadirComentario:
+      if self.anadirComentario:
         ultimaEvidenciaTec = []
         if self.ticket_id.diagnosticos:
             ultimaEvidenciaTec = self.ticket_id.diagnosticos[-1].evidencia.ids
