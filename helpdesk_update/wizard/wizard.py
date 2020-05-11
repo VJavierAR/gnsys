@@ -169,8 +169,10 @@ class HelpDeskNoValidarConComentario(TransientModel):
             self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(self.ticket_id.x_studio_field_nO7Xg.id) + ";")
 
       #self.ticket_id.x_studio_productos = [(6, 0, self.productosACambiar.ids)]
-      _logger.info("res ids productos: " + str(self.productosACambiar))
-      self.sudo().ticket_id.write({'x_studio_productos': [(5,0,0), (6, 0, self.productosACambiar.ids)]})
+      _logger.info("res ids productos: " + str(self.productosACambiar.ids))
+      _logger.info("res ids productos: " + str(self.productosACambiar[-1].x_studio_cantidad_pedida))
+      self.sudo().ticket_id.write({'x_studio_productos': [(5,0,0)]})
+      self.sudo().ticket_id.write({'x_studio_productos': [(6, 0, self.productosACambiar.ids)]})
       #self.sudo().ticket_id.x_studio_productos = [(6, 0, self.productosACambiar.ids)]
 
 
