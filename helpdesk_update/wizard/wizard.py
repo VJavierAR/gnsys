@@ -110,7 +110,7 @@ class HelpDeskNoValidarConComentario(TransientModel):
         self.solicitud = self.ticket_id.x_studio_field_nO7Xg.id
 
     def _compute_productos(self):
-        self.productosACambiar = self.ticket_id.x_studio_productos.ids
+        self.productosACambiar = [(6, 0, self.ticket_id.x_studio_productos.ids)]
 
     @api.onchange('activarCompatibilidad')
     def productos_filtro(self):

@@ -59,8 +59,9 @@
                 
                 <group>
                     <group>
-                        <field name='solicitud'/>
+                        <field name='solicitud' readonly = '1'/>
 
+                        <field name='activarCompatibilidad' />
                         <field name="productosACambiar" string="Productos " domain="[]" options="{'no_create_edit': True, 'no_create': True}" >
                             <tree string="Product Variants" decoration-danger="type == 'product' and virtual_available&lt;0" decoration-info="type != 'product' or virtual_available&gt;=0" editable="bottom" >
                                 <field name="create_uid" string="Creado por"  invisible="1" attrs="{'invisible': 1, 'readonly': 1}"/>
