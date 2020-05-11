@@ -63,7 +63,7 @@
                         <field name='solicitud' readonly = '1'/>
 
                         <field name='activarCompatibilidad' />
-                        <field name="productosACambiar" string="Productos " domain="[]" options="{'no_create_edit': True, 'no_create': True}" attrs={'readonly': '0'}>
+                        <field name="productosACambiar" string="Productos " domain="[]" options="{'no_create_edit': True, 'no_create': True}" attrs="{'readonly': '0'}">
                             <tree string="Product Variants" decoration-danger="type == 'product' and virtual_available&lt;0" decoration-info="type != 'product' or virtual_available&gt;=0" edit="1" editable="top" >
                                 <field name="create_uid" string="Creado por"  invisible="1" attrs="{'invisible': 1, 'readonly': 1}"/>
                                 <field name="x_studio_aadido_por" string="Añadido por"  invisible="1"  attrs="{'invisible': 1, 'readonly': 0}"/>
