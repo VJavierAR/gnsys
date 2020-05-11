@@ -118,9 +118,18 @@ class HelpDeskNoValidarConComentario(TransientModel):
 
     @api.onchange('activarCompatibilidad')
     def productos_filtro(self):
-        res = {}             
-        g = str(self.ticket_id.x_studio_nombretmp)
+
+        a = len(self.ticket_id.x_studio_equipo_por_nmero_de_serie)
+        f = []
+        if a > 0:
+            for n in range(a) :
+                f.append(self.ticket_id.x_studio_equipo_por_nmero_de_serie[n].product_id.id)
         
+        _logger.info("res f: " + str(f))
+        res = {}             
+        g = str(f)
+        #g = self.ticket_id.x_studio_equipo_por_nmero_de_serie[-1].product_id.id
+        #26848
         if self.activarCompatibilidad:
             _logger.info("res g: " + str(g))
             if g !='False':
