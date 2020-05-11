@@ -92,7 +92,11 @@
 
                     </group>
                 </group>
-
+                <group>
+                    <group>
+                        <field name="anadirComentario" /> 
+                    </group>
+                </group>
                 <group>
                     <group>
                         <field name="estado" readonly="1"/>

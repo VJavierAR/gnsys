@@ -105,6 +105,7 @@ class HelpDeskNoValidarConComentario(TransientModel):
     productosACambiar = fields.Many2many('product.product', string = "Productos", compute = '_compute_productos')
     solicitud = fields.Many2one('sale.order', strinf = 'solicitud de refacción', compute = '_compute_solicitud')
     activarCompatibilidad = fields.Boolean(string = 'Activar compatibilidad', default = False)
+    anadirComentario = fields.Boolean(string = 'Añadir comentario', default = False)
     serieTexto = fields.Text('Serie', compute = '_compute_serie_text')
     idProductoEnSerie = fields.Integer('id Producto En Serie', compute = '_compute_serie_producto_id')
     
@@ -122,7 +123,7 @@ class HelpDeskNoValidarConComentario(TransientModel):
 
     @api.onchange('activarCompatibilidad')
     def productos_filtro(self):
-        
+
         f = []
         f.append(self.idProductoEnSerie)
         
@@ -153,7 +154,7 @@ class HelpDeskNoValidarConComentario(TransientModel):
         return res
 
     def noValidarConComentario(self):
-      if ticket_id.x_studio_field_nO7Xg.id != False and self.x_studio_field_nO7Xg.state == 'sale':
+      if self.ticket_id.x_studio_field_nO7Xg.id != False and self.ticket_id.x_studio_field_nO7Xg.state == 'sale':
         for producto in self.productosACambiar:
             datosr = {
                 'order_id' : solicitud.id,
@@ -168,37 +169,38 @@ class HelpDeskNoValidarConComentario(TransientModel):
 
       self.ticket_id.x_studio_productos = [(6, 0, self.productosACambiar.ids)]
 
-      ultimaEvidenciaTec = []
-      if self.ticket_id.diagnosticos:
-        ultimaEvidenciaTec = self.ticket_id.diagnosticos[-1].evidencia.ids
-        if self.evidencia:
-          ultimaEvidenciaTec += self.evidencia.ids
-      if self.ticket_id.stage_id.name == 'Resuelto' or self.ticket_id.stage_id.name == 'Abierto' or self.ticket_id.stage_id.name == 'Asignado' or self.ticket_id.stage_id.name == 'Atención' and self.ticket_id.estadoCerrado == False:
-        self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.ticket_id.id
-                                                ,'comentario': self.comentario
-                                                ,'estadoTicket': self.ticket_id.stage_id.name
-                                                ,'evidencia': [(6,0,ultimaEvidenciaTec)]
-                                                ,'mostrarComentario': self.check
-                                                })
-        self.ticket_id.write({'stage_id': 18 
-                            , 'estadoResueltoPorDocTecnico': True
-                            , 'estadoAtencion': True
-                            })
-        mess = 'Ticket "' + str(self.ticket_id.id) + '" cerrado y último Diagnostico / Comentario añadido al ticket "' + str(self.ticket_id.id) + '" de forma exitosa. \n\nComentario agregado: ' + str(self.comentario) + '.'
-        wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mess})
-        view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
-        return {
-            'name': _('Ticket cerrado !!!'),
-            'type': 'ir.actions.act_window',
-            'view_type': 'form',
-            'view_mode': 'form',
-            'res_model': 'helpdesk.alerta',
-            'views': [(view.id, 'form')],
-            'view_id': view.id,
-            'target': 'new',
-            'res_id': wiz.id,
-            'context': self.env.context,
-        }
+      if anadirComentario:
+        ultimaEvidenciaTec = []
+        if self.ticket_id.diagnosticos:
+            ultimaEvidenciaTec = self.ticket_id.diagnosticos[-1].evidencia.ids
+            if self.evidencia:
+              ultimaEvidenciaTec += self.evidencia.ids
+        if self.ticket_id.stage_id.name == 'Resuelto' or self.ticket_id.stage_id.name == 'Abierto' or self.ticket_id.stage_id.name == 'Asignado' or self.ticket_id.stage_id.name == 'Atención' and self.ticket_id.estadoCerrado == False:
+            self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.ticket_id.id
+                                                    ,'comentario': self.comentario
+                                                    ,'estadoTicket': self.ticket_id.stage_id.name
+                                                    ,'evidencia': [(6,0,ultimaEvidenciaTec)]
+                                                    ,'mostrarComentario': self.check
+                                                    })
+            self.ticket_id.write({'stage_id': 18 
+                                , 'estadoResueltoPorDocTecnico': True
+                                , 'estadoAtencion': True
+                                })
+            mess = 'Ticket "' + str(self.ticket_id.id) + '" cerrado y último Diagnostico / Comentario añadido al ticket "' + str(self.ticket_id.id) + '" de forma exitosa. \n\nComentario agregado: ' + str(self.comentario) + '.'
+            wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mess})
+            view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+            return {
+                'name': _('Ticket cerrado !!!'),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'helpdesk.alerta',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'res_id': wiz.id,
+                'context': self.env.context,
+            }
 
     def _compute_estadoTicket(self):
         self.estado = self.ticket_id.stage_id.name
