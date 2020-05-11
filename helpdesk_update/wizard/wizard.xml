@@ -59,7 +59,7 @@
                 
                 <group>
                     <group>
-                        <field name='idProductoEnSerie' />
+                        <field name='idProductoEnSerie' invisible='1'/>
                         <field name='serieTexto' readonly='1' />
                         <field name='solicitud' readonly = '1'/>
 
