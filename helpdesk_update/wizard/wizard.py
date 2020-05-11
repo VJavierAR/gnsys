@@ -106,9 +106,13 @@ class HelpDeskNoValidarConComentario(TransientModel):
     solicitud = fields.Many2one('sale.order', strinf = 'solicitud de refacción', compute = '_compute_solicitud')
     activarCompatibilidad = fields.Boolean(string = 'Activar compatibilidad', default = False)
     serieTexto = fields.Text('Serie', compute = '_compute_serie_text')
+    idProductoEnSerie = fields.Integer('id Producto En Serie', compute = '_compute_serie_producto_id')
     
     def _compute_solicitud(self):
         self.solicitud = self.ticket_id.x_studio_field_nO7Xg.id
+
+    def _compute_serie_producto_id(self):
+        self.idProductoEnSerie = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].product_id.id
 
     def _compute_serie_text(self):
         self.serieTexto = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].name
@@ -118,12 +122,9 @@ class HelpDeskNoValidarConComentario(TransientModel):
 
     @api.onchange('activarCompatibilidad')
     def productos_filtro(self):
-
-        a = len(self.ticket_id.x_studio_equipo_por_nmero_de_serie)
+        
         f = []
-        if a > 0:
-            for n in range(a) :
-                f.append(self.ticket_id.x_studio_equipo_por_nmero_de_serie[n].product_id.id)
+        f.append(self.idProductoEnSerie)
         
         _logger.info("res f: " + str(f))
         res = {}             
