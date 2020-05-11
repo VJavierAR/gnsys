@@ -2708,6 +2708,25 @@ class helpdesk_update(models.Model):
             'context': self.env.context,
         }
 
+
+    @api.multi
+    def no_validar_con_comentario_wizard(self):
+        wiz = self.env['helpdesk.comentario.no.validar'].create({'ticket_id':self.id })
+        view = self.env.ref('helpdesk_update.view_helpdesk_no_validar_con_comentario')
+        return {
+            'name': _('No validar'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'helpdesk.comentario.no.validar',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            'context': self.env.context,
+        }
+
+
     @api.multi
     def cerrar_con_comentario_wizard(self):
         wiz = self.env['helpdesk.comentario.cerrar'].create({'ticket_id':self.id })

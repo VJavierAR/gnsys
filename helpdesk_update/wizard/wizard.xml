@@ -52,6 +52,92 @@
     </record>
 
 
+    <record id="view_helpdesk_no_validar_con_comentario" model="ir.ui.view">
+        <field name="model">helpdesk.comentario.no.validar</field>
+        <field name="arch" type="xml">
+            <form string="No validar solicitud">
+                
+                <group>
+                    <group>
+                        <field name='solicitud'/>
+
+                        <field name="productosACambiar" string="Productos " domain="[]" options="{'no_create_edit': True, 'no_create': True}" >
+                            <tree string="Product Variants" decoration-danger="type == 'product' and virtual_available&lt;0" decoration-info="type != 'product' or virtual_available&gt;=0" editable="bottom" >
+                                <field name="create_uid" string="Creado por"  invisible="1" attrs="{'invisible': 1, 'readonly': 1}"/>
+                                <field name="x_studio_aadido_por" string="Añadido por"  invisible="1"  attrs="{'invisible': 1, 'readonly': 0}"/>
+                                <field name="x_studio_aadido_por_1" string="Añadido por" invisible="1" attrs="{'invisible': 1, 'readonly': 0}"/>
+                                <field name="x_studio_testuse" string="Prueba" invisible="1" attrs="{'invisible': 1, 'readonly': 1}"/>
+                                <field name="x_studio_field_Fj4xh" string="New Texto" invisible="1" attrs="{'invisible': 1, 'readonly': 1}"/>
+                                <field name="x_studio_currentuser" string="Usuario"  readonly="1" invisible="1" attrs="{'invisible': 0, 'readonly': 1}"/>
+                                <field name="categ_id" attrs="{}" readonly="1" required="1"/>
+                                <field name="default_code" attrs="{}" readonly="1"/>
+                                <field name="name" attrs="{}" readonly="1" required="1"/>
+                                <field name="attribute_value_ids" widget="many2many_tags" groups="product.group_product_variant" invisible="1"/>
+                                <field name="lst_price" attrs="{}" readonly="1" invisible="1"/>
+                                <field name="standard_price" attrs="{}" readonly="1" invisible="1"/>
+                                <field name="type" invisible="1" required="1"/>
+                                <field name="price" invisible="not context.get('pricelist',False)"/>
+                                <field name="qty_available" attrs="{'invisible':[('type', '!=', 'product')]}" readonly="1"/>
+                                <field name="virtual_available" attrs="{'invisible':[('type', '!=', 'product')]}" readonly="1"/>
+                                <field name="uom_id" options="{'no_open': True, 'no_create': True}" groups="uom.group_uom" attrs="{}" readonly="1" required="1" invisible="1"/>
+                                <field name="barcode" attrs="{}" invisible="1"/>
+                                <field name="x_studio_cantidad_pedida" string="Cantidad pedida"/>
+                                <field name="product_tmpl_id" invisible="1" required="1"/>
+                                <field name="active" invisible="1"/>
+                            </tree>
+                        </field>
+
+                    </group>
+                </group>
+
+                <group>
+                    <group>
+                        <field name="estado" readonly="1"/>
+                        <field name="comentario" />
+                    </group>
+                    <group>
+                        <field name="check" />
+                        <field name="evidencia" widget="many2many_binary" />
+                        
+                    </group>
+                </group>
+
+                <field name="diagnostico_id" options="{'no_create': True}" readonly="1">
+                    <tree>
+                        <field name="create_date" string='Creado el' readonly="1"/>
+                        <field name="estadoTicket" readonly="1"/>
+                        <field name="comentario" string='Diagnostico / Comentario'/>
+                        <field name="create_uid" readonly="1" string='Encargado'/>
+                        <field name="evidencia" widget="many2many_binary"/>
+                        <field name="mostrarComentario" />
+                    </tree>
+                    <form>
+                        <group>
+                            <group>
+                                <field name="ticketRelacion" can_create="true" can_write="true" modifiers="{}" invisible="1"/>
+                                <field name="estadoTicket" modifiers="{}" readonly="1"/>
+                                <field name="comentario" modifiers="{}"/>
+                            </group>
+                            <group>
+                                <field name="evidencia" can_create="true" can_write="true" modifiers="{}" widget="many2many_binary"/>
+                                <field name="mostrarComentario" modifiers="{}"/>
+                            </group>
+                        </group>
+                    </form>
+                </field>
+
+                <footer>
+                    <button name="noValidarConComentario" string="No validar" type="object" class="oe_highlight" />
+                    <button string="Cerrar ventana" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+
+
+
 
     <record id="view_helpdesk_cerrar_con_comentario" model="ir.ui.view">
         <field name="model">helpdesk.comentario.cerrar</field>
