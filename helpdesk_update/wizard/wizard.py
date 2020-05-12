@@ -180,7 +180,7 @@ class HelpDeskNoValidarConComentario(TransientModel):
         #lista = self.listaDeCantidaes.split(",")
         for producto in self.productosACambiar:
             datosr = {
-                'order_id' : solicitud.id,
+                'order_id' : self.ticket_id.x_studio_field_nO7Xg.id,
                 'product_id' : producto.id,
                 'product_uom_qty' : producto.x_studio_cantidad_pedida, #lista[i],
                 'x_studio_field_9nQhR': self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id

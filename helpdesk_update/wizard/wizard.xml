@@ -97,7 +97,7 @@
                         <field name="anadirComentario" /> 
                     </group>
                 </group>
-                <group attrs="{'invisible' : [['anadirComentario', '=', 0]]}">
+                <group invisible="[['anadirComentario', '=', 0]]">
                     <group>
                         <field name="estado" readonly="1"/>
                         <field name="comentario" />
