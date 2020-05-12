@@ -102,7 +102,7 @@ class HelpDeskNoValidarConComentario(TransientModel):
     estado = fields.Char('Estado', compute = "_compute_estadoTicket")
     comentario = fields.Text('Comentario')
     evidencia = fields.Many2many('ir.attachment', string = "Evidencias")
-    productosACambiar = fields.Many2many('product.product', string = "Productos", compute = '_compute_productos')
+    productosACambiar = fields.Many2many('product.product', string = "Productos", compute = '_compute_productos', store = True)
     solicitud = fields.Many2one('sale.order', strinf = 'solicitud de refacción', compute = '_compute_solicitud')
     activarCompatibilidad = fields.Boolean(string = 'Activar compatibilidad', default = False)
     anadirComentario = fields.Boolean(string = 'Añadir comentario', default = False, store = True)
@@ -215,7 +215,8 @@ class HelpDeskNoValidarConComentario(TransientModel):
       #self.sudo().ticket_id.write({'x_studio_productos': [(5,0,0)]})
       #self.sudo().ticket_id.write({'x_studio_productos': [(6, 0, self.productosACambiar.ids)]})
       #self.sudo().ticket_id.x_studio_productos = [(6, 0, self.productosACambiar.ids)]
-      self.sudo().ticket_id.write({'x_studio_productos': [(5,0,0),(6, 0, self.productosACambiar.ids)]})
+      #self.sudo().ticket_id.write({'x_studio_productos': [(5,0,0),(6, 0, self.productosACambiar.ids)]})
+      self.ticket_id.x_studio_productos = [(5,0,0),(6, 0, self.productosACambiar.ids)]
 
       if self.anadirComentario:
         #if self.ticket_id.stage_id.name == 'Resuelto' or self.ticket_id.stage_id.name == 'Abierto' or self.ticket_id.stage_id.name == 'Asignado' or self.ticket_id.stage_id.name == 'Atención' and self.ticket_id.estadoCerrado == False:
