@@ -109,7 +109,6 @@ class HelpDeskNoValidarConComentario(TransientModel):
     serieTexto = fields.Text('Serie', compute = '_compute_serie_text')
     idProductoEnSerie = fields.Integer('id Producto En Serie', compute = '_compute_serie_producto_id')
     listaDeCantidaes = fields.Text('Lista de cantidaes', compute = '_compute_lista_de_cantidades')
-    listatmp = []
 
     def _compute_solicitud(self):
         self.solicitud = self.ticket_id.x_studio_field_nO7Xg.id
@@ -128,11 +127,9 @@ class HelpDeskNoValidarConComentario(TransientModel):
         lista = []
         if self.productosACambiar:
             for producto in self.productosACambiar:
-                lista.append(self.productosACambiar.x_studio_cantidad_pedida)
-                #global listatmp.append(self.productosACambiar.x_studio_cantidad_pedida)
-        _logger.info("res global variable: " + str(listatmp))
-        self.listaDeCantidaes = str(lista)
-
+                self.listaDeCantidaes = str(self.listaDeCantidaes) + "," + producto.x_studio_cantidad_pedida
+                _logger.info("res listaDeCantidaes: " + str(self.listaDeCantidaes))
+        
 
     @api.onchange('activarCompatibilidad')
     def productos_filtro(self):
@@ -166,7 +163,7 @@ class HelpDeskNoValidarConComentario(TransientModel):
         _logger.info("res dominio productos wizard: " + str(res))
         return res
 
-    @api.onchange('productosACambiar.x_studio_cantidad_pedida')
+    @api.onchange('productosACambiar')
     def cambiaCantidad(self):
         _logger.info('res cantidad pedida: ' + str(self.productosACambiar[-1].x_studio_cantidad_pedida))
         
@@ -175,12 +172,12 @@ class HelpDeskNoValidarConComentario(TransientModel):
     def noValidarConComentario(self):
       if self.ticket_id.x_studio_field_nO7Xg.id != False and self.ticket_id.x_studio_field_nO7Xg.state == 'sale':
         i = 0
-        lista = 
+        lista = self.listaDeCantidaes.split(",")
         for producto in self.productosACambiar:
             datosr = {
                 'order_id' : solicitud.id,
                 'product_id' : producto.id,
-                'product_uom_qty' : producto.x_studio_cantidad_pedida,
+                'product_uom_qty' : lista[i], #producto.x_studio_cantidad_pedida,
                 'x_studio_field_9nQhR': self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id
             }
             if (self.ticket_id.team_id.id == 10 or self.ticket_id.team_id.id == 11):
