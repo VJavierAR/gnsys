@@ -1129,7 +1129,8 @@ class helpdesk_crearconserie(TransientModel):
                 if self.serie[0].x_studio_move_line:
                     _logger.info("test dato: " + str(self.serie[0].x_studio_move_line[-1].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id))
                     _logger.info("test dato: " + str(self.serie[0].x_studio_move_line[-1].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.name))
-                    self.serie[0].x_studio_move_line.sorted(key="date", reverse=True)
+                    moveLineOrdenado = self.serie[0].x_studio_move_line.sorted(key="date", reverse=True)
+                    _logger.info("test moveLineOrdenado: " + str(moveLineOrdenado))
                     self.cliente = self.serie[0].x_studio_move_line[-1].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.name
                     self.idCliente = self.serie[0].x_studio_move_line[-1].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
                     self.clienteRelacion = self.serie[0].x_studio_move_line[-1].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
