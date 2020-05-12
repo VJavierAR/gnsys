@@ -160,9 +160,10 @@ class HelpDeskNoValidarConComentario(TransientModel):
     def cambiaCantidad(self):
         _logger.info('res cantidad pedida: ' + str(self.productosACambiar[-1].x_studio_cantidad_pedida))
         lista = []
+        self.listaDeCantidaes = ''
         if self.productosACambiar:
             for producto in self.productosACambiar:
-                self.listaDeCantidaes = str(self.listaDeCantidaes) + "," + producto.x_studio_cantidad_pedida
+                self.listaDeCantidaes = str(self.listaDeCantidaes) + "," + str(producto.x_studio_cantidad_pedida)
                 _logger.info("res listaDeCantidaes: " + str(self.listaDeCantidaes))
         
 
