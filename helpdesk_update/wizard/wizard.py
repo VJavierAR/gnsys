@@ -172,6 +172,8 @@ class HelpDeskNoValidarConComentario(TransientModel):
 
     @api.multi
     def noValidarConComentario(self):
+      _logger.info("res self.ticket_id.x_studio_field_nO7Xg.id: " + str(self.ticket_id.x_studio_field_nO7Xg.id))
+      _logger.info("res self.ticket_id.x_studio_field_nO7Xg.state: " + str(self.ticket_id.x_studio_field_nO7Xg.state))
       if self.ticket_id.x_studio_field_nO7Xg.id != False and self.ticket_id.x_studio_field_nO7Xg.state == 'sale':
         _logger.info("res entre: if self.ticket_id.x_studio_field_nO7Xg.id != False and self.ticket_id.x_studio_field_nO7Xg.state == 'sale': ")
         i = 0
@@ -189,11 +191,12 @@ class HelpDeskNoValidarConComentario(TransientModel):
             self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(self.ticket_id.x_studio_field_nO7Xg.id) + ";")
             i += 1
 
-      #self.ticket_id.x_studio_productos = [(6, 0, self.productosACambiar.ids)]
+      
       _logger.info("res ids productos: " + str(self.productosACambiar.ids))
       _logger.info("res ids productos: " + str(self.productosACambiar[-1].x_studio_cantidad_pedida))
-      self.sudo().ticket_id.write({'x_studio_productos': [(5,0,0)]})
-      self.sudo().ticket_id.write({'x_studio_productos': [(6, 0, self.productosACambiar.ids)]})
+      self.ticket_id.x_studio_productos = [(6, 0, self.productosACambiar.ids)]
+      #self.sudo().ticket_id.write({'x_studio_productos': [(5,0,0)]})
+      #self.sudo().ticket_id.write({'x_studio_productos': [(6, 0, self.productosACambiar.ids)]})
       #self.sudo().ticket_id.x_studio_productos = [(6, 0, self.productosACambiar.ids)]
 
 
