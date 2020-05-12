@@ -239,7 +239,7 @@
                 </field>
 
                 <footer>
-                    <button name="cancelarTicketConComentario" string="Confirmar" type="object" class="oe_highlight" attrs='{"invisible": [["estado","=","Cerrado"]]}'/>
+                    <button name="cancelarTicketConComentario" string="Confirmar" type="object" class="oe_highlight" attrs='{"invisible": [["estado","=","Cancelado"]]}'/>
                     <button string="Cancel" class="oe_link" special="cancel"/>
                 </footer>
             </form>
