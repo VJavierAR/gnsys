@@ -102,7 +102,7 @@ class HelpDeskNoValidarConComentario(TransientModel):
     estado = fields.Char('Estado', compute = "_compute_estadoTicket")
     comentario = fields.Text('Comentario')
     evidencia = fields.Many2many('ir.attachment', string = "Evidencias")
-    productosACambiar = fields.Many2many('product.product', string = "Productos", compute = '_compute_productos', store = True)
+    productosACambiar = fields.Many2many('product.product', string = "Productos", compute = '_compute_productos')
     solicitud = fields.Many2one('sale.order', strinf = 'solicitud de refacción', compute = '_compute_solicitud')
     activarCompatibilidad = fields.Boolean(string = 'Activar compatibilidad', default = False)
     anadirComentario = fields.Boolean(string = 'Añadir comentario', default = False, store = True)
@@ -120,8 +120,8 @@ class HelpDeskNoValidarConComentario(TransientModel):
         self.serieTexto = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].name
 
     def _compute_productos(self):
-        #self.productosACambiar = [(6, 0, self.ticket_id.x_studio_productos.ids)]
-        self.write({'productosACambiar': [(6, 0, self.ticket_id.x_studio_productos.ids)]})
+        self.productosACambiar = [(6, 0, self.ticket_id.x_studio_productos.ids)]
+        #self.write({'productosACambiar': [(6, 0, self.ticket_id.x_studio_productos.ids)]})
         
 
     @api.onchange('activarCompatibilidad')
@@ -205,6 +205,9 @@ class HelpDeskNoValidarConComentario(TransientModel):
                 datosr['route_id'] = 22548
             self.env['sale.order.line'].create(datosr)
             self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(self.ticket_id.x_studio_field_nO7Xg.id) + ";")
+
+            self.sudo().ticket_id.x_studio_productos = [(1, producto.id, {'product_uom_qty': float(lista[i])})]
+
             i += 1
             _logger.info("res datosr: " + str(datosr))
 
@@ -216,7 +219,7 @@ class HelpDeskNoValidarConComentario(TransientModel):
       #self.sudo().ticket_id.write({'x_studio_productos': [(6, 0, self.productosACambiar.ids)]})
       #self.sudo().ticket_id.x_studio_productos = [(6, 0, self.productosACambiar.ids)]
       #self.sudo().ticket_id.write({'x_studio_productos': [(5,0,0),(6, 0, self.productosACambiar.ids)]})
-      self.ticket_id.x_studio_productos = [(5,0,0),(6, 0, self.productosACambiar.ids)]
+      #self.ticket_id.x_studio_productos = [(5,0,0),(6, 0, self.productosACambiar.ids)]
 
       if self.anadirComentario:
         #if self.ticket_id.stage_id.name == 'Resuelto' or self.ticket_id.stage_id.name == 'Abierto' or self.ticket_id.stage_id.name == 'Asignado' or self.ticket_id.stage_id.name == 'Atención' and self.ticket_id.estadoCerrado == False:
