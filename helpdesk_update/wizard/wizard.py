@@ -120,8 +120,8 @@ class HelpDeskNoValidarConComentario(TransientModel):
         self.serieTexto = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].name
 
     def _compute_productos(self):
-        self.productosACambiar = [(6, 0, self.ticket_id.x_studio_productos.ids)]
-        #self.write({'productosACambiar': [(6, 0, self.ticket_id.x_studio_productos.ids)]})
+        #self.productosACambiar = [(6, 0, self.ticket_id.x_studio_productos.ids)]
+        self.write({'productosACambiar': [(6, 0, self.ticket_id.x_studio_productos.ids)]})
         
 
     @api.onchange('activarCompatibilidad')
