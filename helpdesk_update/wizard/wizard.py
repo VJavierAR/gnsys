@@ -177,7 +177,7 @@ class HelpDeskNoValidarConComentario(TransientModel):
       if self.ticket_id.x_studio_field_nO7Xg.id != False and self.ticket_id.x_studio_field_nO7Xg.state != 'sale':
         _logger.info("res entre: if self.ticket_id.x_studio_field_nO7Xg.id != False and self.ticket_id.x_studio_field_nO7Xg.state == 'sale': ")
         i = 0
-        lista = self.listaDeCantidaes.split(",")
+        #lista = self.listaDeCantidaes.split(",")
         for producto in self.productosACambiar:
             datosr = {
                 'order_id' : solicitud.id,
