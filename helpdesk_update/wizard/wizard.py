@@ -1128,31 +1128,31 @@ class helpdesk_crearconserie(TransientModel):
 
                 if self.serie[0].x_studio_move_line:
                     moveLineOrdenado = self.serie[0].x_studio_move_line.sorted(key="date", reverse=True)
-                    _logger.info("test dato: " + str(moveLineOrdenado[-1].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id))
-                    _logger.info("test dato: " + str(moveLineOrdenado[-1].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.name))
+                    _logger.info("test dato: " + str(moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id))
+                    _logger.info("test dato: " + str(moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.name))
                     _logger.info("test moveLineOrdenado: " + str(moveLineOrdenado))
-                    self.cliente = moveLineOrdenado[-1].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.name
-                    self.idCliente = moveLineOrdenado[-1].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
-                    self.clienteRelacion = moveLineOrdenado[-1].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
-                    self.localidad = moveLineOrdenado[-1].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.name
-                    self.zonaLocalidad = moveLineOrdenado[-1].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.x_studio_field_SqU5B
-                    self.idLocaliidad = moveLineOrdenado[-1].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
-                    self.localidadRelacion = moveLineOrdenado[-1].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
+                    self.cliente = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.name
+                    self.idCliente = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
+                    self.clienteRelacion = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
+                    self.localidad = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.name
+                    self.zonaLocalidad = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.x_studio_field_SqU5B
+                    self.idLocaliidad = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
+                    self.localidadRelacion = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
 
-                    self.direccionCalleNombre = moveLineOrdenado[-1].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.street_name
-                    self.direccionNumeroExterior = moveLineOrdenado[-1].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.street_number
-                    self.direccionNumeroInterior = moveLineOrdenado[-1].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.street_number2
-                    self.direccionColonia = moveLineOrdenado[-1].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.l10n_mx_edi_colony
-                    self.direccionLocalidad = moveLineOrdenado[-1].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.l10n_mx_edi_locality
-                    self.direccionCiudad = moveLineOrdenado[-1].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.city
-                    self.direccionEstado = moveLineOrdenado[-1].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.state_id.name
-                    self.direccionCodigoPostal = moveLineOrdenado[-1].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.zip
+                    self.direccionCalleNombre = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.street_name
+                    self.direccionNumeroExterior = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.street_number
+                    self.direccionNumeroInterior = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.street_number2
+                    self.direccionColonia = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.l10n_mx_edi_colony
+                    self.direccionLocalidad = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.l10n_mx_edi_locality
+                    self.direccionCiudad = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.city
+                    self.direccionEstado = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.state_id.name
+                    self.direccionCodigoPostal = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.zip
                     #self.direccion = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.
 
-                    _my_object.write({'idCliente' : moveLineOrdenado[-1].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
-                                    ,'idLocaliidad': moveLineOrdenado[-1].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
+                    _my_object.write({'idCliente' : moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
+                                    ,'idLocaliidad': moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
                                     })
-                    loc = moveLineOrdenado[-1].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
+                    loc = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
                     
                     idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_subtipo', '=', 'Contacto de localidad']], order='create_date desc', limit=1)
                     
