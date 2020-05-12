@@ -177,12 +177,13 @@ class HelpDeskNoValidarConComentario(TransientModel):
       if self.ticket_id.x_studio_field_nO7Xg.id != False and self.ticket_id.x_studio_field_nO7Xg.state != 'sale':
         _logger.info("res entre: if self.ticket_id.x_studio_field_nO7Xg.id != False and self.ticket_id.x_studio_field_nO7Xg.state == 'sale': ")
         i = 0
-        #lista = self.listaDeCantidaes.split(",")
+        lista = str(self.listaDeCantidaes).split(",")
+        _logger.info("res len(self.productosACambiar): " + str(len(self.productosACambiar)))
         for producto in self.productosACambiar:
             datosr = {
                 'order_id' : self.ticket_id.x_studio_field_nO7Xg.id,
                 'product_id' : producto.id,
-                'product_uom_qty' : producto.x_studio_cantidad_pedida, #lista[i],
+                'product_uom_qty' :  lista[i], #producto.x_studio_cantidad_pedida,
                 'x_studio_field_9nQhR': self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id
             }
             if (self.ticket_id.team_id.id == 10 or self.ticket_id.team_id.id == 11):
