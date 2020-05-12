@@ -191,6 +191,7 @@ class HelpDeskNoValidarConComentario(TransientModel):
         lista = str(self.listaDeCantidaes).split(",")
         _logger.info("res lista: " +str(lista))
         _logger.info("res len(self.productosACambiar): " + str(len(self.productosACambiar)))
+        self.env.cr.execute("delete from sale_order_line where order_id = " + str(self.ticket_id.x_studio_field_nO7Xg.id) +";")
         for producto in self.productosACambiar:
             _logger.info("res lista[i]: " + str(lista[i]))
             _logger.info("res producto.x_studio_cantidad_pedida: " + str(producto.x_studio_cantidad_pedida))
