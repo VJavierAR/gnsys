@@ -173,6 +173,7 @@ class HelpDeskNoValidarConComentario(TransientModel):
     @api.multi
     def noValidarConComentario(self):
       if self.ticket_id.x_studio_field_nO7Xg.id != False and self.ticket_id.x_studio_field_nO7Xg.state == 'sale':
+        _logger.info("res entre: if self.ticket_id.x_studio_field_nO7Xg.id != False and self.ticket_id.x_studio_field_nO7Xg.state == 'sale': ")
         i = 0
         lista = self.listaDeCantidaes.split(",")
         for producto in self.productosACambiar:
