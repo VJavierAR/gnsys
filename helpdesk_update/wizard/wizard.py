@@ -182,6 +182,7 @@ class HelpDeskNoValidarConComentario(TransientModel):
         _logger.info("res len(self.productosACambiar): " + str(len(self.productosACambiar)))
         for producto in self.productosACambiar:
             _logger.info("res lista[i]: " + str(lista[i]))
+            _logger.info("res producto.x_studio_cantidad_pedida: " + str(producto.x_studio_cantidad_pedida))
             datosr = {
                 'order_id' : self.ticket_id.x_studio_field_nO7Xg.id,
                 'product_id' : producto.id,
