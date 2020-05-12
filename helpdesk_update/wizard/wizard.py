@@ -158,7 +158,7 @@ class HelpDeskNoValidarConComentario(TransientModel):
 
     @api.onchange('productosACambiar')
     def cambiaCantidad(self):
-        _logger.info('res cantidad pedida: ' + str(self.productosACambiar[-1].x_studio_cantidad_pedida))
+        #_logger.info('res cantidad pedida: ' + str(self.productosACambiar[-1].x_studio_cantidad_pedida))
         for record in self:
             lista = []
             self.listaDeCantidaes = ''
@@ -176,25 +176,25 @@ class HelpDeskNoValidarConComentario(TransientModel):
             #_logger.info("res lista: " + str(lista))
             #for cantidad in lista:
             #    record.listaDeCantidaes = str(cantidad) + ","
-            _logger.info("res listaDeCantidaes: " + str(record.listaDeCantidaes))
+            #_logger.info("res listaDeCantidaes: " + str(record.listaDeCantidaes))
 
         
 
     #@api.multi
     def noValidarConComentario(self):
-      _logger.info("res self.ticket_id.x_studio_field_nO7Xg.id: " + str(self.ticket_id.x_studio_field_nO7Xg.id))
-      _logger.info("res self.ticket_id.x_studio_field_nO7Xg.state: " + str(self.ticket_id.x_studio_field_nO7Xg.state))
+      #_logger.info("res self.ticket_id.x_studio_field_nO7Xg.id: " + str(self.ticket_id.x_studio_field_nO7Xg.id))
+      #_logger.info("res self.ticket_id.x_studio_field_nO7Xg.state: " + str(self.ticket_id.x_studio_field_nO7Xg.state))
       if self.ticket_id.x_studio_field_nO7Xg.id != False and self.ticket_id.x_studio_field_nO7Xg.state != 'sale':
-        _logger.info("res entre: if self.ticket_id.x_studio_field_nO7Xg.id != False and self.ticket_id.x_studio_field_nO7Xg.state == 'sale': ")
+        #_logger.info("res entre: if self.ticket_id.x_studio_field_nO7Xg.id != False and self.ticket_id.x_studio_field_nO7Xg.state == 'sale': ")
         i = 0
-        _logger.info("res listaDeCantidaes ya lista: " + str(self.listaDeCantidaes))
+        #_logger.info("res listaDeCantidaes ya lista: " + str(self.listaDeCantidaes))
         lista = str(self.listaDeCantidaes).split(",")
-        _logger.info("res lista: " +str(lista))
-        _logger.info("res len(self.productosACambiar): " + str(len(self.productosACambiar)))
+        #_logger.info("res lista: " +str(lista))
+        #_logger.info("res len(self.productosACambiar): " + str(len(self.productosACambiar)))
         self.env.cr.execute("delete from sale_order_line where order_id = " + str(self.ticket_id.x_studio_field_nO7Xg.id) +";")
         for producto in self.productosACambiar:
-            _logger.info("res lista[i]: " + str(lista[i]))
-            _logger.info("res producto.x_studio_cantidad_pedida: " + str(producto.x_studio_cantidad_pedida))
+            #_logger.info("res lista[i]: " + str(lista[i]))
+            #_logger.info("res producto.x_studio_cantidad_pedida: " + str(producto.x_studio_cantidad_pedida))
             datosr = {
                 'order_id' : self.ticket_id.x_studio_field_nO7Xg.id,
                 'product_id' : producto.id,
@@ -209,11 +209,11 @@ class HelpDeskNoValidarConComentario(TransientModel):
             self.sudo().ticket_id.x_studio_productos = [(1, producto.id, {'x_studio_cantidad_pedida': float(lista[i])})]
 
             i += 1
-            _logger.info("res datosr: " + str(datosr))
+            #_logger.info("res datosr: " + str(datosr))
 
       
-      _logger.info("res ids productos: " + str(self.productosACambiar.ids))
-      _logger.info("res ids productos: " + str(self.productosACambiar[-1].x_studio_cantidad_pedida))
+      #_logger.info("res ids productos: " + str(self.productosACambiar.ids))
+      #_logger.info("res ids productos: " + str(self.productosACambiar[-1].x_studio_cantidad_pedida))
       #self.ticket_id.x_studio_productos = [(6, 0, self.productosACambiar.ids)]
       #self.sudo().ticket_id.write({'x_studio_productos': [(5,0,0)]})
       #self.sudo().ticket_id.write({'x_studio_productos': [(6, 0, self.productosACambiar.ids)]})
