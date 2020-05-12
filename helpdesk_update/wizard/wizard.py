@@ -178,8 +178,10 @@ class HelpDeskNoValidarConComentario(TransientModel):
         _logger.info("res entre: if self.ticket_id.x_studio_field_nO7Xg.id != False and self.ticket_id.x_studio_field_nO7Xg.state == 'sale': ")
         i = 0
         lista = str(self.listaDeCantidaes).split(",")
+        _logger.info("res lista: " +str(lista))
         _logger.info("res len(self.productosACambiar): " + str(len(self.productosACambiar)))
         for producto in self.productosACambiar:
+            _logger.info("res lista[i]: " + str(lista[i]))
             datosr = {
                 'order_id' : self.ticket_id.x_studio_field_nO7Xg.id,
                 'product_id' : producto.id,
