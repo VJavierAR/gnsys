@@ -108,7 +108,7 @@ class HelpDeskNoValidarConComentario(TransientModel):
     anadirComentario = fields.Boolean(string = 'Añadir comentario', default = False)
     serieTexto = fields.Text('Serie', compute = '_compute_serie_text')
     idProductoEnSerie = fields.Integer('id Producto En Serie', compute = '_compute_serie_producto_id')
-    listaDeCantidaes = fields.Text('Lista de cantidaes')
+    listaDeCantidaes = fields.Text('Lista de cantidaes', store = True)
 
     def _compute_solicitud(self):
         self.solicitud = self.ticket_id.x_studio_field_nO7Xg.id
