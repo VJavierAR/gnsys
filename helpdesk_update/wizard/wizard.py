@@ -206,7 +206,7 @@ class HelpDeskNoValidarConComentario(TransientModel):
             self.env['sale.order.line'].create(datosr)
             self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(self.ticket_id.x_studio_field_nO7Xg.id) + ";")
 
-            self.sudo().ticket_id.x_studio_productos = [(1, producto.id, {'product_uom_qty': float(lista[i])})]
+            self.sudo().ticket_id.x_studio_productos = [(1, producto.id, {'x_studio_cantidad_pedida': float(lista[i])})]
 
             i += 1
             _logger.info("res datosr: " + str(datosr))
