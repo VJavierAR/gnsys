@@ -164,18 +164,18 @@ class HelpDeskNoValidarConComentario(TransientModel):
             self.listaDeCantidaes = ''
             if self.productosACambiar:
                 for producto in self.productosACambiar:
-                    _logger.info("res producto.x_studio_cantidad_pedida: " + str(producto.x_studio_cantidad_pedida))
-                    lista.append(producto.x_studio_cantidad_pedida)
-                    _logger.info("res lista: " + str(lista))
-                    #if self.listaDeCantidaes != '':
-                        #self.listaDeCantidaes = str(self.listaDeCantidaes) + "," + str(producto.x_studio_cantidad_pedida)
+                    #_logger.info("res producto.x_studio_cantidad_pedida: " + str(producto.x_studio_cantidad_pedida))
+                    #lista.append(producto.x_studio_cantidad_pedida)
+                    #_logger.info("res lista: " + str(lista))
+                    if self.listaDeCantidaes != '':
+                        self.listaDeCantidaes = str(self.listaDeCantidaes) + "," + str(producto.x_studio_cantidad_pedida)
                         #self.sudo().write({'listaDeCantidaes': str(self.listaDeCantidaes) + "," + str(producto.x_studio_cantidad_pedida)})
-                    #else:
-                        #self.listaDeCantidaes = str(producto.x_studio_cantidad_pedida)
+                    else:
+                        self.listaDeCantidaes = str(producto.x_studio_cantidad_pedida)
                         #self.sudo().write({'listaDeCantidaes': str(producto.x_studio_cantidad_pedida)})
-            _logger.info("res lista: " + str(lista))
-            for cantidad in lista:
-                record.listaDeCantidaes = str(cantidad) + ","
+            #_logger.info("res lista: " + str(lista))
+            #for cantidad in lista:
+            #    record.listaDeCantidaes = str(cantidad) + ","
             _logger.info("res listaDeCantidaes: " + str(record.listaDeCantidaes))
 
         
