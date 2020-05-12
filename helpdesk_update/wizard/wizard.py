@@ -108,7 +108,7 @@ class HelpDeskNoValidarConComentario(TransientModel):
     anadirComentario = fields.Boolean(string = 'Añadir comentario', default = False)
     serieTexto = fields.Text('Serie', compute = '_compute_serie_text')
     idProductoEnSerie = fields.Integer('id Producto En Serie', compute = '_compute_serie_producto_id')
-    listaDeCantidaes = fields.Text('Lista de cantidaes', compute = '_compute_lista_de_cantidades')
+    listaDeCantidaes = fields.Text('Lista de cantidaes')
 
     def _compute_solicitud(self):
         self.solicitud = self.ticket_id.x_studio_field_nO7Xg.id
@@ -122,14 +122,6 @@ class HelpDeskNoValidarConComentario(TransientModel):
     def _compute_productos(self):
         self.productosACambiar = [(6, 0, self.ticket_id.x_studio_productos.ids)]
         #self.write({'productosACambiar': [(6, 0, self.ticket_id.x_studio_productos.ids)]})
-
-    @api.depends('productosACambiar.x_studio_cantidad_pedida')
-    def _compute_lista_de_cantidades(self):
-        lista = []
-        if self.productosACambiar:
-            for producto in self.productosACambiar:
-                self.listaDeCantidaes = str(self.listaDeCantidaes) + "," + producto.x_studio_cantidad_pedida
-                _logger.info("res listaDeCantidaes: " + str(self.listaDeCantidaes))
         
 
     @api.onchange('activarCompatibilidad')
@@ -167,6 +159,11 @@ class HelpDeskNoValidarConComentario(TransientModel):
     @api.onchange('productosACambiar')
     def cambiaCantidad(self):
         _logger.info('res cantidad pedida: ' + str(self.productosACambiar[-1].x_studio_cantidad_pedida))
+        lista = []
+        if self.productosACambiar:
+            for producto in self.productosACambiar:
+                self.listaDeCantidaes = str(self.listaDeCantidaes) + "," + producto.x_studio_cantidad_pedida
+                _logger.info("res listaDeCantidaes: " + str(self.listaDeCantidaes))
         
 
     @api.multi
