@@ -165,9 +165,12 @@ class HelpDeskNoValidarConComentario(TransientModel):
             for producto in self.productosACambiar:
                 if self.listaDeCantidaes != '':
                     self.listaDeCantidaes = str(self.listaDeCantidaes) + "," + str(producto.x_studio_cantidad_pedida)
+                    self.sudo().write({'listaDeCantidaes': str(self.listaDeCantidaes) + "," + str(producto.x_studio_cantidad_pedida)})
                 else:
                     self.listaDeCantidaes = str(producto.x_studio_cantidad_pedida)
-                _logger.info("res listaDeCantidaes: " + str(self.listaDeCantidaes))
+                    self.sudo().write({'listaDeCantidaes': str(producto.x_studio_cantidad_pedida)})
+        _logger.info("res listaDeCantidaes: " + str(self.listaDeCantidaes))
+
         
 
     @api.multi
