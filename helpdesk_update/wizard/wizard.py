@@ -211,7 +211,25 @@ class HelpDeskNoValidarConComentario(TransientModel):
             i += 1
             #_logger.info("res datosr: " + str(datosr))
 
-      
+        if len(self.productosACambiar.ids) > len(self.ticket_id.x_studio_productos.ids):
+            self.sudo().ticket_id.write({'x_studio_productos': [(6, 0, self.productosACambiar.ids)]})
+            """
+            i = 0
+            for producto in self.productosACambiar:
+                if int(self.productosACambiar.ids[i]) != self.ticket_id.x_studio_productos.ids[i]:
+                    self.sudo().ticket_id.x_studio_productos = [(0, 0, {
+                                                                    'order_id': producto.order_id.id,
+                                                                    'product_id': producto.product_id.id,
+                                                                    'product_uom_qty': float(lista[i]),
+                                                                    'x_studio_field_9nQhR': producto.x_studio_field_9nQhR.id,
+                                                                    'name': producto.name,
+                                                                    'price_unit': producto.price_unit,
+                                                                    'product_uom': producto.product_uom,
+                                                                    'tax_id': [(6, 0, [1])]
+                                                                    }
+                                                                )]
+                i += 1
+            """
       #_logger.info("res ids productos: " + str(self.productosACambiar.ids))
       #_logger.info("res ids productos: " + str(self.productosACambiar[-1].x_studio_cantidad_pedida))
       #self.ticket_id.x_studio_productos = [(6, 0, self.productosACambiar.ids)]
