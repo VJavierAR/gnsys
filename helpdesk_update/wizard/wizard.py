@@ -179,7 +179,7 @@ class HelpDeskNoValidarConComentario(TransientModel):
             datosr = {
                 'order_id' : solicitud.id,
                 'product_id' : producto.id,
-                'product_uom_qty' : lista[i], #producto.x_studio_cantidad_pedida,
+                'product_uom_qty' : producto.x_studio_cantidad_pedida, #lista[i],
                 'x_studio_field_9nQhR': self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id
             }
             if (self.ticket_id.team_id.id == 10 or self.ticket_id.team_id.id == 11):
