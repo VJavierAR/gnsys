@@ -1933,19 +1933,19 @@ class helpdesk_update(models.Model):
 
             saleTemp = self.x_studio_field_nO7Xg
             if saleTemp.id != False:
-            if self.x_studio_id_ticket:
-                estadoAntes = str(self.stage_id.name)
-                if self.estadoSolicitudDeToner == False:    
-                    query = "update helpdesk_ticket set stage_id = 93 where id = " + str(self.x_studio_id_ticket) + ";"
-                    ss = self.env.cr.execute(query)
-                    
-                    message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: En almacén' + ". " + "\n\nSolicitud " + str(saleTemp.name) + " generada" + "\n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
-                    mess= {
-                            'title': _('Estado de ticket actualizado!!!'),
-                            'message' : message
-                          }
-                    self.estadoSolicitudDeToner = True
-                    return {'warning': mess}
+                if self.x_studio_id_ticket:
+                    estadoAntes = str(self.stage_id.name)
+                    if self.estadoSolicitudDeToner == False:    
+                        query = "update helpdesk_ticket set stage_id = 93 where id = " + str(self.x_studio_id_ticket) + ";"
+                        ss = self.env.cr.execute(query)
+                        
+                        message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: En almacén' + ". " + "\n\nSolicitud " + str(saleTemp.name) + " generada" + "\n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
+                        mess= {
+                                'title': _('Estado de ticket actualizado!!!'),
+                                'message' : message
+                              }
+                        self.estadoSolicitudDeToner = True
+                        return {'warning': mess}
 
 
 
