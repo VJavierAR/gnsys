@@ -125,8 +125,10 @@ class ExistenciasXML(models.AbstractModel):
                 sheet.write(i, 5, obj.lot_id.x_studio_estado, bold)
                 sheet.write(i, 6, obj.reserved_quantity, bold)
                 sheet.write(i, 7, obj.x_studio_field_kUc4x.x_name if(obj.x_studio_field_kUc4x.x_name) else '', bold)
+                precio=self.env['purchase.order.line'].search([['product_id','=',obj.product_id.id]])
+                sheet.write(i, 8, precio.sorted(key='id',reverse=True)[0].price_unit if(precio) else obj.product_id.lst_price, bold)
                 i=i+1
-            sheet.add_table('A2:H'+str((i)),{'style': 'Table Style Medium 9','columns': [{'header': 'Almacen'},{'header': 'Modelo'},{'header': 'No Parte'},{'header':'Descripción'},{'header':'No Serie'},{'header': 'Estado'},{'header': 'Apartados'},{'header': 'Ubicación'}]}) 
+            sheet.add_table('A2:H'+str((i)),{'style': 'Table Style Medium 9','columns': [{'header': 'Almacen'},{'header': 'Modelo'},{'header': 'No Parte'},{'header':'Descripción'},{'header':'No Serie'},{'header': 'Estado'},{'header': 'Apartados'},{'header': 'Ubicación'},{'header':'Costo'}]}) 
         else:
             sheet = workbook.add_worksheet('Existencias Componentes')
             sheet.merge_range('A1:G1', 'Existencias Componentes', merge_format)   
@@ -138,8 +140,10 @@ class ExistenciasXML(models.AbstractModel):
                 sheet.write(i, 4, obj.quantity, bold)
                 sheet.write(i, 5, obj.reserved_quantity, bold)
                 sheet.write(i, 6, obj.x_studio_field_kUc4x.x_name if(obj.x_studio_field_kUc4x.x_name) else '', bold)
+                precio=self.env['purchase.order.line'].search([['product_id','=',obj.product_id.id]])
+                sheet.write(i, 7, precio.sorted(key='id',reverse=True)[0].price_unit if(precio) else obj.product_id.lst_price, bold)
                 i=i+1
-            sheet.add_table('A2:G'+str((i)),{'style': 'Table Style Medium 9','columns': [{'header': 'Almacen'},{'header': 'Modelo'},{'header': 'No Parte'},{'header':'Descripción'},{'header': 'Existencia'},{'header': 'Apartados'},{'header': 'Ubicación'}]}) 
+            sheet.add_table('A2:G'+str((i)),{'style': 'Table Style Medium 9','columns': [{'header': 'Almacen'},{'header': 'Modelo'},{'header': 'No Parte'},{'header':'Descripción'},{'header': 'Existencia'},{'header': 'Apartados'},{'header': 'Ubicación'},{'header':'Costo'}]}) 
         workbook.close()
 
 
@@ -276,3 +280,4 @@ class PartnerXlsx(models.AbstractModel):
 
         sheet.add_table('A2:Q'+str(i),{'style': 'Table Style Medium 9','columns': [{'header': 'Ticket'},{'header': 'Tipo de Reporte'},{'header': 'Fecha'},{'header':'Dias de atraso'},{'header': 'Cliente'},{'header': 'Localidad'},{'header': 'Serie'},{'header': 'Modelo'},{'header': 'Area de Atención'},{'header': 'Zona'},{'header': 'Falla'},{'header': 'Último estatus ticket'},{'header': 'Última nota'},{'header': 'Fecha nota'},{'header': 'Tecnico'},{'header': 'Dirección'},{'header': 'No. Ticket cliente'}]}) 
         workbook.close()
+
