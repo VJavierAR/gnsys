@@ -1019,7 +1019,9 @@ class helpdesk_update(models.Model):
             #Cancelando contadores
             contadores = self.env['dcas.dcas'].search([['x_studio_tickett', '=', str(self.id)]])
             _logger.info('Contadores: ' + str(contadores))
-            contadores.unlink()
+            #contadores.unlink()
+            for contador in contadores:
+                contador.active = False
 
 
             #Cancelando el pedido de venta
