@@ -305,6 +305,8 @@ class GuiaTicket(TransientModel):
     def confirmar(self):
         if(self.guia):
             self.pick.write({'carrier_tracking_ref':self.guia})
+            if(self.pick.sale_id.x_studio_field_bxHgp):
+                self.pick.sale_id.x_studio_field_bxHgp.sudo().write({'x_studio_nmero_de_guia_1': self.guia})
 
 
 
