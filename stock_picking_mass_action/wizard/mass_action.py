@@ -307,7 +307,7 @@ class GuiaTicket(TransientModel):
             self.pick.write({'carrier_tracking_ref':self.guia})
             if(self.pick.sale_id.x_studio_field_bxHgp):
                 self.pick.sale_id.x_studio_field_bxHgp.sudo().write({'x_studio_nmero_de_guia_1': self.guia})
-                self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : self.pick.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id, 'estadoTicket' : "Guia Agregada", 'comentario':self.guia}) 
+                self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : self.pick.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id, 'estadoTicket' : "Guia Agregada", 'comentario':"Guia: "+self.guia}) 
 
 
 
