@@ -780,7 +780,7 @@ class helpdesk_contadores(TransientModel):
                     raise exceptions.ValidationError("Contador Monocromatico Menor")                                   
             if str(c.x_studio_color_bn) != 'B/N':
                 if int(self.contadorColorMesa) >= int(c.x_studio_contador_color) and int(self.contadorBNActual) >= int(c.x_studio_contador_bn):                      
-                    if self.team_id.id==8:
+                    if self.ticket_id.team_id.id == 8:
                         negrot = c.x_studio_contador_bn
                         colort = c.x_studio_contador_color
                     else:
