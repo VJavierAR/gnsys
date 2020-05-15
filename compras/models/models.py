@@ -161,7 +161,7 @@ class compras(models.Model):
                     sheet = book.sheet_by_index(0)
                     header=[]
                     arr=[]
-                    descuento=self.x_studio_descuento/100 if(self.x_studio_descuento!=0 and self.x_studio_descuento!=False) else 1
+                    descuento=self.x_studio_descuento/100 if(self.x_studio_descuento!=False) else 0
                     for row_num, row in enumerate(sheet.get_rows()):
                         #_logger.info()
                         #_logger.info(str(self.partner_id.name))
