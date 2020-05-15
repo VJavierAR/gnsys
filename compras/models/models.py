@@ -171,7 +171,7 @@ class compras(models.Model):
                         if(row[0].value in self.partner_id.name.replace(' ','') and str(row[0].ctype)!='0'):
                             product={}
                             producto=row[2].value
-                            precio=float(row[10].value)
+                            precio=round(float(row[10].value),2)
                             #_logger.info(row[10].value)
                             cantidad=int(row[8].value) if(row[8].ctype!=0) else 0
                             #_logger.info(str(producto).replace(' ',''))
