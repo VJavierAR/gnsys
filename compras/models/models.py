@@ -161,6 +161,7 @@ class compras(models.Model):
                     sheet = book.sheet_by_index(0)
                     header=[]
                     arr=[]
+                    descuento=self.x_studio_descuento/100 if(self.x_studio_descuento!=0) else 1
                     for row_num, row in enumerate(sheet.get_rows()):
                         #_logger.info()
                         #_logger.info(str(self.partner_id.name))
@@ -170,20 +171,20 @@ class compras(models.Model):
                         if(row[0].value in self.partner_id.name.replace(' ','') and str(row[0].ctype)!='0'):
                             product={}
                             producto=row[2].value
-                            precio=float(row[12].value)
+                            precio=float(row[10].value)
                             #_logger.info(row[10].value)
-                            cantidad=int(row[10].value) if(row[10].ctype!=0) else 0
+                            cantidad=int(row[8].value) if(row[8].ctype!=0) else 0
                             #_logger.info(str(producto).replace(' ',''))
                             template=self.env['product.template'].search([('default_code','=',str(producto).replace('.0',''))])
                             productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
                             product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':cantidad,'price_unit':precio,'name':productid.description}
                             product['taxes_id']=[10]
                             if("KATUN" in row[0].value):
-                                product['price_unit']=float(row[12].value)-(float(row[12].value)*.02)
+                                product['price_unit']=float(row[10].value)-(float(row[10].value)*descuento)
                                 product['taxes_id']=[10]
                             if("CTR" in row[0].value):
-                                descuento=float(row[15].value) if(row[15].ctype!=0) else 0
-                                product['price_unit']=(float(row[13].value)-descuento)/cantidad if(cantidad>0) else float(row[12].value)
+                                #descuento=float(row[15].value) if(row[15].ctype!=0) else 0
+                                product['price_unit']=float(row[10].value)-(float(row[10].value)*descuento)
                                 product['taxes_id']=[10]
                             arr.append(product)
                     if(len(arr)>0):
