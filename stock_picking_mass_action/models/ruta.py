@@ -15,9 +15,26 @@ class CreacionRuta(Model):
 	estado=fields.Selection([["borrador","Borrador"],["valido","Confirmado"]])
 	odometro=fields.Integer()
 	nivel_tanque=fields.Selection([["reserva","Reserva"],[".25","1/4"],[".5","1/2"],[".75","3/4"],["1","Lleno"]])
-	tipo=fields.Selection([["local","Local"],["foraneo","Foraneo"]])
+	tipo=fields.Selection([["local","Local"],["foraneo","Foraneo"],["guadalajara","Guadalajara"],["monterrey","Monterrey"],["queretaro","Querétaro"]])
 	EstadoPais=fields.Many2one('res.country.state',string="Estado")
 	EstadoPaisName=fields.Char(related='EstadoPais.name',string="Estado")
+
+
+	@api.onchange('tipo')
+	def domin(self):
+		res={}
+		if(self.tipo):
+			if(self.tipo=="local"):
+				res['domain']={'ordenes':[('tipo','in',("Ciudad de México","Estado de México","México"))]}
+			if(self.tipo=="foraneo"):
+				res['domain']={'ordenes':[('tipo','not in',("Ciudad de México","Estado de México","México","Querétaro","Jalisco","Nuevo León"))]}
+			if(self.tipo=="guadalajara"):
+				res['domain']={'ordenes':[('tipo','=',"Guadalajara")]}
+			if(self.tipo=="monterrey"):
+				res['domain']={'ordenes':[('tipo','=',"Nuevo León")]}
+			if(self.tipo=="queretaro"):
+				res['domain']={'ordenes':[('tipo','=',"Querétaro")]}
+		return res
 
 
 	@api.multi
