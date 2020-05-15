@@ -27,7 +27,7 @@ class CreacionRuta(Model):
 			if(self.tipo=="local"):
 				res['domain']={'ordenes':[('tipo','in',("Ciudad de México","Estado de México","México")),('state','!=','done'),('state','=','assigned')]}
 			if(self.tipo=="foraneo"):
-				res['domain']={'ordenes':[('tipo','not in',("Ciudad de México","Estado de México","México","Querétaro","Jalisco","Nuevo León"),('state','!=','done'),('state','=','assigned'))]}
+				res['domain']={'ordenes':[('tipo','not in',("Ciudad de México","Estado de México","México","Querétaro","Jalisco","Nuevo León")),('state','!=','done'),('state','=','assigned')]}
 			if(self.tipo=="guadalajara"):
 				res['domain']={'ordenes':[('tipo','=',"Guadalajara"),('state','!=','done'),('state','=','assigned')]}
 			if(self.tipo=="monterrey"):
