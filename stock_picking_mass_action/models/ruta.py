@@ -25,15 +25,15 @@ class CreacionRuta(Model):
 		res={}
 		if(self.tipo):
 			if(self.tipo=="local"):
-				res['domain']={'ordenes':[('tipo','in',("Ciudad de México","Estado de México","México"))]}
+				res['domain']={'ordenes':[('tipo','in',("Ciudad de México","Estado de México","México")),('state','!=','done'),('state','=','assigned')]}
 			if(self.tipo=="foraneo"):
-				res['domain']={'ordenes':[('tipo','not in',("Ciudad de México","Estado de México","México","Querétaro","Jalisco","Nuevo León"))]}
+				res['domain']={'ordenes':[('tipo','not in',("Ciudad de México","Estado de México","México","Querétaro","Jalisco","Nuevo León"),('state','!=','done'),('state','=','assigned'))]}
 			if(self.tipo=="guadalajara"):
-				res['domain']={'ordenes':[('tipo','=',"Guadalajara")]}
+				res['domain']={'ordenes':[('tipo','=',"Guadalajara"),('state','!=','done'),('state','=','assigned')]}
 			if(self.tipo=="monterrey"):
-				res['domain']={'ordenes':[('tipo','=',"Nuevo León")]}
+				res['domain']={'ordenes':[('tipo','=',"Nuevo León"),('state','!=','done'),('state','=','assigned')]}
 			if(self.tipo=="queretaro"):
-				res['domain']={'ordenes':[('tipo','=',"Querétaro")]}
+				res['domain']={'ordenes':[('tipo','=',"Querétaro"),('state','!=','done'),('state','=','assigned')]}
 		return res
 
 
