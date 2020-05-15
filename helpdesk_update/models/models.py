@@ -1796,11 +1796,11 @@ class helpdesk_update(models.Model):
                     if c.x_studio_cartuchonefro:
                         car=car+1                        
                         if c.serie.x_studio_color_bn=="B/N":
-                         c.write({'porcentajeNegro':c.x_studio_toner_negro})
+                         c.write({'porcentajeNegro':c.porcentajeNegro})
                          c.write({'x_studio_toner_negro':1})    
                         else:
-                         c.write({'x_studio_toner_negro':c.x_studio_toner_negro})    
-                         c.write({'porcentajeNegro':1})
+                         c.write({'porcentajeNegro':c.porcentajeNegro})    
+                         c.write({'x_studio_toner_negro':1})
                         pro = self.env['product.product'].search([['name','=',c.x_studio_cartuchonefro.name],['categ_id','=',5]])
                         gen = pro.sorted(key='qty_available',reverse=True)[0]
                         weirtihgone=c.serie.x_studio_toner_compatible.id if(len(gen)==0) else gen.id
@@ -1825,7 +1825,7 @@ class helpdesk_update(models.Model):
                     #Toner Ama
                     if c.x_studio_cartucho_amarillo:
                         car=car+1
-                        c.write({'porcentajeAmarillo':1})
+                        c.write({'x_studio_toner_amarillo':1})
                         pro = self.env['product.product'].search([['name','=',c.x_studio_cartucho_amarillo.name],['categ_id','=',5]])
                         gen = pro.sorted(key='qty_available',reverse=True)[0]
                         datos={'name': ' '
@@ -1846,7 +1846,7 @@ class helpdesk_update(models.Model):
                     #Toner cian
                     if c.x_studio_cartucho_cian_1:
                         car=car+1
-                        c.write({'porcentajeCian':1})
+                        c.write({'x_studio_toner_cian':1})
                         pro = self.env['product.product'].search([['name','=',c.x_studio_cartucho_cian_1.name],['categ_id','=',5]])
                         gen = pro.sorted(key='qty_available',reverse=True)[0]
                         datos={'name': ' '
@@ -1867,7 +1867,7 @@ class helpdesk_update(models.Model):
                     #Toner mage
                     if c.x_studio_cartucho_magenta:
                         car=car+1
-                        c.write({'porcentajeMagenta':1})
+                        c.write({'x_studio_toner_magenta':1})
                         pro = self.env['product.product'].search([['name','=',c.x_studio_cartucho_magenta.name],['categ_id','=',5]])
                         gen = pro.sorted(key='qty_available',reverse=True)[0]
                         datos={'name': ' '
