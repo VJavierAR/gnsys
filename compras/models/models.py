@@ -171,7 +171,7 @@ class compras(models.Model):
                         if(row[0].value in self.partner_id.name.replace(' ','') and str(row[0].ctype)!='0'):
                             product={}
                             producto=row[2].value
-                            precio=round(float(row[10].value),2)
+                            precio=float(row[10].value)
                             #_logger.info(row[10].value)
                             cantidad=int(row[8].value) if(row[8].ctype!=0) else 0
                             #_logger.info(str(producto).replace(' ',''))
@@ -180,7 +180,7 @@ class compras(models.Model):
                             product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':cantidad,'price_unit':precio,'name':productid.description}
                             product['taxes_id']=[10]
                             if("KATUN" in row[0].value):
-                                product['price_unit']=float(row[10].value)-(float(row[10].value)*descuento)
+                                product['price_unit']=round(float(row[10].value)-(float(row[10].value)*descuento),2)
                                 product['taxes_id']=[10]
                             if("CTR" in row[0].value):
                                 #descuento=float(row[15].value) if(row[15].ctype!=0) else 0
