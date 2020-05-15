@@ -41,8 +41,8 @@ class dcas(models.Model):
     grupo=fields.Many2one('res.partner',store=True)
     ubicacion=fields.Char()
     ip=fields.Char(string='IP')
-    contadorColor=fields.Integer(string='Contador Color')
-    contadorMono=fields.Integer(string='Contador Monocromatico')
+    contadorColor=fields.Integer(string='Contador Color',track_visibility='onchange')
+    contadorMono=fields.Integer(string='Contador Monocromatico',track_visibility='onchange')
     contador_id=fields.Many2one('contadores.contadores')        
     dominio=fields.Integer()
     porcentajeNegro=fields.Integer(string='Negro')
@@ -455,7 +455,8 @@ class contadores(models.Model):
     estado=fields.Selection(selection=[('Abierto', 'Abierto'),('Incompleto', 'Incompleto'),('Valido','Valido')],widget="statusbar", default='Abierto')  
     dom=fields.Char(readonly="1",invisible="1")
     order_line = fields.One2many('contadores.lines','ticket',string='Order Lines')
-    csvD = fields.Binary(string="Cargar por DCA csv")      
+    csvD = fields.Binary(string="Cargar por DCA csv")
+    prefacturas=fields.Text(string="Pre-Factura")
     
     
     
@@ -472,7 +473,8 @@ class contadores(models.Model):
     def carga_contadores_fac(self):
         if self.x_studio_estado_capturas=='Listo':
             for r in self.detalle:
-                rr=self.env['dcas.dcas'].create({'serie': r.producto
+                if r.desc!='capturado':
+                   rr=self.env['dcas.dcas'].create({'serie': r.producto
                                                  ,'contadorColor':r.ultimaLecturaColor
                                                  ,'contadorMono':r.ultimaLecturaBN
                                                  ,'fuente':'dcas.dcas'
@@ -483,6 +485,9 @@ class contadores(models.Model):
             for rs in ff:
                 a=self.env['sale.order'].create({'partner_id':self.cliente.id,'x_studio_factura':'si','month':self.mes,'year':self.anio})
                 self.env.cr.execute("insert into x_contrato_sale_order_rel (sale_order_id, contrato_id) values (" +str(a.id) + ", " +  str(rs.id) + ");")    
+                #https://gnsys-corp.odoo.com/web?#id=2477&action=1167&model=sale.order&view_type=form&menu_id=406
+                prefacturas="<a href='https://gnsys-corp.odoo.com/web?#id="+str(a.id)+"&action=1167&model=sale.order&view_type=form&menu_id=406' target='_blank'>"+str(a.name)+"</a>"+' '+prefacturas
+                ss=s
                 ss=self.env['servicios'].search([('contrato', '=',rs.id)])
                 for sg in ss:                                        
                     if sg.nombreAnte=='SERVICIO DE PCOUNTER' or sg.nombreAnte=='SERVICIO DE PCOUNTER1' or sg.nombreAnte=='ADMINISTRACION DE DOCUMENTOS CON PCOUNTER' or sg.nombreAnte=='SERVICIO DE MANTENIMIENTO DE PCOUNTER' or sg.nombreAnte=='SERVICIO DE MANTENIMIENTO PCOUNTER' or sg.nombreAnte=='RENTA DE LICENCIAMIENTO PCOUNTER':           
@@ -498,7 +503,7 @@ class contadores(models.Model):
                     if sg.nombreAnte=='RENTA MENSUAL DE LICENCIA  7 EMBEDED' or sg.nombreAnte=='RENTA MENSUAL DE LICENCIA  14 EMBEDED' or  sg.nombreAnte=='RENTA MENSUAL DE LICENCIA  2 EMBEDED':                        
                         self.env.cr.execute("insert into x_sale_order_servicios_rel (sale_order_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
                                  
-                    
+                self.prefacturas=prefacturas    
     
                 
     
@@ -891,7 +896,18 @@ class contadores(models.Model):
     
     @api.multi
     def carga_contadores(self):
-        if self.anio:
+        ssc=self.env['contadores.contadores'].search([('cliente', '=', self.cliente.id),('mes', '=', self.mes),('anio', '=', self.anio),('id', '!=', self.id)],limit=1)        
+        if ssc:
+           self.sudo().unlink()                   
+           url="https://gnsys-corp.odoo.com/web?#id="+str(ssc.id)+"&action=1129&model=contadores.contadores&view_type=form&menu_id=406"
+           
+           return {'name'     : 'Go to website',
+                  'res_model': 'ir.actions.act_url',
+                  'type'     : 'ir.actions.act_url',
+                  'target'   : 'new',
+                  'url'      : url
+               }      
+        if self.anio and not self.csvD:
             perido=str(self.anio)+'-'+str(self.mes)
             periodoAnterior=''
             mesA=''
@@ -919,7 +935,8 @@ class contadores(models.Model):
                 currentP=self.env['dcas.dcas'].search([('serie','=',a.id),('x_studio_field_no6Rb', '=', perido)],order='x_studio_fecha desc',limit=1)
                 currentPA=self.env['dcas.dcas'].search([('serie','=',a.id),('x_studio_field_no6Rb', '=', periodoAnterior)],order='x_studio_fecha desc',limit=1)
                 #raise exceptions.ValidationError("q onda xd"+str(self.id)+' id  '+str(id))                     
-                rr=self.env['contadores.contadores.detalle'].create({'contadores': self.id
+                if not currentP:  
+                   rr=self.env['contadores.contadores.detalle'].create({'contadores': self.id
                                                        , 'producto': a.id
                                                        , 'serieEquipo': a.name
                                                        , 'locacion':a.x_studio_locacion_recortada
@@ -937,71 +954,90 @@ class contadores(models.Model):
                                                        , 'modelo':a.product_id.name
                                                        , 'servicio':a.servicio.id
                                                        })
-                i=1+i                
-        if self.csvD:           
-           with open("a1.csv","w") as f:
-                f.write(base64.b64decode(self.csvD).decode("utf-8"))
-           f.close()     
-           file = open("a1.csv", "r") 
-           reader = csv.reader(file)
-           j=0
-           #sc.write({'name' : str(self.cliente.name)+' '+str(periodoAnterior)+' a '+str(perido)}) 
-           for row in reader:                                             
-               if j>0 :                   
-                   a=self.env['stock.production.lot'].search([('name','=',row[3])])
-                   date = row[1]
-                   fecha = date.split('-')[0].split('/')
-                   mes=fecha[1]
-                   anio=fecha[2]
-                   i=0
-                   for f in valores:                
-                       if f[0]==str(mes):                
-                          mesaA=str(valores[i-1][0])
-                       i=i+1
-                   anios=get_years()
-                   i=0                   
-                   if str(mes)=='01':
-                      anioA=str(int(anio)-1)
-                   else:    
-                      anioA=str(anio)                     
-                   periodoAnterior= anioA+'-'+mesaA
-                   i=0
-                   for f in valores:                
-                       if f[0]==str(mes):                
-                          mesaC=str(valores[i][0])
-                       i=i+1                   
-                   periodo= anio+'-'+mesaC
-                   self.anio=anio
-                   self.mes=mes
-                   if row[7]=='':
-                      bn=0
-                   else:
-                      bn=int(row[7])
-                   if row[8]=='':
-                      cc=0                    
-                   else:
-                      cc=int(row[8])
-                   currentPA=self.env['dcas.dcas'].search([('serie','=',a.name),('x_studio_field_no6Rb', '=', periodoAnterior)],order='x_studio_fecha desc',limit=1)                
+                else:                   
                    rr=self.env['contadores.contadores.detalle'].create({'contadores': self.id
                                                        , 'producto': a.id
                                                        , 'serieEquipo': a.name
                                                        , 'locacion':a.x_studio_locacion_recortada
-                                                       , 'periodo':periodo                                                              
-                                                       , 'ultimaLecturaBN': bn
+                                                       , 'ubi':a.x_studio_centro_de_costos
+                                                       , 'periodo':perido                                                              
+                                                       , 'ultimaLecturaBN': currentP.contadorMono
                                                        , 'lecturaAnteriorBN': currentPA.contadorMono
                                                        #, 'paginasProcesadasBN': bnp                                                   
                                                        , 'periodoA':periodoAnterior            
-                                                       , 'ultimaLecturaColor': cc
+                                                       , 'ultimaLecturaColor': currentP.contadorColor
                                                        , 'lecturaAnteriorColor': currentPA.contadorColor                                                             
                                                        #, 'paginasProcesadasColor': colorp
                                                        , 'bnColor':a.x_studio_color_bn
                                                        , 'indice': i
                                                        , 'modelo':a.product_id.name
                                                        , 'servicio':a.servicio.id
-                                                       , 'ubi':row[5]
-                                                       , 'capturar':'t'                 
-                                                       })
-               j=1+j                        
+                                                       , 'desc': 'capturado'
+                                                       , 'capturar':True  
+                                                       }) 
+                i=1+i                
+        if self.csvD:           
+           with open("a1.csv","w") as f:
+                f.write(base64.b64decode(self.csvD).decode("utf-8"))
+           f.close()    
+           file = open("a1.csv", "r")
+           re = csv.reader(file)
+           lista=list(re)
+           j=0
+           abuscar=[]
+           sc=self.env['contadores.contadores'].search([('id', '=', self.id)])
+           sc.write({'name' : "Carga por dca "})  
+           for row in lista:                                            
+               if j>0 :                                      
+                   abuscar.append(row[3])
+               j=j+1
+           a=self.env['stock.production.lot'].search([('name','in',abuscar)])
+           series=[]
+           for t in a:                              
+                for row in lista:
+                    if t.name==row[3]:
+                        date = row[1]
+                        fecha = date.split('-')[0].split('/')
+                        mes=fecha[1]
+                        anio=fecha[2]
+                        i=0
+                        for f in valores:                
+                            if f[0]==str(mes):                
+                               mesaA=str(valores[i-1][0])
+                            i=i+1
+                        anios=get_years()
+                        i=0                  
+                        if str(mes)=='01':
+                           anioA=str(int(anio)-1)
+                        else:    
+                           anioA=str(anio)                    
+                        periodoAnterior= anioA+'-'+mesaA
+                        i=0
+                        for f in valores:                
+                            if f[0]==str(mes):                
+                               mesaC=str(valores[i][0])
+                            i=i+1                  
+                        periodo= anio+'-'+mesaC
+                        self.anio=anio
+                        self.mes=mes
+
+                        if row[7]=='':
+                          bn=0
+                        else:
+                          bn=int(row[7])
+                        if row[8]=='':
+                          cc=0                    
+                        else:
+                          cc=int(row[8])                        
+                        series.append({'serie': t.id
+                                                 ,'contadorColor':cc
+                                                 ,'contadorMono':bn
+                                                 ,'fuente':'dcas.dcas'
+                                                 ,'x_studio_field_no6Rb':periodo
+                                                 ,'x_studio_fecha_texto_anio':str(valores[int(self.mes[1])-1][1])+' de '+str(self.anio)
+                                                 ,'x_studio_descripcion':'cvs'
+                                                })                            
+           self.env['dcas.dcas'].create(series)      
                         
             
         
@@ -1067,6 +1103,7 @@ class detalleContadores(models.Model):
       modelo=fields.Text(string="Modelo")
       ubi=fields.Text(string="Ubicacion")
       servicio=fields.Integer(string='Servicio')
+      desc=fields.Text(string="Descripcion",readonly="1")  
         
 
 
