@@ -515,8 +515,24 @@ class contadores(models.Model):
         # Start from the first cell. 
         # Rows and columns are zero indexed. 
         row = 0
-        column = 0        
-        content = ["No.", "Localidad", "Modelo", "No. Serie","B/N "+str(self.mes), "Color "+str(self.mes),"B/N ", "Color", "Impresiones B/N", "Impresiones Color","Excedentes B&N","Excedentes Color","Subtotal","IVA","Total","Ubicación"]        
+        column = 0
+        perido=str(self.anio)+'-'+str(self.mes)
+        periodoAnterior=''
+        mesA=''
+        anioA=''
+        i=0
+        for f in valores:                
+            if f[0]==str(self.mes):                
+                mesaA=str(valores[i-1][0])
+            i=i+1
+        anios=get_years()
+        i=0
+        if str(self.mes)=='01':
+           anioA=str(int(self.anio)-1)
+        else:    
+           anioA=str(self.anio)              
+        periodoAnterior= anioA+'-'+mesaA                  
+        content = ["No.", "Localidad", "Modelo", "No. Serie","B/N "+str(valores[int(mesaA)-1][1]), "Color "+str(valores[int(mesaA)-1][1]),"B/N "+str(valores[int(self.mes[1])-1][1]), "Color "+str(valores[int(self.mes[1])-1][1]), "Impresiones B/N", "Impresiones Color","Excedentes B&N","Excedentes Color","Subtotal","IVA","Total","Ubicación"]        
         #abajo 0 derecha 0
         if self.cliente:
            worksheet.write(0, 0, "CLIENTE: "+str(self.cliente.name))
