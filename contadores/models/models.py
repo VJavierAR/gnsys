@@ -532,7 +532,7 @@ class contadores(models.Model):
         else:    
            anioA=str(self.anio)              
         periodoAnterior= anioA+'-'+mesaA                  
-        content = ["No.", "Localidad", "Modelo", "No. Serie","B/N "+str(valores[int(mesaA)-1][1]), "Color "+str(valores[int(mesaA)-1][1]),"B/N "+str(valores[int(self.mes[1])-1][1]), "Color "+str(valores[int(self.mes[1])-1][1]), "Impresiones B/N", "Impresiones Color","Excedentes B&N","Excedentes Color","Subtotal","IVA","Total","Ubicación"]        
+        content = ["No.", "Localidad", "Modelo", "No. Serie","B/N ["+str(valores[int(mesaA)-1][1])+"]", "Color ["+str(valores[int(mesaA)-1][1])+"]","B/N ["+str(valores[int(self.mes[1])-1][1])+"]", "Color ["+str(valores[int(self.mes[1])-1][1])+"]", "Impresiones B/N", "Impresiones Color","Excedentes B&N","Excedentes Color","Subtotal","IVA","Total","Ubicación"]        
         #abajo 0 derecha 0
         if self.cliente:
            worksheet.write(0, 0, "CLIENTE: "+str(self.cliente.name))
@@ -556,6 +556,10 @@ class contadores(models.Model):
         #worksheet.set_column(2, 2, 40)
         worksheet.set_column('C:C', 30)
         worksheet.set_column('D:D', 30)
+        worksheet.set_column('E:E', 30)
+        worksheet.set_column('F:F', 30)
+        worksheet.set_column('G:G', 30)
+        worksheet.set_column('H:H', 30)
        
         #worksheet.insert_image('O2', 'gnsys.png')
         if len(self.detalle)>0: 
