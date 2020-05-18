@@ -628,8 +628,6 @@ class StockQuantMassAction(TransientModel):
             return self.env.ref('stock_picking_mass_action.quant_xlsx').report_action(data[0])        
         if(len(data)==0):
             raise UserError(_("No hay registros para la selecion actual"))
-
-
 class SaleOrderMassAction(TransientModel):
     _name = 'sale.order.action'
     _description = 'Reporte de Solicitudes'
