@@ -256,18 +256,24 @@ class tfs(models.Model):
             self.env['dcas.dcas'].create({'serie':self.serie.id,'contadorMono':self.actualMonocromatico,'contadorColor':self.actualColor,'fuente':'tfs.tfs','x_studio_contador_color_anterior':self.contadorAmarillo.contadorColor,'x_studio_contador_mono_anterior_1':self.contadorAmarillo.contadorMono,'x_studio_toner_amarillo':1})
         if(self.productoCian):           
             self.env['dcas.dcas'].create({'serie':self.serie.id,'contadorMono':self.actualMonocromatico,'contadorColor':self.actualColor,'fuente':'tfs.tfs','x_studio_contador_color_anterior':self.contadorCian.contadorColor,'x_studio_contador_mono_anterior_1':self.contadorCian.contadorMono,'x_studio_toner_cian':1})
+
+
+
+    @api.multi
+    def valida1(self):
         return {
-                'name': _('Alerta'),
-                'type': 'ir.actions.act_window',
-                'view_type': 'form',
-                'view_mode': 'form',
-                'res_model': 'tfs.ticket',
-                'views': [(view.id, 'form')],
-                'view_id': view.id,
-                'target': 'new',
-                'res_id': wiz.id,
-                'context': self.env.context,
+        'name': _('Alerta'),
+        'type': 'ir.actions.act_window',
+        'view_type': 'form',
+        'view_mode': 'form',
+        'res_model': 'tfs.ticket',
+        'views': [(view.id, 'form')],
+        'view_id': view.id,
+        'target': 'new',
+        'res_id': wiz.id,
+        'context': self.env.context,
             }
+
     #@api.onchange('cliente')
     #def onchange_cliente(self):
     #    res = {}
