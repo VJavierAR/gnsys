@@ -239,9 +239,8 @@ class tfs(models.Model):
 
     @api.multi
     def valida(self):
-        view = self.env.ref('tfs.view_tfs_ticket')
-        wiz = self.env['tfs.ticket'].create({'tfs_ids': [(4, self.id)]})
-        #self.write({'estado':'Confirmado'})
+
+        self.write({'estado':'Confirmado'})
         #self.env['dcas.dcas'].create({'serie':self.serie.id,'contadorMono':self.actualMonocromatico,'contadorColor':self.actualColor,'fuente':'tfs.tfs'})
         dat=eval(self.arreglo)
         if(dat!=[]):
@@ -261,6 +260,8 @@ class tfs(models.Model):
 
     @api.multi
     def valida1(self):
+        view = self.env.ref('tfs.view_tfs_ticket')
+        wiz = self.env['tfs.ticket'].create({'tfs_ids': [(4, self.id)]})
         return {
         'name': _('Alerta'),
         'type': 'ir.actions.act_window',
