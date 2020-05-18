@@ -228,6 +228,30 @@ class helpdesk_update(models.Model):
     telefonoLocalidadContacto = fields.Text(string = 'Telefono de localidad', compute = '_compute_telefonoLocalidad')
     movilLocalidadContacto = fields.Text(string = 'Movil de localidad', compute = '_compute_movilLocalidad')
     correoLocalidadContacto = fields.Text(string = 'Correo de localidad', compute = '_compute_correoLocalidad')
+    direccionLocalidadText = fields.Text(string = 'Dirección localidad', compute = '_compute_direccionLocalidad')
+
+    @api.one
+    @api.depends('x_studio_empresas_relacionadas')
+    def _compute_direccionLocalidad(self):
+        if self.x_studio_empresas_relacionadas:
+            self.direccionLocalidadText = """
+                                            <address>
+                                                Calle: """ + str(self.x_studio_empresas_relacionadas.street_name) + """
+                                                </br>
+                                                Número exterior: """ + str(self.x_studio_empresas_relacionadas.street_number) + """
+                                                </br>
+                                                Número interior: """ + str(self.x_studio_empresas_relacionadas.street_number2) + """
+                                                </br>
+                                                Colonia: """ + str(self.x_studio_empresas_relacionadas.l10n_mx_edi_colony) + """
+                                                </br>
+                                                Alcaldía: """ + str(self.x_studio_empresas_relacionadas.city) + """
+                                                </br>
+                                                Estado: """ + str(self.x_studio_empresas_relacionadas.state_id.name) + """
+                                                </br>
+                                                Código postal: """ + str(self.x_studio_empresas_relacionadas.zip) + """
+                                                </br>
+                                            </address>
+                                        """
 
     @api.one
     @api.depends('localidadContacto')
@@ -1797,7 +1821,7 @@ class helpdesk_update(models.Model):
                         car=car+1                        
                         if c.serie.x_studio_color_bn=="B/N":
                          c.write({'porcentajeNegro':c.porcentajeNegro})
-                         c.write({'x_studio_toner_negro':1})    
+                         c.write({'x_studio_toner_negro':1})
                         else:
                          c.write({'porcentajeNegro':c.porcentajeNegro})    
                          c.write({'x_studio_toner_negro':1})
