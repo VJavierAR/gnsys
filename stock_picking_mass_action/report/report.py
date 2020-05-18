@@ -195,7 +195,7 @@ class PartnerXlsx(models.AbstractModel):
                 sheet.write(i, 3, obj.x_studio_localidades, bold)
                 sheet.write(i, 4, obj.warehouse_id.name, bold)
                 sheet.write(i, 5, obj.x_studio_status if(obj.x_studio_status) else '', bold)
-                sheet.write(i, 6, str(equ.name).split('] ')[1] if(len(str(equ.name).spli('] '))>1) else '', bold)
+                sheet.write(i, 6, str(equ.name).split('] ')[1] if(len(str(equ.name).split('] '))>1) else '', bold)
                 #m=self.env['stock.move.line'].search([['picking_id.sale_id','=',obj.id],['lot_id','=',equ.x_studio_field_9nQhR.id]]).lot_id.name
                 sheet.write(i, 7, str(equ.x_studio_field_9nQhR.name) if(equ.x_studio_field_9nQhR.id) else '', bold)
                 a=obj.order_line.filtered(lambda x:x.product_id.categ_id.id==11).mapped('product_id.name')
