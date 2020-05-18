@@ -4,7 +4,7 @@ from odoo.exceptions import UserError
 from odoo.tools.float_utils import float_compare, float_is_zero, float_round
 import logging, ast
 _logger = logging.getLogger(__name__)
-
+import threading
 class StockPicking(Model):
     _inherit = 'stock.inventory'    
 
