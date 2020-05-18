@@ -12,9 +12,9 @@ class StockPicking(Model):
         negative = next((line for line in self.mapped('line_ids') if line.product_qty < 0 and line.product_qty != line.theoretical_qty), False)
         if negative:
             raise UserError(_('You cannot set a negative product quantity in an inventory line:\n\t%s - qty: %s') % (negative.product_id.name, negative.product_qty))
-        self.action_check()
+        threaded_calculation = threading.Thread(target=self.action_check(), args=())
         self.write({'state': 'done'})
-        self.post_inventory()
+        threaded_post = threading.Thread(target=self.post_inventory(), args=())
         for r in self.mapped('line_ids'):
             if(r.x_studio_field_yVDjd):
                 i=self.env['stock.quant'].search([['product_id','=',r.product_id.id],['location_id','=',r.location_id.id]])
