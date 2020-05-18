@@ -36,6 +36,13 @@
         <field name="model">stock.inventory.action</field>
         <field name="arch" type="xml">
             <form string="Mass Action for the selected sale order">
+            <head>
+                <style>
+                table, th, td {
+                  border: 1px solid black;
+                }
+                </style>
+                </head>
                 <h1>Estructura del archivo</h1>
                 <table>
                   <tr>
