@@ -849,7 +849,7 @@ class ProductAltaAction(TransientModel):
                         categoria=self.env['product.category'].search([['name','=',row[5].value]])
                         _logger.info(str(categoria.name))
                         if(producto.id==False):
-                            producto=self.env['product.product'].create({'default_code':str(row[1].value).replace('.0',''),'categ_id':categoria.id,'x_studio_field_ry7nQ':productid.id,'description':row[4].value,'name':row[4].value,'uom_id':unidad.id if(unidad.id) else False})
+                            producto=self.env['product.product'].create({'default_code':str(row[1].value).replace('.0',''),'categ_id':categoria.id,'x_studio_field_ry7nQ':productid.id,'description':row[4].value,'name':row[0].value,'uom_id':unidad.id if(unidad.id) else False})
                         if(check):
                             if(self.almacen):
                                 quant={'product_id':producto.id,'reserved_quantity':'0','quantity':row[2].value, 'location_id':self.almacen.lot_stock_id.id}

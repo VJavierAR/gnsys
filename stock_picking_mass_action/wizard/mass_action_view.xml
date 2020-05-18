@@ -20,6 +20,19 @@
         <field name="model">product.product.action</field>
         <field name="arch" type="xml">
             <form string="Mass Action for the selected sale order">
+                <h1>Estructura del archivo</h1>
+                <table class="table">
+                <thead>
+                  <tr>
+                    <th>Modelo</th>
+                    <th>No Parte</th>
+                    <th>Cantidad</th>
+                    <th>Unidad</th>
+                    <th>Descripción</th>
+                    <th>Tipo de Producto</th>
+                  </tr>
+                </thead>
+                </table>
                 <group>
                     <field name="archivo" string="Archivo" required="1"/>
                     <field name="almacen" string="Almacen" domain="[['x_studio_cliente','=',False]]"/>
