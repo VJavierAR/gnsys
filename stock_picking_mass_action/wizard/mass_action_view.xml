@@ -36,6 +36,15 @@
         <field name="model">stock.inventory.action</field>
         <field name="arch" type="xml">
             <form string="Mass Action for the selected sale order">
+                <h1>Estructura del archivo</h1>
+                <table>
+                  <tr>
+                    <th>Modelo</th>
+                    <th>No Parte</th>
+                    <th>Cantidad</th>
+                    <th>Ubicacion</th>
+                  </tr>
+                </table>
                 <group>
                     <field name="almacen" string="Almacen" editable="bottom" options="{'no_create_edit': True}" required="1" domain="[['x_studio_cliente','=',False]]"/>
                     <field name="archivo" string="Archivo" required="1"/>
