@@ -731,7 +731,7 @@ class SolicitudestockInventoryMassAction(TransientModel):
                         if(row[3].ctype!=0):
                             ubicacion=self.env['x_ubicacion_inventario'].search([('x_name','=',str(row[3].value).replace('.0',''))])
                         if(len(ubicacion)>0):
-                            inventory['x_studio_field_yVDjd']=ubicacion.id
+                            inventoty['x_studio_field_yVDjd']=ubicacion.id
                         self.env['stock.inventory.line'].create(inventoty)
                         busqueda=self.env['stock.quant'].search([['product_id','=',productid.id],['location_id','=',self.almacen.lot_stock_id.id]])
                         _logger.info(str(busqueda))

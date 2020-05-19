@@ -400,3 +400,33 @@ class detalle(models.Model):
                                                          , 'lecturaAnteriorColor': h.x_studio_lec_ant_color
                                                          , 'paginasProcesadasColor': h.x_studio_pg_proc_color
                                                         })
+# class saleOrderTemp(models.Model):
+#   _name='sale.order.temp'
+#   _description='lineas temporales para solicitud'
+#   serie=fields.Many2one('stock.production.lot')
+#   product_id=fields.Many2one('producto.producto','Producto')
+#   cantidad=fields.Integer('Cantidad',default=1)
+#   toner=fields.Many2many('producto.producto','Toner')
+#   accesorios=fields.Many2many('producto.producto','Accesorios')
+#   estado=fields.Selection([["Obsoleto","Obsoleto"],["Usado","Usado"],["Hueso","Hueso"],["Para reparación","Para reparación"],["Nuevo","Nuevo"],["Buenas condiciones","Buenas condiciones"],["Excelentes condiciones","Excelentes condiciones"],["Back-up","Back-up"],["Dañado","Dañado"]],'Estado')
+#   servicio=fields.Integer()
+#   cliente=fields.Char()
+#   tipo=fields.Char()
+
+#   @api.onchange('product_id')
+#   def domini(self):
+#     res={}
+#     res['domain']={'accesorios':[('id','in',self.product_id.x_studio_toner_compatible.filtered(lambda x:x.categ_id.id==11).mapped('id'))],'toner':[('id','in',self.product_id.x_studio_toner_compatible.filtered(lambda x:x.categ_id.id==5).mapped('id'))]}
+#     return res
+
+#   @api.onchange('tipo'):
+#   def ser(self):
+#     res={}
+#     if(self.tipo=='Retiro'):
+#       serv=self.env['servicios'].browser(self.servicio).series.mapped('id')
+#       res['domain']={'serie':[('id','in',serv)]}
+#     return res
+
+#   @api.onchange('serie')
+#   def seri(self):
+#     self.product_id=serie.product_id.id

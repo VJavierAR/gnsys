@@ -79,6 +79,7 @@ class compras(models.Model):
             mimetype = guess_mimetype(f2 or b'')
             if(self.partner_id):
                 if(mimetype=='application/pdf'):
+                    self.x_studio_pdf=self.archivo
                     myCmd = 'pdftotext -fixed 5 hola.pdf test3.txt'
                     if(self.archivo and ("konica" in self.partner_id.name.lower() or "kyocera" in self.partner_id.name.lower())):
                         out = open("hola.pdf", "wb")
