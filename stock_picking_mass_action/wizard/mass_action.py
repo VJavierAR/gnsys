@@ -741,7 +741,7 @@ class SolicitudestockInventoryMassAction(TransientModel):
                             else:
                                 busqueda.sudo().write({'quantity':row[2].value})
                         if(busqueda.id==False):
-                            if(len(ubicacion)>0):
+                            if(ubicacion!=None):
                                 quant['x_studio_field_kUc4x']=ubicacion.id
                             else:
                                 self.env['stock.quant'].sudo().create(quant)
