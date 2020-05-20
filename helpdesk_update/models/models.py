@@ -144,7 +144,7 @@ class helpdesk_update(models.Model):
             ticket.write({'x_studio_field_6furK': ticket.x_studio_empresas_relacionadas.x_studio_field_SqU5B})
         #_logger.info("Informacion 3: " + str(ticket))
         if ticket.x_studio_equipo_por_nmero_de_serie:
-            if ticket.team_id != 8 and len(ticket.x_studio_equipo_por_nmero_de_serie) == 1:
+            if (ticket.team_id != 8 and ticket.team_id != 13) and len(ticket.x_studio_equipo_por_nmero_de_serie) == 1:
                 #_logger.info("Informacion 4: " + str(ticket.x_studio_contadores))
                 #ticket.write({'x_studio_contadores': '</br> Equipo BN o Color: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_color_bn) + ' </br></br> Contador BN: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_bn_mesa) + '</br></br> Contador Color: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_color_mesa)})
                 ticket.write({'contadores_anteriores': '</br>Equipo BN o Color: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_color_bn) + ' </br></br> Contador BN: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_bn_mesa) + '</br></br> Contador Color: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_color_mesa)})
@@ -624,14 +624,14 @@ class helpdesk_update(models.Model):
         _logger.info("id ticket search: " + str(self.x_studio_id_ticket))
         
         #ticketActualiza = self.env['helpdesk.ticket'].search([('id', '=', self.id)])
-        if self.team_id.id==8:
+        if self.team_id.id == 8 or self.team_id.id == 13:
             tam = len(self.x_studio_equipo_por_nmero_de_serie_1)
         else:
             tam = int(self.x_studio_tamao_lista)
         
         
         
-        if self.x_studio_id_ticket and tam < 2 and self.team_id.id==8:
+        if self.x_studio_id_ticket and tam < 2 and (self.team_id.id == 8 or self.team_id.id == 13):
             estadoAntes = str(self.stage_id.name)
             if self.stage_id.name == 'Pre-ticket' and self.x_studio_equipo_por_nmero_de_serie_1[0].serie.id != False and self.estadoAbierto == False:
                 #ticketActualiza.write({'stage_id': '89'})
@@ -647,7 +647,7 @@ class helpdesk_update(models.Model):
                 #mensajeCuerpoGlobal = 'Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Abierto' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página."
                 return {'warning': mess}
         
-        if self.x_studio_id_ticket and tam < 2 and self.team_id!=8:
+        if self.x_studio_id_ticket and tam < 2 and (self.team_id != 8 and self.team_id.id != 13):
             estadoAntes = str(self.stage_id.name)
             if self.stage_id.name == 'Pre-ticket' and self.x_studio_equipo_por_nmero_de_serie.id != False and self.estadoAbierto == False:
                 #ticketActualiza.write({'stage_id': '89'})
@@ -1290,14 +1290,14 @@ class helpdesk_update(models.Model):
             #if self.x_studio_field_nO7Xg.id != False and self.x_studio_field_nO7Xg.state == 'sale':
             if record.x_studio_equipo_por_nmero_de_serie:
                 for c in record.x_studio_equipo_por_nmero_de_serie:
-                    if self.team_id.id == 8:
+                    if self.team_id.id == 8 or self.team_id.id == 13:
                         q = 'helpdesk.ticket'
                     else:
                         q = 'stock.production.lot'
                     #if str(c.x_studio_field_A6PR9) =='Negro':
                     if str(c.x_studio_color_bn) == 'B/N':
                         if int(c.x_studio_contador_bn_a_capturar) >= int(c.x_studio_contador_bn):
-                            if self.team_id.id == 8:
+                            if self.team_id.id == 8 or self.team_id.id == 13:
                                 negrot = c.x_studio_contador_bn
                                 colort = c.x_studio_contador_color
                             else:
@@ -1326,7 +1326,7 @@ class helpdesk_update(models.Model):
                     #if str(c.x_studio_field_A6PR9) != 'Negro':       
                     if str(c.x_studio_color_bn) != 'B/N':
                         if int(c.x_studio_contador_color_a_capturar) >= int(c.x_studio_contador_color) and int(c.x_studio_contador_bn_a_capturar) >= int(c.x_studio_contador_bn):
-                            if self.team_id.id == 8:
+                            if self.team_id.id == 8 or self.team_id.id == 13:
                                 negrot = c.x_studio_contador_bn
                                 colort = c.x_studio_contador_color
                             else:
@@ -1372,7 +1372,7 @@ class helpdesk_update(models.Model):
             return {'warning': mess}
         if self.x_studio_field_nO7Xg.id != False and self.x_studio_field_nO7Xg.state != 'sale':
             self.env.cr.execute("delete from sale_order_line where order_id = " + str(self.x_studio_field_nO7Xg.id) +";")
-            if record.team_id.id == 8 :
+            if record.team_id.id == 8 or record.team_id.id == 13:
                 serieaca=''
                 for c in record.x_studio_equipo_por_nmero_de_serie_1:
                     bn=''
@@ -1486,7 +1486,7 @@ class helpdesk_update(models.Model):
                 #sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta', 'validity_date' : sale.date_order + datetime.timedelta(days=30)})
                 self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(self.x_studio_field_nO7Xg.id) + ";")                
         else:                               
-            if record.team_id.id == 8 :
+            if record.team_id.id == 8 or record.team_id.id == 13:
                 sale = self.env['sale.order'].sudo().create({'partner_id' : record.partner_id.id
                                                 , 'origin' : "Ticket de tóner: " + str(record.x_studio_id_ticket)
                                                 , 'x_studio_tipo_de_solicitud' : "Venta"
@@ -1629,7 +1629,7 @@ class helpdesk_update(models.Model):
             
             
             
-            
+            """
             if (record.team_id.id == 13 ) and record.x_studio_tipo_de_requerimiento == 'Tóner':
                 sale = self.env['sale.order'].sudo().create({'partner_id' : record.partner_id.id
                                                 , 'origin' : "Ticket de tfs: " + str(record.x_studio_id_ticket)
@@ -1653,7 +1653,7 @@ class helpdesk_update(models.Model):
                                               })
                 sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
                 self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")    
-
+            """
             saleTemp = self.x_studio_field_nO7Xg
             if saleTemp.id != False:
                 if self.x_studio_id_ticket:
@@ -1775,7 +1775,7 @@ class helpdesk_update(models.Model):
     def crearYValidarSolicitudDeToner(self):
         for record in self:
             jalaSolicitudes=''                     
-            if record.team_id.id == 8:
+            if record.team_id.id == 8 or record.team_id.id == 13:
                 x = 1 ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
                 if self.x_studio_almacen_1=='Agricola':
                    sale.write({'warehouse_id':1})
@@ -2472,10 +2472,10 @@ class helpdesk_update(models.Model):
               record['x_studio_telefono'] = ''
               record['x_studio_movil'] = ''
               record['x_studio_empresas_relacionadas'] = ''
-              if self.team_id.id==8:
+              if self.team_id.id == 8 or self.team_id.id == 13:
                  record['x_studio_equipo_por_nmero_de_serie'] = ''
                  record['x_studio_equipo_por_nmero_de_serie_1'] = ''                    
-              if self.team_id.id!=8:
+              if self.team_id.id != 8 and self.team_id.id != 13:
                  record['x_studio_equipo_por_nmero_de_serie'] = ''
                  record['x_studio_equipo_por_nmero_de_serie_1'] = ''   
 
@@ -2498,11 +2498,11 @@ class helpdesk_update(models.Model):
               record['x_studio_nivel_del_cliente'] = ''
               record['x_studio_telefono'] = ''
               record['x_studio_movil'] = ''
-            if self.team_id.id==8:
+            if self.team_id.id == 8 or self.team_id.id == 13:
                action = {'domain':{'x_studio_equipo_por_nmero_de_serie':dominio}}
                action = {'domain':{'x_studio_equipo_por_nmero_de_serie_1':dominioT}}
                #raise Warning('este es el dominio xD ' +str(dominio)) 
-            if self.team_id.id!=8:
+            if self.team_id.id != 8 and self.team_id.id != 13:
                action = {'domain':{'x_studio_equipo_por_nmero_de_serie':dominio}}    
                action = {'domain':{'x_studio_equipo_por_nmero_de_serie_1':dominioT}}
             return action
@@ -2518,7 +2518,7 @@ class helpdesk_update(models.Model):
         localidad = []
         for record in self:
             cantidad_numeros_serie = record.x_studio_tamao_lista
-            if record.team_id.id!=8:
+            if record.team_id.id != 8 and record.team_id.id != 13:
                 if int(cantidad_numeros_serie) < 2 :
                     for numeros_serie in record.x_studio_equipo_por_nmero_de_serie:
                         ids.append(numeros_serie.id)
@@ -2575,7 +2575,7 @@ class helpdesk_update(models.Model):
                         record.x_studio_equipo_por_nmero_de_serie = lista_ids
                 else:
                     raise exceptions.ValidationError("No es posible registrar más de un número de serie")
-            if record.team_id.id==8:
+            if record.team_id.id == 8 or record.team_id.id == 13:
                 _my_object = self.env['helpdesk.ticket']
                 #v['x_studio_equipo_por_nmero_de_serie'] = {record.x_studio_equipo_por_nmero_de_serie.id}
 
@@ -2653,7 +2653,7 @@ class helpdesk_update(models.Model):
                     
 
 
-        if int(self.x_studio_tamao_lista) > 0 and self.team_id.id != 8:
+        if int(self.x_studio_tamao_lista) > 0 and (self.team_id.id != 8 and self.team_id.id != 13):
             
             query="select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!="+str(self.x_studio_id_ticket)+"  and h.stage_id!=18 and h.team_id!=8 and  h.active='t' and stock_production_lot_id = "+str(self.x_studio_equipo_por_nmero_de_serie[0].id)+" limit 1;"            
             
@@ -2687,7 +2687,7 @@ class helpdesk_update(models.Model):
                         }
                 """
                 #raise exceptions.ValidationError("No es posible registrar número de serie, primero cerrar el ticket con el id  "+str(informacion[0][0]))
-        if len(self.x_studio_equipo_por_nmero_de_serie_1) > 0 and self.team_id.id == 8:
+        if len(self.x_studio_equipo_por_nmero_de_serie_1) > 0 and (self.team_id.id == 8 or self.team_id.id == 13):
             if len(self.x_studio_equipo_por_nmero_de_serie_1) > 1:
                 for localidades in self.x_studio_equipo_por_nmero_de_serie_1:
                     if self.x_studio_equipo_por_nmero_de_serie_1[0].ultimaUbicacion != localidades.ultimaUbicacion:
