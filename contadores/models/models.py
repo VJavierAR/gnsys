@@ -94,6 +94,8 @@ class dcas(models.Model):
     hTicketUltimaNota = fields.Text(string = 'Última nota')
     hTicketFechaNota = fields.Datetime(string = 'Fecha nota')    
     archivoCSV = fields.Binary(string="Archivo a cargar csv")    
+
+    fechaTemporal = fields.Text(string = 'Fecha temporal', store = True)
     
     
     
