@@ -870,7 +870,7 @@ class  DevolverPick(TransientModel):
     fecha=fields.Datetime()
     comentario=fields.Char()
     picking=fields.Many2one('stock.picking')
-    tipo=fields.Selection([["Total":"Total"],["Parcial","Parcial"]])
+    tipo=fields.Selection([["Total","Total"],["Parcial","Parcial"]])
 
     def confirmar(self):
         pic=self.env['stock.picking'].search([['id','=',self.picking.id]])
