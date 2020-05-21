@@ -1176,8 +1176,8 @@ class contadores_lines(models.Model):
     destino=fields.Many2one('res.partner')
     contrato1=fields.Many2one('contrato')
     servicio1=fields.Many2one('servicios')
-    #servicioz=fields.Char(related='serie.servicio.name')
-    #contrato=fields.Many2one(related='servicioz.contrato.name',string='Contrato origen')
+    servicioz=fields.Char(related='serie.servicio.name')
+    contrato=fields.Many2one(related='servicioz.contrato.name',string='Contrato origen')
 
 
     @api.onchange('serie')
