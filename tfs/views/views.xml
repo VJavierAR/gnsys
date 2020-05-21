@@ -7,6 +7,8 @@
 <form>
     <header>
         <button name="confirm" type="object" string="Confirmar" attrs="{'invisible': ['|','|',('id','=',False),('estado','=','xValidar'),('estado','=','Valido')]}"></button>
+        <button name="confirm" type="object" string="Autorizar" attrs="{'invisible': ['|','|',('id','=',False),('estado','=','xValidar'),('estado','=','Valido')]}"></button>
+
         <field name="estado" widget="statusbar"/>
     </header>
     <sheet>
@@ -43,12 +45,13 @@
                     <group name="a"  string="Contadores Monocromatico">
                         <field name="contadorMono" invisible="1"/>
                         <field name="contadorAnteriorMono"/>
+                        <field name="nivelNegro" string='Nivel Monocromatico'/>
                         <field name="actualporcentajeNegro" widget="percentpie"/>
                         <field name="porcentajeAnteriorNegro" widget="percentpie"/>
                     </group>
                     <group name="b" string="Contadores Cian" attrs="{'invisible': ['|',('colorBN','=','B/N'),('serie','=',False)]}">
                         <field name="contadorCian" invisible="1"/>
-
+                        <field name="nivelCian" string='Nivel Cian'/>
                         <field name="contadorAnteriorCian"/>
                         <field name="actualporcentajeCian" widget="percentpie"/>
                         <field name="porcentajeAnteriorCian" widget="percentpie"/>
@@ -57,15 +60,15 @@
                 <group>
                     <group name="c" string="Contadores Amarillo" attrs="{'invisible': ['|',('colorBN','=','B/N'),('serie','=',False)]}">
                         <field name="contadorAmarillo" invisible="1"/>
-
                         <field name="contadorAnteriorAmarillo"/>
+                        <field name="nivelAmarillo" string='Nivel Amarillo'/>
                         <field name="actualporcentajeAmarillo" widget="percentpie"/>
                         <field name="porcentajeAnteriorAmarillo" widget="percentpie"/>
                     </group>
                     <group name="d" string="Contadores Magenta" attrs="{'invisible': ['|',('colorBN','=','B/N'),('serie','=',False)]}">
-                                                <field name="contadorMagenta" invisible="1"/>
-
+                        <field name="contadorMagenta" invisible="1"/>
                         <field name="contadorAnteriorMagenta"/>
+                        <field name="nivelMagenta" string='Nivel Magenta'/>
                         <field name="actualporcentajeMagenta" widget="percentpie"/>
                         <field name="porcentajeAnteriorMagenta" widget="percentpie"/>
                     </group>

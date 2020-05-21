@@ -10,7 +10,8 @@ class StockImmediateTransfer(models.TransientModel):
 
     def forzar(self):
     	for r in self.tfs_ids:
-            r.write({'estado':'Valido'})
+            r.valida()
+            #r.write({'estado':'Valido'})
     		#In=r.inventario.search([['product_id.name','=',r.producto.name],['location_id','=',r.almacen.lot_stock_id.id]]).sorted(key='quantity',reverse=True)
     		#if(len(In)>0):
 		   # 	In[0].write({'quantity':In[0].quantity-1})

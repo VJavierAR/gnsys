@@ -1174,13 +1174,19 @@ class contadores_lines(models.Model):
     serie=fields.Many2one('stock.production.lot')
     origen=fields.Many2one('res.partner')
     destino=fields.Many2one('res.partner')
-    
+    servicio=fields.Char(related='serie.servicio.display_name','Servicio origen')
+    servicio1=fields.Many2one('servicios')
+    contrato=fields.Many2one(related='servicio.contrato.name','Contrato origen')
+    contrato1=fields.Many2one('contrato')
+
     @api.onchange('serie')
     def ubicacion(self):
         if(self.serie.x_studio_move_line):
-            if(self.serie.x_studio_move_line.location_dest_id.x_studio_field_JoD2k):
-                if(self.serie.x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z):
-                    self.origen=self.serie.x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
+            if(len(self.serie.x_studio_move_line)>0):
+                m=self.serie.x_studio_move_line.sorted(key='id',reverse=True)
+                if(m[0].location_dest_id.x_studio_field_JoD2k):
+                    if(m.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z):
+                        self.origen=m[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
                     
     def cambio(self):
         if(self.destino):

@@ -870,16 +870,13 @@ class  DevolverPick(TransientModel):
     fecha=fields.Datetime()
     comentario=fields.Char()
     picking=fields.Many2one('stock.picking')
+    tipo=fields.Selection([["Total":"Total"],["Parcial","Parcial"]])
 
     def confirmar(self):
         pic=self.env['stock.picking'].search([['id','=',self.picking.id]])
         destino=None
         sale=self.env['sale.order'].search([['id','=',self.picking.sale_id.id]])
         ticket_id=sale.x_studio_field_bxHgp.id
-        sale.write({'x_studio_field_bxHgp':False})
-        s=sale.copy()
-        s.write({'x_studio_field_bxHgp':ticket_id})
-        sale.write({'x_studio_field_bxHgp':ticket_id})
         if(self.picking.picking_type_id.warehouse_id.id==1):
             destino=self.env['stock.picking.type'].search([['name','=','Recepciones'],['warehouse_id','=',self.picking.picking_type_id.warehouse_id.id]])
         if(self.picking.picking_type_id.warehouse_id.id!=1):
@@ -889,14 +886,19 @@ class  DevolverPick(TransientModel):
             datos1={'picking_id':pick_origin1.id,'product_id' : l.product_id.id, 'product_uom_qty' : l.product_uom_qty,'name':l.name if(l.product_id.description) else '/','product_uom':l.product_uom.id,'location_id':self.picking.location_id.id,'location_dest_id':self.picking.picking_type_id.warehouse_id.lot_stock_id.id}
             self.env['stock.move'].create(datos1)
         self.picking.action_cancel()
-        pick_origin1.write({'x_studio_ticket':s.origin})
+        pick_origin1.write({'x_studio_ticket':sale.origin})
         pick_origin1.write({'partner_id':self.picking.partner_id.id})
         pick_origin1.write({'distribucion':True})
         pick_origin1.action_assign()
         pick_origin1.action_confirm()
-        s.write({'x_studio_fecha_de_entrega':self.fecha,'commitment_date':self.fecha})
+        if(self.tipo=="Parcial"):
+            sale.write({'x_studio_field_bxHgp':False})
+            s=sale.copy()
+            s.write({'x_studio_field_bxHgp':ticket_id})
+            sale.write({'x_studio_field_bxHgp':ticket_id})
+            s.write({'x_studio_fecha_de_entrega':self.fecha,'commitment_date':self.fecha})
+            s.action_confirm()
+            self.picking.x_studio_ticket_relacionado.write({'x_studio_field_0OAPP':[(4,s.id)]})
         self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : self.picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id, 'estadoTicket' : "Devuelto a Almacen", 'comentario':self.comentario}) 
-        s.action_confirm()
-        self.picking.x_studio_ticket_relacionado.write({'x_studio_field_0OAPP':[(4,s.id)]})
         
         

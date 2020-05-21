@@ -29,6 +29,7 @@ class tfs(models.Model):
     localidad=fields.Many2one('res.partner',store='True',string='Localidad')
     serie=fields.Many2one('stock.production.lot',string='Numero de Serie',store='True')
     domi=fields.Integer()
+    modelo=fields.Char(related='serie.product_id.name',string='Modelo')
 
     productoNegro=fields.Many2one('product.product',string='Toner Monocromatico')
     productoCian=fields.Many2one('product.product',string='Toner Cian')
@@ -59,11 +60,16 @@ class tfs(models.Model):
     actualporcentajeMagenta=fields.Integer(string='Actual Magenta')
     
     evidencias=fields.One2many('tfs.evidencia',string='Evidencias',inverse_name='tfs_id')
-    estado=fields.Selection([('borrador','Borrador'),('xValidar','Por Validar'),('Valido','Valido'),('Confirmado','Confirmado')])
+    estado=fields.Selection([('borrador','Borrador'),('xValidar','Por Validar'),('Valido','Valido'),('Confirmado','Confirmado'),('Auditar','Auditar'),('Cancelado','Cancelado')])
 
     colorBN=fields.Selection(related='serie.x_studio_color_bn')
     arreglo=fields.Char()
     direccion=fields.Char(widget="html")
+    nivelNegro=fields.float('Nivel Negro')
+    nivelAmarillo=fields.float('Nivel Amarillo')
+    nivelMagenta=fields.float('Nivel Magenta')
+    nivelCian=fields.float('Nivel Cian')
+
     @api.multi
     def confirm(self):
         for record in self:
@@ -239,7 +245,6 @@ class tfs(models.Model):
 
     @api.multi
     def valida(self):
-
         self.write({'estado':'Confirmado'})
         #self.env['dcas.dcas'].create({'serie':self.serie.id,'contadorMono':self.actualMonocromatico,'contadorColor':self.actualColor,'fuente':'tfs.tfs'})
         dat=eval(self.arreglo)
@@ -289,6 +294,8 @@ class tfs(models.Model):
         result = super(tfs, self).create(vals)
         return result
     
+    def canc(self):
+        self.write({'estado':'Auditar'})
 
     
     #@api.onchange('usuario')
