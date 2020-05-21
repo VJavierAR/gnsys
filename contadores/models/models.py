@@ -1174,10 +1174,10 @@ class contadores_lines(models.Model):
     serie=fields.Many2one('stock.production.lot')
     origen=fields.Many2one('res.partner')
     destino=fields.Many2one('res.partner')
-    servicio=fields.Char(related='serie.servicio.name',string='Servicio origen')
-    servicio1=fields.Many2one('servicios')
-    contrato=fields.Many2one(related='servicio.contrato.name',string='Contrato origen')
-    contrato1=fields.Many2one('contrato')
+    #servicio=fields.Char(related='serie.servicio.name',string='Servicio origen')
+    #servicio1=fields.Many2one('servicios')
+    #contrato=fields.Many2one(related='servicio.contrato.name',string='Contrato origen')
+    #contrato1=fields.Many2one('contrato')
 
     @api.onchange('serie')
     def ubicacion(self):
