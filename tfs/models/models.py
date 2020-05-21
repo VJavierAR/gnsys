@@ -65,10 +65,10 @@ class tfs(models.Model):
     colorBN=fields.Selection(related='serie.x_studio_color_bn')
     arreglo=fields.Char()
     direccion=fields.Char(widget="html")
-    nivelNegro=fields.float('Nivel Negro')
-    nivelAmarillo=fields.float('Nivel Amarillo')
-    nivelMagenta=fields.float('Nivel Magenta')
-    nivelCian=fields.float('Nivel Cian')
+    nivelNegro=fields.Float('Nivel Negro')
+    nivelAmarillo=fields.Float('Nivel Amarillo')
+    nivelMagenta=fields.Float('Nivel Magenta')
+    nivelCian=fields.Float('Nivel Cian')
 
     @api.multi
     def confirm(self):
