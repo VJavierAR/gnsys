@@ -13,7 +13,7 @@ class servicios_gnsys(models.Model):
     _inherit = 'mail.thread'
     _description = 'Servicios GNSYS'
     
-    
+    name=fields.Char('Nombre')
     productos = fields.One2many('product.product', 'servicio', string="Productos")
     fechaDeInicioDeServicio = fields.Datetime(string = 'Fecha de inicio de servicio',track_visibility='onchange')
     fechaDeFinDeServicio = fields.Datetime(string = 'Fecha de finalización de servicio',track_visibility='onchange')
