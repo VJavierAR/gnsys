@@ -97,7 +97,7 @@ class compras(models.Model):
                         string = f.read()
                         f.close()
                         text=string.split('Importe')[0]
-                        fff=open('tt.txt')
+                        fff=open("tt.txt"."r")
                         fff.write(text)
                         fff.close()
                     if(self.archivo and ("konica" in self.partner_id.name.lower() or "kyocera" in self.partner_id.name.lower())):
