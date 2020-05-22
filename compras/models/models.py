@@ -96,7 +96,7 @@ class compras(models.Model):
                         f = open("test3.txt","r")
                         string = f.read()
                         f.close()
-                        text=string.split('Importe')[0]
+                        text=string.split('Importe')[1]
                         fff=open("tt.txt","w")
                         fff.write(text)
                         fff.close()
