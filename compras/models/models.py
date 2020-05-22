@@ -94,6 +94,12 @@ class compras(models.Model):
                         out.close()
                         os.system(myCmd)
                         f = open("test3.txt","r")
+                        string = f.read()
+                        f.close()
+                        text=string.split('Importe')[0]
+                        fff=open('tt.txt')
+                        fff.write(text)
+                        fff.close()
                     if(self.archivo and ("konica" in self.partner_id.name.lower() or "kyocera" in self.partner_id.name.lower())):
                         out = open("hola.pdf", "wb")
                         #f2=base64.b64decode(self.archivo)
