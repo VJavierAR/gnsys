@@ -93,6 +93,18 @@ class compras(models.Model):
                         out.close()
                         os.system(myCmd)
                         f = open("test3.txt","r")
+                    if(self.archivo and ("konica" in self.partner_id.name.lower() or "kyocera" in self.partner_id.name.lower())):
+                        out = open("hola.pdf", "wb")
+                        #f2=base64.b64decode(self.archivo)
+                        #H=StringIO(f2)
+                        file = PdfFileReader(H)
+                        t=PdfFileWriter()
+                        for p in range(file.getNumPages()):
+                            t.addPage(file.getPage(p))
+                        t.write(out)
+                        out.close()
+                        os.system(myCmd)
+                        f = open("test3.txt","r")
                         if f2.startswith(b'%PDF-1.7'):
                             string = f.read()
                             f.close()
