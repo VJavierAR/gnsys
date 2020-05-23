@@ -215,7 +215,8 @@ class StockCambio(TransientModel):
         self.confirmar()
         self.confirmarE(equipos)
         self.confirmar()
-
+        self.pick.action_confirm()
+        self.pick.action_assign()
 
 
     def confirmar(self):
@@ -242,8 +243,7 @@ class StockCambio(TransientModel):
                     else:
                         if(d[0]['almacen']['id']):
                             self.env['stock.move'].search([['origin','=',str(self.pick.sale_id.name)],['product_id','=',d[0]['producto2']['id']]]).write({'location_id':d[0]['almacen']['lot_stock_id']['id']})
-            self.pick.action_confirm()
-            self.pick.action_assign()
+
 
 
 
