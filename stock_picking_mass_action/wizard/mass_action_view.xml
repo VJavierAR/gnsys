@@ -274,11 +274,11 @@
                                 <field name="existeciaAlmacen" readonly="1"/>                        
                                 <field name="existencia1" readonly="1"/>
                                 <field name="existencia2" readonly="1"/>
-                                <field name="estado"  attrs="{'invisible':[['tipo','!=',3]],'readonly':[['categoria','=',13]]}"/>
-                                <field name="serieOrigen"  attrs="{'invisible':[['tipo','!=',3]],'readonly':[['categoria','=',13]]}"/>
-                                <field name="color"  attrs="{'invisible':[['tipo','!=',3]],'readonly':[['categoria','=',13]]}"/>
-                                <field name="contadorMono"  attrs="{'invisible':[['tipo','!=',3]],'readonly':[['categoria','=',13]]}"/>
-                                <field name="contadorColor"  attrs="{'invisible':[['tipo','!=',3]],'readonly':[['categoria','=',13]]}"/>                        
+                                <field name="estado"  attrs="{'invisible':[['tipo','!=',3]],'readonly':[['categoria','!=',13]]}"/>
+                                <field name="serieOrigen"  attrs="{'invisible':[['tipo','!=',3]],'readonly':[['categoria','!=',13]]}"/>
+                                <field name="color"  attrs="{'invisible':[['tipo','!=',3]],'readonly':[['categoria','!=',13]]}"/>
+                                <field name="contadorMono"  attrs="{'invisible':[['tipo','!=',3]],'readonly':[['categoria','!=',13]]}"/>
+                                <field name="contadorColor"  attrs="{'invisible':[['tipo','!=',3]],'readonly':[['categoria','!=',13]]}"/>                        
                                 </tree>
                             </field>
                         </page>
