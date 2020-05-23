@@ -249,6 +249,8 @@
             <form string="Cambio">
                 <field name="tonerUorden" />
                 <group attrs="{'invisible':[['tonerUorden','=',True]]}">
+                    <notebook attrs="{'invisible':[['tonerUorden','=',True]]}">
+                        <page attrs="{'invisible':[['tonerUorden','=',True]]}">
                     <field name="pro_ids" string="Toner" attrs="{'invisible':[['tonerUorden','=',True]]}">
                         <tree editable="bottom">
                         <field name="producto1" readonly="1" string="Registro Original"/>
@@ -260,7 +262,11 @@
                         <field name="existencia2" readonly="1"/>
                         </tree>
                     </field>
+                </page>
+                </notebook>
                 </group>
+                <notebook attrs="{'invisible':[['tonerUorden','=',False]]}">
+                    <page attrs="{'invisible':[['tonerUorden','=',False]]}">
                 <group attrs="{'invisible':[['tonerUorden','=',False]]}">
                     <field name="pro_ids" string="Lineas" attrs="{'invisible':[['tonerUorden','=',False]]}">
                         <tree editable="bottom">
@@ -272,14 +278,16 @@
                         <field name="existeciaAlmacen" readonly="1"/>                        
                         <field name="existencia1" readonly="1"/>
                         <field name="existencia2" readonly="1"/>
-                        <field name="estado" attrs="{'invisible':[['tonerUorden','=',True]]}"/>
-                        <field name="serieOrigen" attrs="{'invisible':[['tonerUorden','=',True]]}"/>
-                        <field name="color" attrs="{'invisible':[['tonerUorden','=',True]]}"/>
-                        <field name="contadorMono"  attrs="{'invisible':[['tonerUorden','=',True]]}"/>
-                        <field name="contadorColor" attrs="{'invisible':[['tonerUorden','=',True]]}"/>                        
+                        <field name="estado"/>
+                        <field name="serieOrigen"/>
+                        <field name="color"/>
+                        <field name="contadorMono" />
+                        <field name="contadorColor" />                        
                         </tree>
                     </field>
                 </group>
+            </page>
+            </notebook>
                 <footer>
                     <button name="otra" string="Apply" type="object" class="oe_highlight"/>
                     or
