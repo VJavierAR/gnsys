@@ -272,11 +272,11 @@
                         <field name="existeciaAlmacen" readonly="1"/>                        
                         <field name="existencia1" readonly="1"/>
                         <field name="existencia2" readonly="1"/>
-                        <field name="estado" readonly="1" string="Registro Original"/>
-                        <field name="serieOrigen" invisible="1"/>
-                        <field name="color" string="Registro a Cambiar"  attrs="{'invisible':[['tipo','!=',3]]}"/>
-                        <field name="contadorMono" domain="[['x_studio_cliente','=',False]]"/>
-                        <field name="contadorColor" readonly="1"/>                        
+                        <field name="estado"/>
+                        <field name="serieOrigen"/>
+                        <field name="color"/>
+                        <field name="contadorMono" />
+                        <field name="contadorColor" />                        
                         </tree>
                     </field>
                 </group>
