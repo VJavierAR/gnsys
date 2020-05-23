@@ -247,6 +247,7 @@
         <field name="model">cambio.toner</field>
         <field name="arch" type="xml">
             <form string="Cambio">
+                <field name="tonerUorden" invisible="1"/>
                 <group attrs="{'invisible':[['tonerUorden','=',True]]}">
                     <field name="pro_ids" attrs="{'invisible':[['tonerUorden','=',True]]}">
                         <tree editable="bottom">
