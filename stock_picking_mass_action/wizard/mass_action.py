@@ -297,7 +297,7 @@ class StockCambioLine(TransientModel):
     existeciaAlmacen=fields.Integer(compute='almac',string='Existencia de Almacen seleccionado')
     tipo=fields.Integer()
    
-    serieOrigen=fields.Many2one('stock.production.lot',domain="['&',('product_id.id','=',producto),('x_studio_estado','=',estado)]")
+    serieOrigen=fields.Many2one('stock.production.lot',domain="['&',('product_id.id','=',producto1),('x_studio_estado','=',estado)]")
     estado=fields.Selection([["Obsoleto","Obsoleto"],["Usado","Usado"],["Hueso","Hueso"],["Para reparación","Para reparación"],["Nuevo","Nuevo"],["Buenas condiciones","Buenas condiciones"],["Excelentes condiciones","Excelentes condiciones"],["Back-up","Back-up"],["Dañado","Dañado"]])
     #modelo=fields.Many2one(related='serieOrigen.product_id')
     color=fields.Selection(related='producto1.x_studio_color_bn')
