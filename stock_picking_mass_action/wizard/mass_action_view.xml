@@ -249,7 +249,7 @@
             <form string="Cambio">
                 <field name="tonerUorden" />
                 <group attrs="{'invisible':[['tonerUorden','=',True]]}">
-                    <field name="pro_ids" attrs="{'invisible':[['tonerUorden','=',True]]}">
+                    <field name="pro_ids" string="Toner" attrs="{'invisible':[['tonerUorden','=',True]]}">
                         <tree editable="bottom">
                         <field name="producto1" readonly="1" string="Registro Original"/>
                         <field name="tipo" invisible="1"/>
@@ -262,7 +262,7 @@
                     </field>
                 </group>
                 <group attrs="{'invisible':[['tonerUorden','=',False]]}">
-                    <field name="pro_ids" attrs="{'invisible':[['tonerUorden','=',False]]}">
+                    <field name="pro_ids" string="Lineas" attrs="{'invisible':[['tonerUorden','=',False]]}">
                         <tree editable="bottom">
                         <field name="producto1" readonly="1" string="Registro Original"/>
                         <field name="tipo" invisible="1"/>
