@@ -284,7 +284,6 @@
                     </page>
                 </notebook>
                 </group>
-            </notebook>
                 <footer>
                     <button name="otra" string="Apply" type="object" class="oe_highlight"/>
                     or
