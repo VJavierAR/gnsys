@@ -927,18 +927,3 @@ class  DevolverPick(TransientModel):
             self.picking.x_studio_ticket_relacionado.write({'x_studio_field_0OAPP':[(4,s.id)]})
         self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : self.picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id, 'estadoTicket' : "Devuelto a Almacen", 'comentario':self.comentario}) 
         
-        
-class  AsignacionEquipo(TransientModel):
-    _name='asignacion equipo'
-    _description='Encargado de la asignacion de equipos en  almacen'
-    picking=fields.Many2one('stock.picking')
-    almacenesRel=fields.Many2one('stock.warehouse')
-    dominio=fields.Char()
-    serie=
-
-    @api.onchange('dominio')
-    def asignaDom(self):
-        res={}
-        res['domain']={'almacenesRel':[['id','in',eval(self.dominio)]]}
-        return res
-
