@@ -248,7 +248,7 @@
         <field name="arch" type="xml">
             <form string="Cambio">
                 <field name="tonerUorden" />
-                <group attrs="{'invisible':[['tonerUorden','=',True]]}">
+                <group>
                     <notebook >
                         <page attrs="{'invisible':[['tonerUorden','=',True]]}">
                     <field name="pro_ids" string="Toner">
