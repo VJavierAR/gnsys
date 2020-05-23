@@ -304,7 +304,7 @@ class StockCambioLine(TransientModel):
     contadorMono=fields.Integer('Contador Monocromatico')
     contadorColor=fields.Integer('Contador Color')
     move_id=fields.Many2one('stock.move')
-    categoria=fields.Int(related='producto1.categ_id.id')
+    categoria=fields.Integer(related='producto1.categ_id.id')
 
 
     @api.depends('producto1')
