@@ -249,9 +249,9 @@
             <form string="Cambio">
                 <field name="tonerUorden" />
                 <group attrs="{'invisible':[['tonerUorden','=',True]]}">
-                    <notebook attrs="{'invisible':[['tonerUorden','=',True]]}">
+                    <notebook >
                         <page attrs="{'invisible':[['tonerUorden','=',True]]}">
-                    <field name="pro_ids" string="Toner" attrs="{'invisible':[['tonerUorden','=',True]]}">
+                    <field name="pro_ids" string="Toner">
                         <tree editable="bottom">
                         <field name="producto1" readonly="1" string="Registro Original"/>
                         <field name="tipo" invisible="1"/>
@@ -263,12 +263,8 @@
                         </tree>
                     </field>
                 </page>
-                </notebook>
-                </group>
-                <notebook attrs="{'invisible':[['tonerUorden','=',False]]}">
-                    <page attrs="{'invisible':[['tonerUorden','=',False]]}">
-                <group attrs="{'invisible':[['tonerUorden','=',False]]}">
-                    <field name="pro_ids" string="Lineas" attrs="{'invisible':[['tonerUorden','=',False]]}">
+                <page attrs="{'invisible':[['tonerUorden','=',False]]}">
+                    <field name="pro_ids" string="Lineas">
                         <tree editable="bottom">
                         <field name="producto1" readonly="1" string="Registro Original"/>
                         <field name="tipo" invisible="1"/>
@@ -285,6 +281,7 @@
                         <field name="contadorColor" />                        
                         </tree>
                     </field>
+                </notebook>
                 </group>
             </page>
             </notebook>
