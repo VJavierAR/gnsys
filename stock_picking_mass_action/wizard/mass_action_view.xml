@@ -281,9 +281,9 @@
                         <field name="contadorColor" />                        
                         </tree>
                     </field>
+                    </page>
                 </notebook>
                 </group>
-            </page>
             </notebook>
                 <footer>
                     <button name="otra" string="Apply" type="object" class="oe_highlight"/>
