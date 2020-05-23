@@ -272,11 +272,11 @@
                         <field name="existeciaAlmacen" readonly="1"/>                        
                         <field name="existencia1" readonly="1"/>
                         <field name="existencia2" readonly="1"/>
-                        <field name="estado"/>
-                        <field name="serieOrigen"/>
-                        <field name="color"/>
-                        <field name="contadorMono" />
-                        <field name="contadorColor" />                        
+                        <field name="estado" attrs="{'invisible':[['tonerUorden','=',True]]}"/>
+                        <field name="serieOrigen" attrs="{'invisible':[['tonerUorden','=',True]]}"/>
+                        <field name="color" attrs="{'invisible':[['tonerUorden','=',True]]}"/>
+                        <field name="contadorMono"  attrs="{'invisible':[['tonerUorden','=',True]]}"/>
+                        <field name="contadorColor" attrs="{'invisible':[['tonerUorden','=',True]]}"/>                        
                         </tree>
                     </field>
                 </group>
