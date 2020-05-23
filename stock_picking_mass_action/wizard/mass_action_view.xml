@@ -247,7 +247,7 @@
         <field name="model">cambio.toner</field>
         <field name="arch" type="xml">
             <form string="Cambio">
-                <field name="tonerUorden" invisible="1"/>
+                <field name="tonerUorden" />
                 <group attrs="{'invisible':[['tonerUorden','=',True]]}">
                     <field name="pro_ids" attrs="{'invisible':[['tonerUorden','=',True]]}">
                         <tree editable="bottom">
@@ -281,7 +281,7 @@
                     </field>
                 </group>
                 <footer>
-                    <button name="confirmar" string="Apply" type="object" class="oe_highlight"/>
+                    <button name="otra" string="Apply" type="object" class="oe_highlight"/>
                     or
                     <button string="Cancel" class="oe_link" special="cancel"/>
                 </footer>
