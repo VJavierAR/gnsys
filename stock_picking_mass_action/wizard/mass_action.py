@@ -207,6 +207,16 @@ class StockCambio(TransientModel):
     _description = 'Cambio toner'
     pick=fields.Many2one('stock.picking')
     pro_ids = fields.One2many('cambio.toner.line','rel_cambio')
+    tonerUorden=fields.Boolean()
+
+
+    def otra(self):
+        equipos=pro_ids.filtered(lambda x:x.categ_id.id==13)
+        self.confirmar()
+        self.confirmarE(equipos)
+        self.confirmar()
+
+
 
     def confirmar(self):
         if(self.pick.sale_id):
@@ -234,6 +244,12 @@ class StockCambio(TransientModel):
                             self.env['stock.move'].search([['origin','=',str(self.pick.sale_id.name)],['product_id','=',d[0]['producto2']['id']]]).write({'location_id':d[0]['almacen']['lot_stock_id']['id']})
             self.pick.action_confirm()
             self.pick.action_assign()
+
+
+
+
+
+
             """
             for prp in self.pro_ids:
                 if(prp.producto1.id !=prp.producto2.id):
@@ -262,10 +278,10 @@ class StockCambio(TransientModel):
                             if(alm2!=[]):
                                 p1.write({'location_id':alm2[0]['almacen']})
             """
-
-
-
-
+    def confirmarE(self,equipos):
+        for s in equipos:
+            d=self.env['stock.move.line'].search([['move_id','=',s.move_id.id]])
+            d.write({'lot_id':s.serieOrigen.id})
 
 class StockCambioLine(TransientModel):
     _name = 'cambio.toner.line'
@@ -280,7 +296,17 @@ class StockCambioLine(TransientModel):
     existencia2=fields.Integer(compute='nuevo',string='Existencia Usado')
     existeciaAlmacen=fields.Integer(compute='almac',string='Existencia de Almacen seleccionado')
     tipo=fields.Integer()
-    
+   
+    serieOrigen=fields.Many2one('stock.production.lot',domain="['&',('product_id.id','=',producto),('x_studio_estado','=',estado)]")
+    estado=fields.Selection([["Obsoleto","Obsoleto"],["Usado","Usado"],["Hueso","Hueso"],["Para reparación","Para reparación"],["Nuevo","Nuevo"],["Buenas condiciones","Buenas condiciones"],["Excelentes condiciones","Excelentes condiciones"],["Back-up","Back-up"],["Dañado","Dañado"]])
+    #modelo=fields.Many2one(related='serieOrigen.product_id')
+    color=fields.Char(related='producto1.x_studio_color_bn')
+    contadorMono=fields.Integer('Contador Monocromatico')
+    contadorColor=fields.Integer('Contador Color')
+    move_id=fields.Many2one('stock.move')
+    categoria=fields.Int(related='producto1.categ_id.id')
+
+
     @api.depends('producto1')
     def nuevo(self):
         for record in self:
@@ -902,3 +928,17 @@ class  DevolverPick(TransientModel):
         self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : self.picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id, 'estadoTicket' : "Devuelto a Almacen", 'comentario':self.comentario}) 
         
         
+class  AsignacionEquipo(TransientModel):
+    _name='asignacion equipo'
+    _description='Encargado de la asignacion de equipos en  almacen'
+    picking=fields.Many2one('stock.picking')
+    almacenesRel=fields.Many2one('stock.warehouse')
+    dominio=fields.Char()
+    serie=
+
+    @api.onchange('dominio')
+    def asignaDom(self):
+        res={}
+        res['domain']={'almacenesRel':[['id','in',eval(self.dominio)]]}
+        return res
+

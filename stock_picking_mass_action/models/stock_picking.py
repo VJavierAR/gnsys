@@ -360,7 +360,7 @@ class StockPicking(Model):
         d=[]
         wiz = self.env['cambio.toner'].create({'display_name':'h','pick':self.id})
         for p in self.move_ids_without_package:
-            data={'rel_cambio':wiz.id,'producto1':p.product_id.id,'producto2':p.product_id.id,'cantidad':p.product_uom_qty,'serie':p.x_studio_serie_destino.id,'tipo':self.picking_type_id.id}
+            data={'move_id':p.id,'rel_cambio':wiz.id,'producto1':p.product_id.id,'producto2':p.product_id.id,'cantidad':p.product_uom_qty,'serie':p.x_studio_serie_destino.id,'tipo':self.picking_type_id.id}
             self.env['cambio.toner.line'].create(data)
             #d.append(data)
         
@@ -410,9 +410,6 @@ class StockPicking(Model):
         }
     
     def serie(self):
-        
-
-
         wiz = self.env['picking.serie'].create({'pick':self.id})
         for r in self.move_ids_without_package:
             if(r.product_id.categ_id.id==13):
