@@ -324,7 +324,25 @@ class StockCambioLine(TransientModel):
         for record in self:
             if(record.almacen):
                 ex=self.env['stock.quant'].search([['location_id','=',record.almacen.lot_stock_id.id],['product_id','=',record.producto1.id]]).sorted(key='quantity',reverse=True)
-                record.existeciaAlmacen=int(ex[0].quantity) if(len(ex)>0) else 0 
+                record.existeciaAlmacen=int(ex[0].quantity) if(len(ex)>0) else 0
+    
+    @api.onchange('almacen','estado')
+    def filtroEqui(self):
+        res={}
+        ubicacion=0
+        if(self.producto1.categ_id.id==13):
+            series=[]
+            if(self.move_id):
+                ubicacion=self.move_id.location_dest_id.id
+            if(self.almacen):
+                ubicacion=self.almacen.lot_stock_id.id
+            existencias=self.env['stock.quant'].search([['location_id','=',ubicacion],['product_id','=',record.producto1.id]]).mapped('lot_id.id')
+            if(existencias):
+                series=self.env['stock.production.lot'].search([['id','in',existencias]])
+            if(self.estado):
+                series=series.filtered(lambda x:x_studio_estado==self.estado)
+            res['domain']={'serieOrigen':[['id','in',series]]}
+        return res
 
 class GuiaTicket(TransientModel):
     _name = 'guia.ticket'
