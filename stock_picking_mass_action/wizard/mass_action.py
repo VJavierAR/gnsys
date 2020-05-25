@@ -212,20 +212,23 @@ class StockCambio(TransientModel):
 
     def otra(self):
         equipos=self.pro_ids.filtered(lambda x:x.producto1.categ_id.id==13)
-        self.confirmar()
-        self.confirmarE(equipos)
-        self.confirmar()
+        otros=self.pro_ids.filtered(lambda x:x.producto1.categ_id.id!=13)
+        self.confirmar(otros)
         self.pick.action_confirm()
         self.pick.action_assign()
+        self.confirmarE(equipos)
+        
+        #self.confirmar(otros)
 
 
-    def confirmar(self):
+
+    def confirmar(self,productos):
         if(self.pick.sale_id):
             i=0
             self.pick.backorder=''
             dt=[]
             al=[]
-            for sa in self.pick.move_ids_without_package:
+            for sa in productos:
                 d=list(filter(lambda x:x['producto1']['id']==sa.product_id.id,self.pro_ids))
                 if(d!=[]):
                     if(sa.product_id.id!=d[0]['producto2']['id']):
@@ -305,7 +308,10 @@ class StockCambioLine(TransientModel):
     contadorColor=fields.Integer('Contador Color')
     move_id=fields.Many2one('stock.move')
     categoria=fields.Integer(related='producto1.categ_id.id')
-
+    nivelNegro=fields.Float()
+    nivelCian=fields.Float()
+    nivelAmarillo=fields.Float()
+    nivelMagenta=fields.Float()
 
     @api.depends('producto1')
     def nuevo(self):

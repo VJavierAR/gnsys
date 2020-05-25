@@ -377,7 +377,27 @@ class StockPicking(Model):
             'res_id': wiz.id,
             'context': self.env.context,
         }
-
+    def asignacion_wizard(self):
+        d=[]
+        wiz = self.env['cambio.toner'].create({'display_name':'h','pick':self.id,'tonerUorden':self.oculta})
+        for p in self.move_ids_without_package:
+            data={'move_id':p.id,'rel_cambio':wiz.id,'producto1':p.product_id.id,'producto2':p.product_id.id,'cantidad':p.product_uom_qty,'serie':p.x_studio_serie_destino.id,'tipo':self.picking_type_id.id}
+            self.env['cambio.toner.line'].create(data)
+            #d.append(data)
+        
+        view = self.env.ref('stock_picking_mass_action.view_asignacion_equipo_action_form')
+        return {
+            'name': _('Asignacion'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'cambio.toner',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            'context': self.env.context,
+        }
     def guia(self):
         wiz = self.env['guia.ticket'].create({'pick':self.id})
         view = self.env.ref('stock_picking_mass_action.view_guia_ticket')
