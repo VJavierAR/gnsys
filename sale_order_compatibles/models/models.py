@@ -15,7 +15,10 @@ class sale_order_compatibles(models.Model):
 	equipos = fields.One2many('stock.production.lot', 'sale_order_compatibles', string = 'Equipos')
 	componentes = fields.Many2many('product.product', string = "Componentes")
 	toner = fields.Many2many('product.product', string = "Toner")
+	accesorios = fields.Many2many('product.product', string = "Accesorios")
 	compatibles = fields.Many2many('product.product', string = "Compatibles")
+
+	estado = fields.Selection(selection = [('1', '1'),('2', '2'),('3','3')], widget = "statusbar", default = '1')
 
 
 
