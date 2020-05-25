@@ -268,7 +268,7 @@
                                 <field name="nivelNegro" string="Nivel Negro" />
                                 <field name="nivelAmarillo" string="Nivel Amarillo" attrs="{'invisible':[['color','=','B/N']]}"/>
                                 <field name="nivelCian" string="Nivel Cian"  attrs="{'invisible':[['color','=','B/N']]}"/>
-                                <field name="Magenta" string="Nivel Magenta"  attrs="{'invisible':[['color','=','B/N']]}"/>                          
+                                <field name="nivelMagenta" string="Nivel Magenta"  attrs="{'invisible':[['color','=','B/N']]}"/>                          
                                 </tree>
                             </field>
                         </page>
