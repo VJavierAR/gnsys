@@ -37,8 +37,17 @@
           </group>
 
           <group>
-            <group name='Compatibles'>
-              <field name="compatibles"/>
+            <group name='Componenetes'>
+              <field name="componentes">
+                <tree>
+              <field name="producto"/>
+              <field name="cantidad"/>
+              <field name="idProducto"/>
+
+                  
+                </tree>
+
+              </field>
             </group>
           </group>
 
