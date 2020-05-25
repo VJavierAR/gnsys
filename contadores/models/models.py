@@ -1176,7 +1176,7 @@ class contadores_lines(models.Model):
     destino=fields.Many2one('res.partner')
     contrato1=fields.Many2one('contrato')
     servicio1=fields.Many2one('servicios')
-    servicioz=fields.Char(related='serie.servicio.name')
+    servicioz=fields.Char(related='serie.servicio.name',string='Servicio origen')
     contrato=fields.Char(related='serie.servicio.contrato.name',string='Contrato origen')
 
 
