@@ -32,12 +32,13 @@ class miniModelo(models.Model):
 	cantidad = fields.Integer(string = 'Cantidad')
 	saleOrderMini=fields.Many2one('sale_order_compatibles')
 	
-
+	"""
 	@api.onchange('idProducto')
 	def dominioProducto(self):
 		dominio = [('categ_id', '=', self.idProducto)]
 		res['domain'] = {'producto': dominio}
 		return res
+	"""
 
 
 
