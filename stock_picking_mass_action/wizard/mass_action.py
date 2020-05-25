@@ -341,7 +341,7 @@ class StockCambioLine(TransientModel):
                 series=self.env['stock.production.lot'].search([['id','in',existencias]])
             if(self.estado):
                 if(series!=[]):
-                    series=series.filtered(lambda x:x_studio_estado==self.estado)
+                    series=series.filtered(lambda x:x.x_studio_estado==self.estado)
                 else:
                     series=self.env['stock.production.lot'].search([['x_studio_estado','=',self.estado]])
             res['domain']={'serieOrigen':[['id','in',series.mapped('id')]]}
