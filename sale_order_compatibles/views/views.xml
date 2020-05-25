@@ -65,6 +65,50 @@
     </record>
 
 
+    <record model="ir.ui.view" id="sale_order_compatibles_mini.form">
+      <field name="name">sale_order_compatibles_mini.form</field>
+      <field name="model">sale_order_compatibles_mini</field>
+      <field name="arch" type="xml">
+        <form>
+          <header>
+            <!--<field name='estado' widget='statusbar'/>-->
+          </header>
+
+          <group>
+            <group name='Sale order'>
+              <field name="idProducto"/>
+            </group>
+          </group>
+
+          <group>
+            <group name='Equipo'>
+              <field name="producto" domain='["categ_id.id", "=", 13]'/>
+              <field name="cantidad" domain='["categ_id.id", "=", 13]'/>
+            </group>
+          </group>
+
+
+        </form>
+      </field>
+    </record>
+
+
+    <record model="ir.ui.view" id="sale_order_compatibles_mini.tree">
+      <field name="name">sale_order_compatibles_mini.form</field>
+      <field name="model">sale_order_compatibles_mini</field>
+      <field name="arch" type="xml">
+        <tree>
+          
+          <field name="idProducto"/>
+          <field name="producto" domain='["categ_id.id", "=", 13]'/>
+          <field name="cantidad" domain='["categ_id.id", "=", 13]'/>
+
+        </tree>
+      </field>
+    </record>
+
+
+
     <!-- actions opening views on models -->
     <!--
     <record model="ir.actions.act_window" id="sale_order_compatibles.action_window">
