@@ -39,7 +39,7 @@
           <group>
             <group name='Componenetes'>
               <field name="componentes">
-                <tree>
+                <tree editable="bottom">
               <field name="producto"/>
               <field name="cantidad"/>
               <field name="idProducto"/>
@@ -56,14 +56,14 @@
     </record>
 
 
-    <record model="ir.ui.view" id="sale_order_compatibles_mini_form">
+ <!--    <record model="ir.ui.view" id="sale_order_compatibles_mini_form">
       <field name="name">sale_order_compatibles_mini_form</field>
       <field name="model">sale_order_compatibles_mini</field>
       <field name="arch" type="xml">
         <form>
-          <header>
+          <header> -->
             <!--<field name='estado' widget='statusbar'/>-->
-          </header>
+ <!--          </header>
 
           <group>
             <group name='Sale order'>
@@ -85,7 +85,7 @@
       </field>
     </record>
 
-
+ -->
 <!--     <record model="ir.ui.view" id="sale_order_compatibles_mini_tree">
       <field name="name">sale_order_compatibles_mini.form</field>
       <field name="model">sale_order_compatibles_mini</field>
