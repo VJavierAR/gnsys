@@ -336,7 +336,7 @@ class StockCambioLine(TransientModel):
                 ubicacion=self.move_id.location_dest_id.id
             if(self.almacen):
                 ubicacion=self.almacen.lot_stock_id.id
-            existencias=self.env['stock.quant'].search([['location_id','=',ubicacion],['product_id','=',record.producto1.id]]).mapped('lot_id.id')
+            existencias=self.env['stock.quant'].search([['location_id','=',ubicacion],['product_id','=',self.producto1.id]]).mapped('lot_id.id')
             if(existencias):
                 series=self.env['stock.production.lot'].search([['id','in',existencias]])
             if(self.estado):
