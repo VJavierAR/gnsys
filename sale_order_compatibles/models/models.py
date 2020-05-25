@@ -14,11 +14,26 @@ class sale_order_compatibles(models.Model):
 	saleOrder = fields.Many2one('compatibles')
 	equipos = fields.One2many('product.product', 'sale_order_compatibles_equipos', string = 'Equipos')
 	componentes = fields.One2many('product.product', 'sale_order_compatibles_componentes', string = "Componentes")
-	toner = fields.One2many('product.product', 'sale_order_compatibles_toner', string = "Toner")
-	accesorios = fields.One2many('product.product', 'sale_order_compatibles_accesorios', string = "Accesorios")
-	compatibles = fields.One2many('product.product', 'sale_order_compatibles_compatibles', string = "Compatibles")
+	
+	toner = fields.Many2one('product.product', string = "Toner")
+	accesorios = fields.Many2one('product.product', string = "Accesorios")
+	compatibles = fields.Many2one('product.product', string = "Compatibles")
 
 	estado = fields.Selection(selection = [('1', '1'),('2', '2'),('3','3')], widget = "statusbar", default = '1')
+
+
+
+
+
+class miniModelo(models.Model):
+	_name = 'sale_order_compatibles_mini'
+
+	idProducto = fields.Integer(string = 'id Producto')
+
+	producto = fields.One2many('product.product', 'sale_order_compatibles_mini_producto', string = 'Equipos')
+	cantidad = fields.Integer(string = 'Cantidad')
+		
+
 
 
 
@@ -26,9 +41,13 @@ class product_update(models.Model):
 	_inherit = 'product.product'
 	sale_order_compatibles_equipos = fields.Many2one('sale_order_compatibles')
 	sale_order_compatibles_componentes = fields.Many2one('sale_order_compatibles')
-	sale_order_compatibles_toner = fields.Many2one('sale_order_compatibles')
-	sale_order_compatibles_accesorios = fields.Many2one('sale_order_compatibles')
-	sale_order_compatibles_compatibles = fields.Many2one('sale_order_compatibles')
+
+
+	sale_order_compatibles_toner = fields.One2many('sale_order_compatibles', 'toner')
+	sale_order_compatibles_accesorios = fields.One2many('sale_order_compatibles', 'accesorios')
+	sale_order_compatibles_compatibles = fields.One2many('sale_order_compatibles', 'compatibles')
+
+	sale_order_compatibles_mini_producto = fields.One2many('sale_order_compatibles_mini', 'producto')
 
 
 class sale_update(models.Model):
