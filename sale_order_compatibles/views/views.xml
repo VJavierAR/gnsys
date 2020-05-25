@@ -15,8 +15,8 @@
     </record>
     -->
 
-    <record model="ir.ui.view" id="sale_order_compatibles.form">
-      <field name="name">sale_order_compatibles.form</field>
+    <record model="ir.ui.view" id="sale_order_compatibles_form">
+      <field name="name">sale_order_compatibles_form</field>
       <field name="model">sale_order_compatibles</field>
       <field name="arch" type="xml">
         <form>
@@ -56,8 +56,8 @@
     </record>
 
 
-    <record model="ir.ui.view" id="sale_order_compatibles_mini.form">
-      <field name="name">sale_order_compatibles_mini.form</field>
+    <record model="ir.ui.view" id="sale_order_compatibles_mini_form">
+      <field name="name">sale_order_compatibles_mini_form</field>
       <field name="model">sale_order_compatibles_mini</field>
       <field name="arch" type="xml">
         <form>
@@ -86,7 +86,7 @@
     </record>
 
 
-    <record model="ir.ui.view" id="sale_order_compatibles_mini.tree">
+<!--     <record model="ir.ui.view" id="sale_order_compatibles_mini_tree">
       <field name="name">sale_order_compatibles_mini.form</field>
       <field name="model">sale_order_compatibles_mini</field>
       <field name="arch" type="xml">
@@ -99,7 +99,7 @@
         </tree>
       </field>
     </record>
-
+ -->
 
 
     <!-- actions opening views on models -->
