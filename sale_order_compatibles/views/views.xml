@@ -32,7 +32,7 @@
 
           <group>
             <group name='Equipo'>
-              <field name="equipos" domain='["categ_id.id", "=", 13]' options="{'no_create_edit': True, 'no_create': True}"/>
+              <field name="equipos" domain="[['categ_id.id', '=', 13]]" options="{'no_create_edit': True, 'no_create': True}"/>
             </group>
           </group>
 
