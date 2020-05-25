@@ -54,8 +54,7 @@
                             </span>
                             <span name="document_followers_text" attrs="{'invisible':['|', ('model', '=', False), ('composition_mode', '=', 'mass_mail')]}">Followers of the document and</span>
                             <field name="partner_ids" widget="many2many_tags_email" placeholder="Add contacts to notify..."
-                                context="{'force_email':True, 'show_email':True}"
-                                attrs="{'invisible': [('composition_mode', '!=', 'comment')], 'domain': [('parent_id.parent_id.id', '=', ' 892), ('parent_id.id', '=', 3328), ('x_studio_autoriza_solicitud', '=', True)]}"/>
+                                context="{'force_email':True, 'show_email':True}" attrs="{'invisible': [('composition_mode', '!=', 'comment')], 'domain':[('parent_id.parent_id.id', '=',892), ('parent_id.id', '=', 3328), ('x_studio_autoriza_solicitud', '=', True)]}"/>
                         </div>
                         <field name="subject" placeholder="Subject..." required="True"/>
                         <!-- mass post -->
