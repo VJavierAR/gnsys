@@ -22,7 +22,7 @@ class sale_order_compatibles(models.Model):
 	estado = fields.Selection(selection = [('1', '1'),('2', '2'),('3','3')], widget = "statusbar", default = '1')
 	componentes = fields.One2many('sale_order_compatibles_mini', 'saleOrderMini', string = 'Componentes')
 
-	
+
 
 
 class miniModelo(models.Model):
@@ -36,8 +36,8 @@ class miniModelo(models.Model):
 	@api.onchange('idProducto')
 	def dominioProducto(self):
 		dominio = [('categ_id', '=', self.idProducto)]
-
-		return res['domain'] = {'producto': dominio}
+		res['domain'] = {'producto': dominio}
+		return res
 
 
 
