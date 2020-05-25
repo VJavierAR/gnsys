@@ -226,6 +226,7 @@ class StockCambio(TransientModel):
             dt=[]
             al=[]
             for sa in self.pick.move_ids_without_package.filtered(lambda x:x.product_id.categ_id.id!=13):
+                copia=sa.location_dest_id.id
                 d=list(filter(lambda x:x['producto1']['id']==sa.product_id.id,self.pro_ids))
                 if(d!=[]):
                     if(sa.product_id.id!=d[0]['producto2']['id']):
@@ -239,10 +240,10 @@ class StockCambio(TransientModel):
                         datos={'x_studio_field_9nQhR':d[0]['serie']['id'],'order_id':self.pick.sale_id.id,'product_id':d[0]['producto2']['id'],'product_uom':d[0]['producto2']['uom_id']['id'],'product_uom_qty':d[0]['cantidad'],'name':d[0]['producto2']['description'] if(d[0]['producto2']['description']) else '/','price_unit':0.00}
                         ss=self.env['sale.order.line'].sudo().create(datos)
                     if(d[0]['almacen']['id']):
-                        self.env['stock.move'].search([['picking_id.sale_id','=',self.pick.sale_id.id],['product_id','=',d[0]['producto2']['id']]]).write({'location_id':d[0]['almacen']['lot_stock_id']['id']})
+                        self.env['stock.move'].search([['picking_id.sale_id','=',self.pick.sale_id.id],['product_id','=',d[0]['producto2']['id']]]).write({'location_id':d[0]['almacen']['lot_stock_id']['id'],'location_dest_id':copia})
                     else:
                         if(d[0]['almacen']['id']):
-                            self.env['stock.move'].search([['origin','=',str(self.pick.sale_id.name)],['product_id','=',d[0]['producto2']['id']]]).write({'location_id':d[0]['almacen']['lot_stock_id']['id']})
+                            self.env['stock.move'].search([['origin','=',str(self.pick.sale_id.name)],['product_id','=',d[0]['producto2']['id']]]).write({'location_dest_id':copia,'location_id':d[0]['almacen']['lot_stock_id']['id']})
 
 
 
