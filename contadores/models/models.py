@@ -1187,7 +1187,7 @@ class contadores_lines(models.Model):
             if(len(self.serie.x_studio_move_line)>0):
                 m=self.serie.x_studio_move_line.sorted(key='id',reverse=True)
                 if(m[0].location_dest_id.x_studio_field_JoD2k):
-                    if(m.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z):
+                    if(m[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z):
                         self.origen=m[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
                     
     def cambio(self):
