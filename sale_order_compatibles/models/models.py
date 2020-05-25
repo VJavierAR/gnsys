@@ -22,16 +22,7 @@ class sale_order_compatibles(models.Model):
 	estado = fields.Selection(selection = [('1', '1'),('2', '2'),('3','3')], widget = "statusbar", default = '1')
 	componentes = fields.One2many('sale_order_compatibles_mini', 'saleOrderMini', string = 'Componentes')
 
-
-
-@api.onchange('equipos')
-def filtroComponentes(self):
-	dominio = {}
-
-	#dominio = 
-
-	#return res['domain'] = {'componentes':[('categ_id', '=', 5),('x_studio_toner_compatible.id','in',list)]}
-
+	
 
 
 class miniModelo(models.Model):
@@ -40,7 +31,13 @@ class miniModelo(models.Model):
 	producto = fields.Many2one('product.product')
 	cantidad = fields.Integer(string = 'Cantidad')
 	saleOrderMini=fields.Many2one('sale_order_compatibles')
-		
+	
+
+	@api.onchange('idProducto')
+	def dominioProducto(self):
+		dominio = [('categ_id', '=', self.idProducto)]
+
+		return res['domain'] = {'producto': dominio}
 
 
 
