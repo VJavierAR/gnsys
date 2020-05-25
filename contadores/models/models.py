@@ -1176,8 +1176,7 @@ class contadores_lines(models.Model):
     destino=fields.Many2one('res.partner')
     contrato1=fields.Many2one('contrato')
     servicio1=fields.Many2one('servicios')
-    #servicioz=fields.Char(related='serie.servicio.name')
-    #contrato=fields.Char(related='servicioz.contrato.name',string='Contrato origen')
+
 
 
     @api.onchange('serie')
@@ -1186,7 +1185,7 @@ class contadores_lines(models.Model):
             if(len(self.serie.x_studio_move_line)>0):
                 m=self.serie.x_studio_move_line.sorted(key='id',reverse=True)
                 if(m[0].location_dest_id.x_studio_field_JoD2k):
-                    if(m.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z):
+                    if(m[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z):
                         self.origen=m[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
                     
     def cambio(self):
