@@ -23,6 +23,13 @@
           <header>
             <field name='estado' widget='statusbar'/>
           </header>
+
+          <group>
+            <group name='Sale order'>
+              <field name="saleOrder"/>
+            </group>
+          </group>
+
           <group>
             <group name='Equipo'>
               <field name="equipos"/>
