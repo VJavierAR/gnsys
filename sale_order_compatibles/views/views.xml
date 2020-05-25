@@ -17,7 +17,7 @@
 
     <record model="ir.ui.view" id="sale_order_compatibles.form">
       <field name="name">sale_order_compatibles.form</field>
-      <field name="model">sale_order_compatibles.sale_order_compatibles</field>
+      <field name="model">sale_order_compatibles</field>
       <field name="arch" type="xml">
         <form>
           <header>
