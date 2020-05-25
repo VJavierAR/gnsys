@@ -20,8 +20,17 @@ class sale_order_compatibles(models.Model):
 	#ccesorios = fields.Many2one('product.product', string = "Accesorios")
 	#compatibles = fields.Many2one('product.product', string = "Compatibles")
 	estado = fields.Selection(selection = [('1', '1'),('2', '2'),('3','3')], widget = "statusbar", default = '1')
-	componentes=fields.One2many('sale_order_compatibles_mini', 'saleOrderMini', string = 'Componentes')
+	componentes = fields.One2many('sale_order_compatibles_mini', 'saleOrderMini', string = 'Componentes')
 
+
+
+@api.onchange('equipos')
+def filtroComponentes(self):
+	dominio = {}
+
+	#dominio = 
+
+	#return res['domain'] = {'componentes':[('categ_id', '=', 5),('x_studio_toner_compatible.id','in',list)]}
 
 
 

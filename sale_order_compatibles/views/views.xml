@@ -38,7 +38,7 @@
 
           <group>
             <group name='Componenetes'>
-              <field name="componentes">
+              <field name="componentes" context = "{'default_idProducto': equipos.id}">
                 <tree editable="bottom">
               <field name="producto"/>
               <field name="cantidad"/>
