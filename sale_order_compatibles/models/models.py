@@ -14,23 +14,66 @@ class sale_order_compatibles(models.Model):
 	saleOrder = fields.Many2one('sale.order')
 	equipos = fields.Many2one('product.product', string = 'Equipos')
 	cantidad = fields.Integer(string = 'Cantidad')
-	#componentes = fields.One2many('product.product', 'sale_order_compatibles_componentes', string = "Componentes")
-	
-	#toner = fields.Many2one('product.product', string = "Toner")
-	#ccesorios = fields.Many2one('product.product', string = "Accesorios")
-	#compatibles = fields.Many2one('product.product', string = "Compatibles")
 	estado = fields.Selection(selection = [('1', '1'),('2', '2'),('3','3')], widget = "statusbar", default = '1')
 	componentes = fields.One2many('sale_order_compatibles_mini', 'saleOrderMini', string = 'Componentes')
+	toner = fields.One2many('sale_order_compatibles_mini_toner', 'saleOrderMini', string = 'Toner')
+	accesorios = fields.One2many('sale_order_compatibles_mini_acesorios', 'saleOrderMini', string = 'Accesorios')
+	domin=fields.Char()
 
-
+	@api.onchange('equipos')
+	def domi(self):
+		datos=self.equipos.x_studio_toner_compatible.mapped('id')
+		self.domin=str(datos)
 
 
 class miniModelo(models.Model):
 	_name = 'sale_order_compatibles_mini'
-	idProducto = fields.Integer(string = 'id Producto')
+	idProducto = fields.Char(string = 'id Producto')
 	producto = fields.Many2one('product.product')
 	cantidad = fields.Integer(string = 'Cantidad')
 	saleOrderMini=fields.Many2one('sale_order_compatibles')
+
+
+	@api.onchange('idProducto')
+	def domi(self):
+		res={}
+		da=self.env['product.product'].browse(eval(self.idProducto)).filtered(lambda x:x.categ_id.id==7).mapped('id')
+		res['domain']={'product':[['id','in',da]]}
+		return res
+
+
+
+
+class miniModeloToner(models.Model):
+	_name = 'sale_order_compatibles_mini_toner'
+	idProducto = fields.Char(string = 'id Producto')
+	producto = fields.Many2one('product.product')
+	cantidad = fields.Integer(string = 'Cantidad')
+	saleOrderMini=fields.Many2one('sale_order_compatibles')
+
+	@api.onchange('idProducto')
+	def domi(self):
+		res={}
+		da=self.env['product.product'].browse(eval(self.idProducto)).filtered(lambda x:x.categ_id.id==5).mapped('id')
+		res['domain']={'product':[['id','in',da]]}
+		return res
+
+
+class miniModeloAccesorio(models.Model):
+	_name = 'sale_order_compatibles_mini_acesorios'
+	idProducto = fields.Char(string = 'id Producto')
+	producto = fields.Many2one('product.product')
+	cantidad = fields.Integer(string = 'Cantidad')
+	saleOrderMini=fields.Many2one('sale_order_compatibles')
+
+	@api.onchange('idProducto')
+	def domi(self):
+		res={}
+		da=self.env['product.product'].browse(eval(self.idProducto)).filtered(lambda x:x.categ_id.id==11).mapped('id')
+		res['domain']={'product':[['id','in',da]]}
+		return res
+
+
 	
 	"""
 	@api.onchange('idProducto')
