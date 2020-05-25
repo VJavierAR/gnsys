@@ -212,23 +212,20 @@ class StockCambio(TransientModel):
 
     def otra(self):
         equipos=self.pro_ids.filtered(lambda x:x.producto1.categ_id.id==13)
-        otros=self.pro_ids.filtered(lambda x:x.producto1.categ_id.id!=13)
-        self.confirmar(otros)
+        self.confirmar()
+        self.confirmarE(equipos)
+        #self.confirmar()
         self.pick.action_confirm()
         self.pick.action_assign()
-        self.confirmarE(equipos)
-        
-        #self.confirmar(otros)
 
 
-
-    def confirmar(self,productos):
+    def confirmar(self):
         if(self.pick.sale_id):
             i=0
             self.pick.backorder=''
             dt=[]
             al=[]
-            for sa in productos:
+            for sa in self.pick.move_ids_without_package.filtered(lambda x:x.producto1.categ_id.id!=13):
                 d=list(filter(lambda x:x['producto1']['id']==sa.product_id.id,self.pro_ids))
                 if(d!=[]):
                     if(sa.product_id.id!=d[0]['producto2']['id']):
