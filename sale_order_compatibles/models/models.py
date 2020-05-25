@@ -32,7 +32,7 @@ class miniModelo(models.Model):
 	producto = fields.Many2one('product.product')
 	cantidad = fields.Integer(string = 'Cantidad')
 		
-
+	sale_order_compatibles = fields.One2many('sale_order_compatibles', 'miniModelo')
 
 
 
