@@ -37,26 +37,8 @@
           </group>
 
           <group>
-            <group name='Componentes'>
-              <field name="componentes" options="{'no_create_edit': True, 'no_create': True}"/>
-            </group>
-          </group>
-
-          <group>
-            <group name='Toner'>
-              <field name="toner" options="{'no_create_edit': True, 'no_create': True}"/>
-            </group>
-          </group>
-
-          <group>
-            <group name='Accesorios'>
-              <field name="accesorios" options="{'no_create_edit': True, 'no_create': True}"/>
-            </group>
-          </group>
-
-          <group>
             <group name='Compatibles'>
-              <field name="compatibles" options="{'no_create_edit': True, 'no_create': True}"/>
+              <field name="compatibles"/>
             </group>
           </group>
 
