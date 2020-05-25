@@ -942,7 +942,8 @@ class helpdesk_crearconserie(TransientModel):
         self.zonaLocalidad = self.localidadRelacion.x_studio_field_SqU5B
 
         loc = self.localidadRelacion.id
-        idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_subtipo', '=', 'Contacto de localidad']], order='create_date desc', limit=1)
+        #idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_subtipo', '=', 'Contacto de localidad']], order='create_date desc', limit=1)
+        idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_ultimo_contacto', '=', True]], order='create_date desc', limit=1)
         if idLoc:
             self.nombreContactoLocalidad = idLoc[0].name
             self.telefonoContactoLocalidad = idLoc[0].phone
@@ -1154,7 +1155,8 @@ class helpdesk_crearconserie(TransientModel):
                                     })
                     loc = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
                     
-                    idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_subtipo', '=', 'Contacto de localidad']], order='create_date desc', limit=1)
+                    #idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_subtipo', '=', 'Contacto de localidad']], order='create_date desc', limit=1)
+                    idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_ultimo_contacto', '=', True]], order='create_date desc', limit=1)
                     
                     if idLoc:
                         self.nombreContactoLocalidad = idLoc[0].name

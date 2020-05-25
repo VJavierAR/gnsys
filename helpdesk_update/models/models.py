@@ -50,7 +50,8 @@ class helpdesk_update(models.Model):
         if self.x_studio_empresas_relacionadas:
             _logger.info("Entre por toner: " + str(self.x_studio_empresas_relacionadas))
             loc = self.x_studio_empresas_relacionadas.id
-            idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_subtipo', '=', 'Contacto de localidad']], order='create_date desc', limit=1).id
+            #idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_subtipo', '=', 'Contacto de localidad']], order='create_date desc', limit=1).id
+            idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_ultimo_contacto', '=', True]], order='create_date desc', limit=1).id
             self.localidadContacto = idLoc
             self.x_studio_field_6furK = self.x_studio_empresas_relacionadas.x_studio_field_SqU5B
             _logger.info("Entre por toner idLoc: " + str(idLoc))
