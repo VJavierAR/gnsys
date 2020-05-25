@@ -109,9 +109,9 @@ class sale_update(models.Model):
 
 	@api.multi
 	def mail_action_quotation_send(self):
-        '''
-        This function opens a window to compose an email, with the edi sale template message loaded by default
-        '''
+		'''
+		This function opens a window to compose an email, with the edi sale template message loaded by default
+		'''
 		self.ensure_one()
 		ir_model_data = self.env['ir.model.data']
 		try:
