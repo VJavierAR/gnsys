@@ -22,7 +22,8 @@
     # any module necessary for this one to work correctly
     'depends': [
         'base',
-        'stock'    
+        'stock',
+        'sale'   
     ],
 
     # always loaded
