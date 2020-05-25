@@ -190,7 +190,7 @@ class PartnerXlsx(models.AbstractModel):
                     i=i+1
             else:
                 sheet.write(i, 0, obj.name, bold)
-                sheet.write(i, 1, obj.confirmation_date.strftime("%Y/%m/%d"), bold)
+                sheet.write(i, 1, obj.confirmation_date.strftime("%Y/%m/%d") if(obj.confirmation_date) else '', bold)
                 sheet.write(i, 2, obj.partner_id.name, bold)
                 sheet.write(i, 3, obj.x_studio_localidades, bold)
                 sheet.write(i, 4, obj.warehouse_id.name, bold)
