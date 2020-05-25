@@ -20,7 +20,7 @@ class sale_order_compatibles(models.Model):
 	#ccesorios = fields.Many2one('product.product', string = "Accesorios")
 	#compatibles = fields.Many2one('product.product', string = "Compatibles")
 	estado = fields.Selection(selection = [('1', '1'),('2', '2'),('3','3')], widget = "statusbar", default = '1')
-	componentes=fields.One2many('sale_order_compatibles_mini', 'saleOrderMini', string = 'nombre temp')
+	componentes=fields.One2many('sale_order_compatibles_mini', 'saleOrderMini', string = 'Componentes')
 
 
 
