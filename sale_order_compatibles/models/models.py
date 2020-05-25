@@ -38,7 +38,7 @@ class miniModelo(models.Model):
 	def domi(self):
 		res={}
 		da=self.env['product.product'].browse(eval(self.idProducto)).filtered(lambda x:x.categ_id.id==7).mapped('id')
-		res['domain']={'product':[['id','in',da]]}
+		res['domain']={'producto':[['id','in',da]]}
 		return res
 
 
@@ -55,7 +55,7 @@ class miniModeloToner(models.Model):
 	def domi(self):
 		res={}
 		da=self.env['product.product'].browse(eval(self.idProducto)).filtered(lambda x:x.categ_id.id==5).mapped('id')
-		res['domain']={'product':[['id','in',da]]}
+		res['domain']={'producto':[['id','in',da]]}
 		return res
 
 
@@ -70,7 +70,7 @@ class miniModeloAccesorio(models.Model):
 	def domi(self):
 		res={}
 		da=self.env['product.product'].browse(eval(self.idProducto)).filtered(lambda x:x.categ_id.id==11).mapped('id')
-		res['domain']={'product':[['id','in',da]]}
+		res['domain']={'producto':[['id','in',da]]}
 		return res
 
 
