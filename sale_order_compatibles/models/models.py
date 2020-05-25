@@ -12,7 +12,7 @@ _logger = logging.getLogger(__name__)
 class sale_order_compatibles(models.Model):
 	_name = 'sale_order_compatibles'
 	saleOrder = fields.Many2one('sale.order')
-	equipos = fields.Many2one('product.product', 'sale_order_compatibles_equipos', string = 'Equipos')
+	equipos = fields.Many2one('product.product', string = 'Equipos')
 	cantidad = fields.Integer(string = 'Cantidad')
 	#componentes = fields.One2many('product.product', 'sale_order_compatibles_componentes', string = "Componentes")
 	
