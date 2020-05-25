@@ -264,7 +264,11 @@
                                 <field name="serieOrigen" string="Serie" attrs="{'invisible':[['tipo','!=',3]],'readonly':[['categoria','!=',13]]}"/>
                                 <field name="color"  attrs="{'invisible':[['tipo','!=',3]],'readonly':[['categoria','!=',13]]}"/>
                                 <field name="contadorMono"  attrs="{'invisible':[['tipo','!=',3]],'readonly':[['categoria','!=',13]]}"/>
-                                <field name="contadorColor"  attrs="{'invisible':[['tipo','!=',3]],'readonly':[['categoria','!=',13]]}"/>                        
+                                <field name="contadorColor"  attrs="{'invisible':[['tipo','!=',3]],'readonly':[['categoria','!=',13]]}"/>
+                                <field name="nivelNegro" string="Nivel Negro" />
+                                <field name="nivelAmarillo" string="Nivel Amarillo" attrs="{'invisible':[['color','=','B/N']"/>
+                                <field name="nivelCian" string="Nivel Cian"  attrs="{'invisible':[['color','=','B/N']"/>
+                                <field name="Magenta" string="Nivel Magenta"  attrs="{'invisible':[['color','=','B/N']"/>                          
                                 </tree>
                             </field>
                         </page>
