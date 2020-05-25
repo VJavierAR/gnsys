@@ -26,37 +26,37 @@
 
           <group>
             <group name='Sale order'>
-              <field name="saleOrder"/>
+              <field name="saleOrder" options="{'no_create_edit': True, 'no_create': True}"/>
             </group>
           </group>
 
           <group>
             <group name='Equipo'>
-              <field name="equipos" domain='["categ_id.id", "=", 13]'/>
+              <field name="equipos" domain='["categ_id.id", "=", 13]' options="{'no_create_edit': True, 'no_create': True}"/>
             </group>
           </group>
 
           <group>
             <group name='Componentes'>
-              <field name="componentes"/>
+              <field name="componentes" options="{'no_create_edit': True, 'no_create': True}"/>
             </group>
           </group>
 
           <group>
             <group name='Toner'>
-              <field name="toner"/>
+              <field name="toner" options="{'no_create_edit': True, 'no_create': True}"/>
             </group>
           </group>
 
           <group>
             <group name='Accesorios'>
-              <field name="accesorios"/>
+              <field name="accesorios" options="{'no_create_edit': True, 'no_create': True}"/>
             </group>
           </group>
 
           <group>
             <group name='Compatibles'>
-              <field name="compatibles"/>
+              <field name="compatibles" options="{'no_create_edit': True, 'no_create': True}"/>
             </group>
           </group>
 
@@ -81,12 +81,14 @@
           </group>
 
           <group>
-            <group name='Equipo'>
-              <field name="producto" domain='["categ_id.id", "=", 13]'/>
-              <field name="cantidad" domain='["categ_id.id", "=", 13]'/>
+            <group name='Producto y cantidad'>
+              <field name="producto" domain='["categ_id.id", "=", 13]' options="{'no_create_edit': True, 'no_create': True}"/>
+              
+            </group>
+            <group>
+              <field name="cantidad" />
             </group>
           </group>
-
 
         </form>
       </field>
@@ -101,7 +103,7 @@
           
           <field name="idProducto"/>
           <field name="producto" domain='["categ_id.id", "=", 13]'/>
-          <field name="cantidad" domain='["categ_id.id", "=", 13]'/>
+          <field name="cantidad" />
 
         </tree>
       </field>

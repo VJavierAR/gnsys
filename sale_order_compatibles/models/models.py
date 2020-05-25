@@ -22,6 +22,7 @@ class sale_order_compatibles(models.Model):
 	estado = fields.Selection(selection = [('1', '1'),('2', '2'),('3','3')], widget = "statusbar", default = '1')
 
 
+	miniModelo = fields.Many2one('sale_order_compatibles_mini', string = 'Mini modelo')
 
 
 
@@ -32,6 +33,8 @@ class miniModelo(models.Model):
 
 	producto = fields.One2many('product.product', 'sale_order_compatibles_mini_producto', string = 'Equipos')
 	cantidad = fields.Integer(string = 'Cantidad')
+
+	sale_order_compatibles = fields.One2many('sale_order_compatibles', 'miniModelo')
 		
 
 
