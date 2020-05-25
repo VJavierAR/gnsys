@@ -1170,15 +1170,14 @@ class lor(models.Model):
 class contadores_lines(models.Model):
     _name="cambios.localidad"
     _description = "Cambios de Localidad"
-    servicioz=fields.Char(related='serie.servicio.name',string='Servicio origen')
-    contrato=fields.Char(related='serie.servicio.contrato.name',string='Contrato origen')
     estado=fields.Selection(selection=[('1','Por Confirma'),('2','Confirmado')])
     serie=fields.Many2one('stock.production.lot')
     origen=fields.Many2one('res.partner')
     destino=fields.Many2one('res.partner')
     contrato1=fields.Many2one('contrato')
     servicio1=fields.Many2one('servicios')
-    
+    servi=fields.Char(related='serie.servicio.name',string='Servicio origen')
+    contrato=fields.Char(related='serie.servicio.contrato.name',string='Contrato origen')
 
 
     @api.onchange('serie')
