@@ -231,31 +231,33 @@ class helpdesk_update(models.Model):
     correoLocalidadContacto = fields.Text(string = 'Correo de localidad', compute = '_compute_correoLocalidad')
     direccionLocalidadText = fields.Text(string = 'Dirección localidad', compute = '_compute_direccionLocalidad')
 
-    @api.one
+    #@api.one
+    @api.multi
     @api.depends('x_studio_empresas_relacionadas')
     def _compute_direccionLocalidad(self):
-        _logger.info("test: " + str(self.x_studio_empresas_relacionadas.id))
-        #localidadData = self.env['res.partner'].search([['id', '=', self.x_studio_empresas_relacionadas.id]])
-        #_logger.info("test: " + str(localidadData))
-        if self.x_studio_empresas_relacionadas:
-            self.direccionLocalidadText = """
-                                            <address>
-                                                Calle: """ + str(self.x_studio_empresas_relacionadas.street_name) + """
-                                                </br>
-                                                Número exterior: """ + str(self.x_studio_empresas_relacionadas.street_number) + """
-                                                </br>
-                                                Número interior: """ + str(self.x_studio_empresas_relacionadas.street_number2) + """
-                                                </br>
-                                                Colonia: """ + str(self.x_studio_empresas_relacionadas.l10n_mx_edi_colony) + """
-                                                </br>
-                                                Alcaldía: """ + str(self.x_studio_empresas_relacionadas.city) + """
-                                                </br>
-                                                Estado: """ + str(self.x_studio_empresas_relacionadas.state_id.name) + """
-                                                </br>
-                                                Código postal: """ + str(self.x_studio_empresas_relacionadas.zip) + """
-                                                </br>
-                                            </address>
-                                        """
+        for record in self:
+            _logger.info("test: " + str(record.x_studio_empresas_relacionadas.id))
+            #localidadData = self.env['res.partner'].search([['id', '=', self.x_studio_empresas_relacionadas.id]])
+            #_logger.info("test: " + str(localidadData))
+            if record.x_studio_empresas_relacionadas:
+                record.direccionLocalidadText = """
+                                                <address>
+                                                    Calle: """ + str(record.x_studio_empresas_relacionadas.street_name) + """
+                                                    </br>
+                                                    Número exterior: """ + str(record.x_studio_empresas_relacionadas.street_number) + """
+                                                    </br>
+                                                    Número interior: """ + str(record.x_studio_empresas_relacionadas.street_number2) + """
+                                                    </br>
+                                                    Colonia: """ + str(record.x_studio_empresas_relacionadas.l10n_mx_edi_colony) + """
+                                                    </br>
+                                                    Alcaldía: """ + str(record.x_studio_empresas_relacionadas.city) + """
+                                                    </br>
+                                                    Estado: """ + str(record.x_studio_empresas_relacionadas.state_id.name) + """
+                                                    </br>
+                                                    Código postal: """ + str(record.x_studio_empresas_relacionadas.zip) + """
+                                                    </br>
+                                                </address>
+                                            """
 
     @api.one
     @api.depends('localidadContacto')
