@@ -70,12 +70,12 @@ class tfs(models.Model):
     nivelMagenta=fields.Float('Nivel Magenta')
     nivelCian=fields.Float('Nivel Cian')
     calle=fields.Char(related='localidad.street')
-    NumeroInt=fields.Char(related='localidad.treet_number')
+    NumeroInt=fields.Char(related='localidad.street_number')
     NumeroOut=fields.Char(related='localidad.street_number2')
     cp=fields.Char(related='localidad.zip')
     delegacion=fields.Char(related='localidad.city')
     estadoCi=fields.Char(related='localidad.state_id.name')
-    
+
     @api.multi
     def confirm(self):
         for record in self:
