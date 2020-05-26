@@ -284,8 +284,8 @@
                                 </tree>
                             </field>
                         </page>
-                        <page string="AC}">
-                            <field name="accesorios_ids" string="Toner">
+                        <page string="Accesorios">
+                            <field name="accesorios_ids" string="Accesorios">
                                 <tree editable="bottom">
                                 <field name="producto1" readonly="1" string="Registro Original"/>
                                 <field name="tipo" invisible="1"/>
