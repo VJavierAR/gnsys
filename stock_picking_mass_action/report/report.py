@@ -250,8 +250,8 @@ class PartnerXlsx(models.AbstractModel):
                         p.append(obj.x_studio_equipo_por_nmero_de_serie_1.x_studio_cartucho_cian_1.name)
                     if(obj.x_studio_equipo_por_nmero_de_serie_1.x_studio_cartucho_magenta):
                         p.append(obj.x_studio_equipo_por_nmero_de_serie_1.x_studio_cartucho_magenta.name)
-                sheet.write(i, 8, str(obj.x_studio_productos.mapped('name')) if(len(obj.x_studio_equipo_por_nmero_de_serie)==1) else str(p), bold)
-                sheet.write(i, 9, "Soporte x Monitoreo" if(obj.team_id.id!=67) else "Suministro", bold)
+                sheet.write(i, 8, str(obj.x_studio_productos.mapped('name')).replace('\'[','').replace(']\'') if(len(obj.x_studio_equipo_por_nmero_de_serie)==1) else str(p), bold)
+                sheet.write(i, 9, obj.team_id.name if(obj.team_id.id) else "", bold)
                 sheet.write(i, 10,obj.x_studio_empresas_relacionadas.state_id.name if(obj.x_studio_empresas_relacionadas.state_id) else '' , bold)
                 sheet.write(i, 11, obj.description if(obj.description) else '', bold)
                 sheet.write(i, 12, obj.stage_id.name if(obj.stage_id.id) else '', bold)
@@ -288,8 +288,8 @@ class PartnerXlsx(models.AbstractModel):
                             p.append(s.x_studio_cartucho_cian_1.name)
                         if(s.x_studio_cartucho_magenta):
                             p.append(s.x_studio_cartucho_magenta.name)
-                    sheet.write(i, 8, str(p) if(a) else str(obj.x_studio_productos.mapped('name')), bold)
-                    sheet.write(i, 9, "Soporte x Monitoreo" if(obj.team_id.id!=67) else "Suministro", bold)
+                    sheet.write(i, 8, str(p) if(a) else str(obj.x_studio_productos.mapped('name')).replace('\'[','').replace(']\''), bold)
+                    sheet.write(i, 9, obj.team_id.name if(obj.team_id.id) else "", bold)
                     sheet.write(i, 10,obj.x_studio_empresas_relacionadas.state_id.name if(obj.x_studio_empresas_relacionadas.state_id) else '' , bold)
                     sheet.write(i, 11, obj.description if(obj.description) else '', bold)
                     sheet.write(i, 12, obj.stage_id.name if(obj.stage_id.id) else '', bold)
