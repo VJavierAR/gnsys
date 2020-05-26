@@ -332,7 +332,6 @@ class StockCambioLine(TransientModel):
         ubicacion=0
         if(self.producto1.categ_id.id==13):
             series=[]
-
             ubicacion=self.move_id.location_id.id
             if(self.almacen):
                 ubicacion=self.almacen.lot_stock_id.id

@@ -1177,6 +1177,7 @@ class contadores_lines(models.Model):
     contrato1=fields.Many2one('contrato')
     servicio1=fields.Many2one('servicios')
     tipo=fields.Selection(selection=[('1','Ubicacion'),('2','servicios'),('3','Ambos')])
+    nota=fields.Char()
 
 
     @api.onchange('serie')
