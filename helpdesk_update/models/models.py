@@ -231,17 +231,18 @@ class helpdesk_update(models.Model):
     correoLocalidadContacto = fields.Text(string = 'Correo de localidad', compute = '_compute_correoLocalidad')
     direccionLocalidadText = fields.Text(string = 'Dirección localidad', compute = '_compute_direccionLocalidad')
 
-    #@api.one
+    @api.one
     @api.depends('x_studio_empresas_relacionadas')
     def _compute_direccionLocalidad(self):
+        localidadData = self.env['res.partner'].search([['id', '=', self.x_studio_empresas_relacionadas.id]])
         if self.x_studio_empresas_relacionadas:
             self.direccionLocalidadText = """
                                             <address>
                                                 Calle: """ + str(self.x_studio_empresas_relacionadas.street_name) + """
                                                 </br>
-                                                Número exterior: """ + str(self.x_studio_empresas_relacionadas.street_number) + """
+                                                Número exterior: """ + str(localidadData.x_studio_empresas_relacionadas.street_number) + """
                                                 </br>
-                                                Número interior: """ + str(self.x_studio_empresas_relacionadas.street_number2) + """
+                                                Número interior: """ + str(localidadData.x_studio_empresas_relacionadas.street_number2) + """
                                                 </br>
                                                 Colonia: """ + str(self.x_studio_empresas_relacionadas.l10n_mx_edi_colony) + """
                                                 </br>
