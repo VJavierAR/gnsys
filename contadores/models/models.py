@@ -1198,6 +1198,8 @@ class contadores_lines(models.Model):
                                                 ,'date':datetime.datetime.now(),'location_dest_id':destino2.lot_stock_id.id})
             self.serie.x_studio_cambio = not self.serie.x_studio_cambio
             self.estado='2'
+            self.serie.x_studio_ubicacion_id=destino2.lot_stock_id.id
+
 
             
             
