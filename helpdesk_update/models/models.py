@@ -235,16 +235,16 @@ class helpdesk_update(models.Model):
     @api.depends('x_studio_empresas_relacionadas')
     def _compute_direccionLocalidad(self):
         _logger.info("test: " + str(self.x_studio_empresas_relacionadas.id))
-        localidadData = self.env['res.partner'].search([['id', '=', self.x_studio_empresas_relacionadas.id]])
-        _logger.info("test: " + str(localidadData))
+        #localidadData = self.env['res.partner'].search([['id', '=', self.x_studio_empresas_relacionadas.id]])
+        #_logger.info("test: " + str(localidadData))
         if self.x_studio_empresas_relacionadas:
             self.direccionLocalidadText = """
                                             <address>
                                                 Calle: """ + str(self.x_studio_empresas_relacionadas.street_name) + """
                                                 </br>
-                                                Número exterior: """ + str(localidadData.x_studio_empresas_relacionadas.street_number) + """
+                                                Número exterior: """ + str(self.x_studio_empresas_relacionadas.street_number) + """
                                                 </br>
-                                                Número interior: """ + str(localidadData.x_studio_empresas_relacionadas.street_number2) + """
+                                                Número interior: """ + str(self.x_studio_empresas_relacionadas.street_number2) + """
                                                 </br>
                                                 Colonia: """ + str(self.x_studio_empresas_relacionadas.l10n_mx_edi_colony) + """
                                                 </br>
