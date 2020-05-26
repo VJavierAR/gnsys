@@ -231,7 +231,7 @@ class helpdesk_update(models.Model):
     correoLocalidadContacto = fields.Text(string = 'Correo de localidad', compute = '_compute_correoLocalidad')
     direccionLocalidadText = fields.Text(string = 'Dirección localidad', compute = '_compute_direccionLocalidad')
 
-    @api.one
+    #@api.one
     @api.depends('x_studio_empresas_relacionadas')
     def _compute_direccionLocalidad(self):
         if self.x_studio_empresas_relacionadas:
