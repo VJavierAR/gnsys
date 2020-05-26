@@ -326,6 +326,8 @@ class PartnerXlsx(models.AbstractModel):
     _inherit = 'report.report_xlsx.abstract'
 
     def generate_xlsx_report(self, workbook, data, lots):
+        i=2
+        d=[]
         merge_format = workbook.add_format({'bold': 1,'border': 1,'align': 'center','valign': 'vcenter','fg_color': 'blue'})
         report_name = 'Base Instalada'
         bold = workbook.add_format({'bold': True})
