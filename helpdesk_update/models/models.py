@@ -234,7 +234,9 @@ class helpdesk_update(models.Model):
     @api.one
     @api.depends('x_studio_empresas_relacionadas')
     def _compute_direccionLocalidad(self):
+        _logger.info("test: " + str(self.x_studio_empresas_relacionadas.id))
         localidadData = self.env['res.partner'].search([['id', '=', self.x_studio_empresas_relacionadas.id]])
+        _logger.info("test: " + str(localidadData))
         if self.x_studio_empresas_relacionadas:
             self.direccionLocalidadText = """
                                             <address>
