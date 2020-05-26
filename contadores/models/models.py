@@ -1176,7 +1176,7 @@ class contadores_lines(models.Model):
     destino=fields.Many2one('res.partner')
     contrato1=fields.Many2one('contrato')
     servicio1=fields.Many2one('servicios')
-
+    tipo=fields.Selection(selection=[('1','Ubicacion'),('2','servicios'),('3','Ambos')])
 
 
     @api.onchange('serie')
@@ -1189,7 +1189,9 @@ class contadores_lines(models.Model):
                         self.origen=m[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
                     
     def cambio(self):
-        if(self.destino):
+        if(self.servicio1 and (self.tipo=='2' or self.tipo=='3')):
+            self.serie.servicio=self.servicio1.id
+        if(self.destino and (self.tipo=='1' or self.tipo=='3')):
             origen2=self.env['stock.warehouse'].search([('x_studio_field_E0H1Z','=',self.origen.id)])
             destino2=self.env['stock.warehouse'].search([('x_studio_field_E0H1Z','=',self.destino.id)])
             self.env['stock.move.line'].create({'product_id':self.serie.product_id.id, 'product_uom_id':1,'location_id':origen2.lot_stock_id.id,'product_uom_qty':1,'lot_id':self.serie.id
