@@ -69,6 +69,12 @@ class tfs(models.Model):
     nivelAmarillo=fields.Float('Nivel Amarillo')
     nivelMagenta=fields.Float('Nivel Magenta')
     nivelCian=fields.Float('Nivel Cian')
+    calle=fields.Char(related='localidad.street')
+    NumeroInt=fields.Char(related='localidad.street_number')
+    NumeroOut=fields.Char(related='localidad.street_number2')
+    cp=fields.Char(related='localidad.zip')
+    delegacion=fields.Char(related='localidad.city')
+    estadoCi=fields.Char(related='localidad.state_id.name')
 
     @api.multi
     def confirm(self):
@@ -372,7 +378,7 @@ class tfs(models.Model):
                     record['cliente'] = cliente
                     record['localidad'] = localidad
                     lo=moveli[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z
-                    record['direccion']="<table><tr><td>Calle</td><td>"+str(lo.street)+"</td></tr><tr><td>No.Exterior</td><td>"+str(lo.street)+"</td></tr><tr><td>No. Interior</td><td>"+str(lo.street_number)+"</td></tr><tr><td>Cp</td><td>"+str(lo.zip)+"</td></tr><tr><td>Estado</td><td>"+str(lo.state_id.name)+"</td></tr><tr><td>Delegación</td><td>"+str(lo.city)+"</td></tr></table>"
+                    record['direccion']="<table><tr><td>Calle</td><td>"+str(lo.street)+"</td></tr><tr><td>No.Exterior</td><td>"+str(lo.street_number2)+"</td></tr><tr><td>No. Interior</td><td>"+str(lo.street_number)+"</td></tr><tr><td>Cp</td><td>"+str(lo.zip)+"</td></tr><tr><td>Estado</td><td>"+str(lo.state_id.name)+"</td></tr><tr><td>Delegación</td><td>"+str(lo.city)+"</td></tr></table>"
                     #_logger.info(str(localidad.name))
                     record['almacen'] =self.env['stock.warehouse'].search([['x_studio_field_E0H1Z','=',localidad]]).lot_stock_id.x_studio_almacn_padre.id
                 if(record.colorBN=="B/N"):

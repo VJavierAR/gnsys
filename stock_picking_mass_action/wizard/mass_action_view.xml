@@ -249,7 +249,7 @@
                 <group>
                     <notebook >
                     <field name="tonerUorden" invisible="1"/>
-                        <page attrs="{'invisible':[['tonerUorden','=',False]]}">
+                        <page string="Equipos" attrs="{'invisible':[['tonerUorden','=',False]]}">
                             <field name="pro_ids" string="Lineas">
                                 <tree editable="bottom">
                                 <field name="producto1" readonly="1" string="Registro Original"/>
@@ -269,6 +269,29 @@
                                 <field name="nivelAmarillo" string="Nivel Amarillo" attrs="{'invisible':[['color','=','B/N']]}"/>
                                 <field name="nivelCian" string="Nivel Cian"  attrs="{'invisible':[['color','=','B/N']]}"/>
                                 <field name="nivelMagenta" string="Nivel Magenta"  attrs="{'invisible':[['color','=','B/N']]}"/>                          
+                                </tree>
+
+                            </field>
+                        </page>
+                        <page string="Toner">                    
+                            <field name="toner_ids" string="Toner">
+                                <tree editable="bottom">
+                                <field name="producto1" readonly="1" string="Registro Original"/>
+                                <field name="tipo" invisible="1"/>
+                                <field name="producto2" string="Registro a Cambiar"  attrs="{'invisible':[['tipo','!=',3]]}"/>
+                                <field name="almacen" domain="[['x_studio_cliente','=',False]]"/>
+                                <field name="existeciaAlmacen" readonly="1"/>                        
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="AC}">
+                            <field name="accesorios_ids" string="Toner">
+                                <tree editable="bottom">
+                                <field name="producto1" readonly="1" string="Registro Original"/>
+                                <field name="tipo" invisible="1"/>
+                                <field name="producto2" string="Registro a Cambiar"  attrs="{'invisible':[['tipo','!=',3]]}"/>
+                                <field name="almacen" domain="[['x_studio_cliente','=',False]]"/>
+                                <field name="existeciaAlmacen" readonly="1"/>
                                 </tree>
                             </field>
                         </page>
