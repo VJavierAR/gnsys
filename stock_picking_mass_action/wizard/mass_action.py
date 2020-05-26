@@ -208,6 +208,9 @@ class StockCambio(TransientModel):
     pick=fields.Many2one('stock.picking')
     pro_ids = fields.One2many('cambio.toner.line','rel_cambio')
     tonerUorden=fields.Boolean()
+    toner_ids = fields.One2many('cambio.toner.line.toner','rel_cambio')
+    accesorios_ids = fields.One2many('cambio.toner.line.accesorios','rel_cambio')
+
 
 
     def otra(self):
@@ -345,6 +348,49 @@ class StockCambioLine(TransientModel):
                     series=self.env['stock.production.lot'].search([['x_studio_estado','=',self.estado],['product_id','=',self.producto1.id]])
             res['domain']={'serieOrigen':[['id','in',series.mapped('id')]]}
         return res
+
+class StockCambioLine(TransientModel):
+    _name = 'cambio.toner.line.toner'
+    _description = 'Lineas cambio toner'
+    producto1=fields.Many2one('product.product')
+    producto2=fields.Many2one('product.product')
+    cantidad=fields.Float()
+    rel_cambio=fields.Many2one('cambio.toner')
+    serie=fields.Many2one('stock.production.lot')
+    almacen=fields.Many2one('stock.warehouse',string='Almacen')
+    existencia1=fields.Integer(compute='nuevo',string='Existencia Nuevo')
+    existencia2=fields.Integer(compute='nuevo',string='Existencia Usado')
+    existeciaAlmacen=fields.Integer(compute='almac',string='Existencia de Almacen seleccionado')
+    tipo=fields.Integer()
+
+    @api.depends('almacen')
+    def almac(self):
+        for record in self:
+            if(record.almacen):
+                ex=self.env['stock.quant'].search([['location_id','=',record.almacen.lot_stock_id.id],['product_id','=',record.producto1.id]]).sorted(key='quantity',reverse=True)
+                record.existeciaAlmacen=int(ex[0].quantity) if(len(ex)>0) else 0
+
+class StockCambioLine(TransientModel):
+    _name = 'cambio.toner.line.accesorios'
+    _description = 'Lineas cambio toner'
+    producto1=fields.Many2one('product.product')
+    producto2=fields.Many2one('product.product')
+    cantidad=fields.Float()
+    rel_cambio=fields.Many2one('cambio.toner')
+    serie=fields.Many2one('stock.production.lot')
+    almacen=fields.Many2one('stock.warehouse',string='Almacen')
+    existencia1=fields.Integer(compute='nuevo',string='Existencia Nuevo')
+    existencia2=fields.Integer(compute='nuevo',string='Existencia Usado')
+    existeciaAlmacen=fields.Integer(compute='almac',string='Existencia de Almacen seleccionado')
+    tipo=fields.Integer()
+
+    @api.depends('almacen')
+    def almac(self):
+        for record in self:
+            if(record.almacen):
+                ex=self.env['stock.quant'].search([['location_id','=',record.almacen.lot_stock_id.id],['product_id','=',record.producto1.id]]).sorted(key='quantity',reverse=True)
+                record.existeciaAlmacen=int(ex[0].quantity) if(len(ex)>0) else 0
+
 
 class GuiaTicket(TransientModel):
     _name = 'guia.ticket'
