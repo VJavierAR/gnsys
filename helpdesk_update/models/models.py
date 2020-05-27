@@ -1784,7 +1784,9 @@ class helpdesk_update(models.Model):
             if record.stage_id.id == 91 and record.x_studio_field_nO7Xg:
                 _logger.info("record.stage_id.id = " + str(record.stage_id.id))
                 _logger.info("record.x_studio_field_nO7Xg = " + str(record.x_studio_field_nO7Xg))
-                self.stage_id.id = 93
+                #self.stage_id.id = 93
+                query = "update helpdesk_ticket set stage_id = 93 where id = " + str(self.x_studio_id_ticket) + ";"
+                ss = self.env.cr.execute(query)
                 break
             if record.team_id.id == 8 or record.team_id.id == 13:
                 x = 1 ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
