@@ -167,7 +167,7 @@ class PartnerXlsx(models.AbstractModel):
             equ=obj.order_line.filtered(lambda x:x.product_id.categ_id.id==13)
             if(len(equ)>1):
                 for eq in equ:
-                    sheet.write(i, 0, obj.name, bold)
+                    sheet.write(i, 0, obj.name.replace('SO',''), bold)
                     sheet.write(i, 1, obj.confirmation_date.strftime("%Y/%m/%d"), bold)
                     sheet.write(i, 2, obj.partner_id.name, bold)
                     sheet.write(i, 3, obj.x_studio_localidades, bold)
@@ -189,7 +189,7 @@ class PartnerXlsx(models.AbstractModel):
                     sheet.write(i, 16, str(obj.note) if(obj.note) else '', bold)
                     i=i+1
             else:
-                sheet.write(i, 0, obj.name, bold)
+                sheet.write(i, 0, obj.name.replace('SO',''), bold)
                 sheet.write(i, 1, obj.confirmation_date.strftime("%Y/%m/%d") if(obj.confirmation_date) else '', bold)
                 sheet.write(i, 2, obj.partner_id.name, bold)
                 sheet.write(i, 3, obj.x_studio_localidades, bold)
