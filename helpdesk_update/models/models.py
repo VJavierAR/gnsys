@@ -2044,7 +2044,7 @@ class helpdesk_update(models.Model):
                                         , """ + x + """
                                         , """ + 1 + """
                                         , """ + self.x_studio_comentarios_de_localidad + """
-                                        , """ + id_ticket + """);
+                                        , """ + str(id_ticket) + """);
                             """
                 else:
                     query = """insert into sale_order 
@@ -2060,7 +2060,7 @@ class helpdesk_update(models.Model):
                                         , """ + x + """
                                         , """ + 1 + """
                                         , """ + self.x_studio_comentarios_de_localidad + """
-                                        , """ + id_ticket + """
+                                        , """ + str(id_ticket) + """
                                         , """ + str(dict(self._fields['x_studio_corte']._description_selection(self.env)).get(self.x_studio_corte)) + """);
                             """
                 datoSale = self.env.cr.execute(query)
