@@ -702,7 +702,7 @@ class StockQuantMassAction(TransientModel):
                 d.append(['x_studio_almacn.x_studio_cliente','=',False])
                 if(self.almacen):
                     d.append(['x_studio_almacn','in',self.almacen.mapped('id')])
-                if(self.almacen.id==False):
+                if(len(self.almacen)==0):
                     d.append(['x_studio_almacn','!=',False])
         if(self.tipo):
             d.append(['product_id','=',self.tipo.id])
