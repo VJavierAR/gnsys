@@ -2025,7 +2025,7 @@ class helpdesk_update(models.Model):
                                                 ,'x_studio_corte':self.x_studio_corte     
                                               })
                 """
-                _logger.info("aaaa: " + str(dict(self._fields['x_studio_corte']._description_selection(self.env)).get(self.x_studio_corte)))
+                _logger.info("aaaa: " + str(self.x_studio_corte))
                 corte = str(dict(self._fields['x_studio_corte']._description_selection(self.env)).get(self.x_studio_corte))
                 if corte == None:
                     query = """insert into sale_order 
