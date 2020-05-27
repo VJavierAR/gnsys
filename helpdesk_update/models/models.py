@@ -2044,7 +2044,7 @@ class helpdesk_update(models.Model):
                                         , """ + str(x) + """
                                         , """ + str(1) + """
                                         , """ + str(self.x_studio_comentarios_de_localidad) + """
-                                        , '""" + str(id_ticket) + """');
+                                        , """ + str(id_ticket) + """);
                             """
                 else:
                     query = """insert into sale_order 
