@@ -177,9 +177,9 @@ class PartnerXlsx(models.AbstractModel):
                     #m=self.env['stock.move.line'].search([['picking_id.sale_id','=',obj.id],['lot_id','=',eq.x_studio_field_9nQhR.id]]).lot_id.name
                     sheet.write(i, 7, str(eq.x_studio_field_9nQhR.name) if(eq.x_studio_field_9nQhR.name) else '', bold)
                     a=obj.order_line.filtered(lambda x:x.product_id.categ_id.id==11).mapped('product_id.name')
-                    sheet.write(i, 8, str(a) if(a!=[]) else '', bold)
+                    sheet.write(i, 8, str(a).replace('[','').replace(']','').replace('\'','') if(a!=[]) else '', bold)
                     b=obj.order_line.filtered(lambda x:x.product_id.categ_id.id==5).mapped('product_id.name')
-                    sheet.write(i, 9, str(b) if(b!=[]) else '', bold)
+                    sheet.write(i, 9, str(b).replace('[','').replace(']','').replace('\'','') if(b!=[]) else '', bold)
                     sheet.write(i, 10, len(obj.order_line.filtered(lambda x:x.product_id.categ_id.id==13).mapped('product_id.name')), bold)
                     sheet.write(i, 11, len(obj.order_line.filtered(lambda x:x.product_id.categ_id.id!=13).mapped('product_id.name')), bold)
                     sheet.write(i, 12, obj.x_studio_tipo_de_solicitud if(obj.x_studio_tipo_de_solicitud) else '', bold)
@@ -199,9 +199,9 @@ class PartnerXlsx(models.AbstractModel):
                 #m=self.env['stock.move.line'].search([['picking_id.sale_id','=',obj.id],['lot_id','=',equ.x_studio_field_9nQhR.id]]).lot_id.name
                 sheet.write(i, 7, str(equ.x_studio_field_9nQhR.name) if(equ.x_studio_field_9nQhR.id) else '', bold)
                 a=obj.order_line.filtered(lambda x:x.product_id.categ_id.id==11).mapped('product_id.name')
-                sheet.write(i, 8, str(a) if(a!=[]) else '', bold)
+                sheet.write(i, 8, str(a).replace('[','').replace(']','').replace('\'','') if(a!=[]) else '', bold)
                 b=obj.order_line.filtered(lambda x:x.product_id.categ_id.id==5).mapped('product_id.name')
-                sheet.write(i, 9, str(b) if(b!=[]) else '', bold)
+                sheet.write(i, 9, str(b).replace('[','').replace(']','').replace('\'','') if(b!=[]) else '', bold)
                 sheet.write(i, 10, len(obj.order_line.filtered(lambda x:x.product_id.categ_id.id==13).mapped('product_id.name')), bold)
                 sheet.write(i, 11, len(obj.order_line.filtered(lambda x:x.product_id.categ_id.id!=13).mapped('product_id.name')), bold)
                 sheet.write(i, 12, obj.x_studio_tipo_de_solicitud if(obj.x_studio_tipo_de_solicitud) else '', bold)
