@@ -2049,7 +2049,7 @@ class helpdesk_update(models.Model):
                 record['x_studio_field_nO7Xg'] = informaciont[0][0]
                 
                 
-                record['x_studio_field_nO7Xg'] = sale.id
+                #record['x_studio_field_nO7Xg'] = sale.id
                 serieaca = ''
                 
                 for c in record.x_studio_equipo_por_nmero_de_serie_1:
