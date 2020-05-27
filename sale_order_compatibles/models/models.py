@@ -120,3 +120,20 @@ class sale_update(models.Model):
 			'target': 'new',
 			'context': ctx,
 		}
+
+	def preparaSolicitud(self):
+		data=[]
+		if(len(self.compatiblesLineas)>0):
+			for e in compatiblesLineas:
+				d={'product_id':e.equipos.id,'name':e.equipos.name,'product_uom_qty':1,'product_uom':e.equipos.uom_id.id}
+				data.append(d)
+				for e1 in e.componentes:
+					d={'product_id':e1.producto.id,'name':e1.producto.name,'product_uom_qty':e1.cantidad,'product_uom':e1.uom_id.id}
+					data.append(d)
+				for e2 in e.toner:
+					d={'product_id':e2.producto.id,'name':e2.producto.name,'product_uom_qty':e2.cantidad,'product_uom':e2.uom_id.id}
+					data.append(d)
+				for e3 in e.accesorios:
+					d={'product_id':e3.producto.id,'name':e3.producto.name,'product_uom_qty':e3.cantidad,'product_uom':e3.uom_id.id}
+					data.append(d)
+			self.order_line=data
