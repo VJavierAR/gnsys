@@ -5,7 +5,7 @@
 	        	<button t-if="widget.modelName == 'stock.picking'" class="btn btn-primary oe_action_button" type="button" accesskey="f">Transferencia Interna</button>
 	        	<button t-if="widget.modelName == 'stock.move.line'" class="btn btn-primary oe_action_button_move_line" name="1384" type="action" accesskey="g">Reporte de Movimientos</button>
 	        	<button t-if="widget.modelName == 'stock.quant'" class="btn btn-primary oe_action_button_stock_quant" type="button" accesskey="f">Reporte de Existencias</button>
-	        	<button t-if="widget.modelName == 'stock.quant'" class="btn btn-primary oe_action_button_sale_report" type="button" accesskey="f">Reporte de Solicitudes</button>
+	        	<button t-if="widget.modelName == 'sale.order'" class="btn btn-primary oe_action_button_sale_report" type="button" accesskey="f">Reporte de Solicitudes</button>
 	        	<button t-if="widget.modelName == 'helpdesk.ticket'" class="btn btn-primary oe_action_button_ticket_report" type="button" accesskey="f">Reporte de Tickets</button>
 	        	<button t-if="widget.modelName == 'stock.inventory'" class="btn btn-primary oe_action_button_stock_inventory" type="button" accesskey="f">Importar Inventario</button>
 	        	<button t-if="widget.modelName == 'product.product'" class="btn btn-primary oe_action_button_product_product" type="button" accesskey="f">Alta de Referencias</button>	        	

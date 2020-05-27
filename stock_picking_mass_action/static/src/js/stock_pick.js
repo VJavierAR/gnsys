@@ -27,7 +27,10 @@ odoo.define('invoice.action_button', function (require) {
                       case 646:
                         this.$buttons.find('.o_button_import').hide();
                         this.$buttons.find('.oe_action_button_stock_inventory').click(this.proxy('action_inter6'));
-                        break; 
+                        break;
+                      case 2966:
+                        this.$buttons.find('.oe_action_button_sale_report').click(this.proxy('action_inter4')); 
+                        break;
                       default:
                         this.$buttons.find('.oe_action_button_ticket_report').hide();
                         this.$buttons.find('.o_button_import').hide();
@@ -35,7 +38,7 @@ odoo.define('invoice.action_button', function (require) {
                         this.$buttons.find('.oe_action_button_move_line').click(this.proxy('action_inter1'));
                         this.$buttons.find('.oe_action_button_product_product').click(this.proxy('action_inter7'));
                         this.$buttons.find('.oe_action_button_stock_quant').click(this.proxy('action_inter3'));
-                        this.$buttons.find('.oe_action_button_sale_report').click(this.proxy('action_inter4'));
+                        
                     }
                 }
                 
