@@ -2043,7 +2043,7 @@ class helpdesk_update(models.Model):
                                         , """ + str(self.x_studio_empresas_relacionadas.id) + """
                                         , """ + str(x) + """
                                         , """ + str(1) + """
-                                        , """ + str(self.x_studio_comentarios_de_localidad) + """
+                                        , '""" + str(self.x_studio_comentarios_de_localidad) + """'
                                         , """ + str(id_ticket) + """);
                             """
                 else:
@@ -2059,7 +2059,7 @@ class helpdesk_update(models.Model):
                                         , """ + str(self.x_studio_empresas_relacionadas.id) + """
                                         , """ + str(x) + """
                                         , """ + str(1) + """
-                                        , """ + str(self.x_studio_comentarios_de_localidad) + """
+                                        , '""" + str(self.x_studio_comentarios_de_localidad) + """'
                                         , """ + str(id_ticket) + """
                                         , """ + str(dict(self._fields['x_studio_corte']._description_selection(self.env)).get(self.x_studio_corte)) + """);
                             """
