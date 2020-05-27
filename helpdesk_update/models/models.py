@@ -2032,7 +2032,7 @@ class helpdesk_update(models.Model):
                 id_ticket = "Ticket de tóner: " + str(record.x_studio_id_ticket)
                 if corte == 'False':
                     query = """insert into sale_order 
-                                (partner_id, origin, x_studio_tipo_de_solicitud, x_studio_requiere_instalacin, user_id, \"x_studio_field_RnhKr\", partner_shipping_id, warehouse_id, team_id, x_studio_comentario_adicional, x_studio_field_bxHgp, x_studio_corte)
+                                (partner_id, origin, x_studio_tipo_de_solicitud, x_studio_requiere_instalacin, user_id, \"x_studio_field_RnhKr\", partner_shipping_id, warehouse_id, team_id, x_studio_comentario_adicional, \"x_studio_field_bxHgp\", x_studio_corte)
                                 values (""" + str(record.partner_id.id) + """
                                         , '""" + str(id_ticket) + """'
                                         , """ + "Venta"  + """
@@ -2047,7 +2047,7 @@ class helpdesk_update(models.Model):
                             """
                 else:
                     query = """insert into sale_order 
-                                (partner_id, origin, x_studio_tipo_de_solicitud, x_studio_requiere_instalacin, user_id, \"x_studio_field_RnhKr\", partner_shipping_id, warehouse_id, team_id, x_studio_comentario_adicional, x_studio_field_bxHgp, x_studio_corte)
+                                (partner_id, origin, x_studio_tipo_de_solicitud, x_studio_requiere_instalacin, user_id, \"x_studio_field_RnhKr\", partner_shipping_id, warehouse_id, team_id, x_studio_comentario_adicional, \"x_studio_field_bxHgp\", x_studio_corte)
                                 values (""" + str(record.partner_id.id) + """
                                         , '""" + str(id_ticket) + """'
                                         , """ + "Venta"  + """
