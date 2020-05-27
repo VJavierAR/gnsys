@@ -124,7 +124,7 @@ class sale_update(models.Model):
 	def preparaSolicitud(self):
 		data=[]
 		if(len(self.compatiblesLineas)>0):
-			for e in compatiblesLineas:
+			for e in self.compatiblesLineas:
 				d={'product_id':e.equipos.id,'name':e.equipos.name,'product_uom_qty':1,'product_uom':e.equipos.uom_id.id}
 				data.append(d)
 				for e1 in e.componentes:
