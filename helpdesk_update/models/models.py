@@ -2039,7 +2039,7 @@ class helpdesk_update(models.Model):
                                     , """ + 1 + """
                                     , """ + self.x_studio_comentarios_de_localidad + """
                                     , """ + int(record.x_studio_id_ticket) + """
-                                    , """ + str(self.x_studio_corte) + """);
+                                    , """ + str(dict(self._fields['x_studio_corte']._description_selection(self.env)).get(self.x_studio_corte)) + """);
                         """
                 datoSale = self.env.cr.execute(query)
                 query = "select origin from sale_order s where s.origin = 'Ticket de tóner: " + str(record.x_studio_id_ticket) + "';"
