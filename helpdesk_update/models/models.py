@@ -2033,34 +2033,34 @@ class helpdesk_update(models.Model):
                 if corte == 'False':
                     query = """insert into sale_order 
                                 (partner_id, origin, x_studio_tipo_de_solicitud, x_studio_requiere_instalacin, user_id, x_studio_tcnico, x_studio_field_RnhKr, partner_shipping_id, warehouse_id, team_id, x_studio_comentario_adicional, x_studio_field_bxHgp, x_studio_corte)
-                                values (""" + record.partner_id.id + """
-                                        , """ + id_ticket + """
+                                values (""" + str(record.partner_id.id) + """
+                                        , """ + str(id_ticket) + """
                                         , """ + "Venta"  + """
                                         , """ + """t""" + """
-                                        , """ + record.user_id.id + """
-                                        , """ + record.x_studio_tcnico.id + """
-                                        , """ + self.localidadContacto.id + """
-                                        , """ + self.x_studio_empresas_relacionadas.id + """
-                                        , """ + x + """
-                                        , """ + 1 + """
-                                        , """ + self.x_studio_comentarios_de_localidad + """
+                                        , """ + str(record.user_id.id) + """
+                                        , """ + str(record.x_studio_tcnico.id) + """
+                                        , """ + str(self.localidadContacto.id) + """
+                                        , """ + str(self.x_studio_empresas_relacionadas.id) + """
+                                        , """ + str(x) + """
+                                        , """ + str(1) + """
+                                        , """ + str(self.x_studio_comentarios_de_localidad) + """
                                         , '""" + str(id_ticket) + """');
                             """
                 else:
                     query = """insert into sale_order 
                                 (partner_id, origin, x_studio_tipo_de_solicitud, x_studio_requiere_instalacin, user_id, x_studio_tcnico, x_studio_field_RnhKr, partner_shipping_id, warehouse_id, team_id, x_studio_comentario_adicional, x_studio_field_bxHgp, x_studio_corte)
-                                values (""" + record.partner_id.id + """
-                                        , """ + id_ticket + """
+                                values (""" + str(record.partner_id.id) + """
+                                        , """ + str(id_ticket) + """
                                         , """ + "Venta"  + """
                                         , """ + """t""" + """
-                                        , """ + record.user_id.id + """
-                                        , """ + record.x_studio_tcnico.id + """
-                                        , """ + self.localidadContacto.id + """
-                                        , """ + self.x_studio_empresas_relacionadas.id + """
-                                        , """ + x + """
-                                        , """ + 1 + """
-                                        , """ + self.x_studio_comentarios_de_localidad + """
-                                        , '""" + str(id_ticket) + """'
+                                        , """ + str(record.user_id.id) + """
+                                        , """ + str(record.x_studio_tcnico.id) + """
+                                        , """ + str(self.localidadContacto.id) + """
+                                        , """ + str(self.x_studio_empresas_relacionadas.id) + """
+                                        , """ + str(x) + """
+                                        , """ + str(1) + """
+                                        , """ + str(self.x_studio_comentarios_de_localidad) + """
+                                        , """ + str(id_ticket) + """
                                         , """ + str(dict(self._fields['x_studio_corte']._description_selection(self.env)).get(self.x_studio_corte)) + """);
                             """
                 datoSale = self.env.cr.execute(query)
