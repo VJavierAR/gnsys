@@ -2073,7 +2073,7 @@ class helpdesk_update(models.Model):
                             """
                 datoSale = self.env.cr.execute(query)
                 query = "select origin from sale_order s where s.origin = 'Ticket de tóner: " + str(record.x_studio_id_ticket) + "';"
-                self.env.cr.execute(queryt)
+                self.env.cr.execute(query)
                 informaciont = self.env.cr.fetchall()
                 _logger.info("resultado query: " +str(informaciont))
                 record['x_studio_field_nO7Xg'] = informaciont[0][0]
