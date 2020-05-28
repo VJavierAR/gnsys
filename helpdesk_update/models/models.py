@@ -2033,7 +2033,7 @@ class helpdesk_update(models.Model):
                 if corte == 'False':
                     query = """insert into sale_order 
                                 (date_order, name, partner_id, origin, \"x_studio_tipo_de_solicitud\", \"x_studio_requiere_instalacin\", user_id, \"x_studio_field_RnhKr\", partner_shipping_id, warehouse_id, team_id, \"x_studio_comentario_adicional\", \"x_studio_field_bxHgp\")
-                                values ('""" + datetime.datetime.now() + """'
+                                values ('""" + str(datetime.datetime.now()) + """'
                                         , '""" + str(self.env['ir.sequence'].next_by_code('sale.order')) + """'
                                         , '""" + str(record.partner_id.id) + """'
                                         , '""" + str(id_ticket) + """'
@@ -2050,7 +2050,7 @@ class helpdesk_update(models.Model):
                 else:
                     query = """insert into sale_order 
                                 (date_order, name, partner_id, origin, \"x_studio_tipo_de_solicitud\", \"x_studio_requiere_instalacin\", user_id, \"x_studio_field_RnhKr\", partner_shipping_id, warehouse_id, team_id, \"x_studio_comentario_adicional\", \"x_studio_field_bxHgp\", \"x_studio_corte\")
-                                values ('"""+ datetime.datetime.now() + """'
+                                values ('"""+ str(datetime.datetime.now()) + """'
                                         , '""" + str(self.env['ir.sequence'].next_by_code('sale.order')) + """'
                                         , '""" + str(record.partner_id.id) + """'
                                         , '""" + str(id_ticket) + """'
