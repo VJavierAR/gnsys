@@ -129,15 +129,12 @@ class sale_update(models.Model):
 				data.append(d)
 				for e1 in e.componentes:
 					d={'product_id':e1.producto.id,'name':e1.producto.name,'product_uom_qty':e1.cantidad,'product_uom':e1.producto.uom_id.id,'price_unit':0.00,'x_studio_id_relacion':e.id,'x_studio_modelo':e.equipos.name}
-					e1.producto.write({'tracking':'serial'})
 					data.append(d)
 				for e2 in e.toner:
 					d={'product_id':e2.producto.id,'name':e2.producto.name,'product_uom_qty':e2.cantidad,'product_uom':e2.producto.uom_id.id,'price_unit':0.00,'x_studio_id_relacion':e.id,'x_studio_modelo':e.equipos.name}
-					e2.producto.write({'tracking':'serial'})
 					data.append(d)
 				for e3 in e.accesorios:
 					d={'product_id':e3.producto.id,'name':e3.producto.name,'product_uom_qty':e3.cantidad,'product_uom':e3.producto.uom_id.id,'price_unit':0.00,'x_studio_id_relacion':e.id,'x_studio_modelo':e.equipos.name}
-					e3.producto.write({'tracking':'serial'})
 					data.append(d)
 			self.order_line=data
 
