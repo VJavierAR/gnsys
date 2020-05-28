@@ -137,3 +137,5 @@ class sale_update(models.Model):
 					d={'product_id':e3.producto.id,'name':e3.producto.name,'product_uom_qty':e3.cantidad,'product_uom':e3.producto.uom_id.id,'price_unit':0.00,'x_studio_id_relacion':e.id,'x_studio_modelo':e.equipos.name}
 					data.append(d)
 			self.order_line=data
+
+			
