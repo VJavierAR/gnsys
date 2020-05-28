@@ -108,6 +108,15 @@ class dcas(models.Model):
         _logger.info("self inicio id"+str(c.id))
         _logger.info("self inicio id"+str(c.create_date))
         self.env.cr.execute("update dcas_dcas set x_studio_fecha = '"+str(c.create_date)+"' where  id = " + str(c.id) + ";")
+        if c.x_studio_cartuchonefro:
+            c.write({'x_studio_toner_negro': 1})
+        if c.x_studio_cartucho_cian_1:
+            c.write({'x_studio_toner_cian': 1})
+        if c.x_studio_cartucho_magenta:
+            c.write({'x_studio_toner_magenta': 1})
+        if c.x_studio_cartucho_amarillo:
+            c.write({'x_studio_toner_amarillo': 1})
+
         """
         contaC=c.contadorColor                       
         cac=c.contadorAnteriorColor
