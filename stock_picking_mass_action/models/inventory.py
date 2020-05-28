@@ -23,7 +23,7 @@ class StockPicking(Model):
 
 
 
-class StockPicking(Model):
+class StockPic(Model):
     _inherit = 'stock.move'
 
     def _action_confirm(self, merge=True, merge_into=False):
