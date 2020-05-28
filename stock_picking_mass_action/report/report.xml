@@ -32,5 +32,14 @@
     name="tickets.report"
     file="Reporte de Tickets"
     attachment_use="False"/>
+
+<report
+    id="lot_serial_xlsx"
+    model="stock.production.lot"
+    string="Base Instalada"
+    report_type="xlsx"
+    name="lot_serial.report"
+    file="Base Instalada"
+    attachment_use="False"/>
 </data>
 </odoo>

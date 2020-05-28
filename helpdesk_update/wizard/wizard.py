@@ -92,6 +92,187 @@ class HelpDeskComentario(TransientModel):
 
 
 
+
+class HelpDeskNoValidarConComentario(TransientModel):
+    _name = 'helpdesk.comentario.no.validar'
+    _description = 'HelpDesk No Validar Con Comentario'
+    check = fields.Boolean(string = 'Mostrar en reporte', default = False)
+    ticket_id = fields.Many2one("helpdesk.ticket")
+    diagnostico_id = fields.One2many('helpdesk.diagnostico', 'ticketRelacion', string = 'Diagnostico', compute = '_compute_diagnosticos')
+    estado = fields.Char('Estado', compute = "_compute_estadoTicket")
+    comentario = fields.Text('Comentario')
+    evidencia = fields.Many2many('ir.attachment', string = "Evidencias")
+    productosACambiar = fields.Many2many('product.product', string = "Productos", compute = '_compute_productos')
+    solicitud = fields.Many2one('sale.order', strinf = 'solicitud de refacción', compute = '_compute_solicitud')
+    activarCompatibilidad = fields.Boolean(string = 'Activar compatibilidad', default = False)
+    anadirComentario = fields.Boolean(string = 'Añadir comentario', default = False, store = True)
+    serieTexto = fields.Text('Serie', compute = '_compute_serie_text')
+    idProductoEnSerie = fields.Integer('id Producto En Serie', compute = '_compute_serie_producto_id')
+    listaDeCantidaes = fields.Text('Lista de cantidaes', store = True)
+
+    def _compute_solicitud(self):
+        self.solicitud = self.ticket_id.x_studio_field_nO7Xg.id
+
+    def _compute_serie_producto_id(self):
+        self.idProductoEnSerie = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].product_id.id
+
+    def _compute_serie_text(self):
+        self.serieTexto = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].name
+
+    def _compute_productos(self):
+        self.productosACambiar = [(6, 0, self.ticket_id.x_studio_productos.ids)]
+        #self.write({'productosACambiar': [(6, 0, self.ticket_id.x_studio_productos.ids)]})
+        
+
+    @api.onchange('activarCompatibilidad')
+    def productos_filtro(self):
+
+        f = []
+        f.append(self.idProductoEnSerie)
+        
+        _logger.info("res f: " + str(f))
+        res = {}             
+        g = str(f)
+        #g = self.ticket_id.x_studio_equipo_por_nmero_de_serie[-1].product_id.id
+        #26848
+        if self.activarCompatibilidad:
+            _logger.info("res g: " + str(g))
+            if g !='False':
+                list = ast.literal_eval(g)        
+                idf = self.ticket_id.team_id.id
+                tam = len(list)
+                if idf == 8 or idf == 13 :  
+                   res['domain']={'productosACambiar':[('categ_id', '=', 5),('x_studio_toner_compatible.id','in',list)]}
+                if idf == 9:
+                   res['domain']={'productosACambiar':[('categ_id', '=', 7),('x_studio_toner_compatible.id','=',list[0])]}
+                if idf != 9 and idf != 8:
+                   res['domain']={'productosACambiar':[('categ_id', '!=', 5),('x_studio_toner_compatible.id','=',list[0])]}
+                #if idf 55:
+                #   _logger.info("Cotizacion xD" + g)
+                #   res['domain'] = {'x_studio_productos':[('x_studio_toner_compatible.id', '=', list[0]),('x_studio_toner_compatible.property_stock_inventory.id', '=', 121),('x_studio_toner_compatible.id property_stock_inventory.id', '=', 121)] }
+                #   _logger.info("res"+str(res))
+        else:
+            res['domain']={'productosACambiar':[('categ_id', '=', 7)]}
+        _logger.info("res dominio productos wizard: " + str(res))
+        return res
+
+    @api.onchange('productosACambiar')
+    def cambiaCantidad(self):
+        #_logger.info('res cantidad pedida: ' + str(self.productosACambiar[-1].x_studio_cantidad_pedida))
+        for record in self:
+            lista = []
+            self.listaDeCantidaes = ''
+            if self.productosACambiar:
+                for producto in self.productosACambiar:
+                    #_logger.info("res producto.x_studio_cantidad_pedida: " + str(producto.x_studio_cantidad_pedida))
+                    #lista.append(producto.x_studio_cantidad_pedida)
+                    #_logger.info("res lista: " + str(lista))
+                    if self.listaDeCantidaes != '':
+                        self.listaDeCantidaes = str(self.listaDeCantidaes) + "," + str(producto.x_studio_cantidad_pedida)
+                        #self.sudo().write({'listaDeCantidaes': str(self.listaDeCantidaes) + "," + str(producto.x_studio_cantidad_pedida)})
+                    else:
+                        self.listaDeCantidaes = str(producto.x_studio_cantidad_pedida)
+                        #self.sudo().write({'listaDeCantidaes': str(producto.x_studio_cantidad_pedida)})
+            #_logger.info("res lista: " + str(lista))
+            #for cantidad in lista:
+            #    record.listaDeCantidaes = str(cantidad) + ","
+            #_logger.info("res listaDeCantidaes: " + str(record.listaDeCantidaes))
+
+        
+
+    #@api.multi
+    def noValidarConComentario(self):
+      #_logger.info("res self.ticket_id.x_studio_field_nO7Xg.id: " + str(self.ticket_id.x_studio_field_nO7Xg.id))
+      #_logger.info("res self.ticket_id.x_studio_field_nO7Xg.state: " + str(self.ticket_id.x_studio_field_nO7Xg.state))
+      if self.ticket_id.x_studio_field_nO7Xg.id != False and self.ticket_id.x_studio_field_nO7Xg.state != 'sale':
+        #_logger.info("res entre: if self.ticket_id.x_studio_field_nO7Xg.id != False and self.ticket_id.x_studio_field_nO7Xg.state == 'sale': ")
+        i = 0
+        #_logger.info("res listaDeCantidaes ya lista: " + str(self.listaDeCantidaes))
+        lista = str(self.listaDeCantidaes).split(",")
+        #_logger.info("res lista: " +str(lista))
+        #_logger.info("res len(self.productosACambiar): " + str(len(self.productosACambiar)))
+        self.env.cr.execute("delete from sale_order_line where order_id = " + str(self.ticket_id.x_studio_field_nO7Xg.id) +";")
+        for producto in self.productosACambiar:
+            #_logger.info("res lista[i]: " + str(lista[i]))
+            #_logger.info("res producto.x_studio_cantidad_pedida: " + str(producto.x_studio_cantidad_pedida))
+            datosr = {
+                'order_id' : self.ticket_id.x_studio_field_nO7Xg.id,
+                'product_id' : producto.id,
+                'product_uom_qty' :  float(lista[i]), #producto.x_studio_cantidad_pedida,
+                'x_studio_field_9nQhR': self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id
+            }
+            if (self.ticket_id.team_id.id == 10 or self.ticket_id.team_id.id == 11):
+                datosr['route_id'] = 22548
+            self.env['sale.order.line'].create(datosr)
+            self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(self.ticket_id.x_studio_field_nO7Xg.id) + ";")
+
+            self.sudo().ticket_id.x_studio_productos = [(1, producto.id, {'x_studio_cantidad_pedida': float(lista[i])})]
+
+            i += 1
+            #_logger.info("res datosr: " + str(datosr))
+
+        if len(self.productosACambiar.ids) > len(self.ticket_id.x_studio_productos.ids):
+            self.sudo().ticket_id.write({'x_studio_productos': [(6, 0, self.productosACambiar.ids)]})
+            """
+            i = 0
+            for producto in self.productosACambiar:
+                if int(self.productosACambiar.ids[i]) != self.ticket_id.x_studio_productos.ids[i]:
+                    self.sudo().ticket_id.x_studio_productos = [(0, 0, {
+                                                                    'order_id': producto.order_id.id,
+                                                                    'product_id': producto.product_id.id,
+                                                                    'product_uom_qty': float(lista[i]),
+                                                                    'x_studio_field_9nQhR': producto.x_studio_field_9nQhR.id,
+                                                                    'name': producto.name,
+                                                                    'price_unit': producto.price_unit,
+                                                                    'product_uom': producto.product_uom,
+                                                                    'tax_id': [(6, 0, [1])]
+                                                                    }
+                                                                )]
+                i += 1
+            """
+      #_logger.info("res ids productos: " + str(self.productosACambiar.ids))
+      #_logger.info("res ids productos: " + str(self.productosACambiar[-1].x_studio_cantidad_pedida))
+      #self.ticket_id.x_studio_productos = [(6, 0, self.productosACambiar.ids)]
+      #self.sudo().ticket_id.write({'x_studio_productos': [(5,0,0)]})
+      #self.sudo().ticket_id.write({'x_studio_productos': [(6, 0, self.productosACambiar.ids)]})
+      #self.sudo().ticket_id.x_studio_productos = [(6, 0, self.productosACambiar.ids)]
+      #self.sudo().ticket_id.write({'x_studio_productos': [(5,0,0),(6, 0, self.productosACambiar.ids)]})
+      #self.ticket_id.x_studio_productos = [(5,0,0),(6, 0, self.productosACambiar.ids)]
+
+      if self.anadirComentario:
+        #if self.ticket_id.stage_id.name == 'Resuelto' or self.ticket_id.stage_id.name == 'Abierto' or self.ticket_id.stage_id.name == 'Asignado' or self.ticket_id.stage_id.name == 'Atención' and self.ticket_id.estadoCerrado == False:
+        self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.ticket_id.id
+                                                ,'comentario': self.comentario
+                                                ,'estadoTicket': self.ticket_id.stage_id.name
+                                                ,'evidencia': [(6,0,self.evidencia.ids)]
+                                                ,'mostrarComentario': self.check
+                                                })
+        
+        mess = 'Ticket "' + str(self.ticket_id.id) + '" no validado y Diagnostico / Comentario añadido al ticket "' + str(self.ticket_id.id) + '" de forma exitosa. \n\nComentario agregado: ' + str(self.comentario) + '.'
+        wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mess})
+        view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+        return {
+            'name': _('Ticket cerrado !!!'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'helpdesk.alerta',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            'context': self.env.context,
+        }
+
+    def _compute_estadoTicket(self):
+        self.estado = self.ticket_id.stage_id.name
+
+    def _compute_diagnosticos(self):
+        self.diagnostico_id = self.ticket_id.diagnosticos.ids
+
+
+
+
 class HelpDeskCerrarConComentario(TransientModel):
     _name = 'helpdesk.comentario.cerrar'
     _description = 'HelpDesk Cerrar Con Comentario'
@@ -599,7 +780,7 @@ class helpdesk_contadores(TransientModel):
                     raise exceptions.ValidationError("Contador Monocromatico Menor")                                   
             if str(c.x_studio_color_bn) != 'B/N':
                 if int(self.contadorColorMesa) >= int(c.x_studio_contador_color) and int(self.contadorBNActual) >= int(c.x_studio_contador_bn):                      
-                    if self.team_id.id==8:
+                    if self.ticket_id.team_id.id == 8:
                         negrot = c.x_studio_contador_bn
                         colort = c.x_studio_contador_color
                     else:
@@ -612,9 +793,9 @@ class helpdesk_contadores(TransientModel):
                                                     ,'x_studio_tickett':self.ticket_id.id
                                                     ,'x_studio_contador_mono_anterior_1':negrot
                                                     ,'fuente':q
-                                                  })   
+                                                  }) 
                     self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.ticket_id.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario': 'Contador BN anterior: ' + str(negrot) + '\nContador BN capturado: ' + str(self.contadorBNActual) + '\nContador color anterior: ' + str(colort) + '\nContador color capturado: ' + str(self.contadorColorActual)})
-                    self.ticket_id.write({'contadores_anteriores': '</br>Equipo BN o Color: ' + str(self.bnColor) + ' </br></br>Contador BN: ' + str(self.contadorBNActual)
+                    self.ticket_id.write({'contadores_anteriores': '</br>Equipo BN o Color: ' + str(self.bnColor) + ' </br></br>Contador BN: ' + str(self.contadorBNActual) + '</br></br>Contador Color: ' + str(self.contadorColorMesa)
                                         , 'x_studio_contador_bn': int(negrot)
                                         , 'x_studio_contador_bn_a_capturar': int(self.contadorBNActual)
                                         , 'x_studio_contador_color': int(colort)
@@ -651,7 +832,9 @@ class helpdesk_crearconserie(TransientModel):
     serie = fields.Many2many('stock.production.lot', string = 'Serie', store = True)
     clienteRelacion = fields.Many2one('res.partner', string = 'Cliente', default=False, store = True)
     localidadRelacion = fields.Many2one('res.partner', string = 'Localidad', store = True)
+    contactoInterno = fields.Many2one('res.partner', string = 'Contacto interno', default=False, store = True)
 
+    idContactoInterno = fields.Text(string = 'idContactoInterno', store=True, default=0)
     cliente = fields.Text(string = 'Cliente', store = True)
     idCliente = fields.Text(string = 'idCliente', store=True, default=0)
     localidad = fields.Text(string = 'Localidad', store = True)
@@ -683,6 +866,19 @@ class helpdesk_crearconserie(TransientModel):
                 "url": "https://gnsys-corp.odoo.com/web#id= " + str(self.ticket_id_existente) + " &action=400&active_id=9&model=helpdesk.ticket&view_type=form&menu_id=406",
                 "target": "new",
                 }
+
+    @api.onchange('contactoInterno')
+    def actualiza_datos_contacto_interno(self):
+        if not self.contactoInterno:
+            self.nombreContactoLocalidad = ''
+            self.telefonoContactoLocalidad = ''
+            self.movilContactoLocalidad = ''
+            self.correoContactoLocalidad = ''
+        else:
+            self.nombreContactoLocalidad = self.contactoInterno.name
+            self.telefonoContactoLocalidad = self.contactoInterno.phone
+            self.movilContactoLocalidad = self.contactoInterno.mobile
+            self.correoContactoLocalidad = self.contactoInterno.email
 
 
     @api.onchange('clienteRelacion', 'localidadRelacion')
@@ -746,7 +942,8 @@ class helpdesk_crearconserie(TransientModel):
         self.zonaLocalidad = self.localidadRelacion.x_studio_field_SqU5B
 
         loc = self.localidadRelacion.id
-        idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_subtipo', '=', 'Contacto de localidad']], order='create_date desc', limit=1)
+        #idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_subtipo', '=', 'Contacto de localidad']], order='create_date desc', limit=1)
+        idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_ultimo_contacto', '=', True]], order='create_date desc', limit=1)
         if idLoc:
             self.nombreContactoLocalidad = idLoc[0].name
             self.telefonoContactoLocalidad = idLoc[0].phone
@@ -828,6 +1025,9 @@ class helpdesk_crearconserie(TransientModel):
             else:
                 self.estatus = 'Al corriente'
                 self.textoClienteMoroso = ''
+            #if self.clienteRelacion.name == 'GN SYS CORPORATIVO SA DE CV':
+
+
     
 
     @api.onchange('serie')
@@ -840,9 +1040,11 @@ class helpdesk_crearconserie(TransientModel):
                 raise exceptions.Warning(mensajeCuerpo)
             else:
                 query = "select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.stage_id!=18 and h.team_id!=8 and  h.active='t' and stock_production_lot_id = " +  str(self.serie[0].id) + " limit 1;"
+                _logger.info("test query: " + str(query))
                 #query = "select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!=" + str(ticket.x_studio_id_ticket) + "  and h.stage_id!=18 and h.team_id!=8 and  h.active='t' and stock_production_lot_id = " +  str(self.serie[0].id) + " limit 1;"
-                self.env.cr.execute(query)                        
+                self.env.cr.execute(query)
                 informacion = self.env.cr.fetchall()
+                _logger.info("test informacion: " + str(informacion))
                 if len(informacion) > 0:
                   textoHtml2 = """ 
                                 <!-- Button trigger modal -->
@@ -915,31 +1117,46 @@ class helpdesk_crearconserie(TransientModel):
                 else:
                   self.ticket_id_existente = 0
                   self.textoTicketExistente = ''
-                if self.serie[0].x_studio_move_line:
-                    self.cliente = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.name
-                    self.idCliente = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
-                    self.clienteRelacion = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
-                    self.localidad = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.name
-                    self.zonaLocalidad = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.x_studio_field_SqU5B
-                    self.idLocaliidad = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
-                    self.localidadRelacion = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
+                _logger.info("test serie: " + str(self.serie))
+                _logger.info("test serie: " + str(self.serie[0]))
+                _logger.info("test serie: " + str(self.serie[0].x_studio_move_line))
+                #self.serie.reverse()
+                #listaMovimientos = []
+                #for movimiento in self.serie[0].x_studio_move_line:
+                #    listaMovimeintos.append(movimiento.id)
+                #listaMovimeintos.reverse()
+                _logger.info("test serie reverse: " + str(self.serie[0].x_studio_move_line))
 
-                    self.direccionCalleNombre = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.street_name
-                    self.direccionNumeroExterior = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.street_number
-                    self.direccionNumeroInterior = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.street_number2
-                    self.direccionColonia = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.l10n_mx_edi_colony
-                    self.direccionLocalidad = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.l10n_mx_edi_locality
-                    self.direccionCiudad = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.city
-                    self.direccionEstado = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.state_id.name
-                    self.direccionCodigoPostal = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.zip
+                if self.serie[0].x_studio_move_line:
+                    moveLineOrdenado = self.serie[0].x_studio_move_line.sorted(key="date", reverse=True)
+                    _logger.info("test dato: " + str(moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id))
+                    _logger.info("test dato: " + str(moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.name))
+                    _logger.info("test moveLineOrdenado: " + str(moveLineOrdenado))
+                    self.cliente = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.name
+                    self.idCliente = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
+                    self.clienteRelacion = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
+                    self.localidad = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.name
+                    self.zonaLocalidad = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.x_studio_field_SqU5B
+                    self.idLocaliidad = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
+                    self.localidadRelacion = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
+
+                    self.direccionCalleNombre = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.street_name
+                    self.direccionNumeroExterior = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.street_number
+                    self.direccionNumeroInterior = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.street_number2
+                    self.direccionColonia = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.l10n_mx_edi_colony
+                    self.direccionLocalidad = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.l10n_mx_edi_locality
+                    self.direccionCiudad = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.city
+                    self.direccionEstado = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.state_id.name
+                    self.direccionCodigoPostal = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.zip
                     #self.direccion = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.
 
-                    _my_object.write({'idCliente' : self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
-                                    ,'idLocaliidad': self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
+                    _my_object.write({'idCliente' : moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
+                                    ,'idLocaliidad': moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
                                     })
-                    loc = self.serie[0].x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
+                    loc = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
                     
-                    idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_subtipo', '=', 'Contacto de localidad']], order='create_date desc', limit=1)
+                    #idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_subtipo', '=', 'Contacto de localidad']], order='create_date desc', limit=1)
+                    idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_ultimo_contacto', '=', True]], order='create_date desc', limit=1)
                     
                     if idLoc:
                         self.nombreContactoLocalidad = idLoc[0].name
@@ -1004,6 +1221,10 @@ class helpdesk_crearconserie(TransientModel):
                         ,'team_id': 9
                         ,'x_studio_field_6furK': self.zonaLocalidad
                         })
+            if self.contactoInterno:
+                query = "update helpdesk_ticket set \"contactoInterno\" = " + str(self.contactoInterno.id) + " where id = " + str(ticket.id) + ";"
+                self.env.cr.execute(query)
+                self.env.cr.commit()
             query = "update helpdesk_ticket set \"partner_id\" = " + str(self.idCliente) + ", \"x_studio_empresas_relacionadas\" =" + str(self.idLocaliidad) + " where id = " + str(ticket.id) + ";"
             self.env.cr.execute(query)
             self.env.cr.commit()
@@ -1048,6 +1269,10 @@ class helpdesk_crearconserie(TransientModel):
                       ,'team_id': 9
                       ,'x_studio_field_6furK': self.zonaLocalidad
                       })
+          if self.contactoInterno:
+                query = "update helpdesk_ticket set \"contactoInterno\" = " + str(self.contactoInterno.id) + " where id = " + str(ticket.id) + ";"
+                self.env.cr.execute(query)
+                self.env.cr.commit()
           #query = "update helpdesk_ticket set \"partner_id\" = " + str(self.idCliente) + ", \"x_studio_empresas_relacionadas\" =" + str(self.idLocaliidad) + " where id = " + str(ticket.id) + ";"
           #self.env.cr.execute(query)
           #self.env.cr.commit()
@@ -1097,6 +1322,7 @@ class HelpDeskReincidencia(TransientModel):
                                                       ,'esReincidencia': True
                                                       ,'ticketDeReincidencia': "<a href='https://gnsys-corp.odoo.com/web#id=" + str(self.ticket_id.id) + "&action=1137&model=helpdesk.ticket&view_type=form&menu_id=406' target='_blank'>" + str(self.ticket_id.id) + "</a>"
                                                       ,'user_id': self.env.user.id
+                                                      ,'contactoInterno' : self.contactoInterno.id
                                                       })
           ticket.write({'partner_id': int(self.ticket_id.partner_id.id)
                       ,'x_studio_empresas_relacionadas': int(self.ticket_id.x_studio_empresas_relacionadas.id)
@@ -1105,7 +1331,9 @@ class HelpDeskReincidencia(TransientModel):
                       ,'esReincidencia': True
                       ,'ticketDeReincidencia': "<a href='https://gnsys-corp.odoo.com/web#id=" + str(self.ticket_id.id) + "&action=1137&model=helpdesk.ticket&view_type=form&menu_id=406' target='_blank'>" + str(self.ticket_id.id) + "</a>"
                       })
-          query = "update helpdesk_ticket set \"partner_id\" = " + str(self.ticket_id.partner_id.id) + ", \"x_studio_empresas_relacionadas\" =" + str(self.ticket_id.x_studio_empresas_relacionadas.id) + " where id = " + str(ticket.id) + ";"
+          if self.contactoInterno:
+            ticket.write({'contactoInterno' : self.contactoInterno.id})
+          query = "update helpdesk_ticket set \"partner_id\" = " + str(self.ticket_id.partner_id.id) + ", \"x_studio_empresas_relacionadas\" =" + str(self.ticket_id.x_studio_empresas_relacionadas.id) + ", \"contactoInterno\" = " + str(self.contactoInterno.id) + " where id = " + str(ticket.id) + ";"
           self.env.cr.execute(query)
           self.env.cr.commit()
           ticket._compute_datosCliente()
@@ -1145,6 +1373,7 @@ class HelpDeskReincidencia(TransientModel):
                                                         ,'esReincidencia': True
                                                         ,'ticketDeReincidencia': "<a href='https://gnsys-corp.odoo.com/web#id=" + str(self.ticket_id.id) + "&action=1137&model=helpdesk.ticket&view_type=form&menu_id=406' target='_blank'>" + str(self.ticket_id.id) + "</a>"
                                                         ,'user_id': self.env.user.id
+                                                        ,'contactoInterno' : self.contactoInterno.id
                                                         })
           ticket.write({'partner_id': int(self.ticket_id.partner_id.id)
                       ,'x_studio_empresas_relacionadas': int(self.ticket_id.x_studio_empresas_relacionadas.id)
@@ -1153,7 +1382,9 @@ class HelpDeskReincidencia(TransientModel):
                       ,'esReincidencia': True
                       ,'ticketDeReincidencia': "<a href='https://gnsys-corp.odoo.com/web#id=" + str(self.ticket_id.id) + "&action=1137&model=helpdesk.ticket&view_type=form&menu_id=406' target='_blank'>" + str(self.ticket_id.id) + "</a>"
                       })
-          query = "update helpdesk_ticket set \"partner_id\" = " + str(self.ticket_id.partner_id.id) + ", \"x_studio_empresas_relacionadas\" =" + str(self.ticket_id.x_studio_empresas_relacionadas.id) + " where id = " + str(ticket.id) + ";"
+          if self.contactoInterno:
+            ticket.write({'contactoInterno' : self.contactoInterno.id})
+          query = "update helpdesk_ticket set \"partner_id\" = " + str(self.ticket_id.partner_id.id) + ", \"x_studio_empresas_relacionadas\" =" + str(self.ticket_id.x_studio_empresas_relacionadas.id) + ", \"contactoInterno\" = " + str(self.contactoInterno.id) + " where id = " + str(ticket.id) + ";"
           self.env.cr.execute(query)
           self.env.cr.commit()
           ticket._compute_datosCliente()

@@ -13,7 +13,7 @@ class servicios_gnsys(models.Model):
     _inherit = 'mail.thread'
     _description = 'Servicios GNSYS'
     
-    
+    name=fields.Char('Nombre')
     productos = fields.One2many('product.product', 'servicio', string="Productos")
     fechaDeInicioDeServicio = fields.Datetime(string = 'Fecha de inicio de servicio',track_visibility='onchange')
     fechaDeFinDeServicio = fields.Datetime(string = 'Fecha de finalización de servicio',track_visibility='onchange')
@@ -209,6 +209,7 @@ class contratos(models.Model):
 
     metodPago = fields.Selection([('6','PPD Pago en parcialidades o diferido') ,('5','PUE Pago en una sola exhibición')], string = "Método de pago",track_visibility='onchange')
     numCuenta = fields.Integer(string="Número Cuenta",track_visibility='onchange')
+    numCuentaT = fields.Text(string="Número Cuenta",track_visibility='onchange')
 
     razonSocial  = fields.Char(string = "Razón Social interna",track_visibility='onchange', default=lambda self: self.env.user.razonSocial)
 

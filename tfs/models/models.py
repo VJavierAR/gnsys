@@ -29,6 +29,7 @@ class tfs(models.Model):
     localidad=fields.Many2one('res.partner',store='True',string='Localidad')
     serie=fields.Many2one('stock.production.lot',string='Numero de Serie',store='True')
     domi=fields.Integer()
+    modelo=fields.Char(related='serie.product_id.name',string='Modelo')
 
     productoNegro=fields.Many2one('product.product',string='Toner Monocromatico')
     productoCian=fields.Many2one('product.product',string='Toner Cian')
@@ -59,10 +60,22 @@ class tfs(models.Model):
     actualporcentajeMagenta=fields.Integer(string='Actual Magenta')
     
     evidencias=fields.One2many('tfs.evidencia',string='Evidencias',inverse_name='tfs_id')
-    estado=fields.Selection([('borrador','Borrador'),('xValidar','Por Validar'),('Valido','Valido'),('Confirmado','Confirmado')])
+    estado=fields.Selection([('borrador','Borrador'),('xValidar','Por Validar'),('Valido','Valido'),('Confirmado','Confirmado'),('Auditar','Auditar'),('Cancelado','Cancelado')])
 
     colorBN=fields.Selection(related='serie.x_studio_color_bn')
     arreglo=fields.Char()
+    direccion=fields.Char(widget="html")
+    nivelNegro=fields.Float('Nivel Negro')
+    nivelAmarillo=fields.Float('Nivel Amarillo')
+    nivelMagenta=fields.Float('Nivel Magenta')
+    nivelCian=fields.Float('Nivel Cian')
+    calle=fields.Char(related='localidad.street')
+    NumeroInt=fields.Char(related='localidad.street_number')
+    NumeroOut=fields.Char(related='localidad.street_number2')
+    cp=fields.Char(related='localidad.zip')
+    delegacion=fields.Char(related='localidad.city')
+    estadoCi=fields.Char(related='localidad.state_id.name')
+
     @api.multi
     def confirm(self):
         for record in self:
@@ -238,9 +251,7 @@ class tfs(models.Model):
 
     @api.multi
     def valida(self):
-        view = self.env.ref('tfs.view_tfs_ticket')
-        wiz = self.env['tfs.ticket'].create({'tfs_ids': [(4, self.id)]})
-        #self.write({'estado':'Confirmado'})
+        self.write({'estado':'Confirmado'})
         #self.env['dcas.dcas'].create({'serie':self.serie.id,'contadorMono':self.actualMonocromatico,'contadorColor':self.actualColor,'fuente':'tfs.tfs'})
         dat=eval(self.arreglo)
         if(dat!=[]):
@@ -255,18 +266,26 @@ class tfs(models.Model):
             self.env['dcas.dcas'].create({'serie':self.serie.id,'contadorMono':self.actualMonocromatico,'contadorColor':self.actualColor,'fuente':'tfs.tfs','x_studio_contador_color_anterior':self.contadorAmarillo.contadorColor,'x_studio_contador_mono_anterior_1':self.contadorAmarillo.contadorMono,'x_studio_toner_amarillo':1})
         if(self.productoCian):           
             self.env['dcas.dcas'].create({'serie':self.serie.id,'contadorMono':self.actualMonocromatico,'contadorColor':self.actualColor,'fuente':'tfs.tfs','x_studio_contador_color_anterior':self.contadorCian.contadorColor,'x_studio_contador_mono_anterior_1':self.contadorCian.contadorMono,'x_studio_toner_cian':1})
+
+
+
+    @api.multi
+    def valida1(self):
+        view = self.env.ref('tfs.view_tfs_ticket')
+        wiz = self.env['tfs.ticket'].create({'tfs_ids': [(4, self.id)]})
         return {
-                'name': _('Alerta'),
-                'type': 'ir.actions.act_window',
-                'view_type': 'form',
-                'view_mode': 'form',
-                'res_model': 'tfs.ticket',
-                'views': [(view.id, 'form')],
-                'view_id': view.id,
-                'target': 'new',
-                'res_id': wiz.id,
-                'context': self.env.context,
+        'name': _('Alerta'),
+        'type': 'ir.actions.act_window',
+        'view_type': 'form',
+        'view_mode': 'form',
+        'res_model': 'tfs.ticket',
+        'views': [(view.id, 'form')],
+        'view_id': view.id,
+        'target': 'new',
+        'res_id': wiz.id,
+        'context': self.env.context,
             }
+
     #@api.onchange('cliente')
     #def onchange_cliente(self):
     #    res = {}
@@ -281,6 +300,8 @@ class tfs(models.Model):
         result = super(tfs, self).create(vals)
         return result
     
+    def canc(self):
+        self.write({'estado':'Auditar'})
 
     
     #@api.onchange('usuario')
@@ -351,10 +372,14 @@ class tfs(models.Model):
                 if(record.serie.x_studio_mini==False):
                     raise exceptions.UserError("El No. de Serie"+ record.serie.name+"no corresponde a Mini Almacen" )
                 if(len(record.serie.x_studio_move_line)>0):
-                    cliente = record.serie.x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id if(len(record.serie.x_studio_move_line)>1) else record.serie.x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
-                    localidad=record.serie.x_studio_move_line[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id if(len(record.serie.x_studio_move_line)>1) else record.serie.x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
+                    moveli=record.serie.x_studio_move_line.sorted(key='id',reverse=True)
+                    cliente = moveli[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id if(len(record.serie.x_studio_move_line)>1) else record.serie.x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
+                    localidad=moveli[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id if(len(record.serie.x_studio_move_line)>1) else record.serie.x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
                     record['cliente'] = cliente
                     record['localidad'] = localidad
+                    lo=moveli[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z
+                    record['direccion']="<table><tr><td>Calle</td><td>"+str(lo.street)+"</td></tr><tr><td>No.Exterior</td><td>"+str(lo.street_number2)+"</td></tr><tr><td>No. Interior</td><td>"+str(lo.street_number)+"</td></tr><tr><td>Cp</td><td>"+str(lo.zip)+"</td></tr><tr><td>Estado</td><td>"+str(lo.state_id.name)+"</td></tr><tr><td>Delegación</td><td>"+str(lo.city)+"</td></tr></table>"
+                    #_logger.info(str(localidad.name))
                     record['almacen'] =self.env['stock.warehouse'].search([['x_studio_field_E0H1Z','=',localidad]]).lot_stock_id.x_studio_almacn_padre.id
                 if(record.colorBN=="B/N"):
                     data=record.serie.product_id.x_studio_toner_compatible.filtered(lambda x: 'Toner' in x.categ_id.name).mapped('id')

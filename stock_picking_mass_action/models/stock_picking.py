@@ -28,6 +28,8 @@ class StockPicking(Model):
     estadoRuta=fields.Selection([["borrador","Borrador"],["valido","Confirmado"]],default="borrador")
     reglas=fields.Many2many('stock.warehouse.orderpoint')
     internas=fields.Boolean()
+    distribucion=fields.Boolean()
+    retiro=fields.Boolean()
 
     #documentosDistro = fields.Many2many('ir.attachment', string="Evidencias ")
     #historialTicket = fields.One2many('ir.attachment','res_id',string='Evidencias al ticket',store=True,track_visibility='onchange')
@@ -356,9 +358,9 @@ class StockPicking(Model):
 
     def cambio_wizard(self):
         d=[]
-        wiz = self.env['cambio.toner'].create({'display_name':'h','pick':self.id})
+        wiz = self.env['cambio.toner'].create({'display_name':'h','pick':self.id,'tonerUorden':self.oculta})
         for p in self.move_ids_without_package:
-            data={'rel_cambio':wiz.id,'producto1':p.product_id.id,'producto2':p.product_id.id,'cantidad':p.product_uom_qty,'serie':p.x_studio_serie_destino.id,'tipo':self.picking_type_id.id}
+            data={'move_id':p.id,'rel_cambio':wiz.id,'producto1':p.product_id.id,'producto2':p.product_id.id,'cantidad':p.product_uom_qty,'serie':p.x_studio_serie_destino.id,'tipo':self.picking_type_id.id}
             self.env['cambio.toner.line'].create(data)
             #d.append(data)
         
@@ -375,7 +377,34 @@ class StockPicking(Model):
             'res_id': wiz.id,
             'context': self.env.context,
         }
+    def asignacion_wizard(self):
+        d=[]
+        wiz = self.env['cambio.toner'].create({'display_name':'h','pick':self.id,'tonerUorden':self.oculta})
+        for p in self.move_ids_without_package.filtered(lambda x:x.product_id.categ_id.id==13):
+            data={'move_id':p.id,'rel_cambio':wiz.id,'producto1':p.product_id.id,'producto2':p.product_id.id,'cantidad':p.product_uom_qty,'serie':p.x_studio_serie_destino.id,'tipo':self.picking_type_id.id}
+            self.env['cambio.toner.line'].create(data)
 
+        for p in self.move_ids_without_package.filtered(lambda x:x.product_id.categ_id.id==5):
+            data={'move_id':p.id,'rel_cambio':wiz.id,'producto1':p.product_id.id,'producto2':p.product_id.id,'cantidad':p.product_uom_qty,'serie':p.x_studio_serie_destino.id,'tipo':self.picking_type_id.id}
+            self.env['cambio.toner.line.toner'].create(data)
+
+        for p in self.move_ids_without_package.filtered(lambda x:x.product_id.categ_id.id==11):
+            data={'move_id':p.id,'rel_cambio':wiz.id,'producto1':p.product_id.id,'producto2':p.product_id.id,'cantidad':p.product_uom_qty,'serie':p.x_studio_serie_destino.id,'tipo':self.picking_type_id.id}
+            self.env['cambio.toner.line.accesorios'].create(data)
+        
+        view = self.env.ref('stock_picking_mass_action.view_asignacion_equipo_action_form')
+        return {
+            'name': _('Asignacion'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'cambio.toner',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            'context': self.env.context,
+        }
     def guia(self):
         wiz = self.env['guia.ticket'].create({'pick':self.id})
         view = self.env.ref('stock_picking_mass_action.view_guia_ticket')
@@ -408,9 +437,6 @@ class StockPicking(Model):
         }
     
     def serie(self):
-        
-
-
         wiz = self.env['picking.serie'].create({'pick':self.id})
         for r in self.move_ids_without_package:
             if(r.product_id.categ_id.id==13):

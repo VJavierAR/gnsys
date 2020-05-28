@@ -79,7 +79,27 @@ class compras(models.Model):
             mimetype = guess_mimetype(f2 or b'')
             if(self.partner_id):
                 if(mimetype=='application/pdf'):
+                    self.x_studio_pdf=self.archivo
                     myCmd = 'pdftotext -fixed 5 hola.pdf test3.txt'
+                    if(self.archivo and ("ctr" in self.partner_id.name.lower())):
+                        #myCmd = 'pdftotext -fixed 4 hola.pdf test3.txt'
+                        out = open("hola.pdf", "wb")
+                        #f2=base64.b64decode(self.archivo)
+                        #H=StringIO(f2)
+                        file = PdfFileReader(H)
+                        t=PdfFileWriter()
+                        for p in range(file.getNumPages()):
+                            t.addPage(file.getPage(p))
+                        t.write(out)
+                        out.close()
+                        os.system(myCmd)
+                        f = open("test3.txt","r")
+                        string = f.read()
+                        f.close()
+                        text=string.split('Importe')[1]
+                        fff=open("tt.txt","w")
+                        fff.write(text)
+                        fff.close()
                     if(self.archivo and ("konica" in self.partner_id.name.lower() or "kyocera" in self.partner_id.name.lower())):
                         out = open("hola.pdf", "wb")
                         #f2=base64.b64decode(self.archivo)
@@ -161,6 +181,7 @@ class compras(models.Model):
                     sheet = book.sheet_by_index(0)
                     header=[]
                     arr=[]
+                    descuento=self.x_studio_descuento/100 if(self.x_studio_descuento!=False) else 0
                     for row_num, row in enumerate(sheet.get_rows()):
                         #_logger.info()
                         #_logger.info(str(self.partner_id.name))
@@ -170,20 +191,20 @@ class compras(models.Model):
                         if(row[0].value in self.partner_id.name.replace(' ','') and str(row[0].ctype)!='0'):
                             product={}
                             producto=row[2].value
-                            precio=float(row[12].value)
+                            precio=float(row[10].value)
                             #_logger.info(row[10].value)
-                            cantidad=int(row[10].value) if(row[10].ctype!=0) else 0
+                            cantidad=int(row[8].value) if(row[8].ctype!=0) else 0
                             #_logger.info(str(producto).replace(' ',''))
                             template=self.env['product.template'].search([('default_code','=',str(producto).replace('.0',''))])
                             productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
                             product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':cantidad,'price_unit':precio,'name':productid.description}
                             product['taxes_id']=[10]
                             if("KATUN" in row[0].value):
-                                product['price_unit']=float(row[12].value)-(float(row[12].value)*.02)
+                                product['price_unit']=round(float(row[10].value)-(float(row[10].value)*descuento),2)
                                 product['taxes_id']=[10]
                             if("CTR" in row[0].value):
-                                descuento=float(row[15].value) if(row[15].ctype!=0) else 0
-                                product['price_unit']=(float(row[13].value)-descuento)/cantidad if(cantidad>0) else float(row[12].value)
+                                #descuento=float(row[15].value) if(row[15].ctype!=0) else 0
+                                product['price_unit']=float(row[10].value)-(float(row[10].value)*descuento)
                                 product['taxes_id']=[10]
                             arr.append(product)
                     if(len(arr)>0):
