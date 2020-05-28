@@ -2072,7 +2072,7 @@ class helpdesk_update(models.Model):
                                         , '""" + str(dict(self._fields['x_studio_corte']._description_selection(self.env)).get(self.x_studio_corte)) + """');
                             """
                 datoSale = self.env.cr.execute(query)
-                query = "select origin from sale_order s where s.origin = 'Ticket de tóner: " + str(record.x_studio_id_ticket) + "';"
+                query = "select id from sale_order s where s.origin = 'Ticket de tóner: " + str(record.x_studio_id_ticket) + "';"
                 self.env.cr.execute(query)
                 informaciont = self.env.cr.fetchall()
                 _logger.info("resultado query: " +str(informaciont))
