@@ -2077,7 +2077,7 @@ class helpdesk_update(models.Model):
                 informaciont = self.env.cr.fetchall()
                 _logger.info("resultado query: " +str(informaciont))
                 record['x_studio_field_nO7Xg'] = informaciont[0][0]
-                
+                sale = record['x_studio_field_nO7Xg']
                 
                 #record['x_studio_field_nO7Xg'] = sale.id
                 serieaca = ''
