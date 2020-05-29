@@ -27,7 +27,7 @@ class HCliente(models.Model):
 
 	serie = fields.Many2one('stock.production.lot', string = 'Serie')
 
-class SeriesUpdate(object):
+class SeriesUpdate(models.Model):
 	_inherit = 'stock.production.lot'
 
 	clientes = fields.One2many('HCliente', 'serie', string = 'Clientes', store = True)	
