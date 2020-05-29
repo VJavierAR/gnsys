@@ -7,7 +7,7 @@ from odoo import exceptions, _
 import logging, ast
 import datetime, time
 _logger = logging.getLogger(__name__)
-import threading
+
 
 class sale_order_compatibles(models.Model):
 	_name = 'sale_order_compatibles'
@@ -127,7 +127,9 @@ class sale_update(models.Model):
 			for e in self.compatiblesLineas:
 				d={'x_studio_field_mqSKO':e.equipos.id,'product_id':e.equipos.id,'name':e.equipos.name,'product_uom_qty':1,'product_uom':e.equipos.uom_id.id,'price_unit':0.00,'x_studio_id_relacion':e.id}
 				self.order_line=[d]
-				threaded_post = threading.Thread(target=self.componentes, args=(e.componentes))
+				for e1 in e.componentes:
+					d={'x_studio_field_mqSKO':e1.producto.id,'product_id':e1.producto.id,'name':e1.producto.name,'product_uom_qty':e1.cantidad,'product_uom':e1.producto.uom_id.id,'price_unit':0.00,'x_studio_id_relacion':e.id,'x_studio_modelo':e.equipos.name}
+					self.order_line=[d]
 				for e2 in e.toner:
 					d={'x_studio_field_mqSKO':e2.producto.id,'product_id':e2.producto.id,'name':e2.producto.name,'product_uom_qty':e2.cantidad,'product_uom':e2.producto.uom_id.id,'price_unit':0.00,'x_studio_id_relacion':e.id,'x_studio_modelo':e.equipos.name}
 					self.order_line=[d]
@@ -135,8 +137,4 @@ class sale_update(models.Model):
 					d={'x_studio_field_mqSKO':e3.producto.id,'product_id':e3.producto.id,'name':e3.producto.name,'product_uom_qty':e3.cantidad,'product_uom':e3.producto.uom_id.id,'price_unit':0.00,'x_studio_id_relacion':e.id,'x_studio_modelo':e.equipos.name}
 					self.order_line=[d]
 
-	def componentes(self,dat):
-		for e1 in dat:
-			d={'x_studio_field_mqSKO':e1.producto.id,'product_id':e1.producto.id,'name':e1.producto.name,'product_uom_qty':e1.cantidad,'product_uom':e1.producto.uom_id.id,'price_unit':0.00,'x_studio_id_relacion':e.id,'x_studio_modelo':e.equipos.name}
-			self.order_line=[d]
-
+					
