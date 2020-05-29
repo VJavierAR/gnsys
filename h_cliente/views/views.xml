@@ -1,6 +1,7 @@
 <odoo>
   <data>
 
+    <!--
     <record model="ir.ui.view" id="cliente.h.list">
       <field name="name">cliente.h list</field>
       <field name="model">cliente.h.cliente.h</field>
@@ -54,7 +55,7 @@
         </form>
       </field>
     </record>
-
+    -->
 
     <!-- explicit list view definition -->
 <!--
