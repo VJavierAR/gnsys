@@ -341,7 +341,7 @@ class StockCambioLine(TransientModel):
                 ubicacion=self.almacen.lot_stock_id.id
             existencias=self.env['stock.quant'].search([['location_id','=',ubicacion],['product_id','=',self.producto1.id]]).mapped('lot_id.id')
             if(len(existencias)>1):
-                series=self.env['stock.production.lot'].search([['id','in',existencias]])
+                series=self.env['stock.production.lot'].search([['id','in',existencias]]).mapped('id')
             if(self.estado):
                 if(series!=[]):
                     series=series.filtered(lambda x:x.x_studio_estado==self.estado).mapped('id')
@@ -363,7 +363,9 @@ class StockCambioLine(TransientModel):
     existencia2=fields.Integer(compute='nuevo',string='Existencia Usado')
     existeciaAlmacen=fields.Integer(compute='almac',string='Existencia de Almacen seleccionado')
     tipo=fields.Integer()
-
+    move_id=fields.Many2one('stock.move')
+    modelo=fields.Char(related='move_id.sale_line_id.x_studio_modelo')
+    
     @api.depends('almacen')
     def almac(self):
         for record in self:
@@ -384,6 +386,8 @@ class StockCambioLine(TransientModel):
     existencia2=fields.Integer(compute='nuevo',string='Existencia Usado')
     existeciaAlmacen=fields.Integer(compute='almac',string='Existencia de Almacen seleccionado')
     tipo=fields.Integer()
+    move_id=fields.Many2one('stock.move')
+    modelo=fields.Char(related='move_id.sale_line_id.x_studio_modelo')
 
     @api.depends('almacen')
     def almac(self):
