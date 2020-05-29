@@ -3,7 +3,7 @@
 
     <record model="ir.ui.view" id="cliente.h.list">
       <field name="name">cliente.h list</field>
-      <field name="model">cliente.h</field>
+      <field name="model">cliente.h.cliente.h</field>
       <field name="arch" type="xml">
         <tree>
           <field name="fecha"/>
@@ -22,7 +22,7 @@
 
     <record model="ir.ui.view" id="cliente.h.form">
       <field name="name">cliente.h form</field>
-      <field name="model">cliente.h</field>
+      <field name="model">cliente.h.cliente.h</field>
       <field name="arch" type="xml">
         <form>
           <group>
