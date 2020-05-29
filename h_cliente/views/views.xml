@@ -1,9 +1,9 @@
 <odoo>
   <data>
 
-    <record model="ir.ui.view" id="HCliente.list">
+    <record model="ir.ui.view" id="sale.HCliente.list">
       <field name="name">HCliente list</field>
-      <field name="model">HCliente</field>
+      <field name="model">sale.HCliente</field>
       <field name="arch" type="xml">
         <tree>
           <field name="fecha"/>
@@ -20,9 +20,9 @@
     </record>
 
 
-    <record model="ir.ui.view" id="HCliente.form">
+    <record model="ir.ui.view" id="sale.HCliente.form">
       <field name="name">HCliente form</field>
-      <field name="model">HCliente</field>
+      <field name="model">sale.HCliente</field>
       <field name="arch" type="xml">
         <form>
           <group>
