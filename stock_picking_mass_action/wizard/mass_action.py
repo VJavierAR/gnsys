@@ -215,14 +215,15 @@ class StockCambio(TransientModel):
 
     def otra(self):
         equipos=self.pro_ids.filtered(lambda x:x.producto1.categ_id.id==13)
-        self.confirmar()
+        self.confirmar(accesorios_ids)
+        self.confirmar(toner_ids)
         self.confirmarE(equipos)
         #self.confirmar()
         self.pick.action_confirm()
         self.pick.action_assign()
 
 
-    def confirmar(self):
+    def confirmar(self,data):
         if(self.pick.sale_id):
             i=0
             self.pick.backorder=''
@@ -230,7 +231,7 @@ class StockCambio(TransientModel):
             al=[]
             for sa in self.pick.move_ids_without_package.filtered(lambda x:x.product_id.categ_id.id!=13):
                 copia=sa.location_dest_id.id
-                d=list(filter(lambda x:x['producto1']['id']==sa.product_id.id,self.pro_ids))
+                d=list(filter(lambda x:x['producto1']['id']==sa.product_id.id,data))
                 if(d!=[]):
                     if(sa.product_id.id!=d[0]['producto2']['id']):
                         self.env.cr.execute("delete from stock_move_line where reference='"+self.pick.name+"' and product_id="+str(sa.product_id.id)+";")
