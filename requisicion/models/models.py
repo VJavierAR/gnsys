@@ -59,7 +59,7 @@ class requisicion(models.Model):
                         for hi in h:
                             t=t+hi.cantidad
                         e.write({'pedido':ordenDCompra.name})
-                        lineas=self.env['purchase.order.line'].sudo().create({'name':line.product.description,'product_id':line.product.id,'product_qty':t,'price_unit':line.costo,'taxes_id':[10],'order_id':ordenDCompra.id,'date_planned':record.fecha_prevista,'product_uom':'1'})
+                        lineas=self.env['purchase.order.line'].sudo().create({'name':line.product.description if(line.product.description) else '|','product_id':line.product.id,'product_qty':t,'price_unit':line.costo,'taxes_id':[10],'order_id':ordenDCompra.id,'date_planned':record.fecha_prevista,'product_uom':'1'})
                         d.append(line.product.id)
                 ot=len(record.product_rel.search([['pedido','=',False]]))
                 if(ot==0):
