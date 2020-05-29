@@ -7,7 +7,7 @@ from odoo import exceptions, _
 import logging, ast
 import datetime, time
 _logger = logging.getLogger(__name__)
-
+import threading
 
 class sale_order_compatibles(models.Model):
 	_name = 'sale_order_compatibles'
