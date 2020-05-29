@@ -318,19 +318,19 @@ class helpdesk_update(models.Model):
             if telefonoLocalidad == 'False':
                 telefonoLocalidad = 'No disponible'
             elif rec.contactoInterno:
-                contactoDeLocalidad = rec.contactoInterno.phone
+                telefonoLocalidad = rec.contactoInterno.phone
 
             movilLocalidad = str(rec.movilLocalidadContacto)
             if movilLocalidad == 'False':
                 movilLocalidad = 'No disponible'
             elif rec.contactoInterno:
-                contactoDeLocalidad = rec.contactoInterno.mobile
+                movilLocalidad = rec.contactoInterno.mobile
 
             correoElectronicoLocalidad = str(rec.correoLocalidadContacto)
             if correoElectronicoLocalidad == 'False':
                 correoElectronicoLocalidad = 'No disponible'
             elif rec.contactoInterno:
-                contactoDeLocalidad = rec.contactoInterno.email
+                correoElectronicoLocalidad = rec.contactoInterno.email
             
             datos = 'Cliente: ' + nombreCliente + ' \nLocalidad: ' + localidad + ' \nLocalidad contacto: ' + contactoDeLocalidad + ' \nEstado de localidad: ' + estadoLocalidad + '\nZona localidad: ' + zonaLocalidad + ' \nTeléfono de localidad: ' + telefonoLocalidad + ' \nMóvil localidad contacto: ' + movilLocalidad + ' \nCorreo electrónico localidad contacto: ' + correoElectronicoLocalidad
             #datos = 'Cliente: ' + nombreCliente + ' \nLocalidad: ' + localidad + ' \nLocalidad contacto: ' + contactoDeLocalidad + ' \nEstado de localidad: ' + estadoLocalidad 
