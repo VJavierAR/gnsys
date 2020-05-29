@@ -279,7 +279,7 @@
                                 <field name="producto1" readonly="1" string="Registro Original"/>
                                 <field name="tipo" invisible="1"/>
                                 <field name="producto2" string="Registro a Cambiar"  attrs="{'invisible':[['tipo','!=',3]]}"/>
-                                <field name="modelo"/>
+                                <!--<field name="modelo"/>-->
                                 <field name="almacen" domain="[['x_studio_cliente','=',False]]"/>
                                 <field name="existeciaAlmacen" readonly="1"/>                        
                                 </tree>
@@ -291,7 +291,7 @@
                                 <field name="producto1" readonly="1" string="Registro Original"/>
                                 <field name="tipo" invisible="1"/>
                                 <field name="producto2" string="Registro a Cambiar"  attrs="{'invisible':[['tipo','!=',3]]}"/>
-                                <field name="modelo"/>
+                                <!--<field name="modelo"/>-->
                                 <field name="almacen" domain="[['x_studio_cliente','=',False]]"/>
                                 <field name="existeciaAlmacen" readonly="1"/>
                                 </tree>

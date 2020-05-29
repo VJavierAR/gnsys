@@ -364,7 +364,7 @@ class StockCambioLine(TransientModel):
     existeciaAlmacen=fields.Integer(compute='almac',string='Existencia de Almacen seleccionado')
     tipo=fields.Integer()
     move_id=fields.Many2one('stock.move')
-    modelo=fields.Char(related='move_id.x_studio_modelo')
+    #modelo=fields.Char(related='move_id.x_studio_modelo')
     
     @api.depends('almacen')
     def almac(self):
@@ -387,7 +387,7 @@ class StockCambioLine(TransientModel):
     existeciaAlmacen=fields.Integer(compute='almac',string='Existencia de Almacen seleccionado')
     tipo=fields.Integer()
     move_id=fields.Many2one('stock.move')
-    modelo=fields.Char(related='move_id.x_studio_modelo')
+    #modelo=fields.Char(related='move_id.x_studio_modelo')
 
     @api.depends('almacen')
     def almac(self):
