@@ -14,6 +14,7 @@ class HCliente(models.Model):
 	_description = 'Clientes de almacen'
 	
 	fecha = fields.Datetime(string = 'Fecha')
+	fechaTexto = fields.Text(string = 'Fecha texto')
 
 	origen = fields.Text(string = 'Origen')
 	destino = fields.Text(string = 'Destino')
