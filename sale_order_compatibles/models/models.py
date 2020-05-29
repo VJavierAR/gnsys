@@ -137,4 +137,9 @@ class sale_update(models.Model):
 					d={'x_studio_field_mqSKO':e3.producto.id,'product_id':e3.producto.id,'name':e3.producto.name,'product_uom_qty':e3.cantidad,'product_uom':e3.producto.uom_id.id,'price_unit':0.00,'x_studio_id_relacion':e.id,'x_studio_modelo':e.equipos.name}
 					self.order_line=[d]
 
-					
+	def componentes(self):
+		if(len(self.order_line)>0):
+			for s in self.order_line:
+				for ss in s.x_studio_field_9nQhR.x_studio_histrico_de_componentes:
+					d={'x_studio_field_mqSKO':ss.x_studio_field_gKQ9k.id,'product_id':ss.x_studio_field_gKQ9k.id,'name':ss.x_studio_field_gKQ9k.name,'product_uom_qty':ss.x_studio_cantidad,'product_uom':ss.x_studio_field_gKQ9k.uom_id.id,'price_unit':0.00}
+					self.order_line=[d]
