@@ -10,7 +10,7 @@ _logger = logging.getLogger(__name__)
 
 
 class HCliente(models.Model):
-	_name = 'sale.HCliente'
+	_name = 'cliente.h'
 	_description = 'Clientes de almacen'
 	
 	fecha = fields.Datetime(string = 'Fecha')
@@ -30,4 +30,4 @@ class HCliente(models.Model):
 class SeriesUpdate(models.Model):
 	_inherit = 'stock.production.lot'
 
-	clientes = fields.One2many('sale.HCliente', 'serie', string = 'Clientes', store = True)	
+	clientes = fields.One2many('cliente.h', 'serie', string = 'Clientes', store = True)	
