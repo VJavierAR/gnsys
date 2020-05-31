@@ -13,9 +13,9 @@
         <field name="model">purchase.assigned</field>
         <field name="arch" type="xml">
             <form string="Mass Action for the selected stock picking">
-            	<field name="autoriza">
-            	<field name="area">
-            	<field name="solicitante">
+            	<field name="autoriza"/>
+            	<field name="area"/>
+            	<field name="solicitante"/>
                 <footer>
                     <button name="confirmar" string="Apply" type="object" class="oe_highlight"/>
                     <button string="Cancel" class="oe_link" special="cancel"/>
