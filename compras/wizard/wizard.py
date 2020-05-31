@@ -20,6 +20,7 @@ _logger = logging.getLogger(__name__)
 
 class PurchaseAssig(models.Model):
 	_name='purchase.assigned'
+	_description='purchase assig'
 	area=fields.Char('Area')
 	solicitante=fields.Char('Solicitante')
 	autoriza=fields.Char('Autoriza')
@@ -30,4 +31,4 @@ class PurchaseAssig(models.Model):
 	
 	def confirmar(self):
 		p=self.purchase_ids.write({'x_studio_autoriza':self.autoriza,'x_studio_area_de_solicitud':self.area,'x_studio_solicita':self.solicitante})
-		return self.env.ref('studio_customization.pedido_de_compra_rep_0c33061f-3326-4f74-9b7e-99ea6e672160').report_action(p)
+		return self.env.ref('studio_customization.studio_report_docume_0793fc55-e2af-4d93-a7cf-9ae38923bd11').report_action(p)
