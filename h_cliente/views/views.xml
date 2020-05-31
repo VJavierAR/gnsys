@@ -1,0 +1,117 @@
+<odoo>
+  <data>
+
+    <!--
+    <record model="ir.ui.view" id="cliente.h.list">
+      <field name="name">cliente.h list</field>
+      <field name="model">cliente.h.cliente.h</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="fecha"/>
+          <field name="origen"/>
+          <field name="destino"/>
+          <field name="localidad"/>
+          <field name="contadorBNPag"/>
+          <field name="contadorColorPag"/>
+          <field name="contadorBNML"/>
+          <field name="contadorColorML"/>
+          <field name="causa"/>
+        </tree>
+      </field>
+    </record>
+
+
+    <record model="ir.ui.view" id="cliente.h.form">
+      <field name="name">cliente.h form</field>
+      <field name="model">cliente.h.cliente.h</field>
+      <field name="arch" type="xml">
+        <form>
+          <group>
+            <group name=''>
+              <field name="fecha"/>
+            </group>
+            <group name='Ubicación'>
+              <field name="origen"/>
+              <field name="destino"/>
+              <field name="localidad"/>
+            </group>
+          </group>
+
+          <group>
+            <group name='Contadores'>
+              <field name="contadorBNPag"/>
+              <field name="contadorColorPag"/>
+              <field name="contadorBNML"/>
+              <field name="contadorColorML"/>
+            </group>
+          </group>
+
+          <group>
+            <group name='Falla'>
+              <field name="causa"/>
+            </group>
+          </group>
+
+        </form>
+      </field>
+    </record>
+    -->
+
+    <!-- explicit list view definition -->
+<!--
+    <record model="ir.ui.view" id="h_cliente.list">
+      <field name="name">h_cliente list</field>
+      <field name="model">h_cliente.h_cliente</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="value"/>
+          <field name="value2"/>
+        </tree>
+      </field>
+    </record>
+-->
+
+    <!-- actions opening views on models -->
+<!--
+    <record model="ir.actions.act_window" id="h_cliente.action_window">
+      <field name="name">h_cliente window</field>
+      <field name="res_model">h_cliente.h_cliente</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+-->
+
+    <!-- server action to the one above -->
+<!--
+    <record model="ir.actions.server" id="h_cliente.action_server">
+      <field name="name">h_cliente server</field>
+      <field name="model_id" ref="model_h_cliente_h_cliente"/>
+      <field name="state">code</field>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": model._name,
+        }
+      </field>
+    </record>
+-->
+
+    <!-- Top menu item -->
+<!--
+    <menuitem name="h_cliente" id="h_cliente.menu_root"/>
+-->
+    <!-- menu categories -->
+<!--
+    <menuitem name="Menu 1" id="h_cliente.menu_1" parent="h_cliente.menu_root"/>
+    <menuitem name="Menu 2" id="h_cliente.menu_2" parent="h_cliente.menu_root"/>
+-->
+    <!-- actions -->
+<!--
+    <menuitem name="List" id="h_cliente.menu_1_list" parent="h_cliente.menu_1"
+              action="h_cliente.action_window"/>
+    <menuitem name="Server to list" id="h_cliente" parent="h_cliente.menu_2"
+              action="h_cliente.action_server"/>
+-->
+  </data>
+</odoo>

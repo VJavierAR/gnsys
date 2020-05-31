@@ -22,7 +22,6 @@ class StockPicking(Model):
         return True
 
 
-
 class StockPic(Model):
     _inherit = 'stock.move'
 

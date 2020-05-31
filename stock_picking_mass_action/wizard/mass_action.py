@@ -215,14 +215,15 @@ class StockCambio(TransientModel):
 
     def otra(self):
         equipos=self.pro_ids.filtered(lambda x:x.producto1.categ_id.id==13)
-        self.confirmar()
+        self.confirmar(accesorios_ids)
+        self.confirmar(toner_ids)
         self.confirmarE(equipos)
         #self.confirmar()
         self.pick.action_confirm()
         self.pick.action_assign()
 
 
-    def confirmar(self):
+    def confirmar(self,data):
         if(self.pick.sale_id):
             i=0
             self.pick.backorder=''
@@ -230,7 +231,7 @@ class StockCambio(TransientModel):
             al=[]
             for sa in self.pick.move_ids_without_package.filtered(lambda x:x.product_id.categ_id.id!=13):
                 copia=sa.location_dest_id.id
-                d=list(filter(lambda x:x['producto1']['id']==sa.product_id.id,self.pro_ids))
+                d=list(filter(lambda x:x['producto1']['id']==sa.product_id.id,data))
                 if(d!=[]):
                     if(sa.product_id.id!=d[0]['producto2']['id']):
                         self.env.cr.execute("delete from stock_move_line where reference='"+self.pick.name+"' and product_id="+str(sa.product_id.id)+";")
@@ -340,10 +341,10 @@ class StockCambioLine(TransientModel):
                 ubicacion=self.almacen.lot_stock_id.id
             existencias=self.env['stock.quant'].search([['location_id','=',ubicacion],['product_id','=',self.producto1.id]]).mapped('lot_id.id')
             if(len(existencias)>1):
-                series=self.env['stock.production.lot'].search([['id','in',existencias]])
+                series=self.env['stock.production.lot'].search([['id','in',existencias]]).mapped('id')
             if(self.estado):
                 if(series!=[]):
-                    series=series.filtered(lambda x:x.x_studio_estado==self.estado)
+                    series=series.filtered(lambda x:x.x_studio_estado==self.estado).mapped('id')
                 else:
                     series=self.env['stock.production.lot'].search([['x_studio_estado','=',self.estado],['product_id','=',self.producto1.id]]).mapped('id')
             res['domain']={'serieOrigen':[['id','in',series]]}
@@ -362,7 +363,9 @@ class StockCambioLine(TransientModel):
     existencia2=fields.Integer(compute='nuevo',string='Existencia Usado')
     existeciaAlmacen=fields.Integer(compute='almac',string='Existencia de Almacen seleccionado')
     tipo=fields.Integer()
-
+    move_id=fields.Many2one('stock.move')
+    #modelo=fields.Char(related='move_id.x_studio_modelo')
+    
     @api.depends('almacen')
     def almac(self):
         for record in self:
@@ -383,6 +386,8 @@ class StockCambioLine(TransientModel):
     existencia2=fields.Integer(compute='nuevo',string='Existencia Usado')
     existeciaAlmacen=fields.Integer(compute='almac',string='Existencia de Almacen seleccionado')
     tipo=fields.Integer()
+    move_id=fields.Many2one('stock.move')
+    #modelo=fields.Char(related='move_id.x_studio_modelo')
 
     @api.depends('almacen')
     def almac(self):
