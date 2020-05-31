@@ -13,6 +13,7 @@
         <field name="model">purchase.assigned</field>
         <field name="arch" type="xml">
             <form string="Mass Action for the selected stock picking">
+            	<field name="autoriza">
             	<field name="area">
             	<field name="solicitante">
                 <footer>

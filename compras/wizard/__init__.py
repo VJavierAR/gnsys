@@ -1,1 +1,1 @@
-from . import compras
+from . import wizard
