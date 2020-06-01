@@ -435,7 +435,25 @@ class StockPicking(Model):
             'res_id': wiz.id,
             'context': self.env.context,
         }
-    
+
+    def ingreso(self):
+        wiz = self.env['ingreso.almacen'].create({'pick':self.id})
+        view = self.env.ref('stock_picking_mass_action.view_ingreso_almacen')
+        for r in self.move_ids_without_package:
+            self.env['ingreso.lines'].create({'move':r.id,'producto':self.product_id.id,'rel_ingreso':wiz.id,'cantidad':int(r.product_uom_qty)})
+        return {
+            'name': _('Ingreso'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'ingreso.almacen',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            'context': self.env.context,
+        }
+
     def serie(self):
         wiz = self.env['picking.serie'].create({'pick':self.id})
         for r in self.move_ids_without_package:

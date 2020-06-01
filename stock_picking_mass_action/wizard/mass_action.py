@@ -199,6 +199,26 @@ class StockPickingMassAction(TransientModel):
         assigned_picking_lst2 = self.picking_ids.\
         filtered(lambda x: x.picking_type_id.id == 3 and x.state == 'done')
         return self.env.ref('studio_customization.transferir_reporte_4541ad13-9ccb-4a0f-9758-822064db7c9a').report_action(assigned_picking_lst2)
+class StockIngreso(TransientModel):
+    _name='ingreso.almacen'
+    _description='Ingreso Almacen'
+    pick=fields.Many2one('stock.picking')
+    move_line=fields.One2many('ingreso.lines','rel_ingreso')
+
+    def confirmar(self):
+        for m in move_line:
+            l=self.env['stock.move.line'].search([['move_id','=',m.move.id]])
+            l.write({'qty_done':m.cantidad})
+        pick.action_done()
+
+class StockIngresoLines(TransientModel):
+    _name='ingreso.lines'
+    _description='lineas de ingreso'
+    rel_ingreso=fields.Many2one('ingreso.almacen')
+    producto=fields.Many2one('product.product')
+    cantidad=fields.Integer()
+    move=fields.Many2one('stock.move')    
+
 
 
 class StockCambio(TransientModel):
