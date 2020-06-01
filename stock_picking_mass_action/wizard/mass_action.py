@@ -340,13 +340,13 @@ class StockCambioLine(TransientModel):
                 ubicacion=self.almacen.lot_stock_id.id
             existencias=self.env['stock.quant'].search([['location_id','=',ubicacion],['product_id','=',self.producto1.id]]).mapped('lot_id.id')
             if(len(existencias)>1):
-                series=self.env['stock.production.lot'].search([['id','in',existencias]]).mapped('id')
+                series=self.env['stock.production.lot'].search([['id','in',existencias]])
             if(self.estado):
                 if(series!=[]):
-                    series=series.filtered(lambda x:x.x_studio_estado==self.estado).mapped('id')
+                    series=series.filtered(lambda x:x.x_studio_estado==self.estado)
                 else:
-                    series=self.env['stock.production.lot'].search([['x_studio_estado','=',self.estado],['product_id','=',self.producto1.id]]).mapped('id')
-            res['domain']={'serieOrigen':[['id','in',series]]}
+                    series=self.env['stock.production.lot'].search([['x_studio_estado','=',self.estado],['product_id','=',self.producto1.id],['id','in',existencias]])
+            res['domain']={'serieOrigen':[['id','in',series.mapped('id')]]}
         return res
 
 class StockCambioLine(TransientModel):
