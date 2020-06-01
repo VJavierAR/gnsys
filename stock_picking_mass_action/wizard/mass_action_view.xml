@@ -312,8 +312,8 @@
         <field name="arch" type="xml">
             <form string="Cambio">
                 <group>
-                        <field name="move_line" string="Productos">
-                                <tree editable="bottom">
+                        <field name="move_line" string="Productos" options="{'no_create_edit': True}">
+                                <tree editable="bottom" >
                                 <field name="producto" readonly="1" string="Producto"/>
                                 <field name="cantidad" />
                                 </tree>
