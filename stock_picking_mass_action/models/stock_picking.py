@@ -381,7 +381,7 @@ class StockPicking(Model):
         d=[]
         wiz = self.env['cambio.toner'].create({'display_name':'h','pick':self.id,'tonerUorden':self.oculta})
         for p in self.move_ids_without_package.filtered(lambda x:x.product_id.categ_id.id==13):
-            data={'move_id':p.id,'almacen':self.location_id.x_studio_field_JoD2k.id,'estado':p.sale_line_id.x_studio_estado,'rel_cambio':wiz.id,'producto1':p.product_id.id,'producto2':p.product_id.id,'cantidad':p.product_uom_qty,'serie':p.x_studio_serie_destino.id,'tipo':self.picking_type_id.id}
+            data={'estado':p.sale_line_id.x_studio_estado,'move_id':p.id,'almacen':self.location_id.x_studio_field_JoD2k.id,'estado':p.sale_line_id.x_studio_estado,'rel_cambio':wiz.id,'producto1':p.product_id.id,'producto2':p.product_id.id,'cantidad':p.product_uom_qty,'serie':p.x_studio_serie_destino.id,'tipo':self.picking_type_id.id}
             self.env['cambio.toner.line'].create(data)
 
         for p in self.move_ids_without_package.filtered(lambda x:x.product_id.categ_id.id==5):
@@ -435,7 +435,25 @@ class StockPicking(Model):
             'res_id': wiz.id,
             'context': self.env.context,
         }
-    
+
+    def ingreso(self):
+        wiz = self.env['ingreso.almacen'].create({'pick':self.id})
+        view = self.env.ref('stock_picking_mass_action.view_ingreso_almacen')
+        for r in self.move_ids_without_package:
+            self.env['ingreso.lines'].create({'move':r.id,'producto':self.product_id.id,'rel_ingreso':wiz.id,'cantidad':int(r.product_uom_qty)})
+        return {
+            'name': _('Ingreso'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'ingreso.almacen',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            'context': self.env.context,
+        }
+
     def serie(self):
         wiz = self.env['picking.serie'].create({'pick':self.id})
         for r in self.move_ids_without_package:
