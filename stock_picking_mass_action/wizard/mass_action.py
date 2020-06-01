@@ -17,7 +17,6 @@ import logging, ast
 from odoo.tools import config, DEFAULT_SERVER_DATE_FORMAT, DEFAULT_SERVER_DATETIME_FORMAT, pycompat
 _logger = logging.getLogger(__name__)
 
-
 try:
     import xlrd
     try:
@@ -200,6 +199,26 @@ class StockPickingMassAction(TransientModel):
         assigned_picking_lst2 = self.picking_ids.\
         filtered(lambda x: x.picking_type_id.id == 3 and x.state == 'done')
         return self.env.ref('studio_customization.transferir_reporte_4541ad13-9ccb-4a0f-9758-822064db7c9a').report_action(assigned_picking_lst2)
+class StockIngreso(TransientModel):
+    _name='ingreso.almacen'
+    _description='Ingreso Almacen'
+    pick=fields.Many2one('stock.picking')
+    move_line=fields.One2many('ingreso.lines','rel_ingreso')
+
+    def confirmar(self):
+        for m in self.move_line:
+            l=self.env['stock.move.line'].search([['move_id','=',m.move.id]])
+            l.write({'qty_done':m.cantidad})
+        self.pick.action_done()
+
+class StockIngresoLines(TransientModel):
+    _name='ingreso.lines'
+    _description='lineas de ingreso'
+    rel_ingreso=fields.Many2one('ingreso.almacen')
+    producto=fields.Many2one('product.product')
+    cantidad=fields.Integer()
+    move=fields.Many2one('stock.move')    
+
 
 
 class StockCambio(TransientModel):
@@ -215,8 +234,8 @@ class StockCambio(TransientModel):
 
     def otra(self):
         equipos=self.pro_ids.filtered(lambda x:x.producto1.categ_id.id==13)
-        self.confirmar(accesorios_ids)
-        self.confirmar(toner_ids)
+        self.confirmar(self.accesorios_ids)
+        self.confirmar(self.toner_ids)
         self.confirmarE(equipos)
         #self.confirmar()
         self.pick.action_confirm()
@@ -341,13 +360,13 @@ class StockCambioLine(TransientModel):
                 ubicacion=self.almacen.lot_stock_id.id
             existencias=self.env['stock.quant'].search([['location_id','=',ubicacion],['product_id','=',self.producto1.id]]).mapped('lot_id.id')
             if(len(existencias)>1):
-                series=self.env['stock.production.lot'].search([['id','in',existencias]]).mapped('id')
+                series=self.env['stock.production.lot'].search([['id','in',existencias]])
             if(self.estado):
                 if(series!=[]):
-                    series=series.filtered(lambda x:x.x_studio_estado==self.estado).mapped('id')
+                    series=series.filtered(lambda x:x.x_studio_estado==self.estado)
                 else:
-                    series=self.env['stock.production.lot'].search([['x_studio_estado','=',self.estado],['product_id','=',self.producto1.id]]).mapped('id')
-            res['domain']={'serieOrigen':[['id','in',series]]}
+                    series=self.env['stock.production.lot'].search([['x_studio_estado','=',self.estado],['product_id','=',self.producto1.id],['id','in',existencias]])
+            res['domain']={'serieOrigen':[['id','in',series.mapped('id')]]}
         return res
 
 class StockCambioLine(TransientModel):
