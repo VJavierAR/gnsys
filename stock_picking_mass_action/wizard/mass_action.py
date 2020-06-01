@@ -206,7 +206,7 @@ class StockIngreso(TransientModel):
     move_line=fields.One2many('ingreso.lines','rel_ingreso')
 
     def confirmar(self):
-        for m in move_line:
+        for m in self.move_line:
             l=self.env['stock.move.line'].search([['move_id','=',m.move.id]])
             l.write({'qty_done':m.cantidad})
         pick.action_done()
