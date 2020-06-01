@@ -209,7 +209,7 @@ class StockIngreso(TransientModel):
         for m in self.move_line:
             l=self.env['stock.move.line'].search([['move_id','=',m.move.id]])
             l.write({'qty_done':m.cantidad})
-        pick.action_done()
+        self.pick.action_done()
 
 class StockIngresoLines(TransientModel):
     _name='ingreso.lines'
