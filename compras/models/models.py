@@ -110,7 +110,7 @@ class compras(models.Model):
                                 precioCdesc=((cantidad*precio)-descuento)/cantidad
                                 template=self.env['product.template'].search([('default_code','=',noparte)])
                                 productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
-                                product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':cantidad,'price_unit':precioCdesc,'taxes_id':[10],'name':productid.description}
+                                product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':cantidad,'price_unit':precioCdesc,'taxes_id':[10],'name':productid.description if(productid.description) else '/'}
                                 fff.write(str(product)+str(noparte))
                                 arreglo.append(product)
                         if(len(arreglo)>0):
