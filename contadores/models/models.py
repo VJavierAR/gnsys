@@ -662,16 +662,24 @@ class contadores(models.Model):
                               ivatt=iva+ivatt  
                               totalsr=(float(rd.rentaMensual)+(ebn*rd.clickExcedenteBN))+totalsr
                               ttotal=(iva +cal)+ttotal
+                            else:                                                            
+                              cal=float(rd.rentaMensual)
+                              worksheet.write(i, 12, cal)
+                              iva=round(cal*.16,2)
+                              worksheet.write(i, 13,'$ '+str(iva) )
+                              worksheet.write(i, 14,'$ '+str(iva +cal) )  
+                              ivatt=iva+ivatt  
+                              totalsr=(float(rd.rentaMensual)+totalsr
+                              ttotal=(iva +cal)+ttotal  
                         if rpt.x_studio_color_o_bn=='Color':
                            if rd.bolsaBN<ebn:
                               ebn=ebn-rd.bolsaBN
                               eebn=ebn+eebn  
-                              ebnx=(ebn*rd.clickExcedenteBN)                                      
+                              ebnx=(ebn*rd.clickExcedenteBN)                                                                  
                            if rd.bolsaColor<ec:
                               ec=ec-rd.bolsaColor
                               eec=ec+eec  
-                              call=float(rd.rentaMensual)+(ec*rd.clickExcedenteColor)+ebnx  
-                              raise exceptions.ValidationError("Nada que generar "+str(call))                                       
+                              call=float(rd.rentaMensual)+(ec*rd.clickExcedenteColor)+ebnx                                
                               worksheet.write(i, 12, call)
                               iva=round(call*.16,2)
                               ivatt=iva+ivatt
@@ -679,6 +687,18 @@ class contadores(models.Model):
                               worksheet.write(i, 14,'$ '+str(iva +call) )
                               totalsr=call+totalsr
                               ttotal=(iva +call)+ttotal
+                           else:
+                              ec=ec-rd.bolsaColor
+                              eec=ec+eec  
+                              call=float(rd.rentaMensual)                                
+                              worksheet.write(i, 12, call)
+                              iva=round(call*.16,2)
+                              ivatt=iva+ivatt
+                              worksheet.write(i, 13,'$ '+str(iva) )     
+                              worksheet.write(i, 14,'$ '+str(iva +call) )
+                              totalsr=call+totalsr
+                              ttotal=(iva +call)+ttotal          
+                                       
                         i=i+1   
                     if rd.nombreAnte=='Costo por página procesada BN o color':
                         worksheet.write(i, 0, rpt.x_studio_indice)
