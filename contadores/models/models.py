@@ -571,7 +571,7 @@ class contadores(models.Model):
                for rpt in self.dca :
                    if int(rpt.x_studio_servicio)==rd.id :
                         worksheet.write(i, 0, rpt.x_studio_indice)
-                        worksheet.write(i, 1, rpt.x_studio_locacion)
+                        worksheet.write(i, 1, rpt.x_studio_locacin)
                         worksheet.write(i, 2, rpt.x_studio_modelo)
                         worksheet.write(i, 3, rpt.serie.name)           
                         worksheet.write(i, 4, rpt.x_studio_lectura_anterior_bn)
@@ -635,7 +635,7 @@ class contadores(models.Model):
                     
                     if rd.nombreAnte=='Renta base con ML incluidas BN o color + ML. excedentes' or rd.nombreAnte=='Renta base con páginas incluidas BN o color + pag. excedentes':
                         worksheet.write(i, 0, rpt.x_studio_indice)
-                        worksheet.write(i, 1, rpt.x_studio_locacion)
+                        worksheet.write(i, 1, rpt.x_studio_locacin)
                         worksheet.write(i, 2, rpt.x_studio_modelo)
                         worksheet.write(i, 3, rpt.serie.name)            
                         worksheet.write(i, 4, rpt.x_studio_lectura_anterior_bn)
@@ -680,7 +680,7 @@ class contadores(models.Model):
                         i=i+1   
                     if rd.nombreAnte=='Costo por página procesada BN o color':
                         worksheet.write(i, 0, rpt.x_studio_indice)
-                        worksheet.write(i, 1, rpt.x_studio_locacion)
+                        worksheet.write(i, 1, rpt.x_studio_locacin)
                         worksheet.write(i, 2, rpt.x_studio_modelo)
                         worksheet.write(i, 3, rpt.serie.name)            
                         worksheet.write(i, 4, rpt.x_studio_lectura_anterior_bn)
@@ -716,7 +716,7 @@ class contadores(models.Model):
                         i=i+1            
                     if rd.nombreAnte=='Renta base + costo de página procesada BN o color':
                         worksheet.write(i, 0, rpt.x_studio_indice)
-                        worksheet.write(i, 1, rpt.x_studio_locacion)
+                        worksheet.write(i, 1, rpt.x_studio_locacin)
                         worksheet.write(i, 2, rpt.x_studio_modelo)
                         worksheet.write(i, 3, rpt.serie.name)            
                         worksheet.write(i, 4, rpt.x_studio_lectura_anterior_bn)
