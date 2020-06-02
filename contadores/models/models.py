@@ -1010,7 +1010,7 @@ class contadores(models.Model):
                                                        , 'x_studio_ubicacin':a.x_studio_centro_de_costos
                                                        , 'x_studio_fecha_texto_anio':str(valores[int(self.mes)-1][1])+' de '+ str(self.anio)
                                                        , 'x_studio_field_no6Rb':str(self.anio)+'-'+str(self.mes)
-                                                       , #'x_studio_periodo':str(self.anio)+ '-'+str(valores[int(self.mes)-1][1])                                                              
+                                                       #, 'x_studio_periodo':str(self.anio)+ '-'+str(valores[int(self.mes)-1][1])                                                              
                                                        , 'contadorMono': currentP.contadorMono
                                                        , 'x_studio_lectura_anterior_bn': currentPA.contadorMono
                                                        #, 'paginasProcesadasBN': bnp                                                   
