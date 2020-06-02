@@ -82,7 +82,7 @@ class compras(models.Model):
                     self.x_studio_pdf=self.archivo
                     myCmd = 'pdftotext -fixed 5 hola.pdf test3.txt'
                     if(self.archivo and ("ctr" in self.partner_id.name.lower())):
-                        #myCmd = 'pdftotext -fixed 4 hola.pdf test3.txt'
+                        myCmd = 'pdftotext -fixed 4 hola.pdf test3.txt'
                         out = open("hola.pdf", "wb")
                         #f2=base64.b64decode(self.archivo)
                         #H=StringIO(f2)
@@ -96,9 +96,26 @@ class compras(models.Model):
                         f = open("test3.txt","r")
                         string = f.read()
                         f.close()
-                        text=string.split('Importe')[1]
+                        text=string.split('Importe')[1].split('\n')
                         fff=open("tt.txt","w")
-                        fff.write(text)
+                        arreglo=[]
+                        for t in text:
+                            if('H87 -' in t):
+                                tt=t.split('H87 -')
+                                cantidad=float(tt[0].replace(' ',''))
+                                tt2=tt[1].split('$')
+                                noparte=tt2[0].split('      ')[2].split('    ')[0].split('0',1)[1]
+                                precio=float(tt2[1].replace(' ','').replace(',',''))
+                                descuento=float(tt2[2].split('002-IVA')[0].replace(' ','').replace(',',''))
+                                precioCdesc=((cantidad*precio)-descuento)/cantidad
+                                template=self.env['product.template'].search([('default_code','=',noparte)])
+                                productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
+                                product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':cantidad,'price_unit':precioCdesc,'taxes_id':[10],'name':productid.description if(productid.description) else '/'}
+                                fff.write(str(product)+str(noparte))
+                                arreglo.append(product)
+                        if(len(arreglo)>0):
+                            self.order_line=[(5,0,0)]
+                        self.order_line=arreglo
                         fff.close()
                     if(self.archivo and ("konica" in self.partner_id.name.lower() or "kyocera" in self.partner_id.name.lower())):
                         out = open("hola.pdf", "wb")
