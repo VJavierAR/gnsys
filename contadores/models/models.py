@@ -662,7 +662,16 @@ class contadores(models.Model):
                               worksheet.write(i, 14,'$ '+str(iva +cal) )  
                               ivatt=iva+ivatt  
                               totalsr=(float(rd.rentaMensual)+(ebn*rd.clickExcedenteBN))+totalsr
-                              ttotal=(iva +cal)+ttotal                                       
+                              ttotal=(iva +cal)+ttotal
+                            else:                                                                           
+                              cal=float(rd.rentaMensual)
+                              worksheet.write(i, 12, cal)
+                              iva=round(cal*.16,2)
+                              worksheet.write(i, 13,'$ '+str(iva) )
+                              worksheet.write(i, 14,'$ '+str(iva +cal) )  
+                              ivatt=iva+ivatt  
+                              totalsr=float(rd.rentaMensual)+totalsr
+                              ttotal=(iva +cal)+ttotal  
                         if rpt.x_studio_color_o_bn=='Color':
                            if rd.bolsaBN<ebn:
                               ebn=ebn-rd.bolsaBN
@@ -679,6 +688,15 @@ class contadores(models.Model):
                               worksheet.write(i, 14,'$ '+str(iva +call) )
                               totalsr=call+totalsr
                               ttotal=(iva +call)+ttotal
+                           else:                                                            
+                              call=float(rd.rentaMensual)                                
+                              worksheet.write(i, 12, call)
+                              iva=round(call*.16,2)
+                              ivatt=iva+ivatt
+                              worksheet.write(i, 13,'$ '+str(iva) )     
+                              worksheet.write(i, 14,'$ '+str(iva +call) )
+                              totalsr=call+totalsr
+                              ttotal=(iva +call)+ttotal         
                                                  
                         i=i+1   
                     if rd.nombreAnte=='Costo por página procesada BN o color':
