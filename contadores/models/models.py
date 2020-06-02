@@ -940,7 +940,7 @@ class contadores(models.Model):
                   'url'      : url
                }      
         """
-        raise exceptions.ValidationError("Nada que generar "+str(self.cliente.name))                                     
+        
         if self.anio and not self.csvD:
             perido=str(self.anio)+'-'+str(self.mes)
             periodoAnterior=''
@@ -960,6 +960,8 @@ class contadores(models.Model):
             periodoAnterior= anioA+'-'+mesaA   
             
             asd=self.env['stock.production.lot'].search([('x_studio_ubicaciontest','=',self.cliente.name)])
+            raise exceptions.ValidationError("Nada que generar "+str(asd))                                     
+            
             #raise Warning('notihng to show xD '+str(self.cliente.name))
             #id=int(self.id)            
             sc=self.env['contadores.contadores'].search([('id', '=', self.id)])
