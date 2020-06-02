@@ -996,6 +996,25 @@ class contadores(models.Model):
                                                        , 'modelo':a.product_id.name
                                                        , 'servicio':a.servicio.id
                                                        })
+                   rr=self.env['dca'].create({'contador_id': self.id
+                                                       , 'x_studio_producto': a.id
+                                                       , 'serie': a.id
+                                                       , 'x_studio_locacin':a.x_studio_locacion_recortada
+                                                       , 'x_studio_ubicacin':a.x_studio_centro_de_costos
+                                                       , 'x_studio_periodo':str(self.anio)+ '-'+str(valores[int(self.mes)-1][1])                                                              
+                                                       , 'contadorMono': currentP.contadorMono
+                                                       , 'x_studio_lectura_anterior_bn': currentPA.contadorMono
+                                                       #, 'paginasProcesadasBN': bnp                                                   
+                                                       , 'x_studio_periodo_anterior':str(anioA)+ '-'+ str(valores[int(mesaA)-1][1])            
+                                                       , 'contadorColor': currentP.contadorColor
+                                                       , 'x_studio_lectura_anterior_color': currentPA.contadorColor                                                             
+                                                       #, 'paginasProcesadasColor': colorp
+                                                       , 'x_studio_color_o_bn':a.x_studio_color_bn
+                                                       , 'x_studio_indice': i
+                                                       , 'x_studio_modelo':a.product_id.name
+                                                       , 'x_studio_servicio':a.servicio.id
+                                                       })
+                
                 else:                   
                    rr=self.env['contadores.contadores.detalle'].create({'contadores': self.id
                                                        , 'producto': a.id
@@ -1016,7 +1035,28 @@ class contadores(models.Model):
                                                        , 'servicio':a.servicio.id
                                                        , 'desc': 'capturado'
                                                        , 'capturar':True  
-                                                       }) 
+                                                       })
+                    rr=self.env['dca'].create({'contador_id': self.id
+                                                       , 'x_studio_producto': a.id
+                                                       , 'serie': a.id
+                                                       , 'x_studio_locacin':a.x_studio_locacion_recortada
+                                                       , 'x_studio_ubicacin':a.x_studio_centro_de_costos
+                                                       , 'x_studio_periodo':str(self.anio)+ '-'+str(valores[int(self.mes)-1][1])                                                              
+                                                       , 'contadorMono': currentP.contadorMono
+                                                       , 'x_studio_lectura_anterior_bn': currentPA.contadorMono
+                                                       #, 'paginasProcesadasBN': bnp                                                   
+                                                       , 'x_studio_periodo_anterior':str(anioA)+ '-'+ str(valores[int(mesaA)-1][1])            
+                                                       , 'contadorColor': currentP.contadorColor
+                                                       , 'x_studio_lectura_anterior_color': currentPA.contadorColor                                                             
+                                                       #, 'paginasProcesadasColor': colorp
+                                                       , 'x_studio_color_o_bn':a.x_studio_color_bn
+                                                       , 'x_studio_indice': i
+                                                       , 'x_studio_modelo':a.product_id.name
+                                                       , 'x_studio_servicio':a.servicio.id
+                                                        , 'x_studio_descripcin': 'capturado'
+                                                       , 'x_studio_capturar':True 
+                                                       })
+                
                 i=1+i                
         if self.csvD:           
            with open("a1.csv","w") as f:
