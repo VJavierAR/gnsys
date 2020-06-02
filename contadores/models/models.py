@@ -734,6 +734,7 @@ class contadores(models.Model):
                         if rpt.x_studio_color_o_bn=='Color':
                            bsc=(ec*rd.clickExcedenteColor)+(ebn*rd.clickExcedenteBN)
                            eec=ec+eec
+                           eebn=ebn+eebn 
                            worksheet.write(i, 12, bsc,neg) 
                            iva=round(bsc*.16,2)
                            ivatt=iva+ivatt
