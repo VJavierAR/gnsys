@@ -879,8 +879,8 @@ class contadores(models.Model):
         """            
         worksheet.write(i, 10, eebn,neg)
         worksheet.write(i, 11, eec,neg)                
-        worksheet.write(i, 12, '$'+str(totalsr),neg)        
-        worksheet.write(i, 13, '$'+str(ivatt),neg)        
+        worksheet.write(i, 12, '$'+str(round(totalsr,2)),neg)        
+        worksheet.write(i, 13, '$'+str(round(ivatt,2)),neg)        
         worksheet.write(i, 14, '$'+str(round(ttotal,2)),neg)        
         #raise exceptions.ValidationError("Nada que generar "+str(totalsr))                                     
         workbook.close()
