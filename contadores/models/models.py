@@ -1036,7 +1036,7 @@ class contadores(models.Model):
                                                        , 'desc': 'capturado'
                                                        , 'capturar':True  
                                                        })
-                    rrs=self.env['dca'].create({'contador_id': self.id
+                   rrs=self.env['dca'].create({'contador_id': self.id
                                                        , 'x_studio_producto': a.id
                                                        , 'serie': a.id
                                                        , 'x_studio_locacin':a.x_studio_locacion_recortada
