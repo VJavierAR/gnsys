@@ -67,3 +67,23 @@ class StockPic(Model):
         #if merge:
          #   return self._merge_moves(merge_into=merge_into)
         return self
+
+class StockQuan(Model):
+    _inherit = 'stock.quant'
+
+
+    def edit(self):
+        wiz = self.env['quant.action'].create({'quant':self.id,'producto':self.product_id.id,'cantidad':self.quantity,'ubicacion':self.x_studio_field_kUc4x.id})
+        view = self.env.ref('stock_picking_mass_action.view_quant_action_form')
+        return {
+            'name': _('Existencia'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'quant.action',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            'context': self.env.context,
+        }

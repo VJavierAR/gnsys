@@ -1021,3 +1021,13 @@ class  DevolverPick(TransientModel):
             self.picking.x_studio_ticket_relacionado.write({'x_studio_field_0OAPP':[(4,s.id)]})
         self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : self.picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id, 'estadoTicket' : "Devuelto a Almacen", 'comentario':self.comentario}) 
         
+class StockQua(TransientModel):
+    _name='quant.action'
+    _description='Ajuste en quant'
+    quant=fields.Many2one('stock.quant')
+    producto=fields.Many2one('product.product')
+    cantidad=fields.Float()
+    ubicacion=fields.Many2one('x_ubicacion_inventario')
+
+    def confirmar(self):
+        self.quant.sudo().write({'quantity':self.cantidad,'x_studio_field_kUc4x':self.ubicacion.id})
