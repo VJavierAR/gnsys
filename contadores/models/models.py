@@ -940,6 +940,7 @@ class contadores(models.Model):
                   'url'      : url
                }      
         """
+        raise exceptions.ValidationError("Nada que generar "+str(self.cliente.name))                                     
         if self.anio and not self.csvD:
             perido=str(self.anio)+'-'+str(self.mes)
             periodoAnterior=''
