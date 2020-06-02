@@ -697,7 +697,7 @@ class contadores(models.Model):
                               ttotal=(iva +call)+ttotal
                            else:                                                            
                               call=float(rd.rentaMensual)                                
-                              worksheet.write(i, 12, call)
+                              worksheet.write(i, 12, call,neg)
                               iva=round(call*.16,2)
                               ivatt=iva+ivatt
                               worksheet.write(i, 13,'$ '+str(iva) ,neg)     
