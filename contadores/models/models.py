@@ -477,13 +477,18 @@ class contadores(models.Model):
         periodoAnterior= anioA+'-'+mesaA                  
         content = ["No.", "Localidad", "Modelo", "No. Serie","B/N ["+str(valores[int(mesaA)-1][1])+"]", "Color ["+str(valores[int(mesaA)-1][1])+"]","B/N ["+str(valores[int(self.mes[1])-1][1])+"]", "Color ["+str(valores[int(self.mes[1])-1][1])+"]", "Impresiones B/N", "Impresiones Color","Excedentes B&N","Excedentes Color","Subtotal","IVA","Total","Ubicación","Comentario"]        
         #abajo 0 derecha 0
+        bold = workbook.add_format({'bold': True})
         if self.cliente:
-           worksheet.write(0, 0, "CLIENTE: "+str(self.cliente.name))
+           worksheet.write(0, 0, "CLIENTE: "+str(self.cliente.name),bold)
            dir=self.serie=self.env['res.partner'].search([['parent_id','=',self.cliente.id],["type","=","invoice"]],order='create_date desc',limit=1)        
-           worksheet.write(1, 0, str(dir.street_name))
-           worksheet.write(2, 0, "CONTACTO: "+str(dir.name))
-           worksheet.write(3, 1, str(dir.phone))
-           worksheet.write(4, 1, str(dir.email))
+           if dir.street_name:
+              worksheet.write(1, 0, str(dir.street_name))
+           if dir.name:     
+              worksheet.write(2, 0, "CONTACTO: "+str(dir.name))
+           if dir.phone:
+              worksheet.write(3, 1, str(dir.phone))
+           if dir.email:     
+              worksheet.write(4, 1, str(dir.email))
         
             
            
@@ -491,7 +496,7 @@ class contadores(models.Model):
         #falta costo y renta global y cosot por click bn 
         i=0
         for item in content :           
-            worksheet.write(5, i, item)            
+            worksheet.write(5, i, item,neg)            
             row += 1
             i=i+1
         i=6
