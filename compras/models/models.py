@@ -106,7 +106,7 @@ class compras(models.Model):
                                 tt3=tt2[0].split('      ')[2].split('    ')[0].split('0',1)[1]
                                 fff.write(str(tt3))
                                 fff.write(str(tt2[1]))
-                                fff.write(str(tt2[3]))
+                                fff.write(str(tt2[2]))
                         fff.close()
                     if(self.archivo and ("konica" in self.partner_id.name.lower() or "kyocera" in self.partner_id.name.lower())):
                         out = open("hola.pdf", "wb")
