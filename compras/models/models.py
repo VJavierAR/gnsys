@@ -96,7 +96,7 @@ class compras(models.Model):
                         f = open("test3.txt","r")
                         string = f.read()
                         f.close()
-                        text=string.split('Importe')[1].split('/n')
+                        text=string.split('Importe')[1].split('\n')
                         fff=open("tt.txt","w")
                         for t in text:
                             tt=t.split('H87 -')[1].split('$')
