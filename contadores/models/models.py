@@ -653,9 +653,10 @@ class contadores(models.Model):
                         worksheet.write(i, 16, rpt.tablahtml,neg)                                                            
                         worksheet.write(i, 8, ebn,neg)
                         worksheet.write(i, 9, ec,neg)
-                        worksheet.write(i, 10, ebn,neg)
-                        worksheet.write(i, 11, ec,neg)
-                        
+                        #worksheet.write(i, 10, ebn,neg)
+                        #worksheet.write(i, 11, ec,neg)
+                        eebn=ebn+eebn
+                        eec=ec+eec
                         if rpt.x_studio_color_o_bn=='B/N':
                             
                            if rd.bolsaBN<ebn:
@@ -669,7 +670,7 @@ class contadores(models.Model):
                               ivatt=iva+ivatt  
                               totalsr=(float(rd.rentaMensual)+(ebn*rd.clickExcedenteBN))+totalsr
                               ttotal=(iva +cal)+ttotal
-                           else:                                                                           
+                           else:                                                                                                         
                               cal=float(rd.rentaMensual)
                               worksheet.write(i, 12, cal,neg)
                               iva=round(cal*.16,2)
