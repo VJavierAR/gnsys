@@ -1087,6 +1087,7 @@ class contadores(models.Model):
                                                  ,'x_studio_field_no6Rb':periodo
                                                  ,'x_studio_fecha_texto_anio':str(valores[int(self.mes[1])-1][1])+' de '+str(self.anio)
                                                  ,'x_studio_descripcion':'cvs'
+                                                 ,'x_studio_cliente':str(row[0])
                                                 })                            
            self.env['dcas.dcas'].create(series)      
                         
