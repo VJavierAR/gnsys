@@ -648,7 +648,8 @@ class contadores(models.Model):
                         worksheet.write(i, 8, ebn)
                         worksheet.write(i, 9, ec)
                         worksheet.write(i, 10, ebn)
-                        worksheet.write(i, 11, ec)                    
+                        worksheet.write(i, 11, ec)
+                        raise exceptions.ValidationError("Nada que generar "+str(rpt.x_studio_color_o_bn))                                     
                         if rpt.x_studio_color_o_bn=='B/N':
                            if rd.bolsaBN<ebn:
                               ebn=ebn-rd.bolsaBN
