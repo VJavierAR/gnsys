@@ -101,9 +101,10 @@ class compras(models.Model):
                         for t in text:
                             if('H87 -' in t):
                                 tt=t.split('H87 -')
-                                fff.write(str(tt))
+                                fff.write(str(tt[0]))
                                 tt2=tt[1].split('$')
-                                fff.write(str(tt2))
+                                tt3tt2[0].split('      ')
+                                fff.write(str(tt3))
                         fff.close()
                     if(self.archivo and ("konica" in self.partner_id.name.lower() or "kyocera" in self.partner_id.name.lower())):
                         out = open("hola.pdf", "wb")
