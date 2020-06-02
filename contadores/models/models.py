@@ -927,7 +927,8 @@ class contadores(models.Model):
     
     @api.multi
     def carga_contadores(self):
-        ssc=self.env['contadores.contadores'].search([('cliente', '=', self.cliente.id),('mes', '=', self.mes),('anio', '=', self.anio),('id', '!=', self.id)],limit=1)        
+        #ssc=self.env['contadores.contadores'].search([('cliente', '=', self.cliente.id),('mes', '=', self.mes),('anio', '=', self.anio),('id', '!=', self.id)],limit=1)        
+        """
         if ssc:
            self.sudo().unlink()                   
            url="https://gnsys-corp.odoo.com/web?#id="+str(ssc.id)+"&action=1129&model=contadores.contadores&view_type=form&menu_id=406"
@@ -938,6 +939,7 @@ class contadores(models.Model):
                   'target'   : 'new',
                   'url'      : url
                }      
+        """
         if self.anio and not self.csvD:
             perido=str(self.anio)+'-'+str(self.mes)
             periodoAnterior=''
