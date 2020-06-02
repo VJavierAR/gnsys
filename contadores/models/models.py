@@ -649,7 +649,7 @@ class contadores(models.Model):
                         worksheet.write(i, 9, ec)
                         worksheet.write(i, 10, ebn)
                         worksheet.write(i, 11, ec)
-                        raise exceptions.ValidationError("Nada que generar "+str(rpt.x_studio_color_o_bn))                                     
+                        
                         if rpt.x_studio_color_o_bn=='B/N':
                            if rd.bolsaBN<ebn:
                               ebn=ebn-rd.bolsaBN
@@ -854,6 +854,7 @@ class contadores(models.Model):
         worksheet.write(i, 12, '$'+str(totalsr))        
         worksheet.write(i, 13, '$'+str(ivatt))        
         worksheet.write(i, 14, '$'+str(round(ttotal,2)))        
+        raise exceptions.ValidationError("Nada que generar "+str(totalsr))                                     
         workbook.close()
         data = open('Example2.xlsx', 'rb').read()
         base64_encoded = base64.b64encode(data).decode('UTF-8')
