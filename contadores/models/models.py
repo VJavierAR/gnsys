@@ -881,8 +881,7 @@ class contadores(models.Model):
         worksheet.write(i, 11, eec,neg)                
         worksheet.write(i, 12, '$'+str(round(totalsr,2)),neg)        
         worksheet.write(i, 13, '$'+str(round(ivatt,2)),neg)        
-        worksheet.write(i, 14, '$'+str(round(ttotal,2)),neg)        
-        #raise exceptions.ValidationError("Nada que generar "+str(totalsr))                                     
+        worksheet.write(i, 14, '$'+str(round(ttotal,2)),neg)                
         workbook.close()
         data = open('Example2.xlsx', 'rb').read()
         base64_encoded = base64.b64encode(data).decode('UTF-8')
@@ -941,8 +940,9 @@ class contadores(models.Model):
                 currentP=self.env['dcas.dcas'].search([('serie','=',a.id),('x_studio_field_no6Rb', '=', perido)],order='x_studio_fecha desc',limit=1)
                 currentPA=self.env['dcas.dcas'].search([('serie','=',a.id),('x_studio_field_no6Rb', '=', periodoAnterior)],order='x_studio_fecha desc',limit=1)
                 #raise exceptions.ValidationError("q onda xd"+str(self.id)+' id  '+str(id))                     
-                if not currentP:  
-                   rrs=self.env['dcas.dcas'].create({'contador_id': self.id
+                if not currentP:
+                   if a.servicio.id:
+                      rrs=self.env['dcas.dcas'].create({'contador_id': self.id
                                                        , 'x_studio_producto': a.id
                                                        , 'serie': a.id
                                                        , 'x_studio_locacin':a.x_studio_locacion_recortada
@@ -963,8 +963,9 @@ class contadores(models.Model):
                                                        , 'x_studio_servicio':a.servicio.id
                                                        })
                 
-                else:                                 
-                   currentP.write({'contador_id': self.id
+                else:
+                   if a.servicio.id :
+                      currentP.write({'contador_id': self.id
                                                        , 'x_studio_producto': a.id
                                                        , 'serie': a.id
                                                        , 'x_studio_locacin':a.x_studio_locacion_recortada
