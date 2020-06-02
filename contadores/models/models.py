@@ -573,6 +573,8 @@ class contadores(models.Model):
         worksheet.set_column('F:F', 30)
         worksheet.set_column('G:G', 30)
         worksheet.set_column('H:H', 30)
+        
+        worksheet.autofilter('A6:Q6')
        
         #worksheet.insert_image('O2', 'gnsys.png')
         if len(self.dca)>0: 
