@@ -82,7 +82,7 @@ class compras(models.Model):
                     self.x_studio_pdf=self.archivo
                     myCmd = 'pdftotext -fixed 5 hola.pdf test3.txt'
                     if(self.archivo and ("ctr" in self.partner_id.name.lower())):
-                        #myCmd = 'pdftotext -fixed 4 hola.pdf test3.txt'
+                        myCmd = 'pdftotext -fixed 4 hola.pdf test3.txt'
                         out = open("hola.pdf", "wb")
                         #f2=base64.b64decode(self.archivo)
                         #H=StringIO(f2)
