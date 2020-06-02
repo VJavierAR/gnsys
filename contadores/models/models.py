@@ -671,6 +671,7 @@ class contadores(models.Model):
                               ec=ec-rd.bolsaColor
                               eec=ec+eec  
                               call=float(rd.rentaMensual)+(ec*rd.clickExcedenteColor)+ebnx  
+                              raise exceptions.ValidationError("Nada que generar "+str(call))                                       
                               worksheet.write(i, 12, call)
                               iva=round(call*.16,2)
                               ivatt=iva+ivatt
@@ -854,7 +855,7 @@ class contadores(models.Model):
         worksheet.write(i, 12, '$'+str(totalsr))        
         worksheet.write(i, 13, '$'+str(ivatt))        
         worksheet.write(i, 14, '$'+str(round(ttotal,2)))        
-        raise exceptions.ValidationError("Nada que generar "+str(totalsr))                                     
+        #raise exceptions.ValidationError("Nada que generar "+str(totalsr))                                     
         workbook.close()
         data = open('Example2.xlsx', 'rb').read()
         base64_encoded = base64.b64encode(data).decode('UTF-8')
