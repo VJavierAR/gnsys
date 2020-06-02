@@ -1036,7 +1036,7 @@ class contadores(models.Model):
                                                        , 'desc': 'capturado'
                                                        , 'capturar':True  
                                                        })
-                   rrs=self.env['dcas.dcas'].create({'contador_id': self.id
+                   currentP.write({'contador_id': self.id
                                                        , 'x_studio_producto': a.id
                                                        , 'serie': a.id
                                                        , 'x_studio_locacin':a.x_studio_locacion_recortada
@@ -1054,7 +1054,8 @@ class contadores(models.Model):
                                                        , 'x_studio_modelo':a.product_id.name
                                                        , 'x_studio_servicio':a.servicio.id
                                                         , 'x_studio_descripcin': 'capturado'
-                                                       , 'x_studio_capturar':True 
+                                                       , 'x_studio_capturar':True
+                                                       #,'id' : currentP.id
                                                        })
                 
                 i=1+i                
