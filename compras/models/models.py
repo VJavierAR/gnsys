@@ -101,7 +101,7 @@ class compras(models.Model):
                         for t in text:
                             if('H87 -' in t):
                                 tt=t.split('H87 -')
-                                cantidad=float(tt[0].reaplace(' ',''))
+                                cantidad=float(tt[0].replace(' ',''))
                                 tt2=tt[1].split('$')
                                 noparte=tt2[0].split('      ')[2].split('    ')[0].split('0',1)[1]
                                 precio=float(tt2[1].replace(' ',''))
