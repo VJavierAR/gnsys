@@ -997,11 +997,11 @@ class contadores(models.Model):
                                                        , 'serieEquipo': a.name
                                                        , 'locacion':a.x_studio_locacion_recortada
                                                        , 'ubi':a.x_studio_centro_de_costos
-                                                       , 'periodo':perido                                                              
+                                                       , 'periodo':perido+'/'+str(valores[int(self.mes)-1][1])                                                              
                                                        , 'ultimaLecturaBN': currentP.contadorMono
                                                        , 'lecturaAnteriorBN': currentPA.contadorMono
                                                        #, 'paginasProcesadasBN': bnp                                                   
-                                                       , 'periodoA':periodoAnterior            
+                                                       , 'periodoA':periodoAnterior+ '/'+ str(valores[int(mesaA)-1][1])
                                                        , 'ultimaLecturaColor': currentP.contadorColor
                                                        , 'lecturaAnteriorColor': currentPA.contadorColor                                                             
                                                        #, 'paginasProcesadasColor': colorp
