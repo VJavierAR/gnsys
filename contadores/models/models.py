@@ -492,7 +492,8 @@ class contadores(models.Model):
                                                  ,'fuente':'dcas.dcas'
                                                  ,'x_studio_field_no6Rb':str(self.anio)+'-'+str(self.mes)
                                                  ,'x_studio_fecha_texto_anio':str(valores[int(self.mes[1])-1][1])+' de '+str(self.anio)
-            """                                    })
+                                                })
+            """                                                
             ff=self.env['contrato'].search([('cliente', '=',self.cliente.id)])
             prefacturas=''
             for rs in ff:
