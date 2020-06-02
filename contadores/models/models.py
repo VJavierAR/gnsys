@@ -595,7 +595,7 @@ class contadores(models.Model):
         for rd in re:
             if rd.nombreAnte=='Renta global con páginas incluidas BN o color + pag. Excedentes' :                    
                for rpt in self.dca :
-                   if rpt.x_studio_servicio==rd.id :
+                   if int(rpt.x_studio_servicio)==rd.id :
                         worksheet.write(i, 0, rpt.x_studio_indice)
                         worksheet.write(i, 1, rpt.x_studio_locacin)
                         worksheet.write(i, 2, rpt.x_studio_modelo)
@@ -638,7 +638,7 @@ class contadores(models.Model):
                ttotal=round(float(rd.rentaMensual)*.16,2) +float(rd.rentaMensual)+ttotal
             if rd.nombreAnte=='Renta global + costo de página procesada BN o color':                    
                for rpt in self.dca :
-                   if rpt.x_studio_servicio==rd.id :
+                   if int(rpt.x_studio_servicio)==rd.id :
                         worksheet.write(i, 0, rpt.x_studio_indice)
                         worksheet.write(i, 1, rpt.x_studio_locacion)
                         worksheet.write(i, 2, rpt.x_studio_modelo)
@@ -692,7 +692,7 @@ class contadores(models.Model):
                #raise exceptions.ValidationError("Nada que generar "+str(ttotal))                                     
         for rd in re:
             for rpt in self.dca :
-                if rpt.x_studio_servicio==rd.id :                                        
+                if int(rpt.x_studio_servicio)==rd.id :                                        
                     if rpt.contadorMono==0:
                        ebn=0
                     else:
@@ -986,11 +986,13 @@ class contadores(models.Model):
                                                        , 'serie': a.id
                                                        , 'x_studio_locacin':a.x_studio_locacion_recortada
                                                        , 'x_studio_ubicacin':a.x_studio_centro_de_costos
-                                                       , 'x_studio_periodo':str(self.anio)+ '-'+str(valores[int(self.mes)-1][1])                                                              
+                                                       #, 'x_studio_periodo':str(self.anio)+ '-'+str(valores[int(self.mes)-1][1])                                                              
+                                                       , 'x_studio_fecha_texto_anio':str(valores[int(self.mes)-1][1])+' de '+ str(self.anio)
+                                                       ,'x_studio_field_no6Rb':str(self.anio)+'-'+str(self.mes)
                                                        , 'contadorMono': currentP.contadorMono
                                                        , 'x_studio_lectura_anterior_bn': currentPA.contadorMono
                                                        #, 'paginasProcesadasBN': bnp                                                   
-                                                       , 'x_studio_periodo_anterior':str(anioA)+ '-'+ str(valores[int(mesaA)-1][1])            
+                                                       , 'x_studio_periodo_anterior':str(valores[int(mesaA)-1][1])            + ' de '+ str(anioA)
                                                        , 'contadorColor': currentP.contadorColor
                                                        , 'x_studio_lectura_anterior_color': currentPA.contadorColor                                                             
                                                        #, 'paginasProcesadasColor': colorp
@@ -1006,11 +1008,13 @@ class contadores(models.Model):
                                                        , 'serie': a.id
                                                        , 'x_studio_locacin':a.x_studio_locacion_recortada
                                                        , 'x_studio_ubicacin':a.x_studio_centro_de_costos
-                                                       , 'x_studio_periodo':str(self.anio)+ '-'+str(valores[int(self.mes)-1][1])                                                              
+                                                       , 'x_studio_fecha_texto_anio':str(valores[int(self.mes)-1][1])+' de '+ str(self.anio)
+                                                       , 'x_studio_field_no6Rb':str(self.anio)+'-'+str(self.mes)
+                                                       , #'x_studio_periodo':str(self.anio)+ '-'+str(valores[int(self.mes)-1][1])                                                              
                                                        , 'contadorMono': currentP.contadorMono
                                                        , 'x_studio_lectura_anterior_bn': currentPA.contadorMono
                                                        #, 'paginasProcesadasBN': bnp                                                   
-                                                       , 'x_studio_periodo_anterior':str(anioA)+ '-'+ str(valores[int(mesaA)-1][1])            
+                                                       , 'x_studio_periodo_anterior':str(valores[int(mesaA)-1][1])+ ' de '+   str(anioA)          
                                                        , 'contadorColor': currentP.contadorColor
                                                        , 'x_studio_lectura_anterior_color': currentPA.contadorColor                                                             
                                                        #, 'paginasProcesadasColor': colorp
