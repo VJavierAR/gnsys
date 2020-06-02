@@ -104,8 +104,8 @@ class compras(models.Model):
                                 cantidad=float(tt[0].replace(' ',''))
                                 tt2=tt[1].split('$')
                                 noparte=tt2[0].split('      ')[2].split('    ')[0].split('0',1)[1]
-                                precio=float(tt2[1].replace(' ',''))
-                                descuento=float(tt2[2].split('002-IVA')[0].replace(' ',''))
+                                precio=float(tt2[1].replace(' ','').replace(',',''))
+                                descuento=float(tt2[2].split('002-IVA')[0].replace(' ','').replace(',',''))
                                 precioCdesc=((cantidad*precio)-descuento)/cantidad
                                 fff.write('cantidad:'+str(cantidad)+'no:'+str(noparte)+'precio:'+str(precio)+'descuento'+str(descuento)+'precioCdesc'+str(precioCdesc))
                         fff.close()
