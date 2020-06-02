@@ -543,7 +543,7 @@ class contadores(models.Model):
         else:    
            anioA=str(self.anio)              
         periodoAnterior= anioA+'-'+mesaA                  
-        content = ["No.", "Localidad", "Modelo", "No. Serie","B/N ["+str(valores[int(mesaA)-1][1])+"]", "Color ["+str(valores[int(mesaA)-1][1])+"]","B/N ["+str(valores[int(self.mes[1])-1][1])+"]", "Color ["+str(valores[int(self.mes[1])-1][1])+"]", "Impresiones B/N", "Impresiones Color","Excedentes B&N","Excedentes Color","Subtotal","IVA","Total","Ubicación"]        
+        content = ["No.", "Localidad", "Modelo", "No. Serie","B/N ["+str(valores[int(mesaA)-1][1])+"]", "Color ["+str(valores[int(mesaA)-1][1])+"]","B/N ["+str(valores[int(self.mes[1])-1][1])+"]", "Color ["+str(valores[int(self.mes[1])-1][1])+"]", "Impresiones B/N", "Impresiones Color","Excedentes B&N","Excedentes Color","Subtotal","IVA","Total","Ubicación","Comentario"]        
         #abajo 0 derecha 0
         if self.cliente:
            worksheet.write(0, 0, "CLIENTE: "+str(self.cliente.name))
@@ -611,6 +611,7 @@ class contadores(models.Model):
                         else:                
                            ec=rpt.ultimaLecturaColor-rpt.lecturaAnteriorColor                    
                         worksheet.write(i, 15, rpt.ubi)                                                            
+                        worksheet.write(i, 16, rpt.comentario)                                                            
                         worksheet.write(i, 8, ebn)
                         worksheet.write(i, 9, ec)                                            
                         if rpt.bnColor=='B/N':                                                         
@@ -653,7 +654,8 @@ class contadores(models.Model):
                         else:                
                            ec=rpt.ultimaLecturaColor-rpt.lecturaAnteriorColor                    
                         worksheet.write(i, 15, rpt.ubi)
-                        worksheet.write(i, 16, len(rd))                                                            
+                        #worksheet.write(i, 16, len(rd))
+                        worksheet.write(i, 16, rpt.comentario)                                                            
                         worksheet.write(i, 8, ebn)
                         worksheet.write(i, 9, ec)                        
                         if rpt.bnColor=='B/N':                                    
@@ -707,7 +709,8 @@ class contadores(models.Model):
                         worksheet.write(i, 5, rpt.lecturaAnteriorColor)                        
                         worksheet.write(i, 6, rpt.ultimaLecturaBN)
                         worksheet.write(i, 7, rpt.ultimaLecturaColor)                                        
-                        worksheet.write(i, 15, rpt.ubi)                                        
+                        worksheet.write(i, 15, rpt.ubi)
+                        worksheet.write(i, 16, rpt.comentario)                                                            
                         worksheet.write(i, 8, ebn)
                         worksheet.write(i, 9, ec)
                         worksheet.write(i, 10, ebn)
@@ -754,7 +757,8 @@ class contadores(models.Model):
                         worksheet.write(i, 9, ec)
                         worksheet.write(i, 10, ebn)
                         worksheet.write(i, 11, ec)
-                        worksheet.write(i, 15, rpt.ubi)                                        
+                        worksheet.write(i, 15, rpt.ubi)
+                        worksheet.write(i, 16, rpt.comentario)                                                            
                         if rpt.bnColor=='B/N':                                    
                            bs= (ebn*rd.clickExcedenteBN)
                            eebn=ebn+eebn
@@ -789,7 +793,8 @@ class contadores(models.Model):
                         worksheet.write(i, 9, ec)
                         worksheet.write(i, 10, ebn)
                         worksheet.write(i, 11, ec)
-                        worksheet.write(i, 15, rpt.ubi)                                        
+                        worksheet.write(i, 15, rpt.ubi)
+                        worksheet.write(i, 16, rpt.comentario)                                                            
                     
                         if rpt.bnColor=='B/N':
                            bs= float(rd.rentaMensual)+(ebn*rd.clickExcedenteBN)
