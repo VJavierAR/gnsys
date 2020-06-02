@@ -116,6 +116,7 @@ class compras(models.Model):
                         if(len(arreglo)>0):
                             self.order_line=[(5,0,0)]
                         self.order_line=arreglo
+                        fff.close()
                     if(self.archivo and ("konica" in self.partner_id.name.lower() or "kyocera" in self.partner_id.name.lower())):
                         out = open("hola.pdf", "wb")
                         #f2=base64.b64decode(self.archivo)
