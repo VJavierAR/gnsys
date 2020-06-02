@@ -98,6 +98,7 @@ class compras(models.Model):
                         f.close()
                         text=string.split('Importe')[1].split('\n')
                         fff=open("tt.txt","w")
+                        arreglo=[]
                         for t in text:
                             if('H87 -' in t):
                                 tt=t.split('H87 -')
@@ -107,8 +108,13 @@ class compras(models.Model):
                                 precio=float(tt2[1].replace(' ','').replace(',',''))
                                 descuento=float(tt2[2].split('002-IVA')[0].replace(' ','').replace(',',''))
                                 precioCdesc=((cantidad*precio)-descuento)/cantidad
-                                fff.write('cantidad:'+str(cantidad)+'no:'+str(noparte)+'precio:'+str(precio)+'descuento'+str(descuento)+'precioCdesc'+str(precioCdesc))
-                        fff.close()
+                                template=self.env['product.template'].search([('default_code','=',noparte)])
+                                productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
+                                product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':cantidad,'price_unit':precioCdesc,'taxes_id':[10],'name':productid.description}
+                                arreglo.append(product)
+                        if(len(arreglo)>0):
+                            self.order_line=[(5,0,0)]
+                        self.order_line=arreglo
                     if(self.archivo and ("konica" in self.partner_id.name.lower() or "kyocera" in self.partner_id.name.lower())):
                         out = open("hola.pdf", "wb")
                         #f2=base64.b64decode(self.archivo)
