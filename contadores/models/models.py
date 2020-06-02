@@ -1050,10 +1050,10 @@ class contadores(models.Model):
            for t in a:                              
                 for row in lista:
                     if t.name==row[3]:
-                        date = row[1]
-                        fecha = date.split('-')[0].split('/')
-                        mes=fecha[1]
-                        anio=fecha[2]
+                        #date = row[1]
+                        #fecha = date.split('-')[0].split('/')
+                        mes=(self.mes)
+                        anio=str(self.anio)
                         i=0
                         for f in valores:                
                             if f[0]==str(mes):                
@@ -1071,10 +1071,7 @@ class contadores(models.Model):
                             if f[0]==str(mes):                
                                mesaC=str(valores[i][0])
                             i=i+1                  
-                        periodo= anio+'-'+mesaC
-                        self.anio=anio
-                        self.mes=mes
-
+                        periodo= anio+'-'+mesaC                        
                         if row[7]=='':
                           bn=0
                         else:
