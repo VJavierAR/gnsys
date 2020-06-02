@@ -662,7 +662,7 @@ class contadores(models.Model):
                               ivatt=iva+ivatt  
                               totalsr=(float(rd.rentaMensual)+(ebn*rd.clickExcedenteBN))+totalsr
                               ttotal=(iva +cal)+ttotal
-                            else:                                                            
+                           else:                                                            
                               cal=float(rd.rentaMensual)
                               worksheet.write(i, 12, cal)
                               iva=round(cal*.16,2)
