@@ -1701,6 +1701,8 @@ class HelpDeskDatosToner(TransientModel):
     comentario = fields.Text('Comentario')
     evidencia = fields.Many2many('ir.attachment', string = "Evidencias")
     """
+
+    ticket_id = fields.Many2one("helpdesk.ticket")
     serie = fields.Text(string = "Serie", compute = '_compute_serie_nombre')
     series = fields.One2many(
                                 'dcas.dcas',
