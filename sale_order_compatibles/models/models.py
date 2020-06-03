@@ -122,7 +122,7 @@ class sale_update(models.Model):
 		}
 
 	def preparaSolicitud(self):
-		self.message_post(self, body='hola', subject=None, message_type='notification', subtype=None, parent_id=3)
+		self.message_post(body='hola', subject=None, message_type='notification', subtype=None, parent_id=3)
 		data=[]
 		if(len(self.compatiblesLineas)>0):
 			for e in self.compatiblesLineas:
