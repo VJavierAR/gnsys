@@ -30,6 +30,8 @@
         'wizard/wizard.xml',
         'report/report.xml',
     ],
+    'qweb':['static/xml/purchase_xml.xml',]
+    ,
     # only loaded in demonstration mode
     'demo': [
         'demo/demo.xml',
