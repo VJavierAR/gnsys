@@ -1438,7 +1438,7 @@ class CrearYValidarSolTonerMassAction(TransientModel):
         _logger.info("CrearYValidarSolTonerMassAction.confirmar()")
 
         listaTicketsSale = []
-        for ticket in ticket_ids:
+        for ticket in self.ticket_ids:
 
             jalaSolicitudes = ''
             if ticket.stage_id.id == 91 and ticket.x_studio_field_nO7Xg:
@@ -1657,16 +1657,16 @@ class CrearYValidarSolTonerMassAction(TransientModel):
 
 
         listaTicketsSale.sudo().action_confirm()
-        ticket_ids.write({'stage_id': 93})
+        self.ticket_ids.write({'stage_id': 93})
 
-        for ticket in ticket_ids:
+        for ticket in self.ticket_ids:
             query = "update helpdesk_ticket set stage_id = 93 where id = " + str(ticket.x_studio_id_ticket) + ";"
             ss = self.env.cr.execute(query)
 
         wiz = ''
         mensajeTitulo = "Solicitudes de toner creadas y validadas !!!"
         mensajeCuerpo = "Se crearon y validaron las solicitudes de los tickets. \n\n"
-        for ticket in ticket_ids:
+        for ticket in self.ticket_ids:
             mensajeCuerpo = mensajeCuerpo + str(ticket.x_studio_id_ticket) + ', '
               
         wiz = self.env['helpdesk.alerta.series'].create({'ticket_id': ticket.id, 'mensaje': mensajeCuerpo})
