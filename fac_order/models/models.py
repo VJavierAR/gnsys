@@ -145,7 +145,7 @@ class fac_order(models.Model):
             if self.x_studio_dividir_servicios==False and self.x_studio_dividir_servicios_1==False and len(self.order_line)<1:
                
                for m in ff:              
-                          p=self.env['stock.production.lot'].search([('servicio', '=', m.id)])                  
+                          p=self.env['stock.production.lot'].search([('servicio', '=', m.id),('x_studio_estado','!=','Back-up')])                  
                           procesadasColorTotal=0
                           procesadasColorBN=0
                           serUNO=0
@@ -232,7 +232,7 @@ class fac_order(models.Model):
                                      self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':11398,'product_uom_qty':1,'price_unit':m.rentaMensual,'name':'RENTA EQUIPO ' +k.x_studio_locacion_recortada+' SERIE: '+k.name +' MODELO: '+ k.product_id.name+" Período "+perido,'discount':int(self.x_studio_descuento)})                                                                                                                                      
                for j in ff:                      
                      if j.nombreAnte=='Renta global con páginas incluidas BN o color + pag. Excedentes':                                                
-                        p=self.env['stock.production.lot'].search([('servicio', '=', j.id)])                  
+                        p=self.env['stock.production.lot'].search([('servicio', '=', j.id),('x_studio_estado','!=','Back-up')])                  
                         procesadasColorTotal=0
                         procesadasColorBN=0
                         serUNO=0
@@ -280,7 +280,7 @@ class fac_order(models.Model):
                            self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'product_id':11397,'product_uom_qty':abs(j.bolsaColor-procesadasColorTotal),'price_unit':j.clickExcedenteColor,'x_studio_bolsa':j.bolsaColor,'x_studio_excedente':'si','name':'(82121500) PAGINAS IMPRESAS COLOR : '+str(abs(bolsacolor-procesadasColorTotal))+' INCLUYE: '+str(j.bolsaColor),'discount':int(self.x_studio_descuento)})                   
                         self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'product_id':11395,'product_uom_qty':1.0,'price_unit':j.rentaMensual,'name':'(80161801)  RENTA '+ str(len(p))+' EQUIPOS EN GENERAL.','discount':int(self.x_studio_descuento)})
                      if j.nombreAnte=='Renta global + costo de página procesada BN o color':                        
-                        p=self.env['stock.production.lot'].search([('servicio', '=', j.id)])                  
+                        p=self.env['stock.production.lot'].search([('servicio', '=', j.id),('x_studio_estado','!=','Back-up')])                  
                         procesadasColorTotal=0
                         procesadasColorBN=0
                         serUNO=0
