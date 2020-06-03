@@ -568,8 +568,7 @@
         <field name="view_type">form</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
-        <field name="binding_model_id"  />
-        <field name="src_model">helpdesk.ticket</field>
+        <field name="binding_model_id" ref="helpdesk.ticket.valToner" />
     </record>
     <record id="view_validar_toner_form" model="ir.ui.view">
         <field name="model">helpdesk.validar.toner</field>
