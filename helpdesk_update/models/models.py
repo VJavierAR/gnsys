@@ -3362,6 +3362,24 @@ class helpdesk_update(models.Model):
             'context': self.env.context,
         }   
 
+
+    @api.multi
+    def detalle_toner_wizard(self):
+        wiz = self.env['helpdesk.datos.toner'].create({'ticket_id': self.id})
+        view = self.env.ref('helpdesk_update.view_helpdesk_detalle_toner')
+        return {
+            'name': _('Datos tóner'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'helpdesk.datos.toner',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            'context': {'series': self.x_studio_equipo_por_nmero_de_serie_1.ids},
+        }        
+
 class helpdes_diagnostico(models.Model):
     _name = "helpdesk.diagnostico"
     _description = "Historial de diagnostico"

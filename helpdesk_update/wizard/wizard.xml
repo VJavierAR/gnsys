@@ -587,4 +587,83 @@
     </record>
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <record id="view_helpdesk_detalle_toner" model="ir.ui.view">
+        <field name="model">helpdesk.datos.toner</field>
+        <field name="arch" type="xml">
+            <form string="Detalle tóner">
+                <group class='text-center'>
+                    <h2>
+                        <field name="serie" string='' readonly="1"/>
+                    </h2>
+                </group>
+                <group>
+                    <notebook>
+                        <page string = 'Pedido'>
+                            <field name='series' domain="['|', ('active', '=', 0), ('active', '=', 1)]" />
+                        </page>
+                        <page string = 'Cliente'>
+                            
+                        </page>
+                        <page string = 'Datos del ticket'>
+                            
+                        </page>
+                    </notebook>
+                </group>
+                <footer>
+                    <button special="cancel" string="Cerrar" class="oe_highlight" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </odoo>
