@@ -568,6 +568,7 @@
         <field name="view_type">form</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
+        <field name="groups">studio_customization.validar_toner_d61119fe-f670-4dd0-9dee-6d2bfdd1824e</field>
         <field name="binding_model_id" ref="helpdesk.model_helpdesk_ticket" />
     </record>
     <record id="view_validar_toner_form" model="ir.ui.view">
