@@ -1712,7 +1712,7 @@ class HelpDeskDatosToner(TransientModel):
     def _compute_serie_nombre(self):
         if self.ticket_id.x_studio_equipo_por_nmero_de_serie_1:
             for serie in self.ticket_id.x_studio_equipo_por_nmero_de_serie_1:
-                self.serie = self.serie + ', ' serie.serie.name
+                self.serie = self.serie + ', ' + serie.serie.name
     """
     def cerrarTicketConComentario(self):
       ultimaEvidenciaTec = []
