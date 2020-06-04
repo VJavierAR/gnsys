@@ -3368,9 +3368,6 @@ class helpdesk_update(models.Model):
         wiz = self.env['helpdesk.datos.toner'].create({
                                                         'ticket_id': self.id
                                                     })
-        wiz.write({
-                    'series': [(6, 0, self.x_studio_equipo_por_nmero_de_serie_1.ids)]
-                })
         view = self.env.ref('helpdesk_update.view_helpdesk_detalle_toner')
         return {
             'name': _('Datos tóner'),
