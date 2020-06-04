@@ -169,9 +169,9 @@ class sale_update(models.Model):
 	    
 	    for p in pii:
 	    	i=0
-		    for pi in p.move_ids_without_package.sorted(key='id'):
-		    	pi.write({'sale_line_id':sal[i]})
-		    	i=i+1
+	    	for pi in p.move_ids_without_package.sorted(key='id'):
+	    		pi.write({'sale_line_id':sal[i]})
+	    		i=i+1
 	    return True
 
 	def cambio(self):
