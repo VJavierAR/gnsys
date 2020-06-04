@@ -163,6 +163,6 @@ class sale_update(models.Model):
         sal=self.order_line.sorted(key='id').mapped('id')
         i=0
         for pi in p.move_ids_without_package.sorted(key='id'):
-        	m.write({'sale_line_id':sal[i]})
+        	pi.write({'sale_line_id':sal[i]})
         	i=i+1
         return True
