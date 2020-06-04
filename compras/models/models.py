@@ -114,7 +114,7 @@ class compras(models.Model):
                             if('E48' in ar):
                                 p=ar.split('$')
                                 product={'product_uom':1,'date_planned':self.date_order,'product_id':1,'product_qty':1,'price_unit':float(p[1].replace(' ','')),'taxes_id':[10],'name':productid.description if(productid.description) else '/'}
-
+                                arreglo.append(product)
                         if(len(arreglo)>0):
                             self.order_line=[(5,0,0)]
                         self.order_line=arreglo
