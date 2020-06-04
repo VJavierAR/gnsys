@@ -620,7 +620,15 @@
                 <group>
                     <notebook>
                         <page string = 'Pedido'>
-                            <field name='series' domain="['|', ('active', '=', 0), ('active', '=', 1)]" />
+                            <field name='series' domain="['|', ('active', '=', 0), ('active', '=', 1)]" >
+                                <tree>
+                                    <field name='serie' />
+                                    <field name='tablahtml' />
+                                </tree>
+                                <form>
+                                    <field name='serie'/>
+                                </form>
+                            </field>
                         </page>
                         <page string = 'Cliente'>
                             
