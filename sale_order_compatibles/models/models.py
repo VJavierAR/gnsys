@@ -20,8 +20,8 @@ class sale_order_compatibles(models.Model):
 	accesorios = fields.One2many('sale_order_compatibles_mini_acesorios', 'saleOrderMini', string = 'Accesorios')
 	serie=fields.Many2one('stock.production.lot','Serie')
 	domin=fields.Char()
-	location=fields.Char()
-
+	location=fields.Integer()
+	tipo=fields.Char()
 	@api.onchange('equipos')
 	def domi(self):
 		datos=self.equipos.x_studio_toner_compatible.mapped('id')
@@ -138,6 +138,7 @@ class sale_update(models.Model):
 				for e3 in e.accesorios:
 					d={'x_studio_field_mqSKO':e3.producto.id,'product_id':e3.producto.id,'name':e3.producto.name,'product_uom_qty':e3.cantidad,'product_uom':e3.producto.uom_id.id,'price_unit':0.00,'x_studio_id_relacion':e.id,'x_studio_modelo':e.equipos.name}
 					self.order_line=[d]
+		self.write({'state':'sent'})
 
 	def componentes(self):
 		if(len(self.order_line)>0):
