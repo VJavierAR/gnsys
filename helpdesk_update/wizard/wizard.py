@@ -1708,7 +1708,8 @@ class HelpDeskDatosToner(TransientModel):
                                 'dcas.dcas',
                                 'x_studio_tiquete',
                                 string = 'Series',
-                                store = True
+                                store = True,
+                                #compute = '_compute_series'
                             )
 
     def _compute_serie_nombre(self):
@@ -1718,6 +1719,12 @@ class HelpDeskDatosToner(TransientModel):
                     self.serie = str(self.serie) + ', ' + str(serie.serie.name)
                 else:
                     self.serie = str(serie.serie.name) + ', '
+
+
+    #def _compute_serie_nombre(self):
+    #    if self.ticket_id.x_studio_equipo_por_nmero_de_serie_1:
+    #        self.series = [(6,0,self.ticket_id.x_studio_equipo_por_nmero_de_serie_1.ids)]
+            
 
                 
     """
