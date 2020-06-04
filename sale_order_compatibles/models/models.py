@@ -166,3 +166,4 @@ class sale_update(models.Model):
 	    	pi.write({'sale_line_id':sal[i]})
 	    	i=i+1
 	    return True
+	    
