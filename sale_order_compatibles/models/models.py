@@ -162,7 +162,7 @@ class sale_update(models.Model):
 	    self._action_confirm()
 	    if self.env['ir.config_parameter'].sudo().get_param('sale.auto_done_setting'):
 	        self.action_done()
-	    p=self.env['stock.picking'].search(['|','&',['sale_id','=',self.id],['name','like','SU'],['name','like','PICK']])
+	    p=self.env['stock.picking'].search([['sale_id','=',self.id]])
 	    sal=self.order_line.sorted(key='id').mapped('id')
 	    _logger.info(str(len(p)))
 	    _logger.info(str(sal))
