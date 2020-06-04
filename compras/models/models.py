@@ -101,15 +101,19 @@ class compras(models.Model):
                         for ar in arr:
                             if('Pieza' in ar):
                                 cantidad=float(ar.split('      ',1)[1].split('        ',1)[0].replace(' ',''))
-                                noparte=ar.split('        ',1)[1].split('            ',1)[0].split(' ')[0]
+                                noparte=ar.split('      ',1)[1].split('        ',1)[1].split('            ',1)[0].split(str(ar.split('      ',1)[1].split('        ',1)[0].replace(' ','')),1)[1]
                                 _logger.info(str(noparte))
                                 p=ar.split('$')
                                 precio=float(p[1].replace(' ',''))
                                 descuento=float(p[4].replace(' ','')) if(len(p)==5) else 0
                                 precioCdesc=((cantidad*precio)-descuento)/cantidad
-                                template=self.env['product.template'].search([('default_code','=',noparte)])
+                                template=self.env['product.template'].search([('default_code','=',noparte.replace(' ',''))])
                                 productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
                                 product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':cantidad,'price_unit':precioCdesc,'taxes_id':[10],'name':productid.description if(productid.description) else '/'}
+                                arreglo.append(product)
+                            if('E48' in ar):
+                                p=ar.split('$')
+                                product={'product_uom':1,'date_planned':self.date_order,'product_id':1,'product_qty':1,'price_unit':float(p[1].replace(' ','')),'taxes_id':[10],'name':productid.description if(productid.description) else '/'}
                                 arreglo.append(product)
                         if(len(arreglo)>0):
                             self.order_line=[(5,0,0)]
