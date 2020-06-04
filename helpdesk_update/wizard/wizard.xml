@@ -630,12 +630,46 @@
                                     <field name='serie'/>
                                 </form>
                             </field>
+                            <group>
+                                <group>
+                                    <field name='solicitud' />
+                                </group>
+                                <group>
+                                    <field name='corte' />
+                                </group>
+                            </group>
                         </page>
                         <page string = 'Cliente'>
-                            
+                            <group string='Datos cliente'>
+                                <group>
+                                    <field name='cliente' />
+                                    <field name='tipoCliente' />
+                                    <field name='localidad' />
+                                </group>
+                                <group>
+                                    <field name='zonaLocalidad' />
+                                    <field name='localidadContacto' />
+                                    <field name='estadoLocalidad' />
+                                </group>
+                                <group>
+                                    <field name='telefonoContactoLocalidad' />
+                                    <field name='movilContactoLocalidad' />
+                                    <field name='correoContactoLocalidad' />
+                                </group>
+                                <group>
+                                    <field name='direccionLocalidad' />
+                                </group>
+                            </group>
                         </page>
                         <page string = 'Datos del ticket'>
-                            
+                            <group>
+                                <group>
+                                    
+                                </group>
+                                <group>
+                                    
+                                </group>
+                            </group>
                         </page>
                     </notebook>
                 </group>

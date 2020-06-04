@@ -1708,9 +1708,64 @@ class HelpDeskDatosToner(TransientModel):
                                 'dcas.dcas',
                                 'x_studio_tiquete',
                                 string = 'Series',
-                                store = True,
+                                #store = True,
                                 compute = '_compute_series'
                             )
+    corte = fields.Selection(
+                                [('1ero','1ero'),('2do','2do'),('3ro','3ro'),('4to','4to')], 
+                                string = 'Corte', 
+                                compute = '_compute_corte'
+                            )
+    solicitud = fields.Many2one(
+                                    'sale.order', 
+                                    string = 'Solicitud',
+                                    compute = '_compute_solicitud'
+                                )
+    cliente = fields.Many2one(  
+                                'res.parent',
+                                string = 'Cliente',
+                                compute = '_compute_cliente'
+                            )
+    tipoCliente = fields.Selection(
+                                        [('A','A'),('B','B'),('C','C'),('OTRO','D'),('VIP','VIP')], 
+                                        string = 'Tipo de cliente', 
+                                        compute = '_compute_tipo_cliente'
+                                    )
+    localidad = fields.Many2one(  
+                                    'res.parent',
+                                    string = 'Localidad',
+                                    compute = '_compute_localidad'
+                                )
+    zonaLocalidad = fields.Selection(
+                                        [('SUR','SUR'),('NORTE','NORTE'),('PONIENTE','PONIENTE'),('ORIENTE','ORIENTE'),('CENTRO','CENTRO'),('DISTRIBUIDOR','DISTRIBUIDOR'),('MONTERREY','MONTERREY'),('CUERNAVACA','CUERNAVACA'),('GUADALAJARA','GUADALAJARA'),('QUERETARO','QUERETARO'),('CANCUN','CANCUN'),('VERACRUZ','VERACRUZ'),('PUEBLA','PUEBLA'),('TOLUCA','TOLUCA'),('LEON','LEON'),('COMODIN','COMODIN'),('VILLAHERMOSA','VILLAHERMOSA'),('MERIDA','MERIDA'),('ALTAMIRA','ALTAMIRA'),('COMODIN','COMODIN'),('DF00','DF00'),('SAN LP','SAN LP'),('ESTADO DE MÉXICO','ESTADO DE MÉXICO'),('Foraneo Norte','Foraneo Norte'),('Foraneo Sur','Foraneo Sur')], 
+                                        string = 'Zona localidad',
+                                        compute = '_compute_zona_localidad'
+                                    )
+    localidadContacto = fields.Many2one(  
+                                    'res.parent',
+                                    string = 'Localidad contacto',
+                                    compute = '_compute_localidad_contacto'
+                                )
+    estadoLocalidad = fields.Text(
+                                    string = 'Estado de localidad',
+                                    compute = '_compute_estado_localidad'
+                                )
+    telefonoContactoLocalidad = fields.Text(
+                                    string = 'Télefgono localidad contacto',
+                                    compute = '_compute_telefono_localidad'
+                                )
+    movilContactoLocalidad = fields.Text(
+                                    string = 'Movil localidad contacto',
+                                    compute = '_compute_movil_localidad'
+                                )
+    correoContactoLocalidad = fields.Text(
+                                    string = 'Correo electrónico localidad contacto',
+                                    compute = '_compute_correo_localidad'
+                                )
+    direccionLocalidad = fields.Text(
+                                    string = 'Dirección localidad',
+                                    compute = '_compute_direccion_localidad'
+                                )
 
     def _compute_serie_nombre(self):
         if self.ticket_id.x_studio_equipo_por_nmero_de_serie_1:
@@ -1724,7 +1779,54 @@ class HelpDeskDatosToner(TransientModel):
     def _compute_series(self):
         if self.ticket_id.x_studio_equipo_por_nmero_de_serie_1:
             self.series = self.ticket_id.x_studio_equipo_por_nmero_de_serie_1.ids
-            
+
+    def _compute_corte(self):
+        if self.ticket_id.x_studio_corte:
+            self.corte = self.ticket_id.x_studio_corte
+
+    def _compute_solicitud(self):
+        if self.ticket_id.x_studio_field_nO7Xg:
+            self.solicitud = self.ticket_id.x_studio_field_nO7Xg.id
+
+    def _compute_cliente(self):
+        if self.ticket_id.parent_id:
+            self.cliente = self.ticket_id.parent_id.id
+    
+    def _compute_tipo_cliente(self):
+        if self.ticket_id.x_studio_nivel_del_cliente:
+            self.tipoCliente = self.ticket_id.x_studio_nivel_del_cliente
+
+    def _compute_localidad(self):
+        if self.ticket_id.x_studio_empresas_relacionadas:
+            self.localidad = self.ticket_id.x_studio_empresas_relacionadas.id
+
+    def _compute_zona_localidad(self):
+        if self.ticket_id.x_studio_field_6furK:
+            self.zonaLocalidad = self.ticket_id.x_studio_field_6furK
+
+    def _compute_localidad_contacto(self):
+        if self.ticket_id.localidadContacto:
+            self.localidadContacto = self.ticket_id.localidadContacto.id
+
+    def _compute_estado_localidad(self):
+        if self.ticket_id.x_studio_estado_de_localidad:
+            self.estadoLocalidad = self.ticket_id.x_studio_estado_de_localidad
+
+    def _compute_telefono_localidad(self):
+        if self.ticket_id.telefonoContactoLocalidad:
+            self.telefonoContactoLocalidad = self.ticket_id.telefonoContactoLocalidad
+
+    def _compute_movil_localidad(self):
+        if self.ticket_id.movilContactoLocalidad:
+            self.movilContactoLocalidad = self.ticket_id.movilContactoLocalidad
+
+    def _compute_correo_localidad(self):
+        if self.ticket_id.correoLocalidadContacto:
+            self.correoContactoLocalidad = self.ticket_id.correoLocalidadContacto
+
+    def _compute_direccion_localidad(self):
+        if self.ticket_id.direccionLocalidadText:
+            self.direccionLocalidad = self.ticket_id.direccionLocalidadText
 
                 
     """
