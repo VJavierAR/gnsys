@@ -20,7 +20,7 @@ class sale_order_compatibles(models.Model):
 	accesorios = fields.One2many('sale_order_compatibles_mini_acesorios', 'saleOrderMini', string = 'Accesorios')
 	serie=fields.Many2one('stock.production.lot','Serie')
 	domin=fields.Char()
-	location=fields.Char()
+	location=fields.Integer()
 	tipo=fields.Char()
 
 
