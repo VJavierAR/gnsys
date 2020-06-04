@@ -145,7 +145,7 @@ class fac_order(models.Model):
             if self.x_studio_dividir_servicios==False and self.x_studio_dividir_servicios_1==False and len(self.order_line)<1:
                
                for m in ff:              
-                          p=self.env['stock.production.lot'].search([('servicio', '=', m.id),('x_studio_estado','!=','Back-up')])                  
+                          p=self.env['stock.production.lot'].search([('servicio', '=', m.id)])                  
                           procesadasColorTotal=0
                           procesadasColorBN=0
                           serUNO=0
