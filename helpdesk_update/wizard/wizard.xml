@@ -622,9 +622,9 @@
                         <page string = 'Pedido'>
                             <field name='series' domain="['|', ('active', '=', 0), ('active', '=', 1)]" >
                                 <tree>
-                                    <field name='active' />
+                                    <field name='active' invisible='1'/>
                                     <field name='serie' />
-                                    <field name='tablahtml' />
+                                    <field name='tablahtml' widget='html'/>
                                 </tree>
                                 <form>
                                     <field name='serie'/>
@@ -657,7 +657,7 @@
                                     <field name='correoContactoLocalidad' />
                                 </group>
                                 <group>
-                                    <field name='direccionLocalidad' />
+                                    <field name='direccionLocalidad' widget='html'/>
                                 </group>
                             </group>
                         </page>
