@@ -1423,6 +1423,6 @@ class helpdeskMass(TransientModel):
     ticket_ids = fields.Many2many("helpdesk.ticket",default=lambda self: self._default_tickets_ids())
 
     def confirmar(self):
-        for t in self.ticket_id:
+        for t in self.ticket_ids:
             threaded_calculation = threading.Thread(target=self.crearYValidarSolicitudDeTonerHilo(), args=(t))
 
