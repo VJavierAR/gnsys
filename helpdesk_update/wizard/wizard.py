@@ -1868,12 +1868,12 @@ class HelpDeskDatosToner(TransientModel):
             self.estadoLocalidad = self.ticket_id.x_studio_estado_de_localidad
 
     def _compute_telefono_localidad(self):
-        if self.ticket_id.telefonoContactoLocalidad:
-            self.telefonoContactoLocalidad = self.ticket_id.telefonoContactoLocalidad
+        if self.ticket_id.telefonoLocalidadContacto:
+            self.telefonoContactoLocalidad = self.ticket_id.telefonoLocalidadContacto
 
     def _compute_movil_localidad(self):
-        if self.ticket_id.movilContactoLocalidad:
-            self.movilContactoLocalidad = self.ticket_id.movilContactoLocalidad
+        if self.ticket_id.movilLocalidadContacto:
+            self.movilContactoLocalidad = self.ticket_id.movilLocalidadContacto
 
     def _compute_correo_localidad(self):
         if self.ticket_id.correoLocalidadContacto:
