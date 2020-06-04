@@ -3377,7 +3377,7 @@ class helpdesk_update(models.Model):
             'view_id': view.id,
             'target': 'new',
             'res_id': wiz.id,
-            'context': {'series': [(6,0,self.x_studio_equipo_por_nmero_de_serie_1.ids)]},
+            'context': self.env.context,
         }        
 
 class helpdes_diagnostico(models.Model):
