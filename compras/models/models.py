@@ -81,6 +81,39 @@ class compras(models.Model):
                 if(mimetype=='application/pdf'):
                     self.x_studio_pdf=self.archivo
                     myCmd = 'pdftotext -fixed 5 hola.pdf test3.txt'
+                    if(self.archivo and ("katun" in self.partner_id.name.lower())):
+                        myCmd = 'pdftotext -fixed 3 hola.pdf test3.txt'
+                        out = open("hola.pdf", "wb")
+                        #f2=base64.b64decode(self.archivo)
+                        #H=StringIO(f2)
+                        file = PdfFileReader(H)
+                        t=PdfFileWriter()
+                        for p in range(file.getNumPages()):
+                            t.addPage(file.getPage(p))
+                        t.write(out)
+                        out.close()
+                        os.system(myCmd)
+                        f = open("test3.txt","r")
+                        string = f.read()
+                        f.close()
+                        arr=string.split('\n')
+                        arreglo=[]
+                        for ar in arr:
+                            if('Pieza' in ar):
+                                cantidad=float(ar.split('      ',1)[1].split('        ',1)[0].replace(' ',''))
+                                noparte=ar.split('        ',1)[1].split('            ',1)[0].split(' ')[0]
+                                _logger.info(str(noparte))
+                                p=ar.split('$')
+                                precio=float(p[1].replace(' ',''))
+                                descuento=float(p[4].replace(' ','')) if(len(p)==5) else 0
+                                precioCdesc=((cantidad*precio)-descuento)/cantidad
+                                template=self.env['product.template'].search([('default_code','=',noparte)])
+                                productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
+                                product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':cantidad,'price_unit':precioCdesc,'taxes_id':[10],'name':productid.description if(productid.description) else '/'}
+                                arreglo.append(product)
+                        if(len(arreglo)>0):
+                            self.order_line=[(5,0,0)]
+                        self.order_line=arreglo
                     if(self.archivo and ("ctr" in self.partner_id.name.lower())):
                         myCmd = 'pdftotext -fixed 4 hola.pdf test3.txt'
                         out = open("hola.pdf", "wb")
