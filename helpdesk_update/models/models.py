@@ -1826,7 +1826,6 @@ class helpdesk_update(models.Model):
                     weirtihgone=0
                     weirtihgwtwo=0
                     insert="insert into sale_order_line values (order_id,product_id,product_uom_qty,x_studio_field_9nQhR,route_id,price_unit, customer_lead,x_studio_toner_negro,porcentajeNegro)values("+str(sale.id)+","+str(weirtihgone)+",1,"+str(c.serie.id)+","+str(weirtihgwtwo)+",0,0,"+str(c.x_studio_toner_negro)+",1)"
-                    #_logger.info("Error al capturar."+str(insert))                        
                     c.write({'x_studio_tickett':self.x_studio_id_ticket})
                     c.write({'fuente':'helpdesk.ticket'})
                     #Toner BN
@@ -1848,7 +1847,6 @@ class helpdesk_update(models.Model):
                                , 'x_studio_field_9nQhR': c.serie.id 
                                , 'price_unit': 0 
                                , 'customer_lead' : 0
-                               #, 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id
                                }
                         if(gen['qty_available']<=0):
                             datos['route_id']=1
@@ -1870,7 +1868,6 @@ class helpdesk_update(models.Model):
                                , 'x_studio_field_9nQhR': c.serie.id
                                , 'price_unit': 0 
                                , 'customer_lead' : 0
-                               #, 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id
                                }
                         if(gen['qty_available']<=0):
                             datos['route_id']=1
@@ -1890,7 +1887,6 @@ class helpdesk_update(models.Model):
                                , 'x_studio_field_9nQhR': c.serie.id 
                                , 'price_unit': 0 
                                , 'customer_lead' : 0
-                               #, 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id
                                }
                         if(gen['qty_available']<=0):
                             datos['route_id']=1
@@ -1910,7 +1906,6 @@ class helpdesk_update(models.Model):
                                , 'x_studio_field_9nQhR': c.serie.id 
                                , 'price_unit': 0 
                                , 'customer_lead' : 0
-                               #, 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id
                                }
                         if(gen['qty_available']<=0):
                             datos['route_id']=1
