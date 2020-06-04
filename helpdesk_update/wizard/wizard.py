@@ -1425,3 +1425,4 @@ class helpdeskMass(TransientModel):
     def confirmar(self):
         for t in self.ticket_id:
             threaded_calculation = threading.Thread(target=self.crearYValidarSolicitudDeTonerHilo(), args=(t))
+
