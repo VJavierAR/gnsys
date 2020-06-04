@@ -1427,5 +1427,4 @@ class helpdeskMass(TransientModel):
         for t in self.ticket_ids:
             threaded_calculation = threading.Thread(name='hilo%s' %num_hilo,target=t.crearYValidarSolicitudDeToner(), args=())
             num_hilo=num_hilo+1
-            threaded_calculation.start()
 
