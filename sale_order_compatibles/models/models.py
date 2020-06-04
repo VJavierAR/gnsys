@@ -13,12 +13,14 @@ class sale_order_compatibles(models.Model):
 	_name = 'sale_order_compatibles'
 	saleOrder = fields.Many2one('sale.order')
 	equipos = fields.Many2one('product.product', string = 'Equipos')
-	cantidad = fields.Integer(string = 'Cantidad',default=1,readonly=True)
+	cantidad = fields.Selection(selection = [(0, '0'),(1, '1')],string = 'Cantidad',default=1)
 	estado = fields.Selection(selection = [('1', '1'),('2', '2'),('3','3')], widget = "statusbar", default = '1')
 	componentes = fields.One2many('sale_order_compatibles_mini', 'saleOrderMini', string = 'Componentes')
 	toner = fields.One2many('sale_order_compatibles_mini_toner', 'saleOrderMini', string = 'Toner')
 	accesorios = fields.One2many('sale_order_compatibles_mini_acesorios', 'saleOrderMini', string = 'Accesorios')
+	serie=fields.Many2one('stock.production.lot','Serie')
 	domin=fields.Char()
+	location=fields.Char()
 
 	@api.onchange('equipos')
 	def domi(self):
