@@ -161,6 +161,8 @@ class sale_update(models.Model):
 	        self.action_done()
 	    p=self.env['stock.picking'].search(['&','|',['sale_id','=',self.id],['name','like','SU'],['name','like','PICK']])
 	    sal=self.order_line.sorted(key='id').mapped('id')
+	    _logger.info(str(len(p)))
+	    _logger.info(str(sal))
 	    i=0
 	    for pi in p.move_ids_without_package.sorted(key='id'):
 	    	pi.write({'sale_line_id':sal[i]})
