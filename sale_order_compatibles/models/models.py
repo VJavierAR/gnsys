@@ -21,6 +21,8 @@ class sale_order_compatibles(models.Model):
 	serie=fields.Many2one('stock.production.lot','Serie')
 	domin=fields.Char()
 	location=fields.Char()
+	tipo=fields.Char()
+
 
 	@api.onchange('equipos')
 	def domi(self):
