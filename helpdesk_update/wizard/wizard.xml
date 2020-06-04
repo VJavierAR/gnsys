@@ -622,6 +622,7 @@
                         <page string = 'Pedido'>
                             <field name='series' domain="['|', ('active', '=', 0), ('active', '=', 1)]" >
                                 <tree>
+                                    <field name='active' />
                                     <field name='serie' />
                                     <field name='tablahtml' />
                                 </tree>
