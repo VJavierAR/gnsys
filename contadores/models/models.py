@@ -105,7 +105,7 @@ class dcas(models.Model):
     
     @api.onchange('serie')             
     def ultimosContadoresNACM(self):
-      if self.fuente == 'helpdesk.ticket' or self.fuente == 'tfs.tfs':
+      #if self.fuente == 'helpdesk.ticket' or self.fuente == 'tfs.tfs':
         if self.serie :
             bn_c=self.env['stock.production.lot'].search([['id','=',self.serie.id]])        
             self.colorEquipo=bn_c.x_studio_color_bn
