@@ -1722,7 +1722,7 @@ class HelpDeskDatosToner(TransientModel):
                                     compute = '_compute_solicitud'
                                 )
     cliente = fields.Many2one(  
-                                'res.parent',
+                                'res.partner',
                                 string = 'Cliente',
                                 compute = '_compute_cliente'
                             )
@@ -1732,7 +1732,7 @@ class HelpDeskDatosToner(TransientModel):
                                         compute = '_compute_tipo_cliente'
                                     )
     localidad = fields.Many2one(  
-                                    'res.parent',
+                                    'res.partner',
                                     string = 'Localidad',
                                     compute = '_compute_localidad'
                                 )
@@ -1742,7 +1742,7 @@ class HelpDeskDatosToner(TransientModel):
                                         compute = '_compute_zona_localidad'
                                     )
     localidadContacto = fields.Many2one(  
-                                    'res.parent',
+                                    'res.partner',
                                     string = 'Localidad contacto',
                                     compute = '_compute_localidad_contacto'
                                 )
@@ -1844,8 +1844,8 @@ class HelpDeskDatosToner(TransientModel):
             self.solicitud = self.ticket_id.x_studio_field_nO7Xg.id
 
     def _compute_cliente(self):
-        if self.ticket_id.parent_id:
-            self.cliente = self.ticket_id.parent_id.id
+        if self.ticket_id.partner_id:
+            self.cliente = self.ticket_id.partner_id.id
     
     def _compute_tipo_cliente(self):
         if self.ticket_id.x_studio_nivel_del_cliente:
