@@ -2893,6 +2893,8 @@ class helpdesk_update(models.Model):
                     localidadTemp = numeros_serie.serie.x_studio_move_line[-1].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z
                     self.x_studio_empresas_relacionadas = localidadTemp.id
                     self.x_studio_field_6furK = localidadTemp.x_studio_field_SqU5B
+                    self.x_studio_zona = localidadTemp.x_studio_field_SqU5B
+                    self.zona_estados = localidadTemp.state_id.name
                     #self.localidadContacto = 
                     self.x_studio_estado_de_localidad = localidadTemp.state_id.name
                     self.telefonoLocalidadContacto = localidadTemp.phone
