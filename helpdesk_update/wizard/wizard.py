@@ -5,7 +5,7 @@ import datetime, time
 _logger = logging.getLogger(__name__)
 from odoo.exceptions import UserError
 from odoo import exceptions, _
-
+import threading
 class HelpDeskComentario(TransientModel):
     _name = 'helpdesk.comentario'
     _description = 'HelpDesk Comentario'
@@ -1423,4 +1423,5 @@ class helpdeskMass(TransientModel):
     ticket_ids = fields.Many2many("helpdesk.ticket",default=lambda self: self._default_tickets_ids())
 
     def confirmar(self):
-        self.ticket_id.crearYValidarSolicitudDeToner()
+        for t in self.ticket_id:
+            threaded_calculation = threading.Thread(target=self.crearYValidarSolicitudDeTonerHilo(), args=(t))
