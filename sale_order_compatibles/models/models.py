@@ -198,3 +198,5 @@ class sale_update(models.Model):
 				ppp.move_ids_without_package.write({'location_dest_id':ppp.picking_type_id.warehouse_id.lot_stock_id.id})
 				self.env['stock.move.line'].search([['picking_id','=',ppp.id]]).write({'location_dest_id':ppp.picking_type_id.warehouse_id.lot_stock_id.id})
 				ppp.move_ids_without_package.write({'location_id':ppp.picking_type_id.default_location_src_id.id})
+			ppp.action_confirm()
+			ppp.action_assign()
