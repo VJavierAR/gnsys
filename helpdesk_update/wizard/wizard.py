@@ -1415,3 +1415,12 @@ class HelpDeskReincidencia(TransientModel):
                   'context': self.env.context,
                   }
         
+class helpdeskMass(TransientModel):
+    _name = 'helpdesk.mass'
+    _description = 'HelpDesk Reincidencia'
+    def _default_tickets_ids(self):
+        return self.env['helpdesk.ticket'].browse(self.env.context.get('active_ids'))
+    ticket_ids = fields.Many2many("helpdesk.ticket",default=lambda self: self._default_tickets_ids())
+
+    def confirmar(self):
+        self.ticket_id.crearYValidarSolicitudDeToner()
