@@ -1423,6 +1423,9 @@ class helpdeskMass(TransientModel):
     ticket_ids = fields.Many2many("helpdesk.ticket",default=lambda self: self._default_tickets_ids())
 
     def confirmar(self):
+        num_hilo=1
         for t in self.ticket_ids:
-            threaded_calculation = threading.Thread(target=t.crearYValidarSolicitudDeToner(), args=())
+            threaded_calculation = threading.Thread(name='hilo%s' %num_hilo,target=t.crearYValidarSolicitudDeToner(), args=())
+            num_hilo=i+1
+            threaded_calculation.start()
 
