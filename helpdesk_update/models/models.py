@@ -1804,7 +1804,7 @@ class helpdesk_update(models.Model):
                                                 , 'x_studio_tipo_de_solicitud' : "Venta"
                                                 , 'x_studio_requiere_instalacin' : False                                       
                                                 , 'user_id' : record.user_id.id                                           
-                                                , 'x_studio_tcnico' : record.x_studio_tcnico.id
+                                                #, 'x_studio_tcnico' : record.x_studio_tcnico.id
                                                 , 'x_studio_field_RnhKr': self.localidadContacto.id
                                                 , 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id
                                                 , 'warehouse_id' :self.x_studio_almacen_1 if(self.x_studio_almacen_1) else 1  
