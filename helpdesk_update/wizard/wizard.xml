@@ -664,10 +664,24 @@
                         <page string = 'Datos del ticket'>
                             <group>
                                 <group>
-                                    
+                                    <field name='creadoEl' />
+                                    <field name='areaAtencion' />
+                                    <field name='ejecutivo' />
+                                    <field name='encargadoArea' />
                                 </group>
                                 <group>
-                                    
+                                    <field name='diasAtraso' />
+                                    <field name='prioridad' />
+                                    <field name='zona' />
+                                    <field name='zonaEstados' />
+                                </group>
+                                <group>
+                                    <field name='numeroTicketCliente' />
+                                    <field name='numeroTicketDistribuidor' />
+                                    <field name='numeroTicketGuia' />
+                                </group>
+                                <group>
+                                    <field name='comentarioLocalidad' />
                                 </group>
                             </group>
                         </page>

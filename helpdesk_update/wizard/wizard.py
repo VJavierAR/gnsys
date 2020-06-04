@@ -1766,6 +1766,61 @@ class HelpDeskDatosToner(TransientModel):
                                     string = 'Dirección localidad',
                                     compute = '_compute_direccion_localidad'
                                 )
+    creadoEl = fields.Text(
+                            string = 'Creado el',
+                            compute = '_compute_creado_el'
+                        )
+    areaAtencion = fields.Many2one(  
+                                    'helpdesk.team',
+                                    string = 'Área de atención',
+                                    compute = '_compute_area_atencion'
+                                )
+    ejecutivo = fields.Many2one(  
+                                    'res.users',
+                                    string = 'Ejecutivo',
+                                    compute = '_compute_ejecutivo'
+                                )
+    encargadoArea = fields.Many2one(  
+                                    'hr.employee',
+                                    string = 'Encargado de área',
+                                    compute = '_compute_encargado_area'
+                                )
+    diasAtraso = fields.Integer(
+                            string = 'Días de atraso',
+                            compute = '_compute_dias_atraso'
+                        )
+    prioridad = fields.Selection(
+                                    [('0','Todas'),('1','Baja'),('2','Media'),('3','Alta'),('4','Critica')], 
+                                    string = 'Prioridad', 
+                                    compute = '_compute_prioridad'
+                                )
+    zona = fields.Selection(
+                                        [('SUR','SUR'),('NORTE','NORTE'),('PONIENTE','PONIENTE'),('ORIENTE','ORIENTE'),('CENTRO','CENTRO'),('DISTRIBUIDOR','DISTRIBUIDOR'),('MONTERREY','MONTERREY'),('CUERNAVACA','CUERNAVACA'),('GUADALAJARA','GUADALAJARA'),('QUERETARO','QUERETARO'),('CANCUN','CANCUN'),('VERACRUZ','VERACRUZ'),('PUEBLA','PUEBLA'),('TOLUCA','TOLUCA'),('LEON','LEON'),('COMODIN','COMODIN'),('VILLAHERMOSA','VILLAHERMOSA'),('MERIDA','MERIDA'),('ALTAMIRA','ALTAMIRA'),('COMODIN','COMODIN'),('DF00','DF00'),('SAN LP','SAN LP'),('ESTADO DE MÉXICO','ESTADO DE MÉXICO'),('Foraneo Norte','Foraneo Norte'),('Foraneo Sur','Foraneo Sur')],
+                                        string = 'Zona',
+                                        compute = '_compute_zona'
+                                    )
+    zonaEstados = fields.Selection(
+                                        [('Estado de México','Estado de México'), ('Campeche','Campeche'), ('Ciudad de México','Ciudad de México'), ('Yucatán','Yucatán'), ('Guanajuato','Guanajuato'), ('Puebla','Puebla'), ('Coahuila','Coahuila'), ('Sonora','Sonora'), ('Tamaulipas','Tamaulipas'), ('Oaxaca','Oaxaca'), ('Tlaxcala','Tlaxcala'), ('Morelos','Morelos'), ('Jalisco','Jalisco'), ('Sinaloa','Sinaloa'), ('Nuevo León','Nuevo León'), ('Baja California','Baja California'), ('Nayarit','Nayarit'), ('Querétaro','Querétaro'), ('Tabasco','Tabasco'), ('Hidalgo','Hidalgo'), ('Chihuahua','Chihuahua'), ('Quintana Roo','Quintana Roo'), ('Chiapas','Chiapas'), ('Veracruz','Veracruz'), ('Michoacán','Michoacán'), ('Aguascalientes','Aguascalientes'), ('Guerrero','Guerrero'), ('San Luis Potosí', 'San Luis Potosí'), ('Colima','Colima'), ('Durango','Durango'), ('Baja California Sur','Baja California Sur'), ('Zacatecas','Zacatecas')],
+                                        string = 'Zona Estados',
+                                        compute = '_compute_zona_estados'
+                                    )
+    numeroTicketCliente = fields.Text(
+                            string = 'Número de ticket cliente',
+                            compute = '_compute_numero_ticket_cliente'
+                        )
+    numeroTicketDistribuidor = fields.Text(
+                            string = 'Número de ticket distribuidor',
+                            compute = '_compute_numero_ticket_distribuidor'
+                        )
+    numeroTicketGuia = fields.Text(
+                            string = 'Número de ticket guía',
+                            compute = '_compute_numero_ticket_guia'
+                        )
+    comentarioLocalidad = fields.Text(
+                            string = 'Comentario de localidad',
+                            compute = '_compute_comentario_localidad'
+                        )
+
 
     def _compute_serie_nombre(self):
         if self.ticket_id.x_studio_equipo_por_nmero_de_serie_1:
@@ -1828,44 +1883,51 @@ class HelpDeskDatosToner(TransientModel):
         if self.ticket_id.direccionLocalidadText:
             self.direccionLocalidad = self.ticket_id.direccionLocalidadText
 
-                
-    """
-    def cerrarTicketConComentario(self):
-      ultimaEvidenciaTec = []
-      if self.ticket_id.diagnosticos:
-        ultimaEvidenciaTec = self.ticket_id.diagnosticos[-1].evidencia.ids
-        if self.evidencia:
-          ultimaEvidenciaTec += self.evidencia.ids
-      if self.ticket_id.stage_id.name == 'Resuelto' or self.ticket_id.stage_id.name == 'Abierto' or self.ticket_id.stage_id.name == 'Asignado' or self.ticket_id.stage_id.name == 'Atención' and self.ticket_id.estadoCerrado == False:
-        self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.ticket_id.id
-                                                ,'comentario': self.comentario
-                                                ,'estadoTicket': self.ticket_id.stage_id.name
-                                                ,'evidencia': [(6,0,ultimaEvidenciaTec)]
-                                                ,'mostrarComentario': self.check
-                                                })
-        self.ticket_id.write({'stage_id': 18 
-                            , 'estadoResueltoPorDocTecnico': True
-                            , 'estadoAtencion': True
-                            })
-        mess = 'Ticket "' + str(self.ticket_id.id) + '" cerrado y último Diagnostico / Comentario añadido al ticket "' + str(self.ticket_id.id) + '" de forma exitosa. \n\nComentario agregado: ' + str(self.comentario) + '.'
-        wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mess})
-        view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
-        return {
-            'name': _('Ticket cerrado !!!'),
-            'type': 'ir.actions.act_window',
-            'view_type': 'form',
-            'view_mode': 'form',
-            'res_model': 'helpdesk.alerta',
-            'views': [(view.id, 'form')],
-            'view_id': view.id,
-            'target': 'new',
-            'res_id': wiz.id,
-            'context': self.env.context,
-        }
+    def _compute_creado_el(self):
+        if self.ticket_id.create_date:
+            self.creadoEl = str(self.ticket_id.create_date)
 
-    def _compute_estadoTicket(self):
-        self.estado = self.ticket_id.stage_id.name
+    def _compute_area_atencion(self):
+        if self.ticket_id.team_id:
+            self.areaAtencion = self.ticket_id.team_id.id
 
-    def _compute_diagnosticos(self):
-        self.diagnostico_id = self.ticket_id.diagnosticos.ids
-    """
+    def _compute_ejecutivo(self):
+        if self.ticket_id.user_id:
+            self.ejecutivo = self.ticket_id.user_id.id
+
+    def _compute_encargado_area(self):
+        if self.ticket_id.x_studio_responsable_de_equipo:
+            self.encargadoArea = self.ticket_id.x_studio_responsable_de_equipo.id
+
+    def _compute_dias_atraso(self):
+        if self.ticket_id.days_difference:
+            self.diasAtraso = self.ticket_id.days_difference
+
+    def _compute_prioridad(self):
+        if self.ticket_id.priority:
+            self.prioridad = self.ticket_id.priority
+
+    def _compute_zona(self):
+        if self.ticket_id.x_studio_zona:
+            self.zona = self.ticket_id.x_studio_zona
+
+    def _compute_zona_estados(self):
+        if self.ticket_id.zona_estados:
+            self.zonaEstados = self.ticket_id.zona_estados
+
+    def _compute_numero_ticket_cliente(self):
+        if self.ticket_id.x_studio_nmero_de_ticket_cliente:
+            self.numeroTicketCliente = self.ticket_id.x_studio_nmero_de_ticket_cliente
+
+    def _compute_numero_ticket_distribuidor(self):
+        if self.ticket_id.x_studio_nmero_ticket_distribuidor_1:
+            self.numeroTicketDistribuidor = self.ticket_id.x_studio_nmero_ticket_distribuidor_1
+    
+    def _compute_numero_ticket_guia(self):
+        if self.ticket_id.x_studio_nmero_de_guia_1:
+            self.numeroTicketGuia = self.ticket_id.x_studio_nmero_de_guia_1
+
+    def _compute_comentario_localidad(self):
+        if self.ticket_id.x_studio_comentarios_de_localidad:
+            self.comentarioLocalidad = self.ticket_id.x_studio_comentarios_de_localidad
+    
