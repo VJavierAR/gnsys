@@ -144,25 +144,25 @@ class sale_update(models.Model):
 					d={'x_studio_field_mqSKO':ss.x_studio_field_gKQ9k.id,'product_id':ss.x_studio_field_gKQ9k.id,'name':ss.x_studio_field_gKQ9k.name,'product_uom_qty':ss.x_studio_cantidad,'product_uom':ss.x_studio_field_gKQ9k.uom_id.id,'price_unit':0.00}
 					self.order_line=[d]
 	@api.multi
-    def action_confirm(self):
-        if self._get_forbidden_state_confirm() & set(self.mapped('state')):
-            raise UserError(_(
-                'It is not allowed to confirm an order in the following states: %s'
-            ) % (', '.join(self._get_forbidden_state_confirm())))
+	def action_confirm(self):
+	    if self._get_forbidden_state_confirm() & set(self.mapped('state')):
+	        raise UserError(_(
+	            'It is not allowed to confirm an order in the following states: %s'
+	        ) % (', '.join(self._get_forbidden_state_confirm())))
 
-        for order in self.filtered(lambda order: order.partner_id not in order.message_partner_ids):
-            order.message_subscribe([order.partner_id.id])
-        self.write({
-            'state': 'sale',
-            'confirmation_date': fields.Datetime.now()
-        })
-        self._action_confirm()
-        if self.env['ir.config_parameter'].sudo().get_param('sale.auto_done_setting'):
-            self.action_done()
-        p=self.env['stock.picking'].search([['sale_id','=',self.id],['name','like',('SU','PICK')]])
-        sal=self.order_line.sorted(key='id').mapped('id')
-        i=0
-        for pi in p.move_ids_without_package.sorted(key='id'):
-        	pi.write({'sale_line_id':sal[i]})
-        	i=i+1
-        return True
+	    for order in self.filtered(lambda order: order.partner_id not in order.message_partner_ids):
+	        order.message_subscribe([order.partner_id.id])
+	    self.write({
+	        'state': 'sale',
+	        'confirmation_date': fields.Datetime.now()
+	    })
+	    self._action_confirm()
+	    if self.env['ir.config_parameter'].sudo().get_param('sale.auto_done_setting'):
+	        self.action_done()
+	    p=self.env['stock.picking'].search([['sale_id','=',self.id],['name','like',('SU','PICK')]])
+	    sal=self.order_line.sorted(key='id').mapped('id')
+	    i=0
+	    for pi in p.move_ids_without_package.sorted(key='id'):
+	    	pi.write({'sale_line_id':sal[i]})
+	    	i=i+1
+	    return True
