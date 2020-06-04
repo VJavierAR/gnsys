@@ -22,8 +22,6 @@ class sale_order_compatibles(models.Model):
 	domin=fields.Char()
 	location=fields.Integer()
 	tipo=fields.Char()
-
-
 	@api.onchange('equipos')
 	def domi(self):
 		datos=self.equipos.x_studio_toner_compatible.mapped('id')
