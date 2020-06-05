@@ -1931,3 +1931,50 @@ class HelpDeskDatosToner(TransientModel):
         if self.ticket_id.x_studio_comentarios_de_localidad:
             self.comentarioLocalidad = self.ticket_id.x_studio_comentarios_de_localidad
     
+
+
+
+
+class HelpDeskDetalleSerieToner(TransientModel):
+    _name = 'helpdesk.detalle.serie.toner'
+    _description = 'HelpDesk Detalle Serie del equipo de toner'
+    ticket_id = fields.Many2one("helpdesk.ticket")
+    historicoTickets = fields.One2many('dcas.dcas', 'serie', string = 'Historico de tickets', compute='_compute_historico_tickets')
+    lecturas = fields.One2many('dcas.dcas', 'serie', string = 'Lecturas', compute='_compute_lecturas')
+    toner = fields.One2many('dcas.dcas', 'serie', string = 'Tóner', compute='_compute_toner')
+    historicoDeComponentes = fields.One2many('x_studio_historico_de_componentes', 'x_studio_field_MH4DO', string = 'Historico de Componentes', compute='_compute_historico_de_componentes')
+    movimientos = fields.One2many('stock.move.line', 'lot_id', string = 'Movimientos', compute='_compute_movimientos')
+    serie = fields.Text(string = "Serie", compute = '_compute_serie_nombre')
+
+    series = fields.Many2one(
+                                'dcas.dcas', 
+                                string = 'Series'
+                            )
+
+    def _compute_serie_nombre(self):
+        if self.ticket_id.x_studio_equipo_por_nmero_de_serie_1:
+            for serie in self.ticket_id.x_studio_equipo_por_nmero_de_serie_1:
+                if self.serie:
+                    self.serie = str(self.serie) + ', ' + str(serie.serie.name)
+                else:
+                    self.serie = str(serie.serie.name) + ', '
+
+    def _compute_historico_tickets(self):
+        if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+            self.historicoTickets = self.series.x_studio_field_Yxv2m.ids
+
+    def _compute_lecturas(self):
+        if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+            self.lecturas = self.series.x_studio_field_PYss4.ids
+
+    def _compute_toner(self):
+        if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+            self.toner = self.series.x_studio_toner_1.ids
+
+    def _compute_historico_de_componentes(self):
+        if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+            self.historicoDeComponentes = self.series.x_studio_histrico_de_componentes.ids
+
+    def _compute_movimientos(self):
+        if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+            self.movimientos = self.series.x_studio_move_line.ids

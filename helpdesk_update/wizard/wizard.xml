@@ -701,6 +701,86 @@
 
 
 
+    <record id="view_helpdesk_bitacora_toner" model="ir.ui.view">
+        <field name="model">helpdesk.detalle.serie.toner</field>
+        <field name="arch" type="xml">
+            <form string="Detalle serie">
+                <group class='text-center'>
+                    <h2>
+                        <field name="serie" string='' readonly="1"/>
+                    </h2>
+                </group>
+                <group>
+                    <group>
+                        <field name="series" readonly="0"/>
+                    </group>
+                    <group>
+                    </group>
+                </group>
+                <group>
+                    <notebook>
+                        <page string = 'Tickets'>
+                            <field name='historicoTickets'>
+                                <tree default_order="create_date desc"><!--x_studio_fecha-->
+                                    <field name='x_studio_tickett' attrs='{"domain": [["fuente","=","Equipo"]]}'/>
+                                    <field name='create_date' />
+                                    <field name='fuente' />
+                                    <field name='x_studio_fecha_techra' />
+                                    <field name='serie' />
+                                    <field name='hTicketCliente' />
+                                    <field name='hTicketAreaDeAtencion' />
+                                    <field name='hTicketUbicacion' />
+                                    <field name='hTicketFalla' />
+                                    <field name='hTicketUltimaEtapaTicket' />
+                                    <field name='contadorMono' />
+                                    <field name='contadorColor' />
+                                    <field name='hTicketHojaDeEstado' />
+                                    <field name='hTicketUltimaNota' />
+                                    <field name='hTicketFechaNota' />
+
+                                    <!--
+                                    <field name='x_studio_fecha' />
+                                    <field name='hTicketSerie' />
+                                    -->
+                                    
+                                    
+                                    
+                                    
+                                    <!--
+                                    <field name='x_studio_fecha' />
+                                    <field name='x_studio_field_no6Rb' />
+                                    <field name='x_studio_texto_anio' />
+                                    
+                                    <field name='' />
+                                    -->
+                                </tree>
+                                <form>
+                                </form>
+                            </field>
+                        </page>
+                        <page string = 'Lecturas'>
+                            <field name='lecturas' />
+                        </page>
+                        <page string = 'Tóner'>
+                            <field name='toner' />
+                        </page>
+                        <page string = 'Historico de componentes'>
+                            <field name='historicoDeComponentes' />
+                        </page>
+                        <page string = 'Movimientos'>
+                            <field name='movimientos' />
+                        </page>
+                    </notebook>
+                </group>
+                <footer>
+                    <button special="cancel" string="Cerrar" class="oe_highlight" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+
 
 
 
