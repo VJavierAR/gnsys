@@ -705,7 +705,9 @@ class contadores(models.Model):
                               ttotal=(iva +call)+ttotal
                               _logger.info("totals csi: " + str(totalsr))  
                               _logger.info("tota csi: " + str(ttotal))  
-                           else:                                                            
+                           else:
+                              _logger.info("totals celse: " + str(totalsr))  
+                              _logger.info("tota celse: " + str(ttotal))   
                               call=float(rd.rentaMensual)                                
                               worksheet.write(i, 12, call,neg)
                               iva=round(call*.16,2)
