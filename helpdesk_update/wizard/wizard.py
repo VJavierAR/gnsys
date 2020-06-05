@@ -1946,10 +1946,15 @@ class HelpDeskDetalleSerieToner(TransientModel):
     movimientos = fields.One2many('stock.move.line', 'lot_id', string = 'Movimientos', compute='_compute_movimientos')
     serie = fields.Text(string = "Serie", compute = '_compute_serie_nombre')
 
+    dominio = fields.Text(string = 'Dominio')
     series = fields.Many2one(
                                 'stock.production.lot',
-                                string = 'Series'
+                                string = 'Series',
+                                default = lambda self: self._default_serie_ids(),
                             )
+
+    def _default_serie_ids(self):
+        return ast.literal_eval(self.dominio)
 
     def _compute_serie_nombre(self):
         if self.ticket_id.x_studio_equipo_por_nmero_de_serie_1:
