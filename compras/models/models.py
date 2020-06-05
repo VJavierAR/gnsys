@@ -101,7 +101,7 @@ class compras(models.Model):
                         for ar in arr:
                             if('Pieza' in ar):
                                 cantidad=float(ar.split('      ',1)[1].split('        ',1)[0].replace(' ',''))
-                                _logger.info(str(ar.split(' '+str(int(cantidad))+' '))[2].split(' ')[0])
+                                _logger.info(str(ar.split(' '+str(int(cantidad))+' '))[2].split(' ')[1])
                                 noparte=ar.split('      ',1)[1].split('        ',1)[1].split('            ',1)[0].split(str(ar.split('      ',1)[1].split('        ',1)[0].replace(' ','')),1)[1]
                                 _logger.info(str(noparte))
                                 p=ar.split('$')
