@@ -945,9 +945,9 @@ class contadores(models.Model):
             periodoAnterior= anioA+'-'+mesaA   
             
             
-            asdc=self.env['contrato'].search([('cliente','=',self.cliente.id)])
-            asds=self.env['servicios'].search([('contrato','in',asdc)])
-            asd==self.env['stock.production.lot'].search([('servicio','in',asds)])
+            asdc=self.env['contrato'].search([('cliente','=',self.cliente.id)]).ids
+            asds=self.env['servicios'].search([('contrato','in',asdc)]).ids
+            asd=self.env['stock.production.lot'].search([('servicio','in',asds)])
             
             raise exceptions.ValidationError("Nada que generar "+str(asd))                                     
             
