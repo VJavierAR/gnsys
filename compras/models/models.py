@@ -100,12 +100,12 @@ class compras(models.Model):
                         arreglo=[]
                         for ar in arr:
                             if('Pieza' in ar):
-                                cantidad=float(ar.split('      ',1)[1].split('        ',1)[0].replace(' ',''))
-                                noparte=ar.split('      ',1)[1].split('        ',1)[1].split('            ',1)[0]
+                                cantidad=float(ar.split('      ',1)[1].split('        ',1)[0].replace(' ','').replace(',',''))
+                                noparte=ar.split(str(int(cantidad)))
                                 _logger.info(str(noparte))
                                 p=ar.split('$')
-                                precio=float(p[1].replace(' ',''))
-                                descuento=float(p[4].replace(' ','')) if(len(p)==5) else 0
+                                precio=float(p[1].replace(' ','').replace(',',''))
+                                descuento=float(p[4].replace(' ','').replace(',','')) if(len(p)==5) else 0
                                 precioCdesc=((cantidad*precio)-descuento)/cantidad
                                 template=self.env['product.template'].search([('default_code','=',noparte.replace(' ',''))])
                                 productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
