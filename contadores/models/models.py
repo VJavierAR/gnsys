@@ -627,7 +627,7 @@ class contadores(models.Model):
                totalsr=float(rd.rentaMensual)+totalsr
                ivatt=round(float(rd.rentaMensual)*.16,2)+ivatt
                ttotal=round(float(rd.rentaMensual)*.16,2) +float(rd.rentaMensual)+ttotal
-               #raise exceptions.ValidationError("Nada que generar "+str(ttotal))                                     
+               raise exceptions.ValidationError("Nada que generar "+str(ttotal))                                     
         for rd in re:
             for rpt in self.dca :
                 if int(rpt.x_studio_servicio)==rd.id :                                        
