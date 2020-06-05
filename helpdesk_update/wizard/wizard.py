@@ -1946,7 +1946,7 @@ class HelpDeskDetalleSerieToner(TransientModel):
     movimientos = fields.One2many('stock.move.line', 'lot_id', string = 'Movimientos', compute='_compute_movimientos')
     serie = fields.Text(string = "Serie", compute = '_compute_serie_nombre')
 
-    dominio = fields.Text(string = 'Dominio')
+    dominio = fields.Text(string = 'Dominio', store = True)
     series = fields.Many2one(
                                 'stock.production.lot',
                                 string = 'Series',

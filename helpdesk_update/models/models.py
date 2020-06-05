@@ -3401,7 +3401,7 @@ class helpdesk_update(models.Model):
             'view_id': view.id,
             'target': 'new',
             'res_id': wiz.id,
-            'context': {'dominio_val': str(ids)},
+            'context': {'default_dominio': str(ids)},
         }
 
 class helpdes_diagnostico(models.Model):
