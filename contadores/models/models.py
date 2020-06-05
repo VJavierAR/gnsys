@@ -625,11 +625,11 @@ class contadores(models.Model):
                            eebn=ebn+eebn                                                                                   
                            eec=ec+eec                           
                         i=i+1                        
-                   if rb==0:     
-                      totalsr=float(rd.rentaMensual)+totalsr
-                      ivatt=round(float(rd.rentaMensual)*.16,2)+ivatt
-                      ttotal=round(float(rd.rentaMensual)*.16,2) +float(rd.rentaMensual)+ttotal
-                   rb=rb+1
+                        if rb==0:     
+                          totalsr=float(rd.rentaMensual)+totalsr
+                          ivatt=round(float(rd.rentaMensual)*.16,2)+ivatt
+                          ttotal=round(float(rd.rentaMensual)*.16,2) +float(rd.rentaMensual)+ttotal
+                        rb=rb+1
                    #que se cobre solo una vez y no n veces
         for rd in re:
             for rpt in self.dca :
