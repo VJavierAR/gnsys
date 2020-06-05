@@ -622,7 +622,7 @@ class contadores(models.Model):
                            eebn=ebn+eebn
                         if rpt.x_studio_color_o_bn=='Color':                                                         
                            eebn=ebn+eebn                                                                                   
-                           eec=ec+eec               
+                           eec=ec+eec                           
                         i=i+1      
                totalsr=float(rd.rentaMensual)+totalsr
                ivatt=round(float(rd.rentaMensual)*.16,2)+ivatt
@@ -638,8 +638,7 @@ class contadores(models.Model):
                     if rpt.contadorColor==0:
                        ec=0
                     else:                
-                       ec=rpt.contadorColor-rpt.x_studio_lectura_anterior_color                    
-                    
+                       ec=rpt.contadorColor-rpt.x_studio_lectura_anterior_color                                        
                     if rd.nombreAnte=='Renta base con ML incluidas BN o color + ML. excedentes' or rd.nombreAnte=='Renta base con páginas incluidas BN o color + pag. excedentes':
                         worksheet.write(i, 0, rpt.x_studio_indice,neg)
                         worksheet.write(i, 1, rpt.x_studio_locacin,neg)
@@ -704,7 +703,9 @@ class contadores(models.Model):
                               worksheet.write(i, 13,'$ '+str(iva) ,neg)     
                               worksheet.write(i, 14,'$ '+str(iva +call) ,neg)
                               totalsr=call+totalsr
-                              ttotal=(iva +call)+ttotal         
+                              ttotal=(iva +call)+ttotal
+                        _logger.info("totals: " + str(totalsr))  
+                        _logger.info("total: " + str(ttotal))  
                                                  
                         i=i+1   
                     if rd.nombreAnte=='Costo por página procesada BN o color':
