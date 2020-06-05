@@ -949,7 +949,7 @@ class contadores(models.Model):
             asds=self.env['servicios'].search([('contrato','in',asdc)]).ids
             asd=self.env['stock.production.lot'].search([('servicio','in',asds)])
             
-            raise exceptions.ValidationError("Nada que generar "+str(asd))                                     
+            #raise exceptions.ValidationError("Nada que generar "+str(asd))                                     
             
             #raise Warning('notihng to show xD '+str(self.cliente.name))
             #id=int(self.id)            
