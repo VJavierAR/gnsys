@@ -574,7 +574,8 @@ class contadores(models.Model):
                totalsr=float(rd.rentaMensual)+totalsr
                ivatt=round(float(rd.rentaMensual)*.16,2)+ivatt
                ttotal=round(float(rd.rentaMensual)*.16,2) +float(rd.rentaMensual)+ttotal
-            if rd.nombreAnte=='Renta global + costo de página procesada BN o color' and len(re)>0:                    
+            if rd.nombreAnte=='Renta global + costo de página procesada BN o color' and len(re)>0:
+               rb=0 
                for rpt in self.dca :
                    if int(rpt.x_studio_servicio)==rd.id :
                         worksheet.write(i, 0, rpt.x_studio_indice,neg)
@@ -623,11 +624,13 @@ class contadores(models.Model):
                         if rpt.x_studio_color_o_bn=='Color':                                                         
                            eebn=ebn+eebn                                                                                   
                            eec=ec+eec                           
-                        i=i+1      
-                   totalsr=float(rd.rentaMensual)+totalsr
-                   ivatt=round(float(rd.rentaMensual)*.16,2)+ivatt
-                   ttotal=round(float(rd.rentaMensual)*.16,2) +float(rd.rentaMensual)+ttotal
-                   #raise exceptions.ValidationError("Nada que generar "+str(ttotal))                                     
+                        i=i+1                        
+                   if rb==0:     
+                      totalsr=float(rd.rentaMensual)+totalsr
+                      ivatt=round(float(rd.rentaMensual)*.16,2)+ivatt
+                      ttotal=round(float(rd.rentaMensual)*.16,2) +float(rd.rentaMensual)+ttotal
+                   rb=rb+1
+                   #que se cobre solo una vez y no n veces
         for rd in re:
             for rpt in self.dca :
                 if int(rpt.x_studio_servicio)==rd.id :                                        
