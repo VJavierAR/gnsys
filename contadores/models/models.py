@@ -574,7 +574,7 @@ class contadores(models.Model):
                totalsr=float(rd.rentaMensual)+totalsr
                ivatt=round(float(rd.rentaMensual)*.16,2)+ivatt
                ttotal=round(float(rd.rentaMensual)*.16,2) +float(rd.rentaMensual)+ttotal
-            if rd.nombreAnte=='Renta global + costo de página procesada BN o color':                    
+            if rd.nombreAnte=='Renta global + costo de página procesada BN o color' and len(re)>0:                    
                for rpt in self.dca :
                    if int(rpt.x_studio_servicio)==rd.id :
                         worksheet.write(i, 0, rpt.x_studio_indice,neg)
@@ -627,7 +627,7 @@ class contadores(models.Model):
                totalsr=float(rd.rentaMensual)+totalsr
                ivatt=round(float(rd.rentaMensual)*.16,2)+ivatt
                ttotal=round(float(rd.rentaMensual)*.16,2) +float(rd.rentaMensual)+ttotal
-               raise exceptions.ValidationError("Nada que generar "+str(ttotal))                                     
+               #raise exceptions.ValidationError("Nada que generar "+str(ttotal))                                     
         for rd in re:
             for rpt in self.dca :
                 if int(rpt.x_studio_servicio)==rd.id :                                        
