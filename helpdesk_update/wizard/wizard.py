@@ -1950,7 +1950,7 @@ class HelpDeskDetalleSerieToner(TransientModel):
     series = fields.Many2one(
                                 'stock.production.lot',
                                 string = 'Series',
-                                default = lambda self: self._default_serie_ids(),
+                                #default = lambda self: self._default_serie_ids(),
                             )
 
     def _default_serie_ids(self):
