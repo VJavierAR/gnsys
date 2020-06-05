@@ -945,8 +945,11 @@ class contadores(models.Model):
             periodoAnterior= anioA+'-'+mesaA   
             
             
-            asd=self.env['stock.production.lot'].search([('x_studio_ubicaciontest','=',self.cliente.name)])
-            #raise exceptions.ValidationError("Nada que generar "+str(asd))                                     
+            asdc=self.env['contrato'].search([('cliente','=',self.cliente.id)])
+            asds=self.env['servicios'].search([('contrato','in',asdc)])
+            asd==self.env['stock.production.lot'].search([('servicio','in',asds)])
+            
+            raise exceptions.ValidationError("Nada que generar "+str(asd))                                     
             
             #raise Warning('notihng to show xD '+str(self.cliente.name))
             #id=int(self.id)            
