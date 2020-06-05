@@ -715,7 +715,7 @@
                         <field name="series" readonly="0" options="{'no_create_edit': True, 'no_create': True}"/>
                     </group>
                     <group>
-                        <field name="dominio" readonly="1">
+                        <field name="dominio" readonly="1"/>
                     </group>
                 </group>
                 <group>
