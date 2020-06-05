@@ -1947,7 +1947,7 @@ class HelpDeskDetalleSerieToner(TransientModel):
     serie = fields.Text(string = "Serie", compute = '_compute_serie_nombre')
 
     series = fields.Many2one(
-                                'dcas.dcas', 
+                                'stock.production.lot',
                                 string = 'Series'
                             )
 

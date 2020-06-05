@@ -3386,6 +3386,9 @@ class helpdesk_update(models.Model):
 
     @api.multi
     def detalle_serie_toner_wizard(self):
+        ids = []
+        for dca in self.x_studio_equipo_por_nmero_de_serie_1:
+            ids.append(dca.serie.id)
         wiz = self.env['helpdesk.detalle.serie.toner'].create({'ticket_id':self.id})
         view = self.env.ref('helpdesk_update.view_helpdesk_bitacora_toner')
         return {
@@ -3398,7 +3401,7 @@ class helpdesk_update(models.Model):
             'view_id': view.id,
             'target': 'new',
             'res_id': wiz.id,
-            'context': {'series': self.x_studio_equipo_por_nmero_de_serie_1.ids},
+            'context': {'series': ids},
         }
 
 class helpdes_diagnostico(models.Model):
