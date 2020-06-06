@@ -712,7 +712,7 @@
                 </group>
                 <group>
                     <group>
-                        <field name="series" readonly="0" force_save='1' options="{'no_create_edit': True, 'no_create': True}" />
+                        <field name="series" readonly="0" force_save='1' options="{'no_create_edit': True, 'no_create': True, 'no_edit': True}" />
                     </group>
                     <group>
                         <field name="filtro" />

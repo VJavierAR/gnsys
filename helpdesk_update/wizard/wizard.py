@@ -2001,19 +2001,25 @@ class HelpDeskDetalleSerieToner(TransientModel):
 
     @api.onchange('series')
     def _compute_lecturas(self):
-        _logger.info('aggggg: ' + str(self.series.x_studio_field_PYss4.ids))
-        self.lecturas = []
+        _logger.info('aggggg: ' + str(self.series))
+        for dca in self.ticket_id.x_studio_equipo_por_nmero_de_serie_1:
+            if dca.serie.id == self.series.id:
+                self.toner = self.dca.serie.x_studio_field_PYss4.ids
+        #self.lecturas = []
         #self.write({'lecturas': [] })
-        if self.series:
-            self.lecturas = self.series.x_studio_field_PYss4.ids
+        #if self.series:
+        #    self.lecturas = self.series.x_studio_field_PYss4.ids
 
     @api.onchange('series')
     def _compute_toner(self):
-        _logger.info('aggggg: ' + str(self.series.x_studio_toner_1.ids))
-        self.toner = []
+        _logger.info('aggggg: ' + str(self.series))
+        for dca in self.ticket_id.x_studio_equipo_por_nmero_de_serie_1:
+            if dca.serie.id == self.series.id:
+                self.toner = self.dca.serie.x_studio_toner_1.ids
+        #self.toner = []
         #self.write({'toner': [] })
-        if self.series:
-            self.toner = self.series.x_studio_toner_1.ids
+        #if self.series:
+        #    self.toner = self.series.x_studio_toner_1.ids
 
     @api.onchange('series')
     def _compute_historico_de_componentes(self):
