@@ -1978,7 +1978,7 @@ class HelpDeskDetalleSerieToner(TransientModel):
     @api.onchange('filtro')
     def cambiaDominioSeries(self):
         if self.filtro:
-            return {'domain': {'series': [('serie', '=', ast.literal_eval(self.dominio))] }}
+            return {'domain': {'series': [('id', 'in', ast.literal_eval(self.dominio))] }}
         else:
             return {'domain': {'series': [()] }}
 
