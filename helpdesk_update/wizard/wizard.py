@@ -1957,7 +1957,7 @@ class HelpDeskDetalleSerieToner(TransientModel):
 
     dominio = fields.Text(
                             string = 'Dominio', 
-                            store = True, 
+                            #store = True, 
                             #default = lambda self: self._default_dominio(),
                             compute = '_default_dominio'
                         )
