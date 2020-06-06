@@ -1972,6 +1972,7 @@ class HelpDeskDetalleSerieToner(TransientModel):
         #ids = str(self.env.context.get('dominio'))
         self.dominio = str(ids)
         #return str(ids)
+        return {'domain': {'series': [('serie', '=', ids)] }}
 
     def _default_serie_ids(self):
         return ast.literal_eval(self.dominio)

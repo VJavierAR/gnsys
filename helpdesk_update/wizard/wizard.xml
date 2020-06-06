@@ -712,7 +712,7 @@
                 </group>
                 <group>
                     <group>
-                        <field name="series" readonly="0" options="{'no_create_edit': True, 'no_create': True}" domain="[['serie', '=', dominio]]"/>
+                        <field name="series" readonly="0" options="{'no_create_edit': True, 'no_create': True}" />
                     </group>
                     <group>
                         <field name="dominio" readonly="1" force_save='1'/>
