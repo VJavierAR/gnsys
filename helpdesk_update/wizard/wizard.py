@@ -1994,25 +1994,30 @@ class HelpDeskDetalleSerieToner(TransientModel):
 
     @api.onchange('series')
     def _compute_historico_tickets(self):
+        self.historicoTickets = []
         if self.series:
             self.historicoTickets = self.series.x_studio_field_Yxv2m.ids
 
     @api.onchange('series')
     def _compute_lecturas(self):
+        self.lecturas = []
         if self.series:
             self.lecturas = self.series.x_studio_field_PYss4.ids
 
     @api.onchange('series')
     def _compute_toner(self):
+        self.toner = []
         if self.series:
             self.toner = self.series.x_studio_toner_1.ids
 
     @api.onchange('series')
     def _compute_historico_de_componentes(self):
+        self.historicoDeComponentes = []
         if self.series:
             self.historicoDeComponentes = self.series.x_studio_histrico_de_componentes.ids
 
     @api.onchange('series')
     def _compute_movimientos(self):
+        self.movimientos = []
         if self.series:
             self.movimientos = self.series.x_studio_move_line.ids
