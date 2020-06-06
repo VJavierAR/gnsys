@@ -3403,7 +3403,7 @@ class helpdesk_update(models.Model):
             'target': 'new',
             'res_id': wiz.id,
             #'context': self.env.context,
-            'context': {'dominio': str(ids)},
+            'context': {'dominioTest': str(ids)},
         }
 
 class helpdes_diagnostico(models.Model):
