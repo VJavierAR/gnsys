@@ -1992,15 +1992,14 @@ class HelpDeskDetalleSerieToner(TransientModel):
                 else:
                     self.serie = str(serie.serie.name) + ', '
 
-    @api.depends('series')
+    @api.onchange('series')
     def _compute_historico_tickets(self):
-        for r in self:
-            r.historicoTickets = []
-            #self.write({'historicoTickets': [] })
-            if r.series:
-                r.historicoTickets = r.series.x_studio_field_Yxv2m.ids
+        self.historicoTickets = []
+        #self.write({'historicoTickets': [] })
+        if self.series:
+            self.historicoTickets = self.series.x_studio_field_Yxv2m.ids
 
-    @api.depends('series')
+    @api.onchange('series')
     def _compute_lecturas(self):
         _logger.info('aggggg: ' + str(self.series.x_studio_field_PYss4.ids))
         self.lecturas = []
@@ -2008,7 +2007,7 @@ class HelpDeskDetalleSerieToner(TransientModel):
         if self.series:
             self.lecturas = self.series.x_studio_field_PYss4.ids
 
-    @api.depends('series')
+    @api.onchange('series')
     def _compute_toner(self):
         _logger.info('aggggg: ' + str(self.series.x_studio_toner_1.ids))
         self.toner = []
@@ -2016,14 +2015,14 @@ class HelpDeskDetalleSerieToner(TransientModel):
         if self.series:
             self.toner = self.series.x_studio_toner_1.ids
 
-    @api.depends('series')
+    @api.onchange('series')
     def _compute_historico_de_componentes(self):
         self.historicoDeComponentes = []
         #self.write({'historicoDeComponentes': [] })
         if self.series:
             self.historicoDeComponentes = self.series.x_studio_histrico_de_componentes.ids
 
-    @api.depends('series')
+    @api.onchange('series')
     def _compute_movimientos(self):
         self.movimientos = []
         #self.write({'movimientos': [] })
