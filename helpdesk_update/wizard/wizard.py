@@ -1955,6 +1955,7 @@ class HelpDeskDetalleSerieToner(TransientModel):
     @api.model
     def _default_dominio(self):
         ids = []
+        _logger.info(str(self.ticket_id.x_studio_equipo_por_nmero_de_serie_1))
         for dca in self.ticket_id.x_studio_equipo_por_nmero_de_serie_1:
             ids.append(dca.serie.id)
         return str(ids)
