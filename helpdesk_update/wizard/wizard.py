@@ -1958,6 +1958,7 @@ class HelpDeskDetalleSerieToner(TransientModel):
         _logger.info(str(self.ticket_id.x_studio_equipo_por_nmero_de_serie_1))
         for dca in self.ticket_id.x_studio_equipo_por_nmero_de_serie_1:
             ids.append(dca.serie.id)
+        ids = str(self._context['default_dominio'])
         return str(ids)
 
     def _default_serie_ids(self):
