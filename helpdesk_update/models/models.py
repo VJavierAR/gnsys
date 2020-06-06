@@ -3389,6 +3389,7 @@ class helpdesk_update(models.Model):
         ids = []
         for dca in self.x_studio_equipo_por_nmero_de_serie_1:
             ids.append(dca.serie.id)
+        _logger.info('hola1: ' + str(ids))
         wiz = self.env['helpdesk.detalle.serie.toner'].create({'ticket_id':self.id})
         view = self.env.ref('helpdesk_update.view_helpdesk_bitacora_toner')
         return {
