@@ -722,7 +722,7 @@
                 <group>
                     <notebook>
                         <page string = 'Tickets'>
-                            <field name='historicoTickets'>
+                            <field name='historicoTickets' readonly="1" force_save='1'>
                                 <tree default_order="create_date desc"><!--x_studio_fecha-->
                                     <field name='x_studio_tickett' attrs='{"domain": [["fuente","=","Equipo"]]}'/>
                                     <field name='create_date' />
@@ -761,16 +761,16 @@
                             </field>
                         </page>
                         <page string = 'Lecturas'>
-                            <field name='lecturas' />
+                            <field name='lecturas' readonly="1" force_save='1'/>
                         </page>
                         <page string = 'Tóner'>
-                            <field name='toner' />
+                            <field name='toner' readonly="1" force_save='1'/>
                         </page>
                         <page string = 'Historico de componentes'>
-                            <field name='historicoDeComponentes' />
+                            <field name='historicoDeComponentes' readonly="1" force_save='1'/>
                         </page>
                         <page string = 'Movimientos'>
-                            <field name='movimientos' />
+                            <field name='movimientos' readonly="1" force_save='1'/>
                         </page>
                     </notebook>
                 </group>

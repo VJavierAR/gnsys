@@ -1939,11 +1939,11 @@ class HelpDeskDetalleSerieToner(TransientModel):
     _name = 'helpdesk.detalle.serie.toner'
     _description = 'HelpDesk Detalle Serie del equipo de toner'
     ticket_id = fields.Many2one("helpdesk.ticket")
-    historicoTickets = fields.One2many('dcas.dcas', 'serie', string = 'Historico de tickets', )
-    lecturas = fields.One2many('dcas.dcas', 'serie', string = 'Lecturas', )
-    toner = fields.One2many('dcas.dcas', 'serie', string = 'Tóner', )
-    historicoDeComponentes = fields.One2many('x_studio_historico_de_componentes', 'x_studio_field_MH4DO', string = 'Historico de Componentes', )
-    movimientos = fields.One2many('stock.move.line', 'lot_id', string = 'Movimientos', )
+    historicoTickets = fields.One2many('dcas.dcas', 'serie', string = 'Historico de tickets', store = True)
+    lecturas = fields.One2many('dcas.dcas', 'serie', string = 'Lecturas', store = True)
+    toner = fields.One2many('dcas.dcas', 'serie', string = 'Tóner', store = True)
+    historicoDeComponentes = fields.One2many('x_studio_historico_de_componentes', 'x_studio_field_MH4DO', string = 'Historico de Componentes', store = True)
+    movimientos = fields.One2many('stock.move.line', 'lot_id', string = 'Movimientos', store = True)
     serie = fields.Text(string = "Serie", compute = '_compute_serie_nombre')
 
     filtro = fields.Boolean('Filtra series', default = False)
