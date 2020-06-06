@@ -1951,6 +1951,7 @@ class HelpDeskDetalleSerieToner(TransientModel):
                                 'stock.production.lot',
                                 string = 'Series',
                                 #default = lambda self: self._default_serie_ids(),
+                                store = True,
                             )
 
     
