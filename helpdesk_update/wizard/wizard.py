@@ -1946,6 +1946,7 @@ class HelpDeskDetalleSerieToner(TransientModel):
     movimientos = fields.One2many('stock.move.line', 'lot_id', string = 'Movimientos', compute='_compute_movimientos')
     serie = fields.Text(string = "Serie", compute = '_compute_serie_nombre')
 
+    filtro = fields.Boolean('Filtra series', default = False)
     series = fields.Many2one(
                                 'stock.production.lot',
                                 string = 'Series',
@@ -1972,7 +1973,14 @@ class HelpDeskDetalleSerieToner(TransientModel):
         #ids = str(self.env.context.get('dominio'))
         self.dominio = str(ids)
         #return str(ids)
-        return {'domain': {'series': [('serie', '=', ids)] }}
+        
+
+    @api.onchange('filtro')
+    def cambiaDominioSeries(self):
+        if self.filtro:
+            return {'domain': {'series': [('serie', '=', ast.literal_eval(self.dominio))] }}
+        else:
+            return {'domain': {'series': [()] }}
 
     def _default_serie_ids(self):
         return ast.literal_eval(self.dominio)
