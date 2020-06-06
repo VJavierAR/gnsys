@@ -716,7 +716,7 @@
                     </group>
                     <group>
                         <field name="filtro" />
-                        <field name="dominio" readonly="1" force_save='1'/>
+                        <field name="dominio" readonly="1" force_save='1' invisible='1'/>
                     </group>
                 </group>
                 <group>
