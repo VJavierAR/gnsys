@@ -1958,11 +1958,24 @@ class HelpDeskDetalleSerieToner(TransientModel):
         _logger.info('hola2: ' + str(self.ticket_id.x_studio_equipo_por_nmero_de_serie_1))
         #for dca in self.ticket_id.x_studio_equipo_por_nmero_de_serie_1:
         #    ids.append(dca.serie.id)
-        ids = str(self._context['dominio'])
-        #ids = str(self.env.context.get('dominio'))
+        #ids = str(self._context['dominio'])
+        ids = str(self.env.context.get('dominio'))
         return str(ids)
 
-    dominio = fields.Text(string = 'Dominio', store = True, default = lambda self: self._default_dominio())
+    dominio = fields.Text(
+                            string = 'Dominio', 
+                            store = True, 
+                            #default = lambda self: self._default_dominio()
+                        )
+
+    @api.onchange('serie')
+    def _default_dominio_2(self):
+        ids = []
+        _logger.info('hola2: ' + str(self.ticket_id.x_studio_equipo_por_nmero_de_serie_1))
+        for dca in self.ticket_id.x_studio_equipo_por_nmero_de_serie_1:
+            ids.append(dca.serie.id)
+        self.dominio = str(ids)
+        
 
     def _default_serie_ids(self):
         return ast.literal_eval(self.dominio)
