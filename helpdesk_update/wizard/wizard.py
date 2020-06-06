@@ -2001,7 +2001,7 @@ class HelpDeskDetalleSerieToner(TransientModel):
 
     @api.onchange('series')
     def _compute_lecturas(self):
-        _logger.info('aggggg: ' + str(self.series))
+        _logger.info('aggggg: ' + str(self.series.x_studio_field_PYss4))
         for dca in self.ticket_id.x_studio_equipo_por_nmero_de_serie_1:
             if dca.serie.id == self.series.id:
                 self.toner = self.dca.serie.x_studio_field_PYss4.ids
@@ -2012,7 +2012,7 @@ class HelpDeskDetalleSerieToner(TransientModel):
 
     @api.onchange('series')
     def _compute_toner(self):
-        _logger.info('aggggg: ' + str(self.series))
+        _logger.info('aggggg: ' + str(self.series.x_studio_toner_1))
         for dca in self.ticket_id.x_studio_equipo_por_nmero_de_serie_1:
             if dca.serie.id == self.series.id:
                 self.toner = self.dca.serie.x_studio_toner_1.ids
