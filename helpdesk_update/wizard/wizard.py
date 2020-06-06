@@ -1958,7 +1958,7 @@ class HelpDeskDetalleSerieToner(TransientModel):
         _logger.info('hola2: ' + str(self.env.context))
         #for dca in self.ticket_id.x_studio_equipo_por_nmero_de_serie_1:
         #    ids.append(dca.serie.id)
-        ids = str(self.env.context['dominioTest'])
+        #ids = str(self.env.context['dominioTest'])
         #ids = str(self.env.context.get('dominio'))
         return str(ids)
 
