@@ -78,6 +78,41 @@ class compras(models.Model):
             H=StringIO(f2)
             mimetype = guess_mimetype(f2 or b'')
             if(self.partner_id):
+                importe=0
+                #_logger.info(str(tree.getroot()))
+                if(mimetype=='image/svg+xml' and ("katun" in self.partner_id.name.lower())):
+                    arreglo=[]
+                    con=tree.getElementsByTagName("cfdi:Concepto")
+                    imp=tree.getElementsByTagName("cfdi:Traslado")
+                    i=len(imp)
+                    for c in con:
+                        noparte=str(c.getAttribute("NoIdentificacion"))                
+                        cantidad=float(c.getAttribute("Cantidad"))
+                        precio=float(c.getAttribute("Importe"))
+                        description=c.getAttribute("Descripcion")
+                        product={'product_uom':1,'date_planned':self.date_order,'product_qty':cantidad,'price_unit':precio,'taxes_id':[10]}
+                        descuento=float(c.getAttribute("Descuento")) if(c.getAttribute("Descuento")!='') else 0
+                        precioCdesc=(round(precio,6)-round(descuento,6))/int(cantidad)
+                        #_logger.info(noparte=='')
+                        if(noparte!=''):
+                            template=self.env['product.template'].search([('default_code','=',noparte)])
+                            productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
+                            product['product_id']=productid.id
+                            product['name']=description
+                            product['price_unit']=precioCdesc
+                            product['price_subtotal']=precio-descuento
+                        if(noparte==''):
+                            product['product_id']=11027
+                            product['product_uom']=21
+                            product['name']=description
+                            product['price_unit']=precioCdesc
+                            product['price_subtotal']=precio-descuento
+                        arreglo.append(product) 
+                    if(len(arreglo)>0):
+                       self.order_line=[(5,0,0)]
+                       self.order_line=arreglo
+                    time.sleep(30)
+                    self.amount_tax=float(imp[i-1].getAttribute("Importe"))
                 if(mimetype=='application/pdf'):
                     self.x_studio_pdf=self.archivo
                     myCmd = 'pdftotext -fixed 5 hola.pdf test3.txt'
