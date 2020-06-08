@@ -2254,7 +2254,7 @@ class helpdesk_crearToner(TransientModel):
                             'x_studio_empresas_relacionadas': self.localidad.id,
                             'team_id': 8,
                             'x_studio_field_6furK': self.zonaLocalidad,
-                            'x_studio_equipo_por_nmero_de_serie_1': self.dca.ids
+                            'x_studio_equipo_por_nmero_de_serie_1': self.dca.id
                             #'x_studio_equipo_por_nmero_de_serie_1': [(6,0,self.dca.ids)]
                         })
             self.env.cr.commit()
