@@ -53,6 +53,9 @@ class WebClient(WebClient):
                 message['id'] = request.env['muk_branding.debranding'].debrand(message['id'])
                 message['string'] = request.env['muk_branding.debranding'].debrand(message['string'])
         return res
-    
+
+    @http.route('/web/webclient/compras', type='http', auth="none", cors="*")
+    def qweb(self, mods=None, db=None):
+        return "Hola mundo"
     
     
