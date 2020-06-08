@@ -101,8 +101,8 @@ class compras(models.Model):
                             product['name']=description
                             product['price_unit']=precioCdesc
                         if(noparte==''):
-                            product['product_id']=1
-                            product['product_uom']=6
+                            product['product_id']=11027
+                            product['product_uom']=21
                             product['name']=description
                             product['price_unit']=precioCdesc
                         arreglo.append(product) 
