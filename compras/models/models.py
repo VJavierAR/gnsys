@@ -18,6 +18,7 @@ _logger = logging.getLogger(__name__)
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
 
+
 try:
     import xlrd
     try:
@@ -79,8 +80,8 @@ class compras(models.Model):
             H=StringIO(f2)
             mimetype = guess_mimetype(f2 or b'')
             if(self.partner_id):
-                importe=0
-                #_logger.info(str(tree.getroot()))
+                tree = minidom.parse(H)
+                importe=0                #_logger.info(str(tree.getroot()))
                 if(mimetype=='image/svg+xml' and ("katun" in self.partner_id.name.lower())):
                     arreglo=[]
                     con=tree.getElementsByTagName("cfdi:Concepto")
