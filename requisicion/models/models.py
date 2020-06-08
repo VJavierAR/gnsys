@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api
-
+import logging, ast
+_logger = logging.getLogger(__name__)
 class product_requisicion(models.Model):
     _name = 'product.rel.requisicion'
     _description='Rel requisiocion'
