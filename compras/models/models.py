@@ -102,7 +102,9 @@ class compras(models.Model):
                             product['product_uom']=6
                             product['name']=description
                         arreglo.append(product) 
-
+                    if(len(arreglo)>0):
+                       self.order_line=[(5,0,0)]
+                       self.order_line=arreglo
                 # if(mimetype=='application/pdf'):
                 #     self.x_studio_pdf=self.archivo
                 #     myCmd = 'pdftotext -fixed 5 hola.pdf test3.txt'
