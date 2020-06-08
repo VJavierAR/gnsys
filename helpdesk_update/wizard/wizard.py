@@ -1997,14 +1997,16 @@ class HelpDeskDetalleSerieToner(TransientModel):
 
     @api.onchange('series')
     def actualizaRegistros(self):
+        _logger.info('HelpDeskDetalleSerieToner.actualizaRegistros()')
         self.historicoTickets = [(5, 0, 0)]
         self.lecturas = [(5, 0, 0)]
         self.toner = [(5, 0, 0)]
         self.historicoDeComponentes = [(5, 0, 0)]
         self.movimientos = [(5, 0, 0)]
-        
+        _logger.info('dca if self.series: ' + str(self.series))
         if self.series:
             self.historicoTickets = self.series.x_studio_field_Yxv2m.ids
+            _logger.info('dca forantes0: ' + str(self.ticket_id.x_studio_equipo_por_nmero_de_serie_1))
             _logger.info('dac forantes1: ' + str(self.ticket_id))
             _logger.info('dac forantes2: ' + str(self.ticket_id.x_studio_equipo_por_nmero_de_serie_1))
             for dca in self.ticket_id.x_studio_equipo_por_nmero_de_serie_1:
