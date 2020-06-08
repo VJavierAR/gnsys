@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api
+import datetime, time
 import logging, ast
 _logger = logging.getLogger(__name__)
 class product_requisicion(models.Model):
