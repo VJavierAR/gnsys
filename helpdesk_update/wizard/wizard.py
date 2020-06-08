@@ -2307,8 +2307,8 @@ class helpdesk_crearToner(TransientModel):
             elif not self.validarHastaAlmacenTicket and not self.validarTicket and not self.ponerTicketEnEspera:
                 #CASO COLOR
                 if ticket.x_studio_equipo_por_nmero_de_serie_1[0].colorEquipo == 'Color':
-                    dcaInfo = self.dca[0]
-                    #dcaInfo = ticket.x_studio_equipo_por_nmero_de_serie_1[0]
+                    #dcaInfo = self.dca[0]
+                    dcaInfo = ticket.x_studio_equipo_por_nmero_de_serie_1[0]
                     #SI LOS PORCENTAJES SON MAYORES A 60%
                     if dcaInfo.porcentajeNegro >= 60 and dcaInfo.porcentajeAmarillo >= 60 and dcaInfo.porcentajeCian >= 60 and dcaInfo.porcentajeMagenta >= 60:
                         ticket.crearYValidarSolicitudDeToner()
@@ -2319,6 +2319,7 @@ class helpdesk_crearToner(TransientModel):
                         self.env.cr.commit()
                 else:
                     #CASO EN QUE ES BLANCO NEGRO
+                    dcaInfo = ticket.x_studio_equipo_por_nmero_de_serie_1[0]
                     if dcaInfo.porcentajeNegro >= 60:
                         ticket.crearYValidarSolicitudDeToner()
                     else:
