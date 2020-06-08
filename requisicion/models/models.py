@@ -50,6 +50,7 @@ class requisicion(models.Model):
 
     @api.one
     def update_estado1(self):
+        d=[]
         _logger.info(str(self.product_rel.mapped('product.x_studio_field_7aUDq.id')))
         pp=self.product_rel.filtered(lambda x:x.cantidad!=0)
         pro=self.product_rel.mapped('product.x_studio_field_7aUDq.id')
