@@ -904,7 +904,7 @@
                 </group>
 
                 <group>
-                    <field name='textoTicketExistente' string='' widget='html' readonly='1'/>
+                    <field name='textoTicketExistente' string='' widget='html' attrs="{'readonly': 1}"/>
                 </group>
 
                 <notebook>
