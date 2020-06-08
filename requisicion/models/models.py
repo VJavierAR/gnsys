@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api
-
+import datetime, time
+import logging, ast
+_logger = logging.getLogger(__name__)
 class product_requisicion(models.Model):
     _name = 'product.rel.requisicion'
     _description='Rel requisiocion'
@@ -14,6 +16,7 @@ class product_requisicion(models.Model):
     cliente=fields.Many2one('res.partner')
     solicitar=fields.Boolean('Solicitar',default=True)
     pedido=fields.Char('Pedido')
+    proveedor=fields.Char('proveedor')
 
 
     @api.depends('cliente')
@@ -42,29 +45,69 @@ class requisicion(models.Model):
     @api.one
     def update_estado(self):
         self.write({'state':'open'})
+
+
+
     @api.one
     def update_estado1(self):
-        if(self.orden==False):
-            self.orden='|'
         d=[]
-        for record in self:
-            data=record.product_rel.search([['pedido','=',False],['solicitar','=',True]])
-            if(len(data)>0):
-                ordenDCompra=self.env['purchase.order'].sudo().create({'partner_id':3,'date_planned':record.fecha_prevista,'x_studio_field_a4rih':'Almacén'})
-                for line in data:
-                    if(line.product.id not in d):
-                        h=list(filter(lambda c:c['product']['id']==line.product.id,record.product_rel))
+        _logger.info(str(self.product_rel.mapped('product.x_studio_field_7aUDq.id')))
+        pp=self.product_rel.filtered(lambda x:x.cantidad!=0)
+        pro=self.product_rel.mapped('product.x_studio_field_7aUDq.id')
+        cadena=""
+        #data=record.product_rel.search([['pedido','=',False],['solicitar','=',True]])
+        for prov in pro:
+            ppp=pp.filtered(lambda x: x.product.x_studio_field_7aUDq.id==prov)
+            if(len(ppp)>0):
+                ordenDCompra=self.env['purchase.order'].sudo().create({'partner_id':prov,'date_planned':self.fecha_prevista if(self.fecha_prevista) else datetime.datetime.now(),'x_studio_field_a4rih':'Almacén'})
+                cadena=cadena+ordenDCompra.name+','
+                for prod in ppp:
+                    if(prod.product.id not in d):
+                        h=list(filter(lambda c:c['product']['id']==prod.product.id,ppp))
+                        #e=data.search([['product','=',prod.product.id]])
                         t=0
-                        e=data.search([['product','=',line.product.id]])
                         for hi in h:
                             t=t+hi.cantidad
-                        e.write({'pedido':ordenDCompra.name})
-                        lineas=self.env['purchase.order.line'].sudo().create({'name':line.product.description if(line.product.description) else '|','product_id':line.product.id,'product_qty':t,'price_unit':line.costo,'taxes_id':[10],'order_id':ordenDCompra.id,'date_planned':record.fecha_prevista,'product_uom':'1'})
-                        d.append(line.product.id)
-                ot=len(record.product_rel.search([['pedido','=',False]]))
-                if(ot==0):
-                    self.write({'state':'done'})
-                record['orden']=self.orden+','+ordenDCompra.name
+                        #e.write({'pedido':ordenDCompra.name})
+                        lineas=self.env['purchase.order.line'].sudo().create({'name':prod.product.description if(prod.product.description) else '|','product_id':prod.product.id,'product_qty':t,'price_unit':prod.costo,'taxes_id':[10],'order_id':ordenDCompra.id,'date_planned':self.fecha_prevista if(self.fecha_prevista) else datetime.datetime.now(),'product_uom':'1'})
+                        d.append(prod.product.id)
+        ppp=pp.filtered(lambda x: x.product.x_studio_field_7aUDq.id==False)
+        if(len(ppp)>0):
+            ordenDCompra=self.env['purchase.order'].sudo().create({'partner_id':3,'date_planned':self.fecha_prevista if(self.fecha_prevista) else datetime.datetime.now(),'x_studio_field_a4rih':'Almacén'})
+            cadena=cadena+ordenDCompra.name+','
+            for prod in ppp:
+                if(prod.product.id not in d):
+                    h=list(filter(lambda c:c['product']['id']==prod.product.id,ppp))
+                    #e=data.search([['product','=',prod.product.id]])
+                    t=0
+                    for hi in h:
+                        t=t+hi.cantidad
+                    #e.write({'pedido':ordenDCompra.name})
+                    lineas=self.env['purchase.order.line'].sudo().create({'name':prod.product.description if(prod.product.description) else '|','product_id':prod.product.id,'product_qty':t,'price_unit':prod.costo,'taxes_id':[10],'order_id':ordenDCompra.id,'date_planned':self.fecha_prevista if(self.fecha_prevista) else datetime.datetime.now(),'product_uom':'1'})
+                    d.append(prod.product.id)
+        self.write({'state':'done'})
+        self.orden=cadena
+        # if(self.orden==False):
+        #     self.orden='|'
+        # d=[]
+        # for record in self:
+        #     data=record.product_rel.search([['pedido','=',False],['solicitar','=',True]])
+        #     if(len(data)>0):
+        #         ordenDCompra=self.env['purchase.order'].sudo().create({'partner_id':3,'date_planned':record.fecha_prevista,'x_studio_field_a4rih':'Almacén'})
+        #         for line in data:
+        #             if(line.product.id not in d):
+        #                 h=list(filter(lambda c:c['product']['id']==line.product.id,record.product_rel))
+        #                 t=0
+        #                 e=data.search([['product','=',line.product.id]])
+        #                 for hi in h:
+        #                     t=t+hi.cantidad
+        #                 e.write({'pedido':ordenDCompra.name})
+        #                 lineas=self.env['purchase.order.line'].sudo().create({'name':line.product.description if(line.product.description) else '|','product_id':line.product.id,'product_qty':t,'price_unit':line.costo,'taxes_id':[10],'order_id':ordenDCompra.id,'date_planned':record.fecha_prevista,'product_uom':'1'})
+        #                 d.append(line.product.id)
+        #         ot=len(record.product_rel.search([['pedido','=',False]]))
+        #         if(ot==0):
+        #             self.write({'state':'done'})
+        #         record['orden']=self.orden+','+ordenDCompra.name
 
     @api.model
     def create(self,vals):
