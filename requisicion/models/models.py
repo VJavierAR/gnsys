@@ -69,7 +69,7 @@ class requisicion(models.Model):
                         t=t+hi.cantidad
                     #e.write({'pedido':ordenDCompra.name})
                     lineas=self.env['purchase.order.line'].sudo().create({'name':prod.product.description if(prod.product.description) else '|','product_id':prod.product.id,'product_qty':t,'price_unit':prod.costo,'taxes_id':[10],'order_id':ordenDCompra.id,'date_planned':self.fecha_prevista if(self.fecha_prevista) else datetime.datetime.now(),'product_uom':'1'})
-                    d.append(line.product.id)
+                    d.append(prod.product.id)
 
         ppp=pp.filtered(lambda x: x.product.x_studio_field_7aUDq.id==False)
         if(len(ppp)>0):
@@ -84,7 +84,7 @@ class requisicion(models.Model):
                         t=t+hi.cantidad
                     #e.write({'pedido':ordenDCompra.name})
                     lineas=self.env['purchase.order.line'].sudo().create({'name':prod.product.description if(prod.product.description) else '|','product_id':prod.product.id,'product_qty':t,'price_unit':prod.costo,'taxes_id':[10],'order_id':ordenDCompra.id,'date_planned':self.fecha_prevista if(self.fecha_prevista) else datetime.datetime.now(),'product_uom':'1'})
-                    d.append(line.product.id)
+                    d.append(prod.product.id)
 
         record['orden']=cadena
         # if(self.orden==False):
