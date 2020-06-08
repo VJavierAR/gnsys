@@ -2006,7 +2006,12 @@ class HelpDeskDetalleSerieToner(TransientModel):
         if self.series:
             self.historicoTickets = self.series.x_studio_field_Yxv2m.ids
             for dca in self.ticket_id.x_studio_equipo_por_nmero_de_serie_1:
+                _logger.info('dca For: ' + str(dca))
+                _logger.info('dca If1 furea: ' + str(dca.serie.id))
+                _logger.info('dca If2 fuera: ' + str(self.series.id))
                 if dca.serie.id == self.series.id:
+                    _logger.info('dca If1: ' + str(dca.serie.id))
+                    _logger.info('dca If2: ' + str(self.series.id))
                     self.lecturas = self.dca.serie.x_studio_field_PYss4.ids
                     self.toner = self.dca.serie.x_studio_toner_1.ids
             self.historicoDeComponentes = self.series.x_studio_histrico_de_componentes.ids
