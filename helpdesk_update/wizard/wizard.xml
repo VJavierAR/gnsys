@@ -790,6 +790,194 @@
 
 
 
+    <record id="view_helpdesk_crear_solicitud_toner" model="ir.ui.view">
+        <field name="model">helpdesk.crearSolicitudToner</field>
+        <field name="arch" type="xml">
+            <form string="Crear">
+                <group>
+                    <group string='Buscar'>
+                        <field name='serie' widget='many2many_tags' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" force_save = "1"/>
+
+                        <field name='dca'>
+                            <form>
+                                <!--
+                                <div>
+                                  <h1>
+                                    <span>
+                                      <field name="name" readonly="0"/>
+                                    </span>
+                                  </h1>
+                                </div>
+                                -->
+                                <group name="1">
+                                    <group name="a">
+                                        <field name="x_studio_link" string="link" wiget="html" invisible='1'/>
+                                        <field name="grupo" invisible='1'/>
+                                        <field name="serie"/>
+                                        <field name='colorEquipo' />
+                                        <field name='ultimaUbicacion' />
+                                        <field name='equipo' />
+                                        <field name="contadorMono" string = 'Contador Monocromático'/>
+                                        <field name="contadorAnteriorNegro" string = 'Contador de ultima solicitud negro' readonly = '1'/>
+                                        <field name="contadorColor" string = 'Contador color' invisible="[['colorEquipo', '=', 'B/N']]"/>
+                                        <field name='contadorAnteriorColor' string='Contador ultima solicitud color' readonly='1' invisible="[['colorEquipo', '=', 'B/N']]"/>
+                                        
+                                        <field name='x_studio_cartuchonefro' string="Cartucho negro" domain="[&quot;&amp;&quot;,[&quot;categ_id&quot;,&quot;=&quot;,5],[&quot;x_studio_color&quot;,&quot;=&quot;,&quot;Negro&quot;],[&quot;x_studio_toner_compatible.id&quot;,&quot;=&quot;,x_studio_field_qYMJD]]" />
+                                        <field name="x_studio_rendimiento_negro" string="Rendimiento Negro" readonly='1'/>
+                                        <field name="porcentajeNegro" string ='Porcentaje negro'/>
+                                        
+                                        <field name='x_studio_cartucho_amarillo' domain='[ &quot;&amp;&quot;, ["categ_id", "=", 5], ["x_studip_color","=", "Amarillo"], ["x_studio_toner_compatible.id", "=", x_studio_field_qYMJD] ]' string = 'Cartucho amarillo' />
+                                        <field name='x_studio_rendimientoa' invisible="[['colorEquipo', '=', 'B/N']]" readonly='1' string='Rendimiento Amarillo'/>
+                                        <field name='porcentajeAmarillo' invisible="[['colorEquipo', '=', 'B/N']]" string='Porcentaje cian'/>
+                                        
+                                        <field name='x_studio_cartucho_cian_1' domain="[&quot;&amp;&quot;,[&quot;categ_id&quot;,&quot;=&quot;,5],[&quot;x_studio_color&quot;,&quot;=&quot;,&quot;Cian&quot;],[&quot;x_studio_toner_compatible.id&quot;,&quot;=&quot;,x_studio_field_qYMJD]]" string ='Cartucho cian' invisible="[['colorEquipo', '=', 'B/N']]"/>
+                                        <field name='x_studio_rendimientoc' invisible="[['colorEquipo', '=', 'B/N']]" readonly='1' string = 'Rendimiento cian'/>
+                                        <field name='porcentajeCian' invisible="[['colorEquipo', '=', 'B/N']]" string ='Porcentaje cian' />
+                                        
+                                        <field name='x_studio_cartucho_magenta' domain='[ &quot;&amp;&quot;, ["categ_id", "=", 5], ["x_studip_color","=", "Magenta"], ["x_studio_toner_compatible.id", "=", x_studio_field_qYMJD] ]' invisible="[['colorEquipo', '=', 'B/N']]"  string = 'Cartucho magenta' />
+                                        <field name='x_studio_rendimientom' invisible="[['colorEquipo', '=', 'B/N']]" readonly='1' string = 'Rendimiento magenta'/>
+                                        <field name='porcentajeMagenta' invisible="[['colorEquipo', '=', 'B/N']]" string ='Porcentaje magenta' />
+
+
+
+
+
+
+
+
+                                        <field name="x_studio_field_qYMJD" attrs="{}" invisible="1"/>
+                                        
+                                        
+                                        <field name="x_studio_usuariocaptura" string="UsuarioCaptura" attrs="{}" invisible="1"/>
+                                        <field name="x_studio_fecha" string="Fecha  " invisible='1'/>
+                                        <field name="x_studio_tiquete" string="Tiquete " invisible='1'/>
+                                        <field name="x_studio_descripcion" string="Descripción" invisible='1'/>
+                                        <field name="x_studio_cartucho_negro" string="cartucho negro" invisible='1'/>
+                                        <field name="ubicacion" string="Ubicación" invisible='1'/>
+                                        <field name="cartuchoNegro" invisible='1'/>
+                                        <field name="respaldo" invisible='1'/>
+                                        <field name="usb" string="USB" invisible='1'/>
+                                        <field name="x_studio_toner" string="Tóner" invisible='1'/>
+                                        <field name="ip" invisible='1'/>
+                                        <field name="x_studio_tickett" string="Ticket Techra" invisible='1'/>
+                                        <field name="fuente" invisible='1'/>
+                                        <field name="x_studio_field_no6Rb" string="Fecha mes/año" invisible='1'/>
+                                        <field name="x_studio_fecha_texto_anio" string="Fecha texto año" invisible='1'/>
+                                        <field name="x_studio_fecha_techra" string="Fecha techra" invisible='1'/>
+                                        <field name="x_studio_fuente_real" invisible='1'/>
+                                        <field name="x_studio_mes" string="Mes" invisible='1'/>
+                                    </group>
+                                    <group name="b">
+                                        
+                                        <field name="tablahtml" widget='html' />
+
+
+
+                                        
+                                        <field name="x_studio_rendimiento" string="Rendimiento"  invisible='1'/>
+                                        <field name="x_studio_rendimiento_color" string="Rendimiento Color" invisible='1'/>
+                                        <field name="x_studio_toner_negro" string="Tóner Negro" invisible='1'/>
+                                        <field name="x_studio_toner_cian" string="Tóner Cian" invisible='1'/>
+                                        <field name="x_studio_toner_magenta" string="Tóner Magenta" invisible='1'/>
+                                        <field name="x_studio_toner_amarillo" string="Tóner Amarillo" invisible='1'/>
+                                        <field name="x_studio_robot" string="robot" attrs="{}" invisible='1'/>
+                                        <field name="x_studio_field_VYRwu" string="Resultado" invisible='1'/>
+                                        <field invisible="1" name="x_studio_hoja_de_estado_filename" invisible='1'/>
+                                        <field filename="x_studio_hoja_de_estado_filename" name="x_studio_hoja_de_estado" string="Hoja de estado" invisible='1'/>
+                                    </group>
+                                </group>
+                            </form>
+                            <tree string="DCAS">
+                                <field name="serie"/>
+                                <field name="tablahtml" widget='html'/>
+                            </tree>
+                        </field>
+                    </group>
+                    <group string='Buscar por cliente y localidad'>
+                        <!--
+                        <field name='clienteRelacion' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" attrs='{"domain": [["clienteRelacion.company_type","=","company"]]}' force_save = "1"/>
+                        <field name='localidadRelacion' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain='[["parent_id.id","=",idCliente],["type","=","delivery"]]' force_save = "1"/>
+                        <field name='contactoInterno' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain='[["parent_id.id", "=", idLocaliidad],["type", "=", "contact"]]' attrs='{"invisible": [["localidad","!=","CORPORATIVO"]]}' force_save = '1'/> 
+                        -->
+                        <!--<field name='localidadRelacion' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain='[["parent_id.id","=",idCliente],"|",["type","=","delivery"], ["type","=","contact"]]' force_save = "1"/>-->
+                    </group>
+                </group>
+
+                <group>
+                    <field name='textoTicketExistente' />
+                </group>
+
+                <notebook>
+                    <page string = 'Pedido'>
+                        <group>
+                            <field name='tipoReporte' force_save='1'/>
+                            <field name='corte' force_save='1'/>
+                            <field name='almacen' force_save='1'/>
+                        </group>
+                        <group>
+                            <field name='validarHastaAlmacenTicket' force_save='1'/>
+                            <field name='validarTicket' force_save='1'/>
+                            <field name='ponerTicketEnEspera' force_save='1'/>
+                        </group>
+                    </page>
+                    <page string = 'Cliente'>
+                        <group>
+                            <field name='cliente' force_save='1' readonly='1'/>
+                            <field name='tipoCliente' force_save='1' readonly='1'/>
+                            <field name='localidad' force_save='1' readonly='1'/>
+                        </group>
+                        <group>
+                            <field name='zonaLocalidad' force_save='1' readonly='1'/>
+                            <field name='localidadContacto' force_save='1' readonly='1'/>
+                            <field name='estadoLocalidad' force_save='1' readonly='1'/>
+                        </group>
+                        
+                        <group>
+                            <field name='telefonoContactoLocalidad' force_save='1' readonly='1'/>
+                            <field name='movilContactoLocalidad' force_save='1' readonly='1'/>
+                            <field name='correoContactoLocalidad' force_save='1' readonly='1'/>
+                        </group>
+                        <group>
+                            <field name='direccionLocalidad' force_save='1' readonly='1'/>
+                        </group>
+                    </page>
+                    <page string = 'Datos del ticket'>
+                        <group>
+                            <field name='comentarioLocalidad' force_save='1'/>
+                        </group>
+                        <group>
+                            <field name='prioridad' force_save='1' widget='priority'/>
+                        </group>
+                    </page>
+                </notebook>
+
+                <group>
+                    <group string="Pedido">
+                        <field name='cliente' readonly='1' force_save = "1"/>
+                        <field name='idCliente' readonly='1' invisible='1' force_save = "1"/>
+                        <field name='estatus' readonly = '1' force_save = '1' />
+                        <field name='localidad' readonly='1' force_save = "1"/>
+                        <field name='zonaLocalidad' readonly='1' force_save = "1"/>
+                        <field name='idLocaliidad' readonly='1' invisible='1' force_save = "1"/>
+                    </group>
+                    <group string="Datos de contacto">
+                        <field name='idContactoInterno' readonly='1' invisible='1' force_save = "1"/>
+                        <field name='nombreContactoLocalidad' readonly='1' force_save = "1"/>
+                        <field name='telefonoContactoLocalidad' readonly='1' force_save = "1"/>
+                        <field name='movilContactoLocalidad' readonly='1' force_save = "1"/>
+                        <field name='correoContactoLocalidad' readonly='1' force_save = "1"/>
+                    </group>
+                </group>
+                
+                <footer>
+                    <button name="abrirTicket" string="Abrir ticket existente" type="object" class="oe_highlight" attrs="{'invisible': ['|',['ticket_id_existente','=', 0],['ticket_id_existente','=', False]]}"/>
+                    <button name="crearTicket" string="Crear" type="object" class="oe_highlight" attrs="{'invisible': [['estatus', '=', 'Moroso']]}"/>
+                    <button special="cancel" string="Cancelar" class="oe_highlight" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
 
 
 
