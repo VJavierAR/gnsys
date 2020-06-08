@@ -2248,6 +2248,7 @@ class helpdesk_crearToner(TransientModel):
                                                             'priority': self.prioridad,
                                                             'x_studio_comentarios_de_localidad': self.comentarioLocalidad
                                                         })
+            self.env.cr.commit()
             ticket.write({
                             'partner_id': self.cliente.id,
                             'x_studio_empresas_relacionadas': self.localidad.id,
