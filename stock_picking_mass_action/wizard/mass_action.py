@@ -158,7 +158,7 @@ class StockPickingMassAction(TransientModel):
                             sale.write({'x_studio_backorder':True})
                             pick_id.write({'sale_child':sale.id})
                             pipi=self.env['stock.picking'].search([['sale_id','=',sale.id]])
-                            self.env['stock.move.line'].search(['picking_id','in',pipi.mapped('id')]).unlink()
+                            self.env['stock.move.line'].search([['picking_id','in',pipi.mapped('id')]]).unlink()
                             self.env['sale.order.line'].search([['order_id','=',sale.id]]).unlink()
                             pipi.unlink()
                             for rr in backorder_pick.move_ids_without_package:
