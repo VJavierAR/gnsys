@@ -3203,6 +3203,22 @@ class helpdesk_update(models.Model):
                 r['x_studio_das_de_atraso'] = fe
     """            
     
+
+
+
+
+    
+
+
+
+    
+
+
+
+
+
+
+
     
     """
     @api.onchange('historialCuatro')
