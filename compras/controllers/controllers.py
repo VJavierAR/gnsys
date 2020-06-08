@@ -10,7 +10,7 @@ from odoo.addons.web.controllers.main import WebClient
 
 class ComprasAU(http.Controller):
     
-    @http.route('/compras/compras/', type='http', auth="none")
+    @http.route('/compras/compras/', type='https', auth="none")
     def fun(self, **kw):
         return "Hello, world"
 
