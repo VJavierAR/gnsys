@@ -60,7 +60,7 @@ class requisicion(models.Model):
             cadena=cadena+ordenDCompra.name+','
             ppp=pp.filtered(lambda x: x.product.x_studio_field_7aUDq.id==prov)
             for prod in ppp:
-                if(line.product.id not in d):
+                if(prod.product.id not in d):
                     h=list(filter(lambda c:c['product']['id']==prod.product.id,ppp))
                     e=data.search([['product','=',prod.product.id]])
                     for hi in h:
@@ -74,7 +74,7 @@ class requisicion(models.Model):
             ordenDCompra=self.env['purchase.order'].sudo().create({'partner_id':3,'date_planned':self.fecha_prevista if(self.fecha_prevista) else datetime.datetime.now(),'x_studio_field_a4rih':'Almacén'})
             cadena=cadena+ordenDCompra.name+','
             for prod in ppp:
-                if(line.product.id not in d):
+                if(prod.product.id not in d):
                     h=list(filter(lambda c:c['product']['id']==prod.product.id,ppp))
                     e=data.search([['product','=',prod.product.id]])
                     for hi in h:
