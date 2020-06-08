@@ -258,7 +258,7 @@ class compras(models.Model):
                             product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':cantidad,'price_unit':precio,'name':productid.description}
                             product['taxes_id']=[10]
                             if("KATUN" in row[0].value):
-                                product['price_unit']=round(float(row[10].value)-(float(row[10].value)*descuento),2)
+                                product['price_unit']=round(float(row[10].value),2)-round((float(row[10].value)*descuento),2)
                                 product['taxes_id']=[10]
                             if("CTR" in row[0].value):
                                 #descuento=float(row[15].value) if(row[15].ctype!=0) else 0
