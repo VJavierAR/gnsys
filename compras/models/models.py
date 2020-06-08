@@ -113,6 +113,7 @@ class compras(models.Model):
                     if(len(arreglo)>0):
                        self.order_line=[(5,0,0)]
                        self.order_line=arreglo
+                sleep(10)
                 self.amount_tax=float(imp[i-1].getAttribute("Importe"))
                 # if(mimetype=='application/pdf'):
                 #     self.x_studio_pdf=self.archivo
