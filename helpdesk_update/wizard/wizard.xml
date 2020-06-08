@@ -950,28 +950,10 @@
                         </group>
                     </page>
                 </notebook>
-
-                <group>
-                    <group string="Pedido">
-                        <field name='cliente' readonly='1' force_save = "1"/>
-                        <field name='idCliente' readonly='1' invisible='1' force_save = "1"/>
-                        <field name='estatus' readonly = '1' force_save = '1' />
-                        <field name='localidad' readonly='1' force_save = "1"/>
-                        <field name='zonaLocalidad' readonly='1' force_save = "1"/>
-                        <field name='idLocaliidad' readonly='1' invisible='1' force_save = "1"/>
-                    </group>
-                    <group string="Datos de contacto">
-                        <field name='idContactoInterno' readonly='1' invisible='1' force_save = "1"/>
-                        <field name='nombreContactoLocalidad' readonly='1' force_save = "1"/>
-                        <field name='telefonoContactoLocalidad' readonly='1' force_save = "1"/>
-                        <field name='movilContactoLocalidad' readonly='1' force_save = "1"/>
-                        <field name='correoContactoLocalidad' readonly='1' force_save = "1"/>
-                    </group>
-                </group>
                 
                 <footer>
-                    <button name="abrirTicket" string="Abrir ticket existente" type="object" class="oe_highlight" attrs="{'invisible': ['|',['ticket_id_existente','=', 0],['ticket_id_existente','=', False]]}"/>
-                    <button name="crearTicket" string="Crear" type="object" class="oe_highlight" attrs="{'invisible': [['estatus', '=', 'Moroso']]}"/>
+                    <!--<button name="abrirTicket" string="Abrir ticket existente" type="object" class="oe_highlight" attrs="{'invisible': ['|',['ticket_id_existente','=', 0],['ticket_id_existente','=', False]]}"/>-->
+                    <button name="crearTicketToner" string="Crear" type="object" class="oe_highlight" attrs="{'invisible': [['estatus', '=', 'Moroso']]}"/>
                     <button special="cancel" string="Cancelar" class="oe_highlight" />
                 </footer>
             </form>
