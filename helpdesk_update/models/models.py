@@ -47,19 +47,20 @@ class helpdesk_update(models.Model):
     @api.depends('x_studio_equipo_por_nmero_de_serie','x_studio_equipo_por_nmero_de_serie_1')
     def cambiaContactoLocalidad(self):
         _logger.info("Entre por toner")
-        if self.x_studio_empresas_relacionadas:
-            _logger.info("Entre por toner: " + str(self.x_studio_empresas_relacionadas))
-            loc = self.x_studio_empresas_relacionadas.id
-            #idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_subtipo', '=', 'Contacto de localidad']], order='create_date desc', limit=1).id
-            idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_ultimo_contacto', '=', True]], order='create_date desc', limit=1).id
-            self.localidadContacto = idLoc
-            self.x_studio_field_6furK = self.x_studio_empresas_relacionadas.x_studio_field_SqU5B
-            _logger.info("Entre por toner idLoc: " + str(idLoc))
-            if idLoc:
-                #query = "update helpdesk_ticket set \"localidadContacto\" = " + str(idLoc) + " where id = " + str(self.x_studio_id_ticket) + ";"
-                query = "update helpdesk_ticket set \"localidadContacto\" = " + str(idLoc) + ", \"x_studio_field_6furK\" = '" + str(self.x_studio_empresas_relacionadas.x_studio_field_SqU5B) + "' where id = " + str(self.x_studio_id_ticket) + ";"
-                self.env.cr.execute(query)
-                self.env.cr.commit()
+        if self.team_id.id != 8:
+            if self.x_studio_empresas_relacionadas:
+                _logger.info("Entre por toner: " + str(self.x_studio_empresas_relacionadas))
+                loc = self.x_studio_empresas_relacionadas.id
+                #idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_subtipo', '=', 'Contacto de localidad']], order='create_date desc', limit=1).id
+                idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_ultimo_contacto', '=', True]], order='create_date desc', limit=1).id
+                self.localidadContacto = idLoc
+                self.x_studio_field_6furK = self.x_studio_empresas_relacionadas.x_studio_field_SqU5B
+                _logger.info("Entre por toner idLoc: " + str(idLoc))
+                if idLoc:
+                    #query = "update helpdesk_ticket set \"localidadContacto\" = " + str(idLoc) + " where id = " + str(self.x_studio_id_ticket) + ";"
+                    query = "update helpdesk_ticket set \"localidadContacto\" = " + str(idLoc) + ", \"x_studio_field_6furK\" = '" + str(self.x_studio_empresas_relacionadas.x_studio_field_SqU5B) + "' where id = " + str(self.x_studio_id_ticket) + ";"
+                    self.env.cr.execute(query)
+                    self.env.cr.commit()
 
     @api.model
     def _contacto_definido(self):
