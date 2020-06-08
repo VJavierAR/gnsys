@@ -574,7 +574,7 @@ class contadores(models.Model):
                    
                totalsr=float(rd.rentaMensual)+totalsr
                ivatt=round(float(rd.rentaMensual)*.16,2)+ivatt
-               ttotal=round(float(rd.rentaMensual)*.16,2) +float(rd.rentaMensual)+ttotal
+               ttotal=round(float(rd.rentaMensual)*.16,2) + float(rd.rentaMensual) + ttotal
             if rd.nombreAnte=='Renta global + costo de página procesada BN o color' and len(re)>0:
                rb=0 
                for rpt in self.dca :
@@ -670,6 +670,8 @@ class contadores(models.Model):
                               worksheet.write(i, 12, cal,neg)
                               iva=round(cal*.16,2)
                               worksheet.write(i, 13,'$ '+str(iva) ,neg)
+                              _logger.info('iva: ' + str(iva))
+                              _logger.info('cal: ' + str(cal))
                               worksheet.write(i, 14,'$ '+str(iva +cal) ,neg)  
                               ivatt=iva+ivatt  
                               totalsr=(float(rd.rentaMensual)+(ebn*rd.clickExcedenteBN))+totalsr
