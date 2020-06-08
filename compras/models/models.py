@@ -232,7 +232,6 @@ class compras(models.Model):
                                 if(len(arr)>0):
                                     self.order_line=[(5,0,0)]
                                 self.order_line=arr
-                                           pass
                     except Exception as e:
                         continue     
                 if(mimetype=='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'):
