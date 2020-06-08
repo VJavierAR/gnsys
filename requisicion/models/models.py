@@ -57,10 +57,10 @@ class requisicion(models.Model):
         cadena=""
         #data=record.product_rel.search([['pedido','=',False],['solicitar','=',True]])
         for prov in pro:
-            cadena=cadena+ordenDCompra.name+','
             ppp=pp.filtered(lambda x: x.product.x_studio_field_7aUDq.id==prov)
             if(len(ppp)>0):
                 ordenDCompra=self.env['purchase.order'].sudo().create({'partner_id':prov,'date_planned':self.fecha_prevista if(self.fecha_prevista) else datetime.datetime.now(),'x_studio_field_a4rih':'Almacén'})
+                cadena=cadena+ordenDCompra.name+','
                 for prod in ppp:
                     if(prod.product.id not in d):
                         h=list(filter(lambda c:c['product']['id']==prod.product.id,ppp))
