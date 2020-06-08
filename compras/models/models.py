@@ -86,7 +86,8 @@ class compras(models.Model):
                     con=tree.getElementsByTagName("cfdi:Concepto")
                     for c in con:
                         _logger.info(str(c.getAttribute("NoIdentificacion")))                
-
+                        _logger.info(str(c.getAttribute("Cantidad")))
+                        _logger.info(str(c.getAttribute("ValorUnitario")) 
                 # if(mimetype=='application/pdf'):
                 #     self.x_studio_pdf=self.archivo
                 #     myCmd = 'pdftotext -fixed 5 hola.pdf test3.txt'
