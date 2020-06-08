@@ -149,7 +149,7 @@ class StockPickingMassAction(TransientModel):
                             if float_compare(move.product_uom_qty, move.quantity_done, precision_rounding=move.product_uom.rounding) > 0:
                                 moves_to_log[move] = (move.quantity_done, move.product_uom_qty)
                         pick_id._log_less_quantities_than_expected(moves_to_log)
-                #self.picking_ids.action_done()
+                self.picking_ids.action_done()
                 #if cancel_backorder:
                     for pick_id in self.picking_ids:
                         backorder_pick = self.env['stock.picking'].search([('backorder_id', '=', pick_id.id)])
