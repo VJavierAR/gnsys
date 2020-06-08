@@ -63,10 +63,10 @@ class requisicion(models.Model):
             for prod in ppp:
                 if(prod.product.id not in d):
                     h=list(filter(lambda c:c['product']['id']==prod.product.id,ppp))
-                    e=data.search([['product','=',prod.product.id]])
+                    #e=data.search([['product','=',prod.product.id]])
                     for hi in h:
                         t=t+hi.cantidad
-                    e.write({'pedido':ordenDCompra.name})
+                    #e.write({'pedido':ordenDCompra.name})
                     lineas=self.env['purchase.order.line'].sudo().create({'name':prod.product.description if(prod.product.description) else '|','product_id':prod.product.id,'product_qty':t,'price_unit':prod.costo,'taxes_id':[10],'order_id':ordenDCompra.id,'date_planned':self.fecha_prevista if(self.fecha_prevista) else datetime.datetime.now(),'product_uom':'1'})
                     d.append(line.product.id)
 
@@ -80,7 +80,7 @@ class requisicion(models.Model):
                     e=data.search([['product','=',prod.product.id]])
                     for hi in h:
                         t=t+hi.cantidad
-                    e.write({'pedido':ordenDCompra.name})
+                    #e.write({'pedido':ordenDCompra.name})
                     lineas=self.env['purchase.order.line'].sudo().create({'name':prod.product.description if(prod.product.description) else '|','product_id':prod.product.id,'product_qty':t,'price_unit':prod.costo,'taxes_id':[10],'order_id':ordenDCompra.id,'date_planned':self.fecha_prevista if(self.fecha_prevista) else datetime.datetime.now(),'product_uom':'1'})
                     d.append(line.product.id)
 
