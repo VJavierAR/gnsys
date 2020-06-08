@@ -882,7 +882,7 @@
                                         <field name="x_studio_toner_amarillo" string="Tóner Amarillo" invisible='1'/>
                                         <field name="x_studio_robot" string="robot" attrs="{}" invisible='1'/>
                                         <field name="x_studio_field_VYRwu" string="Resultado" invisible='1'/>
-                                        <field invisible="1" name="x_studio_hoja_de_estado_filename" invisible='1'/>
+                                        <field name="x_studio_hoja_de_estado_filename" invisible='1'/>
                                         <field filename="x_studio_hoja_de_estado_filename" name="x_studio_hoja_de_estado" string="Hoja de estado" invisible='1'/>
                                     </group>
                                 </group>
