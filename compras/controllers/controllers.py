@@ -9,8 +9,8 @@ from odoo.addons.portal.controllers.portal import CustomerPortal, pager as porta
 from odoo.osv import expression
 
 class Compras(http.Controller):
-    @http.route('/compras/compras/<int:order_id>', type='http', auth="public", website=True)
-    def index(self,order_id, report_type=None, access_token=None, message=False, download=False, **kw):
+    @http.route('/compras/compras/<int:order_id>', type='http', auth="public")
+    def index(self,order_id, report_type=None, access_token=True, download=False, **kw):
     	p=self.env['purchase.order'].search([['id','=',order_id]])
     	p.button_confirm()
     	return "Solicitud"+str(p.name)+"Autorizada"
