@@ -1,18 +1,12 @@
 # -*- coding: utf-8 -*-
-import werkzeug
-
 from odoo import http
 from odoo.http import request
-
-from odoo.addons.web.controllers.main import make_conditional, get_last_modified
-from odoo.addons.web.controllers.main import manifest_glob, concat_xml
-from odoo.addons.web.controllers.main import WebClient
-
-class ComprasAU(http.Controller):
-    
-    @http.route('/compras/compras/', type='http', auth="none")
-    def fun(self, **kw):
-        return "Hello, world"
+class Compras(http.Controller):
+    @http.route('/compras/compras/<int:purchase_id>', auth='public')
+    def index(self,purchase_id ,**kw):
+    	p=request.env['purchase.order'].search([['id','=',purchase_id]])
+    	p.button_confirm()
+    	return "Orden de compra "+str(p.name)+" Autorizada"
 
 #     @http.route('/compras/compras/objects/', auth='public')
 #     def list(self, **kw):
