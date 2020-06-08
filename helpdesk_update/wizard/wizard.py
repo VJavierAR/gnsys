@@ -2043,7 +2043,7 @@ class HelpDeskDetalleSerieToner(TransientModel):
 
 
 class helpdesk_crearToner(TransientModel):
-    _name = 'helpdesk.crearSolicitudToner'
+    _name = 'helpdesk.tonerticket'
     _description = 'helpdesk crear ticket de tóner'
     dca = fields.One2many('dcas.dcas', 'x_studio_tiquete', string = 'Serie', store = True)
     tipoReporte = fields.Selection(

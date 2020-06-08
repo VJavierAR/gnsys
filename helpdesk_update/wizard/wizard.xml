@@ -791,7 +791,7 @@
 
 
     <record id="view_helpdesk_crear_solicitud_toner" model="ir.ui.view">
-        <field name="model">helpdesk.crearSolicitudToner</field>
+        <field name="model">helpdesk.tonerticket</field>
         <field name="arch" type="xml">
             <form string="Crear">
                 <group>
