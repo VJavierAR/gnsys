@@ -1996,6 +1996,30 @@ class HelpDeskDetalleSerieToner(TransientModel):
                     self.serie = str(serie.serie.name) + ', '
 
     @api.onchange('series')
+    def actualizaRegistros(self):
+        self.historicoTickets = [(5, 0, 0)]
+        self.lecturas = [(5, 0, 0)]
+        self.toner = [(5, 0, 0)]
+        self.historicoDeComponentes = [(5, 0, 0)]
+        self.movimientos = [(5, 0, 0)]
+        
+        if self.series:
+            self.historicoTickets = self.series.x_studio_field_Yxv2m.ids
+            for dca in self.ticket_id.x_studio_equipo_por_nmero_de_serie_1:
+                if dca.serie.id == self.series.id:
+                    self.lecturas = self.dca.serie.x_studio_field_PYss4.ids
+                    self.toner = self.dca.serie.x_studio_toner_1.ids
+            self.historicoDeComponentes = self.series.x_studio_histrico_de_componentes.ids
+            self.movimientos = self.series.x_studio_move_line.ids
+        else:
+            self.historicoTickets = [(5, 0, 0)]
+            self.lecturas = [(5, 0, 0)]
+            self.toner = [(5, 0, 0)]
+            self.historicoDeComponentes = [(5, 0, 0)]
+            self.movimientos = [(5, 0, 0)]
+
+    """
+    @api.onchange('series')
     def _compute_historico_tickets(self):
         self.historicoTickets = []
         #self.write({'historicoTickets': [] })
@@ -2007,7 +2031,7 @@ class HelpDeskDetalleSerieToner(TransientModel):
         _logger.info('aggggg: ' + str(self.series.x_studio_field_PYss4))
         for dca in self.ticket_id.x_studio_equipo_por_nmero_de_serie_1:
             if dca.serie.id == self.series.id:
-                self.toner = self.dca.serie.x_studio_field_PYss4.ids
+                self.lecturas = self.dca.serie.x_studio_field_PYss4.ids
         #self.lecturas = []
         #self.write({'lecturas': [] })
         #if self.series:
@@ -2037,7 +2061,7 @@ class HelpDeskDetalleSerieToner(TransientModel):
         #self.write({'movimientos': [] })
         if self.series:
             self.movimientos = self.series.x_studio_move_line.ids
-
+    """
 
 
 
