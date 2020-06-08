@@ -64,6 +64,7 @@ class requisicion(models.Model):
                 if(prod.product.id not in d):
                     h=list(filter(lambda c:c['product']['id']==prod.product.id,ppp))
                     #e=data.search([['product','=',prod.product.id]])
+                    t=0
                     for hi in h:
                         t=t+hi.cantidad
                     #e.write({'pedido':ordenDCompra.name})
@@ -78,6 +79,7 @@ class requisicion(models.Model):
                 if(prod.product.id not in d):
                     h=list(filter(lambda c:c['product']['id']==prod.product.id,ppp))
                     #e=data.search([['product','=',prod.product.id]])
+                    t=0
                     for hi in h:
                         t=t+hi.cantidad
                     #e.write({'pedido':ordenDCompra.name})
