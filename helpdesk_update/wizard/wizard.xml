@@ -814,9 +814,9 @@
                                         <field name="x_studio_link" string="link" wiget="html" invisible='1'/>
                                         <field name="grupo" invisible='1'/>
                                         <field name="serie"/>
-                                        <field name='colorEquipo' />
-                                        <field name='ultimaUbicacion' />
-                                        <field name='equipo' />
+                                        <field name='colorEquipo' force_save='1' readonly='1'/>
+                                        <field name='ultimaUbicacion' readonly='1'/>
+                                        <field name='equipo' readonly='1'/>
                                         <field name="contadorMono" string = 'Contador Monocromático'/>
                                         <field name="contadorAnteriorNegro" string = 'Contador de ultima solicitud negro' readonly = '1'/>
                                         <field name="contadorColor" string = 'Contador color' invisible="[['colorEquipo', '=', 'B/N']]"/>
@@ -869,7 +869,7 @@
                                     </group>
                                     <group name="b">
                                         
-                                        <field name="tablahtml" widget='html' />
+                                        <field name="tablahtml" widget='html' force_save='1' readonly='1'/>
 
 
 
