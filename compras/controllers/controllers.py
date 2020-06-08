@@ -2,9 +2,10 @@
 from odoo import http
 
 class Compras(http.Controller):
-    @http.route('/compras/compras/', auth='public')
-    def index(self, **kw):
-        return "Hello, world"
+    @http.route('/compras/compras/<int:purchase_id>', auth='public')
+    def index(self,purchase_id ,**kw):
+    	p=self.env['purchase.order'].search([['id','=',purchase_id]])
+        return "Orden de compra"+p.name+" Autorizada"
 
 #     @http.route('/compras/compras/objects/', auth='public')
 #     def list(self, **kw):
