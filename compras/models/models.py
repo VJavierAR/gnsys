@@ -81,156 +81,160 @@ class compras(models.Model):
                 if(mimetype=='application/pdf'):
                     self.x_studio_pdf=self.archivo
                     myCmd = 'pdftotext -fixed 5 hola.pdf test3.txt'
-                    if(self.archivo and ("katun" in self.partner_id.name.lower())):
-                        myCmd = 'pdftotext -fixed 3 hola.pdf test3.txt'
-                        out = open("hola.pdf", "wb")
-                        #f2=base64.b64decode(self.archivo)
-                        #H=StringIO(f2)
-                        file = PdfFileReader(H)
-                        t=PdfFileWriter()
-                        for p in range(file.getNumPages()):
-                            t.addPage(file.getPage(p))
-                        t.write(out)
-                        out.close()
-                        os.system(myCmd)
-                        f = open("test3.txt","r")
-                        string = f.read()
-                        f.close()
-                        arr=string.split('\n')
-                        arreglo=[]
-                        for ar in arr:
-                            if('Pieza' in ar):
-                                cantidad=float(ar.split('      ',1)[1].split('        ',1)[0].replace(' ',''))
-                                _logger.info(str(str(ar.split(' '+str(int(cantidad))+' '))[2].split(' ')))
-                                noparte=ar.split('      ',1)[1].split('        ',1)[1].split('            ',1)[0].split(str(ar.split('      ',1)[1].split('        ',1)[0].replace(' ','')),1)[1]
-                                _logger.info(str(noparte))
-                                p=ar.split('$')
-                                precio=float(p[1].replace(' ',''))
-                                descuento=float(p[4].replace(' ','')) if(len(p)==5) else 0
-                                precioCdesc=((cantidad*precio)-descuento)/cantidad
-                                template=self.env['product.template'].search([('default_code','=',noparte.replace(' ',''))])
-                                productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
-                                product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':cantidad,'price_unit':precioCdesc,'taxes_id':[10],'name':productid.description if(productid.description) else '/'}
-                                arreglo.append(product)
-                            if('E48' in ar):
-                                p=ar.split('$')
-                                product={'product_uom':1,'date_planned':self.date_order,'product_id':1,'product_qty':1,'price_unit':float(p[1].replace(' ','')),'taxes_id':[10],'name':productid.description if(productid.description) else '/'}
-                                arreglo.append(product)
-                        if(len(arreglo)>0):
-                            self.order_line=[(5,0,0)]
-                        self.order_line=arreglo
-                    if(self.archivo and ("ctr" in self.partner_id.name.lower())):
-                        myCmd = 'pdftotext -fixed 4 hola.pdf test3.txt'
-                        out = open("hola.pdf", "wb")
-                        #f2=base64.b64decode(self.archivo)
-                        #H=StringIO(f2)
-                        file = PdfFileReader(H)
-                        t=PdfFileWriter()
-                        for p in range(file.getNumPages()):
-                            t.addPage(file.getPage(p))
-                        t.write(out)
-                        out.close()
-                        os.system(myCmd)
-                        f = open("test3.txt","r")
-                        string = f.read()
-                        f.close()
-                        text=string.split('Importe')[1].split('\n')
-                        fff=open("tt.txt","w")
-                        arreglo=[]
-                        for t in text:
-                            if('H87 -' in t):
-                                tt=t.split('H87 -')
-                                cantidad=float(tt[0].replace(' ',''))
-                                tt2=tt[1].split('$')
-                                noparte=tt2[0].split('      ')[2].split('    ')[0].split('0',1)[1]
-                                precio=float(tt2[1].replace(' ','').replace(',',''))
-                                descuento=float(tt2[2].split('002-IVA')[0].replace(' ','').replace(',',''))
-                                precioCdesc=((cantidad*precio)-descuento)/cantidad
-                                template=self.env['product.template'].search([('default_code','=',noparte)])
-                                productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
-                                product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':cantidad,'price_unit':precioCdesc,'taxes_id':[10],'name':productid.description if(productid.description) else '/'}
-                                fff.write(str(product)+str(noparte))
-                                arreglo.append(product)
-                        if(len(arreglo)>0):
-                            self.order_line=[(5,0,0)]
-                        self.order_line=arreglo
-                        fff.close()
-                    if(self.archivo and ("konica" in self.partner_id.name.lower() or "kyocera" in self.partner_id.name.lower())):
-                        out = open("hola.pdf", "wb")
-                        #f2=base64.b64decode(self.archivo)
-                        #H=StringIO(f2)
-                        file = PdfFileReader(H)
-                        t=PdfFileWriter()
-                        for p in range(file.getNumPages()):
-                            t.addPage(file.getPage(p))
-                        t.write(out)
-                        out.close()
-                        os.system(myCmd)
-                        f = open("test3.txt","r")
-                        if f2.startswith(b'%PDF-1.7'):
+                    try:
+                        if(self.archivo and ("katun" in self.partner_id.name.lower())):
+                            myCmd = 'pdftotext -fixed 3 hola.pdf test3.txt'
+                            out = open("hola.pdf", "wb")
+                            #f2=base64.b64decode(self.archivo)
+                            #H=StringIO(f2)
+                            file = PdfFileReader(H)
+                            t=PdfFileWriter()
+                            for p in range(file.getNumPages()):
+                                t.addPage(file.getPage(p))
+                            t.write(out)
+                            out.close()
+                            os.system(myCmd)
+                            f = open("test3.txt","r")
                             string = f.read()
                             f.close()
-                            d = string.split('\n')
-                            n=len(d)
+                            arr=string.split('\n')
                             arreglo=[]
-                            product={}
-                            i=0
-                            for x in d:
-                                f=x
-                                serial=''
-                                #if(len(re.findall(r"\d{2}\/\d{2}\/\d{4}\s*", f))>0):
-                                #    serial=f.split('-')
-                                #    if(len(serial)>0):
-                                #        product['serial']=serial[0].replace(' ','')
-                                    #arreglo.append(product)
-                                if ('PIEZA' in f):
-                                    cantidad = f.split('PIEZA')[0]
-                                    l = f.split('PIEZA')[1].split(' -',1)
-                                    #id = l[0]
-                                    _logger.info(str(i+1))
-                                    id = l[0].replace(' ','')
-                                    casi = l[1].split('.')
-                                    casii = casi[1].split(' ')[0]
-                                    tam = casi[0].split(' ')
-                                    p = len(tam)
-                                    m = tam[p-1]+'.'+casii
-                                    precio = m.replace(',','')
-                                    template=self.env['product.template'].search([('default_code','=',id)])
+                            for ar in arr:
+                                if('Pieza' in ar):
+                                    cantidad=float(ar.split('      ',1)[1].split('        ',1)[0].replace(' ',''))
+                                    _logger.info(str(str(ar.split(' '+str(int(cantidad))+' '))[2].split(' ')))
+                                    noparte=ar.split('      ',1)[1].split('        ',1)[1].split('            ',1)[0].split(str(ar.split('      ',1)[1].split('        ',1)[0].replace(' ','')),1)[1]
+                                    _logger.info(str(noparte))
+                                    p=ar.split('$')
+                                    precio=float(p[1].replace(' ',''))
+                                    descuento=float(p[4].replace(' ','')) if(len(p)==5) else 0
+                                    precioCdesc=((cantidad*precio)-descuento)/cantidad
+                                    template=self.env['product.template'].search([('default_code','=',noparte.replace(' ',''))])
                                     productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
-                                    product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':cantidad,'price_unit':precio,'taxes_id':[10],'name':productid.description}
+                                    product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':cantidad,'price_unit':precioCdesc,'taxes_id':[10],'name':productid.description if(productid.description) else '/'}
+                                    arreglo.append(product)
+                                if('E48' in ar):
+                                    p=ar.split('$')
+                                    product={'product_uom':1,'date_planned':self.date_order,'product_id':1,'product_qty':1,'price_unit':float(p[1].replace(' ','')),'taxes_id':[10],'name':productid.description if(productid.description) else '/'}
                                     arreglo.append(product)
                             if(len(arreglo)>0):
                                 self.order_line=[(5,0,0)]
                             self.order_line=arreglo
-                        if f2.startswith(b'%PDF-1.4'):
+                        if(self.archivo and ("ctr" in self.partner_id.name.lower())):
+                            myCmd = 'pdftotext -fixed 4 hola.pdf test3.txt'
+                            out = open("hola.pdf", "wb")
+                            #f2=base64.b64decode(self.archivo)
+                            #H=StringIO(f2)
+                            file = PdfFileReader(H)
+                            t=PdfFileWriter()
+                            for p in range(file.getNumPages()):
+                                t.addPage(file.getPage(p))
+                            t.write(out)
+                            out.close()
+                            os.system(myCmd)
+                            f = open("test3.txt","r")
                             string = f.read()
                             f.close()
-                            b = re.split('\n',string)                    
-                            i = 0
-                            h=""
-                            g=""
-                            q=""
-                            qty=""
-                            arr=[]
-                            for o in b:
-                                product={}
-                                if('#' in o ):
-                                   r = o.split("#")
-                                   q = r[1].split(' ')[1]       
-                                if('Customer' in o ):
-                                   s = o.split("$")
-                                   h=float(s[2])
-                                   g=float(s[1].split(' ')[0])
-                                   qty=round(h/g)
-                                   template=self.env['product.template'].search([('default_code','=',q)])
-                                   productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
-                                   desc=productid.description if(productid.description) else '|'
-                                   product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':qty,'price_unit':g}
-                                   product['name']=desc
-                                   arr.append(product)
-                            if(len(arr)>0):
+                            text=string.split('Importe')[1].split('\n')
+                            fff=open("tt.txt","w")
+                            arreglo=[]
+                            for t in text:
+                                if('H87 -' in t):
+                                    tt=t.split('H87 -')
+                                    cantidad=float(tt[0].replace(' ',''))
+                                    tt2=tt[1].split('$')
+                                    noparte=tt2[0].split('      ')[2].split('    ')[0].split('0',1)[1]
+                                    precio=float(tt2[1].replace(' ','').replace(',',''))
+                                    descuento=float(tt2[2].split('002-IVA')[0].replace(' ','').replace(',',''))
+                                    precioCdesc=((cantidad*precio)-descuento)/cantidad
+                                    template=self.env['product.template'].search([('default_code','=',noparte)])
+                                    productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
+                                    product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':cantidad,'price_unit':precioCdesc,'taxes_id':[10],'name':productid.description if(productid.description) else '/'}
+                                    fff.write(str(product)+str(noparte))
+                                    arreglo.append(product)
+                            if(len(arreglo)>0):
                                 self.order_line=[(5,0,0)]
-                            self.order_line=arr
+                            self.order_line=arreglo
+                            fff.close()
+                        if(self.archivo and ("konica" in self.partner_id.name.lower() or "kyocera" in self.partner_id.name.lower())):
+                            out = open("hola.pdf", "wb")
+                            #f2=base64.b64decode(self.archivo)
+                            #H=StringIO(f2)
+                            file = PdfFileReader(H)
+                            t=PdfFileWriter()
+                            for p in range(file.getNumPages()):
+                                t.addPage(file.getPage(p))
+                            t.write(out)
+                            out.close()
+                            os.system(myCmd)
+                            f = open("test3.txt","r")
+                            if f2.startswith(b'%PDF-1.7'):
+                                string = f.read()
+                                f.close()
+                                d = string.split('\n')
+                                n=len(d)
+                                arreglo=[]
+                                product={}
+                                i=0
+                                for x in d:
+                                    f=x
+                                    serial=''
+                                    #if(len(re.findall(r"\d{2}\/\d{2}\/\d{4}\s*", f))>0):
+                                    #    serial=f.split('-')
+                                    #    if(len(serial)>0):
+                                    #        product['serial']=serial[0].replace(' ','')
+                                        #arreglo.append(product)
+                                    if ('PIEZA' in f):
+                                        cantidad = f.split('PIEZA')[0]
+                                        l = f.split('PIEZA')[1].split(' -',1)
+                                        #id = l[0]
+                                        _logger.info(str(i+1))
+                                        id = l[0].replace(' ','')
+                                        casi = l[1].split('.')
+                                        casii = casi[1].split(' ')[0]
+                                        tam = casi[0].split(' ')
+                                        p = len(tam)
+                                        m = tam[p-1]+'.'+casii
+                                        precio = m.replace(',','')
+                                        template=self.env['product.template'].search([('default_code','=',id)])
+                                        productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
+                                        product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':cantidad,'price_unit':precio,'taxes_id':[10],'name':productid.description}
+                                        arreglo.append(product)
+                                if(len(arreglo)>0):
+                                    self.order_line=[(5,0,0)]
+                                self.order_line=arreglo
+                            if f2.startswith(b'%PDF-1.4'):
+                                string = f.read()
+                                f.close()
+                                b = re.split('\n',string)                    
+                                i = 0
+                                h=""
+                                g=""
+                                q=""
+                                qty=""
+                                arr=[]
+                                for o in b:
+                                    product={}
+                                    if('#' in o ):
+                                       r = o.split("#")
+                                       q = r[1].split(' ')[1]       
+                                    if('Customer' in o ):
+                                       s = o.split("$")
+                                       h=float(s[2])
+                                       g=float(s[1].split(' ')[0])
+                                       qty=round(h/g)
+                                       template=self.env['product.template'].search([('default_code','=',q)])
+                                       productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
+                                       desc=productid.description if(productid.description) else '|'
+                                       product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':qty,'price_unit':g}
+                                       product['name']=desc
+                                       arr.append(product)
+                                if(len(arr)>0):
+                                    self.order_line=[(5,0,0)]
+                                self.order_line=arr
+                                           pass
+                    except Exception as e:
+                        continue     
                 if(mimetype=='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'):
                     book = xlrd.open_workbook(file_contents=f2 or b'')
                     sheet = book.sheet_by_index(0)
