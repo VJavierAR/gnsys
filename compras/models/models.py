@@ -92,7 +92,7 @@ class compras(models.Model):
                         if(noparte!=None):
                             template=self.env['product.template'].search([('default_code','=',noparte)])
                             productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
-                        product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':cantidad,'price_unit':precioCdesc,'taxes_id':[10],'name':productid.description if(productid.description) else '/'}
+                        product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':cantidad,'price_unit':precio,'taxes_id':[10],'name':productid.description if(productid.description) else '/'}
                         if(noparte==None):
                             product['product_id']=1
                             product['product_uom']=6
