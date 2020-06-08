@@ -55,7 +55,7 @@ class WebClient(WebClient):
         return res
 
     @http.route('/web/webclient/compras', type='http', auth="none", cors="*")
-    def qweb(self, mods=None, db=None):
+    def qcompras(self, mods=None, db=None):
         files = [f[0] for f in manifest_glob('qweb', addons=mods, db=db)]
         last_modified = get_last_modified(files)
         if request.httprequest.if_modified_since and request.httprequest.if_modified_since >= last_modified:
