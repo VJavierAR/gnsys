@@ -30,7 +30,7 @@ odoo.define('invoice.action_button_helpdesk', function (require) {
 			//console.log(arguments)
 			if (this.$buttons) {
 				//console.log(this);
-		    	console.log("Test: " + this.actionViews[0].viewID);
+		    	//console.log("Test: " + this.actionViews[0].viewID);
 		    	if (typeof this.actionViews !== 'undefined' && this.actionViews.length > 0) {
 			    	if (this.actionViews[0].viewID == 2766) {
                         console.log("Entre para vista de mesa de servicio")
