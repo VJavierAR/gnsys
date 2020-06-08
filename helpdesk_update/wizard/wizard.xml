@@ -893,60 +893,68 @@
                             </tree>
                         </field>
                     </group>
+                    <!--
                     <group string='Buscar por cliente y localidad'>
-                        <!--
+                        
                         <field name='clienteRelacion' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" attrs='{"domain": [["clienteRelacion.company_type","=","company"]]}' force_save = "1"/>
                         <field name='localidadRelacion' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain='[["parent_id.id","=",idCliente],["type","=","delivery"]]' force_save = "1"/>
                         <field name='contactoInterno' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain='[["parent_id.id", "=", idLocaliidad],["type", "=", "contact"]]' attrs='{"invisible": [["localidad","!=","CORPORATIVO"]]}' force_save = '1'/> 
-                        -->
-                        <!--<field name='localidadRelacion' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain='[["parent_id.id","=",idCliente],"|",["type","=","delivery"], ["type","=","contact"]]' force_save = "1"/>-->
                     </group>
+                    -->
                 </group>
 
                 <group>
-                    <field name='textoTicketExistente' />
+                    <field name='textoTicketExistente'  widget='html'/>
                 </group>
 
                 <notebook>
                     <page string = 'Pedido'>
                         <group>
-                            <field name='tipoReporte' force_save='1'/>
-                            <field name='corte' force_save='1'/>
-                            <field name='almacen' force_save='1'/>
-                        </group>
-                        <group>
-                            <field name='validarHastaAlmacenTicket' force_save='1'/>
-                            <field name='validarTicket' force_save='1'/>
-                            <field name='ponerTicketEnEspera' force_save='1'/>
+                            <group>
+                                <field name='tipoReporte' force_save='1'/>
+                                <field name='corte' force_save='1'/>
+                                <field name='almacen' force_save='1'/>
+                            </group>
+                            <group>
+                                <field name='validarHastaAlmacenTicket' force_save='1'/>
+                                <field name='validarTicket' force_save='1'/>
+                                <field name='ponerTicketEnEspera' force_save='1'/>
+                            </group>
                         </group>
                     </page>
                     <page string = 'Cliente'>
                         <group>
-                            <field name='cliente' force_save='1' readonly='1'/>
-                            <field name='tipoCliente' force_save='1' readonly='1'/>
-                            <field name='localidad' force_save='1' readonly='1'/>
+                            <group>
+                                <field name='cliente' force_save='1' readonly='1'/>
+                                <field name='tipoCliente' force_save='1' readonly='1'/>
+                                <field name='localidad' force_save='1' readonly='1'/>
+                            </group>
+                            <group>
+                                <field name='zonaLocalidad' force_save='1' readonly='1'/>
+                                <field name='localidadContacto' force_save='1' readonly='1'/>
+                                <field name='estadoLocalidad' force_save='1' readonly='1'/>
+                            </group>
                         </group>
+
                         <group>
-                            <field name='zonaLocalidad' force_save='1' readonly='1'/>
-                            <field name='localidadContacto' force_save='1' readonly='1'/>
-                            <field name='estadoLocalidad' force_save='1' readonly='1'/>
-                        </group>
-                        
-                        <group>
-                            <field name='telefonoContactoLocalidad' force_save='1' readonly='1'/>
-                            <field name='movilContactoLocalidad' force_save='1' readonly='1'/>
-                            <field name='correoContactoLocalidad' force_save='1' readonly='1'/>
-                        </group>
-                        <group>
-                            <field name='direccionLocalidad' force_save='1' readonly='1'/>
+                            <group>
+                                <field name='telefonoContactoLocalidad' force_save='1' readonly='1'/>
+                                <field name='movilContactoLocalidad' force_save='1' readonly='1'/>
+                                <field name='correoContactoLocalidad' force_save='1' readonly='1'/>
+                            </group>
+                            <group>
+                                <field name='direccionLocalidad' force_save='1' readonly='1' widget='html'/>
+                            </group>
                         </group>
                     </page>
                     <page string = 'Datos del ticket'>
                         <group>
-                            <field name='comentarioLocalidad' force_save='1'/>
-                        </group>
-                        <group>
-                            <field name='prioridad' force_save='1' widget='priority'/>
+                            <group>
+                                <field name='comentarioLocalidad' force_save='1'/>
+                            </group>
+                            <group>
+                                <field name='prioridad' force_save='1' widget='priority'/>
+                            </group>
                         </group>
                     </page>
                 </notebook>
