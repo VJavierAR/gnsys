@@ -10,13 +10,14 @@ import re
 from PyPDF2 import PdfFileMerger, PdfFileReader,PdfFileWriter
 from io import BytesIO as StringIO
 import base64
-import datetime
+import datetime,time
 from odoo.tools.mimetypes import guess_mimetype
 import logging, ast
 from odoo.tools import config, DEFAULT_SERVER_DATE_FORMAT, DEFAULT_SERVER_DATETIME_FORMAT, pycompat
 _logger = logging.getLogger(__name__)
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
+
 
 try:
     import xlrd
@@ -79,8 +80,8 @@ class compras(models.Model):
             H=StringIO(f2)
             mimetype = guess_mimetype(f2 or b'')
             if(self.partner_id):
-                importe=0
-                #_logger.info(str(tree.getroot()))
+                tree = minidom.parse(H)
+                importe=0                #_logger.info(str(tree.getroot()))
                 if(mimetype=='image/svg+xml' and ("katun" in self.partner_id.name.lower())):
                     arreglo=[]
                     con=tree.getElementsByTagName("cfdi:Concepto")
@@ -112,7 +113,8 @@ class compras(models.Model):
                     if(len(arreglo)>0):
                        self.order_line=[(5,0,0)]
                        self.order_line=arreglo
-                    time.sleep(30)
+                    #time.sleep(30)
+                    _logger.info(str(float(imp[i-1].getAttribute("Importe"))))
                     self.amount_tax=float(imp[i-1].getAttribute("Importe"))
                 if(mimetype=='application/pdf'):
                     self.x_studio_pdf=self.archivo
