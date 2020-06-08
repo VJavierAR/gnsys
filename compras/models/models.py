@@ -10,7 +10,7 @@ import re
 from PyPDF2 import PdfFileMerger, PdfFileReader,PdfFileWriter
 from io import BytesIO as StringIO
 import base64
-import datetime
+import datetime,time
 from odoo.tools.mimetypes import guess_mimetype
 import logging, ast
 from odoo.tools import config, DEFAULT_SERVER_DATE_FORMAT, DEFAULT_SERVER_DATETIME_FORMAT, pycompat
@@ -113,7 +113,8 @@ class compras(models.Model):
                     if(len(arreglo)>0):
                        self.order_line=[(5,0,0)]
                        self.order_line=arreglo
-                    time.sleep(30)
+                    #time.sleep(30)
+                    _logger.info(str(float(imp[i-1].getAttribute("Importe"))))
                     self.amount_tax=float(imp[i-1].getAttribute("Importe"))
                 if(mimetype=='application/pdf'):
                     self.x_studio_pdf=self.archivo
