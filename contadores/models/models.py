@@ -98,84 +98,14 @@ class dcas(models.Model):
     fechaTemporal = fields.Text(string = 'Fecha temporal', store = True)
     
     
-    
-    @api.model
-    def create(self, values):               
-        _logger.info("values "+str(values))
-        c = super(dcas, self).create(values)
-        
-        _logger.info("c inicio"+str(c.tablahtml))
-        _logger.info("self inicio id"+str(c.id))
-        _logger.info("self inicio id"+str(c.create_date))
-        self.env.cr.execute("update dcas_dcas set x_studio_fecha = '"+str(c.create_date)+"' where  id = " + str(c.id) + ";")
-        if c.x_studio_cartuchonefro:
-            c.write({'x_studio_toner_negro': 1})
-        if c.x_studio_cartucho_cian_1:
-            c.write({'x_studio_toner_cian': 1})
-        if c.x_studio_cartucho_magenta:
-            c.write({'x_studio_toner_magenta': 1})
-        if c.x_studio_cartucho_amarillo:
-            c.write({'x_studio_toner_amarillo': 1})
-
-        """
-        contaC=c.contadorColor                       
-        cac=c.contadorAnteriorColor
-        contadorM=c.contadorMono
-        c.paginasProcesadasC=contaC-c.contadorAnteriorCian
-        c.paginasProcesadasA=contaC-c.contadorAnteriorAmarillo
-        c.paginasProcesadasM=contaC-c.contadorAnteriorMagenta
-        c.paginasProcesadasBN=contadorM-c.contadorAnteriorNegro            
-        cc=c.x_studio_rendimientoc
-        a=c.x_studio_rendimientoa
-        m=c.x_studio_rendimientom
-        n=c.x_studio_rendimiento_negro
-        if cc == '0':
-           cc = 1
-        if a == '0':
-           a = 1
-        if m == '0':
-           m = 1                        
-        if n == '0':
-           n = 1                           
-        if n:
-           c.renN=round(c.paginasProcesadasBN*100/int(n),2)            
-        if cc:
-           c.renC=round(c.paginasProcesadasC*100/int(cc),2)
-        if a:
-           c.renA=round(c.paginasProcesadasA*100/int(a),2)
-        if m:
-           c.renM=round(c.paginasProcesadasM*100/int(m),2)
-           
-        if c.serie:
-           style="<html><head><style>table, th, td {border: 1px solid black;border-collapse: collapse;}th, td {padding: 5px;text-align: left;}</style></head><body>"           
-           cabecera="<table ><tr><th></th><th>Monocormatico  </th><th> Cian </th><th> Amarillo </th><th> Magenta </th></tr><tr><tr><td></td></tr>"
-           ticket='<tr><td> Ticket </td><td>'+str(c.tN)+'</br>'+'</td> <td>'+str(c.tC)+' </br> </td> <td>'+' '+str(c.tA)+'</br> </td> <td>'+str(c.tM)+'</br> </td> </tr>'
-           ultimosContadores='<tr><td> Último Contador </td><td>'+str(c.contadorAnteriorNegro)+'</br>'+'</td> <td>'+str(c.contadorAnteriorCian)+' </br> </td> <td>'+ str(c.contadorAnteriorAmarillo)+'</br> </td> <td>'+str(c.contadorAnteriorMagenta)+' </br> </td> </tr>'
-           fechas='<tr><td> Fecha </td><td>'+str(c.fechaN)+'</br>'+'</td> <td>'+str(c.fechaC)+' </br> </td> <td>'+' '+str(c.fechaA)+'</br> </td> <td>'+str(c.fechaM)+'</br> </td> </tr>'
-           paginasProcesadas='<tr><td> Páginas Procesadas </td> <td>'+str(c.paginasProcesadasBN)+'</td> <td>'+str(c.paginasProcesadasC)+'</td> <td>'+ str(c.paginasProcesadasA)+' </td> <td>'+str(c.paginasProcesadasM)+'</td></tr>'        
-           rendimientos='<tr><td> Rendimiento </td> <td>'+str(c.renN)+'</td> <td>'+str(c.renC)+'</td> <td>'+ str(c.renA)+' </td> <td>'+str(c.renM)+'</td></tr>'
-           niveles='<tr><td> Último nivel </td> <td>'+str(c.nivelNA)+'</td> <td>'+str(c.nivelCA)+'</td> <td>'+ str(c.nivelAA)+' </td> <td>'+str(c.nivelMA)+'</td></tr>'           
-           cierre="</table></body></html> "
-           c.tablahtml=cabecera+ticket+ultimosContadores+fechas+paginasProcesadas+rendimientos+niveles+cierre
-           _logger.info("self final antes  "+str(self.tablahtml)) 
-           self.env.cr.execute("update dcas_dcas set x_studio_ultima_ubicacin = '"+str(c.x_studio_ultima_ubicacin)+"' where  id = " + str(c.id) + ";")
-           _logger.info("c color"+str(c.x_studio_color_o_bn)) 
-           _logger.info("c negro anterior"+str(c.contadorAnteriorNegro))
-           _logger.info("self negro anterior"+str(self.contadorAnteriorNegro))
-           self.env.cr.execute("update dcas_dcas set x_studio_color_o_bn = '"+str(c.x_studio_color_o_bn)+"' where  id = " + str(c.id) + ";")           
-           self.env.cr.execute("update dcas_dcas set tablahtml = '"+c.tablahtml+"' where  id = " + str(c.id) + ";")
-           _logger.info("c final"+str(c.tablahtml))
-           _logger.info("self final "+str(self.tablahtml))
-        """
-        return c
-    
-    
+                
     
     
    
     
     @api.onchange('serie')             
-    def ultimosContadoresNACM(self):        
+    def ultimosContadoresNACM(self):
+      #if self.fuente == 'helpdesk.ticket' or self.fuente == 'tfs.tfs':
         if self.serie :
             bn_c=self.env['stock.production.lot'].search([['id','=',self.serie.id]])        
             self.colorEquipo=bn_c.x_studio_color_bn
@@ -483,6 +413,7 @@ class contadores(models.Model):
     @api.multi
     def carga_contadores_fac(self):
         if self.x_studio_estado_capturas=='Listo':
+            """
             for r in self.detalle:
                 if r.desc!='capturado':
                    rr=self.env['dcas.dcas'].create({'serie': r.producto
@@ -492,6 +423,7 @@ class contadores(models.Model):
                                                  ,'x_studio_field_no6Rb':str(self.anio)+'-'+str(self.mes)
                                                  ,'x_studio_fecha_texto_anio':str(valores[int(self.mes[1])-1][1])+' de '+str(self.anio)
                                                 })
+            """                                                
             ff=self.env['contrato'].search([('cliente', '=',self.cliente.id)])
             prefacturas=''
             for rs in ff:
@@ -521,7 +453,8 @@ class contadores(models.Model):
     @api.multi
     def genera_excel(self):
         workbook = xlsxwriter.Workbook('Example2.xlsx') 
-        worksheet = workbook.add_worksheet()   
+        worksheet = workbook.add_worksheet()
+        neg = workbook.add_format({'border': 2})
         
         # Start from the first cell. 
         # Rows and columns are zero indexed. 
@@ -543,15 +476,20 @@ class contadores(models.Model):
         else:    
            anioA=str(self.anio)              
         periodoAnterior= anioA+'-'+mesaA                  
-        content = ["No.", "Localidad", "Modelo", "No. Serie","B/N ["+str(valores[int(mesaA)-1][1])+"]", "Color ["+str(valores[int(mesaA)-1][1])+"]","B/N ["+str(valores[int(self.mes[1])-1][1])+"]", "Color ["+str(valores[int(self.mes[1])-1][1])+"]", "Impresiones B/N", "Impresiones Color","Excedentes B&N","Excedentes Color","Subtotal","IVA","Total","Ubicación"]        
+        content = ["No.", "Localidad", "Modelo", "No. Serie","B/N ["+str(valores[int(mesaA)-1][1])+"]", "Color ["+str(valores[int(mesaA)-1][1])+"]","B/N ["+str(valores[int(self.mes[1])-1][1])+"]", "Color ["+str(valores[int(self.mes[1])-1][1])+"]", "Impresiones B/N", "Impresiones Color","Excedentes B&N","Excedentes Color","Subtotal","IVA","Total","Ubicación","Comentario"]        
         #abajo 0 derecha 0
+        bold = workbook.add_format({'bold': True})
         if self.cliente:
-           worksheet.write(0, 0, "CLIENTE: "+str(self.cliente.name))
+           worksheet.write(0, 0, "CLIENTE: "+str(self.cliente.name),bold)
            dir=self.serie=self.env['res.partner'].search([['parent_id','=',self.cliente.id],["type","=","invoice"]],order='create_date desc',limit=1)        
-           worksheet.write(1, 0, str(dir.street_name))
-           worksheet.write(2, 0, "CONTACTO: "+str(dir.name))
-           worksheet.write(3, 1, str(dir.phone))
-           worksheet.write(4, 1, str(dir.email))
+           if dir.street_name:
+              worksheet.write(1, 0, str(dir.street_name))
+           if dir.name:     
+              worksheet.write(2, 0, "CONTACTO: "+str(dir.name))
+           if dir.phone:
+              worksheet.write(3, 1, str(dir.phone))
+           if dir.email:     
+              worksheet.write(4, 1, str(dir.email))
         
             
            
@@ -559,7 +497,7 @@ class contadores(models.Model):
         #falta costo y renta global y cosot por click bn 
         i=0
         for item in content :           
-            worksheet.write(5, i, item)            
+            worksheet.write(5, i, item,neg)            
             row += 1
             i=i+1
         i=6
@@ -571,10 +509,12 @@ class contadores(models.Model):
         worksheet.set_column('F:F', 30)
         worksheet.set_column('G:G', 30)
         worksheet.set_column('H:H', 30)
+        
+        worksheet.autofilter('A6:Q6')
        
         #worksheet.insert_image('O2', 'gnsys.png')
-        if len(self.detalle)>0: 
-            ser=self.serie=self.env['servicios'].search([['id','=',self.detalle[0].servicio]])
+        if len(self.dca)>0: 
+            ser=self.serie=self.env['servicios'].search([['id','=',self.dca[0].x_studio_servicio]])
         else:
             raise exceptions.ValidationError("Nada que generar ")
         rgl=0
@@ -592,30 +532,31 @@ class contadores(models.Model):
         eec=0
         for rd in re:
             if rd.nombreAnte=='Renta global con páginas incluidas BN o color + pag. Excedentes' :                    
-               for rpt in self.detalle :
-                   if rpt.servicio==rd.id :
-                        worksheet.write(i, 0, rpt.indice)
-                        worksheet.write(i, 1, rpt.locacion)
-                        worksheet.write(i, 2, rpt.modelo)
-                        worksheet.write(i, 3, rpt.serieEquipo)            
-                        worksheet.write(i, 4, rpt.lecturaAnteriorBN)
-                        worksheet.write(i, 5, rpt.lecturaAnteriorColor)                        
-                        worksheet.write(i, 6, rpt.ultimaLecturaBN)
-                        worksheet.write(i, 7, rpt.ultimaLecturaColor)                                        
-                        if rpt.ultimaLecturaBN==0:
+               for rpt in self.dca :
+                   if int(rpt.x_studio_servicio)==rd.id :
+                        worksheet.write(i, 0, rpt.x_studio_indice,neg)
+                        worksheet.write(i, 1, rpt.x_studio_locacin,neg)
+                        worksheet.write(i, 2, rpt.x_studio_modelo,neg)
+                        worksheet.write(i, 3, rpt.serie.name,neg)            
+                        worksheet.write(i, 4, rpt.x_studio_lectura_anterior_bn,neg)
+                        worksheet.write(i, 5, rpt.x_studio_lectura_anterior_color,neg)                        
+                        worksheet.write(i, 6, rpt.contadorMono,neg)
+                        worksheet.write(i, 7, rpt.contadorColor,neg)                                        
+                        if rpt.contadorMono==0:
                            ebn=0
                         else:
-                           ebn=rpt.ultimaLecturaBN-rpt.lecturaAnteriorBN
-                        if rpt.ultimaLecturaColor==0:
+                           ebn=rpt.contadorMono-rpt.x_studio_lectura_anterior_bn
+                        if rpt.contadorColor==0:
                            ec=0
                         else:                
-                           ec=rpt.ultimaLecturaColor-rpt.lecturaAnteriorColor                    
-                        worksheet.write(i, 15, rpt.ubi)                                                            
-                        worksheet.write(i, 8, ebn)
-                        worksheet.write(i, 9, ec)                                            
-                        if rpt.bnColor=='B/N':                                                         
+                           ec=rpt.contadorColor-rpt.x_studio_lectura_anterior_color                    
+                        worksheet.write(i, 15, rpt.x_studio_ubicacin,neg)                                                            
+                        worksheet.write(i, 16, rpt.tablahtml,neg)                                                            
+                        worksheet.write(i, 8, ebn,neg)
+                        worksheet.write(i, 9, ec,neg)                                            
+                        if rpt.x_studio_color_o_bn=='B/N':                                                         
                            eebn=ebn+eebn
-                        if rpt.bnColor=='Color':                                                         
+                        if rpt.x_studio_color_o_bn=='Color':                                                         
                            eebn=ebn+eebn                                                                                   
                            eec=ec+eec               
                         i=i+1
@@ -633,235 +574,279 @@ class contadores(models.Model):
                totalsr=float(rd.rentaMensual)+totalsr
                ivatt=round(float(rd.rentaMensual)*.16,2)+ivatt
                ttotal=round(float(rd.rentaMensual)*.16,2) +float(rd.rentaMensual)+ttotal
-            if rd.nombreAnte=='Renta global + costo de página procesada BN o color':                    
-               for rpt in self.detalle :
-                   if rpt.servicio==rd.id :
-                        worksheet.write(i, 0, rpt.indice)
-                        worksheet.write(i, 1, rpt.locacion)
-                        worksheet.write(i, 2, rpt.modelo)
-                        worksheet.write(i, 3, rpt.serieEquipo)            
-                        worksheet.write(i, 4, rpt.lecturaAnteriorBN)
-                        worksheet.write(i, 5, rpt.lecturaAnteriorColor)                        
-                        worksheet.write(i, 6, rpt.ultimaLecturaBN)
-                        worksheet.write(i, 7, rpt.ultimaLecturaColor)                                        
-                        if rpt.ultimaLecturaBN==0:
+            if rd.nombreAnte=='Renta global + costo de página procesada BN o color' and len(re)>0:
+               rb=0 
+               for rpt in self.dca :
+                   if int(rpt.x_studio_servicio)==rd.id :
+                        worksheet.write(i, 0, rpt.x_studio_indice,neg)
+                        worksheet.write(i, 1, rpt.x_studio_locacin,neg)
+                        worksheet.write(i, 2, rpt.x_studio_modelo,neg)
+                        worksheet.write(i, 3, rpt.serie.name,neg)           
+                        worksheet.write(i, 4, rpt.x_studio_lectura_anterior_bn,neg)
+                        worksheet.write(i, 5, rpt.x_studio_lectura_anterior_color,neg)                        
+                        worksheet.write(i, 6, rpt.contadorMono,neg)
+                        worksheet.write(i, 7, rpt.contadorColor,neg)                                        
+                        if rpt.contadorMono==0:
                            ebn=0
                         else:
-                           ebn=rpt.ultimaLecturaBN-rpt.lecturaAnteriorBN
-                        if rpt.ultimaLecturaColor==0:
+                           ebn=rpt.contadorMono-rpt.x_studio_lectura_anterior_bn
+                        if rpt.contadorColor==0:
                            ec=0
                         else:                
-                           ec=rpt.ultimaLecturaColor-rpt.lecturaAnteriorColor                    
-                        worksheet.write(i, 15, rpt.ubi)
-                        worksheet.write(i, 16, len(rd))                                                            
-                        worksheet.write(i, 8, ebn)
-                        worksheet.write(i, 9, ec)                        
-                        if rpt.bnColor=='B/N':                                    
+                           ec=rpt.contadorColor-rpt.x_studio_lectura_anterior_color                    
+                        worksheet.write(i, 15, rpt.x_studio_ubicacin,neg)
+                        #worksheet.write(i, 16, len(rd))
+                        worksheet.write(i, 16, rpt.tablahtml,neg)                                                            
+                        worksheet.write(i, 8, ebn,neg)
+                        worksheet.write(i, 9, ec,neg)                        
+                        if rpt.x_studio_color_o_bn=='B/N':                                    
                            bs= (ebn*rd.clickExcedenteBN)
                            eebn=ebn+eebn
-                           worksheet.write(i, 12, bs)
+                           worksheet.write(i, 12, bs,neg)
                            iva=round(bs*.16,2)
                            ivatt=iva+ivatt
-                           worksheet.write(i, 13,'$ '+str(iva) )
-                           worksheet.write(i, 14,'$ '+str(iva +bs) )
+                           worksheet.write(i, 13,'$ '+str(iva),neg )
+                           worksheet.write(i, 14,'$ '+str(iva +bs) ,neg)
                            totalsr=bs+totalsr
                            ttotal=(iva +bs)+ttotal                        
-                        if rpt.bnColor=='Color':
+                        if rpt.x_studio_color_o_bn=='Color':
                            bsc=(ec*rd.clickExcedenteColor)+(ebn*rd.clickExcedenteBN)
                            eec=ec+eec
-                           worksheet.write(i, 12, bsc) 
+                           worksheet.write(i, 12, bsc,neg) 
                            iva=round(bsc*.16,2)
                            ivatt=iva+ivatt
-                           worksheet.write(i, 13,'$ '+str(iva) ) 
-                           worksheet.write(i, 14,'$ '+str(iva +bsc) )
+                           worksheet.write(i, 13,'$ '+str(iva) ,neg) 
+                           worksheet.write(i, 14,'$ '+str(iva +bsc) ,neg)
                            totalsr=bsc+totalsr
                            ttotal=(iva +bsc)+ttotal                            
-                        if rpt.bnColor=='B/N':                                                         
+                        if rpt.x_studio_color_o_bn=='B/N':                                                         
                            eebn=ebn+eebn
-                        if rpt.bnColor=='Color':                                                         
+                        if rpt.x_studio_color_o_bn=='Color':                                                         
                            eebn=ebn+eebn                                                                                   
-                           eec=ec+eec               
-                        i=i+1      
-               totalsr=float(rd.rentaMensual)+totalsr
-               ivatt=round(float(rd.rentaMensual)*.16,2)+ivatt
-               ttotal=round(float(rd.rentaMensual)*.16,2) +float(rd.rentaMensual)+ttotal
-               #raise exceptions.ValidationError("Nada que generar "+str(ttotal))                                     
+                           eec=ec+eec                           
+                        i=i+1                        
+                        if rb==0:     
+                          totalsr=float(rd.rentaMensual)+totalsr
+                          ivatt=round(float(rd.rentaMensual)*.16,2)+ivatt
+                          ttotal=round(float(rd.rentaMensual)*.16,2) +float(rd.rentaMensual)+ttotal
+                        rb=rb+1
+                   #que se cobre solo una vez y no n veces
         for rd in re:
-            for rpt in self.detalle :
-                if rpt.servicio==rd.id :                                        
-                    if rpt.ultimaLecturaBN==0:
+            for rpt in self.dca :
+                if int(rpt.x_studio_servicio)==rd.id :                                        
+                    if rpt.contadorMono==0:
                        ebn=0
                     else:
-                       ebn=rpt.ultimaLecturaBN-rpt.lecturaAnteriorBN
-                    if rpt.ultimaLecturaColor==0:
+                       ebn=rpt.contadorMono-rpt.x_studio_lectura_anterior_bn
+                    if rpt.contadorColor==0:
                        ec=0
                     else:                
-                       ec=rpt.ultimaLecturaColor-rpt.lecturaAnteriorColor                    
-                    
+                       ec=rpt.contadorColor-rpt.x_studio_lectura_anterior_color                                        
                     if rd.nombreAnte=='Renta base con ML incluidas BN o color + ML. excedentes' or rd.nombreAnte=='Renta base con páginas incluidas BN o color + pag. excedentes':
-                        worksheet.write(i, 0, rpt.indice)
-                        worksheet.write(i, 1, rpt.locacion)
-                        worksheet.write(i, 2, rpt.modelo)
-                        worksheet.write(i, 3, rpt.serieEquipo)            
-                        worksheet.write(i, 4, rpt.lecturaAnteriorBN)
-                        worksheet.write(i, 5, rpt.lecturaAnteriorColor)                        
-                        worksheet.write(i, 6, rpt.ultimaLecturaBN)
-                        worksheet.write(i, 7, rpt.ultimaLecturaColor)                                        
-                        worksheet.write(i, 15, rpt.ubi)                                        
-                        worksheet.write(i, 8, ebn)
-                        worksheet.write(i, 9, ec)
-                        worksheet.write(i, 10, ebn)
-                        worksheet.write(i, 11, ec)                    
-                        if rpt.bnColor=='B/N':
+                        worksheet.write(i, 0, rpt.x_studio_indice,neg)
+                        worksheet.write(i, 1, rpt.x_studio_locacin,neg)
+                        worksheet.write(i, 2, rpt.x_studio_modelo,neg)
+                        worksheet.write(i, 3, rpt.serie.name,neg)            
+                        worksheet.write(i, 4, rpt.x_studio_lectura_anterior_bn,neg)
+                        worksheet.write(i, 5, rpt.x_studio_lectura_anterior_color,neg)                        
+                        worksheet.write(i, 6, rpt.contadorMono,neg)
+                        worksheet.write(i, 7, rpt.contadorColor,neg)
+                        
+                        worksheet.write(i, 15, rpt.x_studio_ubicacin,neg)
+                        worksheet.write(i, 16, rpt.tablahtml,neg)                                                            
+                        worksheet.write(i, 8, ebn,neg)
+                        worksheet.write(i, 9, ec,neg)
+                        #worksheet.write(i, 10, ebn,neg)
+                        #worksheet.write(i, 11, ec,neg)
+                        eebn=ebn+eebn
+                        eec=ec+eec
+                        if rpt.x_studio_color_o_bn=='B/N':                            
                            if rd.bolsaBN<ebn:
                               ebn=ebn-rd.bolsaBN
                               eebn=ebn+eebn  
                               cal=float(rd.rentaMensual)+(ebn*rd.clickExcedenteBN)  
-                              worksheet.write(i, 12, cal)
+                              worksheet.write(i, 12, cal,neg)
                               iva=round(cal*.16,2)
-                              worksheet.write(i, 13,'$ '+str(iva) )
-                              worksheet.write(i, 14,'$ '+str(iva +cal) )  
+                              worksheet.write(i, 13,'$ '+str(iva) ,neg)
+                              worksheet.write(i, 14,'$ '+str(iva +cal) ,neg)  
                               ivatt=iva+ivatt  
                               totalsr=(float(rd.rentaMensual)+(ebn*rd.clickExcedenteBN))+totalsr
                               ttotal=(iva +cal)+ttotal
-                        if rpt.bnColor=='Color':
+                              _logger.info("totals si: " + str(totalsr))  
+                              _logger.info("tota si: " + str(ttotal))  
+                           else:                                                                                                         
+                              cal=float(rd.rentaMensual)
+                              worksheet.write(i, 12, cal,neg)
+                              iva=round(cal*.16,2)
+                              worksheet.write(i, 13,'$ '+str(iva) ,neg)
+                              worksheet.write(i, 14,'$ '+str(iva +cal) ,neg)  
+                              ivatt=iva+ivatt  
+                              totalsr=float(rd.rentaMensual)+totalsr
+                              ttotal=(iva +cal)+ttotal 
+                              _logger.info("totals elsebn: " + str(totalsr))  
+                              _logger.info("tota elsebn: " + str(ttotal))  
+                        if rpt.x_studio_color_o_bn=='Color':
                            if rd.bolsaBN<ebn:
                               ebn=ebn-rd.bolsaBN
                               eebn=ebn+eebn  
-                              ebnx=(ebn*rd.clickExcedenteBN)                                      
+                              ebnx=(ebn*rd.clickExcedenteBN)
+                              _logger.info("totals cnsi: " + str(totalsr))  
+                              _logger.info("tota cnsi: " + str(ttotal))     
                            if rd.bolsaColor<ec:
                               ec=ec-rd.bolsaColor
                               eec=ec+eec  
-                              call=float(rd.rentaMensual)+(ec*rd.clickExcedenteColor)+ebnx  
-                              worksheet.write(i, 12, call)
+                              call=float(rd.rentaMensual)+(ec*rd.clickExcedenteColor)+ebnx                                
+                              worksheet.write(i, 12, call,neg)
                               iva=round(call*.16,2)
                               ivatt=iva+ivatt
-                              worksheet.write(i, 13,'$ '+str(iva) )     
-                              worksheet.write(i, 14,'$ '+str(iva +call) )
+                              worksheet.write(i, 13,'$ '+str(iva) ,neg)     
+                              worksheet.write(i, 14,'$ '+str(iva +call) ,neg)
                               totalsr=call+totalsr
                               ttotal=(iva +call)+ttotal
+                              _logger.info("totals csi: " + str(totalsr))  
+                              _logger.info("tota csi: " + str(ttotal))  
+                           else:
+                              _logger.info("totals celse: " + str(totalsr))  
+                              _logger.info("tota celse: " + str(ttotal))   
+                              call=float(rd.rentaMensual)                                
+                              worksheet.write(i, 12, call,neg)
+                              iva=round(call*.16,2)
+                              ivatt=iva+ivatt
+                              worksheet.write(i, 13,'$ '+str(iva) ,neg)     
+                              worksheet.write(i, 14,'$ '+str(iva +call) ,neg)
+                              totalsr=call+totalsr
+                              ttotal=(iva +call)+ttotal
+                              _logger.info("totals celse: " + str(totalsr))  
+                              _logger.info("tota celse: " + str(ttotal))  
+                              
+                        _logger.info("totals f: " + str(totalsr))  
+                        _logger.info("tota fl: " + str(ttotal))  
+                                                 
                         i=i+1   
                     if rd.nombreAnte=='Costo por página procesada BN o color':
-                        worksheet.write(i, 0, rpt.indice)
-                        worksheet.write(i, 1, rpt.locacion)
-                        worksheet.write(i, 2, rpt.modelo)
-                        worksheet.write(i, 3, rpt.serieEquipo)            
-                        worksheet.write(i, 4, rpt.lecturaAnteriorBN)
-                        worksheet.write(i, 5, rpt.lecturaAnteriorColor)                        
-                        worksheet.write(i, 6, rpt.ultimaLecturaBN)
-                        worksheet.write(i, 7, rpt.ultimaLecturaColor)                                        
-                        worksheet.write(i, 8, ebn)
-                        worksheet.write(i, 9, ec)
-                        worksheet.write(i, 10, ebn)
-                        worksheet.write(i, 11, ec)
-                        worksheet.write(i, 15, rpt.ubi)                                        
-                        if rpt.bnColor=='B/N':                                    
+                        worksheet.write(i, 0, rpt.x_studio_indice,neg)
+                        worksheet.write(i, 1, rpt.x_studio_locacin,neg)
+                        worksheet.write(i, 2, rpt.x_studio_modelo,neg)
+                        worksheet.write(i, 3, rpt.serie.name,neg)            
+                        worksheet.write(i, 4, rpt.x_studio_lectura_anterior_bn,neg)
+                        worksheet.write(i, 5, rpt.x_studio_lectura_anterior_color,neg)                        
+                        worksheet.write(i, 6, rpt.contadorMono,neg)
+                        worksheet.write(i, 7, rpt.contadorColor,neg)
+                        worksheet.write(i, 8, ebn,neg)
+                        worksheet.write(i, 9, ec,neg)
+                        worksheet.write(i, 10, ebn,neg)
+                        worksheet.write(i, 11, ec,neg)
+                        worksheet.write(i, 15, rpt.x_studio_ubicacin,neg)
+                        worksheet.write(i, 16, rpt.tablahtml,neg)                                                            
+                        if rpt.x_studio_color_o_bn=='B/N':                                    
                            bs= (ebn*rd.clickExcedenteBN)
                            eebn=ebn+eebn
                            worksheet.write(i, 12, bs)
                            iva=round(bs*.16,2)
                            ivatt=iva+ivatt
-                           worksheet.write(i, 13,'$ '+str(iva) )
-                           worksheet.write(i, 14,'$ '+str(iva +bs) )
+                           worksheet.write(i, 13,'$ '+str(iva) ,neg)
+                           worksheet.write(i, 14,'$ '+str(iva +bs) ,neg)
                            totalsr=bs+totalsr
                            ttotal=(iva +bs)+ttotal                        
-                        if rpt.bnColor=='Color':
+                        if rpt.x_studio_color_o_bn=='Color':
                            bsc=(ec*rd.clickExcedenteColor)+(ebn*rd.clickExcedenteBN)
                            eec=ec+eec
-                           worksheet.write(i, 12, bsc) 
+                           eebn=ebn+eebn 
+                           worksheet.write(i, 12, bsc,neg) 
                            iva=round(bsc*.16,2)
                            ivatt=iva+ivatt
-                           worksheet.write(i, 13,'$ '+str(iva) ) 
-                           worksheet.write(i, 14,'$ '+str(iva +bsc) )
+                           worksheet.write(i, 13,'$ '+str(iva) ,neg) 
+                           worksheet.write(i, 14,'$ '+str(iva +bsc) ,neg)
                            totalsr=bsc+totalsr
                            ttotal=(iva +bsc)+ttotal                                                                                                                  
                         i=i+1            
                     if rd.nombreAnte=='Renta base + costo de página procesada BN o color':
-                        worksheet.write(i, 0, rpt.indice)
-                        worksheet.write(i, 1, rpt.locacion)
-                        worksheet.write(i, 2, rpt.modelo)
-                        worksheet.write(i, 3, rpt.serieEquipo)            
-                        worksheet.write(i, 4, rpt.lecturaAnteriorBN)
-                        worksheet.write(i, 5, rpt.lecturaAnteriorColor)                        
-                        worksheet.write(i, 6, rpt.ultimaLecturaBN)
-                        worksheet.write(i, 7, rpt.ultimaLecturaColor)                                        
-                        worksheet.write(i, 8, ebn)
-                        worksheet.write(i, 9, ec)
-                        worksheet.write(i, 10, ebn)
-                        worksheet.write(i, 11, ec)
-                        worksheet.write(i, 15, rpt.ubi)                                        
+                        worksheet.write(i, 0, rpt.x_studio_indice,neg)
+                        worksheet.write(i, 1, rpt.x_studio_locacin,neg)
+                        worksheet.write(i, 2, rpt.x_studio_modelo,neg)
+                        worksheet.write(i, 3, rpt.serie.name,neg)            
+                        worksheet.write(i, 4, rpt.x_studio_lectura_anterior_bn,neg)
+                        worksheet.write(i, 5, rpt.x_studio_lectura_anterior_color,neg)                        
+                        worksheet.write(i, 6, rpt.contadorMono,neg)
+                        worksheet.write(i, 7, rpt.contadorColor,neg)
+                        worksheet.write(i, 8, ebn,neg)
+                        worksheet.write(i, 9, ec,neg)
+                        worksheet.write(i, 10, ebn,neg)
+                        worksheet.write(i, 11, ec,neg)
+                        worksheet.write(i, 15, rpt.x_studio_ubicacin,neg)
+                        worksheet.write(i, 16, rpt.tablahtml,neg)                                                            
                     
-                        if rpt.bnColor=='B/N':
+                        if rpt.x_studio_color_o_bn=='B/N':
                            bs= float(rd.rentaMensual)+(ebn*rd.clickExcedenteBN)
                            eebn=ebn+eebn
-                           worksheet.write(i, 12, bs)
+                           worksheet.write(i, 12, bs,neg)
                            iva=round(bs*.16,2)
                            ivatt=iva+ivatt
-                           worksheet.write(i, 13,'$ '+str(iva) )
-                           worksheet.write(i, 14,'$ '+str(iva +bs) )
+                           worksheet.write(i, 13,'$ '+str(iva),neg )
+                           worksheet.write(i, 14,'$ '+str(iva +bs) ,neg)
                            totalsr=bs+totalsr
                            ttotal=(iva +bs)+ttotal
-                        if rpt.bnColor=='Color':
+                        if rpt.x_studio_color_o_bn=='Color':
                            bsc=float(rd.rentaMensual)+(ec*rd.clickExcedenteColor)+(ebn*rd.clickExcedenteBN)
                            eec=ec+eec
-                           worksheet.write(i, 12, bsc) 
+                           worksheet.write(i, 12, bsc,neg) 
                            iva=round(bsc*.16,2)
                            ivatt=iva+ivatt
-                           worksheet.write(i, 13,'$ '+str(iva) ) 
-                           worksheet.write(i, 14,'$ '+str(iva +bsc) )
+                           worksheet.write(i, 13,'$ '+str(iva) ,neg) 
+                           worksheet.write(i, 14,'$ '+str(iva +bsc) ,neg)
                            totalsr=bsc+totalsr
                            ttotal=(iva +bsc)+ttotal                                                                               
                         i=i+1
                      
         for rd in re:            
             if rd.nombreAnte=='SERVICIO DE PCOUNTER' or rd.nombreAnte=='SERVICIO DE PCOUNTER1' or rd.nombreAnte=='ADMINISTRACION DE DOCUMENTOS CON PCOUNTER' or rd.nombreAnte=='SERVICIO DE MANTENIMIENTO DE PCOUNTER' or rd.nombreAnte=='SERVICIO DE MANTENIMIENTO PCOUNTER' or rd.nombreAnte=='RENTA DE LICENCIAMIENTO PCOUNTER':
-               worksheet.write(i, 0, rd.nombreAnte)
-               worksheet.write(i, 12, '$'+rd.rentaMensual)
-               worksheet.write(i, 13, '$'+str(round(float(rd.rentaMensual)*.16,2)))       
-               worksheet.write(i, 14, '$'+str(round(float(rd.rentaMensual)*.16,2)+float(rd.rentaMensual)))
+               worksheet.write(i, 0, rd.nombreAnte,neg)
+               worksheet.write(i, 12, '$'+rd.rentaMensual,neg)
+               worksheet.write(i, 13, '$'+str(round(float(rd.rentaMensual)*.16,2)),neg)       
+               worksheet.write(i, 14, '$'+str(round(float(rd.rentaMensual)*.16,2)+float(rd.rentaMensual)),neg)
                totalsr=float(rd.rentaMensual)+totalsr 
                ivatt=round(float(rd.rentaMensual)*.16,2)+ivatt 
                ttotal=(round(float(rd.rentaMensual)*.16,2)+float(rd.rentaMensual))+ttotal 
             if rd.nombreAnte=='SERVICIO DE TFS' or rd.nombreAnte=='OPERADOR TFS' or rd.nombreAnte=='TFS' or rd.nombreAnte=='SERVICIO DE TFS ' :
-               worksheet.write(i, 0, rd.nombreAnte)
+               worksheet.write(i, 0, rd.nombreAnte,neg)
                tfs=float(rd.rentaMensual)*int(rd.cantidad)
-               worksheet.write(i, 12, '$'+str(tfs))
-               worksheet.write(i, 13, '$'+str(round(tfs*.16,2)))       
-               worksheet.write(i, 14, '$'+str(round(tfs*.16,2)+tfs))
+               worksheet.write(i, 12, '$'+str(tfs),neg)
+               worksheet.write(i, 13, '$'+str(round(tfs*.16,2)),neg)       
+               worksheet.write(i, 14, '$'+str(round(tfs*.16,2)+tfs),neg)
                totalsr = tfs + totalsr                                
                ivatt=round(float(tfs)*.16,2)+ivatt 
                ttotal=round(tfs*.16,2)+tfs+ttotal                 
             if rd.nombreAnte=='SERVICIO DE MANTENIMIENTO':                        
-               worksheet.write(i, 0, rd.nombreAnte)
-               worksheet.write(i, 12, '$'+rd.rentaMensual)
-               worksheet.write(i, 13, '$'+str(round(float(rd.rentaMensual)*.16,2)))       
-               worksheet.write(i, 14, '$'+str(round(float(rd.rentaMensual)*.16,2)+float(rd.rentaMensual)))
+               worksheet.write(i, 0, rd.nombreAnte,neg)
+               worksheet.write(i, 12, '$'+rd.rentaMensual,neg)
+               worksheet.write(i, 13, '$'+str(round(float(rd.rentaMensual)*.16,2)),neg)       
+               worksheet.write(i, 14, '$'+str(round(float(rd.rentaMensual)*.16,2)+float(rd.rentaMensual)),neg)
                totalsr=float(rd.rentaMensual)+totalsr                 
                ivatt=round(float(rd.rentaMensual)*.16,2)+ivatt 
                ttotal=(round(float(rd.rentaMensual)*.16,2)+float(rd.rentaMensual))+ttotal  
             if rd.nombreAnte=='SERVICIO DE ADMINISTRADOR KM NET MANAGER':
-               worksheet.write(i, 0, rd.nombreAnte)
-               worksheet.write(i, 12, '$'+rd.rentaMensual)
-               worksheet.write(i, 13, '$'+str(round(float(rd.rentaMensual)*.16,2)))       
-               worksheet.write(i, 14, '$'+str(round(float(rd.rentaMensual)*.16,2)+float(rd.rentaMensual)))
+               worksheet.write(i, 0, rd.nombreAnte,neg)
+               worksheet.write(i, 12, '$'+rd.rentaMensual,neg)
+               worksheet.write(i, 13, '$'+str(round(float(rd.rentaMensual)*.16,2)),neg)       
+               worksheet.write(i, 14, '$'+str(round(float(rd.rentaMensual)*.16,2)+float(rd.rentaMensual)),neg)
                totalsr=float(rd.rentaMensual)+totalsr                                
                ivatt=round(float(rd.rentaMensual)*.16,2)+ivatt 
                ttotal=(round(float(rd.rentaMensual)*.16,2)+float(rd.rentaMensual))+ttotal
             if rd.nombreAnte=='PAGINAS IMPRESAS EN BN ':
                importe=float(rd.rentaMensual)*int(rd.cantidad)
-               worksheet.write(i, 0, rd.nombreAnte)
-               worksheet.write(i, 12, '$'+str(importe))
-               worksheet.write(i, 13, '$'+str(round(float(importe)*.16,2)))       
-               worksheet.write(i, 14, '$'+str(round(float(importe)*.16,2)+float(importe)))
+               worksheet.write(i, 0, rd.nombreAnte,neg)
+               worksheet.write(i, 12, '$'+str(importe),neg)
+               worksheet.write(i, 13, '$'+str(round(float(importe)*.16,2)),neg)       
+               worksheet.write(i, 14, '$'+str(round(float(importe)*.16,2)+float(importe)),neg)
                totalsr=importe+totalsr                 
                ivatt=round(float(importe)*.16,2)+ivatt                                
                ttotal=(round(float(importe)*.16,2)+float(importe))+ttotal
             if rd.nombreAnte=='RENTA MENSUAL DE LICENCIA  7 EMBEDED' or rd.nombreAnte=='RENTA MENSUAL DE LICENCIA  14 EMBEDED' or  rd.nombreAnte=='RENTA MENSUAL DE LICENCIA  2 EMBEDED':                        
                worksheet.write(i, 0, rd.nombreAnte)
                tfs=float(rd.rentaMensual)*int(rd.cantidad)
-               worksheet.write(i, 12, '$'+str(tfs))
-               worksheet.write(i, 13, '$'+str(round(tfs*.16,2)))       
-               worksheet.write(i, 14, '$'+str(round(tfs*.16,2)+tfs))
+               worksheet.write(i, 12, '$'+str(tfs),neg)
+               worksheet.write(i, 13, '$'+str(round(tfs*.16,2)),neg)       
+               worksheet.write(i, 14, '$'+str(round(tfs*.16,2)+tfs),neg)
                totalsr = tfs + totalsr                                
                ivatt=round(float(tfs)*.16,2)+ivatt 
                ttotal=round(tfs*.16,2)+tfs+ttotal 
@@ -909,11 +894,11 @@ class contadores(models.Model):
                ivatt=round(float(rd.rentaMensual)*.16,2)+ivatt
                ttotal=round(float(rd.rentaMensual)*.16,2) +float(rd.rentaMensual)+ttotal
         """            
-        worksheet.write(i, 10, eebn)
-        worksheet.write(i, 11, eec)                
-        worksheet.write(i, 12, '$'+str(totalsr))        
-        worksheet.write(i, 13, '$'+str(ivatt))        
-        worksheet.write(i, 14, '$'+str(round(ttotal,2)))        
+        worksheet.write(i, 10, eebn,neg)
+        worksheet.write(i, 11, eec,neg)                
+        worksheet.write(i, 12, '$'+str(round(totalsr,2)),neg)        
+        worksheet.write(i, 13, '$'+str(round(ivatt,2)),neg)        
+        worksheet.write(i, 14, '$'+str(round(ttotal,2)),neg)                
         workbook.close()
         data = open('Example2.xlsx', 'rb').read()
         base64_encoded = base64.b64encode(data).decode('UTF-8')
@@ -927,7 +912,8 @@ class contadores(models.Model):
     
     @api.multi
     def carga_contadores(self):
-        ssc=self.env['contadores.contadores'].search([('cliente', '=', self.cliente.id),('mes', '=', self.mes),('anio', '=', self.anio),('id', '!=', self.id)],limit=1)        
+        #ssc=self.env['contadores.contadores'].search([('cliente', '=', self.cliente.id),('mes', '=', self.mes),('anio', '=', self.anio),('id', '!=', self.id)],limit=1)        
+        """
         if ssc:
            self.sudo().unlink()                   
            url="https://gnsys-corp.odoo.com/web?#id="+str(ssc.id)+"&action=1129&model=contadores.contadores&view_type=form&menu_id=406"
@@ -938,6 +924,8 @@ class contadores(models.Model):
                   'target'   : 'new',
                   'url'      : url
                }      
+        """
+        
         if self.anio and not self.csvD:
             perido=str(self.anio)+'-'+str(self.mes)
             periodoAnterior=''
@@ -956,7 +944,13 @@ class contadores(models.Model):
                anioA=str(self.anio)              
             periodoAnterior= anioA+'-'+mesaA   
             
-            asd=self.env['stock.production.lot'].search([('x_studio_ubicaciontest','=',self.cliente.name)])
+            
+            asdc=self.env['contrato'].search([('cliente','=',self.cliente.id)]).ids
+            asds=self.env['servicios'].search([('contrato','in',asdc)]).ids
+            asd=self.env['stock.production.lot'].search([('servicio','in',asds)])
+            
+            #raise exceptions.ValidationError("Nada que generar "+str(asd))                                     
+            
             #raise Warning('notihng to show xD '+str(self.cliente.name))
             #id=int(self.id)            
             sc=self.env['contadores.contadores'].search([('id', '=', self.id)])
@@ -966,46 +960,55 @@ class contadores(models.Model):
                 currentP=self.env['dcas.dcas'].search([('serie','=',a.id),('x_studio_field_no6Rb', '=', perido)],order='x_studio_fecha desc',limit=1)
                 currentPA=self.env['dcas.dcas'].search([('serie','=',a.id),('x_studio_field_no6Rb', '=', periodoAnterior)],order='x_studio_fecha desc',limit=1)
                 #raise exceptions.ValidationError("q onda xd"+str(self.id)+' id  '+str(id))                     
-                if not currentP:  
-                   rr=self.env['contadores.contadores.detalle'].create({'contadores': self.id
-                                                       , 'producto': a.id
-                                                       , 'serieEquipo': a.name
-                                                       , 'locacion':a.x_studio_locacion_recortada
-                                                       , 'ubi':a.x_studio_centro_de_costos
-                                                       , 'periodo':perido                                                              
-                                                       , 'ultimaLecturaBN': currentP.contadorMono
-                                                       , 'lecturaAnteriorBN': currentPA.contadorMono
+                if not currentP:
+                   if a.servicio.id:
+                      rrs=self.env['dcas.dcas'].create({'contador_id': self.id
+                                                       , 'x_studio_producto': a.id
+                                                       , 'serie': a.id
+                                                       , 'x_studio_locacin':a.x_studio_locacion_recortada
+                                                       , 'x_studio_ubicacin':a.x_studio_centro_de_costos
+                                                       #, 'x_studio_periodo':str(self.anio)+ '-'+str(valores[int(self.mes)-1][1])                                                              
+                                                       , 'x_studio_fecha_texto_anio':str(valores[int(self.mes)-1][1])+' de '+ str(self.anio)
+                                                       ,'x_studio_field_no6Rb':str(self.anio)+'-'+str(self.mes)
+                                                       , 'contadorMono': currentP.contadorMono
+                                                       , 'x_studio_lectura_anterior_bn': currentPA.contadorMono
                                                        #, 'paginasProcesadasBN': bnp                                                   
-                                                       , 'periodoA':periodoAnterior            
-                                                       , 'ultimaLecturaColor': currentP.contadorColor
-                                                       , 'lecturaAnteriorColor': currentPA.contadorColor                                                             
+                                                       , 'x_studio_periodo_anterior':str(valores[int(mesaA)-1][1])            + ' de '+ str(anioA)
+                                                       , 'contadorColor': currentP.contadorColor
+                                                       , 'x_studio_lectura_anterior_color': currentPA.contadorColor                                                             
                                                        #, 'paginasProcesadasColor': colorp
-                                                       , 'bnColor':a.x_studio_color_bn
-                                                       , 'indice': i
-                                                       , 'modelo':a.product_id.name
-                                                       , 'servicio':a.servicio.id
+                                                       , 'x_studio_color_o_bn':a.x_studio_color_bn
+                                                       , 'x_studio_indice': i
+                                                       , 'x_studio_modelo':a.product_id.name
+                                                       , 'x_studio_servicio':a.servicio.id
                                                        })
-                else:                   
-                   rr=self.env['contadores.contadores.detalle'].create({'contadores': self.id
-                                                       , 'producto': a.id
-                                                       , 'serieEquipo': a.name
-                                                       , 'locacion':a.x_studio_locacion_recortada
-                                                       , 'ubi':a.x_studio_centro_de_costos
-                                                       , 'periodo':perido                                                              
-                                                       , 'ultimaLecturaBN': currentP.contadorMono
-                                                       , 'lecturaAnteriorBN': currentPA.contadorMono
+                
+                else:
+                   if a.servicio.id :
+                      currentP.write({'contador_id': self.id
+                                                       , 'x_studio_producto': a.id
+                                                       , 'serie': a.id
+                                                       , 'x_studio_locacin':a.x_studio_locacion_recortada
+                                                       , 'x_studio_ubicacin':a.x_studio_centro_de_costos
+                                                       , 'x_studio_fecha_texto_anio':str(valores[int(self.mes)-1][1])+' de '+ str(self.anio)
+                                                       , 'x_studio_field_no6Rb':str(self.anio)+'-'+str(self.mes)
+                                                       #, 'x_studio_periodo':str(self.anio)+ '-'+str(valores[int(self.mes)-1][1])                                                              
+                                                       , 'contadorMono': currentP.contadorMono
+                                                       , 'x_studio_lectura_anterior_bn': currentPA.contadorMono
                                                        #, 'paginasProcesadasBN': bnp                                                   
-                                                       , 'periodoA':periodoAnterior            
-                                                       , 'ultimaLecturaColor': currentP.contadorColor
-                                                       , 'lecturaAnteriorColor': currentPA.contadorColor                                                             
+                                                       , 'x_studio_periodo_anterior':str(valores[int(mesaA)-1][1])+ ' de '+   str(anioA)          
+                                                       , 'contadorColor': currentP.contadorColor
+                                                       , 'x_studio_lectura_anterior_color': currentPA.contadorColor                                                             
                                                        #, 'paginasProcesadasColor': colorp
-                                                       , 'bnColor':a.x_studio_color_bn
-                                                       , 'indice': i
-                                                       , 'modelo':a.product_id.name
-                                                       , 'servicio':a.servicio.id
-                                                       , 'desc': 'capturado'
-                                                       , 'capturar':True  
-                                                       }) 
+                                                       , 'x_studio_color_o_bn':a.x_studio_color_bn
+                                                       , 'x_studio_indice': i
+                                                       , 'x_studio_modelo':a.product_id.name
+                                                       , 'x_studio_servicio':a.servicio.id
+                                                        , 'x_studio_descripcin': 'capturado'
+                                                       , 'x_studio_capturar':True
+                                                       #,'id' : currentP.id
+                                                       })
+                
                 i=1+i                
         if self.csvD:           
            with open("a1.csv","w") as f:
@@ -1027,10 +1030,10 @@ class contadores(models.Model):
            for t in a:                              
                 for row in lista:
                     if t.name==row[3]:
-                        date = row[1]
-                        fecha = date.split('-')[0].split('/')
-                        mes=fecha[1]
-                        anio=fecha[2]
+                        #date = row[1]
+                        #fecha = date.split('-')[0].split('/')
+                        mes=(self.mes)
+                        anio=str(self.anio)
                         i=0
                         for f in valores:                
                             if f[0]==str(mes):                
@@ -1048,10 +1051,7 @@ class contadores(models.Model):
                             if f[0]==str(mes):                
                                mesaC=str(valores[i][0])
                             i=i+1                  
-                        periodo= anio+'-'+mesaC
-                        self.anio=anio
-                        self.mes=mes
-
+                        periodo= anio+'-'+mesaC                        
                         if row[7]=='':
                           bn=0
                         else:
@@ -1067,6 +1067,7 @@ class contadores(models.Model):
                                                  ,'x_studio_field_no6Rb':periodo
                                                  ,'x_studio_fecha_texto_anio':str(valores[int(self.mes[1])-1][1])+' de '+str(self.anio)
                                                  ,'x_studio_descripcion':'cvs'
+                                                 ,'x_studio_cliente':str(row[0])
                                                 })                            
            self.env['dcas.dcas'].create(series)      
                         

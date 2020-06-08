@@ -1,29 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="action_picking_purchase" model="ir.actions.act_window">
-        <field name="name">Validacion</field>
-        <field name="res_model">helpdesk.mass</field>
-        <field name="view_type">form</field>
-        <field name="view_mode">form</field>
-        <field name="target">new</field>
-        <field name="binding_model_id" ref="helpdesk.model_helpdesk_ticket" />
-    </record>
-    <record id="view_stock_pickings_compras_form" model="ir.ui.view">
-        <field name="model">helpdesk.mass</field>
-        <field name="arch" type="xml">
-            <form string="Mass Action for the selected stock picking">
-                <h2 >Se Verificaran las Tickets Selecionados</h2>
-
-                <footer>
-                    <button name="confirmar" string="Apply" type="object" class="oe_highlight"/>
-                    <button string="Cancel" class="oe_link" special="cancel"/>
-                </footer>
-            </form>
-        </field>
-    </record>
-
-
-
 
     <record id="view_helpdesk_comentario" model="ir.ui.view">
         <field name="model">helpdesk.comentario</field>
@@ -436,11 +412,11 @@
                         <page string = 'Tickets'>
                             <field name='historicoTickets'>
                                 <tree default_order="create_date desc"><!--x_studio_fecha-->
+                                    <field name='x_studio_tickett' attrs='{"domain": [["fuente","=","Equipo"]]}'/>
                                     <field name='create_date' />
                                     <field name='fuente' />
-                                    <field name='x_studio_tickett' attrs='{"domain": [["fuente","=","Equipo"]]}'/>
-                                    <field name='x_studio_fecha' />
-                                    <field name='hTicketSerie' />
+                                    <field name='x_studio_fecha_techra' />
+                                    <field name='serie' />
                                     <field name='hTicketCliente' />
                                     <field name='hTicketAreaDeAtencion' />
                                     <field name='hTicketUbicacion' />
@@ -451,6 +427,14 @@
                                     <field name='hTicketHojaDeEstado' />
                                     <field name='hTicketUltimaNota' />
                                     <field name='hTicketFechaNota' />
+
+                                    <!--
+                                    <field name='x_studio_fecha' />
+                                    <field name='hTicketSerie' />
+                                    -->
+                                    
+                                    
+                                    
                                     
                                     <!--
                                     <field name='x_studio_fecha' />
@@ -574,6 +558,251 @@
             </form>
         </field>
     </record>
+
+
+
+
+    <record id="action_validar_toner" model="ir.actions.act_window">
+        <field name="name">Crear y validar toner</field>
+        <field name="res_model">helpdesk.validar.toner</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="groups">studio_customization.validar_toner_d61119fe-f670-4dd0-9dee-6d2bfdd1824e</field>
+        <field name="binding_model_id" ref="helpdesk.model_helpdesk_ticket" />
+    </record>
+    <record id="view_validar_toner_form" model="ir.ui.view">
+        <field name="model">helpdesk.validar.toner</field>
+        <field name="arch" type="xml">
+            <form string="Mass Action for the selected ticket toner">
+                <h2>
+                    Se crearan hy validaran las solicitudes de toner de los tickets seleccionados
+                </h2>
+                <footer>
+                    <button name="confirmar" string="Crear y validar solicitudes" type="object" class="oe_highlight"/>
+                    <button string="Cerrar" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <record id="view_helpdesk_detalle_toner" model="ir.ui.view">
+        <field name="model">helpdesk.datos.toner</field>
+        <field name="arch" type="xml">
+            <form string="Detalle tóner">
+                <group class='text-center'>
+                    <h2>
+                        <field name="serie" string='' readonly="1"/>
+                    </h2>
+                </group>
+                <group>
+                    <notebook>
+                        <page string = 'Pedido'>
+                            <field name='series' domain="['|', ('active', '=', 0), ('active', '=', 1)]" >
+                                <tree>
+                                    <field name='active' invisible='1'/>
+                                    <field name='serie' />
+                                    <field name='tablahtml' widget='html'/>
+                                </tree>
+                                <form>
+                                    <field name='serie'/>
+                                </form>
+                            </field>
+                            <group>
+                                <group>
+                                    <field name='solicitud' />
+                                </group>
+                                <group>
+                                    <field name='corte' />
+                                </group>
+                            </group>
+                        </page>
+                        <page string = 'Cliente'>
+                            <group string='Datos cliente'>
+                                <group>
+                                    <field name='cliente' />
+                                    <field name='tipoCliente' />
+                                    <field name='localidad' />
+                                </group>
+                                <group>
+                                    <field name='zonaLocalidad' />
+                                    <field name='localidadContacto' />
+                                    <field name='estadoLocalidad' />
+                                </group>
+                                <group>
+                                    <field name='telefonoContactoLocalidad' />
+                                    <field name='movilContactoLocalidad' />
+                                    <field name='correoContactoLocalidad' />
+                                </group>
+                                <group>
+                                    <field name='direccionLocalidad' widget='html'/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string = 'Datos del ticket'>
+                            <group>
+                                <group>
+                                    <field name='creadoEl' />
+                                    <field name='areaAtencion' />
+                                    <field name='ejecutivo' />
+                                    <field name='encargadoArea' />
+                                </group>
+                                <group>
+                                    <field name='diasAtraso' />
+                                    <field name='prioridad' />
+                                    <field name='zona' />
+                                    <field name='zonaEstados' />
+                                </group>
+                                <group>
+                                    <field name='numeroTicketCliente' />
+                                    <field name='numeroTicketDistribuidor' />
+                                    <field name='numeroTicketGuia' />
+                                </group>
+                                <group>
+                                    <field name='comentarioLocalidad' />
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </group>
+                <footer>
+                    <button special="cancel" string="Cerrar" class="oe_highlight" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+
+
+
+
+
+
+    <record id="view_helpdesk_bitacora_toner" model="ir.ui.view">
+        <field name="model">helpdesk.detalle.serie.toner</field>
+        <field name="arch" type="xml">
+            <form string="Detalle serie">
+                <group class='text-center'>
+                    <h2>
+                        <field name="serie" string='' readonly="1"/>
+                    </h2>
+                </group>
+                <group>
+                    <group>
+                        <field name="series" readonly="0" force_save='1' options="{'no_create_edit': True, 'no_create': True, 'no_edit': True}" />
+                    </group>
+                    <group>
+                        <field name="filtro" />
+                        <field name="dominio" readonly="1" force_save='1' invisible='1'/>
+                    </group>
+                </group>
+                <group>
+                    <notebook>
+                        <page string = 'Tickets'>
+                            <field name='historicoTickets' readonly="1" force_save='1'>
+                                <tree default_order="create_date desc"><!--x_studio_fecha-->
+                                    <field name='x_studio_tickett' attrs='{"domain": [["fuente","=","Equipo"]]}'/>
+                                    <field name='create_date' />
+                                    <field name='fuente' />
+                                    <field name='x_studio_fecha_techra' />
+                                    <field name='serie' />
+                                    <field name='hTicketCliente' />
+                                    <field name='hTicketAreaDeAtencion' />
+                                    <field name='hTicketUbicacion' />
+                                    <field name='hTicketFalla' />
+                                    <field name='hTicketUltimaEtapaTicket' />
+                                    <field name='contadorMono' />
+                                    <field name='contadorColor' />
+                                    <field name='hTicketHojaDeEstado' />
+                                    <field name='hTicketUltimaNota' />
+                                    <field name='hTicketFechaNota' />
+
+                                    <!--
+                                    <field name='x_studio_fecha' />
+                                    <field name='hTicketSerie' />
+                                    -->
+                                    
+                                    
+                                    
+                                    
+                                    <!--
+                                    <field name='x_studio_fecha' />
+                                    <field name='x_studio_field_no6Rb' />
+                                    <field name='x_studio_texto_anio' />
+                                    
+                                    <field name='' />
+                                    -->
+                                </tree>
+                                <form>
+                                </form>
+                            </field>
+                        </page>
+                        <page string = 'Lecturas'>
+                            <field name='lecturas' readonly="1" force_save='1'/>
+                        </page>
+                        <page string = 'Tóner'>
+                            <field name='toner' readonly="1" force_save='1'/>
+                        </page>
+                        <page string = 'Historico de componentes'>
+                            <field name='historicoDeComponentes' readonly="1" force_save='1'/>
+                        </page>
+                        <page string = 'Movimientos'>
+                            <field name='movimientos' readonly="1" force_save='1'/>
+                        </page>
+                    </notebook>
+                </group>
+                <footer>
+                    <button special="cancel" string="Cerrar" class="oe_highlight" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 </odoo>
