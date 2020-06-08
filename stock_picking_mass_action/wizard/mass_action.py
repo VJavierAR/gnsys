@@ -105,8 +105,8 @@ class StockPickingMassAction(TransientModel):
 
     def mass_action(self):
         self.ensure_one()
-        picking_ids.sudo().action_confirm()
-        picking_ids.sudo().action_assign()
+        self.picking_ids.sudo().action_confirm()
+        self.picking_ids.sudo().action_assign()
         if self.transfer:
             assigned_picking_lst = self.picking_ids.\
                 filtered(lambda x: x.state == 'assigned').\
@@ -168,7 +168,7 @@ class StockPickingMassAction(TransientModel):
                         backorder_pick.action_cancel()
             if(len(assigned_picking_lst2)>0):
                 return self.env.ref('stock_picking_mass_action.report_custom').report_action(assigned_picking_lst2)
-                
+
     @api.multi
     def vales(self):
         assigned_picking_lst2 = self.picking_ids.\
