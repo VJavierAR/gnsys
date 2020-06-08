@@ -83,11 +83,21 @@ class compras(models.Model):
                 tree = minidom.parse(H)
                 #_logger.info(str(tree.getroot()))
                 if(mimetype=='image/svg+xml'):
+                    arreglo=[]
                     con=tree.getElementsByTagName("cfdi:Concepto")
                     for c in con:
-                        _logger.info(str(c.getAttribute("NoIdentificacion")))                
-                        _logger.info(str(c.getAttribute("Cantidad")))
-                        _logger.info(str(c.getAttribute("ValorUnitario"))) 
+                        noparte=str(c.getAttribute("NoIdentificacion"))                
+                        cantidad=float(c.getAttribute("Cantidad"))
+                        precio=float(c.getAttribute("ValorUnitario"))
+                        if(noparte!=None):
+                            template=self.env['product.template'].search([('default_code','=',noparte)])
+                            productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
+                        product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':cantidad,'price_unit':precioCdesc,'taxes_id':[10],'name':productid.description if(productid.description) else '/'}
+                        if(noparte==None):
+                            product['product_id']=1
+                            product['product_uom']=6
+                        arreglo.append(product) 
+
                 # if(mimetype=='application/pdf'):
                 #     self.x_studio_pdf=self.archivo
                 #     myCmd = 'pdftotext -fixed 5 hola.pdf test3.txt'
