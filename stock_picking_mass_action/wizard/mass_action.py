@@ -102,7 +102,8 @@ class StockPickingMassAction(TransientModel):
             #distribucion
             if(s.picking_type_id.id==29302):
                 self.check=4
-def mass_action(self):
+
+    def mass_action(self):
         self.ensure_one()
         picking_ids.sudo().action_confirm()
         picking_ids.sudo().action_assign()
@@ -167,7 +168,7 @@ def mass_action(self):
                         backorder_pick.action_cancel()
             if(len(assigned_picking_lst2)>0):
                 return self.env.ref('stock_picking_mass_action.report_custom').report_action(assigned_picking_lst2)
-
+                
     @api.multi
     def vales(self):
         assigned_picking_lst2 = self.picking_ids.\
