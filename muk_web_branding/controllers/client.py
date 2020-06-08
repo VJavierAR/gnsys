@@ -56,6 +56,14 @@ class WebClient(WebClient):
 
     @http.route('/web/webclient/compras', type='http', auth="none", cors="*")
     def qweb(self, mods=None, db=None):
+        files = [f[0] for f in manifest_glob('qweb', addons=mods, db=db)]
+        last_modified = get_last_modified(files)
+        if request.httprequest.if_modified_since and request.httprequest.if_modified_since >= last_modified:
+            return werkzeug.wrappers.Response(status=304)
+        content, checksum = concat_xml(files)
+        if request.context and request.context.get('lang') == 'en_US':
+            if request.session.db and request.env:
+                content =  request.env['muk_branding.debranding'].debrand(content)
         return make_conditional(
             request.make_response("Hola mundo", [('Content-Type', 'text')]), last_modified, checksum
         )
