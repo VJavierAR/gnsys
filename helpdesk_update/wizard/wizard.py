@@ -2328,6 +2328,24 @@ class helpdesk_crearToner(TransientModel):
                         ss = self.env.cr.execute(query)
                         self.env.cr.commit()
 
+            wiz = ''
+            mensajeTitulo = "Ticket generado!!!"
+            #mensajeCuerpo = "Se creo el ticket '" + str(ticket.id) + "' sin número de serie para cliente " + self.cliente + " con localidad " + self.localidad + "\n\n"
+            mensajeCuerpo = "Se creo el ticket '" + str(ticket.id) + "' con el número de serie " + self.dca[0].serie.name + ".\n\n"
+            wiz = self.env['helpdesk.alerta.series'].create({'ticket_id': ticket.id, 'mensaje': mensajeCuerpo})
+            view = self.env.ref('helpdesk_update.view_helpdesk_alerta_series')
+            return {
+                      'name': _(mensajeTitulo),
+                      'type': 'ir.actions.act_window',
+                      'view_type': 'form',
+                      'view_mode': 'form',
+                      'res_model': 'helpdesk.alerta.series',
+                      'views': [(view.id, 'form')],
+                      'view_id': view.id,
+                      'target': 'new',
+                      'res_id': wiz.id,
+                      'context': self.env.context,
+                    }
         #else:
             #NO HAY DCA POR LO TANTO NO SE GENERA TICKET
 
