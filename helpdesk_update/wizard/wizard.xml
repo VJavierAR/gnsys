@@ -796,7 +796,7 @@
             <form string="Crear">
                 <group>
                     <group string='Buscar'>
-                        <field name='serie' widget='many2many_tags' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" force_save = "1"/>
+                        <!--<field name='serie' widget='many2many_tags' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" force_save = "1"/>-->
 
                         <field name='dca'>
                             <form>
