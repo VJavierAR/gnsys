@@ -100,11 +100,13 @@ class compras(models.Model):
                             product['product_id']=productid.id
                             product['name']=description
                             product['price_unit']=precioCdesc
+                            product['price_subtotal']=precio
                         if(noparte==''):
                             product['product_id']=11027
                             product['product_uom']=21
                             product['name']=description
                             product['price_unit']=precioCdesc
+                            product['price_subtotal']=precio
                         arreglo.append(product) 
                     if(len(arreglo)>0):
                        self.order_line=[(5,0,0)]
