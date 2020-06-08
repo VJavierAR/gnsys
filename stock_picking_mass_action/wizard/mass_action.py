@@ -139,6 +139,7 @@ class StockPickingMassAction(TransientModel):
                 pick_to_do |= picking
             if pick_to_do:
                 pick_to_do.action_done()
+            _logger.info(str(assigned_picking_lst._check_backorder()))
             if assigned_picking_lst._check_backorder():
                 cancel_backorder=True
                 if cancel_backorder:
@@ -156,12 +157,15 @@ class StockPickingMassAction(TransientModel):
                             sale=pick_id.sale_id.copy()
                             sale.write({'x_studio_backorder':True})
                             pick_id.write({'sale_child':sale.id})
+                            pipi=self.env['stock.picking'].search([['sale_id','=',sale.id]])
+                            self.env['stock.move.line'].search(['picking_id','in',pipi.mapped('id')]).unlink()
+                            self.env['sale.order.line'].search([['order_id','=',sale.id]]).unlink()
+                            pipi.unlink()
                             for rr in backorder_pick.move_ids_without_package:
                                 datosr={'order_id' : sale.id, 'product_id' : rr.product_id.id, 'product_uom_qty' :rr.product_uom_qty,'x_studio_field_9nQhR':rr.x_studio_serie_destino.id, 'price_unit': 0}
                                 #if(pick_id.x_studio_ticket_relacionado.team_id.id==10 or pick_id.x_studio_ticket_relacionado.team_id.id==11):
                                 #    datosr['route_id']=22548
-                                #self.env['sale.order.line'].create(datosr)
-                                sale.order_line=[(5,0,0)]
+                                #sale.order_line=[(5,0,0)]
                                 sale.order_line=datosr
                             pick_id.x_studio_ticket_relacionado.write({'x_studio_field_0OAPP':[(4,sale.id)]})
                             sale.sudo().action_confirm()
