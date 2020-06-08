@@ -2295,5 +2295,6 @@ class helpdesk_crearToner(TransientModel):
                         ss = self.env.cr.execute(query)
                         self.env.cr.commit()
 
-        else:
+        #else:
             #NO HAY DCA POR LO TANTO NO SE GENERA TICKET
+
