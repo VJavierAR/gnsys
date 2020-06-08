@@ -30,6 +30,23 @@ class helpdesk_update(models.Model):
     productos = fields.One2many('product.product','id',string='Solicitudes',store=True)
     #seriesDCA = fields.One2many('dcas.dcas', 'tickete', string="Series")
 
+    validarTicket = fields.Boolean(
+                                    string = "Proceder a realizar la validacón del encargado", 
+                                    default = False, 
+                                    store = True
+                                )
+    validarHastaAlmacenTicket = fields.Boolean(
+                                                string = "Crear y validar la solicitud de tóner", 
+                                                default = False, 
+                                                store = True
+                                            )
+    ponerTicketEnEspera = fields.Boolean(
+                                            string = "Generar ticket en espera", 
+                                            default = False, 
+                                            store = True
+                                        )
+    
+    
     contactoInterno = fields.Many2one('res.partner', string = 'Contacto interno', default=False, store = True)
 
     esReincidencia = fields.Boolean(string = "¿Es reincidencia?", default = False, store = True)

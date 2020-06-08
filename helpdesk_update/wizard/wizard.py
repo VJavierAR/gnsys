@@ -2277,7 +2277,10 @@ class helpdesk_crearToner(TransientModel):
                                                             'direccionLocalidadText': self.direccionLocalidad,
                                                             'team_id': 8,
                                                             'priority': self.prioridad,
-                                                            'x_studio_comentarios_de_localidad': self.comentarioLocalidad
+                                                            'x_studio_comentarios_de_localidad': self.comentarioLocalidad,
+                                                            'validarTicket': self.validarTicket,
+                                                            'validarHastaAlmacenTicket': self.validarHastaAlmacenTicket,
+                                                            'ponerTicketEnEspera': self.ponerTicketEnEspera
                                                         })
             self.env.cr.commit()
             listaDca = []
