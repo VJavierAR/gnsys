@@ -91,13 +91,13 @@ class compras(models.Model):
                         precio=float(c.getAttribute("ValorUnitario"))
                         description=c.getAttribute("Descripcion")
                         product={'product_uom':1,'date_planned':self.date_order,'product_qty':cantidad,'price_unit':precio,'taxes_id':[10]}
-                        _logger.info(noparte=='')
-                        if(noparte!=None):
+                        #_logger.info(noparte=='')
+                        if(noparte!=''):
                             template=self.env['product.template'].search([('default_code','=',noparte)])
                             productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
                             product['product_id']=productid.id
                             product['name']=description
-                        if(noparte==None):
+                        if(noparte==''):
                             product['product_id']=1
                             product['product_uom']=6
                             product['name']=description
