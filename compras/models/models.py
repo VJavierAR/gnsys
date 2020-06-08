@@ -83,7 +83,7 @@ class compras(models.Model):
                 tree = minidom.parse(H)
                 #_logger.info(str(tree.getroot()))
                 if(mimetype=='image/svg+xml'):
-                    _logger.info(str(len(tree.getElementsByTagName("cfdi:Conceptos"))))                
+                    _logger.info(str(len(tree.getElementsByTagName("cfdi:Concepto"))))                
 
                 # if(mimetype=='application/pdf'):
                 #     self.x_studio_pdf=self.archivo
