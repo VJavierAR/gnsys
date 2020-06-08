@@ -81,7 +81,9 @@ class compras(models.Model):
                 _logger.info(str(mimetype))
                 out = open("hola.xml", "wb")
                 tree = ET.parse(H)
-                _logger.info(str(tree.getroot()))
+                #_logger.info(str(tree.getroot()))
+                if(mimetype=='image/svg+xml'):
+                    _logger.info(str(tree.getElementsByTagName("cfdi:Conceptos")[0]))                
 
                 # if(mimetype=='application/pdf'):
                 #     self.x_studio_pdf=self.archivo
