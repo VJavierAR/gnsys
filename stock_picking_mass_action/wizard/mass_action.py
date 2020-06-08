@@ -141,11 +141,11 @@ def mass_action(self):
             if assigned_picking_lst._check_backorder():
                 cancel_backorder=True
                 if cancel_backorder:
-                   for pick_id in self.picking_ids:
-                       moves_to_log = {}
-                       for move in pick_id.move_lines:
-                           if float_compare(move.product_uom_qty, move.quantity_done, precision_rounding=move.product_uom.rounding) > 0:
-                               moves_to_log[move] = (move.quantity_done, move.product_uom_qty)
+                    for pick_id in self.picking_ids:
+                        moves_to_log = {}
+                        for move in pick_id.move_lines:
+                            if float_compare(move.product_uom_qty, move.quantity_done, precision_rounding=move.product_uom.rounding) > 0:
+                                moves_to_log[move] = (move.quantity_done, move.product_uom_qty)
                         pick_id._log_less_quantities_than_expected(moves_to_log)
                 #self.picking_ids.action_done()
                 #if cancel_backorder:
