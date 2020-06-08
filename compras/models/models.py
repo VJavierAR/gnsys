@@ -92,7 +92,7 @@ class compras(models.Model):
                         description=c.getAttribute("Descripcion")
                         product={'product_uom':1,'date_planned':self.date_order,'product_qty':cantidad,'price_unit':precio,'taxes_id':[10]}
                         descuento=float(c.getAttribute("Descuento")) if(c.getAttribute("Descuento")!='') else 0
-                        precioCdesc=(precio-descuento)/cantidad
+                        precioCdesc=(round(precio,6)-round(descuento,6))/int(cantidad)
                         #_logger.info(noparte=='')
                         if(noparte!=''):
                             template=self.env['product.template'].search([('default_code','=',noparte)])
