@@ -3,7 +3,7 @@ from odoo import http
 from odoo.http import request
 
 class Compras(http.Controller):
-    @route('/web/compras/', auth='public')
+    @http.route('/web/compras/', auth='public')
     def index(self, **kw):
         return "Hello, world"
 #     @http.route('/compras/compras/objects/', auth='public')
