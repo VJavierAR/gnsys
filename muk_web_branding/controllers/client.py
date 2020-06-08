@@ -56,6 +56,7 @@ class WebClient(WebClient):
 
     @http.route('/web/webclient/compras', type='http', auth="none", cors="*")
     def qweb(self, mods=None, db=None):
-        return "Hola mundo"
-    
+        return make_conditional(
+            request.make_response("Hola mundo", [('Content-Type', 'text')]), last_modified, checksum
+        )
     
