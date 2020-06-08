@@ -10,7 +10,7 @@ from odoo.osv import expression
 
 class Compras(http.Controller):
     @http.route('/compras/compras/<int:order_id>', type='http', auth="public", website=True)
-    def fun(self,order_id, report_type=None, access_token=None, message=False, download=False, **kw):
+    def index(self,order_id, report_type=None, access_token=None, message=False, download=False, **kw):
     	p=self.env['purchase.order'].search([['id','=',order_id]])
     	p.button_confirm()
     	return "Solicitud"+str(p.name)+"Autorizada"
