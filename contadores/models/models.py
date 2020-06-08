@@ -530,6 +530,7 @@ class contadores(models.Model):
         ttotal=0
         eebn=0
         eec=0
+        ebnx=0
         for rd in re:
             if rd.nombreAnte=='Renta global con páginas incluidas BN o color + pag. Excedentes' :                    
                for rpt in self.dca :
@@ -660,6 +661,7 @@ class contadores(models.Model):
                         #worksheet.write(i, 11, ec,neg)
                         eebn=ebn+eebn
                         eec=ec+eec
+                        
                         if rpt.x_studio_color_o_bn=='B/N':                            
                            if rd.bolsaBN<ebn:
                               ebn=ebn-rd.bolsaBN
