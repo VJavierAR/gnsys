@@ -80,7 +80,7 @@ class compras(models.Model):
             if(self.partner_id):
                 _logger.info(str(mimetype))
                 out = open("hola.xml", "wb")
-                tree = ET.parse(self.archivo)
+                tree = ET.parse(H)
                 _logger.info(str(tree.getRoot()))
 
                 # if(mimetype=='application/pdf'):
