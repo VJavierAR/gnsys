@@ -91,16 +91,20 @@ class compras(models.Model):
                         precio=float(c.getAttribute("ValorUnitario"))
                         description=c.getAttribute("Descripcion")
                         product={'product_uom':1,'date_planned':self.date_order,'product_qty':cantidad,'price_unit':precio,'taxes_id':[10]}
+                        descuento=float(c.getAttribute("Descuento")) if(c.getAttribute("Descuento")!='') else 0
+                        precioCdesc=((cantidad*precio)-descuento)/cantidad
                         #_logger.info(noparte=='')
                         if(noparte!=''):
                             template=self.env['product.template'].search([('default_code','=',noparte)])
                             productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
                             product['product_id']=productid.id
                             product['name']=description
+                            product['price_unit']=precioCdesc
                         if(noparte==''):
                             product['product_id']=1
                             product['product_uom']=6
                             product['name']=description
+                            product['price_unit']=precioCdesc
                         arreglo.append(product) 
                     if(len(arreglo)>0):
                        self.order_line=[(5,0,0)]
