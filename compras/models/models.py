@@ -89,16 +89,18 @@ class compras(models.Model):
                         noparte=str(c.getAttribute("NoIdentificacion"))                
                         cantidad=float(c.getAttribute("Cantidad"))
                         precio=float(c.getAttribute("ValorUnitario"))
+                        description=c.getAttribute("Descripcion")
                         product={'product_uom':1,'date_planned':self.date_order,'product_qty':cantidad,'price_unit':precio,'taxes_id':[10],'name':'/' if(productid.description) else '/'}
+                        
                         if(noparte!=None):
                             template=self.env['product.template'].search([('default_code','=',noparte)])
                             productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
                             product['product_id']=productid.id
-                            product['name']=productid.description if(productid.description) else '/'
+                            product['name']=description
                         if(noparte==None):
                             product['product_id']=1
                             product['product_uom']=6
-                            product['name']=productid.description if(productid.description) else '/'
+                            product['name']=description
                         arreglo.append(product) 
 
                 # if(mimetype=='application/pdf'):
