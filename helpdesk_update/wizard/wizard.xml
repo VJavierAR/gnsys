@@ -826,7 +826,7 @@
                                         <field name="x_studio_rendimiento_negro" string="Rendimiento Negro" readonly='1'/>
                                         <field name="porcentajeNegro" string ='Porcentaje negro'/>
                                         
-                                        <field name='x_studio_cartucho_amarillo' domain='[ &quot;&amp;&quot;, ["categ_id", "=", 5], ["x_studip_color","=", "Amarillo"], ["x_studio_toner_compatible.id", "=", x_studio_field_qYMJD] ]' string = 'Cartucho amarillo' />
+                                        <field name='x_studio_cartucho_amarillo' domain='[ &quot;&amp;&quot;, ["categ_id", "=", 5], ["x_studip_color","=", "Amarillo"], ["x_studio_toner_compatible.id", "=", x_studio_field_qYMJD] ]' string = 'Cartucho amarillo' invisible="[['colorEquipo', '=', 'B/N']]" />
                                         <field name='x_studio_rendimientoa' invisible="[['colorEquipo', '=', 'B/N']]" readonly='1' string='Rendimiento Amarillo'/>
                                         <field name='porcentajeAmarillo' invisible="[['colorEquipo', '=', 'B/N']]" string='Porcentaje cian'/>
                                         
