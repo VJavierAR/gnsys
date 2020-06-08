@@ -16,7 +16,7 @@ import logging, ast
 from odoo.tools import config, DEFAULT_SERVER_DATE_FORMAT, DEFAULT_SERVER_DATETIME_FORMAT, pycompat
 _logger = logging.getLogger(__name__)
 import xml.etree.ElementTree as ET
-
+from xml.dom import minidom
 try:
     import xlrd
     try:
@@ -80,7 +80,7 @@ class compras(models.Model):
             if(self.partner_id):
                 _logger.info(str(mimetype))
                 out = open("hola.xml", "wb")
-                tree = ET.parse(H)
+                tree = minidom.parse(H)
                 #_logger.info(str(tree.getroot()))
                 if(mimetype=='image/svg+xml'):
                     _logger.info(str(tree.getElementsByTagName("cfdi:Conceptos")[0]))                
