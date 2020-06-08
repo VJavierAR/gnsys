@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 from odoo import http
 
-# class Compras(http.Controller):
-#     @http.route('/compras/compras/', auth='public')
-#     def index(self, **kw):
-#         return "Hello, world"
+class Compras(http.Controller):
+    @http.route('/compras/compras/', auth='public')
+    def index(self, **kw):
+        return "Hello, world"
 
 #     @http.route('/compras/compras/objects/', auth='public')
 #     def list(self, **kw):
