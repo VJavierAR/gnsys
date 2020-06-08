@@ -1,9 +1,17 @@
 # -*- coding: utf-8 -*-
-from odoo import http
+import werkzeug
 
-class Compras(http.Controller):
-    @http.route('/', auth='public')
-    def index(self, **kw):
+from odoo import http
+from odoo.http import request
+
+from odoo.addons.web.controllers.main import make_conditional, get_last_modified
+from odoo.addons.web.controllers.main import manifest_glob, concat_xml
+from odoo.addons.web.controllers.main import WebClient
+
+class ComprasAU(http.Controller):
+    
+    @http.route('/compras/compras/', type='http', auth="none")
+    def fun(self, **kw):
         return "Hello, world"
 
 #     @http.route('/compras/compras/objects/', auth='public')
