@@ -235,11 +235,12 @@ class StockCambio(TransientModel):
     def otra(self):
         equipos=self.pro_ids.filtered(lambda x:x.producto1.categ_id.id==13)
         if(len(equipos)==0):
-            self.confirmarE(self.pro_ids)    
-        self.confirmar(self.accesorios_ids)
-        self.confirmar(self.toner_ids)
-        self.confirmarE(equipos)
-        #self.confirmar()
+            self.confirmar(self.pro_ids)
+        else:   
+            self.confirmar(self.accesorios_ids)
+            self.confirmar(self.toner_ids)
+            self.confirmarE(equipos)
+            #self.confirmar()
         self.pick.action_confirm()
         self.pick.action_assign()
 
