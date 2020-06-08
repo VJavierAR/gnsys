@@ -81,7 +81,7 @@ class compras(models.Model):
                 _logger.info(str(mimetype))
                 out = open("hola.xml", "wb")
                 tree = ET.parse(H)
-                _logger.info(str(tree.getRoot()))
+                _logger.info(str(tree.getroot()))
 
                 # if(mimetype=='application/pdf'):
                 #     self.x_studio_pdf=self.archivo
