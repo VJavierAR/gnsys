@@ -90,7 +90,7 @@ class compras(models.Model):
                         cantidad=float(c.getAttribute("Cantidad"))
                         precio=float(c.getAttribute("ValorUnitario"))
                         description=c.getAttribute("Descripcion")
-                        product={'product_uom':1,'date_planned':self.date_order,'product_qty':cantidad,'price_unit':precio,'taxes_id':[10],'name':'/' if(productid.description) else '/'}
+                        product={'product_uom':1,'date_planned':self.date_order,'product_qty':cantidad,'price_unit':precio,'taxes_id':[10]}
                         
                         if(noparte!=None):
                             template=self.env['product.template'].search([('default_code','=',noparte)])
