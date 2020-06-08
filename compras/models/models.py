@@ -233,7 +233,7 @@ class compras(models.Model):
                                     self.order_line=[(5,0,0)]
                                 self.order_line=arr
                     except Exception as e:
-                        continue     
+                        pass     
                 if(mimetype=='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'):
                     book = xlrd.open_workbook(file_contents=f2 or b'')
                     sheet = book.sheet_by_index(0)
