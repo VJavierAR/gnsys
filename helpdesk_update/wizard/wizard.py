@@ -2249,12 +2249,41 @@ class helpdesk_crearToner(TransientModel):
                                                             'x_studio_comentarios_de_localidad': self.comentarioLocalidad
                                                         })
             self.env.cr.commit()
+            listaDca = []
+            for nuevoDca in self.dca:
+                listaDca.append([
+                                    0, 
+                                    0, 
+                                    {   
+                                        'serie': nuevoDca.serie.id,
+                                        'colorEquipo': nuevoDca.colorEquipo,
+                                        'ultimaUbicacion': nuevoDca.ultimaUbicacion,
+                                        'equipo': nuevoDca.equipo,
+                                        'contadorMono': nuevoDca.contadorMono,
+                                        'contadorAnteriorNegro': nuevoDca.contadorAnteriorNegro,
+                                        'contadorColor': nuevoDca.contadorColor,
+                                        'contadorAnteriorColor': nuevoDca.contadorAnteriorColor,
+                                        'x_studio_cartuchonefro': nuevoDca.x_studio_cartuchonefro.id,
+                                        'x_studio_rendimiento_negro': nuevoDca.x_studio_rendimiento_negro,
+                                        'porcentajeNegro': nuevoDca.porcentajeNegro,
+                                        'x_studio_cartucho_amarillo': nuevoDca.x_studio_cartucho_amarillo.id,
+                                        'x_studio_rendimientoa': nuevoDca.x_studio_rendimientoa,
+                                        'porcentajeAmarillo': nuevoDca.porcentajeAmarillo,
+                                        'x_studio_cartucho_cian_1': nuevoDca.x_studio_cartucho_cian_1.id,
+                                        'x_studio_rendimientoc': nuevoDca.x_studio_rendimientoc,
+                                        'porcentajeCian': nuevoDca.porcentajeCian,
+                                        'x_studio_cartucho_magenta': nuevoDca.x_studio_cartucho_magenta.id,
+                                        'x_studio_rendimientom': nuevoDca.x_studio_rendimientom,
+                                        'porcentajeMagenta': nuevoDca.porcentajeMagenta,
+                                        'tablahtml': nuevoDca.tablahtml
+                                    }
+                                ])
             ticket.write({
                             'partner_id': self.cliente.id,
                             'x_studio_empresas_relacionadas': self.localidad.id,
                             'team_id': 8,
                             'x_studio_field_6furK': self.zonaLocalidad,
-                            'x_studio_equipo_por_nmero_de_serie_1': self.dca.id
+                            'x_studio_equipo_por_nmero_de_serie_1': listaDca
                             #'x_studio_equipo_por_nmero_de_serie_1': [(6,0,self.dca.ids)]
                         })
             self.env.cr.commit()
