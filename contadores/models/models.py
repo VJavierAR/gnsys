@@ -72,6 +72,7 @@ class dcas(models.Model):
     renN=fields.Float(string='Rendimiento Negro ')
     
     tablahtml=fields.Text(string='Detalle Equipo')
+    comentarioLecturas = fields.Text(string = 'Comentario')
     fechaN=fields.Datetime(string='Fecha de captura')
     fechaA=fields.Datetime(string='Fecha de captura')
     fechaC=fields.Datetime(string='Fecha de captura')
@@ -552,7 +553,7 @@ class contadores(models.Model):
                         else:                
                            ec=rpt.contadorColor-rpt.x_studio_lectura_anterior_color                    
                         worksheet.write(i, 15, rpt.x_studio_ubicacin,neg)                                                            
-                        worksheet.write(i, 16, rpt.tablahtml,neg)                                                            
+                        worksheet.write(i, 16, rpt.comentarioLecturas,neg)                                                            
                         worksheet.write(i, 8, ebn,neg)
                         worksheet.write(i, 9, ec,neg)                                            
                         if rpt.x_studio_color_o_bn=='B/N':                                                         
@@ -597,7 +598,7 @@ class contadores(models.Model):
                            ec=rpt.contadorColor-rpt.x_studio_lectura_anterior_color                    
                         worksheet.write(i, 15, rpt.x_studio_ubicacin,neg)
                         #worksheet.write(i, 16, len(rd))
-                        worksheet.write(i, 16, rpt.tablahtml,neg)                                                            
+                        worksheet.write(i, 16, rpt.comentarioLecturas,neg)                                                            
                         worksheet.write(i, 8, ebn,neg)
                         worksheet.write(i, 9, ec,neg)                        
                         if rpt.x_studio_color_o_bn=='B/N':                                    
@@ -654,7 +655,7 @@ class contadores(models.Model):
                         worksheet.write(i, 7, rpt.contadorColor,neg)
                         
                         worksheet.write(i, 15, rpt.x_studio_ubicacin,neg)
-                        worksheet.write(i, 16, rpt.tablahtml,neg)                                                            
+                        worksheet.write(i, 16, rpt.comentarioLecturas,neg)                                                            
                         worksheet.write(i, 8, ebn,neg)
                         worksheet.write(i, 9, ec,neg)
                         #worksheet.write(i, 10, ebn,neg)
@@ -741,7 +742,7 @@ class contadores(models.Model):
                         worksheet.write(i, 10, ebn,neg)
                         worksheet.write(i, 11, ec,neg)
                         worksheet.write(i, 15, rpt.x_studio_ubicacin,neg)
-                        worksheet.write(i, 16, rpt.tablahtml,neg)                                                            
+                        worksheet.write(i, 16, rpt.comentarioLecturas,neg)                                                            
                         if rpt.x_studio_color_o_bn=='B/N':                                    
                            bs= (ebn*rd.clickExcedenteBN)
                            eebn=ebn+eebn
@@ -778,7 +779,7 @@ class contadores(models.Model):
                         worksheet.write(i, 10, ebn,neg)
                         worksheet.write(i, 11, ec,neg)
                         worksheet.write(i, 15, rpt.x_studio_ubicacin,neg)
-                        worksheet.write(i, 16, rpt.tablahtml,neg)                                                            
+                        worksheet.write(i, 16, rpt.comentarioLecturas,neg)                                                            
                     
                         if rpt.x_studio_color_o_bn=='B/N':
                            bs= float(rd.rentaMensual)+(ebn*rd.clickExcedenteBN)
