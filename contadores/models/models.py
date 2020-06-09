@@ -712,7 +712,7 @@ class contadores(models.Model):
                            else:
                               _logger.info("totals celse: " + str(totalsr))  
                               _logger.info("tota celse: " + str(ttotal))   
-                              call=float(rd.rentaMensual)                                
+                              call=float(rd.rentaMensual)+ebnx                                
                               worksheet.write(i, 12, call,neg)
                               iva=round(call*.16,2)
                               ivatt=iva+ivatt
