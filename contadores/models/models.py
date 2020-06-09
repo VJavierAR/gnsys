@@ -666,70 +666,70 @@ class contadores(models.Model):
                         #worksheet.write(i, 11, ec,neg)
                         eebn=ebn+eebn
                         eec=ec+eec
-                        
-                        if rpt.x_studio_color_o_bn=='B/N':                            
-                           if rd.bolsaBN<ebn:
-                              ebn=ebn-rd.bolsaBN
-                              eebn=ebn+eebn  
-                              cal=float(rd.rentaMensual)+(ebn*rd.clickExcedenteBN)  
-                              worksheet.write(i, 12, cal,neg)
-                              iva=round(cal*.16,2)
-                              worksheet.write(i, 13,'$ '+str(iva) ,neg)
-                              _logger.info('iva: ' + str(iva))
-                              _logger.info('cal: ' + str(cal))
-                              worksheet.write(i, 14,'$ '+str(iva +cal) ,neg)  
-                              ivatt=iva+ivatt  
-                              totalsr=(float(rd.rentaMensual)+(ebn*rd.clickExcedenteBN))+totalsr
-                              ttotal=(iva +cal)+ttotal
-                              _logger.info("totals si: " + str(totalsr))  
-                              _logger.info("tota si: " + str(ttotal))  
-                           else:                                                                                                         
-                              cal=float(rd.rentaMensual)
-                              worksheet.write(i, 12, cal,neg)
-                              iva=round(cal*.16,2)
-                              worksheet.write(i, 13,'$ '+str(iva) ,neg)
-                              worksheet.write(i, 14,'$ '+str(iva +cal) ,neg)  
-                              ivatt=iva+ivatt  
-                              totalsr=float(rd.rentaMensual)+totalsr
-                              ttotal=(iva +cal)+ttotal 
-                              _logger.info("totals elsebn: " + str(totalsr))  
-                              _logger.info("tota elsebn: " + str(ttotal))  
-                        if rpt.x_studio_color_o_bn=='Color':
-                           if rd.bolsaBN<ebn:
-                              ebn=ebn-rd.bolsaBN
-                              eebn=ebn+eebn  
-                              ebnx=(ebn*rd.clickExcedenteBN)
-                              _logger.info("totals cnsi: " + str(totalsr))  
-                              _logger.info("tota cnsi: " + str(ttotal))     
-                           if rd.bolsaColor<ec:
-                              ec=ec-rd.bolsaColor
-                              eec=ec+eec  
-                              call=float(rd.rentaMensual)+(ec*rd.clickExcedenteColor)+ebnx                                
-                              worksheet.write(i, 12, call,neg)
-                              iva=round(call*.16,2)
-                              ivatt=iva+ivatt
-                              worksheet.write(i, 13,'$ '+str(iva) ,neg)     
-                              worksheet.write(i, 14,'$ '+str(iva +call) ,neg)
-                              totalsr=call+totalsr
-                              ttotal=(iva +call)+ttotal
-                              _logger.info("totals csi: " + str(totalsr))  
-                              _logger.info("tota csi: " + str(ttotal))  
-                           else:
-                              _logger.info("totals celse: " + str(totalsr))  
-                              _logger.info("tota celse: " + str(ttotal))   
-                              call=float(rd.rentaMensual)+ebnx                                
-                              worksheet.write(i, 12, call,neg)
-                              iva=round(call*.16,2)
-                              ivatt=iva+ivatt
-                              worksheet.write(i, 13,'$ '+str(iva) ,neg)     
-                              worksheet.write(i, 14,'$ '+str(iva +call) ,neg)
-                              totalsr=call+totalsr
-                              ttotal=(iva +call)+ttotal
-                              _logger.info("totals celse: " + str(totalsr))  
-                              _logger.info("tota celse: " + str(ttotal))  
-                              
-                        _logger.info("totals f: " + str(totalsr))  
-                        _logger.info("tota fl: " + str(ttotal))  
+                        if str(rpt.x_studio_estado)!='Back.up':
+                            if rpt.x_studio_color_o_bn=='B/N':                            
+                               if rd.bolsaBN<ebn:
+                                  ebn=ebn-rd.bolsaBN
+                                  eebn=ebn+eebn  
+                                  cal=float(rd.rentaMensual)+(ebn*rd.clickExcedenteBN)  
+                                  worksheet.write(i, 12, cal,neg)
+                                  iva=round(cal*.16,2)
+                                  worksheet.write(i, 13,'$ '+str(iva) ,neg)
+                                  _logger.info('iva: ' + str(iva))
+                                  _logger.info('cal: ' + str(cal))
+                                  worksheet.write(i, 14,'$ '+str(iva +cal) ,neg)  
+                                  ivatt=iva+ivatt  
+                                  totalsr=(float(rd.rentaMensual)+(ebn*rd.clickExcedenteBN))+totalsr
+                                  ttotal=(iva +cal)+ttotal
+                                  _logger.info("totals si: " + str(totalsr))  
+                                  _logger.info("tota si: " + str(ttotal))  
+                               else:                                                                                                         
+                                  cal=float(rd.rentaMensual)
+                                  worksheet.write(i, 12, cal,neg)
+                                  iva=round(cal*.16,2)
+                                  worksheet.write(i, 13,'$ '+str(iva) ,neg)
+                                  worksheet.write(i, 14,'$ '+str(iva +cal) ,neg)  
+                                  ivatt=iva+ivatt  
+                                  totalsr=float(rd.rentaMensual)+totalsr
+                                  ttotal=(iva +cal)+ttotal 
+                                  _logger.info("totals elsebn: " + str(totalsr))  
+                                  _logger.info("tota elsebn: " + str(ttotal))  
+                            if rpt.x_studio_color_o_bn=='Color':
+                               if rd.bolsaBN<ebn:
+                                  ebn=ebn-rd.bolsaBN
+                                  eebn=ebn+eebn  
+                                  ebnx=(ebn*rd.clickExcedenteBN)
+                                  _logger.info("totals cnsi: " + str(totalsr))  
+                                  _logger.info("tota cnsi: " + str(ttotal))     
+                               if rd.bolsaColor<ec:
+                                  ec=ec-rd.bolsaColor
+                                  eec=ec+eec  
+                                  call=float(rd.rentaMensual)+(ec*rd.clickExcedenteColor)+ebnx                                
+                                  worksheet.write(i, 12, call,neg)
+                                  iva=round(call*.16,2)
+                                  ivatt=iva+ivatt
+                                  worksheet.write(i, 13,'$ '+str(iva) ,neg)     
+                                  worksheet.write(i, 14,'$ '+str(iva +call) ,neg)
+                                  totalsr=call+totalsr
+                                  ttotal=(iva +call)+ttotal
+                                  _logger.info("totals csi: " + str(totalsr))  
+                                  _logger.info("tota csi: " + str(ttotal))  
+                               else:
+                                  _logger.info("totals celse: " + str(totalsr))  
+                                  _logger.info("tota celse: " + str(ttotal))   
+                                  call=float(rd.rentaMensual)+ebnx                                
+                                  worksheet.write(i, 12, call,neg)
+                                  iva=round(call*.16,2)
+                                  ivatt=iva+ivatt
+                                  worksheet.write(i, 13,'$ '+str(iva) ,neg)     
+                                  worksheet.write(i, 14,'$ '+str(iva +call) ,neg)
+                                  totalsr=call+totalsr
+                                  ttotal=(iva +call)+ttotal
+                                  _logger.info("totals celse: " + str(totalsr))  
+                                  _logger.info("tota celse: " + str(ttotal))  
+
+                            _logger.info("totals f: " + str(totalsr))  
+                            _logger.info("tota fl: " + str(ttotal))  
                                                  
                         i=i+1   
                     if rd.nombreAnte=='Costo por página procesada BN o color':
