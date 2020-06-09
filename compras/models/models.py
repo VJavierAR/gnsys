@@ -84,6 +84,7 @@ class compras(models.Model):
                 importe=0                #_logger.info(str(tree.getroot()))
                 if(mimetype=='image/svg+xml' or mimetype=='application/octet-stream'):
                     arreglo=[]
+                    total=tree.getElementsByTagName("cfdi:Comprobante").getAttribute("Total")
                     con=tree.getElementsByTagName("cfdi:Concepto")
                     imp=tree.getElementsByTagName("cfdi:Traslado")
                     i=len(imp)
@@ -116,6 +117,7 @@ class compras(models.Model):
                     #time.sleep(30)
                     _logger.info(str(float(imp[i-1].getAttribute("Importe"))))
                     self.x_studio_impuesto=float(imp[i-1].getAttribute("Importe"))
+                    self.x_studio_total=float(total)
                 if(mimetype=='application/pdf'):
                     self.x_studio_pdf=self.archivo
                     myCmd = 'pdftotext -fixed 5 hola.pdf test3.txt'
