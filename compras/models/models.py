@@ -84,7 +84,7 @@ class compras(models.Model):
                 importe=0                #_logger.info(str(tree.getroot()))
                 if(mimetype=='image/svg+xml' or mimetype=='application/octet-stream'):
                     arreglo=[]
-                    total=tree.getElementsByTagName("cfdi:Comprobante").getAttribute("Total")
+                    total=tree.getElementsByTagName("cfdi:Comprobante")[0].getAttribute("Total")
                     con=tree.getElementsByTagName("cfdi:Concepto")
                     imp=tree.getElementsByTagName("cfdi:Traslado")
                     i=len(imp)
