@@ -6,7 +6,7 @@ class Compras(http.Controller):
     def index(self,purchase_id ,**kw):
     	p=request.env['purchase.order'].search([['id','=',purchase_id]])
     	p.button_confirm()
-    	return "Orden de compra "+str(p.name)+" Autorizada"
+    	#return "Orden de compra "+str(p.name)+" Autorizada"
 
 #     @http.route('/compras/compras/objects/', auth='public')
 #     def list(self, **kw):

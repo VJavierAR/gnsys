@@ -69,8 +69,8 @@ class compras(models.Model):
     #             order.write({'state': 'to approve'})
     #     return True
 
-    
-    
+    def solicitarAutorizacion(self):
+        self.write({'state':'to approve'})    
     
     @api.multi
     @api.onchange('archivo')
@@ -99,6 +99,8 @@ class compras(models.Model):
                         #_logger.info(noparte=='')
                         if(noparte!=''):
                             template=self.env['product.template'].search([('default_code','=',noparte.split('0',1)[1] if(noparte[0]=="0") else noparte)])
+                            if(template.id==False):
+                                template=self.env['product.template'].create({'name':'','description':description,'categ_id':self.x_studio_tipo_de_producto.id,'default_code':noparte})
                             productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
                             product['product_id']=productid.id
                             product['name']=description
@@ -150,6 +152,8 @@ class compras(models.Model):
                                     descuento=float(p[4].replace(' ','')) if(len(p)==5) else 0
                                     precioCdesc=((cantidad*precio)-descuento)/cantidad
                                     template=self.env['product.template'].search([('default_code','=',noparte.replace(' ',''))])
+                                    if(template.id==False):
+                                        template=self.env['product.template'].create({'name':'','description':'/','categ_id':self.x_studio_tipo_de_producto.id,'default_code':noparte})
                                     productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
                                     product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':cantidad,'price_unit':precioCdesc,'taxes_id':[10],'name':productid.description if(productid.description) else '/'}
                                     arreglo.append(product)
@@ -188,6 +192,8 @@ class compras(models.Model):
                                     descuento=float(tt2[2].split('002-IVA')[0].replace(' ','').replace(',',''))
                                     precioCdesc=((cantidad*precio)-descuento)/cantidad
                                     template=self.env['product.template'].search([('default_code','=',noparte)])
+                                    if(template.id==False):
+                                        template=self.env['product.template'].create({'name':'','description':'/','categ_id':self.x_studio_tipo_de_producto.id,'default_code':noparte})
                                     productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
                                     product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':cantidad,'price_unit':precioCdesc,'taxes_id':[10],'name':productid.description if(productid.description) else '/'}
                                     fff.write(str(product)+str(noparte))
@@ -237,6 +243,8 @@ class compras(models.Model):
                                         m = tam[p-1]+'.'+casii
                                         precio = m.replace(',','')
                                         template=self.env['product.template'].search([('default_code','=',id)])
+                                        if(template.id==False):
+                                            template=self.env['product.template'].create({'name':'','description':'/','categ_id':self.x_studio_tipo_de_producto.id,'default_code':id})
                                         productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
                                         product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':cantidad,'price_unit':precio,'taxes_id':[10],'name':productid.description}
                                         arreglo.append(product)
@@ -264,6 +272,8 @@ class compras(models.Model):
                                        g=float(s[1].split(' ')[0])
                                        qty=round(h/g)
                                        template=self.env['product.template'].search([('default_code','=',q)])
+                                       if(template.id==False):
+                                        template=self.env['product.template'].create({'name':'','description':'/','categ_id':self.x_studio_tipo_de_producto.id,'default_code':q})
                                        productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
                                        desc=productid.description if(productid.description) else '|'
                                        product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':qty,'price_unit':g}
@@ -294,6 +304,8 @@ class compras(models.Model):
                             cantidad=int(row[8].value) if(row[8].ctype!=0) else 0
                             #_logger.info(str(producto).replace(' ',''))
                             template=self.env['product.template'].search([('default_code','=',str(producto).replace('.0',''))])
+                            if(template.id==False):
+                                template=self.env['product.template'].create({'name':'','description':'/','categ_id':self.x_studio_tipo_de_producto.id,'default_code':str(producto).replace('.0','')})
                             productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
                             product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':cantidad,'price_unit':precio,'name':productid.description}
                             product['taxes_id']=[10]
