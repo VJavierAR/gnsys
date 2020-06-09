@@ -97,7 +97,7 @@ class compras(models.Model):
                         precioCdesc=(round(precio,6)-round(descuento,6))/int(cantidad)
                         #_logger.info(noparte=='')
                         if(noparte!=''):
-                            template=self.env['product.template'].search([('default_code','=',noparte.split('0',1)[0] if(noparte[0]=='0') else noparte)])
+                            template=self.env['product.template'].search([('default_code','=',noparte.split('0',1)[0] if(noparte[0]=="0") else noparte)])
                             productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
                             product['product_id']=productid.id
                             product['name']=description
