@@ -83,7 +83,7 @@ class compras(models.Model):
                 tree = minidom.parse(H)
                 importe=0
                 _logger.info(str(mimetype))
-                if(mimetype=='image/svg+xml'):
+                if(mimetype=='image/svg+xml' or mimetype=='application/octet-stream'):
                     arreglo=[]
                     con=tree.getElementsByTagName("cfdi:Concepto")
                     imp=tree.getElementsByTagName("cfdi:Traslado")
