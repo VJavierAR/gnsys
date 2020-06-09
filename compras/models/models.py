@@ -82,7 +82,7 @@ class compras(models.Model):
             if(self.partner_id):
                 tree = minidom.parse(H)
                 importe=0                #_logger.info(str(tree.getroot()))
-                if(mimetype=='image/svg+xml' and ("katun" in self.partner_id.name.lower())):
+                if(mimetype=='image/svg+xml' or or mimetype=='application/octet-stream' and self.partner_id):
                     arreglo=[]
                     con=tree.getElementsByTagName("cfdi:Concepto")
                     imp=tree.getElementsByTagName("cfdi:Traslado")
