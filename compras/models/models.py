@@ -82,7 +82,7 @@ class compras(models.Model):
                 out = open("hola.xml", "wb")
                 tree = minidom.parse(H)
                 importe=0
-                #_logger.info(str(tree.getroot()))
+                _logger.info(str(mimetype))
                 if(mimetype=='image/svg+xml'):
                     arreglo=[]
                     con=tree.getElementsByTagName("cfdi:Concepto")
