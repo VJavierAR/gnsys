@@ -666,7 +666,7 @@ class contadores(models.Model):
                         #worksheet.write(i, 11, ec,neg)
                         eebn=ebn+eebn
                         eec=ec+eec
-                        if str(rpt.x_studio_estado)!='Back.up':
+                        if str(rpt.serie.x_studio_estado)!='Back.up':
                             if rpt.x_studio_color_o_bn=='B/N':                            
                                if rd.bolsaBN<ebn:
                                   ebn=ebn-rd.bolsaBN
