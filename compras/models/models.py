@@ -115,7 +115,7 @@ class compras(models.Model):
                        self.order_line=arreglo
                     #time.sleep(30)
                     _logger.info(str(float(imp[i-1].getAttribute("Importe"))))
-                    self.amount_tax=float(imp[i-1].getAttribute("Importe"))
+                    self.x_studio_impuesto=float(imp[i-1].getAttribute("Importe"))
                 if(mimetype=='application/pdf'):
                     self.x_studio_pdf=self.archivo
                     myCmd = 'pdftotext -fixed 5 hola.pdf test3.txt'
