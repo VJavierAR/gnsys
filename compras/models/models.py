@@ -332,9 +332,7 @@ class compras(models.Model):
                     #_logger.info(str(header))
                     _logger.info(str(arr))
 
-
-
-            
+    
 class comprasLine(models.Model):
     _inherit = 'purchase.order.line'
     serial=fields.Char()
