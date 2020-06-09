@@ -532,9 +532,13 @@ class contadores(models.Model):
         eebn=0
         eec=0
         ebnx=0
+        resto=0
+        restoc=0
         for rd in re:
             if rd.nombreAnte=='Renta global con páginas incluidas BN o color + pag. Excedentes' :                    
                for rpt in self.dca :
+                   eec=0
+                   eebn=0               
                    if int(rpt.x_studio_servicio)==rd.id :
                         worksheet.write(i, 0, rpt.x_studio_indice,neg)
                         worksheet.write(i, 1, rpt.x_studio_locacin,neg)
