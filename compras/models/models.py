@@ -80,9 +80,10 @@ class compras(models.Model):
             H=StringIO(f2)
             mimetype = guess_mimetype(f2 or b'')
             if(self.partner_id):
-                tree = minidom.parse(H)
-                importe=0                #_logger.info(str(tree.getroot()))
+                #_logger.info(str(tree.getroot()))
                 if(mimetype=='image/svg+xml' or mimetype=='application/octet-stream'):
+                    tree = minidom.parse(H)
+                    importe=0
                     arreglo=[]
                     total=tree.getElementsByTagName("cfdi:Comprobante")[0].getAttribute("Total")
                     con=tree.getElementsByTagName("cfdi:Concepto")
