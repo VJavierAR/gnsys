@@ -243,8 +243,8 @@ class compras(models.Model):
                                     m = tam[p-1]+'.'+casii
                                     precio = m.replace(',','')
                                     template=self.env['product.template'].search([('default_code','=',id)])
-                                    if(template.id==False):
-                                        template=self.env['product.template'].create({'name':'','description':'/','categ_id':self.x_studio_tipo_de_producto.id,'default_code':id})
+                                    #if(template.id==False):
+                                    #    template=self.env['product.template'].create({'name':'','description':'/','categ_id':self.x_studio_tipo_de_producto.id,'default_code':id})
                                         
                                     productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
                                     _logger.info('id'+str(productid.id))
