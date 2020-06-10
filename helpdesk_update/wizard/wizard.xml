@@ -7,6 +7,7 @@
             <form string="Creación de comentario">
                 <group>
                     <group>
+                        <field name='ticket_id' string='Ticket'/>
                         <field name="estado" readonly="1"/>
                         <field name="comentario" attrs='{"readonly": [["estado","=","Cerrado"]]}'/>
                     </group>
@@ -616,6 +617,14 @@
                     <h2>
                         <field name="serie" string='' readonly="1"/>
                     </h2>
+                </group>
+                <group>
+                    <group>
+                        <field name='ticket_id' string='Ticket'/>
+                    </group>
+                    <group>
+                    
+                    </group>
                 </group>
                 <group>
                     <notebook>
