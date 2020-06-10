@@ -232,7 +232,7 @@ class compras(models.Model):
                                     #arreglo.append(product)
                                 if ('PIEZA' in f):
                                     cantidad = f.split('PIEZA')[0]
-                                    l = f.split('PIEZA')[1].split(' -',1)
+                                    l = f.split('PIEZA')[1].split(' -')
                                     #id = l[0]
                                     _logger.info(str(i+1))
                                     id = l[1].replace(' ','')
