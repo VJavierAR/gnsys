@@ -225,18 +225,10 @@ class compras(models.Model):
                             for x in d:
                                 f=x
                                 serial=''
-                                #if(len(re.findall(r"\d{2}\/\d{2}\/\d{4}\s*", f))>0):
-                                #    serial=f.split('-')
-                                #    if(len(serial)>0):
-                                #        product['serial']=serial[0].replace(' ','')
-                                    #arreglo.append(product)
                                 if ('PIEZA' in f):
                                     cantidad = f.split('PIEZA')[0]
                                     l = f.split('PIEZA')[1].split(' -',2)
-                                    #id = l[0]
-                                    
                                     id = l[1].replace(' ','')
-
                                     casi = l[2].split('.')
                                     _logger.info(str(casi))
                                     casii = casi[1].split(' ')[0]
