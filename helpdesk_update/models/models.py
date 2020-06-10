@@ -533,8 +533,16 @@ class helpdesk_update(models.Model):
     
     
     
+    def convert_timedelta(duration):
+        days, seconds = duration.days, duration.seconds
+        hours = days * 24 + seconds // 3600
+        minutes = (seconds % 3600) // 60
+        seconds = (seconds % 60)
+        return hours, minutes, seconds
     
     
+    # Ticket compuatado de tiempos
+
     def _compute_difference(self):
         for rec in self:
             if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
@@ -546,6 +554,232 @@ class helpdesk_update(models.Model):
                 #converted_date = datetime.datetime.strptime(str(rec.create_date), '%Y-%m-%d').date()
                 rec.days_difference = (datetime.date.today() - converted_date).days
     
+
+    hour_differenceTicket = fields.Integer(
+                                                compute='_compute_difference_hour_ticket',
+                                                string='Horas de atraso ticket'
+                                            )
+    def _compute_difference_hour_ticket(self):
+        for rec in self:
+            if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
+                first_time = rec.create_date
+                later_time = datetime.datetime.now()
+                difference = later_time - first_time
+                hours, minutes, seconds = convert_timedelta(difference)
+                rec.hour_differenceTicket = hours
+
+    minutes_differenceTicket = fields.Integer(
+                                                compute='_compute_difference_minute_ticket',
+                                                string='Minutos de atraso ticket'
+                                            )
+    def _compute_difference_minute_ticket(self):
+        for rec in self:
+            if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
+                first_time = rec.create_date
+                later_time = datetime.datetime.now()
+                difference = later_time - first_time
+                hours, minutes, seconds = convert_timedelta(difference)
+                rec.minutes_differenceTicket = minutes
+
+    seconds_differenceTicket = fields.Integer(
+                                                compute='_compute_difference_second_ticket',
+                                                string='Segundos de atraso ticket'
+                                            )
+    def _compute_difference_second_ticket(self):
+        for rec in self:
+            if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
+                first_time = rec.create_date
+                later_time = datetime.datetime.now()
+                difference = later_time - first_time
+                hours, minutes, seconds = convert_timedelta(difference)
+                rec.seconds_differenceTicket = seconds
+
+
+
+
+
+
+    
+    # Almacen compuatado de tiempos
+    days_differenceAlmacen = fields.Integer(
+                                                compute='_compute_difference_days_almacen',
+                                                string='Días de atraso almacén'
+                                            )
+    def _compute_difference_days_almacen(self):
+        for rec in self:
+            if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
+                if rec.x_studio_field_nO7Xg and (rec.x_studio_field_up5pO == 'confirmed' or rec.x_studio_field_up5pO == 'assigned'):
+                    fecha = str(rec.create_date).split(' ')[0]
+                    #fe = t[0]
+                    converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
+                    #converted_date = datetime.datetime.strptime(str(rec.create_date), '%Y-%m-%d').date()
+                    rec.days_differenceAlmacen = (datetime.date.today() - converted_date).days
+
+    hour_differenceAlmacen = fields.Integer(
+                                                compute='_compute_difference_hour_almacen',
+                                                string='Horas de atraso almacén'
+                                            )
+    def _compute_difference_hour_almacen(self):
+        for rec in self:
+            if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
+                if rec.x_studio_field_nO7Xg and (rec.x_studio_field_up5pO == 'confirmed' or rec.x_studio_field_up5pO == 'assigned'):
+                    first_time = rec.create_date
+                    later_time = datetime.datetime.now()
+                    difference = later_time - first_time
+                    hours, minutes, seconds = convert_timedelta(difference)
+                    rec.hour_differenceAlmacen = hours
+
+    minutes_differenceAlmacen = fields.Integer(
+                                                compute='_compute_difference_minute_almacen',
+                                                string='Minutos de atraso almacén'
+                                            )
+    def _compute_difference_minute_almacen(self):
+        for rec in self:
+            if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
+                if rec.x_studio_field_nO7Xg and (rec.x_studio_field_up5pO == 'confirmed' or rec.x_studio_field_up5pO == 'assigned'):
+                    first_time = rec.create_date
+                    later_time = datetime.datetime.now()
+                    difference = later_time - first_time
+                    hours, minutes, seconds = convert_timedelta(difference)
+                    rec.minutes_differenceAlmacen = minutes
+
+    seconds_differenceAlmacen = fields.Integer(
+                                                compute='_compute_difference_second_almacen',
+                                                string='Segundos de atraso almacén'
+                                            )
+    def _compute_difference_second_almacen(self):
+        for rec in self:
+            if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
+                if rec.x_studio_field_nO7Xg and (rec.x_studio_field_up5pO == 'confirmed' or rec.x_studio_field_up5pO == 'assigned'):
+                    first_time = rec.create_date
+                    later_time = datetime.datetime.now()
+                    difference = later_time - first_time
+                    hours, minutes, seconds = convert_timedelta(difference)
+                    rec.seconds_differenceAlmacen = seconds
+
+
+    # Distribucion compuatado de tiempos
+    days_differenceDistribucion = fields.Integer(
+                                                compute='_compute_difference_days_distribucion',
+                                                string='Días de atraso distibución'
+                                            )
+    def _compute_difference_days_distribucion(self):
+        for rec in self:
+            if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
+                if rec.x_studio_field_nO7Xg and (rec.x_studio_field_Le2tN == 'confirmed' or rec.x_studio_field_Le2tN == 'assigned' or rec.x_studio_field_Le2tN == 'distribucion'):
+                    fecha = str(rec.create_date).split(' ')[0]
+                    converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
+                    rec.days_differenceDistribucion = (datetime.date.today() - converted_date).days
+
+    hour_differenceDistribucion = fields.Integer(
+                                                compute='_compute_difference_hour_distribucion',
+                                                string='Horas de atraso distribución'
+                                            )
+    def _compute_difference_hour_distribucion(self):
+        for rec in self:
+            if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
+                if rec.x_studio_field_nO7Xg and (rec.x_studio_field_Le2tN == 'confirmed' or rec.x_studio_field_Le2tN == 'assigned' or rec.x_studio_field_Le2tN == 'distribucion'):
+                    first_time = rec.create_date
+                    later_time = datetime.datetime.now()
+                    difference = later_time - first_time
+                    hours, minutes, seconds = convert_timedelta(difference)
+                    rec.hour_differenceDistribucion = hours
+
+    minutes_differenceDistribucion = fields.Integer(
+                                                compute='_compute_difference_minute_distribucion',
+                                                string='Minutos de atraso distribución'
+                                            )
+    def _compute_difference_minute_distribucion(self):
+        for rec in self:
+            if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
+                if rec.x_studio_field_nO7Xg and (rec.x_studio_field_Le2tN == 'confirmed' or rec.x_studio_field_Le2tN == 'assigned' or rec.x_studio_field_Le2tN == 'distribucion'):
+                    first_time = rec.create_date
+                    later_time = datetime.datetime.now()
+                    difference = later_time - first_time
+                    hours, minutes, seconds = convert_timedelta(difference)
+                    rec.minutes_differenceDistribucion = minutes
+
+    seconds_differenceDistribucion = fields.Integer(
+                                                compute='_compute_difference_second_distribucion',
+                                                string='Segundos de atraso distribución'
+                                            )
+    def _compute_difference_second_distribucion(self):
+        for rec in self:
+            if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
+                if rec.x_studio_field_nO7Xg and (rec.x_studio_field_Le2tN == 'confirmed' or rec.x_studio_field_Le2tN == 'assigned' or rec.x_studio_field_Le2tN == 'distribucion'):
+                    first_time = rec.create_date
+                    later_time = datetime.datetime.now()
+                    difference = later_time - first_time
+                    hours, minutes, seconds = convert_timedelta(difference)
+                    rec.seconds_differenceDistribucion = seconds
+
+    # Repartidor compuatado de tiempos
+
+
+
+
+
+    """
+    days_differenceRepartidor = fields.Integer(
+                                                    compute='_compute_difference_repartidor',
+                                                    string='Días de atraso repatidor'
+                                                )
+
+    def _compute_difference_days_repartidor(self):
+        for rec in self:
+            if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
+                if rec.x_studio_field_up5pO == 'waiting' and rec.x_studio_field_nO7Xg:
+                    fecha = str(rec.create_date).split(' ')[0]
+                    converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
+                    rec.days_differenceRepartidor = (datetime.date.today() - converted_date).days
+
+    hour_differenceRepartidor = fields.Integer(
+                                                compute='_compute_difference_hour_repartidor',
+                                                string='Horas de atraso repartidor'
+                                            )
+    def _compute_difference_hour_repartidor(self):
+        for rec in self:
+            if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
+                if rec.x_studio_field_up5pO == 'waiting' and rec.x_studio_field_nO7Xg:
+                    first_time = rec.create_date
+                    later_time = datetime.datetime.now()
+                    difference = later_time - first_time
+                    hours, minutes, seconds = convert_timedelta(difference)
+                    rec.hour_differenceRepartidor = hours
+
+    minutes_differenceRepartidor = fields.Integer(
+                                                compute='_compute_difference_minute_repartidor',
+                                                string='Minutos de atraso repartidor'
+                                            )
+    def _compute_difference_minute_repartidor(self):
+        for rec in self:
+            if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
+                if rec.x_studio_field_up5pO == 'waiting' and rec.x_studio_field_nO7Xg:
+                    first_time = rec.create_date
+                    later_time = datetime.datetime.now()
+                    difference = later_time - first_time
+                    hours, minutes, seconds = convert_timedelta(difference)
+                    rec.minutes_differenceRepartidor = minutes
+
+    seconds_differenceRepartidor = fields.Integer(
+                                                compute='_compute_difference_second_repartidor',
+                                                string='Segundos de atraso repartidor'
+                                            )
+    def _compute_difference_second_repartidor(self):
+        for rec in self:
+            if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
+                if rec.x_studio_field_up5pO == 'waiting' and rec.x_studio_field_nO7Xg:
+                    first_time = rec.create_date
+                    later_time = datetime.datetime.now()
+                    difference = later_time - first_time
+                    hours, minutes, seconds = convert_timedelta(difference)
+                    rec.seconds_differenceRepartidor = seconds
+    """
+
+
+
+
+
     
     #_logger.info("el id xD Toner xD")            
 
