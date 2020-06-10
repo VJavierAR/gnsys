@@ -238,7 +238,7 @@ class compras(models.Model):
                                     precio = (float(m.replace(',',''))-(float(m.replace(',',''))*(self.x_studio_descuento/100)))
                                     template=self.env['product.template'].search([('default_code','=',id)])
                                     if(template.id==False):
-                                        template=self.env['product.template'].create({'name':casi[0],'description':casi[0],'categ_id':self.x_studio_tipo_de_producto.id,'default_code':id})                                        
+                                        template=self.env['product.template'].create({'name':casi[0],'description':casi[0],'categ_id':self.x_studio_tipo_de_producto.id,'default_code':str(id)})                                        
                                     productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
                                     _logger.info('id'+str(id))
                                     product={'product_uom':1,'date_planned':datetime.datetime.now()-datetime.timedelta(hours=-5),'product_id':productid.id,'product_qty':cantidad,'price_unit':precio,'taxes_id':[10],'name':productid.description}
