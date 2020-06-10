@@ -237,7 +237,7 @@ class compras(models.Model):
                                     
                                     id = l[1].replace(' ','')
 
-                                    casi = l[1].split('.')
+                                    casi = l[2].split('.')
                                     _logger.info(str(casi))
                                     casii = casi[1].split(' ')[0]
                                     tam = casi[0].split(' ')
