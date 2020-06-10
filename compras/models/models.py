@@ -234,8 +234,9 @@ class compras(models.Model):
                                     cantidad = f.split('PIEZA')[0]
                                     l = f.split('PIEZA')[1].split(' -',2)
                                     #id = l[0]
-                                    _logger.info(str(i+1))
+                                    
                                     id = l[1].replace(' ','')
+                                    _logger.info(str(id))
                                     casi = l[1].split('.')
                                     casii = casi[1].split(' ')[0]
                                     tam = casi[0].split(' ')
