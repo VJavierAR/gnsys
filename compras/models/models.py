@@ -246,7 +246,7 @@ class compras(models.Model):
                                     if(template.id==False):
                                         template=self.env['product.template'].create({'name':'','description':'/','categ_id':self.x_studio_tipo_de_producto.id,'default_code':id})
                                     productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
-                                    product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':cantidad,'price_unit':precio,'taxes_id':[10],'name':productid.description}
+                                    product={'product_uom':1,'date_planned':datetime.datetime.now()-datetime.timedelta(hours=-5),'product_id':productid.id,'product_qty':cantidad,'price_unit':precio,'taxes_id':[10],'name':productid.description}
                                     arreglo.append(product)
                             if(len(arreglo)>0):
                                 self.order_line=[(5,0,0)]
