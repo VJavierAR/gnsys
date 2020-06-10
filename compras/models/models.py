@@ -235,7 +235,7 @@ class compras(models.Model):
                                     tam = casi[0].split(' ')
                                     p = len(tam)
                                     m = tam[p-1]+'.'+casii
-                                    precio = (float(m.replace(',',''))-(float(m.replace(',',''))*(self.x_studio_descuento/100)))/int(cantidad)
+                                    precio = (float(m.replace(',',''))-(float(m.replace(',',''))*(self.x_studio_descuento/100)))
                                     template=self.env['product.template'].search([('default_code','=',id)])
                                     #if(template.id==False):
                                     #    template=self.env['product.template'].create({'name':'','description':'/','categ_id':self.x_studio_tipo_de_producto.id,'default_code':id})
