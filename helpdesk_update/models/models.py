@@ -12,6 +12,14 @@ _logger = logging.getLogger(__name__)
 #mensajeTituloGlobal = ''
 #mensajeCuerpoGlobal = ''
 
+def convert_timedelta(duration):
+    days, seconds = duration.days, duration.seconds
+    hours = days * 24 + seconds // 3600
+    minutes = (seconds % 3600) // 60
+    seconds = (seconds % 60)
+    return hours, minutes, seconds
+
+
 class helpdesk_update(models.Model):
     #_inherit = ['mail.thread', 'helpdesk.ticket']
     _inherit = 'helpdesk.ticket'
@@ -532,14 +540,14 @@ class helpdesk_update(models.Model):
             raise exceptions.except_orm(_(errorContactoSinLocalidad), _(mensajeContactoSinLocalidad))
     
     
-    
+    """
     def convert_timedelta(duration):
         days, seconds = duration.days, duration.seconds
         hours = days * 24 + seconds // 3600
         minutes = (seconds % 3600) // 60
         seconds = (seconds % 60)
         return hours, minutes, seconds
-    
+    """
     
     # Ticket compuatado de tiempos
 
@@ -565,7 +573,7 @@ class helpdesk_update(models.Model):
                 first_time = rec.create_date
                 later_time = datetime.datetime.now()
                 difference = later_time - first_time
-                hours, minutes, seconds = self.convert_timedelta(difference)
+                hours, minutes, seconds = convert_timedelta(difference)
                 rec.hour_differenceTicket = hours
 
     minutes_differenceTicket = fields.Integer(
@@ -578,7 +586,7 @@ class helpdesk_update(models.Model):
                 first_time = rec.create_date
                 later_time = datetime.datetime.now()
                 difference = later_time - first_time
-                hours, minutes, seconds = self.convert_timedelta(difference)
+                hours, minutes, seconds = convert_timedelta(difference)
                 rec.minutes_differenceTicket = minutes
 
     seconds_differenceTicket = fields.Integer(
@@ -591,7 +599,7 @@ class helpdesk_update(models.Model):
                 first_time = rec.create_date
                 later_time = datetime.datetime.now()
                 difference = later_time - first_time
-                hours, minutes, seconds = self.convert_timedelta(difference)
+                hours, minutes, seconds = convert_timedelta(difference)
                 rec.seconds_differenceTicket = seconds
 
 
@@ -626,7 +634,7 @@ class helpdesk_update(models.Model):
                     first_time = rec.create_date
                     later_time = datetime.datetime.now()
                     difference = later_time - first_time
-                    hours, minutes, seconds = self.convert_timedelta(difference)
+                    hours, minutes, seconds = convert_timedelta(difference)
                     rec.hour_differenceAlmacen = hours
 
     minutes_differenceAlmacen = fields.Integer(
@@ -640,7 +648,7 @@ class helpdesk_update(models.Model):
                     first_time = rec.create_date
                     later_time = datetime.datetime.now()
                     difference = later_time - first_time
-                    hours, minutes, seconds = self.convert_timedelta(difference)
+                    hours, minutes, seconds = convert_timedelta(difference)
                     rec.minutes_differenceAlmacen = minutes
 
     seconds_differenceAlmacen = fields.Integer(
@@ -654,7 +662,7 @@ class helpdesk_update(models.Model):
                     first_time = rec.create_date
                     later_time = datetime.datetime.now()
                     difference = later_time - first_time
-                    hours, minutes, seconds = self.convert_timedelta(difference)
+                    hours, minutes, seconds = convert_timedelta(difference)
                     rec.seconds_differenceAlmacen = seconds
 
 
@@ -682,7 +690,7 @@ class helpdesk_update(models.Model):
                     first_time = rec.create_date
                     later_time = datetime.datetime.now()
                     difference = later_time - first_time
-                    hours, minutes, seconds = self.convert_timedelta(difference)
+                    hours, minutes, seconds = convert_timedelta(difference)
                     rec.hour_differenceDistribucion = hours
 
     minutes_differenceDistribucion = fields.Integer(
@@ -696,7 +704,7 @@ class helpdesk_update(models.Model):
                     first_time = rec.create_date
                     later_time = datetime.datetime.now()
                     difference = later_time - first_time
-                    hours, minutes, seconds = self.convert_timedelta(difference)
+                    hours, minutes, seconds = convert_timedelta(difference)
                     rec.minutes_differenceDistribucion = minutes
 
     seconds_differenceDistribucion = fields.Integer(
@@ -710,7 +718,7 @@ class helpdesk_update(models.Model):
                     first_time = rec.create_date
                     later_time = datetime.datetime.now()
                     difference = later_time - first_time
-                    hours, minutes, seconds = self.convert_timedelta(difference)
+                    hours, minutes, seconds = convert_timedelta(difference)
                     rec.seconds_differenceDistribucion = seconds
 
     # Repartidor compuatado de tiempos
@@ -744,7 +752,7 @@ class helpdesk_update(models.Model):
                     first_time = rec.create_date
                     later_time = datetime.datetime.now()
                     difference = later_time - first_time
-                    hours, minutes, seconds = self.convert_timedelta(difference)
+                    hours, minutes, seconds = convert_timedelta(difference)
                     rec.hour_differenceRepartidor = hours
 
     minutes_differenceRepartidor = fields.Integer(
@@ -758,7 +766,7 @@ class helpdesk_update(models.Model):
                     first_time = rec.create_date
                     later_time = datetime.datetime.now()
                     difference = later_time - first_time
-                    hours, minutes, seconds = self.convert_timedelta(difference)
+                    hours, minutes, seconds = convert_timedelta(difference)
                     rec.minutes_differenceRepartidor = minutes
 
     seconds_differenceRepartidor = fields.Integer(
@@ -772,7 +780,7 @@ class helpdesk_update(models.Model):
                     first_time = rec.create_date
                     later_time = datetime.datetime.now()
                     difference = later_time - first_time
-                    hours, minutes, seconds = self.convert_timedelta(difference)
+                    hours, minutes, seconds = convert_timedelta(difference)
                     rec.seconds_differenceRepartidor = seconds
     """
 
