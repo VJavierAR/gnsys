@@ -1442,199 +1442,206 @@ class CrearYValidarSolTonerMassAction(TransientModel):
 
         listaTicketsSale = []
         for ticket in self.ticket_ids:
-
-            jalaSolicitudes = ''
-            if ticket.stage_id.id == 91 and ticket.x_studio_field_nO7Xg:
-                _logger.info("ticket.stage_id.id = " + str(ticket.stage_id.id))
-                _logger.info("ticket.x_studio_field_nO7Xg = " + str(ticket.x_studio_field_nO7Xg))
-                #self.stage_id.id = 93
-                query = "update helpdesk_ticket set stage_id = 93 where id = " + str(ticket.x_studio_id_ticket) + ";"
-                ss = self.env.cr.execute(query)
-                break
-            if ticket.team_id.id == 8 or ticket.team_id.id == 13:
-                x = 1 ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
-                if ticket.x_studio_almacen_1=='Agricola':
-                   sale.write({'warehouse_id':1})
-                   x = 12
-                if ticket.x_studio_almacen_1=='Queretaro':
-                   sale.write({'warehouse_id':18})
-                   x = 115
-                sale = self.env['sale.order'].sudo().create({ 'partner_id' : ticket.partner_id.id
-                                                            , 'origin' : "Ticket de tóner: " + str(ticket.x_studio_id_ticket)
-                                                            , 'x_studio_tipo_de_solicitud' : "Venta"
-                                                            , 'x_studio_requiere_instalacin' : True                                       
-                                                            , 'user_id' : ticket.user_id.id                                           
-                                                            , 'x_studio_tcnico' : ticket.x_studio_tcnico.id
-                                                            , 'x_studio_field_RnhKr': ticket.localidadContacto.id
-                                                            , 'partner_shipping_id' : ticket.x_studio_empresas_relacionadas.id
-                                                            , 'warehouse_id' : x  
-                                                            , 'team_id' : 1
-                                                            , 'x_studio_comentario_adicional': ticket.x_studio_comentarios_de_localidad
-                                                            , 'x_studio_field_bxHgp': int(ticket.x_studio_id_ticket)
-                                                            ,'x_studio_corte': ticket.x_studio_corte     
-                                                          })
-                
-
-                ticket.write({'x_studio_field_nO7Xg': sale.id})
-                #record['x_studio_field_nO7Xg'] = sale.id
-                serieaca = ''
-                
-                for c in ticket.x_studio_equipo_por_nmero_de_serie_1:
-                    bn=''
-                    amar=''
-                    cian=''
-                    magen=''
-                    car=0
-                    serieaca=c.serie.name
-                    weirtihgone=0
-                    weirtihgwtwo=0
-                    insert="insert into sale_order_line values (order_id,product_id,product_uom_qty,x_studio_field_9nQhR,route_id,price_unit, customer_lead,x_studio_toner_negro,porcentajeNegro)values("+str(sale.id)+","+str(weirtihgone)+",1,"+str(c.serie.id)+","+str(weirtihgwtwo)+",0,0,"+str(c.x_studio_toner_negro)+",1)"
-                    _logger.info("Error al capturar."+str(insert))
-                    #some like this need to be faster than create insert into sale_order_line (name,order_id,product_id,product_uom_qty,"x_studio_field_9nQhR",route_id,price_unit, customer_lead,product_uom)values('a',2220,10770,1,31902,1,0,0,1);
-                        
-                    c.write({'x_studio_tickett':ticket.x_studio_id_ticket})
-                    c.write({'fuente':'helpdesk.ticket'})
-                    
-                    #Toner BN
-                    if c.x_studio_cartuchonefro:
-                        car=car+1                        
-                        if c.serie.x_studio_color_bn=="B/N":
-                         c.write({'porcentajeNegro':c.porcentajeNegro})
-                         c.write({'x_studio_toner_negro':1})
-                        else:
-                         c.write({'porcentajeNegro':c.porcentajeNegro})    
-                         c.write({'x_studio_toner_negro':1})
-                        pro = self.env['product.product'].search([['name','=',c.x_studio_cartuchonefro.name],['categ_id','=',5]])
-                        gen = pro.sorted(key='qty_available',reverse=True)[0]
-                        weirtihgone=c.serie.x_studio_toner_compatible.id if(len(gen)==0) else gen.id
-                        datos={'name': ' '
-                               ,'order_id' : sale.id
-                               , 'product_id' : weirtihgone
-                               #, 'product_id' : c.x_studio_toner_compatible.id
-                               , 'product_uom_qty' : 1
-                               , 'x_studio_field_9nQhR': c.serie.id 
-                               , 'price_unit': 0 
-                               , 'customer_lead' : 0
-                               , 'partner_shipping_id' : ticket.x_studio_empresas_relacionadas.id}
-                        if(gen['qty_available']<=0):
-                            datos['route_id']=1
-                            datos['product_id']=c.serie.x_studio_toner_compatible.id
-                            weirtihgone=c.serie.x_studio_toner_compatible.id
-                            weirtihgtwo=1
-                        #insert='insert into sale_order_line values (order_id,product_id,product_uom_qty,x_studio_field_9nQhR,route_id,price_unit, customer_lead,x_studio_toner_negro,porcentajeNegro)values('+str(sale.id)+','+  str(weirtihgone)+','+1+','+str(c.serie.id)+','+str(weirtihgtwo)+',0,0,'+str(c.x_studio_toner_negro)+',1)'
-                        #raise exceptions.ValidationError("Error al capturar."+str(insert))
-                        self.env['sale.order.line'].create(datos)
-                        bn=str(c.serie.x_studio_reftoner)+', '
-                    #Toner Ama
-                    if c.x_studio_cartucho_amarillo:
-                        car=car+1
-                        c.write({'x_studio_toner_amarillo':1})
-                        pro = self.env['product.product'].search([['name','=',c.x_studio_cartucho_amarillo.name],['categ_id','=',5]])
-                        gen = pro.sorted(key='qty_available',reverse=True)[0]
-                        datos={'name': ' '
-                               ,'order_id' : sale.id
-                               , 'product_id' : c.x_studio_cartucho_amarillo.id if(len(gen)==0) else gen.id
-                               #, 'product_id' : c.x_studio_toner_compatible.id
-                               , 'product_uom_qty' : 1
-                               , 'x_studio_field_9nQhR': c.serie.id
-                               , 'price_unit': 0 
-                               , 'customer_lead' : 0
-                               , 'partner_shipping_id' : ticket.x_studio_empresas_relacionadas.id}
-                        if(gen['qty_available']<=0):
-                            datos['route_id']=1
-                            datos['product_id']=c.x_studio_cartucho_amarillo.id
-                        
-                        self.env['sale.order.line'].create(datos)
-                        amar=str(c.x_studio_cartucho_amarillo.name)+', '
-                    #Toner cian
-                    if c.x_studio_cartucho_cian_1:
-                        car=car+1
-                        c.write({'x_studio_toner_cian':1})
-                        pro = self.env['product.product'].search([['name','=',c.x_studio_cartucho_cian_1.name],['categ_id','=',5]])
-                        gen = pro.sorted(key='qty_available',reverse=True)[0]
-                        datos={'name': ' '
-                               ,'order_id' : sale.id
-                               , 'product_id' : c.x_studio_cartucho_cian_1.id if(len(gen)==0) else gen.id
-                               #, 'product_id' : c.x_studio_toner_compatible.id
-                               , 'product_uom_qty' : 1
-                               , 'x_studio_field_9nQhR': c.serie.id 
-                               , 'price_unit': 0 
-                               , 'customer_lead' : 0
-                               , 'partner_shipping_id' : ticket.x_studio_empresas_relacionadas.id}
-                        if(gen['qty_available']<=0):
-                            datos['route_id']=1
-                            datos['product_id']=c.x_studio_cartucho_cian_1.id
-                        
-                        self.env['sale.order.line'].create(datos)
-                        cian=str(c.x_studio_cartucho_cian_1.name)+', '
-                    #Toner mage
-                    if c.x_studio_cartucho_magenta:
-                        car=car+1
-                        c.write({'x_studio_toner_magenta':1})
-                        pro = self.env['product.product'].search([['name','=',c.x_studio_cartucho_magenta.name],['categ_id','=',5]])
-                        gen = pro.sorted(key='qty_available',reverse=True)[0]
-                        datos={'name': ' '
-                               ,'order_id' : sale.id
-                               , 'product_id' : c.x_studio_cartucho_magenta.id if(len(gen)==0) else gen.id
-                               #, 'product_id' : c.x_studio_toner_compatible.id
-                               , 'product_uom_qty' : 1
-                               , 'x_studio_field_9nQhR': c.serie.id 
-                               , 'price_unit': 0 
-                               , 'customer_lead' : 0
-                               , 'partner_shipping_id' : ticket.x_studio_empresas_relacionadas.id}
-                        if(gen['qty_available']<=0):
-                            datos['route_id']=1
-                            datos['product_id']=c.x_studio_cartucho_magenta.id
-                                                
-                        self.env['sale.order.line'].create(datos)
-                        magen=str(c.x_studio_cartucho_magenta.name)
-                        
-                    
-                    if car==0:
-                       raise exceptions.ValidationError("Ningun cartucho selecionado, serie ."+str(c.serie.name)) 
-                    
-                    jalaSolicitudes='solicitud de toner '+sale.name+' para la serie :'+serieaca +' '+bn+' '+amar+' '+cian+' '+magen
-                if len(sale.order_line)==0:
-                   raise exceptions.ValidationError("Ningun cartucho selecionado, revisar series .")                    
-                sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
-                jalaSolicitudess='solicitud de toner '+sale.name+' para la serie :'+serieaca
-                self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
-            
-
-
-                if ticket.x_studio_field_nO7Xg.order_line:
-                    self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
-                    sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
-                    sale.write({'x_studio_corte':ticket.x_studio_corte})
-                    sale.write({'x_studio_comentario_adicional':ticket.x_studio_comentarios_de_localidad})      
-                    x=0
+            if not ticket.x_studio_field_nO7Xg:
+                jalaSolicitudes = ''
+                if ticket.stage_id.id == 91 and ticket.x_studio_field_nO7Xg:
+                    _logger.info("ticket.stage_id.id = " + str(ticket.stage_id.id))
+                    _logger.info("ticket.x_studio_field_nO7Xg = " + str(ticket.x_studio_field_nO7Xg))
+                    #self.stage_id.id = 93
+                    query = "update helpdesk_ticket set stage_id = 93 where id = " + str(ticket.x_studio_id_ticket) + ";"
+                    ss = self.env.cr.execute(query)
+                    break
+                if ticket.team_id.id == 8 or ticket.team_id.id == 13:
+                    x = 1 ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
                     if ticket.x_studio_almacen_1=='Agricola':
                        sale.write({'warehouse_id':1})
-                       x=12
+                       x = 12
                     if ticket.x_studio_almacen_1=='Queretaro':
                        sale.write({'warehouse_id':18})
-                       x=115
-                    for lineas in sale.order_line:
-                        st=self.env['stock.quant'].search([['location_id','=',x],['product_id','=',lineas.product_id.id]]).sorted(key='quantity',reverse=True)
-                        requisicion=False
-                        if(len(st)>0):
-                            if(st[0].quantity==0):
-                                requisicion=self.env['requisicion.requisicion'].search([['state','!=','done'],['create_date','<=',datetime.datetime.now()],['origen','=','Tóner']]).sorted(key='create_date',reverse=True)
-                        else:
-                            requisicion=self.env['requisicion.requisicion'].search([['state','!=','done'],['create_date','<=',datetime.datetime.now()],['origen','=','Tóner']]).sorted(key='create_date',reverse=True)
-                        if(len(requisicion)==0):
-                            re=self.env['requisicion.requisicion'].create({'origen':'Tóner','area':'Almacen','state':'draft'})
-                            re.product_rel=[{'cliente':sale.partner_shipping_id.id,'ticket':sale.x_studio_field_bxHgp.id,'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
-                        if(len(requisicion)>0):
-                            requisicion[0].product_rel=[{'cliente':sale.partner_shipping_id.id,'ticket':sale.x_studio_field_bxHgp.id,'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
-                    sale.action_confirm()
+                       x = 115
+                    sale = self.env['sale.order'].sudo().create({ 'partner_id' : ticket.partner_id.id
+                                                                , 'origin' : "Ticket de tóner: " + str(ticket.x_studio_id_ticket)
+                                                                , 'x_studio_tipo_de_solicitud' : "Venta"
+                                                                , 'x_studio_requiere_instalacin' : True                                       
+                                                                , 'user_id' : ticket.user_id.id                                           
+                                                                , 'x_studio_tcnico' : ticket.x_studio_tcnico.id
+                                                                , 'x_studio_field_RnhKr': ticket.localidadContacto.id
+                                                                , 'partner_shipping_id' : ticket.x_studio_empresas_relacionadas.id
+                                                                , 'warehouse_id' : x  
+                                                                , 'team_id' : 1
+                                                                , 'x_studio_comentario_adicional': ticket.x_studio_comentarios_de_localidad
+                                                                , 'x_studio_field_bxHgp': int(ticket.x_studio_id_ticket)
+                                                                ,'x_studio_corte': ticket.x_studio_corte     
+                                                              })
+                    
 
-                else:
-                    message = ("No es posible validar una solicitud que no tiene productos.")
-                    mess = {'title': _('Solicitud sin productos!!!')
-                            , 'message' : message
-                            }
-                    return {'warning': mess}
+                    ticket.write({'x_studio_field_nO7Xg': sale.id})
+                    #record['x_studio_field_nO7Xg'] = sale.id
+                    serieaca = ''
+                    
+                    for c in ticket.x_studio_equipo_por_nmero_de_serie_1:
+                        bn=''
+                        amar=''
+                        cian=''
+                        magen=''
+                        car=0
+                        serieaca=c.serie.name
+                        weirtihgone=0
+                        weirtihgwtwo=0
+                        insert="insert into sale_order_line values (order_id,product_id,product_uom_qty,x_studio_field_9nQhR,route_id,price_unit, customer_lead,x_studio_toner_negro,porcentajeNegro)values("+str(sale.id)+","+str(weirtihgone)+",1,"+str(c.serie.id)+","+str(weirtihgwtwo)+",0,0,"+str(c.x_studio_toner_negro)+",1)"
+                        _logger.info("Error al capturar."+str(insert))
+                        #some like this need to be faster than create insert into sale_order_line (name,order_id,product_id,product_uom_qty,"x_studio_field_9nQhR",route_id,price_unit, customer_lead,product_uom)values('a',2220,10770,1,31902,1,0,0,1);
+                            
+                        c.write({'x_studio_tickett':ticket.x_studio_id_ticket})
+                        c.write({'fuente':'helpdesk.ticket'})
+                        
+                        #Toner BN
+                        if c.x_studio_cartuchonefro:
+                            car=car+1                        
+                            if c.serie.x_studio_color_bn=="B/N":
+                             c.write({'porcentajeNegro':c.porcentajeNegro})
+                             c.write({'x_studio_toner_negro':1})
+                            else:
+                             c.write({'porcentajeNegro':c.porcentajeNegro})    
+                             c.write({'x_studio_toner_negro':1})
+                            pro = self.env['product.product'].search([['name','=',c.x_studio_cartuchonefro.name],['categ_id','=',5]])
+                            gen = pro.sorted(key='qty_available',reverse=True)[0]
+                            weirtihgone=c.serie.x_studio_toner_compatible.id if(len(gen)==0) else gen.id
+                            datos={'name': ' '
+                                   ,'order_id' : sale.id
+                                   , 'product_id' : weirtihgone
+                                   #, 'product_id' : c.x_studio_toner_compatible.id
+                                   , 'product_uom_qty' : 1
+                                   , 'x_studio_field_9nQhR': c.serie.id 
+                                   , 'price_unit': 0 
+                                   , 'customer_lead' : 0
+                                   , 'partner_shipping_id' : ticket.x_studio_empresas_relacionadas.id}
+                            if(gen['qty_available']<=0):
+                                datos['route_id']=1
+                                datos['product_id']=c.serie.x_studio_toner_compatible.id
+                                weirtihgone=c.serie.x_studio_toner_compatible.id
+                                weirtihgtwo=1
+                            #insert='insert into sale_order_line values (order_id,product_id,product_uom_qty,x_studio_field_9nQhR,route_id,price_unit, customer_lead,x_studio_toner_negro,porcentajeNegro)values('+str(sale.id)+','+  str(weirtihgone)+','+1+','+str(c.serie.id)+','+str(weirtihgtwo)+',0,0,'+str(c.x_studio_toner_negro)+',1)'
+                            #raise exceptions.ValidationError("Error al capturar."+str(insert))
+                            self.env['sale.order.line'].create(datos)
+                            bn=str(c.serie.x_studio_reftoner)+', '
+                        #Toner Ama
+                        if c.x_studio_cartucho_amarillo:
+                            car=car+1
+                            c.write({'x_studio_toner_amarillo':1})
+                            pro = self.env['product.product'].search([['name','=',c.x_studio_cartucho_amarillo.name],['categ_id','=',5]])
+                            gen = pro.sorted(key='qty_available',reverse=True)[0]
+                            datos={'name': ' '
+                                   ,'order_id' : sale.id
+                                   , 'product_id' : c.x_studio_cartucho_amarillo.id if(len(gen)==0) else gen.id
+                                   #, 'product_id' : c.x_studio_toner_compatible.id
+                                   , 'product_uom_qty' : 1
+                                   , 'x_studio_field_9nQhR': c.serie.id
+                                   , 'price_unit': 0 
+                                   , 'customer_lead' : 0
+                                   , 'partner_shipping_id' : ticket.x_studio_empresas_relacionadas.id}
+                            if(gen['qty_available']<=0):
+                                datos['route_id']=1
+                                datos['product_id']=c.x_studio_cartucho_amarillo.id
+                            
+                            self.env['sale.order.line'].create(datos)
+                            amar=str(c.x_studio_cartucho_amarillo.name)+', '
+                        #Toner cian
+                        if c.x_studio_cartucho_cian_1:
+                            car=car+1
+                            c.write({'x_studio_toner_cian':1})
+                            pro = self.env['product.product'].search([['name','=',c.x_studio_cartucho_cian_1.name],['categ_id','=',5]])
+                            gen = pro.sorted(key='qty_available',reverse=True)[0]
+                            datos={'name': ' '
+                                   ,'order_id' : sale.id
+                                   , 'product_id' : c.x_studio_cartucho_cian_1.id if(len(gen)==0) else gen.id
+                                   #, 'product_id' : c.x_studio_toner_compatible.id
+                                   , 'product_uom_qty' : 1
+                                   , 'x_studio_field_9nQhR': c.serie.id 
+                                   , 'price_unit': 0 
+                                   , 'customer_lead' : 0
+                                   , 'partner_shipping_id' : ticket.x_studio_empresas_relacionadas.id}
+                            if(gen['qty_available']<=0):
+                                datos['route_id']=1
+                                datos['product_id']=c.x_studio_cartucho_cian_1.id
+                            
+                            self.env['sale.order.line'].create(datos)
+                            cian=str(c.x_studio_cartucho_cian_1.name)+', '
+                        #Toner mage
+                        if c.x_studio_cartucho_magenta:
+                            car=car+1
+                            c.write({'x_studio_toner_magenta':1})
+                            pro = self.env['product.product'].search([['name','=',c.x_studio_cartucho_magenta.name],['categ_id','=',5]])
+                            gen = pro.sorted(key='qty_available',reverse=True)[0]
+                            datos={'name': ' '
+                                   ,'order_id' : sale.id
+                                   , 'product_id' : c.x_studio_cartucho_magenta.id if(len(gen)==0) else gen.id
+                                   #, 'product_id' : c.x_studio_toner_compatible.id
+                                   , 'product_uom_qty' : 1
+                                   , 'x_studio_field_9nQhR': c.serie.id 
+                                   , 'price_unit': 0 
+                                   , 'customer_lead' : 0
+                                   , 'partner_shipping_id' : ticket.x_studio_empresas_relacionadas.id}
+                            if(gen['qty_available']<=0):
+                                datos['route_id']=1
+                                datos['product_id']=c.x_studio_cartucho_magenta.id
+                                                    
+                            self.env['sale.order.line'].create(datos)
+                            magen=str(c.x_studio_cartucho_magenta.name)
+                            
+                        
+                        if car==0:
+                           raise exceptions.ValidationError("Ningun cartucho selecionado, serie ."+str(c.serie.name)) 
+                        
+                        jalaSolicitudes='solicitud de toner '+sale.name+' para la serie :'+serieaca +' '+bn+' '+amar+' '+cian+' '+magen
+                    if len(sale.order_line)==0:
+                       raise exceptions.ValidationError("Ningun cartucho selecionado, revisar series .")                    
+                    sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
+                    jalaSolicitudess='solicitud de toner '+sale.name+' para la serie :'+serieaca
+                    self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
+                
+
+
+                    if ticket.x_studio_field_nO7Xg.order_line:
+                        self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
+                        sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
+                        sale.write({'x_studio_corte':ticket.x_studio_corte})
+                        sale.write({'x_studio_comentario_adicional':ticket.x_studio_comentarios_de_localidad})      
+                        x=0
+                        if ticket.x_studio_almacen_1=='Agricola':
+                           sale.write({'warehouse_id':1})
+                           x=12
+                        if ticket.x_studio_almacen_1=='Queretaro':
+                           sale.write({'warehouse_id':18})
+                           x=115
+                        for lineas in sale.order_line:
+                            st=self.env['stock.quant'].search([['location_id','=',x],['product_id','=',lineas.product_id.id]]).sorted(key='quantity',reverse=True)
+                            requisicion=False
+                            if(len(st)>0):
+                                if(st[0].quantity==0):
+                                    requisicion=self.env['requisicion.requisicion'].search([['state','!=','done'],['create_date','<=',datetime.datetime.now()],['origen','=','Tóner']]).sorted(key='create_date',reverse=True)
+                            else:
+                                requisicion=self.env['requisicion.requisicion'].search([['state','!=','done'],['create_date','<=',datetime.datetime.now()],['origen','=','Tóner']]).sorted(key='create_date',reverse=True)
+                            if(len(requisicion)==0):
+                                re=self.env['requisicion.requisicion'].create({'origen':'Tóner','area':'Almacen','state':'draft'})
+                                re.product_rel=[{'cliente':sale.partner_shipping_id.id,'ticket':sale.x_studio_field_bxHgp.id,'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
+                            if(len(requisicion)>0):
+                                requisicion[0].product_rel=[{'cliente':sale.partner_shipping_id.id,'ticket':sale.x_studio_field_bxHgp.id,'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
+                        sale.action_confirm()
+
+                    else:
+                        message = ("No es posible validar una solicitud que no tiene productos.")
+                        mess = {'title': _('Solicitud sin productos!!!')
+                                , 'message' : message
+                                }
+                        return {'warning': mess}
+            else:
+                message = ('Ya existe una solicitud de tóner. No es posible generar dos solicitudes.')
+                mess= {
+                        'title': _('Solicitud de tóner existente!!!'),
+                        'message' : message
+                      }
+                return {'warning': mess}
 
 
             """
@@ -1667,7 +1674,7 @@ class CrearYValidarSolTonerMassAction(TransientModel):
             ss = self.env.cr.execute(query)
 
         wiz = ''
-        mensajeTitulo = "Solicitudes de toner creadas y validadas !!!"
+        mensajeTitulo = "Solicitudes de tóner creadas y validadas !!!"
         mensajeCuerpo = "Se crearon y validaron las solicitudes de los tickets. \n\n"
         for ticket in self.ticket_ids:
             mensajeCuerpo = mensajeCuerpo + str(ticket.x_studio_id_ticket) + ', '
