@@ -138,33 +138,31 @@ class StockPickingMassAction(TransientModel):
             pick_to_do |= picking
             if pick_to_do:
                 pick_to_do.action_done()
-            if assigned_picking_lst._check_backorder():
+            if pick_to_backorder:
                 cancel_backorder=True
                 if cancel_backorder:
-                    for pick_id in self.picking_ids:
-                        moves_to_log = {}
-                        for move in pick_id.move_lines:
-                            if float_compare(move.product_uom_qty, move.quantity_done, precision_rounding=move.product_uom.rounding) > 0:
-                                moves_to_log[move] = (move.quantity_done, move.product_uom_qty)
-                            pick_id._log_less_quantities_than_expected(moves_to_log)
+                    moves_to_log = {}
+                    for move in pick_to_backorder.move_lines:
+                        if float_compare(move.product_uom_qty, move.quantity_done, precision_rounding=move.product_uom.rounding) > 0:
+                            moves_to_log[move] = (move.quantity_done, move.product_uom_qty)
+                        pick_id._log_less_quantities_than_expected(moves_to_log)
                 self.picking_ids.action_done()
                 if cancel_backorder:
-                    for pick_id in self.picking_ids:
-                        backorder_pick = self.env['stock.picking'].search([('backorder_id', '=', pick_id.id)])
-                        if(pick_id.picking_type_id.id==3 or pick_id.picking_type_id.id==29314):
-                            #sale=backorder_pick.sale_id.copy()
-                            #pipi=self.env['stock.picking'].search([['sale_id','=',sale.id]])
-                            #self.env['stock.move.line'].search([['picking_id','in',pipi.mapped('id')]]).unlink()
-                            #self.env['sale.order.line'].search([['order_id','=',sale.id]]).unlink()
-                            sale = self.env['sale.order'].create({'x_studio_backorder':True,'partner_id' : backorder_pick.sale_id.partner_id.id, 'origin' : backorder_pick.sale_id.origin, 'x_studio_tipo_de_solicitud' : 'Venta', 'x_studio_requiere_instalacin' : True, 'x_studio_field_RnhKr': backorder_pick.sale_id.x_studio_field_RnhKr.id, 'partner_shipping_id' : backorder_pick.sale_id.partner_shipping_id.id, 'warehouse_id' :backorder_pick.sale_id.warehouse_id.id, 'team_id' : 1, 'x_studio_field_bxHgp': pick_id.x_studio_ticket_relacionado.id})
-                            pick_id.write({'sale_child':sale.id})
-                            for rr in backorder_pick.move_ids_without_package:
-                                datosr={'order_id' : sale.id, 'product_id' : rr.product_id.id, 'product_uom_qty' :rr.product_uom_qty,'x_studio_field_9nQhR':rr.x_studio_serie_destino.id, 'price_unit': 0}
-                                if(pick_id.x_studio_ticket_relacionado.team_id.id==10 or pick_id.x_studio_ticket_relacionado.team_id.id==11):
-                                    datosr['route_id']=22548
-                                self.env['sale.order.line'].create(datosr)
-                            pick_id.x_studio_ticket_relacionado.write({'x_studio_field_0OAPP':[(4,sale.id)]})
-                            sale.sudo().action_confirm()
+                    backorder_pick = self.env['stock.picking'].search([('backorder_id', '=', pick_to_backorder.id)])
+                    if(pick_to_backorder.picking_type_id.id==3 or pick_to_backorder.picking_type_id.id==29314):
+                        #sale=backorder_pick.sale_id.copy()
+                        #pipi=self.env['stock.picking'].search([['sale_id','=',sale.id]])
+                        #self.env['stock.move.line'].search([['picking_id','in',pipi.mapped('id')]]).unlink()
+                        #self.env['sale.order.line'].search([['order_id','=',sale.id]]).unlink()
+                        sale = self.env['sale.order'].create({'x_studio_backorder':True,'partner_id' : backorder_pick.sale_id.partner_id.id, 'origin' : backorder_pick.sale_id.origin, 'x_studio_tipo_de_solicitud' : 'Venta', 'x_studio_requiere_instalacin' : True, 'x_studio_field_RnhKr': backorder_pick.sale_id.x_studio_field_RnhKr.id, 'partner_shipping_id' : backorder_pick.sale_id.partner_shipping_id.id, 'warehouse_id' :backorder_pick.sale_id.warehouse_id.id, 'team_id' : 1, 'x_studio_field_bxHgp': pick_id.x_studio_ticket_relacionado.id})
+                        pick_id.write({'sale_child':sale.id})
+                        for rr in backorder_pick.move_ids_without_package:
+                            datosr={'order_id' : sale.id, 'product_id' : rr.product_id.id, 'product_uom_qty' :rr.product_uom_qty,'x_studio_field_9nQhR':rr.x_studio_serie_destino.id, 'price_unit': 0}
+                            if(pick_to_backorder.x_studio_ticket_relacionado.team_id.id==10 or pick_to_backorder.x_studio_ticket_relacionado.team_id.id==11):
+                                datosr['route_id']=22548
+                            self.env['sale.order.line'].create(datosr)
+                        pick_to_backorder.x_studio_ticket_relacionado.write({'x_studio_field_0OAPP':[(4,sale.id)]})
+                        sale.sudo().action_confirm()
                         backorder_pick.action_cancel()
         if(len(assigned_picking_lst2)>0):
             return self.env.ref('stock_picking_mass_action.report_custom').report_action(assigned_picking_lst2)
