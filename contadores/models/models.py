@@ -230,7 +230,7 @@ class dcas(models.Model):
             raise exceptions.ValidationError("Contador Monocromatico Menor")
 
     @api.onchange('contadorColor')
-    def validaContadores(self):
+    def validaContadoresLecturas(self):
         contaC=self.contadorColor                       
         cac=int(self.x_studio_lectura_anterior_color)
         if cac>contaC:            
