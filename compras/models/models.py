@@ -250,8 +250,9 @@ class compras(models.Model):
                         if f2.startswith(b'%PDF-1.4'):
                             string = f.read()
                             f.close()
-                            b = re.split('\n',string)                    
+                            b = string.split('\n')                    
                             i = 0
+                            j=0
                             h=""
                             g=""
                             q=""
@@ -260,22 +261,38 @@ class compras(models.Model):
                             for o in b:
                                 product={}
                                 if('#' in o ):
-                                    r = o.split("#")
-                                    q = r[1].split(' ')[1]       
-                                if('Customer' in o ):
-                                    s = o.split("$")
-                                    h=float(s[2])
-                                    g=float(s[1].split(' ')[0])
-                                    qty=round(h/g)
+                                    r = o.split("Artículo # ")
+                                    q = r[0].split(' ')[0]
                                     template=self.env['product.template'].search([('default_code','=',q)])
                                     if(template.id==False):
                                         productid=self.env['product.product'].create({'name':'/','description':'falta','categ_id':self.x_studio_tipo_de_producto.id,'default_code':str(q),'type':'product'})
                                     if(template.id!=False):                                  
                                         productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
-                                    desc=productid.description if(productid.description) else '|'
-                                    product={'product_uom':1,'date_planned':self.date_order if(self.date_order) else datetime.datetime.now()-datetime.timedelta(hours=-5),'product_id':productid.id,'product_qty':qty,'price_unit':g,'taxes_id':[10]}
-                                    product['name']=desc
-                                    arr.append(product)
+                                    if(len(arr)==i+1):
+                                        arr[i]['product_id']=productid.id
+                                        desc=productid.description if(productid.description) else '|'
+                                        arr[i]['name']=desc
+                                        arr[i]['product_uom']=1
+                                        arr[i]['date_planned']=self.date_order if(self.date_order) else datetime.datetime.now()-datetime.timedelta(hours=-5)
+                                        arr[i]['taxes_id']=[10]
+                                    if(len(arr)<i-1):
+                                        product={'product_uom':1,'date_planned':self.date_order if(self.date_order) else datetime.datetime.now()-datetime.timedelta(hours=-5),'product_id':productid.id,'taxes_id':[10],'name':productid.description}
+                                        desc=productid.description if(productid.description) else '|'
+                                        product['name']=desc
+                                        arr.append(product)
+                                    i=i+1       
+                                if('Customer' in o ):
+                                    s = o.split("$")
+                                    h=float(s[2])
+                                    g=float(s[1].split(' ')[0])
+                                    qty=round(h/g)
+                                    if(len(arr)==j+1):
+                                        arr[j]['qty']=qty
+                                        arr[j]['price_unit']=g
+                                    if(len(arr)<j-1):
+                                        product={'qty':qty,'price_unit':g}
+                                        arr.append(product)
+                                    j=j+1
                             if(len(arr)>0):
                                 self.order_line=[(5,0,0)]
                             self.order_line=arr
