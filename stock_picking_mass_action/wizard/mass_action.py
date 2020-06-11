@@ -177,28 +177,28 @@ class StockPickingMassAction(TransientModel):
                             sale.sudo().action_confirm()
                         backorder_pick.action_cancel()
     
-        def massActionPick(self):
-            pickings=self.picking_ids
-            self.picking_ids.sudo().action_confirm()
-            self.picking_ids.sudo().action_assign()
-            assigned_picking_lst = self.picking_ids.\
-            filtered(lambda x: x.state == 'assigned').\
-            sorted(key=lambda r: r.scheduled_date)
-            assigned_picking_lst2 = self.picking_ids.\
-            filtered(lambda x: x.picking_type_id.id == 3 and x.state == 'assigned')
-            CON=str(self.env['ir.sequence'].next_by_code('concentrado'))
-            for l in assigned_picking_lst:
-                if(l.picking_type_id.id==3):
-                    self.check=2
-                    self.env['stock.picking'].search([['sale_id','=',l.sale_id.id]]).write({'concentrado':CON})
-                if(l.picking_type_id.id==29314):
-                    self.check=1
-            for pick in pickings:
-                self.picking_ids=pick
-                threaded_post = threading.Thread(target=self.mass_action(), args=())
-            self.picking_ids=pickings
-            if(len(assigned_picking_lst2)>0):
-                return self.env.ref('stock_picking_mass_action.report_custom').report_action(assigned_picking_lst2)
+    def massActionPick(self):
+        pickings=self.picking_ids
+        self.picking_ids.sudo().action_confirm()
+        self.picking_ids.sudo().action_assign()
+        assigned_picking_lst = self.picking_ids.\
+        filtered(lambda x: x.state == 'assigned').\
+        sorted(key=lambda r: r.scheduled_date)
+        assigned_picking_lst2 = self.picking_ids.\
+        filtered(lambda x: x.picking_type_id.id == 3 and x.state == 'assigned')
+        CON=str(self.env['ir.sequence'].next_by_code('concentrado'))
+        for l in assigned_picking_lst:
+            if(l.picking_type_id.id==3):
+                self.check=2
+                self.env['stock.picking'].search([['sale_id','=',l.sale_id.id]]).write({'concentrado':CON})
+            if(l.picking_type_id.id==29314):
+                self.check=1
+        for pick in pickings:
+            self.picking_ids=pick
+            threaded_post = threading.Thread(target=self.mass_action(), args=())
+        self.picking_ids=pickings
+        if(len(assigned_picking_lst2)>0):
+            return self.env.ref('stock_picking_mass_action.report_custom').report_action(assigned_picking_lst2)
 
 
     @api.multi
