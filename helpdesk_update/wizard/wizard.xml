@@ -696,11 +696,13 @@
                         </page>
                         <page string = 'Días de atraso'>
                             <group>
-                                <field name='tiempoAtrasoTicket' readonly='1' widget='html'/>
-                            </group>
-                            <group>
-                                <field name='tiempoAtrasoAlmacen' readonly='1' widget='html'/>
-                                <field name='tiempoAtrasoDistribucion' readonly='1' widget='html'/>
+                                <group>
+                                    <field name='tiempoAtrasoTicket' readonly='1' widget='html'/>
+                                </group>
+                                <group>
+                                    <field name='tiempoAtrasoAlmacen' readonly='1' widget='html'/>
+                                    <field name='tiempoAtrasoDistribucion' readonly='1' widget='html'/>
+                                </group>
                             </group>
                         </page>
                     </notebook>
@@ -837,24 +839,24 @@
                                         <field name='equipo' readonly='1'/>
                                         <field name="contadorMono" string = 'Contador Monocromático'/>
                                         <field name="contadorAnteriorNegro" string = 'Contador de ultima solicitud negro' readonly = '1'/>
-                                        <field name="contadorColor" string = 'Contador color' invisible="[['colorEquipo', '=', 'B/N']]"/>
-                                        <field name='contadorAnteriorColor' string='Contador ultima solicitud color' readonly='1' invisible="[['colorEquipo', '=', 'B/N']]"/>
+                                        <field name="contadorColor" string = 'Contador color' attrs="{'invisible': [['colorEquipo', '=', 'B/N']] }" />
+                                        <field name='contadorAnteriorColor' string='Contador ultima solicitud color' readonly='1' attrs="{'invisible': [['colorEquipo', '=', 'B/N']] }" />
                                         
                                         <field name='x_studio_cartuchonefro' string="Cartucho negro" domain="[&quot;&amp;&quot;,[&quot;categ_id&quot;,&quot;=&quot;,5],[&quot;x_studio_color&quot;,&quot;=&quot;,&quot;Negro&quot;],[&quot;x_studio_toner_compatible.id&quot;,&quot;=&quot;,x_studio_field_qYMJD]]" />
                                         <field name="x_studio_rendimiento_negro" string="Rendimiento Negro" readonly='1'/>
                                         <field name="porcentajeNegro" string ='Porcentaje negro'/>
                                         
-                                        <field name='x_studio_cartucho_amarillo' domain='[ &quot;&amp;&quot;, ["categ_id", "=", 5], ["x_studip_color","=", "Amarillo"], ["x_studio_toner_compatible.id", "=", x_studio_field_qYMJD] ]' string = 'Cartucho amarillo' invisible="[['colorEquipo', '=', 'B/N']]" />
-                                        <field name='x_studio_rendimientoa' invisible="[['colorEquipo', '=', 'B/N']]" readonly='1' string='Rendimiento Amarillo'/>
-                                        <field name='porcentajeAmarillo' invisible="[['colorEquipo', '=', 'B/N']]" string='Porcentaje cian'/>
+                                        <field name='x_studio_cartucho_amarillo' domain='[ &quot;&amp;&quot;, ["categ_id", "=", 5], ["x_studip_color","=", "Amarillo"], ["x_studio_toner_compatible.id", "=", x_studio_field_qYMJD] ]' string = 'Cartucho amarillo' attrs="{'invisible': [['colorEquipo', '=', 'B/N']] }" />
+                                        <field name='x_studio_rendimientoa' attrs="{'invisible': [['colorEquipo', '=', 'B/N']] }" readonly='1' string='Rendimiento Amarillo'/>
+                                        <field name='porcentajeAmarillo' attrs="{'invisible': [['colorEquipo', '=', 'B/N']] }" string='Porcentaje cian'/>
                                         
-                                        <field name='x_studio_cartucho_cian_1' domain="[&quot;&amp;&quot;,[&quot;categ_id&quot;,&quot;=&quot;,5],[&quot;x_studio_color&quot;,&quot;=&quot;,&quot;Cian&quot;],[&quot;x_studio_toner_compatible.id&quot;,&quot;=&quot;,x_studio_field_qYMJD]]" string ='Cartucho cian' invisible="[['colorEquipo', '=', 'B/N']]"/>
-                                        <field name='x_studio_rendimientoc' invisible="[['colorEquipo', '=', 'B/N']]" readonly='1' string = 'Rendimiento cian'/>
-                                        <field name='porcentajeCian' invisible="[['colorEquipo', '=', 'B/N']]" string ='Porcentaje cian' />
+                                        <field name='x_studio_cartucho_cian_1' domain="[&quot;&amp;&quot;,[&quot;categ_id&quot;,&quot;=&quot;,5],[&quot;x_studio_color&quot;,&quot;=&quot;,&quot;Cian&quot;],[&quot;x_studio_toner_compatible.id&quot;,&quot;=&quot;,x_studio_field_qYMJD]]" string ='Cartucho cian' attrs="{'invisible': [['colorEquipo', '=', 'B/N']] }" />
+                                        <field name='x_studio_rendimientoc' attrs="{'invisible': [['colorEquipo', '=', 'B/N']] }" readonly='1' string = 'Rendimiento cian'/>
+                                        <field name='porcentajeCian' attrs="{'invisible': [['colorEquipo', '=', 'B/N']] }" string ='Porcentaje cian' />
                                         
-                                        <field name='x_studio_cartucho_magenta' domain='[ &quot;&amp;&quot;, ["categ_id", "=", 5], ["x_studip_color","=", "Magenta"], ["x_studio_toner_compatible.id", "=", x_studio_field_qYMJD] ]' invisible="[['colorEquipo', '=', 'B/N']]"  string = 'Cartucho magenta' />
-                                        <field name='x_studio_rendimientom' invisible="[['colorEquipo', '=', 'B/N']]" readonly='1' string = 'Rendimiento magenta'/>
-                                        <field name='porcentajeMagenta' invisible="[['colorEquipo', '=', 'B/N']]" string ='Porcentaje magenta' />
+                                        <field name='x_studio_cartucho_magenta' domain='[ &quot;&amp;&quot;, ["categ_id", "=", 5], ["x_studip_color","=", "Magenta"], ["x_studio_toner_compatible.id", "=", x_studio_field_qYMJD] ]' attrs="{'invisible': [['colorEquipo', '=', 'B/N']] }"  string = 'Cartucho magenta' />
+                                        <field name='x_studio_rendimientom' attrs="{'invisible': [['colorEquipo', '=', 'B/N']] }" readonly='1' string = 'Rendimiento magenta'/>
+                                        <field name='porcentajeMagenta' attrs="{'invisible': [['colorEquipo', '=', 'B/N']] }" string ='Porcentaje magenta' />
 
 
 
