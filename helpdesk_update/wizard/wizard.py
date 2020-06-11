@@ -1703,14 +1703,6 @@ class CrearYValidarSolTonerMassAction(TransientModel):
 class HelpDeskDatosToner(TransientModel):
     _name = 'helpdesk.datos.toner'
     _description = 'HelpDesk informacion de toner'
-    """
-    check = fields.Boolean(string = 'Mostrar en reporte', default = False,)
-    ticket_id = fields.Many2one("helpdesk.ticket")
-    diagnostico_id = fields.One2many('helpdesk.diagnostico', 'ticketRelacion', string = 'Diagnostico', compute = '_compute_diagnosticos')
-    estado = fields.Char('Estado previo a cerrar el ticket', compute = "_compute_estadoTicket")
-    comentario = fields.Text('Comentario')
-    evidencia = fields.Many2many('ir.attachment', string = "Evidencias")
-    """
 
     ticket_id = fields.Many2one("helpdesk.ticket")
     serie = fields.Text(string = "Serie", compute = '_compute_serie_nombre')
@@ -1815,21 +1807,33 @@ class HelpDeskDatosToner(TransientModel):
                                         compute = '_compute_zona_estados'
                                     )
     numeroTicketCliente = fields.Text(
-                            string = 'Número de ticket cliente',
-                            compute = '_compute_numero_ticket_cliente'
-                        )
+                                        string = 'Número de ticket cliente',
+                                        compute = '_compute_numero_ticket_cliente'
+                                    )
     numeroTicketDistribuidor = fields.Text(
-                            string = 'Número de ticket distribuidor',
-                            compute = '_compute_numero_ticket_distribuidor'
-                        )
+                                            string = 'Número de ticket distribuidor',
+                                            compute = '_compute_numero_ticket_distribuidor'
+                                        )
     numeroTicketGuia = fields.Text(
-                            string = 'Número de ticket guía',
-                            compute = '_compute_numero_ticket_guia'
-                        )
+                                    string = 'Número de ticket guía',
+                                    compute = '_compute_numero_ticket_guia'
+                                )
     comentarioLocalidad = fields.Text(
-                            string = 'Comentario de localidad',
-                            compute = '_compute_comentario_localidad'
-                        )
+                                        string = 'Comentario de localidad',
+                                        compute = '_compute_comentario_localidad'
+                                    )
+    tiempoAtrasoTicket = fields.Text(
+                                        string = 'Tiempo de atraso ticket',
+                                        compute = '_compute_tiempo_ticket'
+                                    )
+    tiempoAtrasoAlmacen = fields.Text(
+                                        string = 'Tiempo de atraso almacén',
+                                        compute = '_compute_tiempo_almacen'
+                                    )
+    tiempoAtrasoDistribucion = fields.Text(
+                                            string = 'Tiempo de atraso distribución',
+                                            compute = '_compute_tiempo_distribucion'
+                                        )
 
 
     def _compute_serie_nombre(self):
@@ -1941,8 +1945,17 @@ class HelpDeskDatosToner(TransientModel):
         if self.ticket_id.x_studio_comentarios_de_localidad:
             self.comentarioLocalidad = self.ticket_id.x_studio_comentarios_de_localidad
     
+    def _compute_tiempo_ticket(self):
+        if self.ticket_id.tiempoDeAtrasoTicket:
+            self.tiempoAtrasoTicket = self.ticket_id.tiempoDeAtrasoTicket
 
+    def _compute_tiempo_almacen(self):
+        if self.ticket_id.tiempoDeAtrasoAlmacen:
+            self.tiempoAtrasoAlmacen = self.ticket_id.tiempoDeAtrasoAlmacen
 
+    def _compute_tiempo_distribucion(self):
+        if self.ticket_id.tiempoDeAtrasoDistribucion:
+            self.tiempoAtrasoDistribucion = self.ticket_id.tiempoDeAtrasoDistribucion
 
 
 class HelpDeskDetalleSerieToner(TransientModel):
