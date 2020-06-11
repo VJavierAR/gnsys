@@ -275,7 +275,7 @@ class compras(models.Model):
                                         arr[i]['product_uom']=1
                                         arr[i]['date_planned']=self.date_order if(self.date_order) else datetime.datetime.now()-datetime.timedelta(hours=-5)
                                         arr[i]['taxes_id']=[10]
-                                    if(len(arr)<i-1):
+                                    if(len(arr)==i):
                                         product={'product_uom':1,'date_planned':self.date_order if(self.date_order) else datetime.datetime.now()-datetime.timedelta(hours=-5),'product_id':productid.id,'taxes_id':[10],'name':productid.description}
                                         desc=productid.description if(productid.description) else '|'
                                         product['name']=desc
@@ -289,7 +289,7 @@ class compras(models.Model):
                                     if(len(arr)==j+1):
                                         arr[j]['qty']=qty
                                         arr[j]['price_unit']=g
-                                    if(len(arr)<j-1):
+                                    if(len(arr)==j):
                                         product={'qty':qty,'price_unit':g}
                                         arr.append(product)
                                     j=j+1
