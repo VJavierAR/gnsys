@@ -1618,6 +1618,156 @@ class helpdesk_update(models.Model):
     """
     
     
+
+
+
+
+        @api.multi
+    def crear_y_validar_solicitud_refaccion(self):
+        for record in self:
+            if not record.x_studio_field_nO7Xg:
+                if len(record.x_studio_productos) > 0:
+                    if self.x_studio_field_nO7Xg.id != False and self.x_studio_field_nO7Xg.state == 'sale':
+                        message = ('Existe una solicitud ya generada y esta fue validada. \n\nNo es posible realizar cambios a una solicitud ya validada.')
+                        mess= {'title': _('Solicitud existente validada!!!')
+                                , 'message' : message
+                        }
+                        return {'warning': mess}
+                    
+                    if self.x_studio_field_nO7Xg.id != False and self.x_studio_field_nO7Xg.state != 'sale':
+                        sale = self.x_studio_field_nO7Xg
+                        self.env.cr.execute("delete from sale_order_line where order_id = " + str(sale.id) +";")
+                        for c in self.x_studio_productos:
+                            datosr={'order_id' : sale.id, 'product_id' : c.id, 'product_uom_qty' : c.x_studio_cantidad_pedida, 'x_studio_field_9nQhR':self.x_studio_equipo_por_nmero_de_serie[0].id}
+                            if(self.team_id.id==10 or self.team_id.id==11):
+                                datosr['route_id']=22548
+                            self.env['sale.order.line'].create(datosr)
+                            self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
+                            #self.env.cr.commit()
+                    
+                    else:
+                        sale = self.env['sale.order'].create({'partner_id' : record.partner_id.id
+                                                                     , 'origin' : "Ticket de refacción: " + str(record.x_studio_id_ticket)
+                                                                     , 'x_studio_tipo_de_solicitud' : 'Venta'
+                                                                     , 'x_studio_requiere_instalacin' : True
+                                                                     , 'x_studio_field_RnhKr': self.localidadContacto.id
+                                                                     , 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id
+                                                                     , 'x_studio_tcnico' : record.x_studio_tcnico.id
+                                                                     , 'warehouse_id' : 5865   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
+                                                                     , 'team_id' : 1
+                                                                     , 'x_studio_field_bxHgp': int(record.x_studio_id_ticket) 
+                                                                    })
+                        record['x_studio_field_nO7Xg'] = sale.id
+                        for c in record.x_studio_productos:
+                            datosr = {'order_id' : sale.id
+                                    , 'product_id' : c.id
+                                    , 'product_uom_qty' : c.x_studio_cantidad_pedida
+                                    ,'x_studio_field_9nQhR':self.x_studio_equipo_por_nmero_de_serie[0].id
+                                    , 'price_unit': 0}
+                            if (self.team_id.id == 10 or self.team_id.id == 11):
+                                datosr['route_id'] = 22548
+                            self.env['sale.order.line'].create(datosr)
+                            sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
+                            #sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta', 'validity_date' : sale.date_order + datetime.timedelta(days=30)})
+                            self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
+
+                            
+
+
+
+
+                        sale = record.x_studio_field_nO7Xg
+                        if sale.id != 0 or record.x_studio_productos != []:
+                            if self.x_studio_field_nO7Xg.order_line:
+                                self.sudo().env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
+                                sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
+                                sale.action_confirm()
+                                for lineas in sale.order_line:
+                                    st=self.env['stock.quant'].search([['location_id','in',(35204,12)],['product_id','=',lineas.product_id.id]]).sorted(key='quantity',reverse=True)
+                                    requisicion=False
+                                    if(len(st)>0):
+                                        if(st[0].quantity==0):
+                                            requisicion=self.env['requisicion.requisicion'].search([['state','!=','done'],['create_date','<=',datetime.datetime.now()],['origen','=','Refacción']]).sorted(key='create_date',reverse=True)
+                                    else:
+                                        requisicion=self.env['requisicion.requisicion'].search([['state','!=','done'],['create_date','<=',datetime.datetime.now()],['origen','=','Refacción']]).sorted(key='create_date',reverse=True)
+                                    if(requisicion!=False ):
+                                        re=self.env['requisicion.requisicion'].create({'origen':'Refacción','area':'Almacen','state':'draft'})
+                                        re.product_rel=[{'cliente':sale.partner_shipping_id.id,'ticket':sale.x_studio_field_bxHgp.id,'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
+                                    if(requisicion):                                            
+                                        requisicion[0].product_rel=[{'cliente':sale.partner_shipping_id.id,'ticket':sale.x_studio_field_bxHgp.id,'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
+                                        
+                                estadoAntes = str(self.stage_id.name)
+                                if (self.stage_id.name == 'Solicitud de Refacción' or self.stage_id.name == 'Cotización') and self.estadoSolicitudDeRefaccionValidada == False:
+                                    query = "update helpdesk_ticket set stage_id = 102 where id = " + str(self.x_studio_id_ticket) + ";"
+                                    ss = self.env.cr.execute(query)
+                                    ultimaEvidenciaTec = []
+                                    ultimoComentario = ''
+                                    if self.diagnosticos:
+                                        if self.diagnosticos[-1].evidencia.ids:
+                                            ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
+                                        ultimoComentario = self.diagnosticos[-1].comentario
+                                    
+                                    message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Refacción Autorizada' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
+                                    mess= {
+                                            'title': _('Estado de ticket actualizado!!!'),
+                                            'message' : message
+                                          }
+                                    self.estadoSolicitudDeRefaccionValidada = True
+                                    return {'warning': mess}
+                            else:
+                                message = ("No es posible validar una solicitud que no tiene productos.")
+                                mess = {'title': _('Solicitud sin productos!!!')
+                                        , 'message' : message
+                                        }
+                                return {'warning': mess}
+                        else:
+                            errorRefaccionNoValidada = "Solicitud de refacción no validada"
+                            mensajeSolicitudRefaccionNoValida = "No es posible validar una solicitud de refacción en el estado actual debido a falta de productos o porque no existe la solicitud."
+                            estadoActual = str(record.stage_id.name)
+                            raise exceptions.except_orm(_(errorRefaccionNoValidada), _(mensajeSolicitudRefaccionNoValida + " Estado: " + estadoActual))
+
+
+                else:
+                    message = ('No existen productos para generar y validar la solicitud.')
+                    mess= {
+                            'title': _('Ticket sin productos !!!'),
+                            'message' : message
+                          }
+                    return {'warning': mess}
+            else:
+                message = ('Ya existe una solicitud, no es posible generan una solicitud.')
+                mess= {
+                        'title': _('Ticket con solicitud existente !!!'),
+                        'message' : message
+                      }
+                return {'warning': mess}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     #@api.onchange('x_studio_captura_c')
     @api.multi
     def capturandoMesa(self):
