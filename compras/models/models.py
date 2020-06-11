@@ -273,7 +273,7 @@ class compras(models.Model):
                                     if(template.id!=False):                                  
                                         productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
                                     desc=productid.description if(productid.description) else '|'
-                                    product={'product_uom':1,'date_planned':self.date_order if(self.date_order) else datetime.datetime.now()-datetime.timedelta(hours=-5),'product_id':productid.id,'product_qty':qty,'price_unit':g}
+                                    product={'product_uom':1,'date_planned':self.date_order if(self.date_order) else datetime.datetime.now()-datetime.timedelta(hours=-5),'product_id':productid.id,'product_qty':qty,'price_unit':g,'taxes_id':[10]}
                                     product['name']=desc
                                     arr.append(product)
                             if(len(arr)>0):
