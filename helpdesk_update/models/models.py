@@ -613,9 +613,9 @@ class helpdesk_update(models.Model):
                                             <div class='col-sm-12'>
                                                 <p>
                                                 """ + str(self.days_difference) + """ día(s) con 
-                                                """ + str(self.hour_differenceTicket) + """ hora(s), 
-                                                """ + str(self.minutes_differenceTicket) + """ minuto(s) y 
-                                                """ + str(self.seconds_differenceTicket) + """ segundo(s)
+                                                """ + str(self.hour_differenceTicket) + """: 
+                                                """ + str(self.minutes_differenceTicket) + """:
+                                                """ + str(self.seconds_differenceTicket) + """
                                                 </p>
                                             </div>
                                         </div>
@@ -692,9 +692,9 @@ class helpdesk_update(models.Model):
                                             <div class='col-sm-12'>
                                                 <p>
                                                 """ + str(self.days_differenceAlmacen) + """ día(s) con 
-                                                """ + str(self.hour_differenceAlmacen) + """ hora(s), 
-                                                """ + str(self.minutes_differenceAlmacen) + """ minuto(s) y 
-                                                """ + str(self.seconds_differenceAlmacen) + """ segundo(s)
+                                                """ + str(self.hour_differenceAlmacen) + """:
+                                                """ + str(self.minutes_differenceAlmacen) + """:
+                                                """ + str(self.seconds_differenceAlmacen) + """:
                                                 </p>
                                             </div>
                                         </div>
@@ -766,9 +766,9 @@ class helpdesk_update(models.Model):
                                             <div class='col-sm-12'>
                                                 <p>
                                                 """ + str(self.days_differenceAlmacen) + """ día(s) con 
-                                                """ + str(self.hour_differenceAlmacen) + """ hora(s), 
-                                                """ + str(self.minutes_differenceAlmacen) + """ minuto(s) y 
-                                                """ + str(self.seconds_differenceAlmacen) + """ segundo(s)
+                                                """ + str(self.hour_differenceAlmacen) + """:
+                                                """ + str(self.minutes_differenceAlmacen) + """:
+                                                """ + str(self.seconds_differenceAlmacen) + """
                                                 </p>
                                             </div>
                                         </div>
@@ -834,6 +834,28 @@ class helpdesk_update(models.Model):
                     difference = later_time - first_time
                     hours, minutes, seconds = convert_timedelta(difference)
                     rec.seconds_differenceRepartidor = seconds
+
+
+    tiempoDeAtrasoRepartidor = fields.Text(
+                                            string = 'Tiempo de atraso repartidor',
+                                            compute = '_compute_tiempo_atraso_repartidor'
+                                        )
+    def _compute_tiempo_atraso_repartidor(self):
+        self.tiempoDeAtrasoRepartidor = """
+#                                        <div class='row'>
+#                                            <div class='col-sm-12'>
+#                                                <p>
+                                                """ + str(self.days_differenceRepartidor) + """ #día(s) con 
+                                                """ + str(self.hour_differenceRepartidor) + """#:
+                                                """ + str(self.minutes_differenceRepartidor) + """#:
+                                                """ + str(self.seconds_differenceRepartidor) + """
+#                                                </p>
+#                                            </div>
+#                                        </div>
+                                    """
+
+
+
     """
 
 
