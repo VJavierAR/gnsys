@@ -1630,18 +1630,40 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                         sale.action_confirm()
 
                     else:
-                        message = ("No es posible validar una solicitud que no tiene productos.")
-                        mess = {'title': _('Solicitud sin productos!!!')
-                                , 'message' : message
+                        mensajeTitulo = 'Solicitud sin productos!!!'
+                        mensajeCuerpo = 'No es posible validar una solicitud que no tiene productos.'
+                        wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
+                        view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+                        return {
+                                'name': _(mensajeTitulo),
+                                'type': 'ir.actions.act_window',
+                                'view_type': 'form',
+                                'view_mode': 'form',
+                                'res_model': 'helpdesk.alerta',
+                                'views': [(view.id, 'form')],
+                                'view_id': view.id,
+                                'target': 'new',
+                                'res_id': wiz.id,
+                                'context': self.env.context,
                                 }
-                        return {'warning': mess}
+                        
             else:
-                message = ('Ya existe una solicitud de tóner. No es posible generar dos solicitudes.')
-                mess= {
-                        'title': _('Solicitud de tóner existente!!!'),
-                        'message' : message
-                      }
-                return {'warning': mess}
+                mensajeTitulo = 'Solicitud de tóner existente!!!'
+                mensajeCuerpo = 'Ya existe una solicitud de tóner. No es posible generar dos solicitudes.'
+                wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
+                view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+                return {
+                        'name': _(mensajeTitulo),
+                        'type': 'ir.actions.act_window',
+                        'view_type': 'form',
+                        'view_mode': 'form',
+                        'res_model': 'helpdesk.alerta',
+                        'views': [(view.id, 'form')],
+                        'view_id': view.id,
+                        'target': 'new',
+                        'res_id': wiz.id,
+                        'context': self.env.context,
+                        }
 
 
             """
