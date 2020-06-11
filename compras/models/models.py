@@ -272,10 +272,10 @@ class compras(models.Model):
                                         productid=self.env['product.product'].create({'name':'/','description':'falta','categ_id':self.x_studio_tipo_de_producto.id,'default_code':str(q),'type':'product'})
                                     if(template.id!=False):                                  
                                         productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
-                                   desc=productid.description if(productid.description) else '|'
-                                   product={'product_uom':1,'date_planned':self.date_order if(self.date_order) else datetime.datetime.now()-datetime.timedelta(hours=-5),'product_id':productid.id,'product_qty':qty,'price_unit':g}
-                                   product['name']=desc
-                                   arr.append(product)
+                                    desc=productid.description if(productid.description) else '|'
+                                    product={'product_uom':1,'date_planned':self.date_order if(self.date_order) else datetime.datetime.now()-datetime.timedelta(hours=-5),'product_id':productid.id,'product_qty':qty,'price_unit':g}
+                                    product['name']=desc
+                                    arr.append(product)
                             if(len(arr)>0):
                                 self.order_line=[(5,0,0)]
                             self.order_line=arr
