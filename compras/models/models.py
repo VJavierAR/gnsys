@@ -262,7 +262,7 @@ class compras(models.Model):
                                 product={}
                                 if('#' in o ):
                                     r = o.split(" Artículo # ")
-                                    q = r[1].split(' ')[0]
+                                    q = r[0].split(' ')[0]
                                     _logger.info(str(r))
                                     template=self.env['product.template'].search([('default_code','=',q)])
                                     if(template.id==False):
@@ -288,10 +288,10 @@ class compras(models.Model):
                                     g=float(s[1].split(' ')[0])
                                     qty=round(h/g)
                                     if(len(arr)==j+1):
-                                        arr[j]['qty']=qty
+                                        arr[j]['product_qty']=qty
                                         arr[j]['price_unit']=g
                                     if(len(arr)==j):
-                                        product={'qty':qty,'price_unit':g}
+                                        product={'product_qty':qty,'price_unit':g}
                                         arr.append(product)
                                     j=j+1
                             if(len(arr)>0):
