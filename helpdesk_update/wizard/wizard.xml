@@ -696,11 +696,11 @@
                         </page>
                         <page string = 'Días de atraso'>
                             <group>
-                                <field name='tiempoAtrasoTicket' readonly='1'/>
+                                <field name='tiempoAtrasoTicket' readonly='1' widget='html'/>
                             </group>
                             <group>
-                                <field name='tiempoAtrasoAlmacen' readonly='1'/>
-                                <field name='tiempoAtrasoDistribucion' readonly='1'/>
+                                <field name='tiempoAtrasoAlmacen' readonly='1' widget='html'/>
+                                <field name='tiempoAtrasoDistribucion' readonly='1' widget='html'/>
                             </group>
                         </page>
                     </notebook>
