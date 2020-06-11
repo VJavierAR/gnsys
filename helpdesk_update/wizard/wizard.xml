@@ -781,10 +781,10 @@
                             </field>
                         </page>
                         <page string = 'Lecturas'>
-                            <field name='lecturas' readonly="1" force_save='1'/>
+                            <field name='lecturas' readonly="1" force_save='1' domain="[['fuente', '=', 'dcas.dcas']]" />
                         </page>
                         <page string = 'Tóner'>
-                            <field name='toner' readonly="1" force_save='1'/>
+                            <field name='toner' readonly="1" force_save='1' />
                         </page>
                         <page string = 'Historico de componentes'>
                             <field name='historicoDeComponentes' readonly="1" force_save='1'/>
@@ -833,30 +833,30 @@
                                     <group name="a">
                                         <field name="x_studio_link" string="link" wiget="html" invisible='1'/>
                                         <field name="grupo" invisible='1'/>
-                                        <field name="serie"/>
+                                        <field name="serie" force_save='1'/>
                                         <field name='colorEquipo' force_save='1' readonly='1'/>
-                                        <field name='ultimaUbicacion' readonly='1'/>
-                                        <field name='equipo' readonly='1'/>
-                                        <field name="contadorMono" string = 'Contador Monocromático'/>
-                                        <field name="contadorAnteriorNegro" string = 'Contador de ultima solicitud negro' readonly = '1'/>
-                                        <field name="contadorColor" string = 'Contador color' attrs="{'invisible': [['colorEquipo', '=', 'B/N']] }" />
-                                        <field name='contadorAnteriorColor' string='Contador ultima solicitud color' readonly='1' attrs="{'invisible': [['colorEquipo', '=', 'B/N']] }" />
+                                        <field name='ultimaUbicacion' readonly='1' force_save='1'/>
+                                        <field name='equipo' readonly='1' force_save='1'/>
+                                        <field name="contadorMono" string = 'Contador Monocromático' force_save='1'/>
+                                        <field name="contadorAnteriorNegro" string = 'Contador de ultima solicitud negro' readonly = '1' force_save='1' />
+                                        <field name="contadorColor" string = 'Contador color' attrs="{'invisible': [['colorEquipo', '=', 'B/N']] }" force_save='1' />
+                                        <field name='contadorAnteriorColor' string='Contador ultima solicitud color' readonly='1' attrs="{'invisible': [['colorEquipo', '=', 'B/N']] }" force_save='1' />
                                         
-                                        <field name='x_studio_cartuchonefro' string="Cartucho negro" domain="[&quot;&amp;&quot;,[&quot;categ_id&quot;,&quot;=&quot;,5],[&quot;x_studio_color&quot;,&quot;=&quot;,&quot;Negro&quot;],[&quot;x_studio_toner_compatible.id&quot;,&quot;=&quot;,x_studio_field_qYMJD]]" />
-                                        <field name="x_studio_rendimiento_negro" string="Rendimiento Negro" readonly='1'/>
-                                        <field name="porcentajeNegro" string ='Porcentaje negro'/>
+                                        <field name='x_studio_cartuchonefro' string="Cartucho negro" domain="[&quot;&amp;&quot;,[&quot;categ_id&quot;,&quot;=&quot;,5],[&quot;x_studio_color&quot;,&quot;=&quot;,&quot;Negro&quot;],[&quot;x_studio_toner_compatible.id&quot;,&quot;=&quot;,x_studio_field_qYMJD]]" force_save='1' />
+                                        <field name="x_studio_rendimiento_negro" string="Rendimiento Negro" readonly='1' force_save='1' />
+                                        <field name="porcentajeNegro" string ='Porcentaje negro' force_save='1' />
                                         
-                                        <field name='x_studio_cartucho_amarillo' domain='[ &quot;&amp;&quot;, ["categ_id", "=", 5], ["x_studip_color","=", "Amarillo"], ["x_studio_toner_compatible.id", "=", x_studio_field_qYMJD] ]' string = 'Cartucho amarillo' attrs="{'invisible': [['colorEquipo', '=', 'B/N']] }" />
-                                        <field name='x_studio_rendimientoa' attrs="{'invisible': [['colorEquipo', '=', 'B/N']] }" readonly='1' string='Rendimiento Amarillo'/>
-                                        <field name='porcentajeAmarillo' attrs="{'invisible': [['colorEquipo', '=', 'B/N']] }" string='Porcentaje cian'/>
+                                        <field name='x_studio_cartucho_amarillo' domain='[ &quot;&amp;&quot;, ["categ_id", "=", 5], ["x_studio_color","=", "Amarillo"], ["x_studio_toner_compatible.id", "=", x_studio_field_qYMJD] ]' string = 'Cartucho amarillo' attrs="{'invisible': [['colorEquipo', '=', 'B/N']] }" force_save='1' />
+                                        <field name='x_studio_rendimientoa' attrs="{'invisible': [['colorEquipo', '=', 'B/N']] }" readonly='1' string='Rendimiento Amarillo' force_save='1' />
+                                        <field name='porcentajeAmarillo' attrs="{'invisible': [['colorEquipo', '=', 'B/N']] }" string='Porcentaje cian' force_save='1' />
                                         
-                                        <field name='x_studio_cartucho_cian_1' domain="[&quot;&amp;&quot;,[&quot;categ_id&quot;,&quot;=&quot;,5],[&quot;x_studio_color&quot;,&quot;=&quot;,&quot;Cian&quot;],[&quot;x_studio_toner_compatible.id&quot;,&quot;=&quot;,x_studio_field_qYMJD]]" string ='Cartucho cian' attrs="{'invisible': [['colorEquipo', '=', 'B/N']] }" />
-                                        <field name='x_studio_rendimientoc' attrs="{'invisible': [['colorEquipo', '=', 'B/N']] }" readonly='1' string = 'Rendimiento cian'/>
-                                        <field name='porcentajeCian' attrs="{'invisible': [['colorEquipo', '=', 'B/N']] }" string ='Porcentaje cian' />
+                                        <field name='x_studio_cartucho_cian_1' domain="[&quot;&amp;&quot;,[&quot;categ_id&quot;,&quot;=&quot;,5],[&quot;x_studio_color&quot;,&quot;=&quot;,&quot;Cian&quot;],[&quot;x_studio_toner_compatible.id&quot;,&quot;=&quot;,x_studio_field_qYMJD]]" string ='Cartucho cian' attrs="{'invisible': [['colorEquipo', '=', 'B/N']] }" force_save='1' />
+                                        <field name='x_studio_rendimientoc' attrs="{'invisible': [['colorEquipo', '=', 'B/N']] }" readonly='1' string = 'Rendimiento cian' force_save='1' />
+                                        <field name='porcentajeCian' attrs="{'invisible': [['colorEquipo', '=', 'B/N']] }" string ='Porcentaje cian' force_save='1' />
                                         
-                                        <field name='x_studio_cartucho_magenta' domain='[ &quot;&amp;&quot;, ["categ_id", "=", 5], ["x_studip_color","=", "Magenta"], ["x_studio_toner_compatible.id", "=", x_studio_field_qYMJD] ]' attrs="{'invisible': [['colorEquipo', '=', 'B/N']] }"  string = 'Cartucho magenta' />
-                                        <field name='x_studio_rendimientom' attrs="{'invisible': [['colorEquipo', '=', 'B/N']] }" readonly='1' string = 'Rendimiento magenta'/>
-                                        <field name='porcentajeMagenta' attrs="{'invisible': [['colorEquipo', '=', 'B/N']] }" string ='Porcentaje magenta' />
+                                        <field name='x_studio_cartucho_magenta' domain='[ &quot;&amp;&quot;, ["categ_id", "=", 5], ["x_studio_color","=", "Magenta"], ["x_studio_toner_compatible.id", "=", x_studio_field_qYMJD] ]' attrs="{'invisible': [['colorEquipo', '=', 'B/N']] }"  string = 'Cartucho magenta' force_save='1' />
+                                        <field name='x_studio_rendimientom' attrs="{'invisible': [['colorEquipo', '=', 'B/N']] }" readonly='1' string = 'Rendimiento magenta' force_save='1' />
+                                        <field name='porcentajeMagenta' attrs="{'invisible': [['colorEquipo', '=', 'B/N']] }" string ='Porcentaje magenta' force_save='1' />
 
 
 
@@ -865,27 +865,27 @@
 
 
 
-                                        <field name="x_studio_field_qYMJD" attrs="{}" invisible="1"/>
+                                        <field name="x_studio_field_qYMJD" attrs="{}" invisible="1" force_save='1' />
                                         
                                         
-                                        <field name="x_studio_usuariocaptura" string="UsuarioCaptura" attrs="{}" invisible="1"/>
-                                        <field name="x_studio_fecha" string="Fecha  " invisible='1'/>
-                                        <field name="x_studio_tiquete" string="Tiquete " invisible='1'/>
-                                        <field name="x_studio_descripcion" string="Descripción" invisible='1'/>
-                                        <field name="x_studio_cartucho_negro" string="cartucho negro" invisible='1'/>
-                                        <field name="ubicacion" string="Ubicación" invisible='1'/>
-                                        <field name="cartuchoNegro" invisible='1'/>
-                                        <field name="respaldo" invisible='1'/>
-                                        <field name="usb" string="USB" invisible='1'/>
-                                        <field name="x_studio_toner" string="Tóner" invisible='1'/>
-                                        <field name="ip" invisible='1'/>
-                                        <field name="x_studio_tickett" string="Ticket Techra" invisible='1'/>
-                                        <field name="fuente" invisible='1'/>
-                                        <field name="x_studio_field_no6Rb" string="Fecha mes/año" invisible='1'/>
-                                        <field name="x_studio_fecha_texto_anio" string="Fecha texto año" invisible='1'/>
-                                        <field name="x_studio_fecha_techra" string="Fecha techra" invisible='1'/>
-                                        <field name="x_studio_fuente_real" invisible='1'/>
-                                        <field name="x_studio_mes" string="Mes" invisible='1'/>
+                                        <field name="x_studio_usuariocaptura" string="UsuarioCaptura" attrs="{}" invisible="1" force_save='1' />
+                                        <field name="x_studio_fecha" string="Fecha  " invisible='1' force_save='1' />
+                                        <field name="x_studio_tiquete" string="Tiquete " invisible='1' force_save='1' />
+                                        <field name="x_studio_descripcion" string="Descripción" invisible='1' force_save='1' />
+                                        <field name="x_studio_cartucho_negro" string="cartucho negro" invisible='1' force_save='1' />
+                                        <field name="ubicacion" string="Ubicación" invisible='1' force_save='1' />
+                                        <field name="cartuchoNegro" invisible='1' force_save='1' />
+                                        <field name="respaldo" invisible='1' force_save='1' />
+                                        <field name="usb" string="USB" invisible='1' force_save='1' />
+                                        <field name="x_studio_toner" string="Tóner" invisible='1' force_save='1' />
+                                        <field name="ip" invisible='1' force_save='1' />
+                                        <field name="x_studio_tickett" string="Ticket Techra" invisible='1' force_save='1' />
+                                        <field name="fuente" invisible='1' force_save='1' />
+                                        <field name="x_studio_field_no6Rb" string="Fecha mes/año" invisible='1' force_save='1' />
+                                        <field name="x_studio_fecha_texto_anio" string="Fecha texto año" invisible='1' force_save='1' />
+                                        <field name="x_studio_fecha_techra" string="Fecha techra" invisible='1' force_save='1' />
+                                        <field name="x_studio_fuente_real" invisible='1' force_save='1' />
+                                        <field name="x_studio_mes" string="Mes" invisible='1' force_save='1' />
                                     </group>
                                     <group name="b">
                                         
