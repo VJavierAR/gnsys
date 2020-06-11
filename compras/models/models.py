@@ -289,9 +289,9 @@ class compras(models.Model):
                                     qty=round(h/g)
                                     if(len(arr)==j+1):
                                         arr[j]['product_qty']=qty
-                                        arr[j]['price_unit']=g
+                                        arr[j]['price_unit']=g/1.16
                                     if(len(arr)==j):
-                                        product={'product_qty':qty,'price_unit':g}
+                                        product={'product_qty':qty,'price_unit':g/1.16}
                                         arr.append(product)
                                     j=j+1
                             if(len(arr)>0):
