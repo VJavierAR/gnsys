@@ -603,7 +603,23 @@ class helpdesk_update(models.Model):
                 rec.seconds_differenceTicket = seconds
 
 
-
+    tiempoDeAtrasoTicket = fields.Text(
+                                            string = 'Tiempo de atraso ticket',
+                                            compute = '_compute_tiempo_atraso_ticket'
+                                        )
+    def _compute_tiempo_atraso_ticket(self):
+        self.tiempoDeAtrasoTicket = """
+                                        <div class='row'>
+                                            <div class='col-sm-12'>
+                                                <p>
+                                                """ + str(self.days_difference) + """ día(s) con 
+                                                """ + str(self.hour_differenceTicket) + """ hora(s), 
+                                                """ + str(self.minutes_differenceTicket) + """ minuto(s) y 
+                                                """ + str(self.seconds_differenceTicket) + """ segundo(s)
+                                                </p>
+                                            </div>
+                                        </div>
+                                    """
 
 
 
@@ -666,6 +682,24 @@ class helpdesk_update(models.Model):
                     rec.seconds_differenceAlmacen = seconds
 
 
+    tiempoDeAtrasoAlmacen = fields.Text(
+                                            string = 'Tiempo de atraso almacén',
+                                            compute = '_compute_tiempo_atraso_almacen'
+                                        )
+    def _compute_tiempo_atraso_almacen(self):
+        self.tiempoDeAtrasoAlmacen = """
+                                        <div class='row'>
+                                            <div class='col-sm-12'>
+                                                <p>
+                                                """ + str(self.days_differenceAlmacen) + """ día(s) con 
+                                                """ + str(self.hour_differenceAlmacen) + """ hora(s), 
+                                                """ + str(self.minutes_differenceAlmacen) + """ minuto(s) y 
+                                                """ + str(self.seconds_differenceAlmacen) + """ segundo(s)
+                                                </p>
+                                            </div>
+                                        </div>
+                                    """
+
     # Distribucion compuatado de tiempos
     days_differenceDistribucion = fields.Integer(
                                                 compute='_compute_difference_days_distribucion',
@@ -721,12 +755,30 @@ class helpdesk_update(models.Model):
                     hours, minutes, seconds = convert_timedelta(difference)
                     rec.seconds_differenceDistribucion = seconds
 
+
+    tiempoDeAtrasoDistribucion = fields.Text(
+                                            string = 'Tiempo de atraso distribución',
+                                            compute = '_compute_tiempo_atraso_distribucion'
+                                        )
+    def _compute_tiempo_atraso_distribucion(self):
+        self.tiempoDeAtrasoDistribucion = """
+                                        <div class='row'>
+                                            <div class='col-sm-12'>
+                                                <p>
+                                                """ + str(self.days_differenceAlmacen) + """ día(s) con 
+                                                """ + str(self.hour_differenceAlmacen) + """ hora(s), 
+                                                """ + str(self.minutes_differenceAlmacen) + """ minuto(s) y 
+                                                """ + str(self.seconds_differenceAlmacen) + """ segundo(s)
+                                                </p>
+                                            </div>
+                                        </div>
+                                    """
+
+    
+
+
+
     # Repartidor compuatado de tiempos
-
-
-
-
-
     """
     days_differenceRepartidor = fields.Integer(
                                                     compute='_compute_difference_repartidor',
