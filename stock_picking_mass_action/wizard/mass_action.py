@@ -14,6 +14,7 @@ import base64
 import datetime
 from odoo.tools.mimetypes import guess_mimetype
 import logging, ast
+import threading
 from odoo.tools import config, DEFAULT_SERVER_DATE_FORMAT, DEFAULT_SERVER_DATETIME_FORMAT, pycompat
 _logger = logging.getLogger(__name__)
 
@@ -105,41 +106,29 @@ class StockPickingMassAction(TransientModel):
     def mass_action(self):
         self.ensure_one()
         # Get draft pickings and confirm them if asked
-        if self.confirm:
-            draft_picking_lst = self.picking_ids.\
-                filtered(lambda x: x.state == 'draft').\
-                sorted(key=lambda r: r.scheduled_date)
-            draft_picking_lst.sudo().action_confirm()
-        # check availability if asked
-        if self.check_availability:
-            pickings_to_check = self.picking_ids.\
-                filtered(lambda x: x.state not in [
-                    'draft',
-                    'cancel',
-                    'done',
-                ]).\
-                sorted(key=lambda r: r.scheduled_date)
-            pickings_to_check.sudo().action_assign()
-        # Get all pickings ready to transfer and transfer them if asked
+        # if self.confirm:
+        #     draft_picking_lst = self.picking_ids.\
+        #         filtered(lambda x: x.state == 'draft').\
+        #         sorted(key=lambda r: r.scheduled_date)
+        #     draft_picking_lst.sudo().action_confirm()
+        # # check availability if asked
+        # if self.check_availability:
+        #     pickings_to_check = self.picking_ids.\
+        #         filtered(lambda x: x.state not in [
+        #             'draft',
+        #             'cancel',
+        #             'done',
+        #         ]).\
+        #         sorted(key=lambda r: r.scheduled_date)
+        #     pickings_to_check.sudo().action_assign()
         if self.transfer:
-            _logger.info("Hola ando subiendo info ya te avise en el grupo y en privadoxD")
             assigned_picking_lst = self.picking_ids.\
                 filtered(lambda x: x.state == 'assigned').\
                 sorted(key=lambda r: r.scheduled_date)
-            assigned_picking_lst2 = self.picking_ids.\
-                filtered(lambda x: x.picking_type_id.id == 3 and x.state == 'assigned')
             quantities_done = sum(
                 move_line.qty_done for move_line in
                 assigned_picking_lst.mapped('move_line_ids').filtered(
                     lambda m: m.state not in ('done', 'cancel')))
-            CON=str(self.env['ir.sequence'].next_by_code('concentrado'))
-            for l in assigned_picking_lst:
-                if(l.picking_type_id.id==3):
-                    self.check=2
-                    #l.sudo().write({'concentrado':CON})
-                    self.env['stock.picking'].search([['sale_id','=',l.sale_id.id]]).write({'concentrado':CON})
-                if(l.picking_type_id.id==29314):
-                    self.check=1
             pick_to_backorder = self.env['stock.picking']
             pick_to_do = self.env['stock.picking']
             for picking in assigned_picking_lst:
@@ -173,11 +162,11 @@ class StockPickingMassAction(TransientModel):
                     for pick_id in self.picking_ids:
                         backorder_pick = self.env['stock.picking'].search([('backorder_id', '=', pick_id.id)])
                         if(pick_id.picking_type_id.id==3 or pick_id.picking_type_id.id==29314):
-                            sale=backorder_pick.sale_id.copy()
-                            pipi=self.env['stock.picking'].search([['sale_id','=',sale.id]])
-                            self.env['stock.move.line'].search([['picking_id','in',pipi.mapped('id')]]).unlink()
-                            self.env['sale.order.line'].search([['order_id','=',sale.id]]).unlink()
-                            #sale = self.env['sale.order'].create({'x_studio_backorder':True,'partner_id' : backorder_pick.sale_id.partner_id.id, 'origin' : backorder_pick.sale_id.origin, 'x_studio_tipo_de_solicitud' : 'Venta', 'x_studio_requiere_instalacin' : True, 'x_studio_field_RnhKr': backorder_pick.sale_id.x_studio_field_RnhKr.id, 'partner_shipping_id' : backorder_pick.sale_id.partner_shipping_id.id, 'warehouse_id' :backorder_pick.sale_id.warehouse_id.id, 'team_id' : 1, 'x_studio_field_bxHgp': pick_id.x_studio_ticket_relacionado.id})
+                            #sale=backorder_pick.sale_id.copy()
+                            #pipi=self.env['stock.picking'].search([['sale_id','=',sale.id]])
+                            #self.env['stock.move.line'].search([['picking_id','in',pipi.mapped('id')]]).unlink()
+                            #self.env['sale.order.line'].search([['order_id','=',sale.id]]).unlink()
+                            sale = self.env['sale.order'].create({'x_studio_backorder':True,'partner_id' : backorder_pick.sale_id.partner_id.id, 'origin' : backorder_pick.sale_id.origin, 'x_studio_tipo_de_solicitud' : 'Venta', 'x_studio_requiere_instalacin' : True, 'x_studio_field_RnhKr': backorder_pick.sale_id.x_studio_field_RnhKr.id, 'partner_shipping_id' : backorder_pick.sale_id.partner_shipping_id.id, 'warehouse_id' :backorder_pick.sale_id.warehouse_id.id, 'team_id' : 1, 'x_studio_field_bxHgp': pick_id.x_studio_ticket_relacionado.id})
                             pick_id.write({'sale_child':sale.id})
                             for rr in backorder_pick.move_ids_without_package:
                                 datosr={'order_id' : sale.id, 'product_id' : rr.product_id.id, 'product_uom_qty' :rr.product_uom_qty,'x_studio_field_9nQhR':rr.x_studio_serie_destino.id, 'price_unit': 0}
@@ -187,9 +176,29 @@ class StockPickingMassAction(TransientModel):
                             pick_id.x_studio_ticket_relacionado.write({'x_studio_field_0OAPP':[(4,sale.id)]})
                             sale.sudo().action_confirm()
                         backorder_pick.action_cancel()
+    
+        def massActionPick(self):
+            pickings=self.picking_ids
+            self.picking_ids.sudo().action_confirm()
+            self.picking_ids.sudo().action_assign()
+            assigned_picking_lst = self.picking_ids.\
+            filtered(lambda x: x.state == 'assigned').\
+            sorted(key=lambda r: r.scheduled_date)
+            assigned_picking_lst2 = self.picking_ids.\
+            filtered(lambda x: x.picking_type_id.id == 3 and x.state == 'assigned')
+            CON=str(self.env['ir.sequence'].next_by_code('concentrado'))
+            for l in assigned_picking_lst:
+                if(l.picking_type_id.id==3):
+                    self.check=2
+                    self.env['stock.picking'].search([['sale_id','=',l.sale_id.id]]).write({'concentrado':CON})
+                if(l.picking_type_id.id==29314):
+                    self.check=1
+            for pick in pickings:
+                self.picking_ids=pick
+                threaded_post = threading.Thread(target=self.mass_action(), args=())
+            self.picking_ids=pickings
             if(len(assigned_picking_lst2)>0):
                 return self.env.ref('stock_picking_mass_action.report_custom').report_action(assigned_picking_lst2)
-        #return {'type': 'ir.actions.client','tag': 'reload'}
 
 
     @api.multi
