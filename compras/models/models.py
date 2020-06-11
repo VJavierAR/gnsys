@@ -263,7 +263,7 @@ class compras(models.Model):
                                 if('#' in o ):
                                     r = o.split("#")
                                     q = r[1].split(' ')[0]
-                                    _logger.info(str(q))
+                                    _logger.info(str(r))
                                     template=self.env['product.template'].search([('default_code','=',q)])
                                     if(template.id==False):
                                         productid=self.env['product.product'].create({'name':'/','description':'falta','categ_id':self.x_studio_tipo_de_producto.id,'default_code':str(q),'type':'product'})
