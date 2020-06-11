@@ -836,24 +836,6 @@ class helpdesk_update(models.Model):
                     rec.seconds_differenceRepartidor = seconds
 
 
-    tiempoDeAtrasoRepartidor = fields.Text(
-                                            string = 'Tiempo de atraso repartidor',
-                                            compute = '_compute_tiempo_atraso_repartidor'
-                                        )
-    def _compute_tiempo_atraso_repartidor(self):
-        self.tiempoDeAtrasoRepartidor = """
-#                                        <div class='row'>
-#                                            <div class='col-sm-12'>
-#                                                <p>
-                                                """ + str(self.days_differenceRepartidor) + """ #día(s) con 
-                                                """ + str(self.hour_differenceRepartidor) + """#:
-                                                """ + str(self.minutes_differenceRepartidor) + """#:
-                                                """ + str(self.seconds_differenceRepartidor) + """
-#                                                </p>
-#                                            </div>
-#                                        </div>
-                                    """
-
 
 
     """
