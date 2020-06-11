@@ -262,7 +262,7 @@ class compras(models.Model):
                                 product={}
                                 if('#' in o ):
                                     r = o.split(" Artículo # ")
-                                    q = r[0].split(' ')[0]
+                                    q = r[1].split(' ')[0]
                                     _logger.info(str(r))
                                     template=self.env['product.template'].search([('default_code','=',q)])
                                     if(template.id==False):
