@@ -1622,7 +1622,7 @@ class helpdesk_update(models.Model):
 
 
 
-        @api.multi
+    @api.multi
     def crear_y_validar_solicitud_refaccion(self):
         for record in self:
             if not record.x_studio_field_nO7Xg:
