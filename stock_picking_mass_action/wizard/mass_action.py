@@ -105,47 +105,37 @@ class StockPickingMassAction(TransientModel):
                 self.check=4
     def mass_action(self):
         self.ensure_one()
-        # Get draft pickings and confirm them if asked
-        # if self.confirm:
-        #     draft_picking_lst = self.picking_ids.\
-        #         filtered(lambda x: x.state == 'draft').\
-        #         sorted(key=lambda r: r.scheduled_date)
-        #     draft_picking_lst.sudo().action_confirm()
-        # # check availability if asked
-        # if self.check_availability:
-        #     pickings_to_check = self.picking_ids.\
-        #         filtered(lambda x: x.state not in [
-        #             'draft',
-        #             'cancel',
-        #             'done',
-        #         ]).\
-        #         sorted(key=lambda r: r.scheduled_date)
-        #     pickings_to_check.sudo().action_assign()
-        if self.transfer:
-            assigned_picking_lst = self.picking_ids.\
-                filtered(lambda x: x.state == 'assigned').\
-                sorted(key=lambda r: r.scheduled_date)
-            quantities_done = sum(
-                move_line.qty_done for move_line in
-                assigned_picking_lst.mapped('move_line_ids').filtered(
-                    lambda m: m.state not in ('done', 'cancel')))
-            pick_to_backorder = self.env['stock.picking']
-            pick_to_do = self.env['stock.picking']
-            for picking in assigned_picking_lst:
-                # If still in draft => confirm and assign
-                if picking.state == 'draft':
-                    picking.action_confirm()
+        self.picking_ids.sudo().action_confirm()
+        self.picking_ids.sudo().action_assign()
+        assigned_picking_lst = self.picking_ids.\
+        filtered(lambda x: x.state == 'assigned').\
+        sorted(key=lambda r: r.scheduled_date)
+        assigned_picking_lst2 = self.picking_ids.\
+        filtered(lambda x: x.picking_type_id.id == 3 and x.state == 'assigned')
+        CON=str(self.env['ir.sequence'].next_by_code('concentrado'))
+        for l in assigned_picking_lst:
+            if(l.picking_type_id.id==3):
+                self.check=2
+                self.env['stock.picking'].search([['sale_id','=',l.sale_id.id]]).write({'concentrado':CON})
+            if(l.picking_type_id.id==29314):
+                self.check=1
+        quantities_done = sum(move_line.qty_done for move_line in assigned_picking_lst.mapped('move_line_ids').filtered(lambda m: m.state not in ('done', 'cancel')))
+        pick_to_backorder = self.env['stock.picking']
+        pick_to_do = self.env['stock.picking']
+        for picking in assigned_picking_lst:
+            if picking.state == 'draft':
+                picking.action_confirm()
+                if picking.state != 'assigned':
+                    picking.action_assign()
                     if picking.state != 'assigned':
-                        picking.action_assign()
-                        if picking.state != 'assigned':
-                            raise UserError(_("Could not reserve all requested products. Please use the \'Mark as Todo\' button to handle the reservation manually."))
-                for move in picking.move_lines.filtered(lambda m: m.state not in ['done', 'cancel']):
-                    for move_line in move.move_line_ids:
-                        move_line.qty_done = move_line.product_uom_qty
-                if picking._check_backorder():
-                    pick_to_backorder |= picking
-                    continue
-                pick_to_do |= picking
+                        raise UserError(_("Could not reserve all requested products. Please use the \'Mark as Todo\' button to handle the reservation manually."))
+            for move in picking.move_lines.filtered(lambda m: m.state not in ['done', 'cancel']):
+                for move_line in move.move_line_ids:
+                    move_line.qty_done = move_line.product_uom_qty
+            if picking._check_backorder():
+                pick_to_backorder |= picking
+                continue
+            pick_to_do |= picking
             if pick_to_do:
                 pick_to_do.action_done()
             if assigned_picking_lst._check_backorder():
@@ -176,29 +166,20 @@ class StockPickingMassAction(TransientModel):
                             pick_id.x_studio_ticket_relacionado.write({'x_studio_field_0OAPP':[(4,sale.id)]})
                             sale.sudo().action_confirm()
                         backorder_pick.action_cancel()
+        if(len(assigned_picking_lst2)>0):
+            return self.env.ref('stock_picking_mass_action.report_custom').report_action(assigned_picking_lst2)
     
     def massActionPick(self):
         pickings=self.picking_ids
-        self.picking_ids.sudo().action_confirm()
-        self.picking_ids.sudo().action_assign()
         assigned_picking_lst = self.picking_ids.\
         filtered(lambda x: x.state == 'assigned').\
         sorted(key=lambda r: r.scheduled_date)
-        assigned_picking_lst2 = self.picking_ids.\
-        filtered(lambda x: x.picking_type_id.id == 3 and x.state == 'assigned')
-        CON=str(self.env['ir.sequence'].next_by_code('concentrado'))
-        for l in assigned_picking_lst:
-            if(l.picking_type_id.id==3):
-                self.check=2
-                self.env['stock.picking'].search([['sale_id','=',l.sale_id.id]]).write({'concentrado':CON})
-            if(l.picking_type_id.id==29314):
-                self.check=1
+
         for pick in pickings:
             self.picking_ids=pick
             threaded_post = threading.Thread(target=self.mass_action(), args=())
         self.picking_ids=pickings
-        if(len(assigned_picking_lst2)>0):
-            return self.env.ref('stock_picking_mass_action.report_custom').report_action(assigned_picking_lst2)
+
 
 
     @api.multi
