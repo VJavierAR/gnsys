@@ -167,16 +167,39 @@ class StockPickingMassAction(TransientModel):
         if(len(assigned_picking_lst2)>0):
             return self.env.ref('stock_picking_mass_action.report_custom').report_action(assigned_picking_lst2)
     
-    def massActionPick(self):
-        pickings=self.picking_ids
-        assigned_picking_lst = self.picking_ids.\
-        filtered(lambda x: x.state == 'assigned').\
-        sorted(key=lambda r: r.scheduled_date)
+    def mass_action1(self):
+        self.ensure_one()
 
-        for pick in pickings:
-            self.picking_ids=pick
-            threaded_post = threading.Thread(target=self.mass_action(), args=())
-        self.picking_ids=pickings
+        # Get draft pickings and confirm them if asked
+        if self.confirm:
+            draft_picking_lst = self.picking_ids.filtered(
+                lambda x: x.state == "draft"
+            ).sorted(key=lambda r: r.scheduled_date)
+            draft_picking_lst.action_confirm()
+
+        # check availability if asked
+        if self.check_availability:
+            pickings_to_check = self.picking_ids.filtered(
+                lambda x: x.state not in ["draft", "cancel", "done"]
+            ).sorted(key=lambda r: r.scheduled_date)
+            pickings_to_check.action_assign()
+
+        # Get all pickings ready to transfer and transfer them if asked
+        if self.transfer:
+            assigned_picking_lst = self.picking_ids.filtered(
+                lambda x: x.state == "assigned"
+            ).sorted(key=lambda r: r.scheduled_date)
+            quantities_done = sum(
+                move_line.qty_done
+                for move_line in assigned_picking_lst.mapped("move_line_ids").filtered(
+                    lambda m: m.state not in ("done", "cancel")
+                )
+            )
+            if not quantities_done:
+                return assigned_picking_lst.action_immediate_transfer_wizard()
+            if any([pick._check_backorder() for pick in assigned_picking_lst]):
+                return assigned_picking_lst.action_generate_backorder_wizard()
+            assigned_picking_lst.action_done()
 
 
 
