@@ -119,7 +119,8 @@ class StockPickingMassAction(TransientModel):
         if(3 in validacion):
             CON=str(self.env['ir.sequence'].next_by_code('concentrado'))
             self.check=2
-            self.env['stock.picking'].search([['sale_id','=',l.sale_id.id]]).write({'concentrado':CON})
+            assigned_picking_lst.write({'concentrado':CON})
+            #self.env['stock.picking'].search([['sale_id','=',l.sale_id.id]]).write({'concentrado':CON})
         if(29314 in validacion):
             self.check=1
         pick_to_backorder = self.env['stock.picking']
@@ -160,6 +161,23 @@ class StockPickingMassAction(TransientModel):
                     backorder_pick.action_cancel()
         if(len(assigned_picking_lst2)>0):
             return self.env.ref('stock_picking_mass_action.report_custom').report_action(assigned_picking_lst2)
+        for pp in assigned_picking_lst.filtered(lambda x:x.sale_id.x_studio_tipo_de_solicitud!="Retiro" and x.sale_id.x_studio_field_bxHgp==False):
+            if('incoming' not in tipo):
+                if('outgoing' in tipo):
+                    if(pp.sale_id.x_studio_requiere_instalacin==True):
+                        self.env['helpdesk.ticket'].create({'x_studio_tipo_de_vale':'Instalación','partner_id':pp.partner_id.parent_id.id,'x_studio_empresas_relacionadas':pp.partner_id.id,'team_id':9,'diagnosticos':[(0,0,{'estadoTicket':'Abierto','comentario':'Instalacion de Equipo'})],'stage_id':89,'name':'Instalaccion '+'Serie: '})
+                        
+                else:
+                    move_lines=self.env['stock.move.line'].search([['move_id','in',pp.mapped('move_lines.id')]])
+                    tipo2=move_lines.mapped('move_id.picking_type_id.name')
+                    if('Surtir' in tipo2):
+                        move_lines.lot_id.write({'x_studio_etapa':'A Distribución'})
+                    if('Distribución' in tipo2):
+                      record.lot_id.write({'x_studio_etapa':'Tránsito'})
+                    if('Tránsito' in tipo2):
+                      record.lot_id.write({'x_studio_etapa':'Ruta'})
+        
+
         #return {'type': 'ir.actions.client','tag': 'reload'}
 
 
