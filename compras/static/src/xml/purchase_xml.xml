@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-	<template id="template" xml:space="preserve">
-	    <t t-extend="ListView.buttons">
-	        <t t-jquery="button.o_list_button_save" t-operation="before">
-	        	<button t-if="widget.modelName == 'purchase.order'" class="btn btn-primary oe_action_button_purchase_report" type="button" accesskey="f">Reporte de Compras</button>
-	        </t>
-	    </t>
-	</template>
