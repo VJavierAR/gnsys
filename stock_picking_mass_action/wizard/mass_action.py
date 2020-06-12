@@ -149,7 +149,7 @@ class StockPickingMassAction(TransientModel):
                 for pick_id in self.picking_ids:
                     backorder_pick = self.env['stock.picking'].search([('backorder_id', '=', pick_id.id)])
                     if(pick_id.picking_type_id.id==3 or pick_id.picking_type_id.id==29314):
-                        sale = self.env['sale.order'].create({'x_studio_backorder':True,'partner_id' : backorder_pick.sale_id.partner_id.id, 'origin' : backorder_pick.sale_id.origin, 'x_studio_tipo_de_solicitud' : 'Venta', 'x_studio_requiere_instalacin' : True, 'x_studio_field_RnhKr': backorder_pick.sale_id.x_studio_field_RnhKr.id, 'partner_shipping_id' : backorder_pick.sale_id.partner_shipping_id.id, 'warehouse_id' :backorder_pick.sale_id.warehouse_id.id, 'team_id' : 1, 'x_studio_field_bxHgp': pick_id.x_studio_ticket_relacionado.id})
+                        sale = self.env['sale.order'].create({'x_studio_backorder':True,'partner_id' : pick_id.sale_id.partner_id.id, 'origin' : pick_id.sale_id.origin, 'x_studio_tipo_de_solicitud' : 'Venta', 'x_studio_requiere_instalacin' : True, 'x_studio_field_RnhKr': pick_id.sale_id.x_studio_field_RnhKr.id, 'partner_shipping_id' : pick_id.sale_id.partner_shipping_id.id, 'warehouse_id' :pick_id.sale_id.warehouse_id.id, 'team_id' : 1, 'x_studio_field_bxHgp': pick_id.x_studio_ticket_relacionado.id})
                         pick_id.write({'sale_child':sale.id})
                         for rr in backorder_pick.move_ids_without_package:
                             datosr={'order_id' : sale.id, 'product_id' : rr.product_id.id, 'product_uom_qty' :rr.product_uom_qty,'x_studio_field_9nQhR':rr.x_studio_serie_destino.id, 'price_unit': 0}
