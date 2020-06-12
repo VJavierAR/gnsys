@@ -221,7 +221,7 @@
                     </field>
                 </group>
                 <footer>
-                    <button name="mass_action" string="Apply" type="object" class="oe_highlight"/>
+                    <button name="mass_action1" string="Apply" type="object" class="oe_highlight"/>
                     <button name="vales" string="Vale de Entrega" type="object" class="oe_highlight" attrs="{'invisible':[['check','!=',2]]}"/>
                     <button name="etiquetas" string="Etiquetas" type="object" attrs="{'invisible':[['check','!=',2]]}" class="oe_highlight"/>
                     <button string="Cancel" class="oe_link" special="cancel"/>
