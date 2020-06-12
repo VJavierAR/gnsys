@@ -161,6 +161,11 @@ class StockPickingMassAction(TransientModel):
                     backorder_pick.action_cancel()
         if(len(assigned_picking_lst2)>0):
             return self.env.ref('stock_picking_mass_action.report_custom').report_action(assigned_picking_lst2)
+        if('outgoing' in tipo):
+            for pp in assigned_picking_lst:
+                if(pp.sale_id.x_studio_requiere_instalacin==True):
+                    self.env['helpdesk.ticket'].create({'x_studio_tipo_de_vale':'Instalación','partner_id':pp.partner_id.parent_id.id,'x_studio_empresas_relacionadas':pp.partner_id.id,'team_id':9,'diagnosticos':[(0,0,{'estadoTicket':'Abierto','comentario':'Instalacion de Equipo'})],'stage_id':89,'name':'Instalaccion '+'Serie: '})
+
         #return {'type': 'ir.actions.client','tag': 'reload'}
 
 
