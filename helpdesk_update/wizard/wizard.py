@@ -1632,7 +1632,8 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                     else:
                         mensajeTitulo = 'Solicitud sin productos!!!'
                         mensajeCuerpo = 'No es posible validar una solicitud que no tiene productos.'
-                        wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
+                        #wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
+                        wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_ids[0], 'mensaje': mensajeCuerpo})
                         view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
                         return {
                                 'name': _(mensajeTitulo),
@@ -1650,7 +1651,8 @@ class CrearYValidarSolTonerMassAction(TransientModel):
             else:
                 mensajeTitulo = 'Solicitud de tóner existente!!!'
                 mensajeCuerpo = 'Ya existe una solicitud de tóner. No es posible generar dos solicitudes.'
-                wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
+                #wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
+                wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_ids[0], 'mensaje': mensajeCuerpo})
                 view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
                 return {
                         'name': _(mensajeTitulo),
