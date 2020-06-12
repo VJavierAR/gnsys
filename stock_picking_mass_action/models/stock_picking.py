@@ -33,6 +33,22 @@ class StockPicking(Model):
 
     #documentosDistro = fields.Many2many('ir.attachment', string="Evidencias ")
     #historialTicket = fields.One2many('ir.attachment','res_id',string='Evidencias al ticket',store=True,track_visibility='onchange')
+    def _log_activity_get_documents(
+            self, orig_obj_changes, stream_field, stream, sorted_method=False,
+            groupby_method=False):
+        """ Avoid error in method:
+            env['stock.backorder.confirmation']._process(cancel_backorder=True)
+            if mixing complete picking with partial picking and select cancel
+            backorder
+        """
+        if not orig_obj_changes:
+            return {}
+        else:
+            return super()._log_activity_get_documents(
+                orig_obj_changes, stream_field, stream,
+                sorted_method=sorted_method, groupby_method=groupby_method)
+
+
     def regresoAlmacen(self):
         wiz = self.env['devolver.action'].create({'picking':self.id})
         view = self.env.ref('stock_picking_mass_action.view_devolver_action_form')
