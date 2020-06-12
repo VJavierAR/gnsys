@@ -114,6 +114,8 @@ class StockPickingMassAction(TransientModel):
         assigned_picking_lst2 = self.picking_ids.filtered(lambda x: x.picking_type_id.id == 3 and x.state == 'assigned')
         quantities_done = sum(move_line.qty_done for move_line in assigned_picking_lst.mapped('move_line_ids').filtered(lambda m: m.state not in ('done', 'cancel')))
         validacion=assigned_picking_lst.mapped('picking_type_id.id')
+        tipo=assigned_picking_lst.mapped('picking_type_id.code')
+        _logger.info(str(tipo))
         if(3 in validacion):
             CON=str(self.env['ir.sequence'].next_by_code('concentrado'))
             self.check=2
