@@ -164,12 +164,15 @@ class sale_update(models.Model):
 	        self.action_done()
 	    pii=self.env['stock.picking'].search([['sale_id','=',self.id]])
 	    sal=self.order_line.sorted(key='id').mapped('id')
-	    #_logger.info(str(len(p)))
-	    #_logger.info(str(sal))
-	    
+
 	    for p in pii:
 	    	i=0
 	    	for pi in p.move_ids_without_package.sorted(key='id'):
+	    		if(p.picking_type_id.code=='outgoing'):
+	    			almacen=self.env['stock.warehouse'].search([['x_studio_field_E0H1Z','=',self.partner_shipping_id.id]])
+	    			if(almacen.id!=False):
+	    				pi.write({'location_dest_id':almacen.lot_stock_id.id})
+	    				self.env['stock.move.line'].search([['move_id','=',pi.id]]).write({'location_dest_id':almacen.lot_stock_id.id})
 	    		pi.write({'sale_line_id':sal[i]})
 	    		i=i+1
 	    return True
