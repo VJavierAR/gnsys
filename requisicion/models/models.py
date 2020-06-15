@@ -39,7 +39,7 @@ class requisicion(models.Model):
     origen=fields.Char()
     orden=fields.Char('Orden de Compra')
     picking_ids=fields.Many2many('stock.picking','picking_req_rel','picking_id','req_id')
-
+    proveedor=fields.Many2one('res.partner')
     @api.one
     def update_estado(self):
         self.write({'state':'open'})
