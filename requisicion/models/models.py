@@ -31,7 +31,7 @@ class requisicion(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _description='Requisicion'
     name = fields.Char()
-    area = fields.Selection([('Ventas','Ventas'),('Almacen','Almacen'), ('Mesa de Ayuda','Mesa de Ayuda'), ('Foraneo Distribuidor','Foraneo Distribuidor')])
+    area = fields.Selection([('Ventas','Ventas'),('Almacen','Almacen'), ('Mesa de Ayuda','Mesa de Ayuda')])
     fecha_prevista=fields.Datetime()
     justificacion=fields.Text()
     product_rel=fields.One2many('product.rel.requisicion','req_rel')
@@ -39,7 +39,6 @@ class requisicion(models.Model):
     origen=fields.Char()
     orden=fields.Char('Orden de Compra')
     picking_ids=fields.Many2many('stock.picking','picking_req_rel','picking_id','req_id')
-    proveedor=fields.Many2one('res.partner')
     @api.one
     def update_estado(self):
         self.write({'state':'open'})
