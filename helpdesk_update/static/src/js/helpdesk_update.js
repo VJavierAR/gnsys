@@ -30,13 +30,20 @@ odoo.define('invoice.action_button_helpdesk', function (require) {
 			//console.log(arguments)
 			if (this.$buttons) {
 				//console.log(this);
-		    	console.log("Test: " + this.actionViews[0].viewID);
+		    	//console.log("Test: " + this.actionViews[0].viewID);
 		    	if (typeof this.actionViews !== 'undefined' && this.actionViews.length > 0) {
 			    	if (this.actionViews[0].viewID == 2766) {
+                        console.log("Entre para vista de mesa de servicio")
 			    		this.$buttons.find('.o_button_import').hide();
 			    		this.$buttons.find('.o_list_button_add').hide();
 			    		this.$buttons.find('.oe_action_button_helpdesk').click(this.proxy('action_def'));
-			    	} else {
+			    	} else if (this.actionViews[0].viewID == 956) {
+                        console.log("Entre para vista de toner")
+                        this.$buttons.find('.o_button_import').hide();
+                        this.$buttons.find('.o_list_button_add').hide();
+                        this.$buttons.find('.oe_action_button_helpdesk').click(this.proxy('action_def_toner'));
+                    } else {
+                        console.log("Entre poirque no fue ninguna")
 			    		this.$buttons.find('.o_list_button_add').show();
 			    		this.$buttons.find('.oe_action_button_helpdesk').hide();
 			    	}
@@ -60,6 +67,32 @@ odoo.define('invoice.action_button_helpdesk', function (require) {
             	on_reverse_breadcrumb: function () {
                		self.update_control_panel({clear: true, hidden: true});
            		}
+            });
+
+
+            rpc.query({
+                model: 'helpdesk.ticket',
+                method: 'cambio_wizard',
+                args: [[user],{'id':user}],
+            });
+        },
+
+        action_def_toner: function (e) {
+            var self = this
+            var user = session.uid;
+            self.do_action({
+                name: _t('Crear ticket tóner'),
+                type : 'ir.actions.act_window',
+                res_model: 'helpdesk.tonerticket',
+                view_type: 'form',
+                view_mode: 'form',
+                view_id: 'view_helpdesk_crear_solicitud_toner',
+                views: [[false, 'form']],
+                target: 'new',
+            }, {
+                on_reverse_breadcrumb: function () {
+                    self.update_control_panel({clear: true, hidden: true});
+                }
             });
 
 

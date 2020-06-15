@@ -48,7 +48,6 @@ class StockPicking(Model):
                 orig_obj_changes, stream_field, stream,
                 sorted_method=sorted_method, groupby_method=groupby_method)
 
-
     def regresoAlmacen(self):
         wiz = self.env['devolver.action'].create({'picking':self.id})
         view = self.env.ref('stock_picking_mass_action.view_devolver_action_form')
