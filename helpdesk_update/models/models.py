@@ -3968,11 +3968,3 @@ class helpdesk_lines(models.Model):
             if idf != 9 and idf != 8:
                res['domain']={'producto':[('id','in',d)]}
         return res
-    
-
-    
-
-    
-    
-
-    
