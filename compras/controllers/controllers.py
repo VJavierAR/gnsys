@@ -8,6 +8,7 @@ class Compras(http.Controller):
     	p.button_confirm()
     	return "Orden de compra "+str(p.name)+" Autorizada"
 
+
 #     @http.route('/compras/compras/objects/', auth='public')
 #     def list(self, **kw):
 #         return http.request.render('compras.listing', {
