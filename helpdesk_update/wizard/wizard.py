@@ -1219,11 +1219,17 @@ class helpdesk_crearconserie(TransientModel):
                                                 ,'team_id': 9
                                                 ,'x_studio_field_6furK': self.zonaLocalidad
                                                 })
-            ticket.write({'partner_id': int(self.idCliente)
-                        ,'x_studio_empresas_relacionadas': int(self.idLocaliidad)
-                        ,'team_id': 9
-                        ,'x_studio_field_6furK': self.zonaLocalidad
-                        })
+            if self.zonaLocalidad:
+                ticket.write({'partner_id': int(self.idCliente)
+                            ,'x_studio_empresas_relacionadas': int(self.idLocaliidad)
+                            ,'team_id': 9
+                            ,'x_studio_field_6furK': self.zonaLocalidad
+                            })
+            else:
+                ticket.write({'partner_id': int(self.idCliente)
+                            ,'x_studio_empresas_relacionadas': int(self.idLocaliidad)
+                            ,'team_id': 9
+                            })
             if self.contactoInterno:
                 query = "update helpdesk_ticket set \"contactoInterno\" = " + str(self.contactoInterno.id) + " where id = " + str(ticket.id) + ";"
                 self.env.cr.execute(query)
@@ -1418,6 +1424,113 @@ class HelpDeskReincidencia(TransientModel):
                   'context': self.env.context,
                   }
         
+
+
+
+
+
+
+class ActivarTicketCanceladoTonerMassAction(TransientModel):
+    _name = 'helpdesk.activar.cancelado.toner'
+    _description = 'Activar tickets que fueron cancelados'
+    
+    def _default_ticket_ids(self):
+        return self.env['helpdesk.ticket'].browse(
+            self.env.context.get('active_ids'))
+
+    ticket_ids = fields.Many2many(
+        string = 'Tickets',
+        comodel_name = "helpdesk.ticket",
+        default = lambda self: self._default_ticket_ids(),
+        help = "",
+    )
+
+
+    def cambioActivo(self):
+        idsTicketsList = []
+        for ticket in self.ticket_ids:
+            if ticket.x_studio_field_nO7Xg:
+                mensajeTitulo = 'No es posible volver a activar tickets!!!'
+                mensajeCuerpo = 'No es posible activar tickets debido a que ya cuentan con una solicitud generada.'
+                wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
+                view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+                return {
+                        'name': _(mensajeTitulo),
+                        'type': 'ir.actions.act_window',
+                        'view_type': 'form',
+                        'view_mode': 'form',
+                        'res_model': 'helpdesk.alerta',
+                        'views': [(view.id, 'form')],
+                        'view_id': view.id,
+                        'target': 'new',
+                        'res_id': wiz.id,
+                        'context': self.env.context,
+                        }
+
+            estadoAntes = str(ticket.stage_id.name)
+            if ticket.estadoCancelado:
+                ticket.write({'stage_id': 1})
+                query = "update helpdesk_ticket set stage_id = 1 where id = " + str(ticket.x_studio_id_ticket) + ";"
+                ss = self.env.cr.execute(query)
+
+                #Activando contadores
+                contadores = self.env['dcas.dcas'].search([['x_studio_tickett', '=', str(ticket.id)]])
+                _logger.info('Contadores: ' + str(contadores))
+                #contadores.unlink()
+                for contador in contadores:
+                    contador.active = True
+
+                idsTicketsList.append(ticket.id)
+                #Cancelando el pedido de venta
+                #self.estadoCancelado = True
+                #pedidoDeVentaACancelar = self.x_studio_field_nO7Xg
+                #if pedidoDeVentaACancelar:
+                #    regresa = self.env['stock.picking'].search([['sale_id', '=', int(pedidoDeVentaACancelar.id)], ['state', '=', 'done']])
+                #    if len(regresa) == 0:
+                #        pedidoDeVentaACancelar.action_cancel()
+                
+                
+
+        mensajeTitulo = 'Tickets activados!!!'
+        mensajeCuerpo = 'Seactivaron los tickets seleccionados. \nTickets activados: ' + str(idsTicketsList)
+        wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
+        view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+        return {
+                'name': _(mensajeTitulo),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'helpdesk.alerta',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'res_id': wiz.id,
+                'context': self.env.context,
+                }
+
+
+
+
+class CancelarSolTonerMassAction(TransientModel):
+    _name = 'helpdesk.cancelar.tickets.toner'
+    _description = 'Crear y validad solicitudes de toner'
+    
+    def _default_ticket_ids(self):
+        return self.env['helpdesk.ticket'].browse(
+            self.env.context.get('active_ids'))
+
+    ticket_ids = fields.Many2many(
+        string = 'Tickets',
+        comodel_name = "helpdesk.ticket",
+        default = lambda self: self._default_ticket_ids(),
+        help = "",
+    )
+
+    def confirmarCancelado(self):
+        _logger.info("CancelarSolTonerMassAction.confirmar()")
+
+        for ticket in self.ticket_ids:
+            ticket.cambioCancelado()
 
 
 
@@ -1619,6 +1732,7 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                             requisicion=False
                             if(len(st)>0):
                                 if(st[0].quantity==0):
+                                    _logger.info('ptm: ' + str(datetime.datetime.now()))
                                     requisicion=self.env['requisicion.requisicion'].search([['state','!=','done'],['create_date','<=',datetime.datetime.now()],['origen','=','Tóner']]).sorted(key='create_date',reverse=True)
                             else:
                                 requisicion=self.env['requisicion.requisicion'].search([['state','!=','done'],['create_date','<=',datetime.datetime.now()],['origen','=','Tóner']]).sorted(key='create_date',reverse=True)

@@ -5,7 +5,7 @@
 
 
 
-<!--             <xpath expr="." positio="inside">
+            <xpath expr="." positio="inside">
             <script type="text/javascript">
 
                 odoo.define('web.csrf', function (require) {
@@ -19,7 +19,7 @@
                 });
 
             </script>
-             </xpath> -->
+             </xpath>
         </template>
     </data>
 </odoo>
