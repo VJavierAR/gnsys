@@ -3896,7 +3896,6 @@ class helpdesk_update(models.Model):
             'context': {'dominioTest': str(ids)},
         }
 
-
 class helpdes_diagnostico(models.Model):
     _name = "helpdesk.diagnostico"
     _description = "Historial de diagnostico"
