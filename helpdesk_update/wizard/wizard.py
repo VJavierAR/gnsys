@@ -1467,14 +1467,14 @@ class ActivarTicketCanceladoTonerMassAction(TransientModel):
                         'context': self.env.context,
                         }
 
-            estadoAntes = str(self.stage_id.name)
-            if self.estadoCancelado:
+            estadoAntes = str(ticket.stage_id.name)
+            if ticket.estadoCancelado:
                 ticket.stage_id.id = 1
                 query = "update helpdesk_ticket set stage_id = 1 where id = " + str(ticket.x_studio_id_ticket) + ";"
                 ss = self.env.cr.execute(query)
 
                 #Activando contadores
-                contadores = self.env['dcas.dcas'].search([['x_studio_tickett', '=', str(self.id)]])
+                contadores = self.env['dcas.dcas'].search([['x_studio_tickett', '=', str(ticket.id)]])
                 _logger.info('Contadores: ' + str(contadores))
                 #contadores.unlink()
                 for contador in contadores:
