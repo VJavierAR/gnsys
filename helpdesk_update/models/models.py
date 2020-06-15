@@ -12,12 +12,20 @@ _logger = logging.getLogger(__name__)
 #mensajeTituloGlobal = ''
 #mensajeCuerpoGlobal = ''
 
+def convert_timedelta(duration):
+    days, seconds = duration.days, duration.seconds
+    hours = days * 24 + seconds // 3600
+    minutes = (seconds % 3600) // 60
+    seconds = (seconds % 60)
+    return hours, minutes, seconds
+
+
 class helpdesk_update(models.Model):
     #_inherit = ['mail.thread', 'helpdesk.ticket']
     _inherit = 'helpdesk.ticket'
     #priority = fields.Selection([('all','Todas'),('baja','Baja'),('media','Media'),('alta','Alta'),('critica','Critica')])
     x_studio_field_6furK = fields.Selection([('SUR','SUR'),('NORTE','NORTE'),('PONIENTE','PONIENTE'),('ORIENTE','ORIENTE'),('CENTRO','CENTRO'),('DISTRIBUIDOR','DISTRIBUIDOR'),('MONTERREY','MONTERREY'),('CUERNAVACA','CUERNAVACA'),('GUADALAJARA','GUADALAJARA'),('QUERETARO','QUERETARO'),('CANCUN','CANCUN'),('VERACRUZ','VERACRUZ'),('PUEBLA','PUEBLA'),('TOLUCA','TOLUCA'),('LEON','LEON'),('COMODIN','COMODIN'),('VILLAHERMOSA','VILLAHERMOSA'),('MERIDA','MERIDA'),('ALTAMIRA','ALTAMIRA'),('COMODIN','COMODIN'),('DF00','DF00'),('SAN LP','SAN LP'),('ESTADO DE MÉXICO','ESTADO DE MÉXICO'),('Foraneo Norte','Foraneo Norte'),('Foraneo Sur','Foraneo Sur')], string = 'Zona localidad', store = True, track_visibility='onchange')
-    x_studio_zona = fields.Selection([('SUR','SUR'),('NORTE','NORTE'),('PONIENTE','PONIENTE'),('ORIENTE','ORIENTE'),('CENTRO','CENTRO'),('DISTRIBUIDOR','DISTRIBUIDOR'),('MONTERREY','MONTERREY'),('CUERNAVACA','CUERNAVACA'),('GUADALAJARA','GUADALAJARA'),('QUERETARO','QUERETARO'),('CANCUN','CANCUN'),('VERACRUZ','VERACRUZ'),('PUEBLA','PUEBLA'),('TOLUCA','TOLUCA'),('LEON','LEON'),('COMODIN','COMODIN'),('VILLAHERMOSA','VILLAHERMOSA'),('MERIDA','MERIDA'),('ALTAMIRA','ALTAMIRA'),('COMODIN','COMODIN'),('DF00','DF00'),('SAN LP','SAN LP'),('ESTADO DE MÉXICO','ESTADO DE MÉXICO'),('Foraneo Norte','Foraneo Norte'),('Foraneo Sur','Foraneo Sur')], string = 'Zona', store = True, track_visibility='onchange')
+    x_studio_zona = fields.Selection([('SUR','SUR'),('NORTE','NORTE'),('PONIENTE','PONIENTE'),('ORIENTE','ORIENTE'),('CENTRO','CENTRO'),('DISTRIBUIDOR','DISTRIBUIDOR'),('MONTERREY','MONTERREY'),('CUERNAVACA','CUERNAVACA'),('GUADALAJARA','GUADALAJARA'),('QUERETARO','QUERETARO'),('CANCUN','CANCUN'),('VERACRUZ','VERACRUZ'),('PUEBLA','PUEBLA'),('TOLUCA','TOLUCA'),('LEON','LEON'),('COMODIN','COMODIN'),('VILLAHERMOSA','VILLAHERMOSA'),('MERIDA','MERIDA'),('ALTAMIRA','ALTAMIRA'),('COMODIN','COMODIN'),('DF00','DF00'),('SAN LP','SAN LP'),('ESTADO DE MÉXICO','ESTADO DE MÉXICO'),('Foraneo Norte','Foraneo Norte'),('Foraneo Sur','Foraneo Sur'),('CHIHUAHUA','CHIHUAHUA')], string = 'Zona', store = True, track_visibility='onchange')
     zona_estados = fields.Selection([('Estado de México','Estado de México'), ('Campeche','Campeche'), ('Ciudad de México','Ciudad de México'), ('Yucatán','Yucatán'), ('Guanajuato','Guanajuato'), ('Puebla','Puebla'), ('Coahuila','Coahuila'), ('Sonora','Sonora'), ('Tamaulipas','Tamaulipas'), ('Oaxaca','Oaxaca'), ('Tlaxcala','Tlaxcala'), ('Morelos','Morelos'), ('Jalisco','Jalisco'), ('Sinaloa','Sinaloa'), ('Nuevo León','Nuevo León'), ('Baja California','Baja California'), ('Nayarit','Nayarit'), ('Querétaro','Querétaro'), ('Tabasco','Tabasco'), ('Hidalgo','Hidalgo'), ('Chihuahua','Chihuahua'), ('Quintana Roo','Quintana Roo'), ('Chiapas','Chiapas'), ('Veracruz','Veracruz'), ('Michoacán','Michoacán'), ('Aguascalientes','Aguascalientes'), ('Guerrero','Guerrero'), ('San Luis Potosí', 'San Luis Potosí'), ('Colima','Colima'), ('Durango','Durango'), ('Baja California Sur','Baja California Sur'), ('Zacatecas','Zacatecas')], track_visibility='onchange', store=True)
     estatus_techra = fields.Selection([('Cerrado','Cerrado'), ('Cancelado','Cancelado'), ('Cotización','Cotización'), ('Tiempo de espera','Tiempo de espera'), ('COTIZACION POR AUTORIZAR POR CLIENTE','COTIZACION POR AUTORIZAR POR CLIENTE'), ('Facturar','Facturar'), ('Refacción validada','Refacción validada'), ('Instalación','Instalación'), ('Taller','Taller'), ('En proceso de atención','En proceso de atención'), ('En Pedido','En Pedido'), ('Mensaje','Mensaje'), ('Resuelto','Resuelto'), ('Reasignación de área','Reasignación de área'), ('Diagnóstico de Técnico','Diagnóstico de Técnico'), ('Entregado','Entregado'), ('En Ruta','En Ruta'), ('Listo para entregar','Listo para entregar'), ('Espera de Resultados','Espera de Resultados'), ('Solicitud de refacción','Solicitud de refacción'), ('Abierto TFS','Abierto TFS'), ('Reparación en taller','Reparación en taller'), ('Abierto Mesa de Ayuda','Abierto Mesa de Ayuda'), ('Reabierto','Reabierto')], track_visibility='onchange', store=True)
     priority = fields.Selection([('0','Todas'),('1','Baja'),('2','Media'),('3','Alta'),('4','Critica')], track_visibility='onchange')
@@ -29,6 +37,23 @@ class helpdesk_update(models.Model):
     stage_id = fields.Many2one('helpdesk.stage', string='Stage', ondelete='restrict', track_visibility='onchange',group_expand='_read_group_stage_ids',readonly=True,copy=False,index=True, domain="[('team_ids', '=', team_id)]")
     productos = fields.One2many('product.product','id',string='Solicitudes',store=True)
     #seriesDCA = fields.One2many('dcas.dcas', 'tickete', string="Series")
+
+    validarTicket = fields.Boolean(
+                                    string = "Proceder a realizar la validacón del encargado", 
+                                    default = False, 
+                                    store = True
+                                )
+    validarHastaAlmacenTicket = fields.Boolean(
+                                                string = "Crear y validar la solicitud de tóner", 
+                                                default = False, 
+                                                store = True
+                                            )
+    ponerTicketEnEspera = fields.Boolean(
+                                            string = "Generar ticket en espera", 
+                                            default = False, 
+                                            store = True
+                                        )
+
 
     contactoInterno = fields.Many2one('res.partner', string = 'Contacto interno', default=False, store = True)
 
@@ -47,19 +72,20 @@ class helpdesk_update(models.Model):
     @api.depends('x_studio_equipo_por_nmero_de_serie','x_studio_equipo_por_nmero_de_serie_1')
     def cambiaContactoLocalidad(self):
         _logger.info("Entre por toner")
-        if self.x_studio_empresas_relacionadas:
-            _logger.info("Entre por toner: " + str(self.x_studio_empresas_relacionadas))
-            loc = self.x_studio_empresas_relacionadas.id
-            #idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_subtipo', '=', 'Contacto de localidad']], order='create_date desc', limit=1).id
-            idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_ultimo_contacto', '=', True]], order='create_date desc', limit=1).id
-            self.localidadContacto = idLoc
-            self.x_studio_field_6furK = self.x_studio_empresas_relacionadas.x_studio_field_SqU5B
-            _logger.info("Entre por toner idLoc: " + str(idLoc))
-            if idLoc:
-                #query = "update helpdesk_ticket set \"localidadContacto\" = " + str(idLoc) + " where id = " + str(self.x_studio_id_ticket) + ";"
-                query = "update helpdesk_ticket set \"localidadContacto\" = " + str(idLoc) + ", \"x_studio_field_6furK\" = '" + str(self.x_studio_empresas_relacionadas.x_studio_field_SqU5B) + "' where id = " + str(self.x_studio_id_ticket) + ";"
-                self.env.cr.execute(query)
-                self.env.cr.commit()
+        if self.team_id.id != 8:
+            if self.x_studio_empresas_relacionadas:
+                _logger.info("Entre por toner: " + str(self.x_studio_empresas_relacionadas))
+                loc = self.x_studio_empresas_relacionadas.id
+                #idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_subtipo', '=', 'Contacto de localidad']], order='create_date desc', limit=1).id
+                idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_ultimo_contacto', '=', True]], order='create_date desc', limit=1).id
+                self.localidadContacto = idLoc
+                self.x_studio_field_6furK = self.x_studio_empresas_relacionadas.x_studio_field_SqU5B
+                _logger.info("Entre por toner idLoc: " + str(idLoc))
+                if idLoc:
+                    #query = "update helpdesk_ticket set \"localidadContacto\" = " + str(idLoc) + " where id = " + str(self.x_studio_id_ticket) + ";"
+                    query = "update helpdesk_ticket set \"localidadContacto\" = " + str(idLoc) + ", \"x_studio_field_6furK\" = '" + str(self.x_studio_empresas_relacionadas.x_studio_field_SqU5B) + "' where id = " + str(self.x_studio_id_ticket) + ";"
+                    self.env.cr.execute(query)
+                    self.env.cr.commit()
 
     @api.model
     def _contacto_definido(self):
@@ -514,9 +540,17 @@ class helpdesk_update(models.Model):
             raise exceptions.except_orm(_(errorContactoSinLocalidad), _(mensajeContactoSinLocalidad))
     
     
+    """
+    def convert_timedelta(duration):
+        days, seconds = duration.days, duration.seconds
+        hours = days * 24 + seconds // 3600
+        minutes = (seconds % 3600) // 60
+        seconds = (seconds % 60)
+        return hours, minutes, seconds
+    """
     
-    
-    
+    # Ticket compuatado de tiempos
+
     def _compute_difference(self):
         for rec in self:
             if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
@@ -528,6 +562,288 @@ class helpdesk_update(models.Model):
                 #converted_date = datetime.datetime.strptime(str(rec.create_date), '%Y-%m-%d').date()
                 rec.days_difference = (datetime.date.today() - converted_date).days
     
+
+    hour_differenceTicket = fields.Integer(
+                                                compute='_compute_difference_hour_ticket',
+                                                string='Horas de atraso ticket'
+                                            )
+    def _compute_difference_hour_ticket(self):
+        for rec in self:
+            if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
+                first_time = rec.create_date
+                later_time = datetime.datetime.now()
+                difference = later_time - first_time
+                hours, minutes, seconds = convert_timedelta(difference)
+                rec.hour_differenceTicket = hours
+
+    minutes_differenceTicket = fields.Integer(
+                                                compute='_compute_difference_minute_ticket',
+                                                string='Minutos de atraso ticket'
+                                            )
+    def _compute_difference_minute_ticket(self):
+        for rec in self:
+            if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
+                first_time = rec.create_date
+                later_time = datetime.datetime.now()
+                difference = later_time - first_time
+                hours, minutes, seconds = convert_timedelta(difference)
+                rec.minutes_differenceTicket = minutes
+
+    seconds_differenceTicket = fields.Integer(
+                                                compute='_compute_difference_second_ticket',
+                                                string='Segundos de atraso ticket'
+                                            )
+    def _compute_difference_second_ticket(self):
+        for rec in self:
+            if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
+                first_time = rec.create_date
+                later_time = datetime.datetime.now()
+                difference = later_time - first_time
+                hours, minutes, seconds = convert_timedelta(difference)
+                rec.seconds_differenceTicket = seconds
+
+
+    tiempoDeAtrasoTicket = fields.Text(
+                                            string = 'Tiempo de atraso ticket',
+                                            compute = '_compute_tiempo_atraso_ticket'
+                                        )
+    def _compute_tiempo_atraso_ticket(self):
+        self.tiempoDeAtrasoTicket = """
+                                        <div class='row'>
+                                            <div class='col-sm-12'>
+                                                <p>
+                                                """ + str(self.days_difference) + """ día(s) con 
+                                                """ + str(self.hour_differenceTicket) + """: 
+                                                """ + str(self.minutes_differenceTicket) + """:
+                                                """ + str(self.seconds_differenceTicket) + """
+                                                </p>
+                                            </div>
+                                        </div>
+                                    """
+
+
+
+    
+    # Almacen compuatado de tiempos
+    days_differenceAlmacen = fields.Integer(
+                                                compute='_compute_difference_days_almacen',
+                                                string='Días de atraso almacén'
+                                            )
+    def _compute_difference_days_almacen(self):
+        for rec in self:
+            if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
+                if rec.x_studio_field_nO7Xg and (rec.x_studio_field_up5pO == 'confirmed' or rec.x_studio_field_up5pO == 'assigned'):
+                    fecha = str(rec.create_date).split(' ')[0]
+                    #fe = t[0]
+                    converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
+                    #converted_date = datetime.datetime.strptime(str(rec.create_date), '%Y-%m-%d').date()
+                    rec.days_differenceAlmacen = (datetime.date.today() - converted_date).days
+
+    hour_differenceAlmacen = fields.Integer(
+                                                compute='_compute_difference_hour_almacen',
+                                                string='Horas de atraso almacén'
+                                            )
+    def _compute_difference_hour_almacen(self):
+        for rec in self:
+            if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
+                if rec.x_studio_field_nO7Xg and (rec.x_studio_field_up5pO == 'confirmed' or rec.x_studio_field_up5pO == 'assigned'):
+                    first_time = rec.create_date
+                    later_time = datetime.datetime.now()
+                    difference = later_time - first_time
+                    hours, minutes, seconds = convert_timedelta(difference)
+                    rec.hour_differenceAlmacen = hours
+
+    minutes_differenceAlmacen = fields.Integer(
+                                                compute='_compute_difference_minute_almacen',
+                                                string='Minutos de atraso almacén'
+                                            )
+    def _compute_difference_minute_almacen(self):
+        for rec in self:
+            if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
+                if rec.x_studio_field_nO7Xg and (rec.x_studio_field_up5pO == 'confirmed' or rec.x_studio_field_up5pO == 'assigned'):
+                    first_time = rec.create_date
+                    later_time = datetime.datetime.now()
+                    difference = later_time - first_time
+                    hours, minutes, seconds = convert_timedelta(difference)
+                    rec.minutes_differenceAlmacen = minutes
+
+    seconds_differenceAlmacen = fields.Integer(
+                                                compute='_compute_difference_second_almacen',
+                                                string='Segundos de atraso almacén'
+                                            )
+    def _compute_difference_second_almacen(self):
+        for rec in self:
+            if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
+                if rec.x_studio_field_nO7Xg and (rec.x_studio_field_up5pO == 'confirmed' or rec.x_studio_field_up5pO == 'assigned'):
+                    first_time = rec.create_date
+                    later_time = datetime.datetime.now()
+                    difference = later_time - first_time
+                    hours, minutes, seconds = convert_timedelta(difference)
+                    rec.seconds_differenceAlmacen = seconds
+
+
+    tiempoDeAtrasoAlmacen = fields.Text(
+                                            string = 'Tiempo de atraso almacén',
+                                            compute = '_compute_tiempo_atraso_almacen'
+                                        )
+    def _compute_tiempo_atraso_almacen(self):
+        self.tiempoDeAtrasoAlmacen = """
+                                        <div class='row'>
+                                            <div class='col-sm-12'>
+                                                <p>
+                                                """ + str(self.days_differenceAlmacen) + """ día(s) con 
+                                                """ + str(self.hour_differenceAlmacen) + """:
+                                                """ + str(self.minutes_differenceAlmacen) + """:
+                                                """ + str(self.seconds_differenceAlmacen) + """:
+                                                </p>
+                                            </div>
+                                        </div>
+                                    """
+
+    # Distribucion compuatado de tiempos
+    days_differenceDistribucion = fields.Integer(
+                                                compute='_compute_difference_days_distribucion',
+                                                string='Días de atraso distibución'
+                                            )
+    def _compute_difference_days_distribucion(self):
+        for rec in self:
+            if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
+                if rec.x_studio_field_nO7Xg and (rec.x_studio_field_Le2tN == 'confirmed' or rec.x_studio_field_Le2tN == 'assigned' or rec.x_studio_field_Le2tN == 'distribucion'):
+                    fecha = str(rec.create_date).split(' ')[0]
+                    converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
+                    rec.days_differenceDistribucion = (datetime.date.today() - converted_date).days
+
+    hour_differenceDistribucion = fields.Integer(
+                                                compute='_compute_difference_hour_distribucion',
+                                                string='Horas de atraso distribución'
+                                            )
+    def _compute_difference_hour_distribucion(self):
+        for rec in self:
+            if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
+                if rec.x_studio_field_nO7Xg and (rec.x_studio_field_Le2tN == 'confirmed' or rec.x_studio_field_Le2tN == 'assigned' or rec.x_studio_field_Le2tN == 'distribucion'):
+                    first_time = rec.create_date
+                    later_time = datetime.datetime.now()
+                    difference = later_time - first_time
+                    hours, minutes, seconds = convert_timedelta(difference)
+                    rec.hour_differenceDistribucion = hours
+
+    minutes_differenceDistribucion = fields.Integer(
+                                                compute='_compute_difference_minute_distribucion',
+                                                string='Minutos de atraso distribución'
+                                            )
+    def _compute_difference_minute_distribucion(self):
+        for rec in self:
+            if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
+                if rec.x_studio_field_nO7Xg and (rec.x_studio_field_Le2tN == 'confirmed' or rec.x_studio_field_Le2tN == 'assigned' or rec.x_studio_field_Le2tN == 'distribucion'):
+                    first_time = rec.create_date
+                    later_time = datetime.datetime.now()
+                    difference = later_time - first_time
+                    hours, minutes, seconds = convert_timedelta(difference)
+                    rec.minutes_differenceDistribucion = minutes
+
+    seconds_differenceDistribucion = fields.Integer(
+                                                compute='_compute_difference_second_distribucion',
+                                                string='Segundos de atraso distribución'
+                                            )
+    def _compute_difference_second_distribucion(self):
+        for rec in self:
+            if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
+                if rec.x_studio_field_nO7Xg and (rec.x_studio_field_Le2tN == 'confirmed' or rec.x_studio_field_Le2tN == 'assigned' or rec.x_studio_field_Le2tN == 'distribucion'):
+                    first_time = rec.create_date
+                    later_time = datetime.datetime.now()
+                    difference = later_time - first_time
+                    hours, minutes, seconds = convert_timedelta(difference)
+                    rec.seconds_differenceDistribucion = seconds
+
+
+    tiempoDeAtrasoDistribucion = fields.Text(
+                                            string = 'Tiempo de atraso distribución',
+                                            compute = '_compute_tiempo_atraso_distribucion'
+                                        )
+    def _compute_tiempo_atraso_distribucion(self):
+        self.tiempoDeAtrasoDistribucion = """
+                                        <div class='row'>
+                                            <div class='col-sm-12'>
+                                                <p>
+                                                """ + str(self.days_differenceAlmacen) + """ día(s) con 
+                                                """ + str(self.hour_differenceAlmacen) + """:
+                                                """ + str(self.minutes_differenceAlmacen) + """:
+                                                """ + str(self.seconds_differenceAlmacen) + """
+                                                </p>
+                                            </div>
+                                        </div>
+                                    """
+
+    
+
+
+
+    # Repartidor compuatado de tiempos
+    """
+    days_differenceRepartidor = fields.Integer(
+                                                    compute='_compute_difference_repartidor',
+                                                    string='Días de atraso repatidor'
+                                                )
+
+    def _compute_difference_days_repartidor(self):
+        for rec in self:
+            if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
+                if rec.x_studio_field_up5pO == 'waiting' and rec.x_studio_field_nO7Xg:
+                    fecha = str(rec.create_date).split(' ')[0]
+                    converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
+                    rec.days_differenceRepartidor = (datetime.date.today() - converted_date).days
+
+    hour_differenceRepartidor = fields.Integer(
+                                                compute='_compute_difference_hour_repartidor',
+                                                string='Horas de atraso repartidor'
+                                            )
+    def _compute_difference_hour_repartidor(self):
+        for rec in self:
+            if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
+                if rec.x_studio_field_up5pO == 'waiting' and rec.x_studio_field_nO7Xg:
+                    first_time = rec.create_date
+                    later_time = datetime.datetime.now()
+                    difference = later_time - first_time
+                    hours, minutes, seconds = convert_timedelta(difference)
+                    rec.hour_differenceRepartidor = hours
+
+    minutes_differenceRepartidor = fields.Integer(
+                                                compute='_compute_difference_minute_repartidor',
+                                                string='Minutos de atraso repartidor'
+                                            )
+    def _compute_difference_minute_repartidor(self):
+        for rec in self:
+            if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
+                if rec.x_studio_field_up5pO == 'waiting' and rec.x_studio_field_nO7Xg:
+                    first_time = rec.create_date
+                    later_time = datetime.datetime.now()
+                    difference = later_time - first_time
+                    hours, minutes, seconds = convert_timedelta(difference)
+                    rec.minutes_differenceRepartidor = minutes
+
+    seconds_differenceRepartidor = fields.Integer(
+                                                compute='_compute_difference_second_repartidor',
+                                                string='Segundos de atraso repartidor'
+                                            )
+    def _compute_difference_second_repartidor(self):
+        for rec in self:
+            if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
+                if rec.x_studio_field_up5pO == 'waiting' and rec.x_studio_field_nO7Xg:
+                    first_time = rec.create_date
+                    later_time = datetime.datetime.now()
+                    difference = later_time - first_time
+                    hours, minutes, seconds = convert_timedelta(difference)
+                    rec.seconds_differenceRepartidor = seconds
+
+
+
+
+    """
+
+
+
+
+
     
     #_logger.info("el id xD Toner xD")            
 
@@ -1302,6 +1618,156 @@ class helpdesk_update(models.Model):
     """
     
     
+
+
+
+
+    @api.multi
+    def crear_y_validar_solicitud_refaccion(self):
+        for record in self:
+            if not record.x_studio_field_nO7Xg:
+                if len(record.x_studio_productos) > 0:
+                    if self.x_studio_field_nO7Xg.id != False and self.x_studio_field_nO7Xg.state == 'sale':
+                        message = ('Existe una solicitud ya generada y esta fue validada. \n\nNo es posible realizar cambios a una solicitud ya validada.')
+                        mess= {'title': _('Solicitud existente validada!!!')
+                                , 'message' : message
+                        }
+                        return {'warning': mess}
+                    
+                    if self.x_studio_field_nO7Xg.id != False and self.x_studio_field_nO7Xg.state != 'sale':
+                        sale = self.x_studio_field_nO7Xg
+                        self.env.cr.execute("delete from sale_order_line where order_id = " + str(sale.id) +";")
+                        for c in self.x_studio_productos:
+                            datosr={'order_id' : sale.id, 'product_id' : c.id, 'product_uom_qty' : c.x_studio_cantidad_pedida, 'x_studio_field_9nQhR':self.x_studio_equipo_por_nmero_de_serie[0].id}
+                            if(self.team_id.id==10 or self.team_id.id==11):
+                                datosr['route_id']=22548
+                            self.env['sale.order.line'].create(datosr)
+                            self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
+                            #self.env.cr.commit()
+                    
+                    else:
+                        sale = self.env['sale.order'].create({'partner_id' : record.partner_id.id
+                                                                     , 'origin' : "Ticket de refacción: " + str(record.x_studio_id_ticket)
+                                                                     , 'x_studio_tipo_de_solicitud' : 'Venta'
+                                                                     , 'x_studio_requiere_instalacin' : True
+                                                                     , 'x_studio_field_RnhKr': self.localidadContacto.id
+                                                                     , 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id
+                                                                     , 'x_studio_tcnico' : record.x_studio_tcnico.id
+                                                                     , 'warehouse_id' : 5865   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
+                                                                     , 'team_id' : 1
+                                                                     , 'x_studio_field_bxHgp': int(record.x_studio_id_ticket) 
+                                                                    })
+                        record['x_studio_field_nO7Xg'] = sale.id
+                        for c in record.x_studio_productos:
+                            datosr = {'order_id' : sale.id
+                                    , 'product_id' : c.id
+                                    , 'product_uom_qty' : c.x_studio_cantidad_pedida
+                                    ,'x_studio_field_9nQhR':self.x_studio_equipo_por_nmero_de_serie[0].id
+                                    , 'price_unit': 0}
+                            if (self.team_id.id == 10 or self.team_id.id == 11):
+                                datosr['route_id'] = 22548
+                            self.env['sale.order.line'].create(datosr)
+                            sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
+                            #sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta', 'validity_date' : sale.date_order + datetime.timedelta(days=30)})
+                            self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
+
+                            
+
+
+
+
+                        sale = record.x_studio_field_nO7Xg
+                        if sale.id != 0 or record.x_studio_productos != []:
+                            if self.x_studio_field_nO7Xg.order_line:
+                                self.sudo().env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
+                                sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
+                                sale.action_confirm()
+                                for lineas in sale.order_line:
+                                    st=self.env['stock.quant'].search([['location_id','in',(35204,12)],['product_id','=',lineas.product_id.id]]).sorted(key='quantity',reverse=True)
+                                    requisicion=False
+                                    if(len(st)>0):
+                                        if(st[0].quantity==0):
+                                            requisicion=self.env['requisicion.requisicion'].search([['state','!=','done'],['create_date','<=',datetime.datetime.now()],['origen','=','Refacción']]).sorted(key='create_date',reverse=True)
+                                    else:
+                                        requisicion=self.env['requisicion.requisicion'].search([['state','!=','done'],['create_date','<=',datetime.datetime.now()],['origen','=','Refacción']]).sorted(key='create_date',reverse=True)
+                                    if(requisicion!=False ):
+                                        re=self.env['requisicion.requisicion'].create({'origen':'Refacción','area':'Almacen','state':'draft'})
+                                        re.product_rel=[{'cliente':sale.partner_shipping_id.id,'ticket':sale.x_studio_field_bxHgp.id,'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
+                                    if(requisicion):                                            
+                                        requisicion[0].product_rel=[{'cliente':sale.partner_shipping_id.id,'ticket':sale.x_studio_field_bxHgp.id,'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
+                                        
+                                estadoAntes = str(self.stage_id.name)
+                                if (self.stage_id.name == 'Solicitud de Refacción' or self.stage_id.name == 'Cotización') and self.estadoSolicitudDeRefaccionValidada == False:
+                                    query = "update helpdesk_ticket set stage_id = 102 where id = " + str(self.x_studio_id_ticket) + ";"
+                                    ss = self.env.cr.execute(query)
+                                    ultimaEvidenciaTec = []
+                                    ultimoComentario = ''
+                                    if self.diagnosticos:
+                                        if self.diagnosticos[-1].evidencia.ids:
+                                            ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
+                                        ultimoComentario = self.diagnosticos[-1].comentario
+                                    
+                                    message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Refacción Autorizada' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
+                                    mess= {
+                                            'title': _('Estado de ticket actualizado!!!'),
+                                            'message' : message
+                                          }
+                                    self.estadoSolicitudDeRefaccionValidada = True
+                                    return {'warning': mess}
+                            else:
+                                message = ("No es posible validar una solicitud que no tiene productos.")
+                                mess = {'title': _('Solicitud sin productos!!!')
+                                        , 'message' : message
+                                        }
+                                return {'warning': mess}
+                        else:
+                            errorRefaccionNoValidada = "Solicitud de refacción no validada"
+                            mensajeSolicitudRefaccionNoValida = "No es posible validar una solicitud de refacción en el estado actual debido a falta de productos o porque no existe la solicitud."
+                            estadoActual = str(record.stage_id.name)
+                            raise exceptions.except_orm(_(errorRefaccionNoValidada), _(mensajeSolicitudRefaccionNoValida + " Estado: " + estadoActual))
+
+
+                else:
+                    message = ('No existen productos para generar y validar la solicitud.')
+                    mess= {
+                            'title': _('Ticket sin productos !!!'),
+                            'message' : message
+                          }
+                    return {'warning': mess}
+            else:
+                message = ('Ya existe una solicitud, no es posible generan una solicitud.')
+                mess= {
+                        'title': _('Ticket con solicitud existente !!!'),
+                        'message' : message
+                      }
+                return {'warning': mess}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     #@api.onchange('x_studio_captura_c')
     @api.multi
     def capturandoMesa(self):
@@ -1793,215 +2259,222 @@ class helpdesk_update(models.Model):
     @api.multi
     def crearYValidarSolicitudDeToner(self):
         for record in self:
-            jalaSolicitudes = ''
-            if record.stage_id.id == 91 and record.x_studio_field_nO7Xg:
-                _logger.info("record.stage_id.id = " + str(record.stage_id.id))
-                _logger.info("record.x_studio_field_nO7Xg = " + str(record.x_studio_field_nO7Xg))
-                #self.stage_id.id = 93
-                query = "update helpdesk_ticket set stage_id = 93 where id = " + str(self.x_studio_id_ticket) + ";"
-                ss = self.env.cr.execute(query)
-                break
-            if record.team_id.id == 8 or record.team_id.id == 13:
-                x = 1 ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
-                if self.x_studio_almacen_1=='Agricola':
-                   sale.write({'warehouse_id':1})
-                   x = 12
-                if self.x_studio_almacen_1=='Queretaro':
-                   sale.write({'warehouse_id':18})
-                   x = 115
-                sale = self.env['sale.order'].sudo().create({'partner_id' : record.partner_id.id
-                                                , 'origin' : "Ticket de tóner: " + str(record.x_studio_id_ticket)
-                                                , 'x_studio_tipo_de_solicitud' : "Venta"
-                                                , 'x_studio_requiere_instalacin' : True                                       
-                                                , 'user_id' : record.user_id.id                                           
-                                                , 'x_studio_tcnico' : record.x_studio_tcnico.id
-                                                , 'x_studio_field_RnhKr': self.localidadContacto.id
-                                                , 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id
-                                                , 'warehouse_id' : x  
-                                                , 'team_id' : 1
-                                                , 'x_studio_comentario_adicional':self.x_studio_comentarios_de_localidad
-                                                , 'x_studio_field_bxHgp': int(record.x_studio_id_ticket)
-                                                ,'x_studio_corte':self.x_studio_corte     
-                                              })
-                
-
-
-                record['x_studio_field_nO7Xg'] = sale.id
-                serieaca = ''
-                
-                for c in record.x_studio_equipo_por_nmero_de_serie_1:
-                    bn=''
-                    amar=''
-                    cian=''
-                    magen=''
-                    car=0
-                    serieaca=c.serie.name
-                    weirtihgone=0
-                    weirtihgwtwo=0
-                    insert="insert into sale_order_line values (order_id,product_id,product_uom_qty,x_studio_field_9nQhR,route_id,price_unit, customer_lead,x_studio_toner_negro,porcentajeNegro)values("+str(sale.id)+","+str(weirtihgone)+",1,"+str(c.serie.id)+","+str(weirtihgwtwo)+",0,0,"+str(c.x_studio_toner_negro)+",1)"
-                    _logger.info("Error al capturar."+str(insert))
-                    #some like this need to be faster than create insert into sale_order_line (name,order_id,product_id,product_uom_qty,"x_studio_field_9nQhR",route_id,price_unit, customer_lead,product_uom)values('a',2220,10770,1,31902,1,0,0,1);
-                        
-                    c.write({'x_studio_tickett':self.x_studio_id_ticket})
-                    c.write({'fuente':'helpdesk.ticket'})
-                    
-                    #Toner BN
-                    if c.x_studio_cartuchonefro:
-                        car=car+1                        
-                        if c.serie.x_studio_color_bn=="B/N":
-                         c.write({'porcentajeNegro':c.porcentajeNegro})
-                         c.write({'x_studio_toner_negro':1})
-                        else:
-                         c.write({'porcentajeNegro':c.porcentajeNegro})    
-                         c.write({'x_studio_toner_negro':1})
-                        pro = self.env['product.product'].search([['name','=',c.x_studio_cartuchonefro.name],['categ_id','=',5]])
-                        gen = pro.sorted(key='qty_available',reverse=True)[0]
-                        weirtihgone=c.serie.x_studio_toner_compatible.id if(len(gen)==0) else gen.id
-                        datos={'name': ' '
-                               ,'order_id' : sale.id
-                               , 'product_id' : weirtihgone
-                               #, 'product_id' : c.x_studio_toner_compatible.id
-                               , 'product_uom_qty' : 1
-                               , 'x_studio_field_9nQhR': c.serie.id 
-                               , 'price_unit': 0 
-                               , 'customer_lead' : 0
-                               , 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id}
-                        if(gen['qty_available']<=0):
-                            datos['route_id']=1
-                            datos['product_id']=c.serie.x_studio_toner_compatible.id
-                            weirtihgone=c.serie.x_studio_toner_compatible.id
-                            weirtihgtwo=1
-                        #insert='insert into sale_order_line values (order_id,product_id,product_uom_qty,x_studio_field_9nQhR,route_id,price_unit, customer_lead,x_studio_toner_negro,porcentajeNegro)values('+str(sale.id)+','+  str(weirtihgone)+','+1+','+str(c.serie.id)+','+str(weirtihgtwo)+',0,0,'+str(c.x_studio_toner_negro)+',1)'
-                        #raise exceptions.ValidationError("Error al capturar."+str(insert))
-                        self.env['sale.order.line'].create(datos)
-                        bn=str(c.serie.x_studio_reftoner)+', '
-                    #Toner Ama
-                    if c.x_studio_cartucho_amarillo:
-                        car=car+1
-                        c.write({'x_studio_toner_amarillo':1})
-                        pro = self.env['product.product'].search([['name','=',c.x_studio_cartucho_amarillo.name],['categ_id','=',5]])
-                        gen = pro.sorted(key='qty_available',reverse=True)[0]
-                        datos={'name': ' '
-                               ,'order_id' : sale.id
-                               , 'product_id' : c.x_studio_cartucho_amarillo.id if(len(gen)==0) else gen.id
-                               #, 'product_id' : c.x_studio_toner_compatible.id
-                               , 'product_uom_qty' : 1
-                               , 'x_studio_field_9nQhR': c.serie.id
-                               , 'price_unit': 0 
-                               , 'customer_lead' : 0
-                               , 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id}
-                        if(gen['qty_available']<=0):
-                            datos['route_id']=1
-                            datos['product_id']=c.x_studio_cartucho_amarillo.id
-                        
-                        self.env['sale.order.line'].create(datos)
-                        amar=str(c.x_studio_cartucho_amarillo.name)+', '
-                    #Toner cian
-                    if c.x_studio_cartucho_cian_1:
-                        car=car+1
-                        c.write({'x_studio_toner_cian':1})
-                        pro = self.env['product.product'].search([['name','=',c.x_studio_cartucho_cian_1.name],['categ_id','=',5]])
-                        gen = pro.sorted(key='qty_available',reverse=True)[0]
-                        datos={'name': ' '
-                               ,'order_id' : sale.id
-                               , 'product_id' : c.x_studio_cartucho_cian_1.id if(len(gen)==0) else gen.id
-                               #, 'product_id' : c.x_studio_toner_compatible.id
-                               , 'product_uom_qty' : 1
-                               , 'x_studio_field_9nQhR': c.serie.id 
-                               , 'price_unit': 0 
-                               , 'customer_lead' : 0
-                               , 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id}
-                        if(gen['qty_available']<=0):
-                            datos['route_id']=1
-                            datos['product_id']=c.x_studio_cartucho_cian_1.id
-                        
-                        self.env['sale.order.line'].create(datos)
-                        cian=str(c.x_studio_cartucho_cian_1.name)+', '
-                    #Toner mage
-                    if c.x_studio_cartucho_magenta:
-                        car=car+1
-                        c.write({'x_studio_toner_magenta':1})
-                        pro = self.env['product.product'].search([['name','=',c.x_studio_cartucho_magenta.name],['categ_id','=',5]])
-                        gen = pro.sorted(key='qty_available',reverse=True)[0]
-                        datos={'name': ' '
-                               ,'order_id' : sale.id
-                               , 'product_id' : c.x_studio_cartucho_magenta.id if(len(gen)==0) else gen.id
-                               #, 'product_id' : c.x_studio_toner_compatible.id
-                               , 'product_uom_qty' : 1
-                               , 'x_studio_field_9nQhR': c.serie.id 
-                               , 'price_unit': 0 
-                               , 'customer_lead' : 0
-                               , 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id}
-                        if(gen['qty_available']<=0):
-                            datos['route_id']=1
-                            datos['product_id']=c.x_studio_cartucho_magenta.id
-                                                
-                        self.env['sale.order.line'].create(datos)
-                        magen=str(c.x_studio_cartucho_magenta.name)
-                        
-                    
-                    if car==0:
-                       raise exceptions.ValidationError("Ningun cartucho selecionado, serie ."+str(c.serie.name)) 
-                    
-                    jalaSolicitudes='solicitud de toner '+sale.name+' para la serie :'+serieaca +' '+bn+' '+amar+' '+cian+' '+magen
-                if len(sale.order_line)==0:
-                   raise exceptions.ValidationError("Ningun cartucho selecionado, revisar series .")                    
-                sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
-                jalaSolicitudess='solicitud de toner '+sale.name+' para la serie :'+serieaca
-                self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
-            
-
-
-                if self.x_studio_field_nO7Xg.order_line:
-                    self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
-                    sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
-                    sale.write({'x_studio_corte':self.x_studio_corte})
-                    sale.write({'x_studio_comentario_adicional':self.x_studio_comentarios_de_localidad})      
-                    x=0
+            if not record.x_studio_field_nO7Xg:
+                jalaSolicitudes = ''
+                if record.stage_id.id == 91 and record.x_studio_field_nO7Xg:
+                    _logger.info("record.stage_id.id = " + str(record.stage_id.id))
+                    _logger.info("record.x_studio_field_nO7Xg = " + str(record.x_studio_field_nO7Xg))
+                    #self.stage_id.id = 93
+                    query = "update helpdesk_ticket set stage_id = 93 where id = " + str(self.x_studio_id_ticket) + ";"
+                    ss = self.env.cr.execute(query)
+                    break
+                if record.team_id.id == 8 or record.team_id.id == 13:
+                    x = 1 ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
                     if self.x_studio_almacen_1=='Agricola':
                        sale.write({'warehouse_id':1})
-                       x=12
+                       x = 12
                     if self.x_studio_almacen_1=='Queretaro':
                        sale.write({'warehouse_id':18})
-                       x=115
-                    for lineas in sale.order_line:
-                        st=self.env['stock.quant'].search([['location_id','=',x],['product_id','=',lineas.product_id.id]]).sorted(key='quantity',reverse=True)
-                        requisicion=False
-                        if(len(st)>0):
-                            if(st[0].quantity==0):
-                                requisicion=self.env['requisicion.requisicion'].search([['state','!=','done'],['create_date','<=',datetime.datetime.now()],['origen','=','Tóner']]).sorted(key='create_date',reverse=True)
-                        else:
-                            requisicion=self.env['requisicion.requisicion'].search([['state','!=','done'],['create_date','<=',datetime.datetime.now()],['origen','=','Tóner']]).sorted(key='create_date',reverse=True)
-                        if(len(requisicion)==0):
-                            re=self.env['requisicion.requisicion'].create({'origen':'Tóner','area':'Almacen','state':'draft'})
-                            re.product_rel=[{'cliente':sale.partner_shipping_id.id,'ticket':sale.x_studio_field_bxHgp.id,'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
-                        if(len(requisicion)>0):
-                            requisicion[0].product_rel=[{'cliente':sale.partner_shipping_id.id,'ticket':sale.x_studio_field_bxHgp.id,'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
-                    sale.action_confirm()
+                       x = 115
+                    sale = self.env['sale.order'].sudo().create({'partner_id' : record.partner_id.id
+                                                    , 'origin' : "Ticket de tóner: " + str(record.x_studio_id_ticket)
+                                                    , 'x_studio_tipo_de_solicitud' : "Venta"
+                                                    , 'x_studio_requiere_instalacin' : True                                       
+                                                    , 'user_id' : record.user_id.id                                           
+                                                    , 'x_studio_tcnico' : record.x_studio_tcnico.id
+                                                    , 'x_studio_field_RnhKr': self.localidadContacto.id
+                                                    , 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id
+                                                    , 'warehouse_id' : x  
+                                                    , 'team_id' : 1
+                                                    , 'x_studio_comentario_adicional':self.x_studio_comentarios_de_localidad
+                                                    , 'x_studio_field_bxHgp': int(record.x_studio_id_ticket)
+                                                    ,'x_studio_corte':self.x_studio_corte     
+                                                  })
+                    
 
-                else:
-                    message = ("No es posible validar una solicitud que no tiene productos.")
-                    mess = {'title': _('Solicitud sin productos!!!')
-                            , 'message' : message
-                            }
-                    return {'warning': mess}
 
-            saleTemp = self.x_studio_field_nO7Xg
-            if saleTemp.id != False:
-                if self.x_studio_id_ticket:
-                    estadoAntes = str(self.stage_id.name)
-                    if self.estadoSolicitudDeToner == False:    
-                        query = "update helpdesk_ticket set stage_id = 93 where id = " + str(self.x_studio_id_ticket) + ";"
-                        ss = self.env.cr.execute(query)
+                    record['x_studio_field_nO7Xg'] = sale.id
+                    serieaca = ''
+                    
+                    for c in record.x_studio_equipo_por_nmero_de_serie_1:
+                        bn=''
+                        amar=''
+                        cian=''
+                        magen=''
+                        car=0
+                        serieaca=c.serie.name
+                        weirtihgone=0
+                        weirtihgwtwo=0
+                        insert="insert into sale_order_line values (order_id,product_id,product_uom_qty,x_studio_field_9nQhR,route_id,price_unit, customer_lead,x_studio_toner_negro,porcentajeNegro)values("+str(sale.id)+","+str(weirtihgone)+",1,"+str(c.serie.id)+","+str(weirtihgwtwo)+",0,0,"+str(c.x_studio_toner_negro)+",1)"
+                        _logger.info("Error al capturar."+str(insert))
+                        #some like this need to be faster than create insert into sale_order_line (name,order_id,product_id,product_uom_qty,"x_studio_field_9nQhR",route_id,price_unit, customer_lead,product_uom)values('a',2220,10770,1,31902,1,0,0,1);
+                            
+                        c.write({'x_studio_tickett':self.x_studio_id_ticket})
+                        c.write({'fuente':'helpdesk.ticket'})
                         
-                        message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: En almacén' + ". " + "\n\nSolicitud " + str(saleTemp.name) + " generada" + "\n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
-                        mess= {
-                                'title': _('Estado de ticket actualizado!!!'),
-                                'message' : message
-                              }
-                        self.estadoSolicitudDeToner = True
+                        #Toner BN
+                        if c.x_studio_cartuchonefro:
+                            car=car+1                        
+                            if c.serie.x_studio_color_bn=="B/N":
+                             c.write({'porcentajeNegro':c.porcentajeNegro})
+                             c.write({'x_studio_toner_negro':1})
+                            else:
+                             c.write({'porcentajeNegro':c.porcentajeNegro})    
+                             c.write({'x_studio_toner_negro':1})
+                            pro = self.env['product.product'].search([['name','=',c.x_studio_cartuchonefro.name],['categ_id','=',5]])
+                            gen = pro.sorted(key='qty_available',reverse=True)[0]
+                            weirtihgone=c.serie.x_studio_toner_compatible.id if(len(gen)==0) else gen.id
+                            datos={'name': ' '
+                                   ,'order_id' : sale.id
+                                   , 'product_id' : weirtihgone
+                                   #, 'product_id' : c.x_studio_toner_compatible.id
+                                   , 'product_uom_qty' : 1
+                                   , 'x_studio_field_9nQhR': c.serie.id 
+                                   , 'price_unit': 0 
+                                   , 'customer_lead' : 0
+                                   , 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id}
+                            if(gen['qty_available']<=0):
+                                datos['route_id']=1
+                                datos['product_id']=c.serie.x_studio_toner_compatible.id
+                                weirtihgone=c.serie.x_studio_toner_compatible.id
+                                weirtihgtwo=1
+                            #insert='insert into sale_order_line values (order_id,product_id,product_uom_qty,x_studio_field_9nQhR,route_id,price_unit, customer_lead,x_studio_toner_negro,porcentajeNegro)values('+str(sale.id)+','+  str(weirtihgone)+','+1+','+str(c.serie.id)+','+str(weirtihgtwo)+',0,0,'+str(c.x_studio_toner_negro)+',1)'
+                            #raise exceptions.ValidationError("Error al capturar."+str(insert))
+                            self.env['sale.order.line'].create(datos)
+                            bn=str(c.serie.x_studio_reftoner)+', '
+                        #Toner Ama
+                        if c.x_studio_cartucho_amarillo:
+                            car=car+1
+                            c.write({'x_studio_toner_amarillo':1})
+                            pro = self.env['product.product'].search([['name','=',c.x_studio_cartucho_amarillo.name],['categ_id','=',5]])
+                            gen = pro.sorted(key='qty_available',reverse=True)[0]
+                            datos={'name': ' '
+                                   ,'order_id' : sale.id
+                                   , 'product_id' : c.x_studio_cartucho_amarillo.id if(len(gen)==0) else gen.id
+                                   #, 'product_id' : c.x_studio_toner_compatible.id
+                                   , 'product_uom_qty' : 1
+                                   , 'x_studio_field_9nQhR': c.serie.id
+                                   , 'price_unit': 0 
+                                   , 'customer_lead' : 0
+                                   , 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id}
+                            if(gen['qty_available']<=0):
+                                datos['route_id']=1
+                                datos['product_id']=c.x_studio_cartucho_amarillo.id
+                            
+                            self.env['sale.order.line'].create(datos)
+                            amar=str(c.x_studio_cartucho_amarillo.name)+', '
+                        #Toner cian
+                        if c.x_studio_cartucho_cian_1:
+                            car=car+1
+                            c.write({'x_studio_toner_cian':1})
+                            pro = self.env['product.product'].search([['name','=',c.x_studio_cartucho_cian_1.name],['categ_id','=',5]])
+                            gen = pro.sorted(key='qty_available',reverse=True)[0]
+                            datos={'name': ' '
+                                   ,'order_id' : sale.id
+                                   , 'product_id' : c.x_studio_cartucho_cian_1.id if(len(gen)==0) else gen.id
+                                   #, 'product_id' : c.x_studio_toner_compatible.id
+                                   , 'product_uom_qty' : 1
+                                   , 'x_studio_field_9nQhR': c.serie.id 
+                                   , 'price_unit': 0 
+                                   , 'customer_lead' : 0
+                                   , 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id}
+                            if(gen['qty_available']<=0):
+                                datos['route_id']=1
+                                datos['product_id']=c.x_studio_cartucho_cian_1.id
+                            
+                            self.env['sale.order.line'].create(datos)
+                            cian=str(c.x_studio_cartucho_cian_1.name)+', '
+                        #Toner mage
+                        if c.x_studio_cartucho_magenta:
+                            car=car+1
+                            c.write({'x_studio_toner_magenta':1})
+                            pro = self.env['product.product'].search([['name','=',c.x_studio_cartucho_magenta.name],['categ_id','=',5]])
+                            gen = pro.sorted(key='qty_available',reverse=True)[0]
+                            datos={'name': ' '
+                                   ,'order_id' : sale.id
+                                   , 'product_id' : c.x_studio_cartucho_magenta.id if(len(gen)==0) else gen.id
+                                   #, 'product_id' : c.x_studio_toner_compatible.id
+                                   , 'product_uom_qty' : 1
+                                   , 'x_studio_field_9nQhR': c.serie.id 
+                                   , 'price_unit': 0 
+                                   , 'customer_lead' : 0
+                                   , 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id}
+                            if(gen['qty_available']<=0):
+                                datos['route_id']=1
+                                datos['product_id']=c.x_studio_cartucho_magenta.id
+                                                    
+                            self.env['sale.order.line'].create(datos)
+                            magen=str(c.x_studio_cartucho_magenta.name)
+                            
+                        
+                        if car==0:
+                           raise exceptions.ValidationError("Ningun cartucho selecionado, serie ."+str(c.serie.name)) 
+                        
+                        jalaSolicitudes='solicitud de toner '+sale.name+' para la serie :'+serieaca +' '+bn+' '+amar+' '+cian+' '+magen
+                    if len(sale.order_line)==0:
+                       raise exceptions.ValidationError("Ningun cartucho selecionado, revisar series .")                    
+                    sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
+                    jalaSolicitudess='solicitud de toner '+sale.name+' para la serie :'+serieaca
+                    self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
+                
+
+
+                    if self.x_studio_field_nO7Xg.order_line:
+                        self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
+                        sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
+                        sale.write({'x_studio_corte':self.x_studio_corte})
+                        sale.write({'x_studio_comentario_adicional':self.x_studio_comentarios_de_localidad})      
+                        x=0
+                        if self.x_studio_almacen_1=='Agricola':
+                           sale.write({'warehouse_id':1})
+                           x=12
+                        if self.x_studio_almacen_1=='Queretaro':
+                           sale.write({'warehouse_id':18})
+                           x=115
+                        for lineas in sale.order_line:
+                            st=self.env['stock.quant'].search([['location_id','=',x],['product_id','=',lineas.product_id.id]]).sorted(key='quantity',reverse=True)
+                            requisicion=False
+                            if(len(st)>0):
+                                if(st[0].quantity==0):
+                                    requisicion=self.env['requisicion.requisicion'].search([['state','!=','done'],['create_date','<=',datetime.datetime.now()],['origen','=','Tóner']]).sorted(key='create_date',reverse=True)
+                            else:
+                                requisicion=self.env['requisicion.requisicion'].search([['state','!=','done'],['create_date','<=',datetime.datetime.now()],['origen','=','Tóner']]).sorted(key='create_date',reverse=True)
+                            if(len(requisicion)==0):
+                                re=self.env['requisicion.requisicion'].create({'origen':'Tóner','area':'Almacen','state':'draft'})
+                                re.product_rel=[{'cliente':sale.partner_shipping_id.id,'ticket':sale.x_studio_field_bxHgp.id,'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
+                            if(len(requisicion)>0):
+                                requisicion[0].product_rel=[{'cliente':sale.partner_shipping_id.id,'ticket':sale.x_studio_field_bxHgp.id,'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
+                        sale.action_confirm()
+
+                    else:
+                        message = ("No es posible validar una solicitud que no tiene productos.")
+                        mess = {'title': _('Solicitud sin productos!!!')
+                                , 'message' : message
+                                }
                         return {'warning': mess}
 
+                saleTemp = self.x_studio_field_nO7Xg
+                if saleTemp.id != False:
+                    if self.x_studio_id_ticket:
+                        estadoAntes = str(self.stage_id.name)
+                        if self.estadoSolicitudDeToner == False:    
+                            query = "update helpdesk_ticket set stage_id = 93 where id = " + str(self.x_studio_id_ticket) + ";"
+                            ss = self.env.cr.execute(query)
+                            
+                            message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: En almacén' + ". " + "\n\nSolicitud " + str(saleTemp.name) + " generada" + "\n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
+                            mess= {
+                                    'title': _('Estado de ticket actualizado!!!'),
+                                    'message' : message
+                                  }
+                            self.estadoSolicitudDeToner = True
+                            return {'warning': mess}
+            else:
+                message = ('Ya existe una solicitud de tóner. No es posible generar dos solicitudes.')
+                mess= {
+                        'title': _('Solicitud de tóner existente!!!'),
+                        'message' : message
+                      }
+                return {'warning': mess}
 
     @api.multi
     def crearYValidarSolicitudDeTonerTest(self):
