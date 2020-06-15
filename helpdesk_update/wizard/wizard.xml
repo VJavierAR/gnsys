@@ -583,7 +583,7 @@
                     Se volveran a activar los tickets seleccionados. Pasaran al estado de Pre-ticket
                 </h2>
                 <footer>
-                    <button name="confirmar" string="Activar tickets" type="object" class="oe_highlight"/>
+                    <button name="cambioActivo" string="Activar tickets" type="object" class="oe_highlight"/>
                     <button string="Cerrar" class="oe_link" special="cancel"/>
                 </footer>
             </form>

@@ -1446,7 +1446,7 @@ class ActivarTicketCanceladoTonerMassAction(TransientModel):
     )
 
 
-    def cambioCancelado(self):
+    def cambioActivo(self):
         idsTicketsList = []
         for ticket in self.ticket_ids:
             if ticket.x_studio_field_nO7Xg:
