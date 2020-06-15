@@ -1526,7 +1526,7 @@ class CancelarSolTonerMassAction(TransientModel):
         help = "",
     )
 
-    def confirmar(self):
+    def confirmarCancelado(self):
         _logger.info("CancelarSolTonerMassAction.confirmar()")
 
         for ticket in self.ticket_ids:

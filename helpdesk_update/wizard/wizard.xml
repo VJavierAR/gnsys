@@ -610,7 +610,7 @@
                     Se cancelaran los tickets seleccionados
                 </h2>
                 <footer>
-                    <button name="confirmar" string="Cancelar tickets" type="object" class="oe_highlight"/>
+                    <button name="confirmarCancelado" string="Cancelar tickets" type="object" class="oe_highlight"/>
                     <button string="Cerrar" class="oe_link" special="cancel"/>
                 </footer>
             </form>
