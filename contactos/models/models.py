@@ -9,6 +9,7 @@ class contactos(models.Model):
       razonSocial = fields.Selection([('0','DOCUMENTO INTEGRAL CORPORATIVO, SA DE CV'),('1','GN SYS CORPORATIVO S.A. DE C.V.'),('2','GRUPO GNSYS SOLUCIONES SA DE CV'),('3','SERVICIOS CORPORATIVOS GENESIS, S.A DE C.V.')])
       distribuidor=fields.One2many('zona.distribuidor','rel_contact')
 
+
 class zonaDistribuidor(models.Model):
 	_name='zona.distribuidor'
 	_description='Zona x distribuidor'
