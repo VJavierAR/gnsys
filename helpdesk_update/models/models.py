@@ -3945,6 +3945,7 @@ class helpdesk_update(models.Model):
                     req_rel=self.env['product.rel.requisicion'].create({'product_id':1,'cantidad':1,'req_rel':req.id,'costo':0.0,'ticket':vals.get('id'),'cliente':cliente.id})
         return res
 
+
 class helpdes_diagnostico(models.Model):
     _name = "helpdesk.diagnostico"
     _description = "Historial de diagnostico"

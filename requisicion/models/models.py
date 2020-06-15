@@ -26,8 +26,6 @@ class product_requisicion(models.Model):
 
 
 
-
-
 class requisicion(models.Model):
     _name = 'requisicion.requisicion'
     _inherit = ['mail.thread', 'mail.activity.mixin']
