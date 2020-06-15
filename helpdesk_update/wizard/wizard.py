@@ -1219,11 +1219,17 @@ class helpdesk_crearconserie(TransientModel):
                                                 ,'team_id': 9
                                                 ,'x_studio_field_6furK': self.zonaLocalidad
                                                 })
-            ticket.write({'partner_id': int(self.idCliente)
-                        ,'x_studio_empresas_relacionadas': int(self.idLocaliidad)
-                        ,'team_id': 9
-                        ,'x_studio_field_6furK': self.zonaLocalidad
-                        })
+            if self.zonaLocalidad:
+                ticket.write({'partner_id': int(self.idCliente)
+                            ,'x_studio_empresas_relacionadas': int(self.idLocaliidad)
+                            ,'team_id': 9
+                            ,'x_studio_field_6furK': self.zonaLocalidad
+                            })
+            else:
+                ticket.write({'partner_id': int(self.idCliente)
+                            ,'x_studio_empresas_relacionadas': int(self.idLocaliidad)
+                            ,'team_id': 9
+                            })
             if self.contactoInterno:
                 query = "update helpdesk_ticket set \"contactoInterno\" = " + str(self.contactoInterno.id) + " where id = " + str(ticket.id) + ";"
                 self.env.cr.execute(query)
