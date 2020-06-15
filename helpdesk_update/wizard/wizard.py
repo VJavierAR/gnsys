@@ -1469,7 +1469,7 @@ class ActivarTicketCanceladoTonerMassAction(TransientModel):
 
             estadoAntes = str(ticket.stage_id.name)
             if ticket.estadoCancelado:
-                ticket.stage_id.id = 1
+                ticket.write({'stage_id': 1})
                 query = "update helpdesk_ticket set stage_id = 1 where id = " + str(ticket.x_studio_id_ticket) + ";"
                 ss = self.env.cr.execute(query)
 
