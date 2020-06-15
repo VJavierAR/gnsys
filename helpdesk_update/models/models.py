@@ -3943,6 +3943,7 @@ class helpdesk_update(models.Model):
                     req_rel=self.env['product.rel.requisicion'].create({'product_id':1,'cantidad':1,'req_rel':req.id,'costo':0.0,'ticket':vals.get('id'),'cliente':cliente.id})
                 else:
                     req_rel=self.env['product.rel.requisicion'].create({'product_id':1,'cantidad':1,'req_rel':req.id,'costo':0.0,'ticket':vals.get('id'),'cliente':cliente.id})
+            _logger.info('hi'+str(req))
         return res
         
 class helpdes_diagnostico(models.Model):
