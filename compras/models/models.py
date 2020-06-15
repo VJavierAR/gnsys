@@ -18,7 +18,6 @@ _logger = logging.getLogger(__name__)
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
 
-
 try:
     import xlrd
     try:
