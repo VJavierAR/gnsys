@@ -566,6 +566,32 @@
 
 
 
+    <record id="action_activar_toner" model="ir.actions.act_window">
+        <field name="name">Activar tickets de tóner</field>
+        <field name="res_model">helpdesk.activar.cancelado.toner</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="groups">studio_customization.validar_toner_d61119fe-f670-4dd0-9dee-6d2bfdd1824e</field>
+        <field name="binding_model_id" ref="helpdesk.model_helpdesk_ticket" />
+    </record>
+    <record id="view_activar_toner_form" model="ir.ui.view">
+        <field name="model">helpdesk.activar.cancelado.toner</field>
+        <field name="arch" type="xml">
+            <form string="Activar tickets seleccionados">
+                <h2>
+                    Se volveran a activar los tickets seleccionados. Pasaran al estado de Pre-ticket
+                </h2>
+                <footer>
+                    <button name="confirmar" string="Activar tickets" type="object" class="oe_highlight"/>
+                    <button string="Cerrar" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+
 
     <record id="action_cancelar_toner" model="ir.actions.act_window">
         <field name="name">Cancelar tickets de tóner</field>
