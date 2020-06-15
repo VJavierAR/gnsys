@@ -349,13 +349,3 @@ class compras(models.Model):
 class comprasLine(models.Model):
     _inherit = 'purchase.order.line'
     serial=fields.Char()
-
-class GastosGnsys(models.Model):
-    _name='gastos.gnsys.vc'
-    _description='Modulo de Gastos V.C'
-    solicitante=fields.Many2one('hr.employee','Solicitante')
-    rubro=fields.Selection([["GASTOS TRANSPORTE","GASTOS TRANSPORTE"], ["GASTOS DE OPERACION","GASTOS DE OPERACION"], ["SERVICIOS GENERALES ","SERVICIOS GENERALES "], ["INSUMOS PARA OFICINA ","INSUMOS PARA OFICINA "], ["EQUIPO DE TRANSPORTE ","EQUIPO DE TRANSPORTE "], ["SERVICIOS DE PERSONAL ","SERVICIOS DE PERSONAL "], ["ARRENDAMIENTO DE INMUEBLES ","ARRENDAMIENTO DE INMUEBLES "], ["EQUIPO DE TRANSPORTE","EQUIPO DE TRANSPORTE"], ["SERVICIOS PROFESIONALES","SERVICIOS PROFESIONALES"], ["INSUMOS PARA SERVICIO","INSUMOS PARA SERVICIO"], ["EXTRAORDINARIOS ","EXTRAORDINARIOS "], ["EXTRAORDINARIOS","EXTRAORDINARIOS"], ["IMPUESTOS SAT","IMPUESTOS SAT"], ["MOBILIARIO Y EQUIPO","MOBILIARIO Y EQUIPO"], ["SERVICIOS PROFESIONALES ","SERVICIOS PROFESIONALES "], ["INSUMOS PARA OFICINA","INSUMOS PARA OFICINA"], ["SERVICIOS DE PERSONAL","SERVICIOS DE PERSONAL"]])
-    concepto=fields.Char('Concepto')
-    aplicacion=fields.Many2one('x_aplicacion','Aplicacion')
-    monto=fields.Float('Monto',widget='monetary')
-
