@@ -1428,6 +1428,33 @@ class HelpDeskReincidencia(TransientModel):
 
 
 
+
+
+
+class CancelarSolTonerMassAction(TransientModel):
+    _name = 'helpdesk.cancelar.tickets.toner'
+    _description = 'Crear y validad solicitudes de toner'
+    
+    def _default_ticket_ids(self):
+        return self.env['helpdesk.ticket'].browse(
+            self.env.context.get('active_ids'))
+
+    ticket_ids = fields.Many2many(
+        string = 'Tickets',
+        comodel_name = "helpdesk.ticket",
+        default = lambda self: self._default_ticket_ids(),
+        help = "",
+    )
+
+    def confirmar(self):
+        _logger.info("CancelarSolTonerMassAction.confirmar()")
+
+        for ticket in self.ticket_ids:
+            ticket.cambioCancelado()
+
+
+
+
 class CrearYValidarSolTonerMassAction(TransientModel):
     _name = 'helpdesk.validar.toner'
     _description = 'Crear y validad solicitudes de toner'
