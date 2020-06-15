@@ -3907,14 +3907,14 @@ class helpdesk_update(models.Model):
             closed_tickets = self.filtered(lambda ticket: not ticket.close_date)
 
         now = datetime.datetime.now()
-        res = super(HelpdeskTicket, self - assigned_tickets - closed_tickets).write(vals)
-        res &= super(HelpdeskTicket, assigned_tickets - closed_tickets).write(dict(vals, **{
+        res = super(helpdesk_update, self - assigned_tickets - closed_tickets).write(vals)
+        res &= super(helpdesk_update, assigned_tickets - closed_tickets).write(dict(vals, **{
             'assign_date': now,
         }))
-        res &= super(HelpdeskTicket, closed_tickets - assigned_tickets).write(dict(vals, **{
+        res &= super(helpdesk_update, closed_tickets - assigned_tickets).write(dict(vals, **{
             'close_date': now,
         }))
-        res &= super(HelpdeskTicket, assigned_tickets & closed_tickets).write(dict(vals, **{
+        res &= super(helpdesk_update, assigned_tickets & closed_tickets).write(dict(vals, **{
             'assign_date': now,
             'close_date': now,
         }))
@@ -3944,8 +3944,7 @@ class helpdesk_update(models.Model):
                 else:
                     req_rel=self.env['product.rel.requisicion'].create({'product_id':1,'cantidad':1,'req_rel':req.id,'costo':0.0,'ticket':vals.get('id'),'cliente':cliente.id})
         return res
-
-
+        
 class helpdes_diagnostico(models.Model):
     _name = "helpdesk.diagnostico"
     _description = "Historial de diagnostico"
