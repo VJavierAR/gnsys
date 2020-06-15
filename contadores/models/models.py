@@ -845,6 +845,15 @@ class contadores(models.Model):
                totalsr=float(rd.rentaMensual)+totalsr                 
                ivatt=round(float(rd.rentaMensual)*.16,2)+ivatt 
                ttotal=(round(float(rd.rentaMensual)*.16,2)+float(rd.rentaMensual))+ttotal  
+            if rd.nombreAnte=='SOPORTE Y MANTENIMIENTO DE EQUIPOS':
+               importe=float(rd.rentaMensual)
+               worksheet.write(i, 0, rd.nombreAnte,neg)
+               worksheet.write(i, 12, '$'+str(importe),neg)
+               worksheet.write(i, 13, '$'+str(round(float(importe)*.16,2)),neg)       
+               worksheet.write(i, 14, '$'+str(round(float(importe)*.16,2)+float(importe)),neg)
+               totalsr=importe+totalsr                 
+               ivatt=round(float(importe)*.16,2)+ivatt                                
+               ttotal=(round(float(importe)*.16,2)+float(importe))+ttotal
             if rd.nombreAnte=='SERVICIO DE ADMINISTRADOR KM NET MANAGER':
                worksheet.write(i, 0, rd.nombreAnte,neg)
                worksheet.write(i, 12, '$'+rd.rentaMensual,neg)
