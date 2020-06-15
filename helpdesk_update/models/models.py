@@ -3896,56 +3896,56 @@ class helpdesk_update(models.Model):
             'context': {'dominioTest': str(ids)},
         }
 
-    @api.multi
-    def write(self, vals):
-        # we set the assignation date (assign_date) to now for tickets that are being assigned for the first time
-        # same thing for the closing date
-        assigned_tickets = closed_tickets = self.browse()
-        if vals.get('user_id'):
-            assigned_tickets = self.filtered(lambda ticket: not ticket.assign_date)
-        if vals.get('stage_id') and self.env['helpdesk.stage'].browse(vals.get('stage_id')).is_close:
-            closed_tickets = self.filtered(lambda ticket: not ticket.close_date)
+    # @api.multi
+    # def write(self, vals):
+    #     # we set the assignation date (assign_date) to now for tickets that are being assigned for the first time
+    #     # same thing for the closing date
+    #     assigned_tickets = closed_tickets = self.browse()
+    #     if vals.get('user_id'):
+    #         assigned_tickets = self.filtered(lambda ticket: not ticket.assign_date)
+    #     if vals.get('stage_id') and self.env['helpdesk.stage'].browse(vals.get('stage_id')).is_close:
+    #         closed_tickets = self.filtered(lambda ticket: not ticket.close_date)
 
-        now = datetime.datetime.now()
-        res = super(helpdesk_update, self - assigned_tickets - closed_tickets).write(vals)
-        res &= super(helpdesk_update, assigned_tickets - closed_tickets).write(dict(vals, **{
-            'assign_date': now,
-        }))
-        res &= super(helpdesk_update, closed_tickets - assigned_tickets).write(dict(vals, **{
-            'close_date': now,
-        }))
-        res &= super(helpdesk_update, assigned_tickets & closed_tickets).write(dict(vals, **{
-            'assign_date': now,
-            'close_date': now,
-        }))
+    #     now = datetime.datetime.now()
+    #     res = super(helpdesk_update, self - assigned_tickets - closed_tickets).write(vals)
+    #     res &= super(helpdesk_update, assigned_tickets - closed_tickets).write(dict(vals, **{
+    #         'assign_date': now,
+    #     }))
+    #     res &= super(helpdesk_update, closed_tickets - assigned_tickets).write(dict(vals, **{
+    #         'close_date': now,
+    #     }))
+    #     res &= super(helpdesk_update, assigned_tickets & closed_tickets).write(dict(vals, **{
+    #         'assign_date': now,
+    #         'close_date': now,
+    #     }))
 
-        if vals.get('partner_id'):
-            self.message_subscribe([vals['partner_id']])
+    #     if vals.get('partner_id'):
+    #         self.message_subscribe([vals['partner_id']])
 
-        if(vals.get('team_id')==11):
-            cliente=self.env['res.partner'].browse(vals.get('partner_id'))
-            distribuidores=self.env['zona.distribuidor'].search([['estado','=',cliente.state_id.id]])
-            check=distribuidores.mapped('municipio')
-            if(check==[] and len(distribuidores)==1):
-                req=self.env['requisicion.requisicion'].search([['proveedor','=',distribuidores.rel_contact.id],['state','=','open']])
-                if(len(req)==0):
-                    req=self.env['requisicion.requisicion'].create({'state':'open','proveedor':distribuidores.rel_contact.id})
-                    req_rel=self.env['product.rel.requisicion'].create({'product_id':1,'cantidad':1,'req_rel':req.id,'costo':0.0,'ticket':vals.get('id'),'cliente':cliente.id})
-                else:
-                    req_rel=self.env['product.rel.requisicion'].create({'product_id':1,'cantidad':1,'req_rel':req.id,'costo':0.0,'ticket':vals.get('id'),'cliente':cliente.id})
-            else:
-                d=distribuidores.filtered(lambda x:x.municipio!=False).filtered(lambda x:x.municipio.lower().replace(' ','')==cliente.city.lower().replace(' ',''))
-                if(len(d)==0):
-                    d=distribuidores.filtered(lambda x:x.municipio==False)
-                req=self.env['requisicion.requisicion'].search([['proveedor','=',d.rel_contact.id],['state','=','open']])
-                _logger.info('hi'+str(len(req)))
-                if(len(req)==0):
-                    req=self.env['requisicion.requisicion'].create({'state':'open','proveedor':d.rel_contact.id})
-                    req_rel=self.env['product.rel.requisicion'].create({'product_id':1,'cantidad':1,'req_rel':req.id,'costo':0.0,'ticket':vals.get('id'),'cliente':cliente.id})
-                #_logger.info('hi'+str(len(req)))
-                else:
-                    req_rel=self.env['product.rel.requisicion'].create({'product_id':1,'cantidad':1,'req_rel':req.id,'costo':0.0,'ticket':vals.get('id'),'cliente':cliente.id})
-        return res
+    #     if(vals.get('team_id')==11):
+    #         cliente=self.env['res.partner'].browse(vals.get('partner_id'))
+    #         distribuidores=self.env['zona.distribuidor'].search([['estado','=',cliente.state_id.id]])
+    #         check=distribuidores.mapped('municipio')
+    #         if(check==[] and len(distribuidores)==1):
+    #             req=self.env['requisicion.requisicion'].search([['proveedor','=',distribuidores.rel_contact.id],['state','=','open']])
+    #             if(len(req)==0):
+    #                 req=self.env['requisicion.requisicion'].create({'state':'open','proveedor':distribuidores.rel_contact.id})
+    #                 req_rel=self.env['product.rel.requisicion'].create({'product_id':1,'cantidad':1,'req_rel':req.id,'costo':0.0,'ticket':vals.get('id'),'cliente':cliente.id})
+    #             else:
+    #                 req_rel=self.env['product.rel.requisicion'].create({'product_id':1,'cantidad':1,'req_rel':req.id,'costo':0.0,'ticket':vals.get('id'),'cliente':cliente.id})
+    #         else:
+    #             d=distribuidores.filtered(lambda x:x.municipio!=False).filtered(lambda x:x.municipio.lower().replace(' ','')==cliente.city.lower().replace(' ',''))
+    #             if(len(d)==0):
+    #                 d=distribuidores.filtered(lambda x:x.municipio==False)
+    #             req=self.env['requisicion.requisicion'].search([['proveedor','=',d.rel_contact.id],['state','=','open']])
+    #             _logger.info('hi'+str(len(req)))
+    #             if(len(req)==0):
+    #                 req=self.env['requisicion.requisicion'].create({'state':'open','proveedor':d.rel_contact.id})
+    #                 req_rel=self.env['product.rel.requisicion'].create({'product_id':1,'cantidad':1,'req_rel':req.id,'costo':0.0,'ticket':vals.get('id'),'cliente':cliente.id})
+    #             #_logger.info('hi'+str(len(req)))
+    #             else:
+    #                 req_rel=self.env['product.rel.requisicion'].create({'product_id':1,'cantidad':1,'req_rel':req.id,'costo':0.0,'ticket':vals.get('id'),'cliente':cliente.id})
+    #     return res
         
 class helpdes_diagnostico(models.Model):
     _name = "helpdesk.diagnostico"
