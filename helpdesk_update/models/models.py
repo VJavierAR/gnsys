@@ -3942,10 +3942,11 @@ class helpdesk_update(models.Model):
                 if(len(req)==0):
                     req=self.env['requisicion.requisicion'].create({'state':'open','proveedor':d.rel_contact.id})
                     req_rel=self.env['product.rel.requisicion'].create({'product_id':1,'cantidad':1,'req_rel':req.id,'costo':0.0,'ticket':vals.get('id'),'cliente':cliente.id})
-                _logger.info('hi'+str(len(req)))
-                else:
-                    req_rel=self.env['product.rel.requisicion'].create({'product_id':1,'cantidad':1,'req_rel':req.id,'costo':0.0,'ticket':vals.get('id'),'cliente':cliente.id})
         return res
+                #_logger.info('hi'+str(len(req)))
+                #else:
+                #    req_rel=self.env['product.rel.requisicion'].create({'product_id':1,'cantidad':1,'req_rel':req.id,'costo':0.0,'ticket':vals.get('id'),'cliente':cliente.id})
+        
         
 class helpdes_diagnostico(models.Model):
     _name = "helpdesk.diagnostico"
