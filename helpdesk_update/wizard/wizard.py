@@ -1732,6 +1732,7 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                             requisicion=False
                             if(len(st)>0):
                                 if(st[0].quantity==0):
+                                    _logger.info('ptm: ' + str(datetime.datetime.now()))
                                     requisicion=self.env['requisicion.requisicion'].search([['state','!=','done'],['create_date','<=',datetime.datetime.now()],['origen','=','Tóner']]).sorted(key='create_date',reverse=True)
                             else:
                                 requisicion=self.env['requisicion.requisicion'].search([['state','!=','done'],['create_date','<=',datetime.datetime.now()],['origen','=','Tóner']]).sorted(key='create_date',reverse=True)
