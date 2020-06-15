@@ -37,15 +37,17 @@ class PurchaseAssig(models.Model):
 class PurchaseOrderConfirm(models.TransientModel):
     _name = 'purchase.order.confirm'
     _description = "Wizard - Purchase Order Confirm/Cancel"
-
+    def _default_purchase_ids(self):
+        return self.env['purchase.order'].browse(self.env.context.get('active_ids'))
+    purchase_ids=fields.Many2many('purchase.order',default=lambda self: self._default_purchase_ids(),)
     @api.multi
     def purchase_confirm(self):
         """filter the records of the state 'draft' and 'sent',
         and will confirm this and others will be skipped"""
-        quotations = self._context.get('active_ids')
-        quotations_ids = self.env['purchase.order'].browse(quotations).\
+        quotations = self.purchase_ids
+        quotations_ids = self.env['purchase.order'].\
             filtered(lambda x: x.state == 'draft' or x.state == "sent")
-        quotations_ids1 = self.env['purchase.order'].browse(quotations).\
+        quotations_ids1 = self.env['purchase.order'].\
             filtered(lambda x: x.state == 'to approve')
         if(len(quotations_ids)> 0):
         	quotations_ids.button_confirm()
