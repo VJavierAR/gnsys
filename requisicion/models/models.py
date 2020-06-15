@@ -31,7 +31,7 @@ class requisicion(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _description='Requisicion'
     name = fields.Char()
-    area = fields.Selection([('Ventas','Ventas'),('Almacen','Almacen'), ('Mesa de Ayuda','Mesa de Ayuda'), ('Foraneo Distribuidor')])
+    area = fields.Selection([('Ventas','Ventas'),('Almacen','Almacen'), ('Mesa de Ayuda','Mesa de Ayuda'), ('Foraneo Distribuidor','Foraneo Distribuidor')])
     fecha_prevista=fields.Datetime()
     justificacion=fields.Text()
     product_rel=fields.One2many('product.rel.requisicion','req_rel')
