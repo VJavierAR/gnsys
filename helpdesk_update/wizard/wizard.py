@@ -1430,6 +1430,86 @@ class HelpDeskReincidencia(TransientModel):
 
 
 
+class ActivarTicketCanceladoTonerMassAction(TransientModel):
+    _name = 'helpdesk.activar.cancelado.toner'
+    _description = 'Activar tickets que fueron cancelados'
+    
+    def _default_ticket_ids(self):
+        return self.env['helpdesk.ticket'].browse(
+            self.env.context.get('active_ids'))
+
+    ticket_ids = fields.Many2many(
+        string = 'Tickets',
+        comodel_name = "helpdesk.ticket",
+        default = lambda self: self._default_ticket_ids(),
+        help = "",
+    )
+
+
+    def cambioCancelado(self):
+        idsTicketsList = []
+        for ticket in self.ticket_ids:
+            if ticket.x_studio_field_nO7Xg:
+                mensajeTitulo = 'No es posible volver a activar tickets!!!'
+                mensajeCuerpo = 'No es posible activar tickets debido a que ya cuentan con una solicitud generada.'
+                wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
+                view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+                return {
+                        'name': _(mensajeTitulo),
+                        'type': 'ir.actions.act_window',
+                        'view_type': 'form',
+                        'view_mode': 'form',
+                        'res_model': 'helpdesk.alerta',
+                        'views': [(view.id, 'form')],
+                        'view_id': view.id,
+                        'target': 'new',
+                        'res_id': wiz.id,
+                        'context': self.env.context,
+                        }
+
+            estadoAntes = str(self.stage_id.name)
+            if self.estadoCancelado:
+                ticket.stage_id.id = 1
+                query = "update helpdesk_ticket set stage_id = 1 where id = " + str(ticket.x_studio_id_ticket) + ";"
+                ss = self.env.cr.execute(query)
+
+                #Activando contadores
+                contadores = self.env['dcas.dcas'].search([['x_studio_tickett', '=', str(self.id)]])
+                _logger.info('Contadores: ' + str(contadores))
+                #contadores.unlink()
+                for contador in contadores:
+                    contador.active = True
+
+                idsTicketsList.append(ticket.id)
+                #Cancelando el pedido de venta
+                #self.estadoCancelado = True
+                #pedidoDeVentaACancelar = self.x_studio_field_nO7Xg
+                #if pedidoDeVentaACancelar:
+                #    regresa = self.env['stock.picking'].search([['sale_id', '=', int(pedidoDeVentaACancelar.id)], ['state', '=', 'done']])
+                #    if len(regresa) == 0:
+                #        pedidoDeVentaACancelar.action_cancel()
+                
+                
+
+        mensajeTitulo = 'Tickets activados!!!'
+        mensajeCuerpo = 'Seactivaron los tickets seleccionados. \nTickets activados: ' + str(idsTicketsList)
+        wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
+        view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+        return {
+                'name': _(mensajeTitulo),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'helpdesk.alerta',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'res_id': wiz.id,
+                'context': self.env.context,
+                }
+
+
+
 
 class CancelarSolTonerMassAction(TransientModel):
     _name = 'helpdesk.cancelar.tickets.toner'
