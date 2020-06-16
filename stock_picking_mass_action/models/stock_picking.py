@@ -88,7 +88,7 @@ class StockPicking(Model):
     def back(self):
         for r in self:
             for rrr in r.move_ids_without_package:
-                if(rrr.product_id.categ_id.id==13 and r.picking_type_id.id==3 and r.state!='done'):
+                if(rrr.product_id.categ_id.id==13 and (r.picking_type_id.id==3 or r.picking_type_id.id==1) and r.state!='done'):
                     r.write({'oculta':True})
                 rrrrr=self.env['stock.quant'].search([['product_id','=', rrr.product_id.id],['location_id','=',rrr.location_id.id]]).sorted(key='quantity',reverse=True)
                 if(len(rrrrr)==0):
@@ -462,6 +462,24 @@ class StockPicking(Model):
             'view_type': 'form',
             'view_mode': 'form',
             'res_model': 'ingreso.almacen',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            'context': self.env.context,
+        }
+    def ingresoEquipos(self):
+        wiz = self.env['serie.ingreso'].create({'picking':self.id})
+        view = self.env.ref('stock_picking_mass_action.view_serie_ingreso')
+        ml=self.env['stock.move.line'].search([['picking_id','=',self.id]])
+        for r in ml:
+            self.env['serie.ingreso.lines'].create({'move_line':r.id,'producto':r.product_id.id,'serie_rel':wiz.id,'cantidad':int(1)})
+        return {
+            'name': _('Ingreso Equipos'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'serie.ingreso',
             'views': [(view.id, 'form')],
             'view_id': view.id,
             'target': 'new',

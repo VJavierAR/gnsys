@@ -36,29 +36,11 @@ odoo.define('invoice.action_button', function (require) {
                         this.$buttons.find('.oe_action_button_move_line').click(this.proxy('action_inter1'));
                         this.$buttons.find('.oe_action_button_product_product').click(this.proxy('action_inter7'));
                         this.$buttons.find('.oe_action_button_stock_quant').click(this.proxy('action_inter3'));
-                        this.$buttons.find('.oe_action_button_purchase_order').click(this.proxy('action_inter8'));
-
                         
                     }
                 }
                 
             }
-        },
-        action_inter8: function (e) {
-            var self = this
-            var user = session.uid;
-            
-            self.do_action({
-                name: _t('Ordenes de Compra'),
-                type : 'ir.actions.act_window',
-                res_model: 'purchase.order.confirm',
-                view_type: 'form',
-                view_mode: 'form',
-                view_id: 'purchase_order_confirm_view',
-                views: [[false, 'form']],
-                target: 'new',
-            
-            });
         },
         action_inter7: function (e) {
             var self = this
