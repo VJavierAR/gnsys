@@ -47,8 +47,7 @@ odoo.define('invoice.action_button', function (require) {
         action_inter8: function (e) {
             var self = this
             var user = session.uid;
-            var dataset = this.dataset;
-            var active_id = dataset.ids[dataset.index]
+            
             self.do_action({
                 name: _t('Ordenes de Compra'),
                 type : 'ir.actions.act_window',
@@ -61,8 +60,6 @@ odoo.define('invoice.action_button', function (require) {
             
             });
         },
-
-        
         action_inter7: function (e) {
             var self = this
             var user = session.uid;
