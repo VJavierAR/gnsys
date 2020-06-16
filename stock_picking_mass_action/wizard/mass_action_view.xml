@@ -356,7 +356,7 @@
                         <field name="lineas" string="Productos" options="{'no_create_edit': True}">
                             <tree editable="bottom" >
                                 <field name="producto" readonly="1" string="Producto"/>
-                                <field name="serie" />
+                                <field name="serie" context="{'default_product_id':producto}"/>
                                 <field name="cantidad" />
                             </tree>
                         </field>
