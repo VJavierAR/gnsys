@@ -1,12 +1,26 @@
 # -*- coding: utf-8 -*-
 from odoo import http
 from odoo.http import request
+
+
 class Compras(http.Controller):
     @http.route('/compras/compras/<int:purchase_id>', auth='public')
     def index(self,purchase_id ,**kw):
     	p=request.env['purchase.order'].search([['id','=',purchase_id]])
     	p.button_approve()
     	return "Orden de compra "+str(p.name)+" Autorizada"
+
+class Orden(http.Controller):
+    @http.route('/sale/order/<int:sale_id>', auth='public')
+    def index(self,sale_id ,**kw):
+    	p=request.env['sale.order'].search([['id','=',sale_id]])
+    	if(p.x_studio_tipo_solicitud in ["Venta","Venta directa","Arrendamiento"]):
+    		p.button_confirm()
+    	return "Orden  "+str(p.name)+" Autorizada"
+
+
+
+
 
 
 #     @http.route('/compras/compras/objects/', auth='public')
