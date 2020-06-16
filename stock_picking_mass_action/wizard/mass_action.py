@@ -1027,3 +1027,27 @@ class StockQua(TransientModel):
     def confirmar(self):
         self.quant.sudo().write({'quantity':self.cantidad,'x_studio_field_kUc4x':self.ubicacion.id})
         self.env['stock.picking'].search([['state','=','confirmed']]).action_assign()
+
+class SerieIngreso(TransientModel):
+    _name='serie.ingreso'
+    _description='Ingreso desde proveedor'
+    picking=fields.Many2one('stock.picking')
+    lineas=fields.One2many('serie.ingreso.line','serie_rel')
+
+    def confirmar(self):
+        for mv in self.lineas:
+            mv.move_line.write({'lot_id':mv.serie.id})
+        if(len(self.lineas.mapped('serie.id'))!=len(lineas)):
+            raise UserError(_("Faltan serie por ingresar"))   
+        if(len(self.lineas.mapped('serie.id'))==len(lineas)):
+            self.picking.action_done()
+
+
+class SerieIngresoLine(TransientModel):
+    _name='serie.ingreso.line'
+    _description='Lineas de ingreso equipos'
+    producto=fields.Many2one('product.product','Modelo')
+    cantidad=fields.Float('Cantidad')
+    serie=fields.Many2one('stock.production.lot')
+    serie_rel=fields.Many2one('serie.ingreso')
+    move_line=fields.Many2one('stock.move.line')

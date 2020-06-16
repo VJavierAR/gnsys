@@ -348,7 +348,27 @@
         </field>
     </record>
 
-
+    <record id="view_serie_ingreso" model="ir.ui.view">
+        <field name="model">serie.ingreso</field>
+        <field name="arch" type="xml">
+            <form string="Ingreso">
+                <group>
+                        <field name="lines" string="Productos" options="{'no_create_edit': True}">
+                            <tree editable="bottom" >
+                                <field name="producto" readonly="1" string="Producto"/>
+                                <field name="serie" />
+                                <field name="cantidad" />
+                            </tree>
+                        </field>
+                </group>
+                <footer>
+                    <button name="confirmar" string="Apply" type="object" class="oe_highlight"/>
+                    or
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
 
 
     <record id="view_cambio_toner_action_form" model="ir.ui.view">

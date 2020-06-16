@@ -468,6 +468,24 @@ class StockPicking(Model):
             'res_id': wiz.id,
             'context': self.env.context,
         }
+    def ingresoEquipos(self):
+        wiz = self.env['serie.ingreso'].create({'picking':self.id})
+        view = self.env.ref('stock_picking_mass_action.view_serie_ingreso')
+        ml=self.env['stock.move.line'].search([['picking_id','=',self.id]])
+        for r in ml:
+            self.env['serie.ingreso.lines'].create({'move_line':r.id,'producto':r.product_id.id,'serie_rel':wiz.id,'cantidad':int(1)})
+        return {
+            'name': _('Ingreso Equipos'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'serie.ingreso',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            'context': self.env.context,
+        }
 
     def serie(self):
         wiz = self.env['picking.serie'].create({'pick':self.id})
