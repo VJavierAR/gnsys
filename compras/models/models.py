@@ -50,6 +50,7 @@ class compras(models.Model):
     _inherit = 'purchase.order'
     archivo=fields.Binary(store=True,readonly=False)
     nam=fields.Char()
+    mailCheck=fields.Boolean()
     
     
     # @api.multi
@@ -70,7 +71,8 @@ class compras(models.Model):
     #     return True
 
     def solicitarAutorizacion(self):
-        self.write({'state':'to approve'})    
+        self.write({'state':'to approve'})
+        self.write({'mailCheck':True})    
     
     @api.multi
     @api.onchange('archivo')
