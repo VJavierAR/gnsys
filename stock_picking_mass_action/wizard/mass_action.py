@@ -1036,9 +1036,9 @@ class SerieIngreso(TransientModel):
 
     def confirmar(self):
         for mv in self.lineas:
-            mv.move_line.write({'lot_id':mv.serie.id})
-        if(len(self.lineas.mapped('serie.id'))!=len(self.lineas)):
-            raise UserError(_("Faltan serie por ingresar"))   
+            mv.move_line.write({'lot_id':mv.serie.id,'qty_done':mv.cantidad})
+        #if(len(self.lineas.mapped('serie.id'))!=len(self.lineas)):
+        #    raise UserError(_("Faltan serie por ingresar"))   
         if(len(self.lineas.mapped('serie.id'))==len(self.lineas)):
             self.picking.action_done()
 
