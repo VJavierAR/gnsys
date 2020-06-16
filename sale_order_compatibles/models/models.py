@@ -190,7 +190,7 @@ class sale_update(models.Model):
 				ppp.write({'location_dest_id':pic.picking_type_id.default_location_dest_id.id})
 				i=0
 				for e in self.compatiblesLineas:
-					ppp.move_ids_without_package[i].write({'location_id':almacen.lot_stock_id.id,'location_dest_id':pic.picking_type_id.default_location_dest_id.id,'product_id':e.serie.product_id.id})
+					ppp.move_ids_without_package[i].write({'location_id':almacen.lot_stock_id.id,'location_dest_id':pic.picking_type_id.default_location_dest_id.id,'product_id':e.serie.product_id.id,'x_studio_serie_destino':e.serie.id})
 					#self.env['stock.move.line'].search([['picking_id','=',ppp.id]]).write({'location_id':almacen.lot_stock_id.id})
 					#ppp.move_ids_without_package[i].write({'location_dest_id':ppp.picking_type_id.default_location_dest_id.id})
 					i=i+1
@@ -202,7 +202,7 @@ class sale_update(models.Model):
 				#ppp.move_ids_without_package.write({'location_dest_id':ppp.picking_type_id.default_location_dest_id.id})
 				i=0
 				for e in self.compatiblesLineas:
-					ppp.move_ids_without_package[i].write({'location_id':ppp.picking_type_id.default_location_src_id.id,'location_dest_id':ppp.picking_type_id.default_location_dest_id.id,'product_id':e.serie.product_id.id})
+					ppp.move_ids_without_package[i].write({'location_id':ppp.picking_type_id.default_location_src_id.id,'location_dest_id':ppp.picking_type_id.default_location_dest_id.id,'product_id':e.serie.product_id.id,'x_studio_serie_destino':e.serie.id})
 					#self.env['stock.move.line'].search([['picking_id','=',ppp.id]]).write({'location_id':almacen.lot_stock_id.id})
 					#ppp.move_ids_without_package[i].write({'location_dest_id':ppp.picking_type_id.default_location_dest_id.id})
 					i=i+1
@@ -214,7 +214,7 @@ class sale_update(models.Model):
 				#ppp.move_ids_without_package.write({'location_id':ppp.picking_type_id.default_location_src_id.id})
 				i=0
 				for e in self.compatiblesLineas:
-					ppp.move_ids_without_package[i].write({'location_dest_id':ppp.picking_type_id.default_location_dest_id.id,'product_id':e.serie.product_id.id})
+					ppp.move_ids_without_package[i].write({'location_dest_id':ppp.picking_type_id.default_location_dest_id.id,'product_id':e.serie.product_id.id,'x_studio_serie_destino':e.serie.id})
 					#self.env['stock.move.line'].search([['picking_id','=',ppp.id]]).write({'location_id':almacen.lot_stock_id.id})
 					#ppp.move_ids_without_package[i].write({'location_dest_id':ppp.picking_type_id.default_location_dest_id.id})
 					i=i+1
