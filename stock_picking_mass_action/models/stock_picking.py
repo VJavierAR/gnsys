@@ -473,7 +473,7 @@ class StockPicking(Model):
         view = self.env.ref('stock_picking_mass_action.view_serie_ingreso')
         ml=self.env['stock.move.line'].search([['picking_id','=',self.id]])
         for r in ml:
-            self.env['serie.ingreso.lines'].create({'move_line':r.id,'producto':r.product_id.id,'serie_rel':wiz.id,'cantidad':int(1)})
+            self.env['serie.ingreso.line'].create({'move_line':r.id,'producto':r.product_id.id,'serie_rel':wiz.id,'cantidad':int(1)})
         return {
             'name': _('Ingreso Equipos'),
             'type': 'ir.actions.act_window',
