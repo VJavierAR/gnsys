@@ -1039,7 +1039,7 @@ class SerieIngreso(TransientModel):
             mv.move_line.write({'lot_id':mv.serie.id})
         if(len(self.lineas.mapped('serie.id'))!=len(self.lineas)):
             raise UserError(_("Faltan serie por ingresar"))   
-        if(len(self.linea.mapped('serie.id'))==len(self.lineas)):
+        if(len(self.lineas.mapped('serie.id'))==len(self.lineas)):
             self.picking.action_done()
 
 
