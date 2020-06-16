@@ -2313,22 +2313,33 @@ class helpdesk_crearToner(TransientModel):
 
 
     validarTicket = fields.Boolean(
-                                    string = "Proceder a realizar la validacón del encargado", 
+                                    string = "Solicitar autorización",
                                     default = False, 
                                     store = True
                                 )
     validarHastaAlmacenTicket = fields.Boolean(
-                                                string = "Crear y validar la solicitud de tóner", 
+                                                string = "Crear y validar la solicitud de tóner",
                                                 default = False, 
                                                 store = True
                                             )
     ponerTicketEnEspera = fields.Boolean(
-                                            string = "Generar ticket en espera", 
+                                            string = "Crear ticket en espera",
                                             default = False, 
                                             store = True
                                         )
     textoTicketExistente = fields.Text(store = True)
 
+
+    @api.onchange('localidadContacto')
+    def cambia_contacto_localidad(self):
+        if self.localidadContacto:
+            self.telefonoContactoLocalidad = self.localidadContacto.phone
+            self.movilContactoLocalidad = self.localidadContacto.mobile
+            self.correoContactoLocalidad = self.localidadContacto.email
+        else:
+            self.telefonoContactoLocalidad = ''
+            self.movilContactoLocalidad = ''
+            self.correoContactoLocalidad = ''
 
     @api.onchange('dca')
     def cambia_dca(self):
@@ -2489,15 +2500,15 @@ class helpdesk_crearToner(TransientModel):
 
             #CASOS
             #CASO EN EL QUE SE PASA DIRECTO A ALMACEN
-            if self.validarHastaAlmacenTicket:
+            if self.validarHastaAlmacenTicket and not self.validarTicket and not self.ponerTicketEnEspera:
                 ticket.crearYValidarSolicitudDeToner()
             #CASO EN EL QUE PASA A SER VALIDADO POR EL RESPONSABLE
-            elif self.validarTicket:
+            elif self.validarTicket and not self.validarHastaAlmacenTicket and not self.ponerTicketEnEspera:
                 query = "update helpdesk_ticket set stage_id = 91 where id = " + str(ticket.id) + ";"
                 ss = self.env.cr.execute(query)
                 self.env.cr.commit()
             #CASO EN EL QUE EL TICKET PASA A ESTAR EN ESPERA 'PRETICKET'
-            elif self.ponerTicketEnEspera:
+            elif self.ponerTicketEnEspera and not self.validarHastaAlmacenTicket and not self.validarTicket:
                 query = "update helpdesk_ticket set stage_id = 1 where id = " + str(ticket.id) + ";"
                 ss = self.env.cr.execute(query)
                 self.env.cr.commit()
