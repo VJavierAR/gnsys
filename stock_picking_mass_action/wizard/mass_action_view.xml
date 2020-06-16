@@ -353,7 +353,7 @@
         <field name="arch" type="xml">
             <form string="Ingreso">
                 <group>
-                        <field name="lines" string="Productos" options="{'no_create_edit': True}">
+                        <field name="lineas" string="Productos" options="{'no_create_edit': True}">
                             <tree editable="bottom" >
                                 <field name="producto" readonly="1" string="Producto"/>
                                 <field name="serie" />
