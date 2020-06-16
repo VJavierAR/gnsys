@@ -184,7 +184,7 @@ class sale_update(models.Model):
 		for pic in picks:
 			ppp=pic.copy()
 			ppp.write({'retiro':True})
-			ppp.order_line=[(5,0,0)]
+			#ppp.order_line=[(5,0,0)]
 			if('PICK' in ppp.name or 'SU' in ppp.name):
 				ppp.write({'location_id':almacen.lot_stock_id.id})
 				ppp.write({'location_dest_id':pic.picking_type_id.default_location_dest_id.id})
