@@ -6,10 +6,10 @@
             <form string="Mass Action for the selected sale order">
                 <group>
                     <group>
-                    <field name="productoInicial" readonly="1"/>    
+                    <field name="productoInicial" string="Producto"readonly="1"/>    
                     </group>
                     <group>
-                    <field name="productoCompatible" />    
+                    <field name="productoCompatible" string="Compatible" />    
                     </group>
                 </group>
                 <footer>
