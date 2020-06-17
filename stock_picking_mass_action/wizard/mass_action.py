@@ -1039,7 +1039,8 @@ class SerieIngreso(TransientModel):
             mv.move_line.write({'lot_id':mv.serie.id,'qty_done':mv.cantidad})
         #if(len(self.lineas.mapped('serie.id'))!=len(self.lineas)):
         #    raise UserError(_("Faltan serie por ingresar"))   
-        self.picking.action_done()
+        if(len(self.lineas.mapped('serie.id'))==len(self.lineas)):
+            self.picking.action_done()
 
 
 class SerieIngresoLine(TransientModel):
@@ -1050,3 +1051,13 @@ class SerieIngresoLine(TransientModel):
     serie=fields.Many2one('stock.production.lot')
     serie_rel=fields.Many2one('serie.ingreso')
     move_line=fields.Many2one('stock.move.line')
+
+
+class AddCompatibles(TransientModel):
+    _name='add.compatible'
+    _description='Agregar Compatibles'
+    productoInicial=fields.Many2one('product.product')
+    productoCompatible=fields.Many2one('product.product')
+
+    def confirmar(self):
+        self.productoInicial.write({'x_studio_toner_compatible':[(4,self.productoCompatible.id)]})

@@ -70,7 +70,7 @@ class compras(models.Model):
     #     return True
 
     def solicitarAutorizacion(self):
-        self.write({'state':'to approve'})    
+        self.write({'state':'to approve'})
     
     @api.multi
     @api.onchange('archivo')
@@ -282,7 +282,7 @@ class compras(models.Model):
                                         product['name']=desc
                                         arr.append(product)
                                     i=i+1       
-                                if('Customer' in o ):
+                                if('Customer' in o or 'SUPPLY' in o):
                                     s = o.split("$")
                                     h=float(s[2])
                                     g=float(s[1].split(' ')[0])
@@ -345,7 +345,24 @@ class compras(models.Model):
                     #_logger.info(str(header))
                     _logger.info(str(arr))
 
-    
+    def registrarPago(self):
+        _logger.info(str(len(self.invoice_ids)))
+        if(len(self.x_studio_field_H9kGQ)==0):
+            result = {
+            'type': 'in_invoice',
+            'purchase_id': self.id,
+            'currency_id': self.currency_id.id,
+            'company_id': self.company_id.id,
+            'partner_id':self.partner_id.id,
+            'invoice_lines_ids':[(0,0,self.order_line)]}
+            self.env['account.invoice'].create(result)
+            lines=self.env['account.invoice.line']
+            lines|=self.order_line
+        if(len(self.x_studio_field_H9kGQ)==1):
+            self.action_view_invoice()
+        if(len(self.x_studio_field_H9kGQ)>1):
+            self.action_view_invoice()
+
 class comprasLine(models.Model):
     _inherit = 'purchase.order.line'
     serial=fields.Char()

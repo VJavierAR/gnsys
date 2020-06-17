@@ -3,3 +3,4 @@
 from . import stock_picking
 from . import ruta
 from . import inventory
+from . import product
