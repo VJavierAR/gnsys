@@ -1051,3 +1051,13 @@ class SerieIngresoLine(TransientModel):
     serie=fields.Many2one('stock.production.lot')
     serie_rel=fields.Many2one('serie.ingreso')
     move_line=fields.Many2one('stock.move.line')
+
+
+class AddCompatibles(TransientModel):
+    _name='add.compatible'
+    _description='Agregar Compatibles'
+    productoInicial=fields.Many2one('product.product')
+    productoCompatible=fields.Many2one('product.product')
+
+    def confirmar(self):
+        self.productoInicial.write({'':[(4,self.productoCompatible.id)]})
