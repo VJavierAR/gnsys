@@ -346,6 +346,7 @@ class compras(models.Model):
                     _logger.info(str(arr))
 
     def registrarPago(self):
+        _logger.info(str(len(self.invoice_ids)))
         if(len(self.x_studio_field_H9kGQ)==0):
             result = {
             'type': 'in_invoice',
@@ -359,6 +360,7 @@ class compras(models.Model):
             self.action_view_invoice()
         if(len(self.x_studio_field_H9kGQ)>1):
             self.action_view_invoice()
+
 class comprasLine(models.Model):
     _inherit = 'purchase.order.line'
     serial=fields.Char()
