@@ -50,7 +50,6 @@ class compras(models.Model):
     _inherit = 'purchase.order'
     archivo=fields.Binary(store=True,readonly=False)
     nam=fields.Char()
-    mailCheck=fields.Boolean()
     
     
     # @api.multi
@@ -72,7 +71,6 @@ class compras(models.Model):
 
     def solicitarAutorizacion(self):
         self.write({'state':'to approve'})
-        self.write({'mailCheck':True})    
     
     @api.multi
     @api.onchange('archivo')
@@ -347,7 +345,12 @@ class compras(models.Model):
                     #_logger.info(str(header))
                     _logger.info(str(arr))
 
-    
+    def registrarPago(self):
+        if(len(self.x_studio_field_H9kGQ)==0):
+            self.action_view_invoice()
+
+        if(len(self.x_studio_field_H9kGQ)==1):
+        if(len(self.x_studio_field_H9kGQ)>1):
 class comprasLine(models.Model):
     _inherit = 'purchase.order.line'
     serial=fields.Char()
