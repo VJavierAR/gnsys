@@ -356,7 +356,7 @@ class compras(models.Model):
             'partner_id':self.partner_id.id,
             'invoice_lines_ids':[(0,0,self.order_line)]}
             self.env['account.invoice'].create(result)
-            lines=self.env['account.invoice.lines']
+            lines=self.env['account.invoice.line']
             lines|=self.order_line
         if(len(self.x_studio_field_H9kGQ)==1):
             self.action_view_invoice()
