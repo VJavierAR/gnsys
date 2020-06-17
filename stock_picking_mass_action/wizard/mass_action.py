@@ -1060,4 +1060,4 @@ class AddCompatibles(TransientModel):
     productoCompatible=fields.Many2one('product.product')
 
     def confirmar(self):
-        self.productoInicial.write({'':[(4,self.productoCompatible.id)]})
+        self.productoInicial.write({'x_studio_toner_compatible':[(4,self.productoCompatible.id)]})

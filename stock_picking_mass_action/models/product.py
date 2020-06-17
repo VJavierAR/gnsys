@@ -25,7 +25,7 @@ class compras(models.Model):
         wiz = self.env['add.compatible'].create({'productoInicial':self.id})
         view = self.env.ref('stock_picking_mass_action.view_addcompatile_action_form')
         return {
-            'name': _('Agregar Compatible'),
+            'name': _('Agregar Compatibles'),
             'type': 'ir.actions.act_window',
             'view_type': 'form',
             'view_mode': 'form',
