@@ -348,9 +348,10 @@ class compras(models.Model):
     def registrarPago(self):
         if(len(self.x_studio_field_H9kGQ)==0):
             self.action_view_invoice()
-
         if(len(self.x_studio_field_H9kGQ)==1):
+            self.action_view_invoice()
         if(len(self.x_studio_field_H9kGQ)>1):
+            self.action_view_invoice()
 class comprasLine(models.Model):
     _inherit = 'purchase.order.line'
     serial=fields.Char()
