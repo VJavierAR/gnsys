@@ -353,7 +353,7 @@ class compras(models.Model):
             'purchase_id': self.id,
             'currency_id': self.currency_id.id,
             'company_id': self.company_id.id,
-            'partner_id':self.partner_id.id
+            'partner_id':self.partner_id.id,
             'invoice_lines_ids':self.order_line}
             self.env['account.invoice'].create(result)
         if(len(self.x_studio_field_H9kGQ)==1):
