@@ -347,7 +347,9 @@ class compras(models.Model):
 
     def registrarPago(self):
         if(len(self.x_studio_field_H9kGQ)==0):
-            self.action_view_invoice().save()
+            res=self.action_view_invoice()
+            res['purchase_id']=self.id
+            self.env['account.invoice'].create(res)
         if(len(self.x_studio_field_H9kGQ)==1):
             self.action_view_invoice()
         if(len(self.x_studio_field_H9kGQ)>1):
