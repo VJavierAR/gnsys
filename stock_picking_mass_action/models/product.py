@@ -29,7 +29,7 @@ class compras(models.Model):
             'type': 'ir.actions.act_window',
             'view_type': 'form',
             'view_mode': 'form',
-            'res_model': 'devolver.action',
+            'res_model': 'add.compatible',
             'views': [(view.id, 'form')],
             'view_id': view.id,
             'target': 'new',
