@@ -358,6 +358,7 @@ class compras(models.Model):
             p=self.env['account.invoice'].create(result)
             lines=self.env['account.invoice.line']
             p.purchase_order_change()
+            p.write({'purchase_id':self.id})
         if(len(self.x_studio_field_H9kGQ)==1):
             self.action_view_invoice()
         if(len(self.x_studio_field_H9kGQ)>1):
