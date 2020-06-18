@@ -368,7 +368,7 @@ class compras(models.Model):
             p.compute_taxes()
             p.write({'purchase_id':self.id})
             p.action_invoice_open()
-            wiz = self.env['account.payment'].create({'invoice_ids':[(4,p.id)]})
+            wiz = self.env['account.payment'].create({'invoice_ids':[(4,p.id)],'payment_type':'outbound'})
             view = self.env.ref('account.view_account_payment_invoice_form')
             return {
             'name': _('Registrar Pago'),
