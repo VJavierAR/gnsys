@@ -50,7 +50,7 @@ class compras(models.Model):
     _inherit = 'purchase.order'
     archivo=fields.Binary(store=True,readonly=False)
     nam=fields.Char()
-    recibido=fields.Boolean()
+    recibido=fields.Selection([('pendiente','pendiente'),('recibido','recibido'),('backorder','backorder')])
     
     
     # @api.multi
