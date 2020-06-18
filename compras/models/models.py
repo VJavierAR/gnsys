@@ -363,6 +363,7 @@ class compras(models.Model):
             #p._onchange_product_id()
             p.purchase_order_change()
             p._onchange_currency_id()
+            p._onchange_partner_id()
             p.write({'purchase_id':self.id})
         if(len(self.x_studio_field_H9kGQ)==1):
             self.action_view_invoice()
