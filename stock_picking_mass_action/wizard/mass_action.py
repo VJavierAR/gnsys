@@ -1042,6 +1042,8 @@ class SerieIngreso(TransientModel):
         #    raise UserError(_("Faltan serie por ingresar"))   
         if(len(self.lineas.mapped('serie.id'))==len(self.lineas)):
             self.picking.action_done()
+        self.picking.purchase_id.write({'recibido':'recibido'})
+
 
 
 class SerieIngresoLine(TransientModel):
