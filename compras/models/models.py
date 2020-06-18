@@ -367,6 +367,21 @@ class compras(models.Model):
             p._onchange_partner_id()
             p.compute_taxes()
             p.write({'purchase_id':self.id})
+            p.action_invoice_open()
+            wiz = self.env['account.payment'].create({'invoice_ids':[(4,p.id)]})
+            view = self.env.ref('account.view_account_payment_invoice_form')
+            return {
+            'name': _('Registrar Pago'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'account.payment',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            'context': self.env.context,}
+            
         if(len(self.x_studio_field_H9kGQ)==1):
             self.action_view_invoice()
         if(len(self.x_studio_field_H9kGQ)>1):
