@@ -48,7 +48,7 @@ EXTENSIONS = {
 
 class compras(models.Model):
     _inherit = 'purchase.order'
-    recibido=fields.Selection([('pendiente','pendiente'),('recibido','recibido'),('backorder','backorder')])
+    recibido=fields.Selection([('pendiente','pendiente'),('recibido','recibido'),('backorder','backorder')],default='pendiente')
     archivo=fields.Binary(store=True,readonly=False)
     nam=fields.Char()
     
