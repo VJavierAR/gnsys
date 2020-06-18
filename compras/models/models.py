@@ -357,7 +357,12 @@ class compras(models.Model):
             'invoice_lines_ids':[(0,0,self.order_line)]}
             p=self.env['account.invoice'].create(result)
             lines=self.env['account.invoice.line']
+            p._onchange_bill_purchase_order()
+            p._onchange_allowed_purchase_ids()
+            p._prepare_invoice_line_from_po_line(self.order_line)
+            p._onchange_product_id()
             p.purchase_order_change()
+            p._onchange_currency_id()
             p.write({'purchase_id':self.id})
         if(len(self.x_studio_field_H9kGQ)==1):
             self.action_view_invoice()
