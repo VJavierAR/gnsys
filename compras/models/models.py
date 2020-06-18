@@ -354,7 +354,7 @@ class compras(models.Model):
             'currency_id': self.currency_id.id,
             'company_id': self.company_id.id,
             'partner_id':self.partner_id.id,
-            'invoice_lines_ids':[(6,0,self.order_line.ids)]}
+            'origin':self.name}
             p=self.env['account.invoice'].create(result)
             #lines=self.env['account.invoice.line']
             p._onchange_bill_purchase_order()
