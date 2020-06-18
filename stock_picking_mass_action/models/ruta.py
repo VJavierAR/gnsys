@@ -20,21 +20,21 @@ class CreacionRuta(Model):
 	EstadoPaisName=fields.Char(related='EstadoPais.name',string="Estado")
 
 
-	@api.onchange('tipo')
-	def domin(self):
-		res={}
-		if(self.tipo):
-			if(self.tipo=="local"):
-				res['domain']={'ordenes':["&","&","&","&",("ruta_id","=",False),("picking_type_id.id","=",2),('tipo','in',("Ciudad de México","Estado de México","México")),('state','!=','done'),('state','=','assigned')]}
-			if(self.tipo=="foraneo"):
-				res['domain']={'ordenes':["&","&","&","&",("ruta_id","=",False),("picking_type_id.id","=",2),('tipo','not in',("Ciudad de México","Estado de México","México","Querétaro","Jalisco","Nuevo León")),('state','!=','done'),('state','=','assigned')]}
-			if(self.tipo=="guadalajara"):
-				res['domain']={'ordenes':["&","&","&","&",("ruta_id","=",False),("picking_type_id.id","=",2),('tipo','=',"Guadalajara"),('state','!=','done'),('state','=','assigned')]}
-			if(self.tipo=="monterrey"):
-				res['domain']={'ordenes':["&","&","&","&",("ruta_id","=",False),("picking_type_id.id","=",2),('tipo','=',"Nuevo León"),('state','!=','done'),('state','=','assigned')]}
-			if(self.tipo=="queretaro"):
-				res['domain']={'ordenes':["&","&","&","&",("ruta_id","=",False),("picking_type_id.id","=",2),('tipo','=',"Querétaro"),('state','!=','done'),('state','=','assigned')]}
-		return res
+	# @api.onchange('tipo')
+	# def domin(self):
+	# 	res={}
+	# 	if(self.tipo):
+	# 		if(self.tipo=="local"):
+	# 			res['domain']={'ordenes':["&","&","&","&",("ruta_id","=",False),("picking_type_id.id","=",2),('tipo','in',("Ciudad de México","Estado de México","México")),('state','!=','done'),('state','=','assigned')]}
+	# 		if(self.tipo=="foraneo"):
+	# 			res['domain']={'ordenes':["&","&","&","&",("ruta_id","=",False),("picking_type_id.id","=",2),('tipo','not in',("Ciudad de México","Estado de México","México","Querétaro","Jalisco","Nuevo León")),('state','!=','done'),('state','=','assigned')]}
+	# 		if(self.tipo=="guadalajara"):
+	# 			res['domain']={'ordenes':["&","&","&","&",("ruta_id","=",False),("picking_type_id.id","=",2),('tipo','=',"Guadalajara"),('state','!=','done'),('state','=','assigned')]}
+	# 		if(self.tipo=="monterrey"):
+	# 			res['domain']={'ordenes':["&","&","&","&",("ruta_id","=",False),("picking_type_id.id","=",2),('tipo','=',"Nuevo León"),('state','!=','done'),('state','=','assigned')]}
+	# 		if(self.tipo=="queretaro"):
+	# 			res['domain']={'ordenes':["&","&","&","&",("ruta_id","=",False),("picking_type_id.id","=",2),('tipo','=',"Querétaro"),('state','!=','done'),('state','=','assigned')]}
+	# 	return res
 
 	@api.multi
 	def confirmar(self):
