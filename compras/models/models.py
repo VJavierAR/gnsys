@@ -361,7 +361,7 @@ class compras(models.Model):
             p._onchange_allowed_purchase_ids()
             for line in self.order_line:
                 p._prepare_invoice_line_from_po_line(line)
-            p._onchange_product_id()
+            #p._onchange_product_id()
             p.purchase_order_change()
             p._onchange_currency_id()
             p._onchange_partner_id()
