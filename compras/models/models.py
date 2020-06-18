@@ -344,31 +344,31 @@ class compras(models.Model):
                     #    for cell in row:
                     #_logger.info(str(header))
                     _logger.info(str(arr))
-
+    def armarFactura(self):
+        result = {
+        'type': 'in_invoice',
+        'purchase_id': self.id,
+        'currency_id': self.currency_id.id,
+        'company_id': self.company_id.id,
+        'partner_id':self.partner_id.id,
+        'origin':self.name}
+        p=self.env['account.invoice'].create(result)
+        #lines=self.env['account.invoice.line']
+        p._onchange_bill_purchase_order()
+        p._onchange_allowed_purchase_ids()
+        #for line in self.order_line:
+        #    p._prepare_invoice_line_from_po_line(line)
+        #p._onchange_product_id()
+        p.purchase_order_change()
+        p._onchange_currency_id()
+        p._onchange_partner_id()
+        p.compute_taxes()
+        p.write({'purchase_id':self.id})
+        p.action_invoice_open()
+        return p
     def registrarPago(self):
-        _logger.info(str(len(self.invoice_ids)))
         if(len(self.x_studio_field_H9kGQ)==0):
-            result = {
-            'type': 'in_invoice',
-            'purchase_id': self.id,
-            'currency_id': self.currency_id.id,
-            'company_id': self.company_id.id,
-            'partner_id':self.partner_id.id,
-            'origin':self.name}
-            p=self.env['account.invoice'].create(result)
-            #lines=self.env['account.invoice.line']
-            p._onchange_bill_purchase_order()
-            p._onchange_allowed_purchase_ids()
-            #for line in self.order_line:
-            #    p._prepare_invoice_line_from_po_line(line)
-            #p._onchange_product_id()
-            p.purchase_order_change()
-            p._onchange_currency_id()
-            p._onchange_partner_id()
-            p.compute_taxes()
-            p.write({'purchase_id':self.id})
-            p.action_invoice_open()
-            #wiz = self.env['account.payment'].create({'invoice_ids':[(4,p.id)],'payment_type':'outbound'})
+            p=self.armarFactura()
             view = self.env.ref('account.view_account_payment_invoice_form')
             return {
             'name': _('Registrar Pago'),
@@ -379,11 +379,30 @@ class compras(models.Model):
             'view_id': view.id,
             'target': 'new',
             'context': {'default_invoice_ids': [(4, p.id, None)]},}
-            
         if(len(self.x_studio_field_H9kGQ)==1):
-            self.action_view_invoice()
+            view = self.env.ref('account.view_account_payment_invoice_form')
+            return {
+            'name': _('Registrar Pago'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'account.payment',
+            'view_id': view.id,
+            'target': 'new',
+            'context': {'default_invoice_ids': [(4, self.x_studio_field_H9kGQ[0].id, None)]},}
         if(len(self.x_studio_field_H9kGQ)>1):
-            self.action_view_invoice()
+            for p in self.x_studio_field_H9kGQ:
+                if(p.residual_signed!=0.00):
+                    view = self.env.ref('account.view_account_payment_invoice_form')
+                    return {
+                    'name': _('Registrar Pago'),
+                    'type': 'ir.actions.act_window',
+                    'view_type': 'form',
+                    'view_mode': 'form',
+                    'res_model': 'account.payment',
+                    'view_id': view.id,
+                    'target': 'new',
+                    'context': {'default_invoice_ids': [(4, self.x_studio_field_H9kGQ[0].id, None)]},}
 
 class comprasLine(models.Model):
     _inherit = 'purchase.order.line'
