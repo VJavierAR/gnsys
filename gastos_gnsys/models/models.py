@@ -25,7 +25,7 @@ class gastos_gnsys(models.Model):
     montoAtnticipado = fields.Float(string = 'Monto anticipo',track_visibility='onchange')
 
     proyecto = fields.Text(string="Proyecto", track_visibility='onchange')
-
+    fechaLimitePagoGasto = fields.Datetime(string = 'Fecha limite de pago', track_visibility='onchange')
 
 
     formaDepagoAnticipo         = fields.Selection((('Efectivo','Efectivo'), ('Cheque','Cheque'),('Deposito','Deposito'),('Transferencia','Transferencia')), string = "Forma de pago",track_visibility='onchange')
