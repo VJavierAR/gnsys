@@ -24,7 +24,8 @@ class gastos_gnsys(models.Model):
     montoRequerido   = fields.Float(string = 'Monto requerido',track_visibility='onchange')
     montoAdelantado = fields.Float(string = 'Monto adelanto',track_visibility='onchange')
     montoAtnticipado = fields.Float(string = 'Monto anticipo',track_visibility='onchange')
-
+    autorizacionLider = fields.Selection([('Aprueba','Aprueba'), ('Rechaza','Rechaza')], string = "Autorización", track_visibility='onchange')
+    autorizacionFinanzas = fields.Selection([('Aprueba','Aprueba'), ('Rechaza','Rechaza')], string = "Autorización", track_visibility='onchange')
     proyecto = fields.Text(string="Proyecto", track_visibility='onchange')
     fechaLimitePagoGasto = fields.Datetime(string = 'Fecha limite de pago', track_visibility='onchange')
 
