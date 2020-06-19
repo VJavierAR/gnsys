@@ -3921,7 +3921,7 @@ class helpdesk_update(models.Model):
 
         if vals.get('partner_id'):
             self.message_subscribe([vals['partner_id']])
-        _logger.info('Hola-----'+str(vals.get('team_id')))
+        _logger.info('Hola-----'+str(self.team_id.id))
         if(vals.get('team_id')==11):
             cliente=self.env['res.partner'].browse(vals.get('partner_id'))
             distribuidores=self.env['zona.distribuidor'].search([['estado','=',cliente.state_id.id]])
