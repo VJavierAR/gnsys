@@ -17,7 +17,8 @@ class gastos_gnsys(models.Model):
     quienSolcita     = fields.Many2one('res.users', string = "Quien solicita",track_visibility='onchange', default=lambda self: self.env.user)
     #quienSolcita     = fields.Char(string="Quien solicita?" ,track_visibility='onchange')
     #quienesAutorizan = fields.One2many('res.users', 'gastoAutoriza', string = "Responsable de autorizacion",track_visibility='onchange')
-    quienesAutorizan = fields.Char(string = "Responsable de autorizacion", track_visibility='onchange')
+    #quienesAutorizan = fields.Char(string = "Responsable de autorizacion", track_visibility='onchange')
+    quienesAutorizan = fields.Many2one('res.users',string = "Responsable de autorizacion", track_visibility='onchange', default=lambda self: self.env.user)
     quienesReciben   = fields.One2many('res.users', 'gastoRecibe', string = "Quien (es) reciben",track_visibility='onchange')
     montoAprobado   = fields.Float(string = 'Monto aprobado',track_visibility='onchange')
     montoRequerido   = fields.Float(string = 'Monto requerido',track_visibility='onchange')
@@ -178,6 +179,7 @@ class gastos_gnsys(models.Model):
 class usuarios_gastos(models.Model):
     _inherit = 'res.users'
     gastoSolicitante = fields.One2many('gastos', 'quienSolcita', string="Gasto solicitante")
+    gastoAtoriza = fields.One2many('gastos', 'quienesAutorizan', string="Gasto autorizo")
     gastoAutoriza = fields.Many2one('gastos', string="Gasto autoriza")
     gastoRecibe = fields.Many2one('gastos', string="Gasto autoriza")
     devoResponsableAjuste = fields.One2many('gastos.devolucion', 'responsableDeMontoAjustado', string = "Devolucion responsable")
