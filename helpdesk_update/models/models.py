@@ -3931,9 +3931,9 @@ class helpdesk_update(models.Model):
                 req=self.env['requisicion.requisicion'].search([['proveedor','=',distribuidores.rel_contact.id],['state','=','open']])
                 if(len(req)==0):
                     req=self.env['requisicion.requisicion'].create({'state':'open','proveedor':distribuidores.rel_contact.id})
-                    req_rel=self.env['product.rel.requisicion'].create({'product_id':1,'cantidad':1,'req_rel':req.id,'costo':0.0,'ticket':vals.get('id'),'cliente':cliente.id})
+                    req_rel=self.env['product.rel.requisicion'].create({'product':1,'cantidad':1,'req_rel':req.id,'costo':0.0,'ticket':vals.get('id'),'cliente':cliente.id})
                 else:
-                    req_rel=self.env['product.rel.requisicion'].create({'product_id':1,'cantidad':1,'req_rel':req.id,'costo':0.0,'ticket':vals.get('id'),'cliente':cliente.id})
+                    req_rel=self.env['product.rel.requisicion'].create({'product':1,'cantidad':1,'req_rel':req.id,'costo':0.0,'ticket':vals.get('id'),'cliente':cliente.id})
             else:
                 d=distribuidores.filtered(lambda x:x.municipio!=False).filtered(lambda x:x.municipio.lower().replace(' ','')==cliente.city.lower().replace(' ',''))
                 if(len(d)==0):
@@ -3941,9 +3941,9 @@ class helpdesk_update(models.Model):
                 req=self.env['requisicion.requisicion'].search([['proveedor','=',d.rel_contact.id],['state','=','open']])
                 if(len(req)==0):
                     req=self.env['requisicion.requisicion'].create({'state':'open','proveedor':d.rel_contact.id})
-                    req_rel=self.env['product.rel.requisicion'].create({'product_id':1,'cantidad':1,'req_rel':req.id,'costo':0.0,'ticket':vals.get('id'),'cliente':cliente.id})
+                    req_rel=self.env['product.rel.requisicion'].create({'product':1,'cantidad':1,'req_rel':req.id,'costo':0.0,'ticket':vals.get('id'),'cliente':cliente.id})
                 if(len(req)>0):
-                    req_rel=self.env['product.rel.requisicion'].create({'product_id':1,'cantidad':1,'req_rel':req[0].id,'costo':0.0,'ticket':vals.get('id'),'cliente':cliente.id})
+                    req_rel=self.env['product.rel.requisicion'].create({'product':1,'cantidad':1,'req_rel':req[0].id,'costo':0.0,'ticket':vals.get('id'),'cliente':cliente.id})
         return res
         
 class helpdes_diagnostico(models.Model):
