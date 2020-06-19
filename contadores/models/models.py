@@ -452,6 +452,8 @@ class contadores(models.Model):
                         self.env.cr.execute("insert into x_sale_order_servicios_rel (sale_order_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
                     if sg.nombreAnte=='SERVICIO DE MANTENIMIENTO':                        
                         self.env.cr.execute("insert into x_sale_order_servicios_rel (sale_order_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
+                    if sg.nombreAnte=='SOPORTE Y MANTENIMIENTO DE EQUIPOS':
+                        self.env.cr.execute("insert into x_sale_order_servicios_rel (sale_order_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
                     if sg.nombreAnte=='SERVICIO DE ADMINISTRADOR KM NET MANAGER':                        
                         self.env.cr.execute("insert into x_sale_order_servicios_rel (sale_order_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
                     if sg.nombreAnte=='PAGINAS IMPRESAS EN BN':                        
