@@ -326,6 +326,8 @@ class fac_order(models.Model):
                         self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':s.id,'product_id':11419 ,'product_uom_qty':1.0,'price_unit':s.rentaMensual,'discount':int(self.x_studio_descuento)})                                                                                                    
                      if s.nombreAnte=='SERVICIO DE MANTENIMIENTO':                        
                         self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':s.id,'product_id':11420 ,'product_uom_qty':1.0,'price_unit':s.rentaMensual,'discount':int(self.x_studio_descuento)})                                                                                                    
+                     if s.nombreAnte=='SOPORTE Y MANTENIMIENTO DE EQUIPOS':                        
+                        self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':s.id,'product_id':12130 ,'product_uom_qty':1.0,'price_unit':s.rentaMensual,'discount':int(self.x_studio_descuento)})                                                                                                       
                      if s.nombreAnte=='SERVICIO DE ADMINISTRADOR KM NET MANAGER':                        
                         self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':s.id,'product_id':11421 ,'product_uom_qty':1.0,'price_unit':s.rentaMensual,'discount':int(self.x_studio_descuento)})                                                                                                    
                      if s.nombreAnte=='PAGINAS IMPRESAS EN BN':                        
