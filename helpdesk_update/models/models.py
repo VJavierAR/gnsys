@@ -3926,6 +3926,7 @@ class helpdesk_update(models.Model):
             cliente=self.env['res.partner'].browse(vals.get('partner_id'))
             distribuidores=self.env['zona.distribuidor'].search([['estado','=',cliente.state_id.id]])
             check=distribuidores.mapped('municipio')
+            _logger.info(str(check))
             if(check==[] and len(distribuidores)==1):
                 req=self.env['requisicion.requisicion'].search([['proveedor','=',distribuidores.rel_contact.id],['state','=','open']])
                 if(len(req)==0):
