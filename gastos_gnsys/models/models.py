@@ -252,9 +252,9 @@ class PagoSolicitante(models.Model):
 
     #datos tabla compleneto/Devolucion
     montoEntregado = fields.Float(string = "Monto")
-    #fecha = fields.Datetime(string = 'Fecha límite', track_visibility = 'onchange')
-    #formaDePago = fields.Selection((('Efectivo','Efectivo'), ('Cheque','Cheque'),('Deposito','Deposito'),('Transferencia','Transferencia')), string = "Forma de pago")
-    #fechaLimite = fields.Datetime(string = 'Fecha límite comprobación', track_visibility = 'onchange')
+    fecha = fields.Datetime(string = 'Fecha límite', track_visibility = 'onchange')
+    formaDePago = fields.Selection((('Efectivo','Efectivo'), ('Cheque','Cheque'),('Deposito','Deposito'),('Transferencia','Transferencia')), string = "Forma de pago")
+    fechaLimite = fields.Datetime(string = 'Fecha límite comprobación', track_visibility = 'onchange')
     # montoJustificado = fields.Float(string = "Monto justificado")
     # saldo = fields.Float(string = "Saldo", compute = "calcularSaldo", readonly = True)
     # montoAjustado = fields.Float(string = "Monto ajustado")
