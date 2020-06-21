@@ -255,6 +255,8 @@ class PagoSolicitante(models.Model):
     fecha = fields.Datetime(string = 'Fecha límite', track_visibility = 'onchange')
     formaDePago = fields.Selection((('Efectivo','Efectivo'), ('Cheque','Cheque'),('Deposito','Deposito'),('Transferencia','Transferencia')), string = "Forma de pago")
     fechaLimite = fields.Datetime(string = 'Fecha límite comprobación', track_visibility = 'onchange')
+    evidencia = fields.Many2many('ir.attachment', string="Evidencia")
+    montoPagado = fields.Float(string = "Monto pagado")
     # montoJustificado = fields.Float(string = "Monto justificado")
     # saldo = fields.Float(string = "Saldo", compute = "calcularSaldo", readonly = True)
     # montoAjustado = fields.Float(string = "Monto ajustado")
