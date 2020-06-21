@@ -251,7 +251,10 @@ class PagoSolicitante(models.Model):
     quienesAutorizanPagoSolicitante = fields.Many2one('res.users',string = "Responsable de autorizacion", track_visibility='onchange', default=lambda self: self.env.user)
 
     #datos tabla compleneto/Devolucion
-    montoEntregado = fields.Float(string = "Monto entregado")
+    montoEntregado = fields.Float(string = "Monto")
+    fecha = fields.Datetime(string = 'Fecha límite', track_visibility = 'onchange')
+    formaDePago = fields.Selection((('Efectivo','Efectivo'), ('Cheque','Cheque'),('Deposito','Deposito'),('Transferencia','Transferencia')), string = "Forma de pago")
+    fechaLimite = fields.Datetime(string = 'Fecha límite comprobación', track_visibility = 'onchange')
     # montoJustificado = fields.Float(string = "Monto justificado")
     # saldo = fields.Float(string = "Saldo", compute = "calcularSaldo", readonly = True)
     # montoAjustado = fields.Float(string = "Monto ajustado")
