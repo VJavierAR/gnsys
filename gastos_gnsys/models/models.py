@@ -251,7 +251,7 @@ class PagoSolicitante(models.Model):
     quienesAutorizanPagoSolicitante = fields.Many2one('res.users',string = "Responsable de autorizacion", track_visibility='onchange', default=lambda self: self.env.user)
 
     #datos tabla compleneto/Devolucion
-    # montoEntregado = fields.Float(string = "Monto entregado")
+    montoEntregado = fields.Float(string = "Monto entregado")
     # montoJustificado = fields.Float(string = "Monto justificado")
     # saldo = fields.Float(string = "Saldo", compute = "calcularSaldo", readonly = True)
     # montoAjustado = fields.Float(string = "Monto ajustado")
