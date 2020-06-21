@@ -183,7 +183,8 @@ class usuarios_gastos(models.Model):
     gastoAtoriza = fields.One2many('gastos', 'quienesAutorizan', string="Gasto autorizo")
     gastoAutoriza = fields.Many2one('gastos', string="Gasto autoriza")
     gastoRecibe = fields.Many2one('gastos', string="Gasto autoriza")
-    devoResponsableAjuste = fields.One2many('gastos.devolucion', 'responsableDeMontoAjustado', string = "Devolucion responsable")
+    devoResponsableAjuste = fields.Text(string = "Devolucion responsable",track_visibility='onchange')
+    #devoResponsableAjuste = fields.One2many('gastos.devolucion', 'responsableDeMontoAjustado', string = "Devolucion responsable")
 
 class cliente_comprobante(object):
     _inherit = 'res.partner'
