@@ -184,7 +184,7 @@ class usuarios_gastos(models.Model):
     gastoAutoriza = fields.Many2one('gastos', string="Gasto autoriza")
     gastoRecibe = fields.Many2one('gastos', string="Gasto autoriza")
     devoResponsableAjuste = fields.Text(string = "Devolucion responsable",track_visibility='onchange')
-    pagoSolicitanteAutoriza = fields.One2many('gastos.devolucion','quienesAutorizanPagoSolicitante' ,string="Pago autoriza")
+    pagoSolicitanteAutoriza = fields.One2many('gastos.devolucion','quienesReciben' ,string="Pago autoriza")
     #devoResponsableAjuste = fields.One2many('gastos.devolucion', 'responsableDeMontoAjustado', string = "Devolucion responsable")
 
 class cliente_comprobante(object):
@@ -248,7 +248,7 @@ class PagoSolicitante(models.Model):
     #_description = 'Complemento/devolución'
     _description = 'Pago a solicitante'
     gasto = fields.Many2one('gastos', string="Pagos solitatados", track_visibility='onchange')
-    quienesAutorizanPagoSolicitante = fields.Many2one('res.users',string = "Responsable de autorizacion", track_visibility='onchange', default=lambda self: self.env.user)
+    quienesReciben = fields.Many2one('res.users',string = "Quien recibe", track_visibility='onchange', default=lambda self: self.env.user)
 
     #datos tabla compleneto/Devolucion
     montoEntregado = fields.Float(string = "Monto")
