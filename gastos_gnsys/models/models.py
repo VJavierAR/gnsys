@@ -244,7 +244,8 @@ class comprobaciones(models.Model):
 
 class devoluciones(models.Model):
     _name = "gastos.devolucion"
-    _description = 'Complemento/devolución'
+    #_description = 'Complemento/devolución'
+    _description = 'Pago a solicitante'
     gasto = fields.Many2one('gastos', string="Gasto relacionado", track_visibility='onchange')
 
 
