@@ -242,7 +242,7 @@ class comprobaciones(models.Model):
                 montoJustificado = rec.monto * rec.porcentajeAceptado
 
 
-class devoluciones(models.Model):
+class PagoSolicitante(models.Model):
     _name = "gastos.devolucion"
     #_description = 'Complemento/devolución'
     _description = 'Pago a solicitante'
