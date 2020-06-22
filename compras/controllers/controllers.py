@@ -13,8 +13,8 @@ class Compras(http.Controller):
 class Orden(http.Controller):
     @http.route('/sale/order/<int:sale_id>', auth='public')
     def index(self,sale_id ,**kw):
-    	p=request.env['sale.order'].search([['id','=',sale_id]])
-    	if(p.x_studio_tipo_solicitud in ["Venta","Venta directa","Arrendamiento"]):
+        p=request.env['sale.order'].search([['id','=',sale_id]])
+        if(p.x_studio_tipo_solicitud in ["Venta","Venta directa","Arrendamiento"]):
             p.action_confirm()
         if(p.x_studio_tipo_solicitud == "Cambio"):
             p.cambio()
