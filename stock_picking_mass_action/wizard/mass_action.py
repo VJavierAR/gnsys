@@ -196,11 +196,13 @@ class StockIngreso(TransientModel):
     _description='Ingreso Almacen'
     pick=fields.Many2one('stock.picking')
     move_line=fields.One2many('ingreso.lines','rel_ingreso')
-
+    almacen=fields.Many2one('stock.warehouse','Almacen')
     def confirmar(self):
+        self.pick.write({'location_dest_id':self.almacen.lot_stock_id.id})
         for m in self.move_line:
+            m.write({'location_dest_id':self.almacen.lot_stock_id.id})
             l=self.env['stock.move.line'].search([['move_id','=',m.move.id]])
-            l.write({'qty_done':m.cantidad})
+            l.write({'location_dest_id':self.almacen.lot_stock_id.id,'qty_done':m.cantidad})
         self.pick.purchase_id.write({'recibido':'recibido'})
         self.pick.action_done()
 
@@ -1034,10 +1036,13 @@ class SerieIngreso(TransientModel):
     _description='Ingreso desde proveedor'
     picking=fields.Many2one('stock.picking')
     lineas=fields.One2many('serie.ingreso.line','serie_rel')
+    almacen=fields.Many2one('stock.warehouse','Almacen')
+    archivo=fields.Binary('Archivo')
 
     def confirmar(self):
         for mv in self.lineas:
-            mv.move_line.write({'lot_id':mv.serie.id,'qty_done':mv.cantidad})
+            mv.write({'location_dest_id':self.almacen.lot_stock_id.id})
+            mv.move_line.write({'location_dest_id':self.almacen.lot_stock_id.id,'lot_id':mv.serie.id,'qty_done':mv.cantidad})
         #if(len(self.lineas.mapped('serie.id'))!=len(self.lineas)):
         #    raise UserError(_("Faltan serie por ingresar"))   
         if(len(self.lineas.mapped('serie.id'))==len(self.lineas)):

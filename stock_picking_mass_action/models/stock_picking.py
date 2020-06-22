@@ -452,7 +452,7 @@ class StockPicking(Model):
         }
 
     def ingreso(self):
-        wiz = self.env['ingreso.almacen'].create({'pick':self.id})
+        wiz = self.env['ingreso.almacen'].create({'pick':self.id,'almacen':self.picking_type_id.warehouse_id.id})
         view = self.env.ref('stock_picking_mass_action.view_ingreso_almacen')
         for r in self.move_ids_without_package:
             self.env['ingreso.lines'].create({'move':r.id,'producto':self.product_id.id,'rel_ingreso':wiz.id,'cantidad':int(r.product_uom_qty)})
@@ -469,7 +469,7 @@ class StockPicking(Model):
             'context': self.env.context,
         }
     def ingresoEquipos(self):
-        wiz = self.env['serie.ingreso'].create({'picking':self.id})
+        wiz = self.env['serie.ingreso'].create({'picking':self.id,'almacen':self.picking_type_id.warehouse_id.id})
         view = self.env.ref('stock_picking_mass_action.view_serie_ingreso')
         ml=self.env['stock.move.line'].search([['picking_id','=',self.id]])
         for r in ml:

@@ -353,6 +353,8 @@
         <field name="arch" type="xml">
             <form string="Cambio">
                 <group>
+                    <field name="almacen" options="{'no_create_edit': True}"/>
+
                         <field name="move_line" string="Productos" options="{'no_create_edit': True}">
                                 <tree editable="bottom" >
                                 <field name="producto" readonly="1" string="Producto"/>
@@ -374,6 +376,8 @@
         <field name="arch" type="xml">
             <form string="Ingreso">
                 <group>
+                    <field name="almacen" options="{'no_create_edit': True}"/>
+
                         <field name="lineas" string="Productos" options="{'no_create_edit': True}">
                             <tree editable="bottom" >
                                 <field name="producto" readonly="1" string="Producto"/>
@@ -381,6 +385,9 @@
                                 <field name="cantidad" />
                             </tree>
                         </field>
+
+                        <field name="archivo"/>
+
                 </group>
                 <footer>
                     <button name="confirmar" string="Apply" type="object" class="oe_highlight"/>
