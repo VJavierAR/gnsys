@@ -16,9 +16,9 @@ class Orden(http.Controller):
     	p=request.env['sale.order'].search([['id','=',sale_id]])
     	if(p.x_studio_tipo_solicitud in ["Venta","Venta directa","Arrendamiento"]):
             p.action_confirm()
-        if(p.x_studio_tipo_solicitud in ["Cambio"]):
+        if(p.x_studio_tipo_solicitud == "Cambio"):
             p.cambio()
-        if(p.x_studio_tipo_solicitud in ["Retiro"]):
+        if(p.x_studio_tipo_solicitud == "Retiro"):
             p.retiro()
         return "Orden  "+str(p.name)+" Autorizada"
 
