@@ -106,7 +106,7 @@ class gastos_gnsys(models.Model):
     comprobaciones = fields.One2many('gastos.comprobaciones', 'comprobante', string = "Comprobantes",track_visibility='onchange')
 
     devoluciones = fields.One2many('gastos.devolucion', 'gasto' , string = 'Devoluciones', track_visibility = 'onchange')
-
+    #Modelo de devoluciónes
     pagos = fields.One2many('gastos.pago', 'gasto' , string = 'Pagos', track_visibility = 'onchange')    
     #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$4
 
@@ -237,7 +237,7 @@ class comprobaciones(models.Model):
     montoPagado = fields.Float(string = "Monto pagado", track_visibility='onchange')
     montoComprobado = fields.Float(string = "Monto comprobado", track_visibility='onchange')
     montoComprobadoAprobado =  fields.Float(string = "Monto comprobado aprobado", track_visibility='onchange')
-
+    #----------------------------
     monto                   = fields.Float(string = "Monto",         track_visibility='onchange')
     nombre                  = fields.Char(string="Nombre de comprobación", track_visibility='onchange')
     montoJustificado        = fields.Float(string = 'Monto aprobado', compute='calcularMontoAprobado', track_visibility='onchange')
@@ -281,14 +281,30 @@ class pagos(models.Model):
     _description = 'Pagos de los gastos'
     gasto = fields.Many2one('gastos', string="Pago relacionado", track_visibility='onchange')
 
+    # -------Usuario------------
+    concepto = fields.Text(string = "Concepto", track_visibility='onchange')
+    fechaDePago = fields.Datetime(string = 'Fecha de pago', track_visibility='onchange')
+    montoPagado = fields.Float(string = "Monto de pago", track_visibility='onchange')
+    formaDePago = fields.Selection((('Efectivo','Efectivo'), ('Cheque','Cheque'),('Deposito','Deposito'),('Transferencia','Transferencia')), string = "Forma de pago")
+    comprobanteDePago = fields.Many2many('ir.attachment', string="Evidencia")
+    
+
+    montoComprobado = fields.Float(string = "Monto comprobado", track_visibility='onchange')
+    montoComprobadoAprobado = fields.Float(string = "Monto comprobado aprobado", track_visibility='onchange')
+    montoPagadoOri = fields.Float(string = "Monto de pago", track_visibility='onchange')
+    
+    montoADevolver = fields.Float(string = "Monto a devolver", track_visibility='onchange')
+    montoDevuelto = fields.Float(string = "Monto devuelto", track_visibility='onchange')
+    
+    # -----------------------
     #datos tabla pago de complemento/devolucion
     montoSolicitante = fields.Float(string = "Solicitante")
     montoEmpresa = fields.Float(string = "Empresa")
-    concepto = fields.Text(string = "Concepto")
-    formaDePago = fields.Selection((('Efectivo','Efectivo'), ('Cheque','Cheque'),('Deposito','Deposito'),('Transferencia','Transferencia')), string = "Forma de pago")
+    
+    
     fechaProgramada = fields.Datetime(string = 'Fecha programada')
-    comprobanteDePago = fields.Many2many('ir.attachment', string="Comprobante de pago")
-    montoPagado = fields.Float(string = "Monto pagado")
-    fechaDePago = fields.Datetime(string = 'Fecha de pago')
+    
+    
+    
     totalMonto = fields.Float(string = "Total de monto")
 
