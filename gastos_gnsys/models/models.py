@@ -224,18 +224,24 @@ class comprobaciones(models.Model):
     _description = 'Tipos de comprobaciónes del gasto'
     comprobante             = fields.Many2one('gastos', string = "Comprobación ", track_visibility='onchange')
 
-
+    # -------Usuario------------
     concepto                = fields.Text(string = "Concepto",      track_visibility='onchange')
     descripcion             = fields.Text(string = "Descripción",   track_visibility='onchange')
     justificacon            = fields.Text(string = "Justificación", track_visibility='onchange')
     tipoDeComprobante       = fields.Selection((('Factura','Factura'),('FacturaSinIva','Factura sin IVA'),('TiketFacturable','Ticket facturable'),('Tiket','Ticket'),('Nota','Nota')), string = "Tipo de Comprobante",track_visibility='onchange')
     comprobantes            = fields.Many2many('ir.attachment', string="Comprobantes")
-    nombre                  = fields.Char(string="Nombre de comprobación", track_visibility='onchange')
-    # -------------------
-    monto                   = fields.Float(string = "Monto",         track_visibility='onchange')
+    # -------Finanzas------------
     porcentajeAceptado      = fields.Selection((('100','100%'),('75','75%'),('50','50%'),('25','25%'),('0','0%')), string = "Porcentaje Aceptado",track_visibility='onchange')
-    montoJustificado        = fields.Float(string = 'Monto aprobado', compute='calcularMontoAprobado', track_visibility='onchange')
     cuentaContableDestino   = fields.Text(string = "Aplicación contable", track_visibility='onchange')
+    montoAprobadooriginalMante = fields.Float(string = "Monto aprobado originalmente", track_visibility='onchange')
+    montoPagado = fields.Float(string = "Monto pagado", track_visibility='onchange')
+    montoComprobado = fields.Float(string = "Monto comprobado", track_visibility='onchange')
+    montoComprobadoAprobado =  = fields.Float(string = "Monto comprobado aprobado", track_visibility='onchange')
+
+    monto                   = fields.Float(string = "Monto",         track_visibility='onchange')
+    nombre                  = fields.Char(string="Nombre de comprobación", track_visibility='onchange')
+    montoJustificado        = fields.Float(string = 'Monto aprobado', compute='calcularMontoAprobado', track_visibility='onchange')
+    
     centoDeCostos           = fields.Text(string = "Centro de Costos", track_visibility='onchange')
     cliente = fields.Many2one('res.partner', string = 'Cliente', track_visibility='onchange')
     servicio = fields.Text(string = 'Servicio')
