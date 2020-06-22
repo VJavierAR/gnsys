@@ -15,12 +15,12 @@ class Orden(http.Controller):
     def index(self,sale_id ,**kw):
     	p=request.env['sale.order'].search([['id','=',sale_id]])
     	if(p.x_studio_tipo_solicitud in ["Venta","Venta directa","Arrendamiento"]):
-    		p.action_confirm()
+            p.action_confirm()
         if(p.x_studio_tipo_solicitud in ["Cambio"]):
             p.cambio()
         if(p.x_studio_tipo_solicitud in ["Retiro"]):
             p.retiro()
-    	return "Orden  "+str(p.name)+" Autorizada"
+        return "Orden  "+str(p.name)+" Autorizada"
 
 
 
