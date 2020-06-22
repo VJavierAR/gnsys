@@ -715,13 +715,13 @@ class StockQuantMassAction(TransientModel):
         #     #d.append(['lot_id','!=',False])
         # else:
         if(len(self.almacen)>0):
-            d.append(['x_studio_almacn','in',self.almacen.mapped('id')])
+            d.append(['location_id','in',self.almacen.mapped('lot_stock_id.id')])
         if(self.categoria):
             d.append(['x_studio_categoria','=',self.categoria.id])
             if(self.categoria.id==13):
                 d.append(['x_studio_almacn.x_studio_cliente','=',False])
                 if(self.almacen):
-                    d.append(['x_studio_almacn','in',self.almacen.mapped('id')])
+                    d.append(['location_id','in',self.almacen.mapped('lot_stock_id.id')])
                 if(len(self.almacen)==0):
                     d.append(['x_studio_almacn','!=',False])
         if(self.tipo):
