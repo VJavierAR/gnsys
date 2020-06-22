@@ -236,7 +236,7 @@ class comprobaciones(models.Model):
     montoAprobadooriginalMante = fields.Float(string = "Monto aprobado originalmente", track_visibility='onchange')
     montoPagado = fields.Float(string = "Monto pagado", track_visibility='onchange')
     montoComprobado = fields.Float(string = "Monto comprobado", track_visibility='onchange')
-    montoComprobadoAprobado =  = fields.Float(string = "Monto comprobado aprobado", track_visibility='onchange')
+    montoComprobadoAprobado =  fields.Float(string = "Monto comprobado aprobado", track_visibility='onchange')
 
     monto                   = fields.Float(string = "Monto",         track_visibility='onchange')
     nombre                  = fields.Char(string="Nombre de comprobación", track_visibility='onchange')
