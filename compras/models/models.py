@@ -56,14 +56,23 @@ class compras(models.Model):
 
     @api.depends('x_studio_field_H9kGQ','state')
     def pay(self):
+        pago=False
         for record in self:
             t=0.0
             if(len(record.x_studio_field_H9kGQ)>0 or record.state=='purchase'):
+                pago="<table class='table table-sm'>"
                 for ii in record.x_studio_field_H9kGQ:
+                    for  pap in ii.payment_ids:
+                        pago=pago+"<tr>"
+                        pago=pago+"<td>"+str(pap.x_folio)+"</td>"
+                        pago=pago+"<td>"+str(pap.x_banco.name)+"</td>"
+                        pago=pago+"<td>"+str(pap.x_referencia)+"</td>"
+                        pago=pago+"</tr>"
                     if(ii.state!='paid'):
                         t=t+ii.residual_signed
                     if(ii.state=='paid'):
                         t=t+ii.amount_total_signed
+                pago=pago+"</table>"
             record['porPagar']=record.amount_total-t
             record['pagado']=t
             
