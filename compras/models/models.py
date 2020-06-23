@@ -51,7 +51,19 @@ class compras(models.Model):
     recibido=fields.Selection([('pendiente','pendiente'),('recibido','recibido'),('backorder','backorder')],default='pendiente')
     archivo=fields.Binary(store=True,readonly=False)
     nam=fields.Char()
-    
+    pagado=fields.Float(compute='pay',string="Pagado")
+    porPagar=fields.Float(string="Por pagar")
+
+    @api.depends('x_studio_field_H9kGQ','state')
+    def pay(self):
+        t=0.0
+        if(len(self.x_studio_field_H9kGQ)>0 or self.state=='purchase'):
+            for ii in self.x_studio_field_H9kGQ:
+                t=t+ii.residual_signed
+        self.porPagar=self.amount_total-t
+        self.pagado=t
+        
+
     
     # @api.multi
     # def button_confirm(self):
