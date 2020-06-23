@@ -1,6 +1,6 @@
 <odoo>
     <data>
-          <template id="assets_backend2" inherit_id="web.assets_backend" name="Custom Module2">
+<!--           <template id="assets_backend2" inherit_id="web.assets_backend" name="Custom Module2">
             
 
 
@@ -20,6 +20,6 @@
 
             </script>
              </xpath>
-        </template>
+        </template> -->
     </data>
 </odoo>
