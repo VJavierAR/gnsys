@@ -53,6 +53,7 @@ class compras(models.Model):
     nam=fields.Char()
     pagado=fields.Float(compute='pay',string="Pagado")
     porPagar=fields.Float(string="Por pagar")
+    pagos=fields.Char(widget='html')
 
     @api.depends('x_studio_field_H9kGQ','state')
     def pay(self):
@@ -73,6 +74,7 @@ class compras(models.Model):
                     if(ii.state=='paid'):
                         t=t+ii.amount_total_signed
                 pago=pago+"</table>"
+            record['pagos']=pago
             record['porPagar']=record.amount_total-t
             record['pagado']=t
             
