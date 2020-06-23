@@ -60,7 +60,10 @@ class compras(models.Model):
             t=0.0
             if(len(record.x_studio_field_H9kGQ)>0 or record.state=='purchase'):
                 for ii in record.x_studio_field_H9kGQ:
-                    t=t+ii.residual_signed
+                    if(ii.state!='paid'):
+                        t=t+ii.residual_signed
+                    if(ii.state=='paid'):
+                        t=t+ii.amount_total_signed
             record['porPagar']=record.amount_total-t
             record['pagado']=t
             
