@@ -142,13 +142,17 @@ class sale_update(models.Model):
 					if(e3.cantidad!=0):
 						d={'x_studio_field_mqSKO':e3.producto.id,'product_id':e3.producto.id,'name':e3.producto.name,'product_uom_qty':e3.cantidad,'product_uom':e3.producto.uom_id.id,'price_unit':0.00,'x_studio_id_relacion':e.id,'x_studio_modelo':e.equipos.name}
 						self.order_line=[d]
-		self.write({'state':'sent'})
+			self.write({'state':'sent'})
 		if(self.x_studio_tipo_de_solicitud=="Venta" or self.x_studio_tipo_de_solicitud=="Venta directa"):
 			template_id=self.env['mail.template'].search([('id','=',19)], limit=1)
 			template_id.send_mail(self.id, force_send=True)
-		else:
-			template_id=self.env['mail.template'].search([('id','=',53)], limit=1)
-			template_id.send_mail(self.id, force_send=True)
+		if(self.x_studio_tipo_de_solicitud!="Venta" or self.x_studio_tipo_de_solicitud!="Venta directa"):
+			if(len(self.compatiblesLineas)==0):
+				raise UserError(_('No hay registros a procesar'))
+			else:
+				template_id=self.env['mail.template'].search([('id','=',53)], limit=1)
+				template_id.send_mail(self.id, force_send=True)
+
 
 	def componentes(self):
 		if(len(self.order_line)>0):
