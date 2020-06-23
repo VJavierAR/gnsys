@@ -56,13 +56,14 @@ class compras(models.Model):
 
     @api.depends('x_studio_field_H9kGQ','state')
     def pay(self):
-        t=0.0
-        if(len(self.x_studio_field_H9kGQ)>0 or self.state=='purchase'):
-            for ii in self.x_studio_field_H9kGQ:
-                t=t+ii.residual_signed
-        self.porPagar=self.amount_total-t
-        self.pagado=t
-        
+        for record in self:
+            t=0.0
+            if(len(record.x_studio_field_H9kGQ)>0 or record.state=='purchase'):
+                for ii in record.x_studio_field_H9kGQ:
+                    t=t+ii.residual_signed
+            self.porPagar=self.amount_total-t
+            self.pagado=t
+            
 
     
     # @api.multi

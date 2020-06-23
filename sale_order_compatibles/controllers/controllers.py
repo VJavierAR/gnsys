@@ -5,15 +5,15 @@ from odoo.http import request
 class SaleOrderCompatibles(http.Controller):
     @http.route('/sale_order_compatibles/sale_order_compatibles/<int:sale_id>', auth='public')
     def index(self, **kw):
-        # p=request.env['sale.order'].search([['id','=',sale_id]])
-        # if(p.x_studio_tipo_solicitud in ["Venta","Venta directa","Arrendamiento"]):
-        #     p.action_confirm()
-        # if(p.x_studio_tipo_solicitud == "Cambio"):
-        #     p.cambio()
-        # if(p.x_studio_tipo_solicitud == "Retiro"):
-        #     p.retiro()
-        # return "Orden  "+str(p.name)+" Autorizada"
-        return "HOLA"
+        p=request.env['sale.order'].search([['id','=',sale_id]])
+        if(p.x_studio_tipo_de_solicitud in ["Venta","Venta directa","Arrendamiento"]):
+            p.action_confirm()
+        if(p.x_studio_tipo_de_solicitud == "Cambio"):
+            p.cambio()
+        if(p.x_studio_tipo_de_solicitud == "Retiro"):
+            p.retiro()
+        return "Orden  "+str(p.name)+" Autorizada"
+        #return "HOLA"
 # class SaleOrderCompatibles(http.Controller):
 #     @http.route('/sale/order/<int:sale_id>', auth='public')
 #     def index(self,sale_id ,**kw):
