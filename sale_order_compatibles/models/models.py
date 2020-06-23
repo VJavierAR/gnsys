@@ -127,18 +127,28 @@ class sale_update(models.Model):
 		data=[]
 		if(len(self.compatiblesLineas)>0):
 			for e in self.compatiblesLineas:
-				d={'x_studio_field_mqSKO':e.equipos.id,'product_id':e.equipos.id,'name':e.equipos.name,'product_uom_qty':1,'product_uom':e.equipos.uom_id.id,'price_unit':0.00,'x_studio_id_relacion':e.id}
-				self.order_line=[d]
+				if(e.cantidad!=0):
+					d={'x_studio_field_mqSKO':e.equipos.id,'product_id':e.equipos.id,'name':e.equipos.name,'product_uom_qty':1,'product_uom':e.equipos.uom_id.id,'price_unit':0.00,'x_studio_id_relacion':e.id}
+					self.order_line=[d]
 				for e1 in e.componentes:
-					d={'x_studio_field_mqSKO':e1.producto.id,'product_id':e1.producto.id,'name':e1.producto.name,'product_uom_qty':e1.cantidad,'product_uom':e1.producto.uom_id.id,'price_unit':0.00,'x_studio_id_relacion':e.id,'x_studio_modelo':e.equipos.name}
-					self.order_line=[d]
+					if(e1.cantidad!=0):
+						d={'x_studio_field_mqSKO':e1.producto.id,'product_id':e1.producto.id,'name':e1.producto.name,'product_uom_qty':e1.cantidad,'product_uom':e1.producto.uom_id.id,'price_unit':0.00,'x_studio_id_relacion':e.id,'x_studio_modelo':e.equipos.name}
+						self.order_line=[d]
 				for e2 in e.toner:
-					d={'x_studio_field_mqSKO':e2.producto.id,'product_id':e2.producto.id,'name':e2.producto.name,'product_uom_qty':e2.cantidad,'product_uom':e2.producto.uom_id.id,'price_unit':0.00,'x_studio_id_relacion':e.id,'x_studio_modelo':e.equipos.name}
-					self.order_line=[d]
+					if(e2.cantidad!=0):
+						d={'x_studio_field_mqSKO':e2.producto.id,'product_id':e2.producto.id,'name':e2.producto.name,'product_uom_qty':e2.cantidad,'product_uom':e2.producto.uom_id.id,'price_unit':0.00,'x_studio_id_relacion':e.id,'x_studio_modelo':e.equipos.name}
+						self.order_line=[d]
 				for e3 in e.accesorios:
-					d={'x_studio_field_mqSKO':e3.producto.id,'product_id':e3.producto.id,'name':e3.producto.name,'product_uom_qty':e3.cantidad,'product_uom':e3.producto.uom_id.id,'price_unit':0.00,'x_studio_id_relacion':e.id,'x_studio_modelo':e.equipos.name}
-					self.order_line=[d]
+					if(e3.cantidad!=0):
+						d={'x_studio_field_mqSKO':e3.producto.id,'product_id':e3.producto.id,'name':e3.producto.name,'product_uom_qty':e3.cantidad,'product_uom':e3.producto.uom_id.id,'price_unit':0.00,'x_studio_id_relacion':e.id,'x_studio_modelo':e.equipos.name}
+						self.order_line=[d]
 		self.write({'state':'sent'})
+		if(self.x_studio_tipo_de_solicitud=="Venta" or self.x_studio_tipo_de_solicitud=="Venta directa"):
+			template_id=self.env['mail.template'].search([('id','=',19)], limit=1)
+			template_id.send_mail(self.id, force_send=True)
+		else:
+			template_id=self.env['mail.template'].search([('id','=',53)], limit=1)
+			template_id.send_mail(self.id, force_send=True)
 
 	def componentes(self):
 		if(len(self.order_line)>0):
