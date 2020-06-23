@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import http
+from odoo.http import request
 
 class SaleOrderCompatibles(http.Controller):
     @http.route('/sale_order_compatibles/sale_order_compatibles/<int:sale_id>', auth='public')
