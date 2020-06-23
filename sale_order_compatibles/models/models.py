@@ -14,7 +14,7 @@ class sale_order_compatibles(models.Model):
 	saleOrder = fields.Many2one('sale.order')
 	equipos = fields.Many2one('product.product', string = 'Equipos')
 	cantidad = fields.Selection(selection = [(0, '0'),(1, '1')],string = 'Cantidad',default=1)
-	estado = fields.Selection(selection = [('1', '1'),('2', '2'),('3','3')], widget = "statusbar", default = '1')
+	estado = fields.Selection(selection = [('Nuevo', 'Nuevo'),('Usado', 'Usado')], default = 'Nuevo')
 	componentes = fields.One2many('sale_order_compatibles_mini', 'saleOrderMini', string = 'Componentes')
 	toner = fields.One2many('sale_order_compatibles_mini_toner', 'saleOrderMini', string = 'Toner')
 	accesorios = fields.One2many('sale_order_compatibles_mini_acesorios', 'saleOrderMini', string = 'Accesorios')
