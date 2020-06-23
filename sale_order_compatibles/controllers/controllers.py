@@ -4,7 +4,7 @@ from odoo.http import request
 
 class SaleOrderCompatibles(http.Controller):
     @http.route('/sale_order_compatibles/sale_order_compatibles/<int:sale_id>', auth='public')
-    def index(self, **kw):
+    def index(self, sale_id,**kw):
         p=request.env['sale.order'].search([['id','=',sale_id]])
         if(p.x_studio_tipo_de_solicitud in ["Venta","Venta directa","Arrendamiento"]):
             p.action_confirm()
