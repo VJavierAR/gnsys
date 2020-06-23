@@ -45,7 +45,7 @@ class gastos_gnsys(models.Model):
     anticipoCubierto            = fields.Float(string = 'Anticipo cubierto',track_visibility='onchange')
 
     #quienValida                 = fields.One2many('hr.employee', 'gastoValida', string = "Validado por",track_visibility='onchange')
-    quienValida                 = fields.Char(string = "Responsable de aprobacion", track_visibility='onchange')
+    quienValida                 = fields.Many2one('res.users',string = "Responsable de aprobacion", track_visibility='onchange')
 
     motivos                     = fields.One2many('motivos', 'gasto', string = "Motivos",track_visibility='onchange')
     
@@ -182,6 +182,8 @@ class usuarios_gastos(models.Model):
     gastoSolicitante = fields.One2many('gastos', 'quienSolcita', string="Gasto solicitante")
     gastoAtoriza = fields.One2many('gastos', 'quienesAutorizan', string="Gasto autorizo")
     gastoAutoriza = fields.Many2one('gastos', string="Gasto autoriza")
+    gastoAprobacion = fields.One2many('gastos', 'quienValida', string="Gasto aprobación")
+
     gastoRecibe = fields.Many2one('gastos', string="Gasto autoriza")
     devoResponsableAjuste = fields.Text(string = "Devolucion responsable",track_visibility='onchange')
     pagoSolicitanteAutoriza = fields.One2many('gastos.devolucion','quienesReciben' ,string="Pago autoriza")
