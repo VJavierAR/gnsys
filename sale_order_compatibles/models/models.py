@@ -72,7 +72,7 @@ class miniModeloAccesorio(models.Model):
 	def domi(self):
 		res={}
 		if(self.idProducto and self.idProducto!='[]'):
-			da=self.env['product.product'].browse(eval(self.idProducto)).filtered(lambda x:x.categ_id.id==11).mapped('id')
+			da=self.env['product.product'].browse(eval(self.idProducto)).filtered(lambda x:x.categ_id.id!=5 and x.categ_id.id!=7).mapped('id')
 			res['domain']={'producto':[['id','in',da]]}
 		return res
 
