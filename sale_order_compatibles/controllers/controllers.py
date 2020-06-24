@@ -13,6 +13,14 @@ class SaleOrderCompatibles(http.Controller):
         if(p.x_studio_tipo_de_solicitud == "Retiro"):
             p.retiro()
         return "Orden  "+str(p.name)+" Autorizada"
+
+
+class SaleOrderCompatiblesCancel(http.Controller):
+    @http.route('/sale_order_compatibles/cancel/<int:sale_id>', auth='public')
+    def index(self, sale_id,**kw):
+        p=request.env['sale.order'].search([['id','=',sale_id]])
+        p.action_cancel()
+        return "Orden  "+str(p.name)+" Cancelada"
         #return "HOLA"
 # class SaleOrderCompatibles(http.Controller):
 #     @http.route('/sale/order/<int:sale_id>', auth='public')
