@@ -122,7 +122,7 @@ class tfs(models.Model):
                         else:
                             raise exceptions.UserError("No existen cantidades en el almacen para el producto " + self.productoMagenta.name)
                     if(record.productoAmarillo):
-                        In=self.inventario.search([['product_id.name','=',self.productoNegro.name],['location_id','=',self.almacen.lot_stock_id.id]]).sorted(key='quantity',reverse=True)
+                        In=self.inventario.search([['product_id.name','=',self.productoAmarillo.name],['location_id','=',self.almacen.lot_stock_id.id]]).sorted(key='quantity',reverse=True)
                         if(len(In)>0 and In[0].quantity>0):
                             d.append(In[0].id)
                             i=i+1
