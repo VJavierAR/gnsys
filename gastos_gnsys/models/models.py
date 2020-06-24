@@ -218,7 +218,7 @@ class motivos_gastos(models.Model):
     motivoConcepto = fields.Text(string = "Motivo (Concepto)",track_visibility='onchange')
     motivoCentroCostos = fields.Text(string = "Centro de costos",track_visibility='onchange')
     motivoTipoDeMotivo      = fields.Selection((('!','1'), ('2','2')), string = "Tipo de motivo",track_visibility='onchange')
-
+    monto = fields.Float(string = "Monto", track_visibility='onchange')
 
 
 class comprobaciones(models.Model):
