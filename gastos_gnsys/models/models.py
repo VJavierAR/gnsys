@@ -213,7 +213,7 @@ class motivos_gastos(models.Model):
     #motivoDescripcion = fields.Text()
     #tipoDeMotivo      = fields.Selection((('!','1'), ('2','2')), string = "Tipo de motivo",track_visibility='onchange')
 
-    motivoDescripcion = fields.Text(string = "Descripción de motivo",track_visibility='onchange')
+    motivoDescripcion = fields.Text(string = "Descripción de gasto",track_visibility='onchange')
     motivoNumeroTicket = fields.Text(string = "Número de ticket",track_visibility='onchange')
     motivoConcepto = fields.Text(string = "Motivo (Concepto)",track_visibility='onchange')
     motivoCentroCostos = fields.Text(string = "Centro de costos",track_visibility='onchange')
