@@ -641,7 +641,7 @@
 
                 <group>
                     <group>
-                        <field name='almacenes' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain="[('x_studio_cliente', '=', False)]" />
+                        <field name='almacenes' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain="['&amp;', ('x_studio_cliente', '=', False), '|', ('id', '=', 1), ('id', '=', 18) ]" />
                     </group>
                 </group>
 
@@ -1000,7 +1000,8 @@
                                 <field name='tipoReporte' force_save='1' />
                                 <field name='corte' force_save='1' />
                                 <!--<field name='almacen' force_save='1' />-->
-                                <field name='almacenes' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain="[('x_studio_cliente', '=', False)]" />
+                                <field name='almacenes' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain="['&amp;', ('x_studio_cliente', '=', False), '|', ('id', '=', 1), ('id', '=', 18) ]" />
+                                
                             </group>
                             <group>
                                 <field name='validarHastaAlmacenTicket' force_save='1' />

@@ -2330,7 +2330,7 @@ class helpdesk_update(models.Model):
                                                   })
                     
 
-
+                    #record['almacenes'] = self.almacenes.id
                     record['x_studio_field_nO7Xg'] = sale.id
                     serieaca = ''
                     

@@ -1617,7 +1617,7 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                                                                 ,'x_studio_corte': ticket.x_studio_corte     
                                                               })
                     
-
+                    ticket.write({'almacenes': self.almacenes.id})
                     ticket.write({'x_studio_field_nO7Xg': sale.id})
                     #record['x_studio_field_nO7Xg'] = sale.id
                     serieaca = ''
