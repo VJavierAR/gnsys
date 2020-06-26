@@ -49,7 +49,17 @@ class gastos_gnsys(models.Model):
 
     motivos                     = fields.One2many('motivos', 'gasto', string = "Motivos",track_visibility='onchange')
     totalMontoMotivos = fields.Float(string = 'Total',track_visibility='onchange')
-    
+
+    @api.onchange('motivos')
+    def calcularTotalPagoDevolucion(self):
+        listaDeMotivos = self.motivos
+        montoTotal = 0.0
+        if listaDeMotivos != []:
+            for motivo in listaDeMotivos:
+                montoTotal += motivo.monto
+        self.totalMontoMotivos = montoTotal
+
+
     #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     #Comprobo correctamentes
     comproboCorrectamente       = fields.Selection((('Exacto','Exacto'),('Parcial','Parcial'),('Excedido','Excedido')), string = "Tipo de comprobación",track_visibility='onchange')
