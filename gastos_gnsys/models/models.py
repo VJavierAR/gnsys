@@ -276,10 +276,10 @@ class comprobaciones(models.Model):
     cliente = fields.Many2one('res.partner', string = 'Cliente', track_visibility='onchange')
     servicio = fields.Text(string = 'Servicio')
 
-    def calcularMontoAprobado(self):
-        for rec in self:
-            if str(rec.porcentajeAceptado) != 'false':
-                montoJustificado = rec.monto * rec.porcentajeAceptado
+    # def calcularMontoAprobado(self):
+    #     for rec in self:
+    #         if str(rec.porcentajeAceptado) != 'false':
+    #             montoJustificado = rec.monto * rec.porcentajeAceptado
 
 
 class PagoSolicitante(models.Model):
