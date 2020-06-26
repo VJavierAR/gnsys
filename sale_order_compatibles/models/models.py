@@ -150,7 +150,7 @@ class sale_update(models.Model):
 			if(len(self.compatiblesLineas)==0):
 				raise UserError(_('No hay registros a procesar'))
 			else:
-				template_id=self.env['mail.template'].search([('id','=',53)], limit=1)
+				template_id=self.env['mail.template'].search([('id','=',58)], limit=1)
 				template_id.send_mail(self.id, force_send=True)
 
 
