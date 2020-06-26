@@ -1573,8 +1573,7 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                                     'stock.warehouse',
                                     store = True,
                                     track_visibility = 'onchange',
-                                    string = 'Almacén',
-                                    default = 1
+                                    string = 'Almacén'
                                 )
 
     def confirmar(self):
@@ -1616,8 +1615,8 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                                                                 , 'x_studio_field_bxHgp': int(ticket.x_studio_id_ticket)
                                                                 ,'x_studio_corte': ticket.x_studio_corte     
                                                               })
-                    
-                    ticket.write({'almacenes': self.almacenes.id})
+                    if self.almacenes:
+                        ticket.write({'almacenes': self.almacenes.id})
                     ticket.write({'x_studio_field_nO7Xg': sale.id})
                     #record['x_studio_field_nO7Xg'] = sale.id
                     serieaca = ''
@@ -1752,14 +1751,18 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                         sale.write({'x_studio_comentario_adicional':ticket.x_studio_comentarios_de_localidad})
                         x = 0
                         if self.almacenes:
+                            _logger.info('3312: Exisate el almacen')
                             sale.write({'warehouse_id': self.almacenes.id})
                             #if ticket.x_studio_almacen_1=='Agricola':
                             if self.almacenes.id == 1:
                                #sale.write({'warehouse_id':1})
                                x = 12
+                               _logger.info('3312: x agricola: ' + str(x))
                             if self.almacenes.id == 18:
                                #sale.write({'warehouse_id':18})
                                x = 115
+                               _logger.info('3312: x Queretaro: ' + str(x))
+                        
                         for lineas in sale.order_line:
                             st=self.env['stock.quant'].search([['location_id','=',x],['product_id','=',lineas.product_id.id]]).sorted(key='quantity',reverse=True)
                             requisicion=False
@@ -2293,8 +2296,7 @@ class helpdesk_crearToner(TransientModel):
                                     'stock.warehouse',
                                     store = True,
                                     track_visibility = 'onchange',
-                                    string = 'Almacén',
-                                    default = 1
+                                    string = 'Almacén'
                                 )
     cliente = fields.Many2one(  
                                 'res.partner',

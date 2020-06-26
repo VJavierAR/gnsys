@@ -58,8 +58,7 @@ class helpdesk_update(models.Model):
                                     'stock.warehouse',
                                     store = True,
                                     track_visibility = 'onchange',
-                                    string = 'Almacén',
-                                    default = 1
+                                    string = 'Almacén'
                                 )
 
     contactoInterno = fields.Many2one('res.partner', string = 'Contacto interno', default=False, store = True)
