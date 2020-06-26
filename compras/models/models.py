@@ -290,7 +290,7 @@ class compras(models.Model):
                             for o in b:
                                 product={}
                                 if('#' in o ):
-                                    r = o.split(" Artículo # ")
+                                    r = o.split("Artículo # ")
                                     q = r[1].split(' ')[0]
                                     _logger.info(str(r))
                                     template=self.env['product.template'].search([('default_code','=',q)])
