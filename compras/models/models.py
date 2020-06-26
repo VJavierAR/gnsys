@@ -276,7 +276,7 @@ class compras(models.Model):
                             if(len(arreglo)>0):
                                 self.order_line=[(5,0,0)]
                             self.order_line=arreglo
-                        if f2.startswith(b'%PDF-1.7'):
+                        if f2.startswith(b'%PDF-1.4'):
                             string = f.read()
                             f.close()
                             b = string.split('\n')                    
