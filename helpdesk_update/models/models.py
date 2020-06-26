@@ -54,6 +54,13 @@ class helpdesk_update(models.Model):
                                             store = True
                                         )
 
+    almacenes = fields.Many2one(
+                                    'stock.warehouse',
+                                    store = True,
+                                    track_visibility = 'onchange',
+                                    string = 'Almacén',
+                                    default = 1
+                                )
 
     contactoInterno = fields.Many2one('res.partner', string = 'Contacto interno', default=False, store = True)
 
@@ -632,7 +639,8 @@ class helpdesk_update(models.Model):
     def _compute_difference_days_almacen(self):
         for rec in self:
             if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
-                if rec.x_studio_field_nO7Xg and (rec.x_studio_field_up5pO == 'confirmed' or rec.x_studio_field_up5pO == 'assigned'):
+                #if rec.x_studio_field_nO7Xg and (rec.x_studio_field_up5pO == 'confirmed' or rec.x_studio_field_up5pO == 'assigned'):
+                if rec.stage_id.id == 93 or rec.stage_id.id == 112:
                     fecha = str(rec.create_date).split(' ')[0]
                     #fe = t[0]
                     converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
@@ -646,7 +654,8 @@ class helpdesk_update(models.Model):
     def _compute_difference_hour_almacen(self):
         for rec in self:
             if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
-                if rec.x_studio_field_nO7Xg and (rec.x_studio_field_up5pO == 'confirmed' or rec.x_studio_field_up5pO == 'assigned'):
+                #if rec.x_studio_field_nO7Xg and (rec.x_studio_field_up5pO == 'confirmed' or rec.x_studio_field_up5pO == 'assigned'):
+                if rec.stage_id.id == 93 or rec.stage_id.id == 112:
                     first_time = rec.create_date
                     later_time = datetime.datetime.now()
                     difference = later_time - first_time
@@ -660,7 +669,8 @@ class helpdesk_update(models.Model):
     def _compute_difference_minute_almacen(self):
         for rec in self:
             if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
-                if rec.x_studio_field_nO7Xg and (rec.x_studio_field_up5pO == 'confirmed' or rec.x_studio_field_up5pO == 'assigned'):
+                #if rec.x_studio_field_nO7Xg and (rec.x_studio_field_up5pO == 'confirmed' or rec.x_studio_field_up5pO == 'assigned'):
+                if rec.stage_id.id == 93 or rec.stage_id.id == 112:
                     first_time = rec.create_date
                     later_time = datetime.datetime.now()
                     difference = later_time - first_time
@@ -674,7 +684,8 @@ class helpdesk_update(models.Model):
     def _compute_difference_second_almacen(self):
         for rec in self:
             if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
-                if rec.x_studio_field_nO7Xg and (rec.x_studio_field_up5pO == 'confirmed' or rec.x_studio_field_up5pO == 'assigned'):
+                #if rec.x_studio_field_nO7Xg and (rec.x_studio_field_up5pO == 'confirmed' or rec.x_studio_field_up5pO == 'assigned'):
+                if rec.stage_id.id == 93 or rec.stage_id.id == 112:
                     first_time = rec.create_date
                     later_time = datetime.datetime.now()
                     difference = later_time - first_time
@@ -708,7 +719,8 @@ class helpdesk_update(models.Model):
     def _compute_difference_days_distribucion(self):
         for rec in self:
             if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
-                if rec.x_studio_field_nO7Xg and (rec.x_studio_field_Le2tN == 'confirmed' or rec.x_studio_field_Le2tN == 'assigned' or rec.x_studio_field_Le2tN == 'distribucion'):
+                #if rec.x_studio_field_nO7Xg and (rec.x_studio_field_Le2tN == 'confirmed' or rec.x_studio_field_Le2tN == 'assigned' or rec.x_studio_field_Le2tN == 'distribucion'):
+                if rec.stage_id.id == 112 or rec.stage_id.id == 94:
                     fecha = str(rec.create_date).split(' ')[0]
                     converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
                     rec.days_differenceDistribucion = (datetime.date.today() - converted_date).days
@@ -720,7 +732,8 @@ class helpdesk_update(models.Model):
     def _compute_difference_hour_distribucion(self):
         for rec in self:
             if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
-                if rec.x_studio_field_nO7Xg and (rec.x_studio_field_Le2tN == 'confirmed' or rec.x_studio_field_Le2tN == 'assigned' or rec.x_studio_field_Le2tN == 'distribucion'):
+                #if rec.x_studio_field_nO7Xg and (rec.x_studio_field_Le2tN == 'confirmed' or rec.x_studio_field_Le2tN == 'assigned' or rec.x_studio_field_Le2tN == 'distribucion'):
+                if rec.stage_id.id == 112 or rec.stage_id.id == 94:
                     first_time = rec.create_date
                     later_time = datetime.datetime.now()
                     difference = later_time - first_time
@@ -734,7 +747,8 @@ class helpdesk_update(models.Model):
     def _compute_difference_minute_distribucion(self):
         for rec in self:
             if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
-                if rec.x_studio_field_nO7Xg and (rec.x_studio_field_Le2tN == 'confirmed' or rec.x_studio_field_Le2tN == 'assigned' or rec.x_studio_field_Le2tN == 'distribucion'):
+                #if rec.x_studio_field_nO7Xg and (rec.x_studio_field_Le2tN == 'confirmed' or rec.x_studio_field_Le2tN == 'assigned' or rec.x_studio_field_Le2tN == 'distribucion'):
+                if rec.stage_id.id == 112 or rec.stage_id.id == 94:
                     first_time = rec.create_date
                     later_time = datetime.datetime.now()
                     difference = later_time - first_time
@@ -748,7 +762,8 @@ class helpdesk_update(models.Model):
     def _compute_difference_second_distribucion(self):
         for rec in self:
             if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
-                if rec.x_studio_field_nO7Xg and (rec.x_studio_field_Le2tN == 'confirmed' or rec.x_studio_field_Le2tN == 'assigned' or rec.x_studio_field_Le2tN == 'distribucion'):
+                #if rec.x_studio_field_nO7Xg and (rec.x_studio_field_Le2tN == 'confirmed' or rec.x_studio_field_Le2tN == 'assigned' or rec.x_studio_field_Le2tN == 'distribucion'):
+                if rec.stage_id.id == 112 or rec.stage_id.id == 94:
                     first_time = rec.create_date
                     later_time = datetime.datetime.now()
                     difference = later_time - first_time
@@ -779,7 +794,7 @@ class helpdesk_update(models.Model):
 
 
     # Repartidor compuatado de tiempos
-    """
+    
     days_differenceRepartidor = fields.Integer(
                                                     compute='_compute_difference_repartidor',
                                                     string='Días de atraso repatidor'
@@ -788,7 +803,8 @@ class helpdesk_update(models.Model):
     def _compute_difference_days_repartidor(self):
         for rec in self:
             if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
-                if rec.x_studio_field_up5pO == 'waiting' and rec.x_studio_field_nO7Xg:
+                #if rec.x_studio_field_up5pO == 'waiting' and rec.x_studio_field_nO7Xg:
+                if rec.stage_id.id == 108:
                     fecha = str(rec.create_date).split(' ')[0]
                     converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
                     rec.days_differenceRepartidor = (datetime.date.today() - converted_date).days
@@ -800,7 +816,8 @@ class helpdesk_update(models.Model):
     def _compute_difference_hour_repartidor(self):
         for rec in self:
             if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
-                if rec.x_studio_field_up5pO == 'waiting' and rec.x_studio_field_nO7Xg:
+                #if rec.x_studio_field_up5pO == 'waiting' and rec.x_studio_field_nO7Xg:
+                if rec.stage_id.id == 108:
                     first_time = rec.create_date
                     later_time = datetime.datetime.now()
                     difference = later_time - first_time
@@ -814,7 +831,8 @@ class helpdesk_update(models.Model):
     def _compute_difference_minute_repartidor(self):
         for rec in self:
             if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
-                if rec.x_studio_field_up5pO == 'waiting' and rec.x_studio_field_nO7Xg:
+                #if rec.x_studio_field_up5pO == 'waiting' and rec.x_studio_field_nO7Xg:
+                if rec.stage_id.id == 108:
                     first_time = rec.create_date
                     later_time = datetime.datetime.now()
                     difference = later_time - first_time
@@ -828,17 +846,34 @@ class helpdesk_update(models.Model):
     def _compute_difference_second_repartidor(self):
         for rec in self:
             if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
-                if rec.x_studio_field_up5pO == 'waiting' and rec.x_studio_field_nO7Xg:
+                #if rec.x_studio_field_up5pO == 'waiting' and rec.x_studio_field_nO7Xg:
+                if rec.stage_id.id == 108:
                     first_time = rec.create_date
                     later_time = datetime.datetime.now()
                     difference = later_time - first_time
                     hours, minutes, seconds = convert_timedelta(difference)
                     rec.seconds_differenceRepartidor = seconds
 
+    tiempoDeAtrasoRepartidor = fields.Text(
+                                            string = 'Tiempo de atraso distribución',
+                                            compute = '_compute_tiempo_atraso_repartidor'
+                                        )
+    def _compute_tiempo_atraso_repartidor(self):
+        self.tiempoDeAtrasoRepartidor = """
+                                        <div class='row'>
+                                            <div class='col-sm-12'>
+                                                <p>
+                                                """ + str(self.days_differenceRepartidor) + """ día(s) con 
+                                                """ + str(self.hour_differenceRepartidor) + """:
+                                                """ + str(self.minutes_differenceRepartidor) + """:
+                                                """ + str(self.seconds_differenceRepartidor) + """
+                                                </p>
+                                            </div>
+                                        </div>
+                                    """
 
 
-
-    """
+    
 
 
 
@@ -2270,12 +2305,15 @@ class helpdesk_update(models.Model):
                     break
                 if record.team_id.id == 8 or record.team_id.id == 13:
                     x = 1 ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
-                    if self.x_studio_almacen_1=='Agricola':
-                       sale.write({'warehouse_id':1})
-                       x = 12
-                    if self.x_studio_almacen_1=='Queretaro':
-                       sale.write({'warehouse_id':18})
-                       x = 115
+                    if self.almacenes:
+                        #if self.x_studio_almacen_1=='Agricola':
+                        if self.almacenes.id == 1:
+                           #sale.write({'warehouse_id':1})
+                           x = 12
+                        #if self.x_studio_almacen_1=='Queretaro':
+                        if self.almacenes.id == 18:
+                           #sale.write({'warehouse_id':18})
+                           x = 115
                     sale = self.env['sale.order'].sudo().create({'partner_id' : record.partner_id.id
                                                     , 'origin' : "Ticket de tóner: " + str(record.x_studio_id_ticket)
                                                     , 'x_studio_tipo_de_solicitud' : "Venta"
@@ -2284,7 +2322,7 @@ class helpdesk_update(models.Model):
                                                     , 'x_studio_tcnico' : record.x_studio_tcnico.id
                                                     , 'x_studio_field_RnhKr': self.localidadContacto.id
                                                     , 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id
-                                                    , 'warehouse_id' : x  
+                                                    , 'warehouse_id' : self.almacenes.id  
                                                     , 'team_id' : 1
                                                     , 'x_studio_comentario_adicional':self.x_studio_comentarios_de_localidad
                                                     , 'x_studio_field_bxHgp': int(record.x_studio_id_ticket)
@@ -2424,13 +2462,16 @@ class helpdesk_update(models.Model):
                         sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
                         sale.write({'x_studio_corte':self.x_studio_corte})
                         sale.write({'x_studio_comentario_adicional':self.x_studio_comentarios_de_localidad})      
-                        x=0
-                        if self.x_studio_almacen_1=='Agricola':
-                           sale.write({'warehouse_id':1})
-                           x=12
-                        if self.x_studio_almacen_1=='Queretaro':
-                           sale.write({'warehouse_id':18})
-                           x=115
+                        x = 0
+                        if self.almacenes:
+                            #if self.x_studio_almacen_1 == 'Agricola':
+                            if self.almacenes.id == 1:
+                               #sale.write({'warehouse_id':1})
+                               x = 12
+                            #if self.x_studio_almacen_1=='Queretaro':
+                            if self.almacenes.id == 18:
+                               #sale.write({'warehouse_id':18})
+                               x = 115
                         for lineas in sale.order_line:
                             st=self.env['stock.quant'].search([['location_id','=',x],['product_id','=',lineas.product_id.id]]).sorted(key='quantity',reverse=True)
                             requisicion=False

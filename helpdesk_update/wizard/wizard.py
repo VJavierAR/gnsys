@@ -1569,6 +1569,14 @@ class CrearYValidarSolTonerMassAction(TransientModel):
         help = "",
     )
 
+    almacenes = fields.Many2one(
+                                    'stock.warehouse',
+                                    store = True,
+                                    track_visibility = 'onchange',
+                                    string = 'Almacén',
+                                    default = 1
+                                )
+
     def confirmar(self):
         _logger.info("CrearYValidarSolTonerMassAction.confirmar()")
 
@@ -1585,12 +1593,15 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                     break
                 if ticket.team_id.id == 8 or ticket.team_id.id == 13:
                     x = 1 ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
-                    if ticket.x_studio_almacen_1=='Agricola':
-                       sale.write({'warehouse_id':1})
-                       x = 12
-                    if ticket.x_studio_almacen_1=='Queretaro':
-                       sale.write({'warehouse_id':18})
-                       x = 115
+                    if self.almacenes:
+                        #if ticket.x_studio_almacen_1== 'Agricola':
+                        if self.almacenes.id == 1:
+                        #   sale.write({'warehouse_id':1})
+                            x = 12
+                        #if ticket.x_studio_almacen_1=='Queretaro':
+                        if self.almacenes.id == 18:
+                        #   sale.write({'warehouse_id':18})
+                            x = 115
                     sale = self.env['sale.order'].sudo().create({ 'partner_id' : ticket.partner_id.id
                                                                 , 'origin' : "Ticket de tóner: " + str(ticket.x_studio_id_ticket)
                                                                 , 'x_studio_tipo_de_solicitud' : "Venta"
@@ -1599,7 +1610,7 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                                                                 , 'x_studio_tcnico' : ticket.x_studio_tcnico.id
                                                                 , 'x_studio_field_RnhKr': ticket.localidadContacto.id
                                                                 , 'partner_shipping_id' : ticket.x_studio_empresas_relacionadas.id
-                                                                , 'warehouse_id' : x  
+                                                                , 'warehouse_id' : self.almacenes.id
                                                                 , 'team_id' : 1
                                                                 , 'x_studio_comentario_adicional': ticket.x_studio_comentarios_de_localidad
                                                                 , 'x_studio_field_bxHgp': int(ticket.x_studio_id_ticket)
@@ -1738,14 +1749,17 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                         self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
                         sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
                         sale.write({'x_studio_corte':ticket.x_studio_corte})
-                        sale.write({'x_studio_comentario_adicional':ticket.x_studio_comentarios_de_localidad})      
-                        x=0
-                        if ticket.x_studio_almacen_1=='Agricola':
-                           sale.write({'warehouse_id':1})
-                           x=12
-                        if ticket.x_studio_almacen_1=='Queretaro':
-                           sale.write({'warehouse_id':18})
-                           x=115
+                        sale.write({'x_studio_comentario_adicional':ticket.x_studio_comentarios_de_localidad})
+                        x = 0
+                        if self.almacenes:
+                            sale.write({'warehouse_id': self.almacenes.id})
+                            #if ticket.x_studio_almacen_1=='Agricola':
+                            if self.almacenes.id == 1:
+                               #sale.write({'warehouse_id':1})
+                               x = 12
+                            if self.almacenes.id == 18:
+                               #sale.write({'warehouse_id':18})
+                               x = 115
                         for lineas in sale.order_line:
                             st=self.env['stock.quant'].search([['location_id','=',x],['product_id','=',lineas.product_id.id]]).sorted(key='quantity',reverse=True)
                             requisicion=False
@@ -2262,7 +2276,7 @@ class helpdesk_crearToner(TransientModel):
     dca = fields.One2many('dcas.dcas', 'x_studio_tiquete', string = 'Serie', store = True)
     tipoReporte = fields.Selection(
                                         [('Falla','Falla'),('Incidencia','Incidencia'),('Reeincidencia','Reeincidencia'),('Prefunta','Pregunta'),('Requerimiento','Requerimiento'),('Solicitud de refacción','Solicitud de refacción'),('Conectividad','Conectividad'),('Reincidencias','Reincidencias'),('Instalación','Instalación'),('Mantenimiento Preventivo','Mantenimiento Preventivo'),('IMAC','IMAC'),('Proyecto','Proyecto'),('Retiro de equipo','Retiro de equipo'),('Cambio','Cambio'),('Servicio de Software','Servicio de Software'),('Resurtido de Almacen','Resurtido de Almacen'),('Supervisión','Supervisión'),('Demostración','Demostración'),('Toma de lectura','Toma de lectura')], 
-                                        string = 'Tipo de cliente', 
+                                        string = 'Tipo de reporte', 
                                         store = True
                                     )
     corte = fields.Selection(
@@ -2275,6 +2289,13 @@ class helpdesk_crearToner(TransientModel):
                                 string = 'Almacen', 
                                 store = True
                             )
+    almacenes = fields.Many2one(
+                                    'stock.warehouse',
+                                    store = True,
+                                    track_visibility = 'onchange',
+                                    string = 'Almacén',
+                                    default = 1
+                                )
     cliente = fields.Many2one(  
                                 'res.partner',
                                 string = 'Cliente',
@@ -2458,7 +2479,8 @@ class helpdesk_crearToner(TransientModel):
                                                             'stage_id': 1,
                                                             'x_studio_tipo_de_vale': self.tipoReporte,
                                                             'x_studio_corte': self.corte,
-                                                            'x_studio_almacen_1': self.almacen,
+                                                            #'x_studio_almacen_1': self.almacen,
+                                                            'almacenes': self.almacenes.id
                                                             'partner_id': self.cliente.id,
                                                             'x_studio_nivel_del_cliente': self.tipoCliente,
                                                             'x_studio_empresas_relacionadas': self.localidad.id,
