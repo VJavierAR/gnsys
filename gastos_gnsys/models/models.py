@@ -48,6 +48,7 @@ class gastos_gnsys(models.Model):
     quienValida                 = fields.Many2one('res.users',string = "Responsable de aprobacion", track_visibility='onchange', default=lambda self: self.env.user)
 
     motivos                     = fields.One2many('motivos', 'gasto', string = "Motivos",track_visibility='onchange')
+    totalMontoMotivos = fields.Float(string = 'Total',track_visibility='onchange')
     
     #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     #Comprobo correctamentes
@@ -300,15 +301,12 @@ class pagos(models.Model):
     _name = 'gastos.pago'
     _description = 'Pagos de los gastos'
     gasto = fields.Many2one('gastos', string="Pago relacionado", track_visibility='onchange')
-
     # -------Usuario------------
     concepto = fields.Text(string = "Concepto", track_visibility='onchange')
     fechaDePago = fields.Datetime(string = 'Fecha de pago', track_visibility='onchange')
     montoPagado = fields.Float(string = "Monto de pago", track_visibility='onchange')
     formaDePago = fields.Selection((('Efectivo','Efectivo'), ('Cheque','Cheque'),('Deposito','Deposito'),('Transferencia','Transferencia')), string = "Forma de pago")
     comprobanteDePago = fields.Many2many('ir.attachment', string="Evidencia")
-    
-
     # -----------------------
     #datos tabla pago de complemento/devolucion
     montoSolicitante = fields.Float(string = "Solicitante")
