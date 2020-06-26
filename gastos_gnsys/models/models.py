@@ -119,9 +119,16 @@ class gastos_gnsys(models.Model):
             for devolucion in listaDevoluciones:
                 montoPagadoTotal += devolucion.montoEntregado
         self.totalPagosSolitantes = montoPagadoTotal
+    # --------------------
     #Modelo de devoluciónes
     pagos = fields.One2many('gastos.pago', 'gasto' , string = 'Pagos', track_visibility = 'onchange')    
-    #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$4
+    
+    montoComprobadoPago = fields.Float(string = "Monto comprobado", track_visibility='onchange')
+    montoComprobadoAprobadoPago = fields.Float(string = "Monto comprobado aprobado", track_visibility='onchange')
+    montoPagadoOriPago = fields.Float(string = "Monto de pago", track_visibility='onchange')
+    montoADevolverPago = fields.Float(string = "Monto a devolver", track_visibility='onchange')
+    montoDevueltoPago = fields.Float(string = "Monto devuelto", track_visibility='onchange')
+    
 
 
     totalDeMontoPagado = fields.Float(string = 'Total')
@@ -302,13 +309,6 @@ class pagos(models.Model):
     comprobanteDePago = fields.Many2many('ir.attachment', string="Evidencia")
     
 
-    montoComprobado = fields.Float(string = "Monto comprobado", track_visibility='onchange')
-    montoComprobadoAprobado = fields.Float(string = "Monto comprobado aprobado", track_visibility='onchange')
-    montoPagadoOri = fields.Float(string = "Monto de pago", track_visibility='onchange')
-    
-    montoADevolver = fields.Float(string = "Monto a devolver", track_visibility='onchange')
-    montoDevuelto = fields.Float(string = "Monto devuelto", track_visibility='onchange')
-    
     # -----------------------
     #datos tabla pago de complemento/devolucion
     montoSolicitante = fields.Float(string = "Solicitante")
