@@ -104,7 +104,10 @@ class gastos_gnsys(models.Model):
     #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$4
 
     comprobaciones = fields.One2many('gastos.comprobaciones', 'comprobante', string = "Comprobantes",track_visibility='onchange')
-
+    montoPagadoComprobado = fields.Float(string = "Monto pagado", track_visibility='onchange')
+    montoComprobado = fields.Float(string = "Monto comprobado", track_visibility='onchange')
+    montoComprobadoAprobado =  fields.Float(string = "Monto comprobado aprobado", track_visibility='onchange')
+    # --------------------
     devoluciones = fields.One2many('gastos.devolucion', 'gasto' , string = 'Devoluciones', track_visibility = 'onchange')
     totalPagosSolitantes = fields.Float(string = "Total monto pagado", track_visibility='onchange')
 
@@ -246,9 +249,6 @@ class comprobaciones(models.Model):
     porcentajeAceptado      = fields.Selection((('100','100%'),('75','75%'),('50','50%'),('25','25%'),('0','0%')), string = "Porcentaje Aceptado",track_visibility='onchange')
     cuentaContableDestino   = fields.Text(string = "Aplicación contable", track_visibility='onchange')
     montoAprobadooriginalMante = fields.Float(string = "Monto aprobado originalmente", track_visibility='onchange')
-    montoPagado = fields.Float(string = "Monto pagado", track_visibility='onchange')
-    montoComprobado = fields.Float(string = "Monto comprobado", track_visibility='onchange')
-    montoComprobadoAprobado =  fields.Float(string = "Monto comprobado aprobado", track_visibility='onchange')
     #----------------------------
     monto                   = fields.Float(string = "Monto",         track_visibility='onchange')
     nombre                  = fields.Char(string="Nombre de comprobación", track_visibility='onchange')
