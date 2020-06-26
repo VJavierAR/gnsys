@@ -51,7 +51,7 @@ class gastos_gnsys(models.Model):
     totalMontoMotivos = fields.Float(string = 'Total',track_visibility='onchange')
 
     @api.onchange('motivos')
-    def calcularTotalPagoDevolucion(self):
+    def calcularTotalMotivos(self):
         listaDeMotivos = self.motivos
         montoTotal = 0.0
         if listaDeMotivos != []:
