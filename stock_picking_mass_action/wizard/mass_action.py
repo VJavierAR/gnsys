@@ -848,17 +848,25 @@ class SolicitudestockInventoryMassAction(TransientModel):
                         inventoty={'inventory_id':id3.id, 'partner_id':'1','product_id':productid.id,'product_uom_id':'1','product_qty':row[2].value, 'location_id':self.almacen.lot_stock_id.id}
                         if(row[3].ctype!=0 and row[3].value!=''):
                             ubicacion=self.env['x_ubicacion_inventario'].search([('x_name','=',str(row[3].value).replace('.0',''))])
+                            if(len(ubicacion)==0):
+                                ubicacion=self.env['x_ubicacion_inventario'].create({'x_name':str(row[3].value).replace('.0','')})
                         if(ubicacion!=None):
                             inventoty['x_studio_field_yVDjd']=ubicacion.id
                         self.env['stock.inventory.line'].create(inventoty)
                         busqueda=self.env['stock.quant'].search([['product_id','=',productid.id],['location_id','=',self.almacen.lot_stock_id.id]])
                         _logger.info(str(busqueda))
-                        if(busqueda.id):
+                        if(len(busqueda)>0):
+                            jj=0
+                            if(len(busqueda)>1):
+                                for b in busqueda:
+                                    if(jj>0):
+                                        b.unlink()
+                                    jj=jj+1
                             if(ubicacion!=None):
-                                busqueda.sudo().write({'quantity':row[2].value,'x_studio_field_kUc4x':ubicacion.id})                            
+                                busqueda[0].sudo().write({'quantity':row[2].value,'x_studio_field_kUc4x':ubicacion.id})                            
                             else:
-                                busqueda.sudo().write({'quantity':row[2].value})
-                        if(busqueda.id==False):
+                                busqueda[0].sudo().write({'quantity':row[2].value})
+                        if(len(busqueda)==0):
                             if(ubicacion!=None):
                                 quant['x_studio_field_kUc4x']=ubicacion.id
                             else:
