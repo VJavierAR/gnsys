@@ -2480,7 +2480,7 @@ class helpdesk_crearToner(TransientModel):
                                                             'x_studio_tipo_de_vale': self.tipoReporte,
                                                             'x_studio_corte': self.corte,
                                                             #'x_studio_almacen_1': self.almacen,
-                                                            'almacenes': self.almacenes.id
+                                                            'almacenes': self.almacenes.id,
                                                             'partner_id': self.cliente.id,
                                                             'x_studio_nivel_del_cliente': self.tipoCliente,
                                                             'x_studio_empresas_relacionadas': self.localidad.id,
