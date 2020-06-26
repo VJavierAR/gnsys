@@ -12,12 +12,10 @@
     "depends": [
         'mail',
     ],
-    "demo": [
-        "demo/ir_ui_view.xml",
-        "demo/mail_template.xml",
-    ],
     "data": [
         "views/mail_template.xml",
+        "demo/ir_ui_view.xml",
+        "demo/mail_template.xml",
     ],
     'installable': True,
 }
