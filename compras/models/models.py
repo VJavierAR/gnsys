@@ -243,7 +243,7 @@ class compras(models.Model):
                         out.close()
                         os.system(myCmd)
                         f = open("test3.txt","r")
-                        if f2.startswith(b'%PDF-1.7'):
+                        if f2.startswith(b'%PDF') and "konica" in self.partner_id.name.lower():
                             string = f.read()
                             f.close()
                             d = string.split('\n')
@@ -276,7 +276,7 @@ class compras(models.Model):
                             if(len(arreglo)>0):
                                 self.order_line=[(5,0,0)]
                             self.order_line=arreglo
-                        if f2.startswith(b'%PDF-1.4'):
+                        if f2.startswith(b'%PDF') and "kyocera" in self.partner_id.name.lower():
                             string = f.read()
                             f.close()
                             b = string.split('\n')                    
@@ -319,8 +319,9 @@ class compras(models.Model):
                                     if(len(arr)==j+1):
                                         arr[j]['product_qty']=qty
                                         arr[j]['price_unit']=g/1.16
+                                        arr[j]['date_planned']=self.date_order if(self.date_order) else fecha
                                     if(len(arr)==j):
-                                        product={'product_qty':qty,'price_unit':g/1.16}
+                                        product={'product_qty':qty,'price_unit':g/1.16,'date_planned':self.date_order if(self.date_order) else fecha}
                                         arr.append(product)
                                     j=j+1
                             if(len(arr)>0):
