@@ -107,6 +107,15 @@ class gastos_gnsys(models.Model):
 
     devoluciones = fields.One2many('gastos.devolucion', 'gasto' , string = 'Devoluciones', track_visibility = 'onchange')
     totalPagosSolitantes = fields.Float(string = "Total monto pagado", track_visibility='onchange')
+
+    @api.onchange('devoluciones')
+    def calcularTotalPagoDevolucion(self):
+        listaDevoluciones = self.devoluciones
+        montoPagadoTotal = 0.0
+        if listaDevoluciones != []:
+            for devolucion in listaDevoluciones:
+                montoPagadoTotal += devolucion.montoEntregado
+        self.totalPagosSolitantes = montoPagadoTotal
     #Modelo de devoluciónes
     pagos = fields.One2many('gastos.pago', 'gasto' , string = 'Pagos', track_visibility = 'onchange')    
     #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$4
