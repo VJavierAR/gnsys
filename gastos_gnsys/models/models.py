@@ -316,7 +316,7 @@ class PagoSolicitante(models.Model):
     #     for rec in self:
     #         rec.saldo = rec.montoEntregado - rec.montoJustificado
 
-class pagos(models.Model):
+class Pagos(models.Model):
     _name = 'gastos.pago'
     _description = 'Pagos de los gastos'
     gasto = fields.Many2one('gastos', string="Pago relacionado", track_visibility='onchange')
