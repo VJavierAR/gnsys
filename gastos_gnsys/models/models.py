@@ -117,7 +117,7 @@ class gastos_gnsys(models.Model):
     comprobaciones = fields.One2many('gastos.comprobaciones', 'comprobante', string = "Comprobantes",track_visibility='onchange')
     montoPagadoComprobado = fields.Float(string = "Monto pagado", track_visibility='onchange')
     montoComprobado = fields.Float(string = "Monto comprobado", track_visibility='onchange')
-    montoComprobadoAprobado =  fields.Float(string = "Monto comprobado aprobado", track_visibility='onchange')
+    montoComprobadoAprobado =  fields.Float(string = " Monto comprobado aprobado", track_visibility='onchange')
     
     @api.onchange('comprobaciones')
     def calcularTotalComprobaciones(self):
