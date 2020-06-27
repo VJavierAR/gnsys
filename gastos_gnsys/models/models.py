@@ -149,7 +149,14 @@ class gastos_gnsys(models.Model):
     montoADevolverPago = fields.Float(string = "Monto a devolver", track_visibility='onchange')
     montoDevueltoPago = fields.Float(string = "Monto devuelto", track_visibility='onchange')
     
-
+    @api.onchange('pagos')
+    def calcularTotalMontoADevolver(self):
+        listaPagos = self.pagos
+        montoPagadoTotal = 0.0
+        if listaPagos != []:
+            for pago in listaPagos:
+                montoPagadoTotal += pago.monto
+        self.montoADevolverPago = montoPagadoTotal
 
     totalDeMontoPagado = fields.Float(string = 'Total')
 
@@ -323,7 +330,7 @@ class Pagos(models.Model):
     # -------Usuario------------
     concepto = fields.Text(string = "Concepto", track_visibility='onchange')
     fechaDePago = fields.Datetime(string = 'Fecha de pago', track_visibility='onchange')
-    montoPagado = fields.Float(string = "Monto de pago", track_visibility='onchange')
+    montoPagado = fields.Float(string = "Monto", track_visibility='onchange')
     formaDePago = fields.Selection((('Efectivo','Efectivo'), ('Cheque','Cheque'),('Deposito','Deposito'),('Transferencia','Transferencia')), string = "Forma de pago")
     comprobanteDePago = fields.Many2many('ir.attachment', string="Evidencia")
     # -----------------------
