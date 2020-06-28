@@ -60,7 +60,32 @@ class fac_order(models.Model):
             else:    
                 anioA=str(self.year)
             periodoAnterior= anioA+'-'+mesaA
-            
+            htmlloca=''
+            if self.x_studio_dividir_localidades:                
+                localidades=self.detalle
+                loca=[]
+                for loc in localidades:
+                    loca.append(loc.locacion)
+                loca_set=set(loca)
+                newso=[]
+                for lc in loca_set:
+                    newso.append(lc)
+                newso.pop(0)    
+                tamlo=len(newso)                    
+                for sale in newso:
+                    local = self.env['sale.order'].create({'partner_id' : self.partner_id.id
+                                                                 , 'origin' : "dividir por localidades: " + str(self.name)
+                                                                 , 'x_studio_factura':'si'                                                                                                                             
+                                                                })
+                    self.env.cr.execute("insert into x_contrato_sale_order_rel (sale_order_id, contrato_id) values (" +str(local.id) + ", " +  str(r.x_studio_contratosid).replace("[","").replace("]","") + ");")                                        
+                    htmlloca="<a href='https://gnsys-corp.odoo.com/web#id="+str(local.id)+"&action=1167&model=sale.order&view_type=form&menu_id=406' target='_blank'>"+str(local.name)+"</a>"+'<br> '+htmlloca
+                    for det in localidades:                            
+                        if str(sale)==str(det.locacion):
+                           det.write({'saleOrder':local.id}) 
+                           for sl in  self.order_line:
+                               if det.serieEquipo==str(sl.x_studio_field_9nQhR.name):                                                             
+                                  sl.write({'order_id':local.id})                                                                                                                                                                            
+                self.excedente=htmlloca            
             if self.x_studio_dividir_servicios_1:
                
                serviciosd=self.order_line
@@ -83,7 +108,8 @@ class fac_order(models.Model):
                                                                  ,'origin' : "dividir por servicios: " + str(self.name)
                                                                  , 'x_studio_tipo_de_solicitud' : 'Arrendamiento'
                                                                  , 'x_studio_requiere_instalacin' : True                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
-                                                                 , 'team_id' : 1                                                                  
+                                                                 , 'team_id' : 1
+                                                                 , 'x_studio_factura':'si'
                                                                 })
                       servicioshtml="<a href='https://gnsys-corp.odoo.com/web#id="+str(fac.id)+"&action=1167&model=sale.order&view_type=form&menu_id=406' target='_blank'>"+str(fac.name)+"</a>"+'<br> '+servicioshtml
                       for d in self.order_line:
@@ -134,7 +160,8 @@ class fac_order(models.Model):
                                                                  ,'origin' : "dividir por excedentes: " + str(self.name)
                                                                  , 'x_studio_tipo_de_solicitud' : 'Arrendamiento'
                                                                  , 'x_studio_requiere_instalacin' : True                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
-                                                                 , 'team_id' : 1                                                                  
+                                                                 , 'team_id' : 1
+                                                                 , 'x_studio_factura':'si'
                                                                 })
                       
                self.excedente="<a href='https://gnsys-corp.odoo.com/web#id="+str(fac.id)+"&action=1167&model=sale.order&view_type=form&menu_id=406' target='_blank'>"+str(fac.name)+"</a>"
@@ -142,7 +169,7 @@ class fac_order(models.Model):
                    if d.x_studio_bolsa and d.x_studio_excedente == 'si':  
                       self.env['sale.order.line'].create({'order_id': fac.id,'product_id':11396,'product_uom_qty':d.product_uom_qty,'price_unit':d.price_unit,'x_studio_bolsa':d.x_studio_bolsa})
                       self.env['sale.order.line'].search([('id', '=', d.id)]).unlink()                             
-            if self.x_studio_dividir_servicios==False and self.x_studio_dividir_servicios_1==False and len(self.order_line)<1:
+            if self.x_studio_dividir_servicios==False and self.x_studio_dividir_servicios_1==False and len(self.order_line)<1 and self.x_studio_dividir_localidades==False:
                
                for m in ff:              
                           p=self.env['stock.production.lot'].search([('servicio', '=', m.id)])                  
