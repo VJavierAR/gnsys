@@ -205,6 +205,7 @@ class StockIngreso(TransientModel):
             l.write({'location_dest_id':self.almacen.lot_stock_id.id,'qty_done':m.cantidad})
         self.pick.purchase_id.write({'recibido':'recibido'})
         self.pick.action_done()
+        return self.env.ref('stock.report_picking').report_action(self.pick)
 
 class StockIngresoLines(TransientModel):
     _name='ingreso.lines'
@@ -1059,6 +1060,7 @@ class SerieIngreso(TransientModel):
         if(len(self.lineas.mapped('serie.id'))==len(self.lineas)):
             self.picking.action_done()
         self.picking.purchase_id.write({'recibido':'recibido'})
+        return self.env.ref('stock.report_picking').report_action(self.picking)
 
 
 
