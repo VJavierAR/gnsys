@@ -37,7 +37,7 @@ class helpdesk_update(models.Model):
     stage_id = fields.Many2one('helpdesk.stage', string='Stage', ondelete='restrict', track_visibility='onchange',group_expand='_read_group_stage_ids',readonly=True,copy=False,index=True, domain="[('team_ids', '=', team_id)]")
     productos = fields.One2many('product.product','id',string='Solicitudes',store=True)
     #seriesDCA = fields.One2many('dcas.dcas', 'tickete', string="Series")
-
+    requisicion=fields.Boolean()
     validarTicket = fields.Boolean(
                                     string = "Proceder a realizar la validacón del encargado", 
                                     default = False, 
@@ -3964,28 +3964,35 @@ class helpdesk_update(models.Model):
 
     #     if vals.get('partner_id'):
     #         self.message_subscribe([vals['partner_id']])
-
-    #     if(vals.get('team_id')==11):
-    #         cliente=self.env['res.partner'].browse(vals.get('partner_id'))
+    #     _logger.info('Hola-----'+str(self.team_id.id))
+    #     if(self.team_id.id==11 and self.requisicion==False):
+    #         cliente=self.env['res.partner'].browse(self.x_studio_empresas_relacionadas.id)
     #         distribuidores=self.env['zona.distribuidor'].search([['estado','=',cliente.state_id.id]])
     #         check=distribuidores.mapped('municipio')
+    #         _logger.info('Hola-----'+str(check))
     #         if(check==[] and len(distribuidores)==1):
     #             req=self.env['requisicion.requisicion'].search([['proveedor','=',distribuidores.rel_contact.id],['state','=','open']])
     #             if(len(req)==0):
-    #                 req=self.env['requisicion.requisicion'].create({'state':'open','proveedor':distribuidores.rel_contact.id})
-    #                 req_rel=self.env['product.rel.requisicion'].create({'product_id':1,'cantidad':1,'req_rel':req.id,'costo':0.0,'ticket':vals.get('id'),'cliente':cliente.id})
+    #                 req=self.env['requisicion.requisicion'].create({'state':'open','proveedor':distribuidores.rel_contact.id,'area':'Distribuidor'})
+    #                 req_rel=self.env['product.rel.requisicion'].create({'product':1,'cantidad':1,'req_rel':req.id,'costo':0.0,'ticket':self.id,'cliente':cliente.id})
+    #                 _logger.info('Hola-----1')
     #             else:
-    #                 req_rel=self.env['product.rel.requisicion'].create({'product_id':1,'cantidad':1,'req_rel':req.id,'costo':0.0,'ticket':vals.get('id'),'cliente':cliente.id})
+    #                 req_rel=self.env['product.rel.requisicion'].create({'product':1,'cantidad':1,'req_rel':req.id,'costo':0.0,'ticket':self.id,'cliente':cliente.id})
+    #                 _logger.info('Hola-----2')
     #         else:
     #             d=distribuidores.filtered(lambda x:x.municipio!=False).filtered(lambda x:x.municipio.lower().replace(' ','')==cliente.city.lower().replace(' ',''))
     #             if(len(d)==0):
     #                 d=distribuidores.filtered(lambda x:x.municipio==False)
     #             req=self.env['requisicion.requisicion'].search([['proveedor','=',d.rel_contact.id],['state','=','open']])
+    #             _logger.info('Hola-----'+str(req))
     #             if(len(req)==0):
-    #                 req=self.env['requisicion.requisicion'].create({'state':'open','proveedor':d.rel_contact.id})
-    #                 req_rel=self.env['product.rel.requisicion'].create({'product_id':1,'cantidad':1,'req_rel':req.id,'costo':0.0,'ticket':vals.get('id'),'cliente':cliente.id})
-    #             else:
-    #                 req_rel=self.env['product.rel.requisicion'].create({'product_id':1,'cantidad':1,'req_rel':req.id,'costo':0.0,'ticket':vals.get('id'),'cliente':cliente.id})
+    #                 req1=self.env['requisicion.requisicion'].create({'state':'open','proveedor':d.rel_contact.id,'area':'Distribuidor'})
+    #                 req_rel=self.env['product.rel.requisicion'].create({'product':1,'cantidad':1,'req_rel':req1.id,'costo':0.0,'ticket':self.id,'cliente':cliente.id})
+    #                 _logger.info('Hola-----3')
+    #             if(len(req)>0):
+    #                 req_rel=self.env['product.rel.requisicion'].create({'product':1,'cantidad':1,'req_rel':req[0].id,'costo':0.0,'ticket':self.id,'cliente':cliente.id})
+    #                 _logger.info('Hola-----1')
+    #         self.requisicion=True
     #     return res
         
 class helpdes_diagnostico(models.Model):
