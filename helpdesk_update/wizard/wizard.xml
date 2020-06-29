@@ -1001,7 +1001,7 @@
                                 <field name='corte' force_save='1' />
                                 <!--<field name='almacen' force_save='1' />-->
                                 <field name='almacenes' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain="['&amp;', ('x_studio_cliente', '=', False), '|', ('id', '=', 1), ('id', '=', 18) ]" />
-                                
+
                             </group>
                             <group>
                                 <field name='validarHastaAlmacenTicket' force_save='1' />
@@ -1013,14 +1013,21 @@
                     <page string = 'Cliente'>
                         <group>
                             <group>
-                                <field name='cliente' force_save='1' readonly='1' />
+                                <field name='editarCliente' force_save='1' />
+                                <field name='cliente' force_save='1' attrs="{'readonly': [['editarCliente', '=', False]]}" />
                                 <field name='tipoCliente' force_save='1' readonly='1' />
-                                <field name='localidad' force_save='1' readonly='1' />
+                                <field name='localidad' force_save='1' attrs="{'readonly': [['editarCliente', '=', False]]}" />
                             </group>
                             <group>
-                                <field name='zonaLocalidad' force_save='1' readonly='1'/>
-                                <field name='localidadContacto' force_save='1' readonly='0' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}"/>
+                                <field name='zonaLocalidad' force_save='1' attrs="{'readonly': [['editarCliente', '=', False]]}" />
+                                <field name='localidadContacto' force_save='1' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" attrs="{'readonly': [['editarCliente', '=', False]]}" />
                                 <field name='estadoLocalidad' force_save='1' readonly='1'/>
+                            </group>
+                        </group>
+
+                        <group>
+                            <group>
+                                <button name='contacto_wizard' string='Añadir contacto a localidad' attrs="{'invisible': [['editarCliente', '=', False]]}" /> <!--aqui voy-->
                             </group>
                         </group>
 

@@ -2371,7 +2371,12 @@ class helpdesk_crearToner(TransientModel):
                                             store = True
                                         )
     textoTicketExistente = fields.Text(store = True)
-
+    editarCliente = fields.Boolean(
+                                        string = 'Editar cliente',
+                                        default = False,
+                                        store = True
+                                    )
+    
 
     @api.onchange('localidadContacto')
     def cambia_contacto_localidad(self):
