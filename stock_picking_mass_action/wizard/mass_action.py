@@ -204,7 +204,9 @@ class StockIngreso(TransientModel):
             l=self.env['stock.move.line'].search([['move_id','=',m.move.id]])
             l.write({'location_dest_id':self.almacen.lot_stock_id.id,'qty_done':m.cantidad})
         self.pick.purchase_id.write({'recibido':'recibido'})
+        self.env['stock.picking'].search([['state','=','assigned']]).action_assign()
         self.pick.action_done()
+        return self.env.ref('stock.report_picking').report_action(self.pick)
 
 class StockIngresoLines(TransientModel):
     _name='ingreso.lines'
@@ -914,7 +916,10 @@ class PickingsAComprasMassAction(TransientModel):
             for r in requLin:
                 r['req_rel']=requisicion.id
                 self.env['product.rel.requisicion'].create(r)
-            self.env['stock.picking'].browse(pi).write({'estado':'compras'})
+            pppp=self.env['stock.picking'].browse(pi).write({'estado':'compras'})
+            for pp in pppp:
+                pp.x_studio_ticket_relacionado.write({'stage_id':113})
+                env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : pp.x_studio_ticket_relacionado.id, 'estadoTicket' : "Pendiente de compra", 'comentario':"Pendiente de compra Requisicion:(requisicion.name)"}) 
             view = self.env.ref('studio_customization.default_form_view_fo_24cee64e-ad11-4f19-a7f6-fceca5375726')
             return {
                     'name': _('Transferencia'),
@@ -1056,6 +1061,8 @@ class SerieIngreso(TransientModel):
         if(len(self.lineas.mapped('serie.id'))==len(self.lineas)):
             self.picking.action_done()
         self.picking.purchase_id.write({'recibido':'recibido'})
+        self.env['stock.picking'].search([['state','=','assigned']]).action_assign()
+        return self.env.ref('stock.report_picking').report_action(self.picking)
 
 
 

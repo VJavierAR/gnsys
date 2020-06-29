@@ -54,6 +54,7 @@ class compras(models.Model):
     pagado=fields.Float(compute='pay',string="Pagado")
     porPagar=fields.Float(string="Por pagar")
     pagos=fields.Char(widget='html')
+    active = fields.Boolean('Active', default=True, track_visibility=True)
 
     @api.depends('x_studio_field_H9kGQ','state')
     def pay(self):
