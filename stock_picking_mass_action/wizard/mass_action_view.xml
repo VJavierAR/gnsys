@@ -453,7 +453,7 @@
                 <group>
                     <field name="comentario"/>
                     <field name="ruta" invisible="1"/>
-                    <field name="evidencia" widget="many2many_binary" attrs="{'invisible': [['ruta', '=', False]]}"/>
+                    <field name="evidencia" widget="many2many_binary" required="1" attrs="{'invisible': [['ruta', '=', False]]}"/>
                 </group>
                 <footer>
                     <button name="confirmar" string="Confirmar" type="object" class="oe_highlight"/>
