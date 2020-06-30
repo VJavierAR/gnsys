@@ -53,7 +53,7 @@ class requisicion(models.Model):
         p=[]
         d=[]
         cadena=""
-        if(area=="Almacen"):
+        if(self.area=="Almacen"):
             _logger.info(str(self.product_rel.mapped('product.x_studio_field_7aUDq.id')))
             pp=self.product_rel.filtered(lambda x:x.cantidad!=0)
             pro=self.product_rel.mapped('product.x_studio_field_7aUDq.id')
