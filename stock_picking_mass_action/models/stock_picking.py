@@ -619,8 +619,8 @@ class StockPicking(Model):
                 'res_id': wiz.id,
                 'context': self.env.context,
             }
-        #else:
-        #    raise UserError(_('Se requiere evidencia'))
+        else:
+           raise UserError(_('Se requiere evidencia'))
 
 class StockPicking(Model):
     _inherit = 'stock.move'
