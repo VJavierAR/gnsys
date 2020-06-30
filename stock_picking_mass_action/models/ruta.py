@@ -55,7 +55,6 @@ class CreacionRuta(Model):
 		else:
 			raise UserError(_('No se ha selaccionado ninguna orden'))
 
-			
 
 	@api.model
 	def create(self, vals):
