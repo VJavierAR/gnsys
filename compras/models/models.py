@@ -55,7 +55,7 @@ class compras(models.Model):
     porPagar=fields.Float(string="Por pagar")
     pagos=fields.Char(widget='html')
     active = fields.Boolean('Active', default=True, track_visibility=True)
-
+    requisicion=fields:Many2one('requisicion.requisicion')
     @api.depends('x_studio_field_H9kGQ','state')
     def pay(self):
         pago=False
