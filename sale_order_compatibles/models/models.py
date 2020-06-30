@@ -22,6 +22,7 @@ class sale_order_compatibles(models.Model):
 	domin=fields.Char()
 	location=fields.Integer()
 	tipo=fields.Char()
+	precio=fields.Float(default=0.00)
 	@api.onchange('equipos')
 	def domi(self):
 		datos=self.equipos.x_studio_toner_compatible.mapped('id')
@@ -51,6 +52,8 @@ class miniModeloToner(models.Model):
 	producto = fields.Many2one('product.product')
 	cantidad = fields.Integer(string = 'Cantidad')
 	saleOrderMini=fields.Many2one('sale_order_compatibles')
+	precio=fields.Float(default=0.00)
+	tipo=fields.Char()
 
 	@api.onchange('idProducto')
 	def domi(self):
@@ -67,6 +70,8 @@ class miniModeloAccesorio(models.Model):
 	producto = fields.Many2one('product.product')
 	cantidad = fields.Integer(string = 'Cantidad')
 	saleOrderMini=fields.Many2one('sale_order_compatibles')
+	precio=fields.Float(default=0.00)
+	tipo=fields.Char()
 
 	@api.onchange('idProducto')
 	def domi(self):
@@ -128,19 +133,19 @@ class sale_update(models.Model):
 		if(len(self.compatiblesLineas)>0):
 			for e in self.compatiblesLineas:
 				if(e.cantidad!=0):
-					d={'x_studio_field_mqSKO':e.equipos.id,'product_id':e.equipos.id,'name':e.equipos.name,'product_uom_qty':1,'product_uom':e.equipos.uom_id.id,'price_unit':0.00,'x_studio_id_relacion':e.id}
+					d={'x_studio_estado':e.estado,'x_studio_field_mqSKO':e.equipos.id,'product_id':e.equipos.id,'name':e.equipos.name,'product_uom_qty':1,'product_uom':e.equipos.uom_id.id,'price_unit':e.precio,'x_studio_id_relacion':e.id}
 					self.order_line=[d]
 				for e1 in e.componentes:
 					if(e1.cantidad!=0):
-						d={'x_studio_field_mqSKO':e1.producto.id,'product_id':e1.producto.id,'name':e1.producto.name,'product_uom_qty':e1.cantidad,'product_uom':e1.producto.uom_id.id,'price_unit':0.00,'x_studio_id_relacion':e.id,'x_studio_modelo':e.equipos.name}
+						d={'x_studio_field_mqSKO':e1.producto.id,'product_id':e1.producto.id,'name':e1.producto.name,'product_uom_qty':e1.cantidad,'product_uom':e1.producto.uom_id.id,'price_unit':e1.precio,'x_studio_id_relacion':e.id,'x_studio_modelo':e.equipos.name}
 						self.order_line=[d]
 				for e2 in e.toner:
 					if(e2.cantidad!=0):
-						d={'x_studio_field_mqSKO':e2.producto.id,'product_id':e2.producto.id,'name':e2.producto.name,'product_uom_qty':e2.cantidad,'product_uom':e2.producto.uom_id.id,'price_unit':0.00,'x_studio_id_relacion':e.id,'x_studio_modelo':e.equipos.name}
+						d={'x_studio_field_mqSKO':e2.producto.id,'product_id':e2.producto.id,'name':e2.producto.name,'product_uom_qty':e2.cantidad,'product_uom':e2.producto.uom_id.id,'price_unit':e2.precio,'x_studio_id_relacion':e.id,'x_studio_modelo':e.equipos.name}
 						self.order_line=[d]
 				for e3 in e.accesorios:
 					if(e3.cantidad!=0):
-						d={'x_studio_field_mqSKO':e3.producto.id,'product_id':e3.producto.id,'name':e3.producto.name,'product_uom_qty':e3.cantidad,'product_uom':e3.producto.uom_id.id,'price_unit':0.00,'x_studio_id_relacion':e.id,'x_studio_modelo':e.equipos.name}
+						d={'x_studio_field_mqSKO':e3.producto.id,'product_id':e3.producto.id,'name':e3.producto.name,'product_uom_qty':e3.cantidad,'product_uom':e3.producto.uom_id.id,'price_unit':e3.precio,'x_studio_id_relacion':e.id,'x_studio_modelo':e.equipos.name}
 						self.order_line=[d]
 			self.write({'state':'sent'})
 		if(self.x_studio_tipo_de_solicitud=="Venta" or self.x_studio_tipo_de_solicitud=="Venta directa"):
