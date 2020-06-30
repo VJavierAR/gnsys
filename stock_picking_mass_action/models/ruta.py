@@ -55,6 +55,8 @@ class CreacionRuta(Model):
 		else:
 			raise UserError(_('No se ha selaccionado ninguna orden'))
 
+			
+
 	@api.model
 	def create(self, vals):
 		vals['name'] = self.env['ir.sequence'].next_by_code('ruta') or _('New')
