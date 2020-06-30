@@ -19,6 +19,7 @@ class product_requisicion(models.Model):
     proveedor=fields.Char('proveedor')
 
 
+
     @api.depends('cliente')
     def direc(self):
         for recor in self:
@@ -40,6 +41,7 @@ class requisicion(models.Model):
     orden=fields.Char('Orden de Compra')
     picking_ids=fields.Many2many('stock.picking','picking_req_rel','picking_id','req_id')
     proveedor=fields.Many2one('res.partner')
+    ordenes=fields.Many2many('purchase.order')
     @api.one
     def update_estado(self):
         self.write({'state':'open'})
@@ -48,6 +50,7 @@ class requisicion(models.Model):
 
     @api.one
     def update_estado1(self):
+        p=[]
         d=[]
         cadena=""
         if(area=="Almacen"):
@@ -59,6 +62,7 @@ class requisicion(models.Model):
                 ppp=pp.filtered(lambda x: x.product.x_studio_field_7aUDq.id==prov)
                 if(len(ppp)>0):
                     ordenDCompra=self.env['purchase.order'].sudo().create({'partner_id':prov,'date_planned':self.fecha_prevista if(self.fecha_prevista) else datetime.datetime.now(),'x_studio_field_a4rih':'Almacén'})
+                    p.append(ordenDCompra.id)
                     cadena=cadena+ordenDCompra.name+','
                     for prod in ppp:
                         if(prod.product.id not in d):
@@ -73,6 +77,7 @@ class requisicion(models.Model):
             ppp=pp.filtered(lambda x: x.product.x_studio_field_7aUDq.id==False)
             if(len(ppp)>0):
                 ordenDCompra=self.env['purchase.order'].sudo().create({'partner_id':3,'date_planned':self.fecha_prevista if(self.fecha_prevista) else datetime.datetime.now(),'x_studio_field_a4rih':'Almacén'})
+                p.append(ordenDCompra.id)
                 cadena=cadena+ordenDCompra.name+','
                 for prod in ppp:
                     if(prod.product.id not in d):
@@ -86,9 +91,11 @@ class requisicion(models.Model):
                         d.append(prod.product.id)
         if(self.area!='Almacen'):
             ordenDCompra=self.env['purchase.order'].sudo().create({'partner_id':self.proveedor.id,'date_planned':self.fecha_prevista if(self.fecha_prevista) else datetime.datetime.now(),'x_studio_field_a4rih':'General'})
+            p.append(ordenDCompra.id)
             cadena=cadena+ordenDCompra.name
             for hi in self.product_rel:
                 lineas=self.env['purchase.order.line'].sudo().create({'name':hi.product.description if(hi.product.description) else '|','product_id':hi.product.id,'product_qty':hi.cantidad,'price_unit':hi.costo/1.16,'taxes_id':[10],'order_id':ordenDCompra.id,'date_planned':self.fecha_prevista if(self.fecha_prevista) else datetime.datetime.now(),'product_uom':'1'})
+        self.ordenes=p
         self.write({'state':'done'})
         self.orden=cadena
         # if(self.orden==False):
