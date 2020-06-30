@@ -149,7 +149,7 @@ class sale_update(models.Model):
 						self.order_line=[d]
 			self.write({'state':'sent'})
 		if(self.x_studio_tipo_de_solicitud=="Venta" or self.x_studio_tipo_de_solicitud=="Venta directa"):
-			template_id=self.env['mail.template'].search([('id','=',19)], limit=1)
+			template_id=self.env['mail.template'].search([('id','=',58)], limit=1)
 			template_id.send_mail(self.id, force_send=True)
 		if(self.x_studio_tipo_de_solicitud!="Venta" or self.x_studio_tipo_de_solicitud!="Venta directa"):
 			if(len(self.compatiblesLineas)==0):

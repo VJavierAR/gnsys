@@ -18,7 +18,7 @@ class CreacionRuta(Model):
 	tipo=fields.Selection([["local","Local"],["foraneo","Foraneo"],["guadalajara","Guadalajara"],["monterrey","Monterrey"],["queretaro","Querétaro"]])
 	EstadoPais=fields.Many2one('res.country.state',string="Estado")
 	EstadoPaisName=fields.Char(related='EstadoPais.name',string="Estado")
-
+	ticket=fields.Char()
 
 	# @api.onchange('tipo')
 	# def domin(self):
@@ -38,6 +38,7 @@ class CreacionRuta(Model):
 
 	@api.multi
 	def confirmar(self):
+		t=""
 		if(len(self.ordenes)>0):
 			self.ordenes.write({'ruta_id':self.id})
 			self.ordenes.write({'estado':'ruta'})
@@ -48,7 +49,9 @@ class CreacionRuta(Model):
 			for o in self.ordenes:
 				if(o.sale_id.x_studio_field_bxHgp):
 					o.sale_id.x_studio_field_bxHgp.write({'stage_id':108})
+					t=t+o.sale_id.x_studio_field_bxHgp.id+','
 			self.env['registro.odometro'].sudo().create({'rel_vehiculo':self.vehiculo.id,'odometro':self.odometro,'nivel_tanque':self.nivel_tanque,'chofer':self.chofer.id}) 
+			self.ticket=t
 		else:
 			raise UserError(_('No se ha selaccionado ninguna orden'))
 
