@@ -49,7 +49,7 @@ class CreacionRuta(Model):
 			for o in self.ordenes:
 				if(o.sale_id.x_studio_field_bxHgp):
 					o.sale_id.x_studio_field_bxHgp.write({'stage_id':108})
-					t=t+o.sale_id.x_studio_field_bxHgp.id+','
+					t=t+str(o.sale_id.x_studio_field_bxHgp.id)+','
 			self.env['registro.odometro'].sudo().create({'rel_vehiculo':self.vehiculo.id,'odometro':self.odometro,'nivel_tanque':self.nivel_tanque,'chofer':self.chofer.id}) 
 			self.ticket=t
 		else:
