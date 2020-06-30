@@ -119,8 +119,8 @@ class StockPickingMassAction(TransientModel):
         if(3 in validacion):
             CON=str(self.env['ir.sequence'].next_by_code('concentrado'))
             self.check=2
-            assigned_picking_lst.write({'concentrado':CON})
-            #self.env['stock.picking'].search([['sale_id','=',l.sale_id.id]]).write({'concentrado':CON})
+            #assigned_picking_lst.write({'concentrado':CON})
+            self.env['stock.picking'].search([['sale_id','in',assigned_picking_lst.mapped('sale_id.id')]]).write({'concentrado':CON})
         if(29314 in validacion):
             self.check=1
         pick_to_backorder = self.env['stock.picking']
