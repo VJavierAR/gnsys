@@ -1079,7 +1079,7 @@
                     <group>
                         <field name='ticket_id' />
                         <field name="productos" string="Productos " domain="[]" options="{'no_create_edit': True, 'no_create': True}" readonly='0' >
-                            <tree string="Productos" decoration-danger="type == 'product' and virtual_available&lt;0" decoration-info="type != 'product' or virtual_available&gt;=0" editable="bottom" >
+                            <tree string="Productos" editable="bottom" >
                                 <field name='product_variant_id' string='Producto' />
                                 <field name='categ_id' string='Categoría del producto' />
                                 <field name='default_code' string='Referencia interna' />
