@@ -453,7 +453,7 @@ class ComemtarioTicket(TransientModel):
                                         ,'evidencia': [(6,0,self.evidencia.ids)]
                                         ,'mostrarComentario': False
                                         })
-            if(len(self.evidencia)==0 and self.ruta_id.tipo!="foraneo"):
+            if(len(self.evidencia)==0 and self.pick.ruta_id.tipo!="foraneo"):
                 raise UserError(_("Falta evidencia"))
             else:
                 wiz=self.env['stock.picking.mass.action'].create({'picking_ids':[(4,self.pick.id)],'confirm':True,'check_availability':True,'transfer':True})
