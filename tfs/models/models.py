@@ -201,8 +201,8 @@ class tfs(models.Model):
                         rule.append(re.id)
                     if(len(quant)>0):
                         if(quant.quantity<=re.product_min_qty):
-                            datos1={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':41911,'location_dest_id':re.location_id.id}
-                            datos2={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':re.location_id.id,'location_dest_id':41911}
+                            datos1={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty-quant.quantity,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':41911,'location_dest_id':re.location_id.id}
+                            datos2={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty-quant.quantity,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':re.location_id.id,'location_dest_id':41911}
                             pickOrigen.append(datos1)
                             pickDestino.append(datos2)
                             rule.append(re.id)
