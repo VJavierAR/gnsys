@@ -453,8 +453,11 @@ class ComemtarioTicket(TransientModel):
                                         ,'evidencia': [(6,0,self.evidencia.ids)]
                                         ,'mostrarComentario': False
                                         })
-            #wiz=self.env['stock.picking.mass.action'].create({'picking_ids':[(4,self.pick.id)],'confirm':True,'check_availability':True,'transfer':True})
-            #wiz.mass_action()
+            if(len(self.evidencia)==0):
+                raise UserError(_("Falta evidencia"))
+            else:
+                wiz=self.env['stock.picking.mass.action'].create({'picking_ids':[(4,self.pick.id)],'confirm':True,'check_availability':True,'transfer':True})
+                wiz.mass_action()
 
 class TransferInter(TransientModel):
     _name='transferencia.interna'
