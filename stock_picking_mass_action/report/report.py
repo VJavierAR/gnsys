@@ -327,6 +327,7 @@ class PartnerXlsx(models.AbstractModel):
     _name = 'report.lot_serial.report'
     _inherit = 'report.report_xlsx.abstract'
 
+
     def generate_xlsx_report(self, workbook, data, lots):
         i=2
         d=[]
