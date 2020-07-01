@@ -3943,7 +3943,7 @@ class helpdesk_update(models.Model):
     @api.multi
     def agregar_productos_wizard(self):
         wiz = self.env['helpdesk.agregar.productos'].create({'ticket_id':self.id})
-        view = self.env.ref('view_helpdesk_agregar_productos')
+        view = self.env.ref('helpdesk_update.view_helpdesk_agregar_productos')
         return {
             'name': _('Agregar productos'),
             'type': 'ir.actions.act_window',
