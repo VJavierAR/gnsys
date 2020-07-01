@@ -1210,25 +1210,35 @@ class helpdesk_crearconserie(TransientModel):
             self.direccionCodigoPostal = ''
 
     def crearTicket(self):
+        equiposRelacionados = self.env['helpdesk_team_res_users_rel'].search([['res_users_id', '=', self.env.user.id]]).helpdesk_team_id
+        _logger.info('3312 equiposRelacionados: ' + str(equiposRelacionados) )
+        equipoDeUsuario = 9
+        if equiposRelacionados:
+            equipoDeUsuario = equiposRelacionados[0]
+
+        #for equipoRelacionado in equiposRelacionados:
+        #    if equipoRelacionado == 
+
         if self.serie:
+
             messageTemp = ''
             ticket = self.env['helpdesk.ticket'].create({'stage_id': 89 
                                                 ,'x_studio_equipo_por_nmero_de_serie': [(6,0,self.serie.ids)]
                                                 ,'partner_id': int(self.idCliente)
                                                 ,'x_studio_empresas_relacionadas': int(self.idLocaliidad)
-                                                ,'team_id': 9
+                                                ,'team_id': equipoDeUsuario
                                                 ,'x_studio_field_6furK': self.zonaLocalidad
                                                 })
             if self.zonaLocalidad:
                 ticket.write({'partner_id': int(self.idCliente)
                             ,'x_studio_empresas_relacionadas': int(self.idLocaliidad)
-                            ,'team_id': 9
+                            ,'team_id': equipoDeUsuario
                             ,'x_studio_field_6furK': self.zonaLocalidad
                             })
             else:
                 ticket.write({'partner_id': int(self.idCliente)
                             ,'x_studio_empresas_relacionadas': int(self.idLocaliidad)
-                            ,'team_id': 9
+                            ,'team_id': equipoDeUsuario
                             })
             if self.contactoInterno:
                 query = "update helpdesk_ticket set \"contactoInterno\" = " + str(self.contactoInterno.id) + " where id = " + str(ticket.id) + ";"
@@ -1289,12 +1299,12 @@ class helpdesk_crearconserie(TransientModel):
                                               #,'x_studio_equipo_por_nmero_de_serie': [(6,0,self.serie.ids)]
                                               ,'partner_id': int(self.idCliente)
                                               ,'x_studio_empresas_relacionadas': int(self.idLocaliidad)
-                                              ,'team_id': 9
+                                              ,'team_id': equipoDeUsuario
                                               ,'x_studio_field_6furK': self.zonaLocalidad
                                               })
           ticket.write({'partner_id': int(self.idCliente)
                       ,'x_studio_empresas_relacionadas': int(self.idLocaliidad)
-                      ,'team_id': 9
+                      ,'team_id': equipoDeUsuario
                       ,'x_studio_field_6furK': self.zonaLocalidad
                       })
           if self.contactoInterno:
@@ -2274,7 +2284,7 @@ class HelpDeskDetalleSerieToner(TransientModel):
 
 
 
-class helpdesk_crearToner(TransientModel):
+class helpdesk_c<rearToner(TransientModel):
     _name = 'helpdesk.tonerticket'
     _description = 'helpdesk crear ticket de tóner'
     dca = fields.One2many('dcas.dcas', 'x_studio_tiquete', string = 'Serie', store = True)
@@ -2376,7 +2386,7 @@ class helpdesk_crearToner(TransientModel):
                                         default = False,
                                         store = True
                                     )
-    
+
 
     @api.onchange('localidadContacto')
     def cambia_contacto_localidad(self):
@@ -2607,3 +2617,45 @@ class helpdesk_crearToner(TransientModel):
         #else:
             #NO HAY DCA POR LO TANTO NO SE GENERA TICKET
 
+
+
+
+
+class helpdesk_agregar_productos(TransientModel):
+    _name = 'helpdesk.agregarProductos'
+    _description = 'helpdesk añade productos a la lista de productos de un ticket.'
+    
+    ticket_id = fields.Many2one(
+                                    "helpdesk.ticket",
+                                    string = 'Ticket'
+                                )
+
+    productos = fields.Many2many(
+                                    'product.product', 
+                                    string = "Productos"
+                                )
+
+
+    def agregarProductos(self):
+        #for producto in self.productos:
+            #ticket_id.write({})
+
+        self.ticket_id.x_studio_productos = [(6, 0, self.productos.ids)]
+        mensajeTitulo = 'Productos agregados!!!'
+        mensajeCuerpo = 'Se agregaron los productos y sus cantidades.'
+        #wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
+        wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
+        view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+        return {
+                'name': _(mensajeTitulo),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'helpdesk.alerta',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'res_id': wiz.id,
+                'context': self.env.context,
+                }
+        

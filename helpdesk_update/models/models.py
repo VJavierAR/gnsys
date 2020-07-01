@@ -3939,6 +3939,28 @@ class helpdesk_update(models.Model):
             'context': {'dominioTest': str(ids)},
         }
 
+
+    @api.multi
+    def agregar_productos_wizard(self):
+        wiz = self.env['helpdesk.agregarProductos'].create({'ticket_id':self.id})
+        view = self.env.ref('view_helpdesk_agregar_productos')
+        return {
+            'name': _('Agregar productos'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'helpdesk.agregarProductos',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            #'domain': [["series", "=", ids]],
+            #'context': self.env.context,
+            'context': self.env.context,
+        }
+
+
+
     # @api.multi
     # def write(self, vals):
     #     # we set the assignation date (assign_date) to now for tickets that are being assigned for the first time
