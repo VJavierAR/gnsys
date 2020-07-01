@@ -1210,10 +1210,11 @@ class helpdesk_crearconserie(TransientModel):
             self.direccionCodigoPostal = ''
 
     def crearTicket(self):
+        equipoDeUsuario = 9
         """
         equiposRelacionados = self.env['helpdesk_team_res_users_rel'].search([['res_users_id', '=', self.env.user.id]]).helpdesk_team_id
         _logger.info('3312 equiposRelacionados: ' + str(equiposRelacionados) )
-        equipoDeUsuario = 9
+        
         if equiposRelacionados:
             equipoDeUsuario = equiposRelacionados[0]
         """
