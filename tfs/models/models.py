@@ -134,6 +134,7 @@ class tfs(models.Model):
                         self.write({'estado':'xValidar'})
                     else:
                         self.write({'estado':'Valido'})
+                        self.valida()
                     self.arreglo=str(d)
 
                 
