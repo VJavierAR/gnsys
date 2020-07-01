@@ -1070,6 +1070,47 @@
 
 
 
+    <record id="view_helpdesk_agregar_productos" model="ir.ui.view">
+        <field name="model">helpdesk.agregar.productos</field>
+        <field name="arch" type="xml">
+            <form string="Agregar productos a ticket">
+                
+                <group>
+                    <group>
+                        <field name='ticket_id' />
+                        <field name="productos" string="Productos " domain="[]" options="{'no_create_edit': True, 'no_create': True}" readonly='0' >
+                            <tree string="Productos" decoration-danger="type == 'product' and virtual_available&lt;0" decoration-info="type != 'product' or virtual_available&gt;=0" editable="bottom" >
+                                <field name='product_variant_id' string='Producto' />
+                                <field name='categ_id' string='Categoría del producto' />
+                                <field name='default_code' string='Referencia interna' />
+                                <field name='name' string='Nombre' />
+                                <field name='qty_available' string='Cantidad a mano' />
+                                <field name='virtual_available' string='Cantidad prevista' />
+                                <field name='x_studio_cantidad_pedida' string='Cantidad a pedir' />
+                            </tree>
+                        </field>
+
+                    </group>
+                </group>
+                
+                <!--
+                <group>
+                    <group>
+                        <field />
+                    </group>
+                </group>
+                -->
+
+                <footer>
+                    <button name="agregarProductos" string="Agregar productos" type="object" class="oe_highlight" />
+                    <button string="Cerrar ventana" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+
 
 
 

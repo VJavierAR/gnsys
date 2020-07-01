@@ -2622,7 +2622,7 @@ class helpdesk_crearToner(TransientModel):
 
 
 class helpdesk_agregar_productos(TransientModel):
-    _name = 'helpdesk.agregarProductos'
+    _name = 'helpdesk.agregar.productos'
     _description = 'helpdesk añade productos a la lista de productos de un ticket.'
     
     ticket_id = fields.Many2one(
