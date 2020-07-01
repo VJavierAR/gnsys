@@ -29,5 +29,5 @@ class StockQuan(Model):
     @api.onchange('quantity')
     def actualizaRegla(self):
         if(self.x_studio_almacn.x_studio_mini==True):
-            q=self.env['stock.warehouse.orderpoint'].search([['location_id','=',self.location_id.id],['product_id','=',self.product_id.id]])
+            q=self.env['stock.warehouse.orderpoint'].search([['location_id','=',self.location_id.id],['product_id','=',self.product_id.id],['active','=',False]])
             q.x_studio_existencia=self.quantity
