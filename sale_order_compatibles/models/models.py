@@ -129,6 +129,7 @@ class sale_update(models.Model):
 		}
 
 	def preparaSolicitud(self):
+		self.order_line.unlink()
 		data=[]
 		if(len(self.compatiblesLineas)>0):
 			for e in self.compatiblesLineas:
@@ -157,7 +158,10 @@ class sale_update(models.Model):
 			else:
 				template_id=self.env['mail.template'].search([('id','=',58)], limit=1)
 				template_id.send_mail(self.id, force_send=True)
-
+	
+	def desbloquea(self):
+		self.action_cancel()
+		self.action_draft()
 
 	def componentes(self):
 		if(len(self.order_line)>0):
