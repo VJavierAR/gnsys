@@ -2462,7 +2462,7 @@ class helpdesk_crearToner(TransientModel):
                     self.correoContactoLocalidad = idLoc[0].email
 
                 else:
-                    self.localidadContacto = idLoc[0].id
+                    self.localidadContacto = False
                     self.telefonoContactoLocalidad = ''
                     self.movilContactoLocalidad = ''
                     self.correoContactoLocalidad = '' 
