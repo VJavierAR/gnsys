@@ -207,7 +207,6 @@ class tfs(models.Model):
                 _logger.info("entre 2"+str(al.name))
                 for re in reglasabs:
                     quant=quants.filtered(lambda x: x.product_id.id == re.product_id.id)
-                    _logger.info(str(len(quant)))
                     if(len(quant)==0):
                         datos1={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':41911,'location_dest_id':re.location_id.id}
                         datos2={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':re.location_id.id,'location_dest_id':41911}
@@ -215,7 +214,6 @@ class tfs(models.Model):
                         pickDestino.append(datos2)
                         rule.append(re.id)
                     if(len(quant)>0):
-                        _logger.info('producto'+str(re.product_id.name)+str(quant.quantity)+str(re.product_min_qty)+'almacen'+str(al.name))
                         if(quant.quantity<re.product_min_qty):
                             datos1={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty-quant.quantity,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':41911,'location_dest_id':re.location_id.id}
                             datos2={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty-quant.quantity,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':re.location_id.id,'location_dest_id':41911}
