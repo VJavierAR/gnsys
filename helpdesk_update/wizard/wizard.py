@@ -2636,7 +2636,31 @@ class helpdesk_agregar_productos(TransientModel):
                                     'product.product', 
                                     string = "Productos"
                                 )
+    activar_compatibilidad = fields.Boolean(
+                                                string = 'Activar compatibilidad',
+                                                default = False
+                                            )
 
+    @api.onchange('activar_compatibilidad')
+    #@api.multi
+    def productos_filtro(self):
+        res = {}             
+        g = str(self.ticket_id.x_studio_nombretmp)
+        
+        if self.activar_compatibilidad and self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+            if g != 'False':
+                list = ast.literal_eval(g)
+                idf = self.ticket_id.team_id.id
+                tam = len(list)
+                if idf == 8 or idf == 13 :  
+                   res['domain']={'productos':[('categ_id', '=', 5),('x_studio_toner_compatible.id','in',list)]}
+                if idf == 9:
+                   res['domain']={'productos':[('categ_id', '=', 7),('x_studio_toner_compatible.id','=',list[0])]}
+                if idf != 9 and idf != 8:
+                   res['domain']={'productos':[('categ_id', '!=', 5),('x_studio_toner_compatible.id','=',list[0])]}
+        else:
+            res['domain']={'productos':[('categ_id', '=', 7)]}
+        return res
 
     def agregarProductos(self):
         #for producto in self.productos:
