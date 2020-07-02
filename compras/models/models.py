@@ -312,7 +312,7 @@ class compras(models.Model):
                                         product['name']=desc
                                         arr.append(product)
                                     i=i+1       
-                                if('Customer' in o or 'SUPPLY' in o):
+                                if('Customer' in o or 'SUPPLY' in o or 'PARTS' in o):
                                     s = o.split("$")
                                     h=float(s[2])
                                     g=float(s[1].split(' ')[0])
