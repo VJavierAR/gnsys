@@ -14,7 +14,7 @@ class SaleOrderCompatibles(http.Controller):
             p.cambio()
         if(p.x_studio_tipo_de_solicitud == "Retiro" and u!=False):
             p.retiro()
-        if(and u==False):
+        if(u==False):
             return "No tiene permisos para realizar esta acción"    
         return "Orden  "+str(p.name)+" Autorizada"
 
