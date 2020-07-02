@@ -6,12 +6,16 @@ class SaleOrderCompatibles(http.Controller):
     @http.route('/sale_order_compatibles/sale_order_compatibles/<int:sale_id>', auth='public')
     def index(self, sale_id,**kw):
         p=request.env['sale.order'].search([['id','=',sale_id]])
-        if(p.x_studio_tipo_de_solicitud in ["Venta","Venta directa","Arrendamiento"]):
+        uido=request.env.context.get('uid')
+        u=request.env['res.groups'].search([['name','=','ventas autorizacion']]).users.filtered(lambda x:x.id==uido)
+        if(p.x_studio_tipo_de_solicitud in ["Venta","Venta directa","Arrendamiento"] and u!=False):
             p.action_confirm()
-        if(p.x_studio_tipo_de_solicitud == "Cambio"):
+        if(p.x_studio_tipo_de_solicitud == "Cambio" and u!=False):
             p.cambio()
-        if(p.x_studio_tipo_de_solicitud == "Retiro"):
+        if(p.x_studio_tipo_de_solicitud == "Retiro" and u!=False):
             p.retiro()
+        if(and u==False):
+            return "No tiene permisos para realizar esta acción"    
         return "Orden  "+str(p.name)+" Autorizada"
 
 
