@@ -1592,7 +1592,12 @@ class CrearYValidarSolTonerMassAction(TransientModel):
         _logger.info("CrearYValidarSolTonerMassAction.confirmar()")
 
         listaTicketsSale = []
+        listaDeTicketsConSolicitud = []
+        listaDeTicketsValidados = []
+        listaDeTicketsSinPoroductos = []
+
         for ticket in self.ticket_ids:
+            
             if not ticket.x_studio_field_nO7Xg:
                 jalaSolicitudes = ''
                 if ticket.stage_id.id == 91 and ticket.x_studio_field_nO7Xg:
@@ -1745,11 +1750,15 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                             
                         
                         if car==0:
-                           raise exceptions.ValidationError("Ningun cartucho selecionado, serie ."+str(c.serie.name)) 
+                           #raise exceptions.ValidationError("Ningun cartucho selecionado, serie ."+str(c.serie.name))
+                           listaDeTicketsSinPoroductos.append(ticket.id)
+                           break
                         
                         jalaSolicitudes='solicitud de toner '+sale.name+' para la serie :'+serieaca +' '+bn+' '+amar+' '+cian+' '+magen
                     if len(sale.order_line)==0:
-                       raise exceptions.ValidationError("Ningun cartucho selecionado, revisar series .")                    
+                       #raise exceptions.ValidationError("Ningun cartucho selecionado, revisar series .")
+                       listaDeTicketsSinPoroductos.append(ticket.id)
+                       break
                     sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
                     jalaSolicitudess='solicitud de toner '+sale.name+' para la serie :'+serieaca
                     self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
@@ -1791,8 +1800,12 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                                 if(len(requisicion)>0):
                                     requisicion[0].product_rel=[{'cliente':sale.partner_shipping_id.id,'ticket':sale.x_studio_field_bxHgp.id,'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
                         sale.action_confirm()
+                        listaDeTicketsValidados.append(ticket.id)
 
                     else:
+                        listaDeTicketsSinPoroductos.append(ticket.id)
+                        
+                        """
                         mensajeTitulo = 'Solicitud sin productos!!!'
                         mensajeCuerpo = 'No es posible validar una solicitud que no tiene productos.'
                         #wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
@@ -1810,8 +1823,10 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                                 'res_id': wiz.id,
                                 'context': self.env.context,
                                 }
-                        
+                        """
             else:
+                listaDeTicketsConSolicitud.append(ticket.id)
+                """
                 mensajeTitulo = 'Solicitud de tóner existente!!!'
                 mensajeCuerpo = 'Ya existe una solicitud de tóner. No es posible generar dos solicitudes.'
                 #wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
@@ -1829,7 +1844,7 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                         'res_id': wiz.id,
                         'context': self.env.context,
                         }
-
+                """
 
             """
             saleTemp = ticket.x_studio_field_nO7Xg
@@ -1854,18 +1869,29 @@ class CrearYValidarSolTonerMassAction(TransientModel):
 
 
         #listaTicketsSale.sudo().action_confirm()
-        self.ticket_ids.write({'stage_id': 93})
-
-        for ticket in self.ticket_ids:
-            query = "update helpdesk_ticket set stage_id = 93 where id = " + str(ticket.x_studio_id_ticket) + ";"
-            ss = self.env.cr.execute(query)
+        #self.ticket_ids.write({'stage_id': 93})
 
         wiz = ''
         mensajeTitulo = "Solicitudes de tóner creadas y validadas !!!"
         mensajeCuerpo = "Se crearon y validaron las solicitudes de los tickets. \n\n"
-        for ticket in self.ticket_ids:
-            mensajeCuerpo = mensajeCuerpo + str(ticket.x_studio_id_ticket) + ', '
-              
+
+        for ticket in listaDeTicketsValidados:
+            query = "update helpdesk_ticket set stage_id = 93 where id = " + str(ticket) + ";"
+            ss = self.env.cr.execute(query)
+            self.env.cr.commit()
+            mensajeCuerpo = mensajeCuerpo + str(ticket) + ', '
+
+        mensajeCuerpo = mensajeCuerpo + '\n\nLos siguientes tickets ya contaban con Solicitudes creadas por lo cual no fueron validados. \n\n'
+        
+        for ticket in listaDeTicketsConSolicitud:
+            mensajeCuerpo = mensajeCuerpo + str(ticket) + ', '
+        #for ticket in self.ticket_ids:
+        #    mensajeCuerpo = mensajeCuerpo + str(ticket.x_studio_id_ticket) + ', '
+        
+        mensajeCuerpo = mensajeCuerpo + '\n\n Los siguientes tickets no tienen cartuchos en sus solicitudes, favor de revisar las series y sus cartuchos seleccionados. \n\n'
+        for ticket in listaDeTicketsSinPoroductos:
+            mensajeCuerpo = mensajeCuerpo + str(ticket) + ', '
+
         wiz = self.env['helpdesk.alerta.series'].create({'ticket_id': ticket.id, 'mensaje': mensajeCuerpo})
         view = self.env.ref('helpdesk_update.view_helpdesk_alerta_series')
         return {
