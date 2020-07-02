@@ -13,13 +13,13 @@ class SaleOrderCompatibles(http.Controller):
         _logger.info(str(uido))
         u=request.env['res.groups'].search([['name','=','ventas autorizacion']]).users.filtered(lambda x:x.id==uido)
         _logger.info(str(u.id))
-        if(p.x_studio_tipo_de_solicitud in ["Venta","Venta directa","Arrendamiento"] and u!=False):
+        if(p.x_studio_tipo_de_solicitud in ["Venta","Venta directa","Arrendamiento"] and u.id!=False):
             p.action_confirm()
-        if(p.x_studio_tipo_de_solicitud == "Cambio" and u!=False):
+        if(p.x_studio_tipo_de_solicitud == "Cambio" and u.id!=False):
             p.cambio()
-        if(p.x_studio_tipo_de_solicitud == "Retiro" and u!=False):
+        if(p.x_studio_tipo_de_solicitud == "Retiro" and u.id!=False):
             p.retiro()
-        if(u==False):
+        if(u.id==False):
             return "No tiene permisos para realizar esta acción"    
         return "Orden  "+str(p.name)+" Autorizada"
 
