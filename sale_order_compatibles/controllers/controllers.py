@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
 from odoo import http
 from odoo.http import request
+import logging, ast
+from odoo.tools import config, DEFAULT_SERVER_DATE_FORMAT, DEFAULT_SERVER_DATETIME_FORMAT, pycompat
+_logger = logging.getLogger(__name__)
 
 class SaleOrderCompatibles(http.Controller):
     @http.route('/sale_order_compatibles/sale_order_compatibles/<int:sale_id>', auth='public')
     def index(self, sale_id,**kw):
         p=request.env['sale.order'].search([['id','=',sale_id]])
         uido=request.env.context.get('uid')
+        _logger.info(str(uido))
         u=request.env['res.groups'].search([['name','=','ventas autorizacion']]).users.filtered(lambda x:x.id==uido)
         if(p.x_studio_tipo_de_solicitud in ["Venta","Venta directa","Arrendamiento"] and u!=False):
             p.action_confirm()
