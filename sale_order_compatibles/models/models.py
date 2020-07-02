@@ -162,6 +162,8 @@ class sale_update(models.Model):
 	def desbloquea(self):
 		self.action_cancel()
 		self.action_draft()
+		picks=self.env['stock.picking'].search([['sale_id','=',self.id]])
+		picks.unlink()
 
 	def componentes(self):
 		if(len(self.order_line)>0):
