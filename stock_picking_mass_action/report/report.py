@@ -130,7 +130,7 @@ class ExistenciasXML(models.AbstractModel):
                 precio=self.env['purchase.order.line'].search([['product_id','=',obj.product_id.id]])
                 sheet.write(i, 8, precio.sorted(key='id',reverse=True)[0].price_unit if(precio) else obj.product_id.lst_price, bold)
                 i=i+1
-            sheet.add_table('A2:I'+str((i)),{'style': 'Table Style Medium 9','columns': [{'header': 'Almacen'},{'header': 'Modelo'},{'header': 'No Parte'},{'header':'Descripción'},{'header':'No Serie'},{'header': 'Estado'},{'header': 'Apartados'},{'header': 'Ubicación'},{'header':'Costo'}]}) 
+            sheet.add_table('A2:I'+str((i)),{'columns': [{'header': 'Almacen'},{'header': 'Modelo'},{'header': 'No Parte'},{'header':'Descripción'},{'header':'No Serie'},{'header': 'Estado'},{'header': 'Apartados'},{'header': 'Ubicación'},{'header':'Costo'}]}) 
         else:
             sheet = workbook.add_worksheet('Existencias Componentes')
             sheet.merge_range('A1:H1', 'Existencias Componentes', merge_format)   
