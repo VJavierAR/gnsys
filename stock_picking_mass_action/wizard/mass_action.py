@@ -206,7 +206,7 @@ class StockIngreso(TransientModel):
         self.pick.purchase_id.write({'recibido':'recibido'})
         self.env['stock.picking'].search([['state','=','assigned']]).action_assign()
         self.pick.action_done()
-        return self.env.ref('stock.report_picking').report_action(self.pick)
+        return self.env.ref('stock.action_report_picking').report_action(self.pick)
 
 class StockIngresoLines(TransientModel):
     _name='ingreso.lines'
@@ -1067,7 +1067,7 @@ class SerieIngreso(TransientModel):
             self.picking.action_done()
         self.picking.purchase_id.write({'recibido':'recibido'})
         self.env['stock.picking'].search([['state','=','assigned']]).action_assign()
-        return self.env.ref('stock.report_picking').report_action(self.picking)
+        return self.env.ref('stock.action_report_picking').report_action(self.picking)
 
 
 

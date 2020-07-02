@@ -455,7 +455,7 @@ class StockPicking(Model):
         wiz = self.env['ingreso.almacen'].create({'pick':self.id,'almacen':self.picking_type_id.warehouse_id.id})
         view = self.env.ref('stock_picking_mass_action.view_ingreso_almacen')
         for r in self.move_ids_without_package:
-            self.env['ingreso.lines'].create({'move':r.id,'producto':self.product_id.id,'rel_ingreso':wiz.id,'cantidad':int(r.product_uom_qty)})
+            self.env['ingreso.lines'].create({'move':r.id,'producto':r.product_id.id,'rel_ingreso':wiz.id,'cantidad':int(r.product_uom_qty)})
         return {
             'name': _('Ingreso'),
             'type': 'ir.actions.act_window',
