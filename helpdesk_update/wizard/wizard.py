@@ -1892,7 +1892,7 @@ class CrearYValidarSolTonerMassAction(TransientModel):
         for ticket in listaDeTicketsSinPoroductos:
             mensajeCuerpo = mensajeCuerpo + str(ticket) + ', '
 
-        wiz = self.env['helpdesk.alerta.series'].create({'ticket_id': ticket.id, 'mensaje': mensajeCuerpo})
+        wiz = self.env['helpdesk.alerta.series'].create({'mensaje': mensajeCuerpo})
         view = self.env.ref('helpdesk_update.view_helpdesk_alerta_series')
         return {
                 'name': _(mensajeTitulo),
