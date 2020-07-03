@@ -257,9 +257,9 @@ class compras(models.Model):
                                 serial=''
                                 if ('PIEZA' in f):
                                     cantidad = f.split('PIEZA')[0]
-                                    l = f.split('PIEZA')[1].split(' -',2)
-                                    id = l[1].replace(' ','')
-                                    casi = l[2].split('.')
+                                    l = f.split('PIEZA')[1].split(' -',1)
+                                    id = l[0].replace(' ','')
+                                    casi = l[1].split('.')
                                     _logger.info(str(casi))
                                     casii = casi[1].split(' ')[0]
                                     tam = casi[0].split(' ')
