@@ -136,6 +136,7 @@ class StockPickingMassAction(TransientModel):
         if pick_to_do:
             pick_to_do.action_done()
         if assigned_picking_lst._check_backorder():
+            
             cancel_backorder=True
             if cancel_backorder:
                for pick_id in self.picking_ids:
@@ -148,7 +149,7 @@ class StockPickingMassAction(TransientModel):
             if cancel_backorder:
                 for pick_id in self.picking_ids:
                     backorder_pick = self.env['stock.picking'].search([('backorder_id', '=', pick_id.id)])
-                    if(pick_id.picking_type_id.id==3 or pick_id.picking_type_id.id==29314):
+                    if((pick_id.picking_type_id.id==3 or pick_id.picking_type_id.id==29314) and pick_id.sale_id.id !=False):
                         sale = self.env['sale.order'].create({'x_studio_backorder':True,'partner_id' : pick_id.sale_id.partner_id.id, 'origin' : pick_id.sale_id.origin, 'x_studio_tipo_de_solicitud' : 'Venta', 'x_studio_requiere_instalacin' : True, 'x_studio_field_RnhKr': pick_id.sale_id.x_studio_field_RnhKr.id, 'partner_shipping_id' : pick_id.sale_id.partner_shipping_id.id, 'warehouse_id' :pick_id.sale_id.warehouse_id.id, 'team_id' : 1, 'x_studio_field_bxHgp': pick_id.x_studio_ticket_relacionado.id})
                         pick_id.write({'sale_child':sale.id})
                         for rr in backorder_pick.move_ids_without_package:
@@ -468,6 +469,27 @@ class TransferInter(TransientModel):
     almacenDestino=fields.Many2one('stock.warehouse','Almacen Destino')
     lines=fields.One2many('transferencia.interna.temp','transfer')
     categoria=fields.Many2one('product.category','Categoria de productos')
+    archivo=fields.Binary()
+    
+    @api.onchange('archivo')
+    def agregarLineas(self):
+        if(self.archivo):
+            f2=base64.b64decode(self.archivo)
+            H=StringIO(f2)
+            mimetype = guess_mimetype(f2 or b'')
+            if(mimetype=='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'):
+                book = xlrd.open_workbook(file_contents=f2 or b'')
+                sheet = book.sheet_by_index(0)
+                header=[]
+                arr=[]
+                i=0
+                for row_num, row in enumerate(sheet.get_rows()):
+                    if(i>0):
+                        code=str(row[1].value).split('0',1)[0].replace('.0','') if(str(row[1].value)[0]=='0') else str(row[1].value).replace('.0','')
+                        p=self.env['product.product'].search([['default_code','=',code]])
+                        self.lines=[{'producto':p.id,'cantidad':int(row[2].value)}]
+                    i=i+1
+                    
 
     def confirmar(self):
         pick_dest=[]
