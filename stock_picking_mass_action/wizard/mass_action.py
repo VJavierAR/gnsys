@@ -921,8 +921,8 @@ class PickingsAComprasMassAction(TransientModel):
             for r in requLin:
                 r['req_rel']=requisicion.id
                 self.env['product.rel.requisicion'].create(r)
-            pppp=self.env['stock.picking'].browse(pi).write({'estado':'compras'})
-            for pp in pppp:
+            #pppp=self.env['stock.picking'].browse(pi).write({'estado':'compras'})
+            for pp in self.picking_ids:
                 pp.x_studio_ticket_relacionado.write({'stage_id':113})
                 env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : pp.x_studio_ticket_relacionado.id, 'estadoTicket' : "Pendiente de compra", 'comentario':"Pendiente de compra Requisicion:(requisicion.name)"}) 
             view = self.env.ref('studio_customization.default_form_view_fo_24cee64e-ad11-4f19-a7f6-fceca5375726')
