@@ -348,15 +348,26 @@ class PagoSolicitante(models.Model):
     @api.onchange('fecha')
     def computarDiasAtrasoPago(self):
         if self.fecha :
-            _logger.info("**********-:   "+str(self.fecha).split(' ')[0])
-            diasAtraso = 0
+
+            fechaCompleta = str(rec.create_date).split(' ')[0]
+            fechaCompleta = fechaCompleta.split()
 
 
-            # fecha1 = str(self.fecha).split(' ')[0]
-            # converted_date = datetime.datetime.strptime(fecha1, '%Y-%m-%d').date()
-            diasAtraso = (datetime.date.today() - self.fecha).days
+        
+            _logger.info("||||-:   "+fechaCompleta[0])
+            _logger.info("||||-:   "+fechaCompleta[1])
+            _logger.info("||||-:   "+fechaCompleta[2])
+
+            # fecha1 = datetime.datetime(2020, 1, 1)
+            # fecha2 = datetime.datetime(2019, 1, 1)
+            # diasAtraso = 0
+
+
+            # # fecha1 = str(self.fecha).split(' ')[0]
+            # # converted_date = datetime.datetime.strptime(fecha1, '%Y-%m-%d').date()
+            # diasAtraso = (datetime.date.today() - self.fecha).days
             
-            _logger.info("**********-:   "+str(diasAtraso))
+            # _logger.info("**********-:   "+str(diasAtraso))
 
             
             # message = ""
