@@ -24,10 +24,10 @@ class gastos_gnsys(models.Model):
     fechaLimitePagoGasto = fields.Datetime(string = 'Fecha limite de pago', track_visibility='onchange')
 
     def computarfechaDeSolicitud(self):
-    for rec in self:
-        fecha = str(rec.create_date).split(' ')[0]
-        converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
-        self.fechaDeSolicitud = converted_date 
+        for rec in self:
+            fecha = str(rec.create_date).split(' ')[0]
+            converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
+            self.fechaDeSolicitud = converted_date 
 
 
     # --- AUTORIZACIÓN | LÍDER (PUEDE SER MULTIPLE)
