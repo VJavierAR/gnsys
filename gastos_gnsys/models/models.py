@@ -14,20 +14,27 @@ class gastos_gnsys(models.Model):
     
     nombre = fields.Char(string="Nombre de gasto")
     
+    # --- SOLICITUD | USUARIO FINAL ---
     quienSolcita     = fields.Many2one('res.users', string = "Quien solicita",track_visibility='onchange', default=lambda self: self.env.user)
+    proyecto = fields.Text(string="Proyecto", track_visibility='onchange')
+    montoRequerido   = fields.Float(string = 'Monto requerido',track_visibility='onchange')
+    fechaDeSolicitud = fields.Datetime(string = 'Fecha de solicitud', track_visibility='onchange')
+    fechaLimitePagoGasto = fields.Datetime(string = 'Fecha limite de pago', track_visibility='onchange')
+
+    
     #quienSolcita     = fields.Char(string="Quien solicita?" ,track_visibility='onchange')
     #quienesAutorizan = fields.One2many('res.users', 'gastoAutoriza', string = "Responsable de autorizacion",track_visibility='onchange')
     #quienesAutorizan = fields.Char(string = "Responsable de autorizacion", track_visibility='onchange')
     quienesAutorizan = fields.Many2one('res.users',string = "Responsable de autorizacion", track_visibility='onchange', default=lambda self: self.env.user)
     quienesReciben   = fields.One2many('res.users', 'gastoRecibe', string = "Quien (es) reciben",track_visibility='onchange')
     montoAprobado   = fields.Float(string = 'Monto aprobado',track_visibility='onchange')
-    montoRequerido   = fields.Float(string = 'Monto requerido',track_visibility='onchange')
+    
     montoAdelantado = fields.Float(string = 'Monto adelanto',track_visibility='onchange')
     montoAtnticipado = fields.Float(string = 'Monto anticipo',track_visibility='onchange')
     autorizacionLider = fields.Selection([('Aprobada','Aprobada'), ('Rechazada','Rechazada')], string = "Autorización", track_visibility='onchange')
     autorizacionFinanzas = fields.Selection([('Aprobada','Aprobada'), ('Rechazada','Rechazada')], string = "Autorización", track_visibility='onchange')
-    proyecto = fields.Text(string="Proyecto", track_visibility='onchange')
-    fechaLimitePagoGasto = fields.Datetime(string = 'Fecha limite de pago', track_visibility='onchange')
+    
+    
     fechaLimiteComprobacionFinanzas = fields.Datetime(string = 'Fecha limite de comprobacion',track_visibility='onchange')
 
     formaDepagoAnticipo         = fields.Selection((('Efectivo','Efectivo'), ('Cheque','Cheque'),('Deposito','Deposito'),('Transferencia','Transferencia')), string = "Forma de pago",track_visibility='onchange')
