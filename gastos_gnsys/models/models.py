@@ -352,14 +352,15 @@ class PagoSolicitante(models.Model):
             fechaCompleta = str(self.fecha).split(' ')[0]
             fechaCompleta = fechaCompleta.split('-')
 
+            fecha1 = datetime.datetime(fechaCompleta[0], fechaCompleta[1], fechaCompleta[2])
+            fecha2 = datetime.date.today()
 
-        
-            _logger.info("||||-:   "+fechaCompleta[0])
-            _logger.info("||||-:   "+fechaCompleta[1])
-            _logger.info("||||-:   "+fechaCompleta[2])
-
-            # fecha1 = datetime.datetime(2020, 1, 1)
-            # fecha2 = datetime.datetime(2019, 1, 1)
+            esMenor = "Es menor"
+            esMayor = "Es mayor"
+            if fecha1 < fecha2 :
+                _logger.info("||||-:   "+esMenor)
+            else:
+                _logger.info("||||-:   "+esMayor)
             # diasAtraso = 0
 
 
