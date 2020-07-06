@@ -497,6 +497,10 @@
                 </group>
 
                 <group>
+                    <field name='textoDistribuidor' readonly='1' widget='html' force_save='1' /> 
+                </group>
+
+                <group>
                     <group class='text-center' string = 'Datos de busqueda'>
                     </group>
                 </group>

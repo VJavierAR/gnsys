@@ -860,6 +860,7 @@ class helpdesk_crearconserie(TransientModel):
     ticket_id_existente = fields.Integer(string = 'Ticket existente', default = 0, store = True)
     textoTicketExistente = fields.Text(string = ' ', store = True)
     textoClienteMoroso = fields.Text(string = ' ', store = True)
+    textoDistribuidor = fields.Text(string = ' ', store = True)
 
     estatus = fields.Selection([('No disponible','No disponible'),('Moroso','Moroso'),('Al corriente','Al corriente')], string = 'Estatus', store = True, default = 'No disponible')
 
@@ -971,12 +972,12 @@ class helpdesk_crearconserie(TransientModel):
             if self.localidadRelacion.x_studio_distribuidor or self.clienteRelacion.x_studio_distribuidor:
                 textoHtml = []
                 textoHtml.append("<h2>Es distribuidor, favor de verificar la dirección del cliente para evitar problemas de visitas erroneas.</h2>")
-                self.textoClienteMoroso = ''.join(textoHtml)
+                self.textoDistribuidor = ''.join(textoHtml)
         else:
             if self.localidadRelacion.x_studio_distribuidor:
                 textoHtml = []
                 textoHtml.append("<h2>Es distribuidor, favor de verificar la dirección del cliente para evitar problemas de visitas erroneas.</h2>")
-                self.textoClienteMoroso = ''.join(textoHtml)
+                self.textoDistribuidor = ''.join(textoHtml)
       else:
         self.serie = ''
 
@@ -999,6 +1000,7 @@ class helpdesk_crearconserie(TransientModel):
         self.direccionEstado = ''
         self.direccionCodigoPostal = ''
 
+        self.textoDistribuidor = ''
   
         
     @api.onchange('clienteRelacion')
@@ -1027,6 +1029,8 @@ class helpdesk_crearconserie(TransientModel):
             self.direccionCodigoPostal = ''
 
             self.estatus = 'No disponible'
+
+            self.textoDistribuidor = ''
         else:
             if self.clienteRelacion.x_studio_moroso:
                 self.estatus = 'Moroso'
@@ -1042,12 +1046,12 @@ class helpdesk_crearconserie(TransientModel):
                 if self.clienteRelacion.x_studio_distribuidor or self.localidadRelacion.x_studio_distribuidor:
                     textoHtml = []
                     textoHtml.append("<h2>Es distribuidor, favor de verificar la dirección del cliente para evitar problemas de visitas erroneas.</h2>")
-                    self.textoClienteMoroso = ''.join(textoHtml)
+                    self.textoDistribuidor = ''.join(textoHtml)
             else:
                 if self.clienteRelacion.x_studio_distribuidor:
                     textoHtml = []
                     textoHtml.append("<h2>Es distribuidor, favor de verificar la dirección del cliente para evitar problemas de visitas erroneas.</h2>")
-                    self.textoClienteMoroso = ''.join(textoHtml)
+                    self.textoDistribuidor = ''.join(textoHtml)
 
             #if self.clienteRelacion.name == 'GN SYS CORPORATIVO SA DE CV':
 
