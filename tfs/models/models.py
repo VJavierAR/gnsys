@@ -221,46 +221,54 @@ class tfs(models.Model):
                             pickDestino.append(datos2)
                             rule.append(re.id)
             if(len(pickOrigen)>0):
-                origen1=self.env['stock.picking.type'].search([['name','=','Pick'],['warehouse_id','=',6299]])
-                origen2=self.env['stock.picking.type'].search([['name','=','Distribución'],['warehouse_id','=',1]])
-                origen3=self.env['stock.picking.type'].search([['name','=','Tránsito'],['warehouse_id','=',1]])
+                c=self.env['res.partner'].search([['name','=',al.name],['parent_id','=',1]])
+                ticket=self.env['helpdesk.ticket'].create({'x_studio_tipo_de_vale':'Resurtido de Almacen','parent_id':c.id,'partner_shipping_id':c.id})
+                sale = self.env['sale.order'].create({'partner_id' : c.id, 'origin' : "Ticket: " + str(ticket.id), 'x_studio_tipo_de_solicitud' : 'Venta', 'partner_shipping_id' : c.id , 'warehouse_id' : 6299 , 'team_id' : 1, 'x_studio_field_bxHgp': ticket.id})
+                #origen1=self.env['stock.picking.type'].search([['name','=','Pick'],['warehouse_id','=',6299]])
+                #origen2=self.env['stock.picking.type'].search([['name','=','Distribución'],['warehouse_id','=',1]])
+                #origen3=self.env['stock.picking.type'].search([['name','=','Tránsito'],['warehouse_id','=',1]])
                 destino=self.env['stock.picking.type'].search([['name','=','Receipts'],['warehouse_id','=',al.id]])
                 #_logger.info(str(origen2.default_location_src_id.id))
-                pick_origin1= self.env['stock.picking'].create({'picking_type_id' : origen1.id,'almacenOrigen':6299,'almacenDestino':al.id,'location_id':origen1.default_location_src_id.id,'location_dest_id':origen2.default_location_src_id.id})
-                pick_origin2= self.env['stock.picking'].create({'picking_type_id' : origen2.id,'almacenOrigen':6299,'almacenDestino':al.id,'location_id':origen2.default_location_src_id.id,'location_dest_id':origen3.default_location_src_id.id})
-                pick_origin3= self.env['stock.picking'].create({'picking_type_id' : origen3.id,'almacenOrigen':6299,'almacenDestino':al.id,'location_id':origen3.default_location_src_id.id,'location_dest_id':17})
-
+                #pick_origin1= self.env['stock.picking'].create({'picking_type_id' : origen1.id,'almacenOrigen':6299,'almacenDestino':al.id,'location_id':origen1.default_location_src_id.id,'location_dest_id':origen2.default_location_src_id.id})
+                #pick_origin2= self.env['stock.picking'].create({'picking_type_id' : origen2.id,'almacenOrigen':6299,'almacenDestino':al.id,'location_id':origen2.default_location_src_id.id,'location_dest_id':origen3.default_location_src_id.id})
+                #pick_origin3= self.env['stock.picking'].create({'picking_type_id' : origen3.id,'almacenOrigen':6299,'almacenDestino':al.id,'location_id':origen3.default_location_src_id.id,'location_dest_id':17})
                 pick_dest = self.env['stock.picking'].create({'picking_type_id' : destino.id, 'location_id':17,'almacenOrigen':6299,'almacenDestino':al.id,'location_dest_id':al.lot_stock_id.id,'reglas':[(6,0,rule)]})
-                
+                ticket.x_studio_field_nO7Xg=sale.id
                 for ori in pickOrigen:
-                    
+                    ticket.x_studio_productos=[(4,ori['product_id'])]
+                    sl=self.env['sale.order.line'].create({'order_id' : sale.id,'product_id':ori['product_id'],'product_uom_qty':ori['product_uom_qty'], 'price_unit': 0,'route_id':24829})
                     #1
-                    ori['picking_id']=pick_origin1.id
-                    ori['location_id']=pick_origin1.location_id.id
-                    ori['location_dest_id']=pick_origin1.location_dest_id.id
-                    self.env['stock.move'].create(ori)
+                    #ori['picking_id']=pick_origin1.id
+                    #ori['location_id']=pick_origin1.location_id.id
+                    #ori['location_dest_id']=pick_origin1.location_dest_id.id
+                    #self.env['stock.move'].create(ori)
                     #2
-                    ori['picking_id']=pick_origin2.id
-                    ori['location_id']=pick_origin2.location_id.id
-                    ori['location_dest_id']=pick_origin2.location_dest_id.id
-                    self.env['stock.move'].create(ori)
+                    #ori['picking_id']=pick_origin2.id
+                    #ori['location_id']=pick_origin2.location_id.id
+                    #ori['location_dest_id']=pick_origin2.location_dest_id.id
+                    #self.env['stock.move'].create(ori)
                     #3
-                    ori['picking_id']=pick_origin3.id
-                    ori['location_id']=pick_origin3.location_id.id
-                    ori['location_dest_id']=17
-                    self.env['stock.move'].create(ori)
+                    #ori['picking_id']=pick_origin3.id
+                    #ori['location_id']=pick_origin3.location_id.id
+                    #ori['location_dest_id']=17
+                    #self.env['stock.move'].create(ori)
 
                 for des in pickDestino:
                     des['location_id']=17
                     des['picking_id']=pick_dest.id
                     self.env['stock.move'].create(des)
-                
-                pick_origin1.action_confirm()
-                pick_origin1.action_assign()
-                pick_origin2.action_confirm()
-                pick_origin2.action_assign()
-                pick_origin3.action_confirm()
-                pick_origin3.action_assign()
+                sale.action_confirm()
+                ww=self.env['stock.picking'].search([['sale_id','=',sale.id],['picking_type_id.code','=','outgoing']])
+                ww.write({'location_dest_id':17})
+                for w in ww.move_ids_without_package:
+                    w.write({'location_dest_id':17})
+                    self.env['stock.move.line'].search([['move_id','=',w.id]]).write({'location_dest_id':17})
+                #pick_origin1.action_confirm()
+                #pick_origin1.action_assign()
+                #pick_origin2.action_confirm()
+                #pick_origin2.action_assign()
+                #pick_origin3.action_confirm()
+                #pick_origin3.action_assign()
                 pick_dest.action_confirm()
                 pick_dest.action_assign()    
 
