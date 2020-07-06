@@ -91,7 +91,7 @@ class StockPickingMassAction(TransientModel):
     def che(self):
         for s in self.picking_ids:
             #Almacen
-            if(s.picking_type_id.id==3):
+            if(s.picking_type_id.id==3 or s.picking_type_id.id==31485):
                 self.check=2
             #refacion
             if(s.picking_type_id.id==29314):
@@ -116,7 +116,7 @@ class StockPickingMassAction(TransientModel):
         validacion=assigned_picking_lst.mapped('picking_type_id.id')
         tipo=assigned_picking_lst.mapped('picking_type_id.code')
         _logger.info(str(tipo))
-        if(3 in validacion):
+        if(3 in validacion or 31485 in validacion):
             CON=str(self.env['ir.sequence'].next_by_code('concentrado'))
             self.check=2
             #assigned_picking_lst.write({'concentrado':CON})
