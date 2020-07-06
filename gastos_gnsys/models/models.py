@@ -366,7 +366,7 @@ class PagoSolicitante(models.Model):
                 _logger.info("||||-:   "+esMenor)
             else:
                 _logger.info("||||-:   "+esMayor)
-                self.fecha = datetime.date.today()
+                self.fecha = ""
             #diasAtraso = 0
 
 
