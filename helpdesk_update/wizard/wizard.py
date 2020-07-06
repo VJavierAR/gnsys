@@ -969,10 +969,12 @@ class helpdesk_crearconserie(TransientModel):
         self.direccionCodigoPostal = self.localidadRelacion.zip
         if self.clienteRelacion:
             if self.localidadRelacion.x_studio_distribuidor or self.clienteRelacion.x_studio_distribuidor:
+                textoHtml = []
                 textoHtml.append("<h2>Es distribuidor, favor de verificar la dirección del cliente para evitar problemas de visitas erroneas.</h2>")
                 self.textoClienteMoroso = ''.join(textoHtml)
         else:
             if self.localidadRelacion.x_studio_distribuidor:
+                textoHtml = []
                 textoHtml.append("<h2>Es distribuidor, favor de verificar la dirección del cliente para evitar problemas de visitas erroneas.</h2>")
                 self.textoClienteMoroso = ''.join(textoHtml)
       else:
@@ -1038,10 +1040,12 @@ class helpdesk_crearconserie(TransientModel):
                 self.textoClienteMoroso = ''
             if self.localidadRelacion:
                 if self.clienteRelacion.x_studio_distribuidor or self.localidadRelacion.x_studio_distribuidor:
+                    textoHtml = []
                     textoHtml.append("<h2>Es distribuidor, favor de verificar la dirección del cliente para evitar problemas de visitas erroneas.</h2>")
                     self.textoClienteMoroso = ''.join(textoHtml)
             else:
                 if self.clienteRelacion.x_studio_distribuidor:
+                    textoHtml = []
                     textoHtml.append("<h2>Es distribuidor, favor de verificar la dirección del cliente para evitar problemas de visitas erroneas.</h2>")
                     self.textoClienteMoroso = ''.join(textoHtml)
 
