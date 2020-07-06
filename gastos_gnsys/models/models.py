@@ -350,13 +350,8 @@ class PagoSolicitante(models.Model):
         if self.fecha :
             diasAtraso = 0
             for rec in self:
-                fecha = str(datetime.now().date()).split(' ')[0]
+                fecha = str(self.fecha).split(' ')[0]
                 converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
-
-                
-                # current_date=str(datetime.now().date())
-                # d2=datetime.strptime(current_date, "%Y-%m-%d")
-
 
 
                 diasAtraso = (datetime.date.today() - converted_date).days
