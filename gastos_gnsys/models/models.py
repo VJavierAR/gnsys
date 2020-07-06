@@ -313,6 +313,7 @@ class comprobaciones(models.Model):
     porcentajeAceptado      = fields.Selection((('100','100%'),('75','75%'),('50','50%'),('25','25%'),('0','0%')), string = "Porcentaje Aceptado",track_visibility='onchange')
     cuentaContableDestino   = fields.Text(string = "Aplicación contable", track_visibility='onchange')
     montoAprobadooriginalMante = fields.Float(string = "Monto aprobado originalmente", track_visibility='onchange')
+    justificacionContable   = fields.Text(string = "Justificación contable", track_visibility='onchange')
     #----------------------------
     monto                   = fields.Float(string = "Monto",         track_visibility='onchange')
     nombre                  = fields.Char(string="Nombre de comprobación", track_visibility='onchange')
