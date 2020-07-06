@@ -121,6 +121,9 @@ class StockPickingMassAction(TransientModel):
             self.check=2
             #assigned_picking_lst.write({'concentrado':CON})
             self.env['stock.picking'].search([['sale_id','in',assigned_picking_lst.mapped('sale_id.id')]]).write({'concentrado':CON})
+            resto=assigned_picking_lst.filtered(lambda x:x.sale_id.id==False)
+            for r in resto:
+                self.env['stock.picking'].search([['origin','=',r.origin]]).write({'concentrado':CON})        
         if(29314 in validacion):
             self.check=1
         pick_to_backorder = self.env['stock.picking']
@@ -135,8 +138,9 @@ class StockPickingMassAction(TransientModel):
             pick_to_do |= picking
         if pick_to_do:
             pick_to_do.action_done()
-        if assigned_picking_lst._check_backorder():
-            
+        if pick_to_backorder and assigned_picking_lst.mapped('sale_id.id')==[]:
+            pick_to_backorder.action_done()
+        if assigned_picking_lst._check_backorder() and assigned_picking_lst.mapped('sale_id.id')!=[]:
             cancel_backorder=True
             if cancel_backorder:
                for pick_id in self.picking_ids:
@@ -186,7 +190,10 @@ class StockPickingMassAction(TransientModel):
     def vales(self):
         assigned_picking_lst2 = self.picking_ids.\
         filtered(lambda x: x.picking_type_id.id == 3 and x.state == 'done')
-        return self.env.ref('studio_customization.vale_de_entrega_56cdb2f0-51e3-447e-8a67-6e5c7a6b3af9').report_action(assigned_picking_lst2)
+        if(assigned_picking_lst2.mapped('sale_id.id')==[]):
+            return self.env.ref('stock.action_report_picking').report_action(assigned_picking_lst2)
+        else:
+            return self.env.ref('studio_customization.vale_de_entrega_56cdb2f0-51e3-447e-8a67-6e5c7a6b3af9').report_action(assigned_picking_lst2)      
     @api.multi
     def etiquetas(self):
         assigned_picking_lst2 = self.picking_ids.\
@@ -497,6 +504,8 @@ class TransferInter(TransientModel):
         pick_origin1=[]
         pick_origin2=[]
         pick_origin3=[]
+        cliente=self.env['res.partner'].search([['name','=',self.almacenDestino.name],['parent_id','=',1]])
+        oden=self.env['sale.order'].create({'partner_id':cliente.id,'partner_shipping_id':cliente.id})
         if(self.almacenOrigen.id==False):
             self.almacenOrigen=self.almacenPadre.id
 
@@ -510,10 +519,10 @@ class TransferInter(TransientModel):
                 origen2=self.env['stock.picking.type'].search([['name','=','Distribución'],['warehouse_id','=',1]])
                 origen3=self.env['stock.picking.type'].search([['name','=','Tránsito'],['warehouse_id','=',1]])
                 destino=self.env['stock.picking.type'].search([['name','=','Receipts'],['warehouse_id','=',self.almacenDestino.id]])
-                pick_origin1= self.env['stock.picking'].create({'internas':True,'picking_type_id' : origen1.id,'almacenOrigen':self.almacenOrigen.id,'almacenDestino':self.almacenDestino.id,'location_id':origen1.default_location_src_id.id,'location_dest_id':origen2.default_location_src_id.id})
-                pick_origin2= self.env['stock.picking'].create({'internas':True,'picking_type_id' : origen2.id,'almacenOrigen':self.almacenOrigen.id,'almacenDestino':self.almacenDestino.id,'location_id':origen2.default_location_src_id.id,'location_dest_id':origen3.default_location_src_id.id})
-                pick_origin3= self.env['stock.picking'].create({'internas':True,'picking_type_id' : origen3.id,'almacenOrigen':self.almacenOrigen.id,'almacenDestino':self.almacenDestino.id,'location_id':origen3.default_location_src_id.id,'location_dest_id':17})
-                pick_dest = self.env['stock.picking'].create({'internas':True,'picking_type_id' : destino.id, 'location_id':17,'almacenOrigen':self.almacenOrigen.id,'almacenDestino':self.almacenDestino.id,'location_dest_id':self.almacenDestino.lot_stock_id.id})
+                pick_origin1= self.env['stock.picking'].create({'partner_id':cliente.id,'origin':oden.name,'internas':True,'picking_type_id' : origen1.id,'almacenOrigen':self.almacenOrigen.id,'almacenDestino':self.almacenDestino.id,'location_id':origen1.default_location_src_id.id,'location_dest_id':origen2.default_location_src_id.id})
+                pick_origin2= self.env['stock.picking'].create({'partner_id':cliente.id,'origin':oden.name,'internas':True,'picking_type_id' : origen2.id,'almacenOrigen':self.almacenOrigen.id,'almacenDestino':self.almacenDestino.id,'location_id':origen2.default_location_src_id.id,'location_dest_id':origen3.default_location_src_id.id})
+                pick_origin3= self.env['stock.picking'].create({'partner_id':cliente.id,'origin':oden.name,'internas':True,'picking_type_id' : origen3.id,'almacenOrigen':self.almacenOrigen.id,'almacenDestino':self.almacenDestino.id,'location_id':origen3.default_location_src_id.id,'location_dest_id':17})
+                pick_dest = self.env['stock.picking'].create({'partner_id':cliente.id,'origin':oden.name,'internas':True,'picking_type_id' : destino.id, 'location_id':17,'almacenOrigen':self.almacenOrigen.id,'almacenDestino':self.almacenDestino.id,'location_dest_id':self.almacenDestino.lot_stock_id.id})
         else:    
             origen=self.env['stock.picking.type'].search([['name','=','Internal Transfers'],['warehouse_id','=',self.almacenOrigen.id]])
             destino=self.env['stock.picking.type'].search([['name','=','Internal Transfers'],['warehouse_id','=',self.almacenDestino.id]])
