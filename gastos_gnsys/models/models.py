@@ -219,35 +219,35 @@ class gastos_gnsys(models.Model):
                      , 'quienValida': self.env.user.name
                    })
 
-    @api.multi
-    def validarComprobacion(self):
-        message = ""
-        mess = {}
-        if str(self.tipoDeComprobacion) == "Exacto":
-            if self.montoExacto < self.montoAprobado:
-                raise exceptions.ValidationError("El gasto comprobado exacto no es igual al monto aprobado.")
+    # @api.multi
+    # def validarComprobacion(self):
+    #     message = ""
+    #     mess = {}
+    #     if str(self.tipoDeComprobacion) == "Exacto":
+    #         if self.montoExacto < self.montoAprobado:
+    #             raise exceptions.ValidationError("El gasto comprobado exacto no es igual al monto aprobado.")
                 
-                message = ("El gasto comprobado exacto no es igual al monto aprobado.")
-                mess = {
-                        'title': _('Gasto no comprobado!!!'),
-                        'message' : message
-                    }
-                return {'warning': mess}
+    #             message = ("El gasto comprobado exacto no es igual al monto aprobado.")
+    #             mess = {
+    #                     'title': _('Gasto no comprobado!!!'),
+    #                     'message' : message
+    #                 }
+    #             return {'warning': mess}
 
-            else:
-                gasto = self.env['gastos'].search([('id', '=', self.id)])        
-                gasto.write({'x_studio_field_VU6DU': 'Comprobado'
-                            , 'quienValidaMonto': self.env.user.name
-                            })
+    #         else:
+    #             gasto = self.env['gastos'].search([('id', '=', self.id)])        
+    #             gasto.write({'x_studio_field_VU6DU': 'Comprobado'
+    #                         , 'quienValidaMonto': self.env.user.name
+    #                         })
                  
-        elif str(self.tipoDeComprobacion) == "Parcial":
-            _logger.info("Parcial")
-        elif str(self.tipoDeComprobacion) == "Excedido":
-            _logger.info("Excedido")
-        elif str(self.tipoDeComprobacion) == "noComprobado":
-            _logger.info("No comprobado")
-        #else:
-        #    pass
+    #     elif str(self.tipoDeComprobacion) == "Parcial":
+    #         _logger.info("Parcial")
+    #     elif str(self.tipoDeComprobacion) == "Excedido":
+    #         _logger.info("Excedido")
+    #     elif str(self.tipoDeComprobacion) == "noComprobado":
+    #         _logger.info("No comprobado")
+    #     #else:
+    #     #    pass
 
 
 
