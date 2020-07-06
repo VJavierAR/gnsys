@@ -7,7 +7,7 @@ from odoo import exceptions, _
 import logging, ast
 import datetime, time
 _logger = logging.getLogger(__name__)
- 
+from datetime import datetime
 class gastos_gnsys(models.Model):
     _name = 'gastos'
     _description = 'gastos_gnsys'
@@ -350,8 +350,15 @@ class PagoSolicitante(models.Model):
         if self.fecha :
             diasAtraso = 0
             for rec in self:
-                fecha = str(rec.create_date).split(' ')[0]
+                fecha = str(datetime.now().date()).split(' ')[0]
                 converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
+
+                
+                # current_date=str(datetime.now().date())
+                # d2=datetime.strptime(current_date, "%Y-%m-%d")
+
+
+
                 diasAtraso = (datetime.date.today() - converted_date).days
             message = ""
             mess = {}
