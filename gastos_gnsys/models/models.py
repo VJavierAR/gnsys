@@ -23,7 +23,13 @@ class gastos_gnsys(models.Model):
     fechaDeSolicitud = fields.Datetime(string = 'Fecha de solicitud', track_visibility='onchange')
     fechaLimitePagoGasto = fields.Datetime(string = 'Fecha limite de pago', track_visibility='onchange')
 
-    
+    def computarfechaDeSolicitud(self):
+    for rec in self:
+        fecha = str(rec.create_date).split(' ')[0]
+        converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
+        self.fechaDeSolicitud = converted_date 
+
+
     # --- AUTORIZACIÓN | LÍDER (PUEDE SER MULTIPLE)
     quienesAutorizan = fields.Many2one('res.users',string = "Responsable de autorizacion", track_visibility='onchange', default=lambda self: self.env.user)
     autorizacionLider = fields.Selection([('Aprobada','Aprobada'), ('Rechazada','Rechazada')], string = "Autorización", track_visibility='onchange')
