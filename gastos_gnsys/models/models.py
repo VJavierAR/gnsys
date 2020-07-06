@@ -357,12 +357,12 @@ class PagoSolicitante(models.Model):
             mess = {}
             if diasAtraso == 0 :
                 raise exceptions.ValidationError("El pago no puede ser mayor al día de hoy .")
-                    message = ("El pago no puede ser mayor al día de hoy .")
-                    mess = {
-                            'title': _('Error'),
-                            'message' : message
-                        }
-                    return {'warning': mess}
+                message = ("El pago no puede ser mayor al día de hoy .")
+                mess = {
+                        'title': _('Error'),
+                        'message' : message
+                    }
+                return {'warning': mess}
 
 
     # montoJustificado = fields.Float(string = "Monto justificado")
