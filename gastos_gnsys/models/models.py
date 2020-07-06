@@ -348,7 +348,7 @@ class PagoSolicitante(models.Model):
     @api.onchange('fecha')
     def computarDiasAtrasoPago(self):
         if self.fecha :
-            _logger.info("-----------:   "+self.fecha)
+            _logger.info("-----------:   "+str(self.fecha).split(' ')[0])
             # diasAtraso = 0
             # for rec in self:
             #     fecha = str(self.fecha).split(' ')[0]
