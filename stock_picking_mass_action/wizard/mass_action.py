@@ -879,6 +879,7 @@ class SolicitudestockInventoryMassAction(TransientModel):
                 id3=self.env['stock.inventory'].create({'name':str(self.comentario)+' '+str(self.almacen.name), 'location_id':self.almacen.lot_stock_id.id,'x_studio_field_8gltH':self.almacen.id,'state':'done'})
                 for row_num, row in enumerate(sheet.get_rows()):
                     if(i>0):
+                        print(row[1].value)
                         ubicacion=None
                         template=self.env['product.template'].search([('default_code','=',str(row[1].value).replace('.0',''))]).sorted(key='id',reverse=True)
                         productid=self.env['product.product'].search([('product_tmpl_id','=',template[0].id if(len(template)>1) else template.id)])
