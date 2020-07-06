@@ -7,7 +7,6 @@ from odoo import exceptions, _
 import logging, ast
 import datetime, time
 _logger = logging.getLogger(__name__)
-from datetime import datetime
 class gastos_gnsys(models.Model):
     _name = 'gastos'
     _description = 'gastos_gnsys'
@@ -352,7 +351,7 @@ class PagoSolicitante(models.Model):
             fechaCompleta = str(self.fecha).split(' ')[0]
             fechaCompleta = fechaCompleta.split('-')
 
-            fecha1 = datetime(int(fechaCompleta[0]), int(fechaCompleta[1]), int(fechaCompleta[2]))
+            fecha1 = datetime.datetime(int(fechaCompleta[0]), int(fechaCompleta[1]), int(fechaCompleta[2]))
             fecha2 = datetime.date.today()
 
             esMenor = "Es menor"
