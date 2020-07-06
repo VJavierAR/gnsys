@@ -234,7 +234,7 @@ class PartnerXlsx(models.AbstractModel):
         sheet.merge_range('A1:R1', 'Tickets', merge_format)
         for obj in ticket:
             if(len(obj.x_studio_equipo_por_nmero_de_serie_1)==1 or len(obj.x_studio_equipo_por_nmero_de_serie)==1):
-                sheet.write(i, 0, obj.name.replace('Ticket',''), bold)
+                sheet.write(i, 0, obj.name.replace('Ticket0',''), bold)
                 sheet.write(i, 1, obj.x_studio_tipo_de_vale if(obj.x_studio_tipo_de_vale) else '', bold)
                 sheet.write(i, 2, obj.create_date.strftime("%Y/%m/%d"), bold)
                 sheet.write(i, 3, obj.days_difference, bold)
@@ -272,7 +272,7 @@ class PartnerXlsx(models.AbstractModel):
                 if(len(obj.x_studio_equipo_por_nmero_de_serie)>1):
                     series=obj.x_studio_equipo_por_nmero_de_serie
                 for s in series:
-                    sheet.write(i, 0, obj.name.replace('Ticket',''), bold)
+                    sheet.write(i, 0, obj.name.replace('Ticket0',''), bold)
                     sheet.write(i, 1, obj.x_studio_tipo_de_vale if(obj.x_studio_tipo_de_vale) else '', bold)
                     sheet.write(i, 2, obj.create_date.strftime("%Y/%m/%d %H:%M:%S"), bold)
                     sheet.write(i, 3, obj.days_difference, bold)
