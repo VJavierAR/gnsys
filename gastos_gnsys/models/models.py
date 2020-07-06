@@ -33,9 +33,8 @@ class gastos_gnsys(models.Model):
     montoAprobado   = fields.Float(string = 'Monto aprobado',track_visibility='onchange')
     montoAtnticipado = fields.Float(string = 'Monto anticipo',track_visibility='onchange')
     porCubrirAnticipo = fields.Datetime(string = 'Fecha compromiso de adelanto', track_visibility='onchange')
-    autorizacionFinanzas = fields.Selection([('Aprobada','Aprobada'), ('Rechazada','Rechazada')], string = "Autorización", track_visibility='onchange')
+    autorizacionFinanzas = fields.Selection([('Aprobada','Aprobada'), ('Rechazada','Rechazada')],'Selecciona', default='Selecciona', string = "Autorización", track_visibility='onchange')
     fechaLimiteComprobacionFinanzas = fields.Datetime(string = 'Fecha limite de comprobacion',track_visibility='onchange')
-
 
 
 
