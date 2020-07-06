@@ -344,6 +344,27 @@ class PagoSolicitante(models.Model):
     evidencia = fields.Many2many('ir.attachment', string="Evidencia")
     montoAprobadoOriginalMante  = fields.Float(string = "Monto aprobado originalmente", track_visibility='onchange')
     montoPagado = fields.Float(string = "Monto pagado")
+
+    @api.onchange('fecha')
+    def computarDiasAtrasoPago(self):
+        if self.fecha :
+            diasAtraso = 0
+            for rec in self:
+                fecha = str(rec.create_date).split(' ')[0]
+                converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
+                diasAtraso = (datetime.date.today() - converted_date).days
+            message = ""
+            mess = {}
+            if diasAtraso == 0 :
+                raise exceptions.ValidationError("El pago no puede ser mayor al día de hoy .")
+                    message = ("El pago no puede ser mayor al día de hoy .")
+                    mess = {
+                            'title': _('Error'),
+                            'message' : message
+                        }
+                    return {'warning': mess}
+
+
     # montoJustificado = fields.Float(string = "Monto justificado")
     # saldo = fields.Float(string = "Saldo", compute = "calcularSaldo", readonly = True)
     # montoAjustado = fields.Float(string = "Monto ajustado")
