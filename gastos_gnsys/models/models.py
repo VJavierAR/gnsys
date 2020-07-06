@@ -359,14 +359,20 @@ class PagoSolicitante(models.Model):
             fechaHoy = fechaHoy.split('-')
 
             fecha2 = datetime.datetime(int(fechaHoy[0]), int(fechaHoy[1]), int(fechaHoy[2]))
-            
+            message = ""
+            mess = {}
             esMenor = "Es menor"
             esMayor = "Es mayor"
             if fecha1 <= fecha2 :
                 _logger.info("||||-:   "+esMenor)
+
             else:
-                _logger.info("||||-:   "+esMayor)
+                # _logger.info("||||-:   "+esMayor)
                 self.fecha = ""
+                raise exceptions.ValidationError("El pago no puede ser mayor al día de hoy .")
+                message = ("El pago no puede ser mayor al día de hoy .")
+                mess = { 'title': _('Error'), 'message' : message}
+                return {'warning': mess}
             #diasAtraso = 0
 
 
@@ -377,16 +383,10 @@ class PagoSolicitante(models.Model):
             # _logger.info("**********-:   "+str(diasAtraso))
 
             
-            # message = ""
-            # mess = {}
             # if diasAtraso == 0 :
             #     raise exceptions.ValidationError("El pago no puede ser mayor al día de hoy .")
             #     message = ("El pago no puede ser mayor al día de hoy .")
-            #     mess = {
-            #             'title': _('Error'),
-            #             'message' : message
-            #         }
-            #     return {'warning': mess}
+
 
 
     # montoJustificado = fields.Float(string = "Monto justificado")
