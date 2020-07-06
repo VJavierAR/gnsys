@@ -349,8 +349,8 @@ class PagoSolicitante(models.Model):
     def computarDiasAtrasoPago(self):
         if self.fecha :
 
-            fechaCompleta = str(rec.create_date).split(' ')[0]
-            fechaCompleta = fechaCompleta.split()
+            fechaCompleta = str(self.fecha).split(' ')[0]
+            fechaCompleta = fechaCompleta.split('-')
 
 
         
