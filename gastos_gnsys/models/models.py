@@ -348,23 +348,24 @@ class PagoSolicitante(models.Model):
     @api.onchange('fecha')
     def computarDiasAtrasoPago(self):
         if self.fecha :
-            diasAtraso = 0
-            for rec in self:
-                fecha = str(self.fecha).split(' ')[0]
-                converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
+            _logger.info("-----------:   "+self.fecha)
+            # diasAtraso = 0
+            # for rec in self:
+            #     fecha = str(self.fecha).split(' ')[0]
+            #     converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
 
 
-                diasAtraso = (datetime.date.today() - converted_date).days
-            message = ""
-            mess = {}
-            if diasAtraso == 0 :
-                raise exceptions.ValidationError("El pago no puede ser mayor al día de hoy .")
-                message = ("El pago no puede ser mayor al día de hoy .")
-                mess = {
-                        'title': _('Error'),
-                        'message' : message
-                    }
-                return {'warning': mess}
+            #     diasAtraso = (datetime.date.today() - converted_date).days
+            # message = ""
+            # mess = {}
+            # if diasAtraso == 0 :
+            #     raise exceptions.ValidationError("El pago no puede ser mayor al día de hoy .")
+            #     message = ("El pago no puede ser mayor al día de hoy .")
+            #     mess = {
+            #             'title': _('Error'),
+            #             'message' : message
+            #         }
+            #     return {'warning': mess}
 
 
     # montoJustificado = fields.Float(string = "Monto justificado")
