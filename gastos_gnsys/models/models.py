@@ -20,7 +20,7 @@ class gastos_gnsys(models.Model):
     quienSolcita     = fields.Many2one('res.users', string = "Quien solicita",track_visibility='onchange', default=lambda self: self.env.user)
     proyecto = fields.Text(string="Proyecto", track_visibility='onchange')
     montoRequerido   = fields.Float(string = 'Monto requerido',track_visibility='onchange')
-    fechaDeSolicitud = fields.Datetime(string = 'Fecha de solicitud', track_visibility='onchange')
+    fechaDeSolicitud = fields.Datetime(compute='computarfechaDeSolicitud',string = 'Fecha de solicitud', track_visibility='onchange')
     fechaLimitePagoGasto = fields.Datetime(string = 'Fecha limite de pago', track_visibility='onchange')
 
     def computarfechaDeSolicitud(self):
