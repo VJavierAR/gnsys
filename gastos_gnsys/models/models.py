@@ -350,11 +350,13 @@ class PagoSolicitante(models.Model):
         if self.fecha :
             _logger.info("**********-:   "+str(self.fecha).split(' ')[0])
             diasAtraso = 0
+
+
+            fecha = str(self.fecha).split(' ')[0]
+            converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
+            diasAtraso = (datetime.date.today() - converted_date).days
             
-            if (self.fecha).split(' ')[0] < datetime.date.today() :
-                _logger.info("**********-:   ES MENOR")
-            else :
-                _logger.info("**********-:   ES MAYOR")
+            _logger.info("**********-:   "+str(diasAtraso)
 
             
             # message = ""
