@@ -362,10 +362,11 @@ class PagoSolicitante(models.Model):
             
             esMenor = "Es menor"
             esMayor = "Es mayor"
-            if fecha1 < fecha2 :
+            if fecha1 <= fecha2 :
                 _logger.info("||||-:   "+esMenor)
             else:
                 _logger.info("||||-:   "+esMayor)
+                self.fecha = datetime.date.today()
             #diasAtraso = 0
 
 
