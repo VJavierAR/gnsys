@@ -355,7 +355,7 @@ class PagoSolicitante(models.Model):
             
 
             fechaHoy = datetime.date.today()
-            fechaHoy = str(fecha2)
+            fechaHoy = str(fechaHoy)
             fechaHoy = fechaHoy.split('-')
 
             fecha2 = datetime.datetime(int(fechaHoy[0]), int(fechaHoy[1]), int(fechaHoy[2]))
