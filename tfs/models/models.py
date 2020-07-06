@@ -223,7 +223,7 @@ class tfs(models.Model):
             if(len(pickOrigen)>0):
                 c=self.env['res.partner'].search([['name','=',al.name],['parent_id','=',1]])
                 ticket=self.env['helpdesk.ticket'].create({'x_studio_tipo_de_vale':'Resurtido de Almacen','parent_id':c.id,'partner_shipping_id':c.id})
-                sale = self.env['sale.order'].create({'partner_id' : c.id, 'origin' : "Ticket: " + str(ticket.id), 'x_studio_tipo_de_solicitud' : 'Venta', 'partner_shipping_id' : c.id , 'warehouse_id' : 6299 , 'team_id' : 1, 'x_studio_field_bxHgp': ticket.id})
+                sale = self.env['sale.order'].create({'partner_id' : c.id, 'origin' : "Ticket: " + str(ticket.id), 'x_studio_tipo_de_solicitud' : 'Venta', 'partner_shipping_id' : c.id , 'warehouse_id' : 1 , 'team_id' : 1, 'x_studio_field_bxHgp': ticket.id})
                 #origen1=self.env['stock.picking.type'].search([['name','=','Pick'],['warehouse_id','=',6299]])
                 #origen2=self.env['stock.picking.type'].search([['name','=','Distribución'],['warehouse_id','=',1]])
                 #origen3=self.env['stock.picking.type'].search([['name','=','Tránsito'],['warehouse_id','=',1]])
@@ -236,7 +236,7 @@ class tfs(models.Model):
                 ticket.x_studio_field_nO7Xg=sale.id
                 for ori in pickOrigen:
                     ticket.x_studio_productos=[(4,ori['product_id'])]
-                    sl=self.env['sale.order.line'].create({'order_id' : sale.id,'product_id':ori['product_id'],'product_uom_qty':ori['product_uom_qty'], 'price_unit': 0,'route_id':24829})
+                    sl=self.env['sale.order.line'].create({'order_id' : sale.id,'product_id':ori['product_id'],'product_uom_qty':ori['product_uom_qty'], 'price_unit': 0})
                     #1
                     #ori['picking_id']=pick_origin1.id
                     #ori['location_id']=pick_origin1.location_id.id
