@@ -707,17 +707,18 @@ class contadores(models.Model):
                                   totalsr=float(rd.rentaMensual)+totalsr
                                   ttotal=(iva +cal)+ttotal 
                                   _logger.info("totals elsebn: " + str(totalsr))  
-                                  _logger.info("tota elsebn: " + str(ttotal))  
+                                  _logger.info("tota elsebn: " + str(ttotal))
+                            ebnx=0    
                             if rpt.x_studio_color_o_bn=='Color':
                                if rd.bolsaBN<ebn:
                                   ebn=ebn-rd.bolsaBN
-                                  eebn=ebn+eebn  
+                                  #eebn=ebn+eebn  
                                   ebnx=(ebn*rd.clickExcedenteBN)
                                   _logger.info("totals cnsi: " + str(totalsr))  
                                   _logger.info("tota cnsi: " + str(ttotal))     
                                if rd.bolsaColor<ec:
                                   ec=ec-rd.bolsaColor
-                                  eec=ec+eec  
+                                  #eec=ec+eec  
                                   call=float(rd.rentaMensual)+(ec*rd.clickExcedenteColor)+ebnx                                
                                   worksheet.write(i, 12, call,neg)
                                   iva=round(call*.16,2)
