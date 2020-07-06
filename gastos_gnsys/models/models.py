@@ -352,8 +352,8 @@ class PagoSolicitante(models.Model):
             diasAtraso = 0
 
 
-            fecha = str(self.fecha).split(' ')[0]
-            converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
+            fecha1 = str(self.fecha).split(' ')[0]
+            converted_date = datetime.datetime.strptime(fecha1, '%Y-%m-%d').date()
             diasAtraso = (datetime.date.today() - converted_date).days
             
             _logger.info("**********-:   "+str(diasAtraso))
