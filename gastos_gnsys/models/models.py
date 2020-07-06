@@ -352,8 +352,8 @@ class PagoSolicitante(models.Model):
             fechaCompleta = str(self.fecha).split(' ')[0]
             fechaCompleta = fechaCompleta.split('-')
 
-            fecha1 = datetime(int(fechaCompleta[0]), int(fechaCompleta[1]), int(fechaCompleta[2]))
-            fecha2 = date.today()
+            fecha1 = datetime.datetime(int(fechaCompleta[0]), int(fechaCompleta[1]), int(fechaCompleta[2]))
+            fecha2 = datetime.date.today()
 
             esMenor = "Es menor"
             esMayor = "Es mayor"
