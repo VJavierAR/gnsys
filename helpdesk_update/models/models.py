@@ -795,7 +795,7 @@ class helpdesk_update(models.Model):
     # Repartidor compuatado de tiempos
     
     days_differenceRepartidor = fields.Integer(
-                                                    compute='_compute_difference_repartidor',
+                                                    compute='_compute_difference_days_repartidor',
                                                     string='Días de atraso repatidor'
                                                 )
 
