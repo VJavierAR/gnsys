@@ -1205,7 +1205,7 @@
                                         <field name="contadorColor" string = 'Contador color' attrs="{'invisible': [['colorEquipo', '=', 'B/N']] }" force_save='1' />
                                         <field name='contadorAnteriorColor' string='Contador ultima solicitud color' readonly='1' attrs="{'invisible': [['colorEquipo', '=', 'B/N']] }" force_save='1' />
                                         
-                                        <field name='x_studio_cartuchonefro' string="Cartucho negro" domain="[&quot;&amp;&quot;,[&quot;categ_id&quot;,&quot;=&quot;,5],[&quot;x_studio_color&quot;,&quot;=&quot;,&quot;Negro&quot;],[&quot;x_studio_toner_compatible.id&quot;,&quot;=&quot;,x_studio_field_qYMJD]]" force_save='1' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" required='1' />
+                                        <field name='x_studio_cartuchonefro' string="Cartucho negro" domain="[&quot;&amp;&quot;,[&quot;categ_id&quot;,&quot;=&quot;,5],[&quot;x_studio_color&quot;,&quot;=&quot;,&quot;Negro&quot;],[&quot;x_studio_toner_compatible.id&quot;,&quot;=&quot;,x_studio_field_qYMJD]]" force_save='1' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" />
                                         <field name="x_studio_rendimiento_negro" string="Rendimiento Negro" readonly='1' force_save='1' />
                                         <field name="porcentajeNegro" string ='Porcentaje negro' force_save='1' />
                                         
