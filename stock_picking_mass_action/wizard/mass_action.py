@@ -452,7 +452,7 @@ class ComemtarioTicket(TransientModel):
             self.pick.x_studio_evidencia_a_ticket=self.evidencia
             self.pick.x_studio_comentario_1=self.comentario
             self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : self.pick.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id, 'estadoTicket' : "Devuelto a Distribución", 'comentario':self.comentario}) 
-        else:
+        if(self.ruta!=False and pick.sale_id.id!=False):
             self.pick.x_studio_evidencia_a_ticket=self.evidencia
             self.pick.x_studio_comentario_1=self.comentario
             self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.pick.sale_id.x_studio_field_bxHgp.id
@@ -466,7 +466,14 @@ class ComemtarioTicket(TransientModel):
             else:
                 wiz=self.env['stock.picking.mass.action'].create({'picking_ids':[(4,self.pick.id)],'confirm':True,'check_availability':True,'transfer':True})
                 wiz.mass_action()
+        if(self.ruta!=False and pick.sale_id.id==False):
+            if(len(self.evidencia)==0 and self.pick.ruta_id.tipo!="foraneo"):
+                raise UserError(_("Falta evidencia"))
+            else:
+                wiz=self.env['stock.picking.mass.action'].create({'picking_ids':[(4,self.pick.id)],'confirm':True,'check_availability':True,'transfer':True})
+                wiz.mass_action()
 
+        
 class TransferInter(TransientModel):
     _name='transferencia.interna'
     _description='Transferencia Interna'    
