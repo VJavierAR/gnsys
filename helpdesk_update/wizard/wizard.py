@@ -2565,7 +2565,7 @@ class helpdesk_crearToner(TransientModel):
                                                                 'name' : self.nombreDelContacto, 
                                                                 'title' : titulo, 
                                                                 'function' : self.puestoDeTrabajo, 
-                                                                'email' : self.correoElectronico, 
+                                                                'email' : self.correoElectronico.lower(), 
                                                                 'phone' : self.telefono, 
                                                                 'mobile' : self.movil, 
                                                                 'comment' : self.notas, 
