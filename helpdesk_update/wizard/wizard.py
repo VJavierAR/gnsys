@@ -2536,6 +2536,11 @@ class helpdesk_crearToner(TransientModel):
                                     store = True, 
                                     default = 'No disponible'
                                 )
+    noCrearTicket = fields.Boolean(
+                                        string = 'No crear ticket',
+                                        default = False,
+                                        store = True
+                                    )
 
     @api.depends('cliente')
     def _compute_idClienteAyuda(self):
@@ -2720,6 +2725,7 @@ class helpdesk_crearToner(TransientModel):
             textoHtml.append("<br/>")
             textoHtml.append("<br/>")
             textoHtml.append("<h3 class='text-center'>El ticket en proceso es: ")
+            
             for dca in self.dca: 
                 query = "select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.stage_id!=18 and h.team_id!=8 and  h.active='t' and stock_production_lot_id = " +  str(dca.serie.id) + " limit 1;"
                 _logger.info("test query: " + str(query))
@@ -2730,11 +2736,14 @@ class helpdesk_crearToner(TransientModel):
                   textoHtml.append(str(informacion[0][0]))
                 else:
                   self.textoTicketExistente = ''
+
+                
+                
             textoHtml.append("</h3>")
             self.textoTicketExistente =  ''.join(textoHtml)
             
 
-            if self.dca[0].serie.x_studio_move_line:
+            if self.dca[0].serie.x_studio_move_line and self.dca[0].serie.x_studio_move_line.sorted(key='date', reverse=True)[0].location_dest_id.x_studio_field_JoD2k:
                 moveLineOrdenado = self.dca[0].serie.x_studio_move_line.sorted(key="date", reverse=True)
                 self.cliente = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
                 self.tipoCliente = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.x_studio_nivel_del_cliente
@@ -2775,11 +2784,42 @@ class helpdesk_crearToner(TransientModel):
                     self.correoContactoLocalidad = '' 
             else:
                 mensajeTitulo = "Alerta!!!"
-                mensajeCuerpo = "La serie seleccionada no cuenta con una ubicación."
+                mensajeCuerpo = "La serie seleccionada no cuenta con una ubicación. No se permitira crear el ticket. Favor de notificar al administrador con la serie seleccionada."
                 warning = {'title': _(mensajeTitulo)
                         , 'message': _(mensajeCuerpo),
                 }
                 return {'warning': warning}
+
+            self.noCrearTicket = False
+            for dca in self.dca:
+                if dca.colorEquipo == 'Color':
+                    if not dca.x_studio_cartuchonefro and not dca.x_studio_cartucho_amarillo and not dca.x_studio_cartucho_cian_1 and not dca.x_studio_cartucho_magenta:
+                        self.noCrearTicket = True
+                        mensajeTitulo = "Alerta!!!"
+                        mensajeCuerpo = "No se permitira crear un ticket hasta que no selecciones al menos un cartucho para la serie " + str(dca.serie.name)
+                        warning = {'title': _(mensajeTitulo)
+                                , 'message': _(mensajeCuerpo),
+                        }
+                        return {'warning': warning}
+                elif dca.colorEquipo == 'B/N':
+                    if not dca.x_studio_cartuchonefro:
+                        self.noCrearTicket = True
+                        mensajeTitulo = "Alerta!!!"
+                        mensajeCuerpo = "No se permitira crear un ticket hasta que no selecciones cartucho para la serie " + str(dca.serie.name)
+                        warning = {'title': _(mensajeTitulo)
+                                , 'message': _(mensajeCuerpo),
+                        }
+                        return {'warning': warning}
+
+                if dca.serie.x_studio_mini:
+                    self.noCrearTicket = True
+                    mensajeTitulo = "Alerta!!!"
+                    mensajeCuerpo = "La serie " + str(dca.serie.name) + " pertenece a un mini almacén, no es posible crear el ticket de un mini almacén."
+                    warning = {'title': _(mensajeTitulo)
+                            , 'message': _(mensajeCuerpo),
+                    }
+                    return {'warning': warning}
+
         else:
 
             self.textoTicketExistente = ''
