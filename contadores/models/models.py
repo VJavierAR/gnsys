@@ -378,7 +378,42 @@ class dcas(models.Model):
             cierre="</table></body></html> "
             self.tablahtml=cabecera+ticket+ultimosContadores+fechas+paginasProcesadas+rendimientos+niveles+cierre                                                                                                                                                                                 
     """
+
+    @api.multi
+    def editar_contadores_wizard(self):
+        wiz = self.env['contadores.dca.editar.contadores'].create({'dca_id': self.id})
+        #wiz.productos = [(6, 0, self.x_studio_productos.ids)]
+        view = self.env.ref('contadores.view_dca_editar_contadores')
+        return {
+            'name': _('Editar contadores'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'contadores.dca.editar.contadores',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            'context': self.env.context,
+        }
     
+    @api.multi
+    def reiniciar_contadores_wizard(self):
+        wiz = self.env['contadores.dca.reiniciar.contadores'].create({'dca_id': self.id})
+        #wiz.productos = [(6, 0, self.x_studio_productos.ids)]
+        view = self.env.ref('contadores.view_dca_reiniciar_contadores')
+        return {
+            'name': _('Reiniciar contadores'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'contadores.dca.reiniciar.contadores',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            'context': self.env.context,
+        }
     
 
     
