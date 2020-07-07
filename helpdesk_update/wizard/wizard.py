@@ -2348,7 +2348,7 @@ class helpdesk_crearToner(TransientModel):
     _description = 'helpdesk crear ticket de tóner'
 
 
-    localidad = fields.Many2one('res.partner', string = 'Localidad', default = False, store = True)
+    #localidad = fields.Many2one('res.partner', string = 'Localidad', default = False, store = True)
     tipoDeDireccion = fields.Selection([('contact','Contacto')
                                         ,('invoice','Dirección de facturación')
                                         ,('delivery','Dirección de envío')
@@ -3452,3 +3452,72 @@ class HelpDeskContactoToner(TransientModel):
         #        'res_id': wiz.id,
         #        'context': self.env.context,
         #        }
+
+
+
+class HelpdeskTicketReporte(TransientModel):
+    _name = 'helpdesk.ticket.reporte'
+    _description = 'Reporte de Tickets todo'
+    fechaInicial = fields.Datetime(
+                                        string = 'Fecha inicial',
+                                        store = True
+                                    )
+    fechaFinal = fields.Datetime(
+                                    string = 'Fecha final',
+                                    store = True
+                                )
+    estado = fields.Many2one(
+                                'helpdesk.state',
+                                string = 'Etapa'
+                            )
+    tipo = fields.Selection(
+                                [['Todos', 'Todos'], ["Falla","Falla"], ["Toner","Toner"]],
+                                string = 'Tipo de ticket'
+                            )
+    area = fields.Many2one(
+                                'helpdesk.team',
+                                string = 'Área de atención'
+                            )
+    def report(self):
+        i = []
+        d = []
+        j = []
+        if self.fechaInicial:
+            m = ['create_date', '>=', self.fechaInicial]
+            i.append(m)
+        if self.fechaFinal:
+            m = ['create_date', '<=', self.fechaFinal]
+            i.append(m)
+        j.append('|')
+        if self.tipo:
+            if self.tipo == "Toner":
+                #m=['x_studio_tipo_de_vale','=','Falla']
+                #i.append(m)
+                m = ['team_id.id', '=', 8]
+                i.append(m)
+                #j.append('&')
+            elif self.tipo == 'Falla':
+                #m=['x_studio_tipo_de_vale','=','Requerimiento']
+                #i.append(m)
+                m = ['team_id.id', '!=', 8]
+                i.append(m)
+                #j.append('&')
+            #elif self.tipo == 'Todos':
+                #m = ['x_studio_field_nO7Xg', '!=', False]
+                #i.append([])
+        #if self.tipo == False:
+        #    m = ['x_studio_tipo_de_vale','in',['Requerimiento','Falla']]
+        #    i.append(m)
+        #for ii in range(len(i)-2):
+        #    j.append('&')
+        #i.append(['x_studio_field_nO7Xg', '!=', False])
+        #j.extend(i)
+        
+        d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x: len(x.x_studio_equipo_por_nmero_de_serie_1) > 0 or len(x.x_studio_equipo_por_nmero_de_serie) > 0)
+        if len(d) > 0:
+            d[0].write({
+                            'x_studio_arreglo': str(d.mapped('id'))
+                        })
+            return self.env.ref('stock_picking_mass_action.ticket_xlsx').report_action(d[0])
+        if len(d) == 0:
+            raise UserError(_("No hay registros para la selecion actual"))
