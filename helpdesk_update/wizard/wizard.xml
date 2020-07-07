@@ -1388,9 +1388,15 @@
                     </page>
                 </notebook>
                 
+                <group>
+                    <group>
+                        <field name='noCrearTicket' invisible='1' force_save='1' />
+                    </group>
+                </group>
+
                 <footer>
                     <!--<button name="abrirTicket" string="Abrir ticket existente" type="object" class="oe_highlight" attrs="{'invisible': ['|',['ticket_id_existente','=', 0],['ticket_id_existente','=', False]]}"/>-->
-                    <button name="crearTicketToner" string="Crear" type="object" class="oe_highlight" attrs="{'invisible': [['estatus', '=', 'Moroso']]}" />
+                    <button name="crearTicketToner" string="Crear" type="object" class="oe_highlight" attrs="{'invisible': ['|', '|', '|', ('estatus', '=', 'Moroso'), ('cliente', '=', False), ('dca', '=', False), ('noCrearTicket', '=', True) ]}" />
                     <button special="cancel" string="Cancelar" class="oe_highlight" />
                 </footer>
             </form>
