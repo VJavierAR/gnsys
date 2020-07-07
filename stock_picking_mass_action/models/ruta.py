@@ -50,8 +50,8 @@ class CreacionRuta(Model):
 				if(o.sale_id.id):
 					o.sale_id.x_studio_field_bxHgp.write({'stage_id':108})
 					t=t+str(o.sale_id.x_studio_field_bxHgp.id)+','
-			    if(o.sale_id.id==False):
-			    	t=t+str(o.origin)+','
+				if(o.sale_id.id==False):
+					t=t+str(o.origin)+','
 			self.env['registro.odometro'].sudo().create({'rel_vehiculo':self.vehiculo.id,'odometro':self.odometro,'nivel_tanque':self.nivel_tanque,'chofer':self.chofer.id}) 
 			self.ticket=t
 		else:
