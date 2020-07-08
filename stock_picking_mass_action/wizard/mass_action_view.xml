@@ -31,6 +31,7 @@
                     <field name="ubicacion"/>    
                     </group>
                     <group>
+                        <field name="comentario" required="1" /> 
                     <field name="cantidad" />    
                     </group>
                 </group>

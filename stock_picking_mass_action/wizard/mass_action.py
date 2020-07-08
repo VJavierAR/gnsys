@@ -1084,7 +1084,7 @@ class StockQua(TransientModel):
     cantidad=fields.Float()
     ubicacion=fields.Many2one('x_ubicacion_inventario')
     comentario=fields.Char()
-    usuario=fields.One2many('res.users')
+    usuario=fields.Many2one('res.users')
 
     def confirmar(self):
         self.env['stock.quant.line'].sudo().create({'quant_id':self.quant.id,'descripcion':self.comentario,'cantidadAnterior':self.quant.quantity,'cantidadReal':self.cantidad,'usuario':self.usuario.id})
