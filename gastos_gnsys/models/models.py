@@ -16,9 +16,9 @@ class gastos_gnsys(models.Model):
     nombre = fields.Char(string="Nombre de gasto")
     
     # --- SOLICITUD | USUARIO FINAL ---
-    quienSolcita     = fields.Many2one('res.users', string = "Quien solicita",track_visibility='onchange', default=lambda self: self.env.user)
+    quienSolcita = fields.Many2one('res.users', string = "Quien solicita",track_visibility='onchange', default=lambda self: self.env.user)
     proyecto = fields.Text(string="Proyecto", track_visibility='onchange')
-    montoRequerido   = fields.Float(string = 'Monto requerido',track_visibility='onchange')
+    montoRequerido = fields.Float(string = 'Monto requerido',track_visibility='onchange')
     fechaDeSolicitud = fields.Datetime(compute='computarfechaDeSolicitud',string = 'Fecha de solicitud', track_visibility='onchange')
     fechaLimitePagoGasto = fields.Datetime(string = 'Fecha limite de pago', track_visibility='onchange')
 
@@ -35,13 +35,42 @@ class gastos_gnsys(models.Model):
 
     # --- APROBACIÓN | FINANSAS
     quienValida = fields.Many2one('res.users',string = "Responsable de aprobacion", track_visibility='onchange', default=lambda self: self.env.user)
-    montoAprobado   = fields.Float(string = 'Monto aprobado',track_visibility='onchange')
+    montoAprobado = fields.Float(string = 'Monto aprobado',track_visibility='onchange')
     montoAtnticipado = fields.Float(string = 'Monto anticipo',track_visibility='onchange')
     porCubrirAnticipo = fields.Datetime(string = 'Fecha compromiso de adelanto', track_visibility='onchange')
     autorizacionFinanzas = fields.Selection([('Aprobada','Aprobada'), ('Rechazada','Rechazada')], string = "Autorización", track_visibility='onchange')
     fechaLimiteComprobacionFinanzas = fields.Datetime(string = 'Fecha limite de comprobacion',track_visibility='onchange')
 
 
+
+
+    # --- MOTIVOS | SON LOS MOTIVOS DEL GASTO (USUARIO FINAL)
+    # MODELO : motivos
+    #   _name = 'motivos'
+    #   _description = 'Motivos de un gasto'
+
+    motivos = fields.One2many('motivos', 'gasto', string = "Motivos",track_visibility='onchange')
+    totalMontoMotivos = fields.Float(string = 'Total',track_visibility='onchange')
+
+    @api.onchange('motivos')
+    def calcularTotalMotivos(self):
+        message = ""
+        mess = {}
+        listaDeMotivos = self.motivos
+        montoTotal = 0.0
+        montoOriginal = self.totalMontoMotivos
+        if listaDeMotivos != []:
+            for motivo in listaDeMotivos:
+                montoTotal += motivo.monto
+        
+        if montoTotal > self.montoRequerido :
+            self.totalMontoMotivos = montoOriginal
+            raise exceptions.ValidationError("La suma de los montos no puede ser mayor al monto requerido .")
+            message = ("La suma de los montos no puede ser mayor al monto requerido .")
+            mess = { 'title': _('Error'), 'message' : message}
+            return {'warning': mess}
+        else :
+            self.totalMontoMotivos = montoTotal
 
     
     #quienSolcita     = fields.Char(string="Quien solicita?" ,track_visibility='onchange')
@@ -76,17 +105,9 @@ class gastos_gnsys(models.Model):
     #quienValida                 = fields.One2many('hr.employee', 'gastoValida', string = "Validado por",track_visibility='onchange')
     
 
-    motivos                     = fields.One2many('motivos', 'gasto', string = "Motivos",track_visibility='onchange')
-    totalMontoMotivos = fields.Float(string = 'Total',track_visibility='onchange')
 
-    @api.onchange('motivos')
-    def calcularTotalMotivos(self):
-        listaDeMotivos = self.motivos
-        montoTotal = 0.0
-        if listaDeMotivos != []:
-            for motivo in listaDeMotivos:
-                montoTotal += motivo.monto
-        self.totalMontoMotivos = montoTotal
+
+
 
 
     #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -292,7 +313,7 @@ class motivos_gastos(models.Model):
     motivoDescripcion = fields.Text(string = "Descripción de gasto",track_visibility='onchange')
     motivoNumeroTicket = fields.Text(string = "Número de ticket",track_visibility='onchange')
     motivoConcepto = fields.Text(string = "Motivo (Concepto)",track_visibility='onchange')
-    motivoCentroCostos = fields.Many2one('res.partner', string = "Centro de costos",track_visibility='onchange')
+    motivoCentroCostos = fields.Many2one('res.partner', string = "Centro de costos (Cliente)",track_visibility='onchange')
     motivoTipoDeMotivo = fields.Selection((('!','1'), ('2','2')), string = "Tipo de motivo",track_visibility='onchange')
     monto = fields.Float(string = "Monto", track_visibility='onchange')
 
