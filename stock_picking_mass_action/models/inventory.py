@@ -73,7 +73,7 @@ class StockQuan(Model):
 
 
     def edit(self):
-        wiz = self.env['quant.action'].create({'quant':self.id,'producto':self.product_id.id,'cantidad':self.quantity,'ubicacion':self.x_studio_field_kUc4x.id})
+        wiz = self.env['quant.action'].create({'quant':self.id,'producto':self.product_id.id,'cantidad':self.quantity,'ubicacion':self.x_studio_field_kUc4x.id,'usuario':self.env.uid})
         view = self.env.ref('stock_picking_mass_action.view_quant_action_form')
         return {
             'name': _('Existencia'),

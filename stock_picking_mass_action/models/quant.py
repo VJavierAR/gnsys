@@ -8,6 +8,7 @@ import threading
 
 class StockQuan(Model):
     _inherit = 'stock.quant'
+    quants_registro=fields.One2many('stock.quant.line','quant_id')
 
 
     @api.model
@@ -31,3 +32,12 @@ class StockQuan(Model):
         if(self.x_studio_almacn.x_studio_mini==True):
             q=self.env['stock.warehouse.orderpoint'].search([['location_id','=',self.location_id.id],['product_id','=',self.product_id.id],['active','=',False]])
             q.x_studio_existencia=self.quantity
+
+class StockQuantLine(Model):
+    _name='stock.quant.line'
+    _description='registro de cambios'
+    descripcion=fields.Char()
+    cantidadAnterior=fields.Float()
+    cantidadReal=fields.Float()
+    quant_id=fields.Many2one('stock.quant')
+    usuario=fields.Many2one('res.users')

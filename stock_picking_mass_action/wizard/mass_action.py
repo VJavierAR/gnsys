@@ -1083,8 +1083,11 @@ class StockQua(TransientModel):
     producto=fields.Many2one('product.product')
     cantidad=fields.Float()
     ubicacion=fields.Many2one('x_ubicacion_inventario')
+    comentario=fields.Char()
+    usuario=fields.One2many('res.users')
 
     def confirmar(self):
+        self.env['stock.quant.line'].sudo().create({'quant_id':self.quant.id,'descripcion':self.comentario,'cantidadAnterior':self.quant.quantity,'cantidadReal':self.cantidad,'usuario':self.usuario.id})
         self.quant.sudo().write({'quantity':self.cantidad,'x_studio_field_kUc4x':self.ubicacion.id})
         self.env['stock.picking'].search([['state','=','confirmed']]).action_assign()
 
