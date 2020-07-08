@@ -40,6 +40,11 @@
                         <field name='contadorColorActualizado' attrs="{'invisible': [('tipoEquipo', '=', 'B/N')]}" force_save='1' />
                     </group>
                 </group>
+                <group> 
+                    <group>
+                        <field name='textoInformativo' force_save='1' readonly='1' widget='html' />
+                    </group>
+                </group>
                 <footer>
                     <button name="actualizaContador" string="Actualizar contador" type="object" class="oe_highlight" />
                     <button string="Cerrar ventana" class="oe_link" special="cancel"/>
@@ -99,7 +104,11 @@
                         <field name='contadorColorActualizado' attrs="{'invisible': [('tipoEquipo', '=', 'B/N')]}" force_save='1' />
                     </group>
                 </group>
-
+                <group> 
+                    <group>
+                        <field name='textoInformativo' force_save='1' readonly='1' widget='html' />
+                    </group>
+                </group>
                 <footer>
                     <button name="reiniciarContadores" string="Reiniciar contador" type="object" class="oe_highlight" />
                     <button special="cancel" string="Cerrar" class="oe_highlight" />
