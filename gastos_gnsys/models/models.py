@@ -89,6 +89,13 @@ class gastos_gnsys(models.Model):
         self.totalPagosSolitantes = montoPagadoTotal
         self.montoPorCubrir = self.montoAprobado - self.totalPagosSolitantes
     
+    # --- COMPROBACIÓNES | PARTE DE LOS CAMPOS LOS UTILIZA EL USUARIO FINAL Y OTROS EL AREA DE FINANZAS
+    # _name = 'gastos.comprobaciones'
+    # _description = 'Tipos de comprobaciónes del gasto'
+
+
+
+
 
     #quienSolcita     = fields.Char(string="Quien solicita?" ,track_visibility='onchange')
     #quienesAutorizan = fields.One2many('res.users', 'gastoAutoriza', string = "Responsable de autorizacion",track_visibility='onchange')
@@ -329,7 +336,16 @@ class comprobaciones(models.Model):
     _name = 'gastos.comprobaciones'
     _description = 'Tipos de comprobaciónes del gasto'
     comprobante             = fields.Many2one('gastos', string = "Comprobación ", track_visibility='onchange')
-
+    #USUARIO
+        # Concepto
+        # Descripción
+        # Justificación
+        # Tipo de Comprobante
+        # Evidencia
+    #FINANSAS
+        # Porcentaje aceptado
+        # Justicación contable de Porcentaje no aceptado (Con comprobante fiscal)
+        # Aplicación contable
     # -------Usuario------------
     concepto                = fields.Text(string = "Concepto",      track_visibility='onchange')
     descripcion             = fields.Text(string = "Descripción",   track_visibility='onchange')
