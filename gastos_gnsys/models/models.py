@@ -41,10 +41,7 @@ class gastos_gnsys(models.Model):
     autorizacionFinanzas = fields.Selection([('Aprobada','Aprobada'), ('Rechazada','Rechazada')], string = "Autorización", track_visibility='onchange')
     fechaLimiteComprobacionFinanzas = fields.Datetime(string = 'Fecha limite de comprobacion',track_visibility='onchange')
 
-
-
-
-    # --- MOTIVOS | SON LOS MOTIVOS DEL GASTO (USUARIO FINAL)
+    # --- MOTIVOS | SON LOS MOTIVOS DEL GASTO (QUIEN SOLICITA - USUARIO FINAL)
     # MODELO : motivos
     #   _name = 'motivos'
     #   _description = 'Motivos de un gasto'
@@ -72,7 +69,27 @@ class gastos_gnsys(models.Model):
         else :
             self.totalMontoMotivos = montoTotal
 
+    # --- PAGO A SOLICITANTE | ESTOS SON LOS PAGOS QUE SE ESTAN DANDO AL SOLICITANTE (LO EDITA EL AREA DE FINANZAS)
+    # NOTA : El modelo dice devolución cambiar a pago a solicitante
+    # MODELO : devolucion
+    #   _name = "gastos.devolucion"
+    #   _description = 'Pago a solicitante'
+
+    devoluciones = fields.One2many('gastos.devolucion', 'gasto' , string = 'Devoluciones', track_visibility = 'onchange')
+    totalPagosSolitantes = fields.Float(string = "Total monto pagado", track_visibility='onchange')
+    montoPorCubrir = fields.Float(string = "Monto por cubrir a solicitante", track_visibility='onchange')
+
+    @api.onchange('devoluciones')
+    def calcularTotalPagoDevolucion(self):
+        listaDevoluciones = self.devoluciones
+        montoPagadoTotal = 0.0
+        if listaDevoluciones != []:
+            for devolucion in listaDevoluciones:
+                montoPagadoTotal += devolucion.montoEntregado
+        self.totalPagosSolitantes = montoPagadoTotal
+        self.montoPorCubrir = self.montoAprobado - self.totalPagosSolitantes
     
+
     #quienSolcita     = fields.Char(string="Quien solicita?" ,track_visibility='onchange')
     #quienesAutorizan = fields.One2many('res.users', 'gastoAutoriza', string = "Responsable de autorizacion",track_visibility='onchange')
     #quienesAutorizan = fields.Char(string = "Responsable de autorizacion", track_visibility='onchange')
@@ -178,17 +195,7 @@ class gastos_gnsys(models.Model):
                 montoPagadoTotal += comprobacion.monto
         self.montoComprobado = montoPagadoTotal
     # --------------------
-    devoluciones = fields.One2many('gastos.devolucion', 'gasto' , string = 'Devoluciones', track_visibility = 'onchange')
-    totalPagosSolitantes = fields.Float(string = "Total monto pagado", track_visibility='onchange')
 
-    @api.onchange('devoluciones')
-    def calcularTotalPagoDevolucion(self):
-        listaDevoluciones = self.devoluciones
-        montoPagadoTotal = 0.0
-        if listaDevoluciones != []:
-            for devolucion in listaDevoluciones:
-                montoPagadoTotal += devolucion.montoEntregado
-        self.totalPagosSolitantes = montoPagadoTotal
     # --------------------
     #Modelo de devoluciónes
     pagos = fields.One2many('gastos.pago', 'gasto' , string = 'Pagos', track_visibility = 'onchange')    
