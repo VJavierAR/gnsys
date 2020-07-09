@@ -111,7 +111,7 @@ class ExistenciasXML(models.AbstractModel):
         if(len(quants)==1 and quants.x_studio_arreglo!='/' and quants.x_studio_arreglo!=False):
             copia=quants
             quants=self.env['stock.quant'].browse(eval(quants.x_studio_arreglo))
-            copia.write({'x_studio_arreglo':'/'})
+            copia.sudo().write({'x_studio_arreglo':'/'})
         t=quants[0].lot_id.id
         i=2
         merge_format = workbook.add_format({'bold': 1,'border': 1,'align': 'center','valign': 'vcenter','fg_color': 'blue'})
@@ -119,7 +119,7 @@ class ExistenciasXML(models.AbstractModel):
         bold = workbook.add_format({'bold': True})
         if(t):
             sheet = workbook.add_worksheet('Existencias Equipos')
-            sheet.merge_range('A1:I1', 'Existencias Equipos', merge_format)   
+            sheet.merge_range('A1:K1', 'Existencias Equipos', merge_format)   
             for obj in quants:
                 sheet.write(i, 0, obj.x_studio_almacn.name, bold)
                 sheet.write(i, 1, obj.product_id.name, bold)
@@ -129,10 +129,13 @@ class ExistenciasXML(models.AbstractModel):
                 sheet.write(i, 5, obj.lot_id.x_studio_estado, bold)
                 sheet.write(i, 6, obj.reserved_quantity, bold)
                 sheet.write(i, 7, obj.x_studio_field_kUc4x.x_name if(obj.x_studio_field_kUc4x.x_name) else '', bold)
-                precio=self.env['purchase.order.line'].search([['product_id','=',obj.product_id.id]])
+                precio=self.env['purchase.order.line'].sudo().search([['product_id','=',obj.product_id.id]])
                 sheet.write(i, 8, precio.sorted(key='id',reverse=True)[0].price_unit if(precio) else obj.product_id.lst_price, bold)
+                m=self.env['stock.warehouse.orderpoint'].sudo().search([['location_id','=',obj.location_id.id],['product_id','=',obj.product_id.id],['active','=',False]])
+                sheet.write(i, 9, m.product_min_qty if(m.id) else 0, bold)
+                sheet.write(i, 10, m.product_max_qty if(m.id) else 0, bold)
                 i=i+1
-            sheet.add_table('A2:I2',{'columns': [{'header': 'Almacen'},{'header': 'Modelo'},{'header': 'No Parte'},{'header':'Descripción'},{'header':'No Serie'},{'header': 'Estado'},{'header': 'Apartados'},{'header': 'Ubicación'},{'header':'Costo'}]}) 
+            sheet.add_table('A2:K2',{'columns': [{'header': 'Almacen'},{'header': 'Modelo'},{'header': 'No Parte'},{'header':'Descripción'},{'header':'No Serie'},{'header': 'Estado'},{'header': 'Apartados'},{'header': 'Ubicación'},{'header':'Costo'},{'header': 'Minimo'},{'header':'Maximo'}]}) 
             #sheet.add_table('A2:I'+str((i)),{'columns': [{'header': 'Almacen'},{'header': 'Modelo'},{'header': 'No Parte'},{'header':'Descripción'},{'header':'No Serie'},{'header': 'Estado'},{'header': 'Apartados'},{'header': 'Ubicación'},{'header':'Costo'}]}) 
         else:
             sheet = workbook.add_worksheet('Existencias Componentes')
@@ -145,10 +148,13 @@ class ExistenciasXML(models.AbstractModel):
                 sheet.write(i, 4, obj.quantity, bold)
                 sheet.write(i, 5, obj.reserved_quantity, bold)
                 sheet.write(i, 6, obj.x_studio_field_kUc4x.x_name if(obj.x_studio_field_kUc4x.x_name) else '', bold)
-                precio=self.env['purchase.order.line'].search([['product_id','=',obj.product_id.id]])
+                precio=self.env['purchase.order.line'].sudo().search([['product_id','=',obj.product_id.id]])
                 sheet.write(i, 7, precio.sorted(key='id',reverse=True)[0].price_unit if(precio) else obj.product_id.lst_price, bold)
+                m=self.env['stock.warehouse.orderpoint'].sudo().search([['location_id','=',obj.location_id.id],['product_id','=',obj.product_id.id],['active','=',False]])
+                sheet.write(i, 8, m.product_min_qty if(m.id) else 0, bold)
+                sheet.write(i, 9, m.product_max_qty if(m.id) else 0, bold)
                 i=i+1
-            sheet.add_table('A2:H2',{'columns': [{'header': 'Almacen'},{'header': 'Modelo'},{'header': 'No Parte'},{'header':'Descripción'},{'header': 'Existencia'},{'header': 'Apartados'},{'header': 'Ubicación'},{'header':'Costo'}]}) 
+            sheet.add_table('A2:J2',{'columns': [{'header': 'Almacen'},{'header': 'Modelo'},{'header': 'No Parte'},{'header':'Descripción'},{'header': 'Existencia'},{'header': 'Apartados'},{'header': 'Ubicación'},{'header':'Costo'},{'header': 'Minimo'},{'header':'Maximo'}]}) 
             #sheet.add_table('A2:H'+str((i)),{'columns': [{'header': 'Almacen'},{'header': 'Modelo'},{'header': 'No Parte'},{'header':'Descripción'},{'header': 'Existencia'},{'header': 'Apartados'},{'header': 'Ubicación'},{'header':'Costo'}]}) 
         workbook.close()
 

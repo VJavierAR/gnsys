@@ -963,7 +963,7 @@ class PickingsAComprasMassAction(TransientModel):
             #pppp=self.env['stock.picking'].browse(pi).write({'estado':'compras'})
             for pp in self.picking_ids:
                 pp.x_studio_ticket_relacionado.write({'stage_id':113})
-                self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : pp.x_studio_ticket_relacionado.id, 'estadoTicket' : "Pendiente de compra", 'comentario':"Pendiente de compra Requisicion:(requisicion.name)"}) 
+                self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : pp.x_studio_ticket_relacionado.id, 'estadoTicket' : "Pendiente de compra", 'comentario':"Pendiente de compra Requisicion:("+requisicion.name+")"}) 
             view = self.env.ref('studio_customization.default_form_view_fo_24cee64e-ad11-4f19-a7f6-fceca5375726')
             return {
                     'name': _('Transferencia'),
