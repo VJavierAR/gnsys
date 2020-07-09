@@ -102,7 +102,19 @@ class gastos_gnsys(models.Model):
     # _name = 'gastos.comprobaciones'
     # _description = 'Tipos de comprobaciónes del gasto'
 
+    comprobaciones = fields.One2many('gastos.comprobaciones', 'comprobante', string = "Comprobantes",track_visibility='onchange')
+    montoPagadoComprobado = fields.Float(string = "Monto pagado", track_visibility='onchange')
+    montoComprobado = fields.Float(string = "Monto comprobado", track_visibility='onchange')
+    montoComprobadoAprobado =  fields.Float(string = " Monto comprobado aprobado", track_visibility='onchange')
 
+    @api.onchange('comprobaciones')
+    def calcularTotalComprobaciones(self):
+        listaComprobaciones = self.comprobaciones
+        montoPagadoTotal = 0.0
+        if listaComprobaciones != []:
+            for comprobacion in listaComprobaciones:
+                montoPagadoTotal += comprobacion.monto
+        self.montoComprobado = montoPagadoTotal
 
 
 
@@ -197,19 +209,9 @@ class gastos_gnsys(models.Model):
 
     #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$4
 
-    comprobaciones = fields.One2many('gastos.comprobaciones', 'comprobante', string = "Comprobantes",track_visibility='onchange')
-    montoPagadoComprobado = fields.Float(string = "Monto pagado", track_visibility='onchange')
-    montoComprobado = fields.Float(string = "Monto comprobado", track_visibility='onchange')
-    montoComprobadoAprobado =  fields.Float(string = " Monto comprobado aprobado", track_visibility='onchange')
+
     
-    @api.onchange('comprobaciones')
-    def calcularTotalComprobaciones(self):
-        listaComprobaciones = self.comprobaciones
-        montoPagadoTotal = 0.0
-        if listaComprobaciones != []:
-            for comprobacion in listaComprobaciones:
-                montoPagadoTotal += comprobacion.monto
-        self.montoComprobado = montoPagadoTotal
+
     # --------------------
 
     # --------------------
@@ -351,6 +353,7 @@ class comprobaciones(models.Model):
         # Justificación
         # Tipo de Comprobante
         # Evidencia
+        # Monto aprobado
     #FINANSAS
         # Porcentaje aceptado
         # Justicación contable de Porcentaje no aceptado (Con comprobante fiscal)
@@ -363,6 +366,7 @@ class comprobaciones(models.Model):
     comprobantes            = fields.Many2many('ir.attachment', string="Evidencia")
     # -------Finanzas------------
     porcentajeAceptado      = fields.Selection((('100','100%'),('75','75%'),('50','50%'),('25','25%'),('0','0%')), string = "Porcentaje Aceptado",track_visibility='onchange')
+    montoAprobado           = fields.Float(string = "Monto aprobado", compute='calcularMontoAprobado',track_visibility='onchange')
     cuentaContableDestino   = fields.Text(string = "Aplicación contable", track_visibility='onchange')
     montoAprobadooriginalMante = fields.Float(string = "Monto aprobado originalmente", track_visibility='onchange')
     justificacionContable   = fields.Text(string = "Justificación contable", track_visibility='onchange')
@@ -375,10 +379,10 @@ class comprobaciones(models.Model):
     cliente = fields.Many2one('res.partner', string = 'Cliente', track_visibility='onchange')
     servicio = fields.Text(string = 'Servicio')
 
-    # def calcularMontoAprobado(self):
-    #     for rec in self:
-    #         if str(rec.porcentajeAceptado) != 'false':
-    #             montoJustificado = rec.monto * rec.porcentajeAceptado
+    def calcularMontoAprobado(self):
+        for rec in self:
+            if str(rec.porcentajeAceptado) != 'false':
+                self.montoAprobado = rec.monto * rec.porcentajeAceptado
 
 
 class PagoSolicitante(models.Model):
