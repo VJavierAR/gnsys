@@ -382,7 +382,7 @@ class comprobaciones(models.Model):
     def calcularMontoAprobado(self):
         for rec in self:
             if rec.porcentajeAceptado :
-                self.montoAprobado = rec.monto * (rec.porcentajeAceptado/100)
+                self.montoAprobado = rec.monto * rec.porcentajeAceptado
 
 
 class PagoSolicitante(models.Model):
