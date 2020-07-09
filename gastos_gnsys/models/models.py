@@ -365,7 +365,7 @@ class comprobaciones(models.Model):
     tipoDeComprobante       = fields.Selection((('Factura','Factura'),('FacturaSinIva','Factura sin IVA'),('TiketFacturable','Ticket facturable'),('Tiket','Ticket'),('Nota','Nota')), string = "Tipo de Comprobante",track_visibility='onchange')
     comprobantes            = fields.Many2many('ir.attachment', string="Evidencia")
     # -------Finanzas------------
-    porcentajeAceptado      = fields.Percent(string = "Porcentaje Aceptado",track_visibility='onchange')
+    porcentajeAceptado      = fields.Float(string = "Porcentaje Aceptado",track_visibility='onchange')
     montoAprobado           = fields.Float(string = "Monto aprobado", compute='calcularMontoAprobado',track_visibility='onchange')
     cuentaContableDestino   = fields.Text(string = "Aplicación contable", track_visibility='onchange')
     montoAprobadooriginalMante = fields.Float(string = "Monto aprobado originalmente", track_visibility='onchange')
@@ -382,7 +382,7 @@ class comprobaciones(models.Model):
     def calcularMontoAprobado(self):
         for rec in self:
             if rec.porcentajeAceptado :
-                self.montoAprobado = rec.monto * rec.porcentajeAceptado
+                self.montoAprobado = rec.monto * (rec.porcentajeAceptado/100)
 
 
 class PagoSolicitante(models.Model):
