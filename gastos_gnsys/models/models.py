@@ -47,7 +47,7 @@ class gastos_gnsys(models.Model):
     #   _description = 'Motivos de un gasto'
 
     motivos = fields.One2many('motivos', 'gasto', string = "Motivos",track_visibility='onchange')
-    totalMontoMotivos = fields.Float(string = 'Total',track_visibility='onchange')
+    totalMontoMotivos = fields.Float(string = 'Total monto de motivos',track_visibility='onchange')
 
     @api.onchange('motivos')
     def calcularTotalMotivos(self):
