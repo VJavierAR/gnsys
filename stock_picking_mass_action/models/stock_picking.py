@@ -148,16 +148,16 @@ class StockPicking(Model):
         if no_reserved_quantities and no_quantities_done:
             raise UserError(_('You cannot validate a transfer if no quantites are reserved nor done. To force the transfer, switch in edit more and encode the done quantities.'))
    
-        #if(self.picking_type_id.id==2 and len(self.x_studio_evidencia)>0):
-        #    if(self.sale_id.x_studio_field_bxHgp):
-         #       self.sale_id.x_studio_field_bxHgp.write({'stage_id':18})
-         #       for ev in self.x_studio_evidencia:
-         #           self.sale_id.x_studio_field_bxHgp.write({'documentosTecnico':[ev.x_foto]})
-         #           self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : self.sale_id.x_studio_field_bxHgp.id
-         #                                                              , 'x_persona' : str(self.env.user.name)
-         #                                                              , 'x_estado' : "Cierre"
-         #                                                              , 'x_disgnostico':ev.x_comentario                                                                   
-         #                                                             })
+        if(self.picking_type_id.id==2 and len(self.x_studio_evidencia)>0):
+           if(self.sale_id.x_studio_field_bxHgp):
+               self.sale_id.x_studio_field_bxHgp.write({'stage_id':18})
+               for ev in self.x_studio_evidencia:
+                   self.sale_id.x_studio_field_bxHgp.write({'documentosTecnico':[ev.x_foto]})
+                   self.env['x_historial_helpdesk'].sudo().create({ 'x_id_ticket' : self.sale_id.x_studio_field_bxHgp.id
+                                                                      , 'x_persona' : str(self.env.user.name)
+                                                                      , 'x_estado' : "Cierre"
+                                                                      , 'x_disgnostico':ev.x_comentario                                                                   
+                                                                     })
                     
 
         if picking_type.use_create_lots or picking_type.use_existing_lots:
@@ -452,10 +452,10 @@ class StockPicking(Model):
         }
 
     def ingreso(self):
-        wiz = self.env['ingreso.almacen'].create({'pick':self.id})
+        wiz = self.env['ingreso.almacen'].create({'pick':self.id,'almacen':self.picking_type_id.warehouse_id.id})
         view = self.env.ref('stock_picking_mass_action.view_ingreso_almacen')
         for r in self.move_ids_without_package:
-            self.env['ingreso.lines'].create({'move':r.id,'producto':self.product_id.id,'rel_ingreso':wiz.id,'cantidad':int(r.product_uom_qty)})
+            self.env['ingreso.lines'].create({'move':r.id,'producto':r.product_id.id,'rel_ingreso':wiz.id,'cantidad':int(r.product_uom_qty)})
         return {
             'name': _('Ingreso'),
             'type': 'ir.actions.act_window',
@@ -469,7 +469,7 @@ class StockPicking(Model):
             'context': self.env.context,
         }
     def ingresoEquipos(self):
-        wiz = self.env['serie.ingreso'].create({'picking':self.id})
+        wiz = self.env['serie.ingreso'].create({'picking':self.id,'almacen':self.picking_type_id.warehouse_id.id})
         view = self.env.ref('stock_picking_mass_action.view_serie_ingreso')
         ml=self.env['stock.move.line'].search([['picking_id','=',self.id]])
         for r in ml:
@@ -620,7 +620,7 @@ class StockPicking(Model):
                 'context': self.env.context,
             }
         else:
-            raise UserError(_('Se requiere evidencia'))
+           raise UserError(_('Se requiere evidencia'))
 
 class StockPicking(Model):
     _inherit = 'stock.move'

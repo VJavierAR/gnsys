@@ -14,7 +14,7 @@ class sale_order_compatibles(models.Model):
 	saleOrder = fields.Many2one('sale.order')
 	equipos = fields.Many2one('product.product', string = 'Equipos')
 	cantidad = fields.Selection(selection = [(0, '0'),(1, '1')],string = 'Cantidad',default=1)
-	estado = fields.Selection(selection = [('1', '1'),('2', '2'),('3','3')], widget = "statusbar", default = '1')
+	estado = fields.Selection(selection = [('Nuevo', 'Nuevo'),('Usado', 'Usado')], default = 'Nuevo')
 	componentes = fields.One2many('sale_order_compatibles_mini', 'saleOrderMini', string = 'Componentes')
 	toner = fields.One2many('sale_order_compatibles_mini_toner', 'saleOrderMini', string = 'Toner')
 	accesorios = fields.One2many('sale_order_compatibles_mini_acesorios', 'saleOrderMini', string = 'Accesorios')
@@ -22,6 +22,7 @@ class sale_order_compatibles(models.Model):
 	domin=fields.Char()
 	location=fields.Integer()
 	tipo=fields.Char()
+	precio=fields.Float(default=0.00)
 	@api.onchange('equipos')
 	def domi(self):
 		datos=self.equipos.x_studio_toner_compatible.mapped('id')
@@ -51,6 +52,8 @@ class miniModeloToner(models.Model):
 	producto = fields.Many2one('product.product')
 	cantidad = fields.Integer(string = 'Cantidad')
 	saleOrderMini=fields.Many2one('sale_order_compatibles')
+	precio=fields.Float(default=0.00)
+	tipo=fields.Char()
 
 	@api.onchange('idProducto')
 	def domi(self):
@@ -67,18 +70,20 @@ class miniModeloAccesorio(models.Model):
 	producto = fields.Many2one('product.product')
 	cantidad = fields.Integer(string = 'Cantidad')
 	saleOrderMini=fields.Many2one('sale_order_compatibles')
+	precio=fields.Float(default=0.00)
+	tipo=fields.Char()
 
 	@api.onchange('idProducto')
 	def domi(self):
 		res={}
 		if(self.idProducto and self.idProducto!='[]'):
-			da=self.env['product.product'].browse(eval(self.idProducto)).filtered(lambda x:x.categ_id.id==11).mapped('id')
+			da=self.env['product.product'].browse(eval(self.idProducto)).filtered(lambda x:x.categ_id.id!=5 and x.categ_id.id!=7).mapped('id')
 			res['domain']={'producto':[['id','in',da]]}
 		return res
 
 class sale_update(models.Model):
 	_inherit = 'sale.order'
-	compatiblesLineas = fields.One2many('sale_order_compatibles', 'saleOrder', string = 'nombre temp')
+	compatiblesLineas = fields.One2many('sale_order_compatibles', 'saleOrder', string = 'nombre temp',copy=True)
 
 
 	@api.multi
@@ -124,21 +129,41 @@ class sale_update(models.Model):
 		}
 
 	def preparaSolicitud(self):
+		self.order_line.unlink()
 		data=[]
 		if(len(self.compatiblesLineas)>0):
 			for e in self.compatiblesLineas:
-				d={'x_studio_field_mqSKO':e.equipos.id,'product_id':e.equipos.id,'name':e.equipos.name,'product_uom_qty':1,'product_uom':e.equipos.uom_id.id,'price_unit':0.00,'x_studio_id_relacion':e.id}
-				self.order_line=[d]
+				if(e.cantidad!=0):
+					d={'x_studio_estado':e.estado,'x_studio_field_mqSKO':e.equipos.id,'product_id':e.equipos.id,'name':e.equipos.name,'product_uom_qty':1,'product_uom':e.equipos.uom_id.id,'price_unit':e.precio,'x_studio_id_relacion':e.id}
+					self.order_line=[d]
 				for e1 in e.componentes:
-					d={'x_studio_field_mqSKO':e1.producto.id,'product_id':e1.producto.id,'name':e1.producto.name,'product_uom_qty':e1.cantidad,'product_uom':e1.producto.uom_id.id,'price_unit':0.00,'x_studio_id_relacion':e.id,'x_studio_modelo':e.equipos.name}
-					self.order_line=[d]
+					if(e1.cantidad!=0):
+						d={'x_studio_field_mqSKO':e1.producto.id,'product_id':e1.producto.id,'name':e1.producto.name,'product_uom_qty':e1.cantidad,'product_uom':e1.producto.uom_id.id,'price_unit':e1.precio,'x_studio_id_relacion':e.id,'x_studio_modelo':e.equipos.name}
+						self.order_line=[d]
 				for e2 in e.toner:
-					d={'x_studio_field_mqSKO':e2.producto.id,'product_id':e2.producto.id,'name':e2.producto.name,'product_uom_qty':e2.cantidad,'product_uom':e2.producto.uom_id.id,'price_unit':0.00,'x_studio_id_relacion':e.id,'x_studio_modelo':e.equipos.name}
-					self.order_line=[d]
+					if(e2.cantidad!=0):
+						d={'x_studio_field_mqSKO':e2.producto.id,'product_id':e2.producto.id,'name':e2.producto.name,'product_uom_qty':e2.cantidad,'product_uom':e2.producto.uom_id.id,'price_unit':e2.precio,'x_studio_id_relacion':e.id,'x_studio_modelo':e.equipos.name}
+						self.order_line=[d]
 				for e3 in e.accesorios:
-					d={'x_studio_field_mqSKO':e3.producto.id,'product_id':e3.producto.id,'name':e3.producto.name,'product_uom_qty':e3.cantidad,'product_uom':e3.producto.uom_id.id,'price_unit':0.00,'x_studio_id_relacion':e.id,'x_studio_modelo':e.equipos.name}
-					self.order_line=[d]
-		self.write({'state':'sent'})
+					if(e3.cantidad!=0):
+						d={'x_studio_field_mqSKO':e3.producto.id,'product_id':e3.producto.id,'name':e3.producto.name,'product_uom_qty':e3.cantidad,'product_uom':e3.producto.uom_id.id,'price_unit':e3.precio,'x_studio_id_relacion':e.id,'x_studio_modelo':e.equipos.name}
+						self.order_line=[d]
+			self.write({'state':'sent'})
+		if(self.x_studio_tipo_de_solicitud=="Venta" or self.x_studio_tipo_de_solicitud=="Venta directa"):
+			template_id=self.env['mail.template'].search([('id','=',58)], limit=1)
+			template_id.send_mail(self.id, force_send=True)
+		if(self.x_studio_tipo_de_solicitud!="Venta" or self.x_studio_tipo_de_solicitud!="Venta directa"):
+			if(len(self.compatiblesLineas)==0):
+				raise UserError(_('No hay registros a procesar'))
+			else:
+				template_id=self.env['mail.template'].search([('id','=',58)], limit=1)
+				template_id.send_mail(self.id, force_send=True)
+	
+	def desbloquea(self):
+		self.action_cancel()
+		self.action_draft()
+		picks=self.env['stock.picking'].search([['sale_id','=',self.id]])
+		picks.unlink()
 
 	def componentes(self):
 		if(len(self.order_line)>0):
@@ -162,7 +187,7 @@ class sale_update(models.Model):
 	    self._action_confirm()
 	    if self.env['ir.config_parameter'].sudo().get_param('sale.auto_done_setting'):
 	        self.action_done()
-	    pii=self.env['stock.picking'].search([['sale_id','=',self.id]])
+	    pii=self.env['stock.picking'].search(['&',['sale_id','=',self.id],['state','!=','draft']])
 	    sal=self.order_line.sorted(key='id').mapped('id')
 
 	    for p in pii:
@@ -185,22 +210,38 @@ class sale_update(models.Model):
 			ppp=pic.copy()
 			ppp.write({'retiro':True})
 			#ppp.order_line=[(5,0,0)]
-			# if('PICK' in ppp.name or 'SU' in ppp.name):
-			# 	ppp.write({'location_id':almacen.lot_stock_id.id})
-			# 	ppp.write({'location_dest_id':pic.picking_type_id.default_location_dest_id.id})
-			# 	ppp.move_ids_without_package.write({'location_id':almacen.lot_stock_id.id})
-			# 	self.env['stock.move.line'].search([['picking_id','=',ppp.id]]).write({'location_id':almacen.lot_stock_id.id})
-			# 	ppp.move_ids_without_package.write({'location_dest_id':ppp.picking_type_id.default_location_dest_id.id})
-			# if('PACK' in ppp.name or 'TRA' in ppp.name):
-			# 	ppp.write({'location_id':ppp.picking_type_id.default_location_src_id.id})
-			# 	ppp.write({'location_dest_id':ppp.picking_type_id.default_location_dest_id.id})
-			# 	ppp.move_ids_without_package.write({'location_id':ppp.picking_type_id.default_location_src_id.id})
-			# 	self.env['stock.move.line'].search([['picking_id','=',ppp.id]]).write({'location_id':ppp.picking_type_id.default_location_src_id.id})
-			# 	ppp.move_ids_without_package.write({'location_dest_id':ppp.picking_type_id.default_location_dest_id.id})
-			# if('OUT' in ppp.name):
-			# 	ppp.write({'location_dest_id':ppp.picking_type_id.warehouse_id.lot_stock_id.id})
-			# 	ppp.move_ids_without_package.write({'location_dest_id':ppp.picking_type_id.warehouse_id.lot_stock_id.id})
-			# 	self.env['stock.move.line'].search([['picking_id','=',ppp.id]]).write({'location_dest_id':ppp.picking_type_id.warehouse_id.lot_stock_id.id})
-			# 	ppp.move_ids_without_package.write({'location_id':ppp.picking_type_id.default_location_src_id.id})
+			if('PICK' in ppp.name or 'SU' in ppp.name):
+				ppp.write({'location_id':almacen.lot_stock_id.id})
+				ppp.write({'location_dest_id':pic.picking_type_id.default_location_dest_id.id})
+				i=0
+				for e in self.compatiblesLineas:
+					ppp.move_ids_without_package[i].write({'location_id':almacen.lot_stock_id.id,'location_dest_id':pic.picking_type_id.default_location_dest_id.id,'product_id':e.serie.product_id.id,'x_studio_serie_destino':e.serie.id})
+					#self.env['stock.move.line'].search([['picking_id','=',ppp.id]]).write({'location_id':almacen.lot_stock_id.id})
+					#ppp.move_ids_without_package[i].write({'location_dest_id':ppp.picking_type_id.default_location_dest_id.id})
+					i=i+1
+			if('PACK' in ppp.name or 'TRA' in ppp.name):
+				ppp.write({'location_id':ppp.picking_type_id.default_location_src_id.id})
+				ppp.write({'location_dest_id':ppp.picking_type_id.default_location_dest_id.id})
+				#ppp.move_ids_without_package.write({'location_id':ppp.picking_type_id.default_location_src_id.id})
+				#self.env['stock.move.line'].search([['picking_id','=',ppp.id]]).write({'location_id':ppp.picking_type_id.default_location_src_id.id})
+				#ppp.move_ids_without_package.write({'location_dest_id':ppp.picking_type_id.default_location_dest_id.id})
+				i=0
+				for e in self.compatiblesLineas:
+					ppp.move_ids_without_package[i].write({'location_id':ppp.picking_type_id.default_location_src_id.id,'location_dest_id':ppp.picking_type_id.default_location_dest_id.id,'product_id':e.serie.product_id.id,'x_studio_serie_destino':e.serie.id})
+					#self.env['stock.move.line'].search([['picking_id','=',ppp.id]]).write({'location_id':almacen.lot_stock_id.id})
+					#ppp.move_ids_without_package[i].write({'location_dest_id':ppp.picking_type_id.default_location_dest_id.id})
+					i=i+1
+			
+			if('OUT' in ppp.name):
+				ppp.write({'location_dest_id':ppp.picking_type_id.warehouse_id.lot_stock_id.id})
+				#ppp.move_ids_without_package.write({'location_dest_id':ppp.picking_type_id.warehouse_id.lot_stock_id.id})
+				#self.env['stock.move.line'].search([['picking_id','=',ppp.id]]).write({'location_dest_id':ppp.picking_type_id.warehouse_id.lot_stock_id.id})
+				#ppp.move_ids_without_package.write({'location_id':ppp.picking_type_id.default_location_src_id.id})
+				i=0
+				for e in self.compatiblesLineas:
+					ppp.move_ids_without_package[i].write({'location_dest_id':ppp.picking_type_id.default_location_dest_id.id,'product_id':e.serie.product_id.id,'x_studio_serie_destino':e.serie.id})
+					#self.env['stock.move.line'].search([['picking_id','=',ppp.id]]).write({'location_id':almacen.lot_stock_id.id})
+					#ppp.move_ids_without_package[i].write({'location_dest_id':ppp.picking_type_id.default_location_dest_id.id})
+					i=i+1
 			#ppp.action_confirm()
 			#ppp.action_assign()

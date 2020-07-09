@@ -23,8 +23,11 @@ def convert_timedelta(duration):
 class helpdesk_update(models.Model):
     #_inherit = ['mail.thread', 'helpdesk.ticket']
     _inherit = 'helpdesk.ticket'
+
+    
+
     #priority = fields.Selection([('all','Todas'),('baja','Baja'),('media','Media'),('alta','Alta'),('critica','Critica')])
-    x_studio_field_6furK = fields.Selection([('SUR','SUR'),('NORTE','NORTE'),('PONIENTE','PONIENTE'),('ORIENTE','ORIENTE'),('CENTRO','CENTRO'),('DISTRIBUIDOR','DISTRIBUIDOR'),('MONTERREY','MONTERREY'),('CUERNAVACA','CUERNAVACA'),('GUADALAJARA','GUADALAJARA'),('QUERETARO','QUERETARO'),('CANCUN','CANCUN'),('VERACRUZ','VERACRUZ'),('PUEBLA','PUEBLA'),('TOLUCA','TOLUCA'),('LEON','LEON'),('COMODIN','COMODIN'),('VILLAHERMOSA','VILLAHERMOSA'),('MERIDA','MERIDA'),('ALTAMIRA','ALTAMIRA'),('COMODIN','COMODIN'),('DF00','DF00'),('SAN LP','SAN LP'),('ESTADO DE MÉXICO','ESTADO DE MÉXICO'),('Foraneo Norte','Foraneo Norte'),('Foraneo Sur','Foraneo Sur')], string = 'Zona localidad', store = True, track_visibility='onchange')
+    x_studio_field_6furK = fields.Selection([('CHIHUAHUA','CHIHUAHUA'), ('SUR','SUR'),('NORTE','NORTE'),('PONIENTE','PONIENTE'),('ORIENTE','ORIENTE'),('CENTRO','CENTRO'),('DISTRIBUIDOR','DISTRIBUIDOR'),('MONTERREY','MONTERREY'),('CUERNAVACA','CUERNAVACA'),('GUADALAJARA','GUADALAJARA'),('QUERETARO','QUERETARO'),('CANCUN','CANCUN'),('VERACRUZ','VERACRUZ'),('PUEBLA','PUEBLA'),('TOLUCA','TOLUCA'),('LEON','LEON'),('COMODIN','COMODIN'),('VILLAHERMOSA','VILLAHERMOSA'),('MERIDA','MERIDA'),('ALTAMIRA','ALTAMIRA'),('COMODIN','COMODIN'),('DF00','DF00'),('SAN LP','SAN LP'),('ESTADO DE MÉXICO','ESTADO DE MÉXICO'),('Foraneo Norte','Foraneo Norte'),('Foraneo Sur','Foraneo Sur')], string = 'Zona localidad', store = True, track_visibility='onchange')
     x_studio_zona = fields.Selection([('SUR','SUR'),('NORTE','NORTE'),('PONIENTE','PONIENTE'),('ORIENTE','ORIENTE'),('CENTRO','CENTRO'),('DISTRIBUIDOR','DISTRIBUIDOR'),('MONTERREY','MONTERREY'),('CUERNAVACA','CUERNAVACA'),('GUADALAJARA','GUADALAJARA'),('QUERETARO','QUERETARO'),('CANCUN','CANCUN'),('VERACRUZ','VERACRUZ'),('PUEBLA','PUEBLA'),('TOLUCA','TOLUCA'),('LEON','LEON'),('COMODIN','COMODIN'),('VILLAHERMOSA','VILLAHERMOSA'),('MERIDA','MERIDA'),('ALTAMIRA','ALTAMIRA'),('COMODIN','COMODIN'),('DF00','DF00'),('SAN LP','SAN LP'),('ESTADO DE MÉXICO','ESTADO DE MÉXICO'),('Foraneo Norte','Foraneo Norte'),('Foraneo Sur','Foraneo Sur'),('CHIHUAHUA','CHIHUAHUA')], string = 'Zona', store = True, track_visibility='onchange')
     zona_estados = fields.Selection([('Estado de México','Estado de México'), ('Campeche','Campeche'), ('Ciudad de México','Ciudad de México'), ('Yucatán','Yucatán'), ('Guanajuato','Guanajuato'), ('Puebla','Puebla'), ('Coahuila','Coahuila'), ('Sonora','Sonora'), ('Tamaulipas','Tamaulipas'), ('Oaxaca','Oaxaca'), ('Tlaxcala','Tlaxcala'), ('Morelos','Morelos'), ('Jalisco','Jalisco'), ('Sinaloa','Sinaloa'), ('Nuevo León','Nuevo León'), ('Baja California','Baja California'), ('Nayarit','Nayarit'), ('Querétaro','Querétaro'), ('Tabasco','Tabasco'), ('Hidalgo','Hidalgo'), ('Chihuahua','Chihuahua'), ('Quintana Roo','Quintana Roo'), ('Chiapas','Chiapas'), ('Veracruz','Veracruz'), ('Michoacán','Michoacán'), ('Aguascalientes','Aguascalientes'), ('Guerrero','Guerrero'), ('San Luis Potosí', 'San Luis Potosí'), ('Colima','Colima'), ('Durango','Durango'), ('Baja California Sur','Baja California Sur'), ('Zacatecas','Zacatecas')], track_visibility='onchange', store=True)
     estatus_techra = fields.Selection([('Cerrado','Cerrado'), ('Cancelado','Cancelado'), ('Cotización','Cotización'), ('Tiempo de espera','Tiempo de espera'), ('COTIZACION POR AUTORIZAR POR CLIENTE','COTIZACION POR AUTORIZAR POR CLIENTE'), ('Facturar','Facturar'), ('Refacción validada','Refacción validada'), ('Instalación','Instalación'), ('Taller','Taller'), ('En proceso de atención','En proceso de atención'), ('En Pedido','En Pedido'), ('Mensaje','Mensaje'), ('Resuelto','Resuelto'), ('Reasignación de área','Reasignación de área'), ('Diagnóstico de Técnico','Diagnóstico de Técnico'), ('Entregado','Entregado'), ('En Ruta','En Ruta'), ('Listo para entregar','Listo para entregar'), ('Espera de Resultados','Espera de Resultados'), ('Solicitud de refacción','Solicitud de refacción'), ('Abierto TFS','Abierto TFS'), ('Reparación en taller','Reparación en taller'), ('Abierto Mesa de Ayuda','Abierto Mesa de Ayuda'), ('Reabierto','Reabierto')], track_visibility='onchange', store=True)
@@ -37,7 +40,7 @@ class helpdesk_update(models.Model):
     stage_id = fields.Many2one('helpdesk.stage', string='Stage', ondelete='restrict', track_visibility='onchange',group_expand='_read_group_stage_ids',readonly=True,copy=False,index=True, domain="[('team_ids', '=', team_id)]")
     productos = fields.One2many('product.product','id',string='Solicitudes',store=True)
     #seriesDCA = fields.One2many('dcas.dcas', 'tickete', string="Series")
-
+    requisicion=fields.Boolean()
     validarTicket = fields.Boolean(
                                     string = "Proceder a realizar la validacón del encargado", 
                                     default = False, 
@@ -54,6 +57,12 @@ class helpdesk_update(models.Model):
                                             store = True
                                         )
 
+    almacenes = fields.Many2one(
+                                    'stock.warehouse',
+                                    store = True,
+                                    track_visibility = 'onchange',
+                                    string = 'Almacén'
+                                )
 
     contactoInterno = fields.Many2one('res.partner', string = 'Contacto interno', default=False, store = True)
 
@@ -632,7 +641,8 @@ class helpdesk_update(models.Model):
     def _compute_difference_days_almacen(self):
         for rec in self:
             if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
-                if rec.x_studio_field_nO7Xg and (rec.x_studio_field_up5pO == 'confirmed' or rec.x_studio_field_up5pO == 'assigned'):
+                #if rec.x_studio_field_nO7Xg and (rec.x_studio_field_up5pO == 'confirmed' or rec.x_studio_field_up5pO == 'assigned'):
+                if rec.stage_id.id == 93 or rec.stage_id.id == 112:
                     fecha = str(rec.create_date).split(' ')[0]
                     #fe = t[0]
                     converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
@@ -646,7 +656,8 @@ class helpdesk_update(models.Model):
     def _compute_difference_hour_almacen(self):
         for rec in self:
             if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
-                if rec.x_studio_field_nO7Xg and (rec.x_studio_field_up5pO == 'confirmed' or rec.x_studio_field_up5pO == 'assigned'):
+                #if rec.x_studio_field_nO7Xg and (rec.x_studio_field_up5pO == 'confirmed' or rec.x_studio_field_up5pO == 'assigned'):
+                if rec.stage_id.id == 93 or rec.stage_id.id == 112:
                     first_time = rec.create_date
                     later_time = datetime.datetime.now()
                     difference = later_time - first_time
@@ -660,7 +671,8 @@ class helpdesk_update(models.Model):
     def _compute_difference_minute_almacen(self):
         for rec in self:
             if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
-                if rec.x_studio_field_nO7Xg and (rec.x_studio_field_up5pO == 'confirmed' or rec.x_studio_field_up5pO == 'assigned'):
+                #if rec.x_studio_field_nO7Xg and (rec.x_studio_field_up5pO == 'confirmed' or rec.x_studio_field_up5pO == 'assigned'):
+                if rec.stage_id.id == 93 or rec.stage_id.id == 112:
                     first_time = rec.create_date
                     later_time = datetime.datetime.now()
                     difference = later_time - first_time
@@ -674,7 +686,8 @@ class helpdesk_update(models.Model):
     def _compute_difference_second_almacen(self):
         for rec in self:
             if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
-                if rec.x_studio_field_nO7Xg and (rec.x_studio_field_up5pO == 'confirmed' or rec.x_studio_field_up5pO == 'assigned'):
+                #if rec.x_studio_field_nO7Xg and (rec.x_studio_field_up5pO == 'confirmed' or rec.x_studio_field_up5pO == 'assigned'):
+                if rec.stage_id.id == 93 or rec.stage_id.id == 112:
                     first_time = rec.create_date
                     later_time = datetime.datetime.now()
                     difference = later_time - first_time
@@ -708,7 +721,8 @@ class helpdesk_update(models.Model):
     def _compute_difference_days_distribucion(self):
         for rec in self:
             if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
-                if rec.x_studio_field_nO7Xg and (rec.x_studio_field_Le2tN == 'confirmed' or rec.x_studio_field_Le2tN == 'assigned' or rec.x_studio_field_Le2tN == 'distribucion'):
+                #if rec.x_studio_field_nO7Xg and (rec.x_studio_field_Le2tN == 'confirmed' or rec.x_studio_field_Le2tN == 'assigned' or rec.x_studio_field_Le2tN == 'distribucion'):
+                if rec.stage_id.id == 112 or rec.stage_id.id == 94:
                     fecha = str(rec.create_date).split(' ')[0]
                     converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
                     rec.days_differenceDistribucion = (datetime.date.today() - converted_date).days
@@ -720,7 +734,8 @@ class helpdesk_update(models.Model):
     def _compute_difference_hour_distribucion(self):
         for rec in self:
             if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
-                if rec.x_studio_field_nO7Xg and (rec.x_studio_field_Le2tN == 'confirmed' or rec.x_studio_field_Le2tN == 'assigned' or rec.x_studio_field_Le2tN == 'distribucion'):
+                #if rec.x_studio_field_nO7Xg and (rec.x_studio_field_Le2tN == 'confirmed' or rec.x_studio_field_Le2tN == 'assigned' or rec.x_studio_field_Le2tN == 'distribucion'):
+                if rec.stage_id.id == 112 or rec.stage_id.id == 94:
                     first_time = rec.create_date
                     later_time = datetime.datetime.now()
                     difference = later_time - first_time
@@ -734,7 +749,8 @@ class helpdesk_update(models.Model):
     def _compute_difference_minute_distribucion(self):
         for rec in self:
             if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
-                if rec.x_studio_field_nO7Xg and (rec.x_studio_field_Le2tN == 'confirmed' or rec.x_studio_field_Le2tN == 'assigned' or rec.x_studio_field_Le2tN == 'distribucion'):
+                #if rec.x_studio_field_nO7Xg and (rec.x_studio_field_Le2tN == 'confirmed' or rec.x_studio_field_Le2tN == 'assigned' or rec.x_studio_field_Le2tN == 'distribucion'):
+                if rec.stage_id.id == 112 or rec.stage_id.id == 94:
                     first_time = rec.create_date
                     later_time = datetime.datetime.now()
                     difference = later_time - first_time
@@ -748,7 +764,8 @@ class helpdesk_update(models.Model):
     def _compute_difference_second_distribucion(self):
         for rec in self:
             if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
-                if rec.x_studio_field_nO7Xg and (rec.x_studio_field_Le2tN == 'confirmed' or rec.x_studio_field_Le2tN == 'assigned' or rec.x_studio_field_Le2tN == 'distribucion'):
+                #if rec.x_studio_field_nO7Xg and (rec.x_studio_field_Le2tN == 'confirmed' or rec.x_studio_field_Le2tN == 'assigned' or rec.x_studio_field_Le2tN == 'distribucion'):
+                if rec.stage_id.id == 112 or rec.stage_id.id == 94:
                     first_time = rec.create_date
                     later_time = datetime.datetime.now()
                     difference = later_time - first_time
@@ -765,10 +782,10 @@ class helpdesk_update(models.Model):
                                         <div class='row'>
                                             <div class='col-sm-12'>
                                                 <p>
-                                                """ + str(self.days_differenceAlmacen) + """ día(s) con 
-                                                """ + str(self.hour_differenceAlmacen) + """:
-                                                """ + str(self.minutes_differenceAlmacen) + """:
-                                                """ + str(self.seconds_differenceAlmacen) + """
+                                                """ + str(self.days_differenceDistribucion) + """ día(s) con 
+                                                """ + str(self.hour_differenceDistribucion) + """:
+                                                """ + str(self.minutes_differenceDistribucion) + """:
+                                                """ + str(self.seconds_differenceDistribucion) + """
                                                 </p>
                                             </div>
                                         </div>
@@ -779,16 +796,17 @@ class helpdesk_update(models.Model):
 
 
     # Repartidor compuatado de tiempos
-    """
+    
     days_differenceRepartidor = fields.Integer(
-                                                    compute='_compute_difference_repartidor',
+                                                    compute='_compute_difference_days_repartidor',
                                                     string='Días de atraso repatidor'
                                                 )
 
     def _compute_difference_days_repartidor(self):
         for rec in self:
             if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
-                if rec.x_studio_field_up5pO == 'waiting' and rec.x_studio_field_nO7Xg:
+                #if rec.x_studio_field_up5pO == 'waiting' and rec.x_studio_field_nO7Xg:
+                if rec.stage_id.id == 108:
                     fecha = str(rec.create_date).split(' ')[0]
                     converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
                     rec.days_differenceRepartidor = (datetime.date.today() - converted_date).days
@@ -800,7 +818,8 @@ class helpdesk_update(models.Model):
     def _compute_difference_hour_repartidor(self):
         for rec in self:
             if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
-                if rec.x_studio_field_up5pO == 'waiting' and rec.x_studio_field_nO7Xg:
+                #if rec.x_studio_field_up5pO == 'waiting' and rec.x_studio_field_nO7Xg:
+                if rec.stage_id.id == 108:
                     first_time = rec.create_date
                     later_time = datetime.datetime.now()
                     difference = later_time - first_time
@@ -814,7 +833,8 @@ class helpdesk_update(models.Model):
     def _compute_difference_minute_repartidor(self):
         for rec in self:
             if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
-                if rec.x_studio_field_up5pO == 'waiting' and rec.x_studio_field_nO7Xg:
+                #if rec.x_studio_field_up5pO == 'waiting' and rec.x_studio_field_nO7Xg:
+                if rec.stage_id.id == 108:
                     first_time = rec.create_date
                     later_time = datetime.datetime.now()
                     difference = later_time - first_time
@@ -828,17 +848,34 @@ class helpdesk_update(models.Model):
     def _compute_difference_second_repartidor(self):
         for rec in self:
             if rec.stage_id.id != 18 or rec.stage_id.id != 3 or rec.stage_id.id != 4:
-                if rec.x_studio_field_up5pO == 'waiting' and rec.x_studio_field_nO7Xg:
+                #if rec.x_studio_field_up5pO == 'waiting' and rec.x_studio_field_nO7Xg:
+                if rec.stage_id.id == 108:
                     first_time = rec.create_date
                     later_time = datetime.datetime.now()
                     difference = later_time - first_time
                     hours, minutes, seconds = convert_timedelta(difference)
                     rec.seconds_differenceRepartidor = seconds
 
+    tiempoDeAtrasoRepartidor = fields.Text(
+                                            string = 'Tiempo de atraso distribución',
+                                            compute = '_compute_tiempo_atraso_repartidor'
+                                        )
+    def _compute_tiempo_atraso_repartidor(self):
+        self.tiempoDeAtrasoRepartidor = """
+                                        <div class='row'>
+                                            <div class='col-sm-12'>
+                                                <p>
+                                                """ + str(self.days_differenceRepartidor) + """ día(s) con 
+                                                """ + str(self.hour_differenceRepartidor) + """:
+                                                """ + str(self.minutes_differenceRepartidor) + """:
+                                                """ + str(self.seconds_differenceRepartidor) + """
+                                                </p>
+                                            </div>
+                                        </div>
+                                    """
 
 
-
-    """
+    
 
 
 
@@ -2270,12 +2307,15 @@ class helpdesk_update(models.Model):
                     break
                 if record.team_id.id == 8 or record.team_id.id == 13:
                     x = 1 ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
-                    if self.x_studio_almacen_1=='Agricola':
-                       sale.write({'warehouse_id':1})
-                       x = 12
-                    if self.x_studio_almacen_1=='Queretaro':
-                       sale.write({'warehouse_id':18})
-                       x = 115
+                    if self.almacenes:
+                        #if self.x_studio_almacen_1=='Agricola':
+                        if self.almacenes.id == 1:
+                           #sale.write({'warehouse_id':1})
+                           x = 12
+                        #if self.x_studio_almacen_1=='Queretaro':
+                        if self.almacenes.id == 18:
+                           #sale.write({'warehouse_id':18})
+                           x = 115
                     sale = self.env['sale.order'].sudo().create({'partner_id' : record.partner_id.id
                                                     , 'origin' : "Ticket de tóner: " + str(record.x_studio_id_ticket)
                                                     , 'x_studio_tipo_de_solicitud' : "Venta"
@@ -2284,7 +2324,7 @@ class helpdesk_update(models.Model):
                                                     , 'x_studio_tcnico' : record.x_studio_tcnico.id
                                                     , 'x_studio_field_RnhKr': self.localidadContacto.id
                                                     , 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id
-                                                    , 'warehouse_id' : x  
+                                                    , 'warehouse_id' : self.almacenes.id  
                                                     , 'team_id' : 1
                                                     , 'x_studio_comentario_adicional':self.x_studio_comentarios_de_localidad
                                                     , 'x_studio_field_bxHgp': int(record.x_studio_id_ticket)
@@ -2292,7 +2332,7 @@ class helpdesk_update(models.Model):
                                                   })
                     
 
-
+                    #record['almacenes'] = self.almacenes.id
                     record['x_studio_field_nO7Xg'] = sale.id
                     serieaca = ''
                     
@@ -2424,26 +2464,32 @@ class helpdesk_update(models.Model):
                         sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
                         sale.write({'x_studio_corte':self.x_studio_corte})
                         sale.write({'x_studio_comentario_adicional':self.x_studio_comentarios_de_localidad})      
-                        x=0
-                        if self.x_studio_almacen_1=='Agricola':
-                           sale.write({'warehouse_id':1})
-                           x=12
-                        if self.x_studio_almacen_1=='Queretaro':
-                           sale.write({'warehouse_id':18})
-                           x=115
+                        x = 0
+                        if self.almacenes:
+                            #if self.x_studio_almacen_1 == 'Agricola':
+                            if self.almacenes.id == 1:
+                               #sale.write({'warehouse_id':1})
+                               x = 12
+                            #if self.x_studio_almacen_1=='Queretaro':
+                            if self.almacenes.id == 18:
+                               #sale.write({'warehouse_id':18})
+                               x = 115
                         for lineas in sale.order_line:
                             st=self.env['stock.quant'].search([['location_id','=',x],['product_id','=',lineas.product_id.id]]).sorted(key='quantity',reverse=True)
                             requisicion=False
                             if(len(st)>0):
                                 if(st[0].quantity==0):
-                                    requisicion=self.env['requisicion.requisicion'].search([['state','!=','done'],['create_date','<=',datetime.datetime.now()],['origen','=','Tóner']]).sorted(key='create_date',reverse=True)
+                                    #requisicion=self.env['requisicion.requisicion'].search([['state','!=','done'],['create_date','<=',datetime.datetime.now()],['origen','=','Tóner']]).sorted(key='create_date',reverse=True)
+                                    requisicion=self.env['requisicion.requisicion'].search([['state','!=','done'],['create_date','<=',datetime.datetime.now()],['origen','=','Tóner']], order='create_date desc')
                             else:
-                                requisicion=self.env['requisicion.requisicion'].search([['state','!=','done'],['create_date','<=',datetime.datetime.now()],['origen','=','Tóner']]).sorted(key='create_date',reverse=True)
-                            if(len(requisicion)==0):
-                                re=self.env['requisicion.requisicion'].create({'origen':'Tóner','area':'Almacen','state':'draft'})
-                                re.product_rel=[{'cliente':sale.partner_shipping_id.id,'ticket':sale.x_studio_field_bxHgp.id,'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
-                            if(len(requisicion)>0):
-                                requisicion[0].product_rel=[{'cliente':sale.partner_shipping_id.id,'ticket':sale.x_studio_field_bxHgp.id,'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
+                                #requisicion=self.env['requisicion.requisicion'].search([['state','!=','done'],['create_date','<=',datetime.datetime.now()],['origen','=','Tóner']]).sorted(key='create_date',reverse=True)
+                                requisicion=self.env['requisicion.requisicion'].search([['state','!=','done'],['create_date','<=',datetime.datetime.now()],['origen','=','Tóner']], order='create_date desc')
+                            if requisicion:
+                                if(len(requisicion)==0):
+                                    re=self.env['requisicion.requisicion'].create({'origen':'Tóner','area':'Almacen','state':'draft'})
+                                    re.product_rel=[{'cliente':sale.partner_shipping_id.id,'ticket':sale.x_studio_field_bxHgp.id,'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
+                                if(len(requisicion)>0):
+                                    requisicion[0].product_rel=[{'cliente':sale.partner_shipping_id.id,'ticket':sale.x_studio_field_bxHgp.id,'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
                         sale.action_confirm()
 
                     else:
@@ -3896,55 +3942,84 @@ class helpdesk_update(models.Model):
             'context': {'dominioTest': str(ids)},
         }
 
+
     @api.multi
-    def write(self, vals):
-        # we set the assignation date (assign_date) to now for tickets that are being assigned for the first time
-        # same thing for the closing date
-        assigned_tickets = closed_tickets = self.browse()
-        if vals.get('user_id'):
-            assigned_tickets = self.filtered(lambda ticket: not ticket.assign_date)
-        if vals.get('stage_id') and self.env['helpdesk.stage'].browse(vals.get('stage_id')).is_close:
-            closed_tickets = self.filtered(lambda ticket: not ticket.close_date)
+    def agregar_productos_wizard(self):
+        wiz = self.env['helpdesk.agregar.productos'].create({'ticket_id':self.id})
+        wiz.productos = [(6, 0, self.x_studio_productos.ids)]
+        view = self.env.ref('helpdesk_update.view_helpdesk_agregar_productos')
+        return {
+            'name': _('Agregar productos'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'helpdesk.agregar.productos',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            #'domain': [["series", "=", ids]],
+            #'context': self.env.context,
+            'context': self.env.context,
+        }
 
-        now = datetime.datetime.now()
-        res = super(helpdesk_update, self - assigned_tickets - closed_tickets).write(vals)
-        res &= super(helpdesk_update, assigned_tickets - closed_tickets).write(dict(vals, **{
-            'assign_date': now,
-        }))
-        res &= super(helpdesk_update, closed_tickets - assigned_tickets).write(dict(vals, **{
-            'close_date': now,
-        }))
-        res &= super(helpdesk_update, assigned_tickets & closed_tickets).write(dict(vals, **{
-            'assign_date': now,
-            'close_date': now,
-        }))
 
-        if vals.get('partner_id'):
-            self.message_subscribe([vals['partner_id']])
-        _logger.info('Hola-----'+str(self.team_id.id))
-        if(vals.get('team_id')==11):
-            cliente=self.env['res.partner'].browse(vals.get('partner_id'))
-            distribuidores=self.env['zona.distribuidor'].search([['estado','=',cliente.state_id.id]])
-            check=distribuidores.mapped('municipio')
-            _logger.info('Hola-----'+str(check))
-            if(check==[] and len(distribuidores)==1):
-                req=self.env['requisicion.requisicion'].search([['proveedor','=',distribuidores.rel_contact.id],['state','=','open']])
-                if(len(req)==0):
-                    req=self.env['requisicion.requisicion'].create({'state':'open','proveedor':distribuidores.rel_contact.id})
-                    req_rel=self.env['product.rel.requisicion'].create({'product':1,'cantidad':1,'req_rel':req.id,'costo':0.0,'ticket':vals.get('id'),'cliente':cliente.id})
-                else:
-                    req_rel=self.env['product.rel.requisicion'].create({'product':1,'cantidad':1,'req_rel':req.id,'costo':0.0,'ticket':vals.get('id'),'cliente':cliente.id})
-            else:
-                d=distribuidores.filtered(lambda x:x.municipio!=False).filtered(lambda x:x.municipio.lower().replace(' ','')==cliente.city.lower().replace(' ',''))
-                if(len(d)==0):
-                    d=distribuidores.filtered(lambda x:x.municipio==False)
-                req=self.env['requisicion.requisicion'].search([['proveedor','=',d.rel_contact.id],['state','=','open']])
-                if(len(req)==0):
-                    req=self.env['requisicion.requisicion'].create({'state':'open','proveedor':d.rel_contact.id})
-                    req_rel=self.env['product.rel.requisicion'].create({'product':1,'cantidad':1,'req_rel':req.id,'costo':0.0,'ticket':vals.get('id'),'cliente':cliente.id})
-                if(len(req)>0):
-                    req_rel=self.env['product.rel.requisicion'].create({'product':1,'cantidad':1,'req_rel':req[0].id,'costo':0.0,'ticket':vals.get('id'),'cliente':cliente.id})
-        return res
+
+    # @api.multi
+    # def write(self, vals):
+    #     # we set the assignation date (assign_date) to now for tickets that are being assigned for the first time
+    #     # same thing for the closing date
+    #     assigned_tickets = closed_tickets = self.browse()
+    #     if vals.get('user_id'):
+    #         assigned_tickets = self.filtered(lambda ticket: not ticket.assign_date)
+    #     if vals.get('stage_id') and self.env['helpdesk.stage'].browse(vals.get('stage_id')).is_close:
+    #         closed_tickets = self.filtered(lambda ticket: not ticket.close_date)
+
+    #     now = datetime.datetime.now()
+    #     res = super(helpdesk_update, self - assigned_tickets - closed_tickets).write(vals)
+    #     res &= super(helpdesk_update, assigned_tickets - closed_tickets).write(dict(vals, **{
+    #         'assign_date': now,
+    #     }))
+    #     res &= super(helpdesk_update, closed_tickets - assigned_tickets).write(dict(vals, **{
+    #         'close_date': now,
+    #     }))
+    #     res &= super(helpdesk_update, assigned_tickets & closed_tickets).write(dict(vals, **{
+    #         'assign_date': now,
+    #         'close_date': now,
+    #     }))
+
+    #     if vals.get('partner_id'):
+    #         self.message_subscribe([vals['partner_id']])
+    #     _logger.info('Hola-----'+str(self.team_id.id))
+    #     if(self.team_id.id==11 and self.requisicion==False):
+    #         cliente=self.env['res.partner'].browse(self.x_studio_empresas_relacionadas.id)
+    #         distribuidores=self.env['zona.distribuidor'].search([['estado','=',cliente.state_id.id]])
+    #         check=distribuidores.mapped('municipio')
+    #         _logger.info('Hola-----'+str(check))
+    #         if(check==[] and len(distribuidores)==1):
+    #             req=self.env['requisicion.requisicion'].search([['proveedor','=',distribuidores.rel_contact.id],['state','=','open']])
+    #             if(len(req)==0):
+    #                 req=self.env['requisicion.requisicion'].create({'state':'open','proveedor':distribuidores.rel_contact.id,'area':'Distribuidor'})
+    #                 req_rel=self.env['product.rel.requisicion'].create({'product':1,'cantidad':1,'req_rel':req.id,'costo':0.0,'ticket':self.id,'cliente':cliente.id})
+    #                 _logger.info('Hola-----1')
+    #             else:
+    #                 req_rel=self.env['product.rel.requisicion'].create({'product':1,'cantidad':1,'req_rel':req.id,'costo':0.0,'ticket':self.id,'cliente':cliente.id})
+    #                 _logger.info('Hola-----2')
+    #         else:
+    #             d=distribuidores.filtered(lambda x:x.municipio!=False).filtered(lambda x:x.municipio.lower().replace(' ','')==cliente.city.lower().replace(' ',''))
+    #             if(len(d)==0):
+    #                 d=distribuidores.filtered(lambda x:x.municipio==False)
+    #             req=self.env['requisicion.requisicion'].search([['proveedor','=',d.rel_contact.id],['state','=','open']])
+    #             _logger.info('Hola-----'+str(req))
+    #             if(len(req)==0):
+    #                 req1=self.env['requisicion.requisicion'].create({'state':'open','proveedor':d.rel_contact.id,'area':'Distribuidor'})
+    #                 req_rel=self.env['product.rel.requisicion'].create({'product':1,'cantidad':1,'req_rel':req1.id,'costo':0.0,'ticket':self.id,'cliente':cliente.id})
+    #                 _logger.info('Hola-----3')
+    #             if(len(req)>0):
+    #                 req_rel=self.env['product.rel.requisicion'].create({'product':1,'cantidad':1,'req_rel':req[0].id,'costo':0.0,'ticket':self.id,'cliente':cliente.id})
+    #                 _logger.info('Hola-----1')
+    #         self.requisicion=True
+    #     return res
         
 class helpdes_diagnostico(models.Model):
     _name = "helpdesk.diagnostico"

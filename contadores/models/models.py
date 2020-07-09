@@ -378,7 +378,42 @@ class dcas(models.Model):
             cierre="</table></body></html> "
             self.tablahtml=cabecera+ticket+ultimosContadores+fechas+paginasProcesadas+rendimientos+niveles+cierre                                                                                                                                                                                 
     """
+
+    @api.multi
+    def editar_contadores_wizard(self):
+        wiz = self.env['contadores.dca.editar.contadores'].create({'dca_id': self.id})
+        #wiz.productos = [(6, 0, self.x_studio_productos.ids)]
+        view = self.env.ref('contadores.view_dca_editar_contadores')
+        return {
+            'name': _('Editar contadores'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'contadores.dca.editar.contadores',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            'context': self.env.context,
+        }
     
+    @api.multi
+    def reiniciar_contadores_wizard(self):
+        wiz = self.env['contadores.dca.reiniciar.contadores'].create({'dca_id': self.id})
+        #wiz.productos = [(6, 0, self.x_studio_productos.ids)]
+        view = self.env.ref('contadores.view_dca_reiniciar_contadores')
+        return {
+            'name': _('Reiniciar contadores'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'contadores.dca.reiniciar.contadores',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            'context': self.env.context,
+        }
     
 
     
@@ -451,6 +486,8 @@ class contadores(models.Model):
                     if sg.nombreAnte=='SERVICIO DE TFS' or sg.nombreAnte=='OPERADOR TFS' or sg.nombreAnte=='TFS' or sg.nombreAnte=='SERVICIO DE TFS ' :                        
                         self.env.cr.execute("insert into x_sale_order_servicios_rel (sale_order_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
                     if sg.nombreAnte=='SERVICIO DE MANTENIMIENTO':                        
+                        self.env.cr.execute("insert into x_sale_order_servicios_rel (sale_order_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
+                    if sg.nombreAnte=='SOPORTE Y MANTENIMIENTO DE EQUIPOS':
                         self.env.cr.execute("insert into x_sale_order_servicios_rel (sale_order_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
                     if sg.nombreAnte=='SERVICIO DE ADMINISTRADOR KM NET MANAGER':                        
                         self.env.cr.execute("insert into x_sale_order_servicios_rel (sale_order_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
@@ -705,17 +742,18 @@ class contadores(models.Model):
                                   totalsr=float(rd.rentaMensual)+totalsr
                                   ttotal=(iva +cal)+ttotal 
                                   _logger.info("totals elsebn: " + str(totalsr))  
-                                  _logger.info("tota elsebn: " + str(ttotal))  
+                                  _logger.info("tota elsebn: " + str(ttotal))
+                            ebnx=0    
                             if rpt.x_studio_color_o_bn=='Color':
                                if rd.bolsaBN<ebn:
                                   ebn=ebn-rd.bolsaBN
-                                  eebn=ebn+eebn  
+                                  #eebn=ebn+eebn  
                                   ebnx=(ebn*rd.clickExcedenteBN)
                                   _logger.info("totals cnsi: " + str(totalsr))  
                                   _logger.info("tota cnsi: " + str(ttotal))     
                                if rd.bolsaColor<ec:
                                   ec=ec-rd.bolsaColor
-                                  eec=ec+eec  
+                                  #eec=ec+eec  
                                   call=float(rd.rentaMensual)+(ec*rd.clickExcedenteColor)+ebnx                                
                                   worksheet.write(i, 12, call,neg)
                                   iva=round(call*.16,2)

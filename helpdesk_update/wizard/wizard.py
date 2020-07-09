@@ -414,6 +414,12 @@ class HelpDeskAlerta(TransientModel):
     
     ticket_id = fields.Many2one("helpdesk.ticket")
     mensaje = fields.Text('Mensaje')
+
+    
+    def cerrar(self):
+        return {
+                    "type": "set_scrollTop",
+                }
     
 
 class HelpDeskAlertaNumeroDeSerie(TransientModel):
@@ -860,6 +866,7 @@ class helpdesk_crearconserie(TransientModel):
     ticket_id_existente = fields.Integer(string = 'Ticket existente', default = 0, store = True)
     textoTicketExistente = fields.Text(string = ' ', store = True)
     textoClienteMoroso = fields.Text(string = ' ', store = True)
+    textoDistribuidor = fields.Text(string = ' ', store = True)
 
     estatus = fields.Selection([('No disponible','No disponible'),('Moroso','Moroso'),('Al corriente','Al corriente')], string = 'Estatus', store = True, default = 'No disponible')
 
@@ -967,6 +974,16 @@ class helpdesk_crearconserie(TransientModel):
         self.direccionCiudad = self.localidadRelacion.city
         self.direccionEstado = self.localidadRelacion.state_id.name
         self.direccionCodigoPostal = self.localidadRelacion.zip
+        if self.clienteRelacion:
+            if self.localidadRelacion.x_studio_distribuidor or self.clienteRelacion.x_studio_distribuidor:
+                textoHtml = []
+                textoHtml.append("<h2>Es distribuidor, favor de verificar la dirección del cliente para evitar problemas de visitas erroneas.</h2>")
+                self.textoDistribuidor = ''.join(textoHtml)
+        else:
+            if self.localidadRelacion.x_studio_distribuidor:
+                textoHtml = []
+                textoHtml.append("<h2>Es distribuidor, favor de verificar la dirección del cliente para evitar problemas de visitas erroneas.</h2>")
+                self.textoDistribuidor = ''.join(textoHtml)
       else:
         self.serie = ''
 
@@ -989,6 +1006,7 @@ class helpdesk_crearconserie(TransientModel):
         self.direccionEstado = ''
         self.direccionCodigoPostal = ''
 
+        self.textoDistribuidor = ''
   
         
     @api.onchange('clienteRelacion')
@@ -1017,6 +1035,8 @@ class helpdesk_crearconserie(TransientModel):
             self.direccionCodigoPostal = ''
 
             self.estatus = 'No disponible'
+
+            self.textoDistribuidor = ''
         else:
             if self.clienteRelacion.x_studio_moroso:
                 self.estatus = 'Moroso'
@@ -1028,6 +1048,17 @@ class helpdesk_crearconserie(TransientModel):
             else:
                 self.estatus = 'Al corriente'
                 self.textoClienteMoroso = ''
+            if self.localidadRelacion:
+                if self.clienteRelacion.x_studio_distribuidor or self.localidadRelacion.x_studio_distribuidor:
+                    textoHtml = []
+                    textoHtml.append("<h2>Es distribuidor, favor de verificar la dirección del cliente para evitar problemas de visitas erroneas.</h2>")
+                    self.textoDistribuidor = ''.join(textoHtml)
+            else:
+                if self.clienteRelacion.x_studio_distribuidor:
+                    textoHtml = []
+                    textoHtml.append("<h2>Es distribuidor, favor de verificar la dirección del cliente para evitar problemas de visitas erroneas.</h2>")
+                    self.textoDistribuidor = ''.join(textoHtml)
+
             #if self.clienteRelacion.name == 'GN SYS CORPORATIVO SA DE CV':
 
 
@@ -1210,33 +1241,64 @@ class helpdesk_crearconserie(TransientModel):
             self.direccionCodigoPostal = ''
 
     def crearTicket(self):
+        equipoDeUsuario = 9
+        """
+        equiposRelacionados = self.env['helpdesk_team_res_users_rel'].search([['res_users_id', '=', self.env.user.id]]).helpdesk_team_id
+        _logger.info('3312 equiposRelacionados: ' + str(equiposRelacionados) )
+        
+        if equiposRelacionados:
+            equipoDeUsuario = equiposRelacionados[0]
+        """
+        #for equipoRelacionado in equiposRelacionados:
+        #    if equipoRelacionado == 
+
         if self.serie:
+
             messageTemp = ''
             ticket = self.env['helpdesk.ticket'].create({'stage_id': 89 
                                                 ,'x_studio_equipo_por_nmero_de_serie': [(6,0,self.serie.ids)]
                                                 ,'partner_id': int(self.idCliente)
                                                 ,'x_studio_empresas_relacionadas': int(self.idLocaliidad)
-                                                ,'team_id': 9
+                                                ,'team_id': equipoDeUsuario
                                                 ,'x_studio_field_6furK': self.zonaLocalidad
                                                 })
             if self.zonaLocalidad:
                 ticket.write({'partner_id': int(self.idCliente)
                             ,'x_studio_empresas_relacionadas': int(self.idLocaliidad)
-                            ,'team_id': 9
+                            ,'team_id': equipoDeUsuario
                             ,'x_studio_field_6furK': self.zonaLocalidad
                             })
             else:
                 ticket.write({'partner_id': int(self.idCliente)
                             ,'x_studio_empresas_relacionadas': int(self.idLocaliidad)
-                            ,'team_id': 9
+                            ,'team_id': equipoDeUsuario
                             })
             if self.contactoInterno:
                 query = "update helpdesk_ticket set \"contactoInterno\" = " + str(self.contactoInterno.id) + " where id = " + str(ticket.id) + ";"
                 self.env.cr.execute(query)
                 self.env.cr.commit()
-            query = "update helpdesk_ticket set \"partner_id\" = " + str(self.idCliente) + ", \"x_studio_empresas_relacionadas\" =" + str(self.idLocaliidad) + " where id = " + str(ticket.id) + ";"
-            self.env.cr.execute(query)
-            self.env.cr.commit()
+            if self.idCliente:
+                query = "update helpdesk_ticket set \"partner_id\" = " + str(self.idCliente) + ", \"x_studio_empresas_relacionadas\" =" + str(self.idLocaliidad) + " where id = " + str(ticket.id) + ";"
+                self.env.cr.execute(query)
+                self.env.cr.commit()
+            else:
+                mensajeTitulo = 'No existe un cliente asociado a la serie!!!'
+                mensajeCuerpo = 'No se logro encontrar el cliente que esta asociado a la serie "' + str(self.serie) + '", favor de notificar al administrador.'
+                #wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
+                wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
+                view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+                return {
+                        'name': _(mensajeTitulo),
+                        'type': 'ir.actions.act_window',
+                        'view_type': 'form',
+                        'view_mode': 'form',
+                        'res_model': 'helpdesk.alerta',
+                        'views': [(view.id, 'form')],
+                        'view_id': view.id,
+                        'target': 'new',
+                        'res_id': wiz.id,
+                        'context': self.env.context,
+                        }
             ticket._compute_datosCliente()
             query = "select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!=" + str(ticket.x_studio_id_ticket) + "  and h.stage_id!=18 and h.team_id!=8 and  h.active='t' and stock_production_lot_id = " +  str(ticket.x_studio_equipo_por_nmero_de_serie[0].id) + " limit 1;"
             self.env.cr.execute(query)                        
@@ -1270,12 +1332,12 @@ class helpdesk_crearconserie(TransientModel):
                                               #,'x_studio_equipo_por_nmero_de_serie': [(6,0,self.serie.ids)]
                                               ,'partner_id': int(self.idCliente)
                                               ,'x_studio_empresas_relacionadas': int(self.idLocaliidad)
-                                              ,'team_id': 9
+                                              ,'team_id': equipoDeUsuario
                                               ,'x_studio_field_6furK': self.zonaLocalidad
                                               })
           ticket.write({'partner_id': int(self.idCliente)
                       ,'x_studio_empresas_relacionadas': int(self.idLocaliidad)
-                      ,'team_id': 9
+                      ,'team_id': equipoDeUsuario
                       ,'x_studio_field_6furK': self.zonaLocalidad
                       })
           if self.contactoInterno:
@@ -1550,11 +1612,23 @@ class CrearYValidarSolTonerMassAction(TransientModel):
         help = "",
     )
 
+    almacenes = fields.Many2one(
+                                    'stock.warehouse',
+                                    store = True,
+                                    track_visibility = 'onchange',
+                                    string = 'Almacén'
+                                )
+
     def confirmar(self):
         _logger.info("CrearYValidarSolTonerMassAction.confirmar()")
 
         listaTicketsSale = []
+        listaDeTicketsConSolicitud = []
+        listaDeTicketsValidados = []
+        listaDeTicketsSinPoroductos = []
+
         for ticket in self.ticket_ids:
+            
             if not ticket.x_studio_field_nO7Xg:
                 jalaSolicitudes = ''
                 if ticket.stage_id.id == 91 and ticket.x_studio_field_nO7Xg:
@@ -1566,12 +1640,15 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                     break
                 if ticket.team_id.id == 8 or ticket.team_id.id == 13:
                     x = 1 ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
-                    if ticket.x_studio_almacen_1=='Agricola':
-                       sale.write({'warehouse_id':1})
-                       x = 12
-                    if ticket.x_studio_almacen_1=='Queretaro':
-                       sale.write({'warehouse_id':18})
-                       x = 115
+                    if self.almacenes:
+                        #if ticket.x_studio_almacen_1== 'Agricola':
+                        if self.almacenes.id == 1:
+                        #   sale.write({'warehouse_id':1})
+                            x = 12
+                        #if ticket.x_studio_almacen_1=='Queretaro':
+                        if self.almacenes.id == 18:
+                        #   sale.write({'warehouse_id':18})
+                            x = 115
                     sale = self.env['sale.order'].sudo().create({ 'partner_id' : ticket.partner_id.id
                                                                 , 'origin' : "Ticket de tóner: " + str(ticket.x_studio_id_ticket)
                                                                 , 'x_studio_tipo_de_solicitud' : "Venta"
@@ -1580,14 +1657,14 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                                                                 , 'x_studio_tcnico' : ticket.x_studio_tcnico.id
                                                                 , 'x_studio_field_RnhKr': ticket.localidadContacto.id
                                                                 , 'partner_shipping_id' : ticket.x_studio_empresas_relacionadas.id
-                                                                , 'warehouse_id' : x  
+                                                                , 'warehouse_id' : self.almacenes.id
                                                                 , 'team_id' : 1
                                                                 , 'x_studio_comentario_adicional': ticket.x_studio_comentarios_de_localidad
                                                                 , 'x_studio_field_bxHgp': int(ticket.x_studio_id_ticket)
                                                                 ,'x_studio_corte': ticket.x_studio_corte     
                                                               })
-                    
-
+                    if self.almacenes:
+                        ticket.write({'almacenes': self.almacenes.id})
                     ticket.write({'x_studio_field_nO7Xg': sale.id})
                     #record['x_studio_field_nO7Xg'] = sale.id
                     serieaca = ''
@@ -1704,11 +1781,15 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                             
                         
                         if car==0:
-                           raise exceptions.ValidationError("Ningun cartucho selecionado, serie ."+str(c.serie.name)) 
+                           #raise exceptions.ValidationError("Ningun cartucho selecionado, serie ."+str(c.serie.name))
+                           listaDeTicketsSinPoroductos.append(ticket.id)
+                           break
                         
                         jalaSolicitudes='solicitud de toner '+sale.name+' para la serie :'+serieaca +' '+bn+' '+amar+' '+cian+' '+magen
                     if len(sale.order_line)==0:
-                       raise exceptions.ValidationError("Ningun cartucho selecionado, revisar series .")                    
+                       #raise exceptions.ValidationError("Ningun cartucho selecionado, revisar series .")
+                       listaDeTicketsSinPoroductos.append(ticket.id)
+                       break
                     sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
                     jalaSolicitudess='solicitud de toner '+sale.name+' para la serie :'+serieaca
                     self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
@@ -1719,14 +1800,21 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                         self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
                         sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
                         sale.write({'x_studio_corte':ticket.x_studio_corte})
-                        sale.write({'x_studio_comentario_adicional':ticket.x_studio_comentarios_de_localidad})      
-                        x=0
-                        if ticket.x_studio_almacen_1=='Agricola':
-                           sale.write({'warehouse_id':1})
-                           x=12
-                        if ticket.x_studio_almacen_1=='Queretaro':
-                           sale.write({'warehouse_id':18})
-                           x=115
+                        sale.write({'x_studio_comentario_adicional':ticket.x_studio_comentarios_de_localidad})
+                        x = 0
+                        if self.almacenes:
+                            _logger.info('3312: Exisate el almacen')
+                            sale.write({'warehouse_id': self.almacenes.id})
+                            #if ticket.x_studio_almacen_1=='Agricola':
+                            if self.almacenes.id == 1:
+                               #sale.write({'warehouse_id':1})
+                               x = 12
+                               _logger.info('3312: x agricola: ' + str(x))
+                            if self.almacenes.id == 18:
+                               #sale.write({'warehouse_id':18})
+                               x = 115
+                               _logger.info('3312: x Queretaro: ' + str(x))
+                        
                         for lineas in sale.order_line:
                             st=self.env['stock.quant'].search([['location_id','=',x],['product_id','=',lineas.product_id.id]]).sorted(key='quantity',reverse=True)
                             requisicion=False
@@ -1736,14 +1824,19 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                                     requisicion=self.env['requisicion.requisicion'].search([['state','!=','done'],['create_date','<=',datetime.datetime.now()],['origen','=','Tóner']]).sorted(key='create_date',reverse=True)
                             else:
                                 requisicion=self.env['requisicion.requisicion'].search([['state','!=','done'],['create_date','<=',datetime.datetime.now()],['origen','=','Tóner']]).sorted(key='create_date',reverse=True)
-                            if(len(requisicion)==0):
-                                re=self.env['requisicion.requisicion'].create({'origen':'Tóner','area':'Almacen','state':'draft'})
-                                re.product_rel=[{'cliente':sale.partner_shipping_id.id,'ticket':sale.x_studio_field_bxHgp.id,'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
-                            if(len(requisicion)>0):
-                                requisicion[0].product_rel=[{'cliente':sale.partner_shipping_id.id,'ticket':sale.x_studio_field_bxHgp.id,'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
+                            if requisicion:
+                                if(len(requisicion)==0):
+                                    re=self.env['requisicion.requisicion'].create({'origen':'Tóner','area':'Almacen','state':'draft'})
+                                    re.product_rel=[{'cliente':sale.partner_shipping_id.id,'ticket':sale.x_studio_field_bxHgp.id,'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
+                                if(len(requisicion)>0):
+                                    requisicion[0].product_rel=[{'cliente':sale.partner_shipping_id.id,'ticket':sale.x_studio_field_bxHgp.id,'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
                         sale.action_confirm()
+                        listaDeTicketsValidados.append(ticket.id)
 
                     else:
+                        listaDeTicketsSinPoroductos.append(ticket.id)
+                        
+                        """
                         mensajeTitulo = 'Solicitud sin productos!!!'
                         mensajeCuerpo = 'No es posible validar una solicitud que no tiene productos.'
                         #wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
@@ -1761,8 +1854,10 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                                 'res_id': wiz.id,
                                 'context': self.env.context,
                                 }
-                        
+                        """
             else:
+                listaDeTicketsConSolicitud.append(ticket.id)
+                """
                 mensajeTitulo = 'Solicitud de tóner existente!!!'
                 mensajeCuerpo = 'Ya existe una solicitud de tóner. No es posible generar dos solicitudes.'
                 #wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
@@ -1780,7 +1875,7 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                         'res_id': wiz.id,
                         'context': self.env.context,
                         }
-
+                """
 
             """
             saleTemp = ticket.x_studio_field_nO7Xg
@@ -1805,19 +1900,30 @@ class CrearYValidarSolTonerMassAction(TransientModel):
 
 
         #listaTicketsSale.sudo().action_confirm()
-        self.ticket_ids.write({'stage_id': 93})
-
-        for ticket in self.ticket_ids:
-            query = "update helpdesk_ticket set stage_id = 93 where id = " + str(ticket.x_studio_id_ticket) + ";"
-            ss = self.env.cr.execute(query)
+        #self.ticket_ids.write({'stage_id': 93})
 
         wiz = ''
         mensajeTitulo = "Solicitudes de tóner creadas y validadas !!!"
         mensajeCuerpo = "Se crearon y validaron las solicitudes de los tickets. \n\n"
-        for ticket in self.ticket_ids:
-            mensajeCuerpo = mensajeCuerpo + str(ticket.x_studio_id_ticket) + ', '
-              
-        wiz = self.env['helpdesk.alerta.series'].create({'ticket_id': ticket.id, 'mensaje': mensajeCuerpo})
+
+        for ticket in listaDeTicketsValidados:
+            query = "update helpdesk_ticket set stage_id = 93 where id = " + str(ticket) + ";"
+            ss = self.env.cr.execute(query)
+            self.env.cr.commit()
+            mensajeCuerpo = mensajeCuerpo + str(ticket) + ', '
+
+        mensajeCuerpo = mensajeCuerpo + '\n\nLos siguientes tickets ya contaban con Solicitudes creadas por lo cual no fueron validados. \n\n'
+        
+        for ticket in listaDeTicketsConSolicitud:
+            mensajeCuerpo = mensajeCuerpo + str(ticket) + ', '
+        #for ticket in self.ticket_ids:
+        #    mensajeCuerpo = mensajeCuerpo + str(ticket.x_studio_id_ticket) + ', '
+        
+        mensajeCuerpo = mensajeCuerpo + '\n\n Los siguientes tickets no tienen cartuchos en sus solicitudes, favor de revisar las series y sus cartuchos seleccionados. \n\n'
+        for ticket in listaDeTicketsSinPoroductos:
+            mensajeCuerpo = mensajeCuerpo + str(ticket) + ', '
+
+        wiz = self.env['helpdesk.alerta.series'].create({'mensaje': mensajeCuerpo})
         view = self.env.ref('helpdesk_update.view_helpdesk_alerta_series')
         return {
                 'name': _(mensajeTitulo),
@@ -2240,10 +2346,73 @@ class HelpDeskDetalleSerieToner(TransientModel):
 class helpdesk_crearToner(TransientModel):
     _name = 'helpdesk.tonerticket'
     _description = 'helpdesk crear ticket de tóner'
+
+
+    #localidad = fields.Many2one('res.partner', string = 'Localidad', default = False, store = True)
+    tipoDeDireccion = fields.Selection([('contact','Contacto')
+                                        ,('invoice','Dirección de facturación')
+                                        ,('delivery','Dirección de envío')
+                                        ,('other','Otra dirección')
+                                        ,('private','Dirección Privada')]
+                                        , default='contact', string = "Tipo de dirección", store=True)
+    subtipo = fields.Selection([('Contacto comercial','Contacto comercial')
+                                ,('Contacto sistemas','Contacto sistemas')
+                                ,('Contacto para pagos','Contacto parra pagos')
+                                ,('Contacto para compras','Contacto para compras')
+                                ,('Representante legal','Representante legal')
+                                ,('Contacto de localidad','Contacto de localidad')
+                                ,('private','Dirección Privada')]
+                                , string = "Subtipo", store=True)
+    nombreDelContacto = fields.Char(string='Nombre de contacto', default = ' ')
+    titulo = fields.Many2one('res.partner.title', store=True, string='Titulo')
+    puestoDeTrabajo = fields.Char(string='Puesto de trabajo')
+    correoElectronico = fields.Char(string='Correo electrónico')
+    telefono = fields.Char(string='Teléfono')
+    movil = fields.Char(string='Móvil')
+    notas = fields.Text(string="Notas")
+
+    direccionNombreCalle = fields.Char(string='Nombre de la calle')
+    direccionNumeroExterior = fields.Char(string='Número exterior')
+    direccionNumeroInterior = fields.Char(string='Número interior')
+    direccionColonia = fields.Char(string='Colonia')
+    direccionLocalidad = fields.Char(string='Localidad')
+    direccionCiudad = fields.Char(string='Ciudad', default='Ciudad de México')
+    direccionCodigoPostal = fields.Char(string='Código postal')
+    direccionPais = fields.Many2one('res.country', store=True, string='País', default='156')
+    direccionEstado = fields.Many2one('res.country.state', store=True, string='Estado', domain="[('country_id', '=?', direccionPais)]")
+    
+    direccionZona = fields.Selection([('SUR','SUR')
+                                      ,('NORTE','NORTE')
+                                      ,('PONIENTE','PONIENTE')
+                                      ,('ORIENTE','ORIENTE')
+                                      ,('CENTRO','CENTRO')
+                                      ,('DISTRIBUIDOR','DISTRIBUIDOR')
+                                      ,('MONTERREY','MONTERREY')
+                                      ,('CUERNAVACA','CUERNAVACA')
+                                      ,('GUADALAJARA','GUADALAJARA')
+                                      ,('QUERETARO','QUERETARO')
+                                      ,('CANCUN','CANCUN')
+                                      ,('VERACRUZ','VERACRUZ')
+                                      ,('PUEBLA','PUEBLA')
+                                      ,('TOLUCA','TOLUCA')
+                                      ,('LEON','LEON')
+                                      ,('COMODIN','COMODIN')
+                                      ,('VILLAHERMOSA','VILLAHERMOSA')
+                                      ,('MERIDA','MERIDA')
+                                      ,('ALTAMIRA','ALTAMIRA')]
+                                      , string = 'Zona')
+    mostrarAnadirContacto = fields.Boolean(
+                                            string = "mostrar añadir contacto",
+                                            default = False, 
+                                            store = True
+                                        )
+
+
+
     dca = fields.One2many('dcas.dcas', 'x_studio_tiquete', string = 'Serie', store = True)
     tipoReporte = fields.Selection(
                                         [('Falla','Falla'),('Incidencia','Incidencia'),('Reeincidencia','Reeincidencia'),('Prefunta','Pregunta'),('Requerimiento','Requerimiento'),('Solicitud de refacción','Solicitud de refacción'),('Conectividad','Conectividad'),('Reincidencias','Reincidencias'),('Instalación','Instalación'),('Mantenimiento Preventivo','Mantenimiento Preventivo'),('IMAC','IMAC'),('Proyecto','Proyecto'),('Retiro de equipo','Retiro de equipo'),('Cambio','Cambio'),('Servicio de Software','Servicio de Software'),('Resurtido de Almacen','Resurtido de Almacen'),('Supervisión','Supervisión'),('Demostración','Demostración'),('Toma de lectura','Toma de lectura')], 
-                                        string = 'Tipo de cliente', 
+                                        string = 'Tipo de reporte', 
                                         store = True
                                     )
     corte = fields.Selection(
@@ -2256,6 +2425,12 @@ class helpdesk_crearToner(TransientModel):
                                 string = 'Almacen', 
                                 store = True
                             )
+    almacenes = fields.Many2one(
+                                    'stock.warehouse',
+                                    store = True,
+                                    track_visibility = 'onchange',
+                                    string = 'Almacén'
+                                )
     cliente = fields.Many2one(  
                                 'res.partner',
                                 string = 'Cliente',
@@ -2313,22 +2488,230 @@ class helpdesk_crearToner(TransientModel):
 
 
     validarTicket = fields.Boolean(
-                                    string = "Proceder a realizar la validacón del encargado", 
+                                    string = "Solicitar autorización",
                                     default = False, 
                                     store = True
                                 )
     validarHastaAlmacenTicket = fields.Boolean(
-                                                string = "Crear y validar la solicitud de tóner", 
+                                                string = "Crear y validar la solicitud de tóner",
                                                 default = False, 
                                                 store = True
                                             )
     ponerTicketEnEspera = fields.Boolean(
-                                            string = "Generar ticket en espera", 
+                                            string = "Crear ticket en espera",
                                             default = False, 
                                             store = True
                                         )
     textoTicketExistente = fields.Text(store = True)
+    editarCliente = fields.Boolean(
+                                        string = 'Editar cliente',
+                                        default = False,
+                                        store = True
+                                    )
+    idClienteAyuda = fields.Integer(
+                                        string = 'idClienteAyuda',
+                                        store = True,
+                                        compute = '_compute_idClienteAyuda'
+                                    )
+    idLocalidadAyuda = fields.Integer(
+                                        string = 'idLocalidadAyuda',
+                                        store = True,
+                                        compute = '_compute_idLocalidadAyuda'
+                                    )
+    numeroTicketCliente = fields.Text(
+                                        string = 'Número de ticket cliente',
+                                        store = True
+                                    )
+    numeroTicketDistribuidor = fields.Text(
+                                            string = 'Número de ticket distribuidor',
+                                            store = True
+                                        )
+    textoClienteMoroso = fields.Text(
+                                        string = ' ', 
+                                        store = True
+                                    )
+    estatus = fields.Selection(
+                                    [('No disponible','No disponible'),('Moroso','Moroso'),('Al corriente','Al corriente')], 
+                                    string = 'Estatus', 
+                                    store = True, 
+                                    default = 'No disponible'
+                                )
+    noCrearTicket = fields.Boolean(
+                                        string = 'No crear ticket',
+                                        default = False,
+                                        store = True
+                                    )
 
+    @api.depends('cliente')
+    def _compute_idClienteAyuda(self):
+        if self.cliente:
+            self.idClienteAyuda = self.cliente.id
+
+    @api.depends('localidad')
+    def _compute_idLocalidadAyuda(self):
+        if self.localidad:
+            self.idLocalidadAyuda = self.localidad.id
+
+
+    def contacto_toner(self):
+        if self.mostrarAnadirContacto:
+            self.mostrarAnadirContacto = False
+        else:
+            self.mostrarAnadirContacto = True
+
+    def anadirContactoALocalidad(self):
+        if self.tipoDeDireccion == "contact" and self.nombreDelContacto != False:
+            self.subtipo = 'Contacto de localidad'
+            titulo = ''
+            contacto = self.sudo().env['res.partner'].create({
+                                                                'parent_id' : self.localidad.id, 
+                                                                'type' : self.tipoDeDireccion, 
+                                                                'x_studio_subtipo' : self.subtipo, 
+                                                                'name' : self.nombreDelContacto, 
+                                                                'title' : titulo, 
+                                                                'function' : self.puestoDeTrabajo, 
+                                                                'email' : self.correoElectronico.lower(), 
+                                                                'phone' : self.telefono, 
+                                                                'mobile' : self.movil, 
+                                                                'comment' : self.notas, 
+                                                                'team_id': 1
+                                                            })
+            self.mostrarAnadirContacto = False
+        return {
+            "type": "ir.actions.do_nothing",
+        }
+
+    """
+    def contacto_toner_wizard(self):
+        wiz = self.env['helpdesk.contacto.toner'].create({
+                                                            #'dca': self.dca.ids,
+                                                            'tipoReporte': self.tipoReporte,
+                                                            'corte': self.corte,
+                                                            'almacen': self.almacen,
+                                                            'almacenes': self.almacenes.id,
+                                                            'cliente': self.cliente.id,
+                                                            'tipoCliente': self.tipoCliente,
+                                                            'localidad': self.localidad.id,
+                                                            'zonaLocalidad': self.zonaLocalidad,
+                                                            'localidadContacto': self.localidadContacto.id,
+                                                            'estadoLocalidad': self.estadoLocalidad,
+                                                            'telefonoContactoLocalidad': self.telefonoContactoLocalidad,
+                                                            'movilContactoLocalidad': self.movilContactoLocalidad,
+                                                            'correoContactoLocalidad': self.correoContactoLocalidad,
+                                                            'direccionLocalidad': self.direccionLocalidad,
+                                                            'comentarioLocalidad': self.comentarioLocalidad,
+                                                            'prioridad': self.prioridad,
+
+                                                            'validarTicket': self.validarTicket,
+                                                            'validarHastaAlmacenTicket': self.validarHastaAlmacenTicket,
+                                                            'ponerTicketEnEspera': self.ponerTicketEnEspera,
+                                                            'textoTicketExistente': self.textoTicketExistente, 
+                                                            'editarCliente': self.editarCliente,
+                                                            'idClienteAyuda': self.idClienteAyuda,
+                                                            'idLocalidadAyuda': self.idLocalidadAyuda,
+                                                            'numeroTicketCliente': self.numeroTicketCliente,
+                                                            'numeroTicketDistribuidor': self.numeroTicketDistribuidor,
+                                                            'textoClienteMoroso': self.textoClienteMoroso,
+                                                            'estatus': self.estatus
+                                                        })
+        #wiz.dca = []
+        listaDeDcas = []
+        for dcaTemp in self.dca:
+            listaDeDcas.append([0, 0, {
+                                            'tablahtml': dcaTemp.tablahtml,
+                                            'x_studio_cliente': dcaTemp.x_studio_cliente,
+                                            'serie': dcaTemp.serie.id,
+                                            'x_studio_color_o_bn': dcaTemp.x_studio_color_o_bn,
+                                            'x_studio_cartuchonefro': dcaTemp.x_studio_cartuchonefro.id,
+                                            'x_studio_rendimiento_negro': dcaTemp.x_studio_rendimiento_negro,
+                                            'x_studio_cartucho_amarillo': dcaTemp.x_studio_cartucho_amarillo.id,
+                                            'x_studio_rendimientoa': dcaTemp.x_studio_rendimientoa,
+                                            'x_studio_cartucho_cian_1': dcaTemp.x_studio_cartucho_cian_1.id,
+                                            'x_studio_rendimientoc': dcaTemp.x_studio_rendimientoc,
+                                            'x_studio_cartucho_magenta': dcaTemp.x_studio_cartucho_magenta.id,
+                                            'x_studio_rendimientom': dcaTemp.x_studio_rendimientom,
+                                            'x_studio_fecha': dcaTemp.x_studio_fecha,
+                                            'x_studio_tiquete': dcaTemp.x_studio_tiquete.id,
+                                            'x_studio_tickett': dcaTemp.x_studio_tickett,
+                                            'fuente': dcaTemp.fuente,
+
+                                            'contadorColor': dcaTemp.contadorColor,
+                                            'x_studio_contador_color_anterior': dcaTemp.x_studio_contador_color_anterior,
+                                            'contadorMono': dcaTemp.contadorMono,
+                                            'x_studio_contador_mono_anterior_1': dcaTemp.x_studio_contador_mono_anterior_1,
+
+                                            'paginasProcesadasBN': dcaTemp.paginasProcesadasBN,
+                                            'porcentajeNegro': dcaTemp.porcentajeNegro,
+                                            'porcentajeAmarillo': dcaTemp.porcentajeAmarillo,
+                                            'porcentajeCian': dcaTemp.porcentajeCian,
+                                            'porcentajeMagenta': dcaTemp.porcentajeMagenta,
+                                            'x_studio_rendimiento': dcaTemp.x_studio_rendimiento,
+                                            'x_studio_rendimiento_color': dcaTemp.x_studio_rendimiento_color,
+                                            'x_studio_toner_negro': dcaTemp.x_studio_toner_negro,
+                                            'x_studio_toner_cian': dcaTemp.x_studio_toner_cian,
+                                            'x_studio_toner_magenta': dcaTemp.x_studio_toner_magenta,
+                                            'x_studio_toner_amarillo': dcaTemp.x_studio_toner_amarillo,
+                                            'nivelCA': dcaTemp.nivelCA,
+                                            'nivelMA': dcaTemp.nivelMA,
+                                            'nivelNA': dcaTemp.nivelNA,
+                                            'nivelAA': dcaTemp.nivelAA,
+                                            'contadorAnteriorNegro': dcaTemp.contadorAnteriorNegro,
+                                            'contadorAnteriorAmarillo': dcaTemp.contadorAnteriorAmarillo,
+                                            'contadorAnteriorMagenta': dcaTemp.contadorAnteriorMagenta,
+                                            'contadorAnteriorCian': dcaTemp.contadorAnteriorCian,
+                                            'paginasProcesadasA': dcaTemp.paginasProcesadasA,
+                                            'paginasProcesadasC': dcaTemp.paginasProcesadasC,
+                                            'paginasProcesadasM': dcaTemp.paginasProcesadasM,
+                                            'renM': dcaTemp.renM,
+                                            'renA': dcaTemp.renA,
+                                            'renC': dcaTemp.renC
+                                        }])
+
+        wiz.dca = listaDeDcas
+                
+            #wiz.dca = 
+        view = self.env.ref('helpdesk_update.view_helpdesk_contacto_toner')
+        return {
+            'name': _('Agregar contacto a localidad'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'helpdesk.contacto.toner',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            'context': self.env.context,
+        }
+
+    """
+    @api.onchange('cliente')
+    def cliente_moroso(self):
+        if self.cliente:
+            if self.cliente.x_studio_moroso:
+                    self.estatus = 'Moroso'
+                    textoHtml = []
+                    textoHtml.append("<h2>El cliente es moroso.</h2>")
+                    self.textoClienteMoroso = ''.join(textoHtml)
+            else:
+                #no es moroso
+                self.estatus = 'Al corriente'
+                self.textoClienteMoroso = ''
+        else:
+            #No existe cliente
+            self.estatus = 'No disponible'
+            self.textoClienteMoroso = ''
+
+    @api.onchange('localidadContacto')
+    def cambia_contacto_localidad(self):
+        if self.localidadContacto:
+            self.telefonoContactoLocalidad = self.localidadContacto.phone
+            self.movilContactoLocalidad = self.localidadContacto.mobile
+            self.correoContactoLocalidad = self.localidadContacto.email
+        else:
+            self.telefonoContactoLocalidad = ''
+            self.movilContactoLocalidad = ''
+            self.correoContactoLocalidad = ''
 
     @api.onchange('dca')
     def cambia_dca(self):
@@ -2342,6 +2725,7 @@ class helpdesk_crearToner(TransientModel):
             textoHtml.append("<br/>")
             textoHtml.append("<br/>")
             textoHtml.append("<h3 class='text-center'>El ticket en proceso es: ")
+            
             for dca in self.dca: 
                 query = "select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.stage_id!=18 and h.team_id!=8 and  h.active='t' and stock_production_lot_id = " +  str(dca.serie.id) + " limit 1;"
                 _logger.info("test query: " + str(query))
@@ -2352,11 +2736,14 @@ class helpdesk_crearToner(TransientModel):
                   textoHtml.append(str(informacion[0][0]))
                 else:
                   self.textoTicketExistente = ''
+
+                
+                
             textoHtml.append("</h3>")
             self.textoTicketExistente =  ''.join(textoHtml)
             
 
-            if self.dca[0].serie.x_studio_move_line:
+            if self.dca[0].serie.x_studio_move_line and self.dca[0].serie.x_studio_move_line.sorted(key='date', reverse=True)[0].location_dest_id.x_studio_field_JoD2k:
                 moveLineOrdenado = self.dca[0].serie.x_studio_move_line.sorted(key="date", reverse=True)
                 self.cliente = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
                 self.tipoCliente = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.x_studio_nivel_del_cliente
@@ -2391,17 +2778,48 @@ class helpdesk_crearToner(TransientModel):
                     self.correoContactoLocalidad = idLoc[0].email
 
                 else:
-                    self.localidadContacto = idLoc[0].id
+                    self.localidadContacto = False
                     self.telefonoContactoLocalidad = ''
                     self.movilContactoLocalidad = ''
                     self.correoContactoLocalidad = '' 
             else:
                 mensajeTitulo = "Alerta!!!"
-                mensajeCuerpo = "La serie seleccionada no cuenta con una ubicación."
+                mensajeCuerpo = "La serie seleccionada no cuenta con una ubicación. No se permitira crear el ticket. Favor de notificar al administrador con la serie seleccionada."
                 warning = {'title': _(mensajeTitulo)
                         , 'message': _(mensajeCuerpo),
                 }
                 return {'warning': warning}
+
+            self.noCrearTicket = False
+            for dca in self.dca:
+                if dca.colorEquipo == 'Color':
+                    if not dca.x_studio_cartuchonefro and not dca.x_studio_cartucho_amarillo and not dca.x_studio_cartucho_cian_1 and not dca.x_studio_cartucho_magenta:
+                        self.noCrearTicket = True
+                        mensajeTitulo = "Alerta!!!"
+                        mensajeCuerpo = "No se permitira crear un ticket hasta que no selecciones al menos un cartucho para la serie " + str(dca.serie.name)
+                        warning = {'title': _(mensajeTitulo)
+                                , 'message': _(mensajeCuerpo),
+                        }
+                        return {'warning': warning}
+                elif dca.colorEquipo == 'B/N':
+                    if not dca.x_studio_cartuchonefro:
+                        self.noCrearTicket = True
+                        mensajeTitulo = "Alerta!!!"
+                        mensajeCuerpo = "No se permitira crear un ticket hasta que no selecciones cartucho para la serie " + str(dca.serie.name)
+                        warning = {'title': _(mensajeTitulo)
+                                , 'message': _(mensajeCuerpo),
+                        }
+                        return {'warning': warning}
+
+                if dca.serie.x_studio_mini:
+                    self.noCrearTicket = True
+                    mensajeTitulo = "Alerta!!!"
+                    mensajeCuerpo = "La serie " + str(dca.serie.name) + " pertenece a un mini almacén, no es posible crear el ticket de un mini almacén."
+                    warning = {'title': _(mensajeTitulo)
+                            , 'message': _(mensajeCuerpo),
+                    }
+                    return {'warning': warning}
+
         else:
 
             self.textoTicketExistente = ''
@@ -2428,7 +2846,8 @@ class helpdesk_crearToner(TransientModel):
                                                             'stage_id': 1,
                                                             'x_studio_tipo_de_vale': self.tipoReporte,
                                                             'x_studio_corte': self.corte,
-                                                            'x_studio_almacen_1': self.almacen,
+                                                            #'x_studio_almacen_1': self.almacen,
+                                                            'almacenes': self.almacenes.id,
                                                             'partner_id': self.cliente.id,
                                                             'x_studio_nivel_del_cliente': self.tipoCliente,
                                                             'x_studio_empresas_relacionadas': self.localidad.id,
@@ -2442,6 +2861,8 @@ class helpdesk_crearToner(TransientModel):
                                                             'team_id': 8,
                                                             'priority': self.prioridad,
                                                             'x_studio_comentarios_de_localidad': self.comentarioLocalidad,
+                                                            'x_studio_nmero_de_ticket_cliente': self.numeroTicketCliente,
+                                                            'x_studio_nmero_ticket_distribuidor_1': self.numeroTicketDistribuidor,
                                                             'validarTicket': self.validarTicket,
                                                             'validarHastaAlmacenTicket': self.validarHastaAlmacenTicket,
                                                             'ponerTicketEnEspera': self.ponerTicketEnEspera
@@ -2481,23 +2902,24 @@ class helpdesk_crearToner(TransientModel):
                             'x_studio_empresas_relacionadas': self.localidad.id,
                             'team_id': 8,
                             'x_studio_field_6furK': self.zonaLocalidad,
-                            'x_studio_equipo_por_nmero_de_serie_1': listaDca
+                            #'x_studio_equipo_por_nmero_de_serie_1': listaDca
                             #'x_studio_equipo_por_nmero_de_serie_1': [(6,0,self.dca.ids)]
                         })
+            ticket.x_studio_equipo_por_nmero_de_serie_1 = listaDca
             self.env.cr.commit()
             ticket._compute_datosCliente()
 
             #CASOS
             #CASO EN EL QUE SE PASA DIRECTO A ALMACEN
-            if self.validarHastaAlmacenTicket:
+            if self.validarHastaAlmacenTicket and not self.validarTicket and not self.ponerTicketEnEspera:
                 ticket.crearYValidarSolicitudDeToner()
             #CASO EN EL QUE PASA A SER VALIDADO POR EL RESPONSABLE
-            elif self.validarTicket:
+            elif self.validarTicket and not self.validarHastaAlmacenTicket and not self.ponerTicketEnEspera:
                 query = "update helpdesk_ticket set stage_id = 91 where id = " + str(ticket.id) + ";"
                 ss = self.env.cr.execute(query)
                 self.env.cr.commit()
             #CASO EN EL QUE EL TICKET PASA A ESTAR EN ESPERA 'PRETICKET'
-            elif self.ponerTicketEnEspera:
+            elif self.ponerTicketEnEspera and not self.validarHastaAlmacenTicket and not self.validarTicket:
                 query = "update helpdesk_ticket set stage_id = 1 where id = " + str(ticket.id) + ";"
                 ss = self.env.cr.execute(query)
                 self.env.cr.commit()
@@ -2547,3 +2969,555 @@ class helpdesk_crearToner(TransientModel):
         #else:
             #NO HAY DCA POR LO TANTO NO SE GENERA TICKET
 
+
+
+
+
+class helpdesk_agregar_productos(TransientModel):
+    _name = 'helpdesk.agregar.productos'
+    _description = 'helpdesk añade productos a la lista de productos de un ticket.'
+    
+    ticket_id = fields.Many2one(
+                                    "helpdesk.ticket",
+                                    string = 'Ticket'
+                                )
+
+    productos = fields.Many2many(
+                                    'product.product', 
+                                    string = "Productos"
+                                )
+    activar_compatibilidad = fields.Boolean(
+                                                string = 'Activar compatibilidad',
+                                                default = False
+                                            )
+
+    @api.onchange('activar_compatibilidad')
+    #@api.multi
+    def productos_filtro(self):
+        res = {}             
+        g = str(self.ticket_id.x_studio_nombretmp)
+        
+        if self.activar_compatibilidad and self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+            if g != 'False':
+                list = ast.literal_eval(g)
+                idf = self.ticket_id.team_id.id
+                tam = len(list)
+                if idf == 8 or idf == 13 :  
+                   res['domain']={'productos':[('categ_id', '=', 5),('x_studio_toner_compatible.id','in',list)]}
+                if idf == 9:
+                   res['domain']={'productos':[('categ_id', '=', 7),('x_studio_toner_compatible.id','=',list[0])]}
+                if idf != 9 and idf != 8:
+                   res['domain']={'productos':[('categ_id', '!=', 5),('x_studio_toner_compatible.id','=',list[0])]}
+        else:
+            res['domain']={'productos':[('categ_id', '=', 7)]}
+        return res
+
+    def agregarProductos(self):
+        #for producto in self.productos:
+            #ticket_id.write({})
+
+        self.ticket_id.x_studio_productos = [(6, 0, self.productos.ids)]
+        mensajeTitulo = 'Productos agregados!!!'
+        mensajeCuerpo = 'Se agregaron los productos y sus cantidades.'
+        #wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
+        wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
+        view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+        return {
+                'name': _(mensajeTitulo),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'helpdesk.alerta',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'res_id': wiz.id,
+                'context': self.env.context,
+                }
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class HelpDeskContactoToner(TransientModel):
+    _name = 'helpdesk.contacto.toner'
+    _description = 'HelpDesk Contacto toner'
+    #ticket_id = fields.Many2one("helpdesk.ticket")
+    
+
+    dca = fields.One2many('dcas.dcas', 'x_studio_tiquete', string = 'Serie', store = True)
+    tipoReporte = fields.Selection(
+                                        [('Falla','Falla'),('Incidencia','Incidencia'),('Reeincidencia','Reeincidencia'),('Prefunta','Pregunta'),('Requerimiento','Requerimiento'),('Solicitud de refacción','Solicitud de refacción'),('Conectividad','Conectividad'),('Reincidencias','Reincidencias'),('Instalación','Instalación'),('Mantenimiento Preventivo','Mantenimiento Preventivo'),('IMAC','IMAC'),('Proyecto','Proyecto'),('Retiro de equipo','Retiro de equipo'),('Cambio','Cambio'),('Servicio de Software','Servicio de Software'),('Resurtido de Almacen','Resurtido de Almacen'),('Supervisión','Supervisión'),('Demostración','Demostración'),('Toma de lectura','Toma de lectura')], 
+                                        string = 'Tipo de reporte', 
+                                        store = True
+                                    )
+    corte = fields.Selection(
+                                [('1ero','1ero'),('2do','2do'),('3ro','3ro'),('4to','4to')], 
+                                string = 'Corte', 
+                                store = True
+                            )
+    almacen = fields.Selection(
+                                [('Agricola','Agricola'),('Queretaro','Queretaro')],
+                                string = 'Almacen', 
+                                store = True
+                            )
+    almacenes = fields.Many2one(
+                                    'stock.warehouse',
+                                    store = True,
+                                    track_visibility = 'onchange',
+                                    string = 'Almacén'
+                                )
+    cliente = fields.Many2one(  
+                                'res.partner',
+                                string = 'Cliente',
+                                store = True
+                            )
+    tipoCliente = fields.Selection(
+                                        [('A','A'),('B','B'),('C','C'),('OTRO','D'),('VIP','VIP')], 
+                                        string = 'Tipo de cliente', 
+                                        store = True
+                                    )
+    localidad = fields.Many2one(  
+                                    'res.partner',
+                                    string = 'Localidad',
+                                    store = True
+                                )
+    zonaLocalidad = fields.Selection(
+                                        [('SUR','SUR'),('NORTE','NORTE'),('PONIENTE','PONIENTE'),('ORIENTE','ORIENTE'),('CENTRO','CENTRO'),('DISTRIBUIDOR','DISTRIBUIDOR'),('MONTERREY','MONTERREY'),('CUERNAVACA','CUERNAVACA'),('GUADALAJARA','GUADALAJARA'),('QUERETARO','QUERETARO'),('CANCUN','CANCUN'),('VERACRUZ','VERACRUZ'),('PUEBLA','PUEBLA'),('TOLUCA','TOLUCA'),('LEON','LEON'),('COMODIN','COMODIN'),('VILLAHERMOSA','VILLAHERMOSA'),('MERIDA','MERIDA'),('ALTAMIRA','ALTAMIRA'),('COMODIN','COMODIN'),('DF00','DF00'),('SAN LP','SAN LP'),('ESTADO DE MÉXICO','ESTADO DE MÉXICO'),('Foraneo Norte','Foraneo Norte'),('Foraneo Sur','Foraneo Sur')], 
+                                        string = 'Zona localidad',
+                                        store = True
+                                    )
+    localidadContacto = fields.Many2one(  
+                                    'res.partner',
+                                    string = 'Localidad contacto',
+                                    store = True
+                                )
+    estadoLocalidad = fields.Text(
+                                    string = 'Estado de localidad',
+                                    store = True
+                                )
+    telefonoContactoLocalidad = fields.Text(
+                                    string = 'Télefgono localidad contacto',
+                                    store = True
+                                )
+    movilContactoLocalidad = fields.Text(
+                                    string = 'Movil localidad contacto',
+                                    store = True
+                                )
+    correoContactoLocalidad = fields.Text(
+                                    string = 'Correo electrónico localidad contacto',
+                                    store = True
+                                )
+    direccionLocalidad = fields.Text(
+                                    string = 'Dirección localidad',
+                                    store = True
+                                )
+    comentarioLocalidad = fields.Text(
+                                    string = 'Comentarios de localidad',
+                                    store = True
+                                )
+    prioridad = fields.Selection(
+                                [('0','Todas'),('1','Baja'),('2','Media'),('3','Alta'),('4','Critica')], 
+                                string = 'Prioridad', 
+                                store = True
+                            )
+
+
+    validarTicket = fields.Boolean(
+                                    string = "Solicitar autorización",
+                                    default = False, 
+                                    store = True
+                                )
+    validarHastaAlmacenTicket = fields.Boolean(
+                                                string = "Crear y validar la solicitud de tóner",
+                                                default = False, 
+                                                store = True
+                                            )
+    ponerTicketEnEspera = fields.Boolean(
+                                            string = "Crear ticket en espera",
+                                            default = False, 
+                                            store = True
+                                        )
+    textoTicketExistente = fields.Text(store = True)
+    editarCliente = fields.Boolean(
+                                        string = 'Editar cliente',
+                                        default = False,
+                                        store = True
+                                    )
+    idClienteAyuda = fields.Integer(
+                                        string = 'idClienteAyuda',
+                                        store = True
+                                    )
+    idLocalidadAyuda = fields.Integer(
+                                        string = 'idLocalidadAyuda',
+                                        store = True
+                                    )
+    numeroTicketCliente = fields.Text(
+                                        string = 'Número de ticket cliente',
+                                        store = True
+                                    )
+    numeroTicketDistribuidor = fields.Text(
+                                            string = 'Número de ticket distribuidor',
+                                            store = True
+                                        )
+    textoClienteMoroso = fields.Text(
+                                        string = ' ', 
+                                        store = True
+                                    )
+    estatus = fields.Selection(
+                                    [('No disponible','No disponible'),('Moroso','Moroso'),('Al corriente','Al corriente')], 
+                                    string = 'Estatus', 
+                                    store = True, 
+                                    default = 'No disponible'
+                                )
+
+
+
+
+    localidad = fields.Many2one('res.partner', string = 'Localidad', default = False, store = True)
+    tipoDeDireccion = fields.Selection([('contact','Contacto')
+                                        ,('invoice','Dirección de facturación')
+                                        ,('delivery','Dirección de envío')
+                                        ,('other','Otra dirección')
+                                        ,('private','Dirección Privada')]
+                                        , default='contact', string = "Tipo de dirección", store=True)
+    subtipo = fields.Selection([('Contacto comercial','Contacto comercial')
+                                ,('Contacto sistemas','Contacto sistemas')
+                                ,('Contacto para pagos','Contacto parra pagos')
+                                ,('Contacto para compras','Contacto para compras')
+                                ,('Representante legal','Representante legal')
+                                ,('Contacto de localidad','Contacto de localidad')
+                                ,('private','Dirección Privada')]
+                                , string = "Subtipo", default = 'Contacto de localidad', store=True)
+    nombreDelContacto = fields.Char(string='Nombre de contacto')
+    titulo = fields.Many2one('res.partner.title', store=True, string='Titulo')
+    puestoDeTrabajo = fields.Char(string='Puesto de trabajo')
+    correoElectronico = fields.Char(string='Correo electrónico')
+    telefono = fields.Char(string='Teléfono')
+    movil = fields.Char(string='Móvil')
+    notas = fields.Text(string="Notas")
+
+    direccionNombreCalle = fields.Char(string='Nombre de la calle')
+    direccionNumeroExterior = fields.Char(string='Número exterior')
+    direccionNumeroInterior = fields.Char(string='Número interior')
+    direccionColonia = fields.Char(string='Colonia')
+    direccionLocalidad = fields.Char(string='Localidad')
+    direccionCiudad = fields.Char(string='Ciudad', default='Ciudad de México')
+    direccionCodigoPostal = fields.Char(string='Código postal')
+    direccionPais = fields.Many2one('res.country', store=True, string='País', default='156')
+    direccionEstado = fields.Many2one('res.country.state', store=True, string='Estado', domain="[('country_id', '=?', direccionPais)]")
+    
+    direccionZona = fields.Selection([('SUR','SUR')
+                                      ,('NORTE','NORTE')
+                                      ,('PONIENTE','PONIENTE')
+                                      ,('ORIENTE','ORIENTE')
+                                      ,('CENTRO','CENTRO')
+                                      ,('DISTRIBUIDOR','DISTRIBUIDOR')
+                                      ,('MONTERREY','MONTERREY')
+                                      ,('CUERNAVACA','CUERNAVACA')
+                                      ,('GUADALAJARA','GUADALAJARA')
+                                      ,('QUERETARO','QUERETARO')
+                                      ,('CANCUN','CANCUN')
+                                      ,('VERACRUZ','VERACRUZ')
+                                      ,('PUEBLA','PUEBLA')
+                                      ,('TOLUCA','TOLUCA')
+                                      ,('LEON','LEON')
+                                      ,('COMODIN','COMODIN')
+                                      ,('VILLAHERMOSA','VILLAHERMOSA')
+                                      ,('MERIDA','MERIDA')
+                                      ,('ALTAMIRA','ALTAMIRA')]
+                                      , string = 'Zona')
+
+    
+    def agregarContactoALocalidad(self):
+        mensajeTitulo = ''
+        mensajeCuerpo = ''
+        if self.localidad:
+            contactoId = 0
+            titulo = ''
+            if len(self.titulo) == 0:
+                titulo = ''
+            else:
+                titulo = self.titulo.id
+            if self.tipoDeDireccion == "contact" and self.nombreDelContacto != False:
+                contacto = self.sudo().env['res.partner'].create({'parent_id' : self.localidad.id
+                                                                 , 'type' : self.tipoDeDireccion
+                                                                 , 'x_studio_subtipo' : self.subtipo
+                                                                 , 'name' : self.nombreDelContacto
+                                                                 , 'title' : titulo
+                                                                 , 'function' : self.puestoDeTrabajo
+                                                                 , 'email' : self.correoElectronico
+                                                                 , 'phone' : self.telefono
+                                                                 , 'mobile' : self.movil
+                                                                 , 'comment' : self.notas
+                                                                 , 'team_id': 1
+                                                                })
+                contactoId = contacto.id
+            elif self.tipoDeDireccion == "delivery" and self.nombreDelContacto != False:
+                contacto = self.sudo().env['res.partner'].create({'parent_id' : self.localidad.id
+                                                                 , 'type' : self.tipoDeDireccion
+                                                                 , 'x_studio_subtipo' : self.subtipo
+                                                                 , 'name' : self.nombreDelContacto
+                                                                 , 'title' : titulo
+                                                                 , 'function' : self.puestoDeTrabajo
+                                                                 , 'email' : self.correoElectronico
+                                                                 , 'phone' : self.telefono
+                                                                 , 'mobile' : self.movil
+                                                                 , 'comment' : self.notas
+                                                                 , 'team_id': 1
+                                                                  
+                                                                 , 'street_name' : self.direccionNombreCalle
+                                                                 , 'street_number' : self.direccionNumeroExterior
+                                                                 , 'street_number2' : self.direccionNumeroInterior
+                                                                 , 'l10n_mx_edi_colony' : self.direccionColonia
+                                                                 , 'l10n_mx_edi_locality' : self.direccionLocalidad
+                                                                 , 'city' : self.direccionCiudad
+                                                                 , 'state_id' : self.direccionEstado.id
+                                                                 , 'zip' : self.direccionCodigoPostal
+                                                                 , 'country_id' : self.direccionPais.id
+                                                                  
+                                                                 , 'x_studio_field_SqU5B' : self.direccionZona
+                                                                })
+                contactoId = contacto.id
+            #elif self.tipoDeDireccion != "delivery" or self.tipoDeDireccion != "contact":
+            elif self.nombreDelContacto != False:
+                contacto = self.sudo().env['res.partner'].create({'parent_id' : self.localidad.id
+                                                                 , 'type' : self.tipoDeDireccion
+                                                                 , 'x_studio_subtipo' : self.subtipo
+                                                                 , 'name' : self.nombreDelContacto
+                                                                 , 'title' : titulo
+                                                                 , 'function' : self.puestoDeTrabajo
+                                                                 , 'email' : self.correoElectronico
+                                                                 , 'phone' : self.telefono
+                                                                 , 'mobile' : self.movil
+                                                                 , 'comment' : self.notas
+                                                                 , 'team_id': 1
+                                                                  
+                                                                 , 'street_name' : self.direccionNombreCalle
+                                                                 , 'street_number' : self.direccionNumeroExterior
+                                                                 , 'street_number2' : self.direccionNumeroInterior
+                                                                 , 'l10n_mx_edi_colony' : self.direccionColonia
+                                                                 , 'l10n_mx_edi_locality' : self.direccionLocalidad
+                                                                 , 'city' : self.direccionCiudad
+                                                                 , 'state_id' : self.direccionEstado.id
+                                                                 , 'zip' : self.direccionCodigoPostal
+                                                                 , 'country_id' : self.direccionPais.id
+                                                                })
+                contactoId = contacto.id
+            else:
+                mensajeTitulo = "Contacto sin nombre"
+                mensajeCuerpo = "No es posible añadir un contacto sin nombre. Favor de indicar el nombre primero."
+                #raise exceptions.except_orm(_(errorContactoSinNombre), _(mensajeContactoSinNombre))
+            #self.env.cr.commit()
+            if contactoId > 0:
+                mensajeTitulo = "Contacto agregado." 
+                mensajeCuerpo = "Contacto " + str(self.nombreDelContacto) + " agregado a la localidad " + str(self.localidad.name)
+                #self.ticket_id.localidadContacto = contactoId
+                
+                #raise exceptions.except_orm(_(errorContactoGenerado), _(mensajeContactoGenerado))
+            else:
+                mensajeTitulo = "Contacto no agregado"
+                mensajeCuerpo = "Contacto no agregado. Favor de verificar la información ingresada."
+                #raise exceptions.except_orm(_(errorContactoNoGenerado), _(mensajeContactoNoGenerado))
+        else:
+            mensajeTitulo = "Contacto sin localidad"
+            mensajeCuerpo = "No es posible añadir un contacto sin primero indicar la localidad. Favor de indicar la localidad primero."
+            #raise exceptions.except_orm(_(errorContactoSinLocalidad), _(mensajeContactoSinLocalidad))
+        
+
+
+        wiz = self.env['helpdesk.tonerticket'].create({
+                                                            'tipoReporte': self.tipoReporte,
+                                                            'corte': self.corte,
+                                                            'almacen': self.almacen,
+                                                            'almacenes': self.almacenes.id,
+                                                            'cliente': self.cliente.id,
+                                                            'tipoCliente': self.tipoCliente,
+                                                            'localidad': self.localidad.id,
+                                                            'zonaLocalidad': self.zonaLocalidad,
+                                                            'localidadContacto': self.localidadContacto.id,
+                                                            'estadoLocalidad': self.estadoLocalidad,
+                                                            'telefonoContactoLocalidad': self.telefonoContactoLocalidad,
+                                                            'movilContactoLocalidad': self.movilContactoLocalidad,
+                                                            'correoContactoLocalidad': self.correoContactoLocalidad,
+                                                            'direccionLocalidad': self.direccionLocalidad,
+                                                            'comentarioLocalidad': self.comentarioLocalidad,
+                                                            'prioridad': self.prioridad,
+
+                                                            'validarTicket': self.validarTicket,
+                                                            'validarHastaAlmacenTicket': self.validarHastaAlmacenTicket,
+                                                            'ponerTicketEnEspera': self.ponerTicketEnEspera,
+                                                            'textoTicketExistente': self.textoTicketExistente, 
+                                                            'editarCliente': self.editarCliente,
+                                                            'idClienteAyuda': self.idClienteAyuda,
+                                                            'idLocalidadAyuda': self.idLocalidadAyuda,
+                                                            'numeroTicketCliente': self.numeroTicketCliente,
+                                                            'numeroTicketDistribuidor': self.numeroTicketDistribuidor,
+                                                            'textoClienteMoroso': self.textoClienteMoroso,
+                                                            'estatus': self.estatus
+                                                        })
+        #wiz.dca = [(6, 0, self.dca.ids)]
+        #wiz.dca = []
+        listaDeDcas = []
+        for dcaTemp in self.dca:
+            listaDeDcas.append([0, 0, {
+                                            'tablahtml': dcaTemp.tablahtml,
+                                            'x_studio_cliente': dcaTemp.x_studio_cliente,
+                                            'serie': dcaTemp.serie.id,
+                                            'x_studio_color_o_bn': dcaTemp.x_studio_color_o_bn,
+                                            'x_studio_cartuchonefro': dcaTemp.x_studio_cartuchonefro.id,
+                                            'x_studio_rendimiento_negro': dcaTemp.x_studio_rendimiento_negro,
+                                            'x_studio_cartucho_amarillo': dcaTemp.x_studio_cartucho_amarillo.id,
+                                            'x_studio_rendimientoa': dcaTemp.x_studio_rendimientoa,
+                                            'x_studio_cartucho_cian_1': dcaTemp.x_studio_cartucho_cian_1.id,
+                                            'x_studio_rendimientoc': dcaTemp.x_studio_rendimientoc,
+                                            'x_studio_cartucho_magenta': dcaTemp.x_studio_cartucho_magenta.id,
+                                            'x_studio_rendimientom': dcaTemp.x_studio_rendimientom,
+                                            'x_studio_fecha': dcaTemp.x_studio_fecha,
+                                            'x_studio_tiquete': dcaTemp.x_studio_tiquete.id,
+                                            'x_studio_tickett': dcaTemp.x_studio_tickett,
+                                            'fuente': dcaTemp.fuente,
+
+                                            'contadorColor': dcaTemp.contadorColor,
+                                            'x_studio_contador_color_anterior': dcaTemp.x_studio_contador_color_anterior,
+                                            'contadorMono': dcaTemp.contadorMono,
+                                            'x_studio_contador_mono_anterior_1': dcaTemp.x_studio_contador_mono_anterior_1,
+
+                                            'paginasProcesadasBN': dcaTemp.paginasProcesadasBN,
+                                            'porcentajeNegro': dcaTemp.porcentajeNegro,
+                                            'porcentajeAmarillo': dcaTemp.porcentajeAmarillo,
+                                            'porcentajeCian': dcaTemp.porcentajeCian,
+                                            'porcentajeMagenta': dcaTemp.porcentajeMagenta,
+                                            'x_studio_rendimiento': dcaTemp.x_studio_rendimiento,
+                                            'x_studio_rendimiento_color': dcaTemp.x_studio_rendimiento_color,
+                                            'x_studio_toner_negro': dcaTemp.x_studio_toner_negro,
+                                            'x_studio_toner_cian': dcaTemp.x_studio_toner_cian,
+                                            'x_studio_toner_magenta': dcaTemp.x_studio_toner_magenta,
+                                            'x_studio_toner_amarillo': dcaTemp.x_studio_toner_amarillo,
+                                            'nivelCA': dcaTemp.nivelCA,
+                                            'nivelMA': dcaTemp.nivelMA,
+                                            'nivelNA': dcaTemp.nivelNA,
+                                            'nivelAA': dcaTemp.nivelAA,
+                                            'contadorAnteriorNegro': dcaTemp.contadorAnteriorNegro,
+                                            'contadorAnteriorAmarillo': dcaTemp.contadorAnteriorAmarillo,
+                                            'contadorAnteriorMagenta': dcaTemp.contadorAnteriorMagenta,
+                                            'contadorAnteriorCian': dcaTemp.contadorAnteriorCian,
+                                            'paginasProcesadasA': dcaTemp.paginasProcesadasA,
+                                            'paginasProcesadasC': dcaTemp.paginasProcesadasC,
+                                            'paginasProcesadasM': dcaTemp.paginasProcesadasM,
+                                            'renM': dcaTemp.renM,
+                                            'renA': dcaTemp.renA,
+                                            'renC': dcaTemp.renC
+                                        }])
+
+        wiz.dca = listaDeDcas
+        view = self.env.ref('helpdesk_update.view_helpdesk_crear_solicitud_toner')
+        mensajeTitulo = "Crear ticket tóner"
+        return {
+                'name': _(mensajeTitulo),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'helpdesk.tonerticket',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'res_id': wiz.id,
+                'context': self.env.context,
+                }
+        #wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
+        #view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+        #return {
+        #        'name': _(mensajeTitulo),
+        #        'type': 'ir.actions.act_window',
+        #        'view_type': 'form',
+        #        'view_mode': 'form',
+        #        'res_model': 'helpdesk.alerta',
+        #        'views': [(view.id, 'form')],
+        #        'view_id': view.id,
+        #        'target': 'new',
+        #        'res_id': wiz.id,
+        #        'context': self.env.context,
+        #        }
+
+
+
+class HelpdeskTicketReporte(TransientModel):
+    _name = 'helpdesk.ticket.reporte'
+    _description = 'Reporte de Tickets todo'
+    fechaInicial = fields.Datetime(
+                                        string = 'Fecha inicial',
+                                        store = True
+                                    )
+    fechaFinal = fields.Datetime(
+                                    string = 'Fecha final',
+                                    store = True
+                                )
+    estado = fields.Many2one(
+                                'helpdesk.state',
+                                string = 'Etapa'
+                            )
+    tipo = fields.Selection(
+                                [['Todos', 'Todos'], ["Falla","Falla"], ["Toner","Toner"]],
+                                string = 'Tipo de ticket'
+                            )
+    area = fields.Many2one(
+                                'helpdesk.team',
+                                string = 'Área de atención'
+                            )
+    def report(self):
+        i = []
+        d = []
+        j = []
+        if self.fechaInicial:
+            m = ['create_date', '>=', self.fechaInicial]
+            i.append(m)
+        if self.fechaFinal:
+            m = ['create_date', '<=', self.fechaFinal]
+            i.append(m)
+        j.append('|')
+        if self.tipo:
+            if self.tipo == "Toner":
+                #m=['x_studio_tipo_de_vale','=','Falla']
+                #i.append(m)
+                m = ['team_id.id', '=', 8]
+                i.append(m)
+                #j.append('&')
+            elif self.tipo == 'Falla':
+                #m=['x_studio_tipo_de_vale','=','Requerimiento']
+                #i.append(m)
+                m = ['team_id.id', '!=', 8]
+                i.append(m)
+                #j.append('&')
+            #elif self.tipo == 'Todos':
+                #m = ['x_studio_field_nO7Xg', '!=', False]
+                #i.append([])
+        #if self.tipo == False:
+        #    m = ['x_studio_tipo_de_vale','in',['Requerimiento','Falla']]
+        #    i.append(m)
+        #for ii in range(len(i)-2):
+        #    j.append('&')
+        #i.append(['x_studio_field_nO7Xg', '!=', False])
+        #j.extend(i)
+        
+        d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x: len(x.x_studio_equipo_por_nmero_de_serie_1) > 0 or len(x.x_studio_equipo_por_nmero_de_serie) > 0)
+        if len(d) > 0:
+            d[0].write({
+                            'x_studio_arreglo': str(d.mapped('id'))
+                        })
+            return self.env.ref('stock_picking_mass_action.ticket_xlsx').report_action(d[0])
+        if len(d) == 0:
+            raise UserError(_("No hay registros para la selecion actual"))

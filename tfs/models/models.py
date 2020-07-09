@@ -122,7 +122,7 @@ class tfs(models.Model):
                         else:
                             raise exceptions.UserError("No existen cantidades en el almacen para el producto " + self.productoMagenta.name)
                     if(record.productoAmarillo):
-                        In=self.inventario.search([['product_id.name','=',self.productoNegro.name],['location_id','=',self.almacen.lot_stock_id.id]]).sorted(key='quantity',reverse=True)
+                        In=self.inventario.search([['product_id.name','=',self.productoAmarillo.name],['location_id','=',self.almacen.lot_stock_id.id]]).sorted(key='quantity',reverse=True)
                         if(len(In)>0 and In[0].quantity>0):
                             d.append(In[0].id)
                             i=i+1
@@ -134,6 +134,7 @@ class tfs(models.Model):
                         self.write({'estado':'xValidar'})
                     else:
                         self.write({'estado':'Valido'})
+                        self.valida()
                     self.arreglo=str(d)
 
                 
@@ -172,26 +173,40 @@ class tfs(models.Model):
         if(almacen!=[]):
             almacenes=self.env['stock.warehouse'].browse(almacen)           
         i=0
+        productos=[]
+        pickOrigen=[]
+        pickDestino=[]
+        rule2=[]
+        rule=[]
         for al in almacenes:
             quants=self.env['stock.quant'].search([['location_id','=',al.lot_stock_id.id]])
             reglasabs=self.env['stock.warehouse.orderpoint'].search([['warehouse_id','=',al.id],['active','=',False]])
-            #_logger.info(str(len(reglas)))
-            productos=[]
-            pickOrigen=[]
-            pickDestino=[]
-            rule2=[]
-            rule=[]
-            pickPosibles=self.env['stock.picking'].search([['state','!=','done'],['location_id','=',41911]])
-            for pix in pickPosibles:
-                for rl in pix.reglas.search([['active','=',False]]):
-                    rule2.append(rl.id)
-            for re in reglasabs:
-                i=i+1
-                _logger.info(str(rule2))
-                if(re.id not in rule2):
-                    productos.append(re.product_id.id)
-                    quant=quants.\
-                    filtered(lambda x: x.product_id.id == re.product_id.id)
+            pickPosibles=self.env['stock.picking'].search(['&',['state','!=','done'],['location_dest_id','=',al.lot_stock_id.id]])
+            if(len(pickPosibles)!=0):
+                _logger.info("entre 1"+str(al.name))
+                for pix in pickPosibles:
+                    for rl in pix.reglas.search([['active','=',False]]):
+                        rule2.append(rl.id)
+                    for re in reglasabs:
+                        quant=quants.filtered(lambda x: x.product_id.id == re.product_id.id)
+                        if(re.id not in rule2):
+                            if(len(quant)==0):
+                                datos1={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':41911,'location_dest_id':re.location_id.id}
+                                datos2={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':re.location_id.id,'location_dest_id':41911}
+                                pickOrigen.append(datos1)
+                                pickDestino.append(datos2)
+                                rule.append(re.id)
+                            if(len(quant)>0):
+                                if(quant.quantity<re.product_min_qty):
+                                    datos1={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty-quant.quantity,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':41911,'location_dest_id':re.location_id.id}
+                                    datos2={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty-quant.quantity,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':re.location_id.id,'location_dest_id':41911}
+                                    pickOrigen.append(datos1)
+                                    pickDestino.append(datos2)
+                                    rule.append(re.id)
+            else:
+                _logger.info("entre 2"+str(al.name))
+                for re in reglasabs:
+                    quant=quants.filtered(lambda x: x.product_id.id == re.product_id.id)
                     if(len(quant)==0):
                         datos1={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':41911,'location_dest_id':re.location_id.id}
                         datos2={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':re.location_id.id,'location_dest_id':41911}
@@ -199,55 +214,64 @@ class tfs(models.Model):
                         pickDestino.append(datos2)
                         rule.append(re.id)
                     if(len(quant)>0):
-                        if(quant.quantity<=re.product_min_qty):
-                            datos1={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':41911,'location_dest_id':re.location_id.id}
-                            datos2={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':re.location_id.id,'location_dest_id':41911}
+                        if(quant.quantity<re.product_min_qty):
+                            datos1={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty-quant.quantity,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':41911,'location_dest_id':re.location_id.id}
+                            datos2={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty-quant.quantity,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':re.location_id.id,'location_dest_id':41911}
                             pickOrigen.append(datos1)
                             pickDestino.append(datos2)
                             rule.append(re.id)
             if(len(pickOrigen)>0):
-                origen1=self.env['stock.picking.type'].search([['name','=','Pick'],['warehouse_id','=',6299]])
-                origen2=self.env['stock.picking.type'].search([['name','=','Distribución'],['warehouse_id','=',1]])
-                origen3=self.env['stock.picking.type'].search([['name','=','Tránsito'],['warehouse_id','=',1]])
+                c=self.env['res.partner'].search([['name','=',al.name],['parent_id','=',1]])
+                ticket=self.env['helpdesk.ticket'].create({'x_studio_tipo_de_vale':'Resurtido de Almacen','parent_id':c.id,'partner_shipping_id':c.id})
+                sale = self.env['sale.order'].create({'partner_id' : c.id, 'origin' : "Ticket: " + str(ticket.id), 'x_studio_tipo_de_solicitud' : 'Venta', 'partner_shipping_id' : c.id , 'warehouse_id' : 1 , 'team_id' : 1, 'x_studio_field_bxHgp': ticket.id})
+                #origen1=self.env['stock.picking.type'].search([['name','=','Pick'],['warehouse_id','=',6299]])
+                #origen2=self.env['stock.picking.type'].search([['name','=','Distribución'],['warehouse_id','=',1]])
+                #origen3=self.env['stock.picking.type'].search([['name','=','Tránsito'],['warehouse_id','=',1]])
                 destino=self.env['stock.picking.type'].search([['name','=','Receipts'],['warehouse_id','=',al.id]])
-                _logger.info(str(origen2.default_location_src_id.id))
-                pick_origin1= self.env['stock.picking'].create({'picking_type_id' : origen1.id,'almacenOrigen':6299,'almacenDestino':al.id,'location_id':origen1.default_location_src_id.id,'location_dest_id':origen2.default_location_src_id.id,'reglas':[(6,0,rule)]})
-                pick_origin2= self.env['stock.picking'].create({'picking_type_id' : origen2.id,'almacenOrigen':6299,'almacenDestino':al.id,'location_id':origen2.default_location_src_id.id,'location_dest_id':origen3.default_location_src_id.id})
-                pick_origin3= self.env['stock.picking'].create({'picking_type_id' : origen3.id,'almacenOrigen':6299,'almacenDestino':al.id,'location_id':origen3.default_location_src_id.id,'location_dest_id':17})
-
-                pick_dest = self.env['stock.picking'].create({'picking_type_id' : destino.id, 'location_id':17,'almacenOrigen':al.id,'almacenDestino':6299,'location_dest_id':al.lot_stock_id.id})
-                
+                #_logger.info(str(origen2.default_location_src_id.id))
+                #pick_origin1= self.env['stock.picking'].create({'picking_type_id' : origen1.id,'almacenOrigen':6299,'almacenDestino':al.id,'location_id':origen1.default_location_src_id.id,'location_dest_id':origen2.default_location_src_id.id})
+                #pick_origin2= self.env['stock.picking'].create({'picking_type_id' : origen2.id,'almacenOrigen':6299,'almacenDestino':al.id,'location_id':origen2.default_location_src_id.id,'location_dest_id':origen3.default_location_src_id.id})
+                #pick_origin3= self.env['stock.picking'].create({'picking_type_id' : origen3.id,'almacenOrigen':6299,'almacenDestino':al.id,'location_id':origen3.default_location_src_id.id,'location_dest_id':17})
+                pick_dest = self.env['stock.picking'].create({'picking_type_id' : destino.id, 'location_id':17,'almacenOrigen':6299,'almacenDestino':al.id,'location_dest_id':al.lot_stock_id.id,'reglas':[(6,0,rule)]})
+                ticket.x_studio_field_nO7Xg=sale.id
                 for ori in pickOrigen:
-                    
+                    ticket.x_studio_productos=[(4,ori['product_id'])]
+                    sl=self.env['sale.order.line'].create({'order_id' : sale.id,'product_id':ori['product_id'],'product_uom_qty':ori['product_uom_qty'], 'price_unit': 0})
                     #1
-                    ori['picking_id']=pick_origin1.id
-                    ori['location_id']=pick_origin1.location_id.id
-                    ori['location_dest_id']=pick_origin1.location_dest_id.id
-                    self.env['stock.move'].create(ori)
+                    #ori['picking_id']=pick_origin1.id
+                    #ori['location_id']=pick_origin1.location_id.id
+                    #ori['location_dest_id']=pick_origin1.location_dest_id.id
+                    #self.env['stock.move'].create(ori)
                     #2
-                    ori['picking_id']=pick_origin2.id
-                    ori['location_id']=pick_origin2.location_id.id
-                    ori['location_dest_id']=pick_origin2.location_dest_id.id
-                    self.env['stock.move'].create(ori)
+                    #ori['picking_id']=pick_origin2.id
+                    #ori['location_id']=pick_origin2.location_id.id
+                    #ori['location_dest_id']=pick_origin2.location_dest_id.id
+                    #self.env['stock.move'].create(ori)
                     #3
-                    ori['picking_id']=pick_origin3.id
-                    ori['location_id']=pick_origin3.location_id.id
-                    ori['location_dest_id']=pick_origin3.location_dest_id.id
-                    self.env['stock.move'].create(ori)
+                    #ori['picking_id']=pick_origin3.id
+                    #ori['location_id']=pick_origin3.location_id.id
+                    #ori['location_dest_id']=17
+                    #self.env['stock.move'].create(ori)
 
                 for des in pickDestino:
+                    des['location_id']=17
                     des['picking_id']=pick_dest.id
                     self.env['stock.move'].create(des)
-                
-                pick_origin1.action_confirm()
-                pick_origin1.action_assign()
-                pick_origin2.action_confirm()
-                pick_origin2.action_assign()
-                pick_origin3.action_confirm()
-                pick_origin3.action_assign()
+                sale.action_confirm()
+                ww=self.env['stock.picking'].search([['sale_id','=',sale.id],['picking_type_id.code','=','outgoing']])
+                ww.write({'location_dest_id':17})
+                for w in ww.move_ids_without_package:
+                    w.write({'location_dest_id':17})
+                    self.env['stock.move.line'].search([['move_id','=',w.id]]).write({'location_dest_id':17})
+                #pick_origin1.action_confirm()
+                #pick_origin1.action_assign()
+                #pick_origin2.action_confirm()
+                #pick_origin2.action_assign()
+                #pick_origin3.action_confirm()
+                #pick_origin3.action_assign()
                 pick_dest.action_confirm()
-                pick_dest.action_assign()
-            _logger.info(str(len(pickOrigen)))
+                pick_dest.action_assign()    
+
 
     @api.multi
     def valida(self):

@@ -48,10 +48,38 @@ EXTENSIONS = {
 
 class compras(models.Model):
     _inherit = 'purchase.order'
-    recibido=fields.Selection([('pendiente','pendiente'),('recibido','recibido'),('backorder','backorder')])
+    recibido=fields.Selection([('pendiente','pendiente'),('recibido','recibido'),('backorder','backorder')],default='pendiente')
     archivo=fields.Binary(store=True,readonly=False)
     nam=fields.Char()
-    
+    pagado=fields.Float(compute='pay',string="Pagado")
+    porPagar=fields.Float(string="Por pagar")
+    pagos=fields.Char(widget='html')
+    active = fields.Boolean('Active', default=True, track_visibility=True)
+    requisicion=fields.Many2one('requisicion.requisicion')
+    @api.depends('x_studio_field_H9kGQ','state')
+    def pay(self):
+        pago=False
+        for record in self:
+            t=0.0
+            if(len(record.x_studio_field_H9kGQ)>0 or record.state=='purchase'):
+                pago="<table class='table table-sm'>"
+                for ii in record.x_studio_field_H9kGQ:
+                    for  pap in ii.payment_ids:
+                        pago=pago+"<tr>"
+                        pago=pago+"<td>"+str(pap.x_folio)+"</td>"
+                        pago=pago+"<td>"+str(pap.x_banco.name)+"</td>"
+                        pago=pago+"<td>"+str(pap.x_referencia)+"</td>"
+                        pago=pago+"</tr>"
+                    if(ii.state!='paid'):
+                        t=t+ii.residual_signed
+                    if(ii.state=='paid'):
+                        t=t+ii.amount_total_signed
+                pago=pago+"</table>"
+            record['pagos']=pago
+            record['porPagar']=record.amount_total-t
+            record['pagado']=t
+            
+
     
     # @api.multi
     # def button_confirm(self):
@@ -76,6 +104,7 @@ class compras(models.Model):
     @api.multi
     @api.onchange('archivo')
     def factura(self):
+        fecha=datetime.datetime.now()-datetime.timedelta(hours=-5)
         if(self.archivo):
             f2=base64.b64decode(self.archivo)
             H=StringIO(f2)
@@ -95,7 +124,7 @@ class compras(models.Model):
                         cantidad=float(c.getAttribute("Cantidad"))
                         precio=float(c.getAttribute("Importe"))
                         description=c.getAttribute("Descripcion")
-                        product={'product_uom':1,'date_planned':self.date_order,'product_qty':cantidad,'price_unit':precio,'taxes_id':[10]}
+                        product={'product_uom':1,'date_planned':self.date_order if(self.date_order) else fecha,'product_qty':cantidad,'price_unit':precio,'taxes_id':[10]}
                         descuento=float(c.getAttribute("Descuento")) if(c.getAttribute("Descuento")!='') else 0
                         precioCdesc=(round(precio,6)-round(descuento,6))/int(cantidad)
                         #_logger.info(noparte=='')
@@ -149,18 +178,18 @@ class compras(models.Model):
                                 noparte=ar.split('      ',1)[1].split('        ',1)[1].split('            ',1)[0].split(str(ar.split('      ',1)[1].split('        ',1)[0].replace(' ','')),1)[1]
                                 _logger.info(str(noparte))
                                 p=ar.split('$')
-                                precio=float(p[1].replace(' ',''))
-                                descuento=float(p[4].replace(' ','')) if(len(p)==5) else 0
+                                precio=float(p[1].replace(' ',''),replace(',',''))
+                                descuento=float(p[4].replace(' ','').replace(',','')) if(len(p)==5) else 0
                                 precioCdesc=((cantidad*precio)-descuento)/cantidad
                                 template=self.env['product.template'].search([('default_code','=',noparte.replace(' ',''))])
                                 if(template.id==False):
                                     template=self.env['product.template'].create({'name':'','description':'/','categ_id':self.x_studio_tipo_de_producto.id,'default_code':noparte})
                                 productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
-                                product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':cantidad,'price_unit':precioCdesc,'taxes_id':[10],'name':productid.description if(productid.description) else '/'}
+                                product={'product_uom':1,'date_planned':self.date_order if(self.date_order) else fecha,'product_id':productid.id,'product_qty':cantidad,'price_unit':precioCdesc,'taxes_id':[10],'name':productid.description if(productid.description) else '/'}
                                 arreglo.append(product)
                             if('E48' in ar):
                                 p=ar.split('$')
-                                product={'product_uom':1,'date_planned':self.date_order,'product_id':1,'product_qty':1,'price_unit':float(p[1].replace(' ','')),'taxes_id':[10],'name':productid.description if(productid.description) else '/'}
+                                product={'product_uom':1,'date_planned':self.date_order if(self.date_order) else fecha,'product_id':1,'product_qty':1,'price_unit':float(p[1].replace(' ','')),'taxes_id':[10],'name':productid.description if(productid.description) else '/'}
                                 arreglo.append(product)
                         if(len(arreglo)>0):
                             self.order_line=[(5,0,0)]
@@ -196,7 +225,7 @@ class compras(models.Model):
                                 if(template.id==False):
                                     template=self.env['product.template'].create({'name':'','description':'/','categ_id':self.x_studio_tipo_de_producto.id,'default_code':noparte})
                                 productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
-                                product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':cantidad,'price_unit':precioCdesc,'taxes_id':[10],'name':productid.description if(productid.description) else '/'}
+                                product={'product_uom':1,'date_planned':self.date_order if(self.date_order) else fecha,'product_id':productid.id,'product_qty':cantidad,'price_unit':precioCdesc,'taxes_id':[10],'name':productid.description if(productid.description) else '/'}
                                 fff.write(str(product)+str(noparte))
                                 arreglo.append(product)
                         if(len(arreglo)>0):
@@ -228,9 +257,9 @@ class compras(models.Model):
                                 serial=''
                                 if ('PIEZA' in f):
                                     cantidad = f.split('PIEZA')[0]
-                                    l = f.split('PIEZA')[1].split(' -',2)
-                                    id = l[1].replace(' ','')
-                                    casi = l[2].split('.')
+                                    l = f.split('PIEZA')[1].split(' -',1)
+                                    id = l[0].replace(' ','')
+                                    casi = l[1].split('.')
                                     _logger.info(str(casi))
                                     casii = casi[1].split(' ')[0]
                                     tam = casi[0].split(' ')
@@ -243,7 +272,7 @@ class compras(models.Model):
                                     if(template.id!=False):
                                         productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
                                     _logger.info('id'+str(id))
-                                    product={'product_uom':1,'date_planned':self.date_order if(self.date_order) else datetime.datetime.now()-datetime.timedelta(hours=-5),'product_id':productid.id,'product_qty':cantidad,'price_unit':precio,'taxes_id':[10],'name':productid.description}
+                                    product={'product_uom':1,'date_planned':self.date_order if(self.date_order) else fecha,'product_id':productid.id,'product_qty':cantidad,'price_unit':precio,'taxes_id':[10],'name':productid.description}
                                     arreglo.append(product)
                             if(len(arreglo)>0):
                                 self.order_line=[(5,0,0)]
@@ -262,7 +291,7 @@ class compras(models.Model):
                             for o in b:
                                 product={}
                                 if('#' in o ):
-                                    r = o.split(" Artículo # ")
+                                    r = o.split("Artículo # ")
                                     q = r[1].split(' ')[0]
                                     _logger.info(str(r))
                                     template=self.env['product.template'].search([('default_code','=',q)])
@@ -275,15 +304,16 @@ class compras(models.Model):
                                         desc=productid.description if(productid.description) else '|'
                                         arr[i]['name']=desc
                                         arr[i]['product_uom']=1
-                                        arr[i]['date_planned']=self.date_order if(self.date_order) else datetime.datetime.now()-datetime.timedelta(hours=-5)
+                                        arr[i]['date_planned']=self.date_order if(self.date_order) else fecha
                                         arr[i]['taxes_id']=[10]
                                     if(len(arr)==i):
-                                        product={'product_uom':1,'date_planned':self.date_order if(self.date_order) else datetime.datetime.now()-datetime.timedelta(hours=-5),'product_id':productid.id,'taxes_id':[10],'name':productid.description}
+                                        product={'product_uom':1,'date_planned':self.date_order if(self.date_order) else fecha,'product_id':productid.id,'taxes_id':[10],'name':productid.description}
                                         desc=productid.description if(productid.description) else '|'
                                         product['name']=desc
                                         arr.append(product)
                                     i=i+1       
-                                if('Customer' in o or 'SUPPLY' in o):
+                                #if('Customer' in o or 'SUPPLY' in o or 'PARTS' in o):
+                                if 'SUPPLY' in o or ('PARTS' in o and '$' in o):
                                     s = o.split("$")
                                     h=float(s[2])
                                     g=float(s[1].split(' ')[0])
@@ -291,8 +321,9 @@ class compras(models.Model):
                                     if(len(arr)==j+1):
                                         arr[j]['product_qty']=qty
                                         arr[j]['price_unit']=g/1.16
+                                        arr[j]['date_planned']=self.date_order if(self.date_order) else fecha
                                     if(len(arr)==j):
-                                        product={'product_qty':qty,'price_unit':g/1.16}
+                                        product={'product_qty':qty,'price_unit':g/1.16,'date_planned':self.date_order if(self.date_order) else fecha}
                                         arr.append(product)
                                     j=j+1
                             if(len(arr)>0):
@@ -321,7 +352,7 @@ class compras(models.Model):
                             if(template.id==False):
                                 template=self.env['product.template'].create({'name':'','description':'/','categ_id':self.x_studio_tipo_de_producto.id,'default_code':str(producto).replace('.0','')})
                             productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
-                            product={'product_uom':1,'date_planned':self.date_order,'product_id':productid.id,'product_qty':cantidad,'price_unit':precio,'name':productid.description}
+                            product={'product_uom':1,'date_planned':self.date_order if(self.date_order) else fecha,'product_id':productid.id,'product_qty':cantidad,'price_unit':precio,'name':productid.description}
                             product['taxes_id']=[10]
                             if("KATUN" in row[0].value):
                                 product['price_unit']=float(row[10].value)-float(row[10].value)*descuento
