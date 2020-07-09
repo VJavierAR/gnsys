@@ -383,9 +383,8 @@ class comprobaciones(models.Model):
     servicio = fields.Text(string = 'Servicio')
 
     def calcularMontoAprobado(self):
-        for rec in self:
-            if rec.porcentajeAceptado :
-                self.montoAprobado = rec.monto * rec.porcentajeAceptado
+        if self.porcentajeAceptado :
+            self.montoAprobado = self.monto * self.porcentajeAceptado
 
 
 class PagoSolicitante(models.Model):
