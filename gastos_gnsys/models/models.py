@@ -32,7 +32,7 @@ class gastos_gnsys(models.Model):
     # --- AUTORIZACIÓN | LÍDER (PUEDE SER MULTIPLE)
     quienesAutorizan = fields.Many2one('res.users',string = "Responsable de autorizacion", track_visibility='onchange', default=lambda self: self.env.user)
     autorizacionLider = fields.Selection([('Aprobar','Aprobar'), ('Rechazar','Rechazar')], string = "Autorización", track_visibility='onchange')
-
+    montoAutorizado = fields.Float(string = 'Monto autorizado',track_visibility='onchange')
     # --- APROBACIÓN | FINANSAS
     quienValida = fields.Many2one('res.users',string = "Responsable de aprobacion", track_visibility='onchange', default=lambda self: self.env.user)
     montoAprobado = fields.Float(string = 'Monto aprobado',track_visibility='onchange')
