@@ -37,7 +37,10 @@ class gastos_gnsys(models.Model):
     @api.onchange('montoRequerido')
     def definirMontoAutorizado(self):
         if self.montoRequerido :
-            self.montoAutorizado = self.montoRequerido
+            if self.montoAutorizado :
+                self.montoAutorizado = self.montoAutorizado    
+            else :
+                self.montoAutorizado = self.montoRequerido
 
     # --- APROBACIÓN | FINANSAS
     quienValida = fields.Many2one('res.users',string = "Responsable de aprobacion", track_visibility='onchange', default=lambda self: self.env.user)
