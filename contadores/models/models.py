@@ -879,7 +879,7 @@ class contadores(models.Model):
                if rht>0:
                   worksheet.write(i, 15, 'Retencion $'+str(round(rht,2)),neg)
                   worksheet.write(i, 14, '$'+str(round(tfs*.16,2)+tfs),neg)
-                  totalsr = tfs + totalsr
+                  totalsr = tfs + totalsr-rht
                else:
                   worksheet.write(i, 14, '$'+str(round(tfs*.16,2)+tfs),neg)
                   totalsr = tfs + totalsr  
