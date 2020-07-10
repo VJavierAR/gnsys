@@ -865,19 +865,8 @@ class contadores(models.Model):
                worksheet.write(i, 14, '$'+str(round(float(rd.rentaMensual)*.16,2)+float(rd.rentaMensual)),neg)
                totalsr=float(rd.rentaMensual)+totalsr 
                ivatt=round(float(rd.rentaMensual)*.16,2)+ivatt 
-               ttotal=(round(float(rd.rentaMensual)*.16,2)+float(rd.rentaMensual))+ttotal 
-            """
-            if rd.nombreAnte=='SERVICIO DE TFS' or rd.nombreAnte=='OPERADOR TFS' or rd.nombreAnte=='TFS' or rd.nombreAnte=='SERVICIO DE TFS ' :
-               worksheet.write(i, 0, rd.nombreAnte,neg)
-               tfs=float(rd.rentaMensual)*int(rd.cantidad)
-               worksheet.write(i, 12, '$'+str(tfs),neg)
-               worksheet.write(i, 13, '$'+str(round(tfs*.16,2)),neg)       
-               worksheet.write(i, 14, '$'+str(round(tfs*.16,2)+tfs),neg)
-               totalsr = tfs + totalsr                                
-               ivatt=round(float(tfs)*.16,2)+ivatt 
-               ttotal=round(tfs*.16,2)+tfs+ttotal  
-             """                                                   
-             if rd.nombreAnte=='SERVICIO DE TFS' or rd.nombreAnte=='OPERADOR TFS' or rd.nombreAnte=='TFS' or rd.nombreAnte=='SERVICIO DE TFS ' :               
+               ttotal=(round(float(rd.rentaMensual)*.16,2)+float(rd.rentaMensual))+ttotal                                                
+            if rd.nombreAnte=='SERVICIO DE TFS' or rd.nombreAnte=='OPERADOR TFS' or rd.nombreAnte=='TFS' or rd.nombreAnte=='SERVICIO DE TFS ' :               
                worksheet.write(i, 0, rd.nombreAnte,neg)
                tfs=float(rd.rentaMensual)*int(rd.cantidad)               
                retnecion=rd.retencion
