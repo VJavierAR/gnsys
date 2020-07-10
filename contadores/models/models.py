@@ -866,6 +866,7 @@ class contadores(models.Model):
                totalsr=float(rd.rentaMensual)+totalsr 
                ivatt=round(float(rd.rentaMensual)*.16,2)+ivatt 
                ttotal=(round(float(rd.rentaMensual)*.16,2)+float(rd.rentaMensual))+ttotal 
+            """
             if rd.nombreAnte=='SERVICIO DE TFS' or rd.nombreAnte=='OPERADOR TFS' or rd.nombreAnte=='TFS' or rd.nombreAnte=='SERVICIO DE TFS ' :
                worksheet.write(i, 0, rd.nombreAnte,neg)
                tfs=float(rd.rentaMensual)*int(rd.cantidad)
@@ -874,7 +875,30 @@ class contadores(models.Model):
                worksheet.write(i, 14, '$'+str(round(tfs*.16,2)+tfs),neg)
                totalsr = tfs + totalsr                                
                ivatt=round(float(tfs)*.16,2)+ivatt 
-               ttotal=round(tfs*.16,2)+tfs+ttotal                 
+               ttotal=round(tfs*.16,2)+tfs+ttotal  
+             """                                                   
+             if rd.nombreAnte=='SERVICIO DE TFS' or rd.nombreAnte=='OPERADOR TFS' or rd.nombreAnte=='TFS' or rd.nombreAnte=='SERVICIO DE TFS ' :               
+               worksheet.write(i, 0, rd.nombreAnte,neg)
+               tfs=float(rd.rentaMensual)*int(rd.cantidad)               
+               retnecion=rd.retencion
+               rht=0
+               #raise exceptions.ValidationError("Nada que generar "+retnecion+" "+str(retnecion)!='N/A' )
+               if str(retnecion)!='N/A':
+                  rht=float(rd.retencion)  
+               worksheet.write(i, 12, '$'+str(tfs),neg)
+               worksheet.write(i, 13, '$'+str(round(tfs*.16,2)),neg)                     
+               if rht>0:
+                  worksheet.write(i, 15, 'Retencion $'+str(round(rht,2)),neg)
+                  worksheet.write(i, 14, '$'+str(round(tfs*.16,2)+tfs),neg)
+                  totalsr = tfs + totalsr
+               else:
+                  worksheet.write(i, 14, '$'+str(round(tfs*.16,2)+tfs),neg)
+                  totalsr = tfs + totalsr  
+    
+               ivatt=round(float(tfs)*.16,2)+ivatt 
+               ttotal=round(tfs*.16,2)+tfs+ttotal   
+                
+                
             if rd.nombreAnte=='SERVICIO DE MANTENIMIENTO':                        
                worksheet.write(i, 0, rd.nombreAnte,neg)
                worksheet.write(i, 12, '$'+rd.rentaMensual,neg)
