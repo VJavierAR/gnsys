@@ -2362,7 +2362,7 @@ class helpdesk_update(models.Model):
                              c.write({'porcentajeNegro':c.porcentajeNegro})    
                              c.write({'x_studio_toner_negro':1})
                             pro = self.env['product.product'].search([['name','ilike',str(c.x_studio_cartuchonefro.name).replace(' ','').replace('-','')],['categ_id','=',5]])
-                            q=self.env['stock.quant'].search([['location_id','=',self.almacenes.lot_stock_id.id],['product_id','in',pro.mapped('id')]],order="qty_available desc")
+                            q=self.env['stock.quant'].search([['location_id','=',self.almacenes.lot_stock_id.id],['product_id','in',pro.mapped('id')]],order="quantity desc")
                             #gen = pro.sorted(key='qty_available',reverse=True)[0]
                             weirtihgone=c.serie.x_studio_toner_compatible.id if(len(q)==0) else q[0].product_id.id
                             datos={'name': ' '
@@ -2374,7 +2374,7 @@ class helpdesk_update(models.Model):
                                    , 'price_unit': 0 
                                    , 'customer_lead' : 0
                                    , 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id}
-                            if(gen['qty_available']<=0):
+                            if(len(q)>0 and q[0]['quantity']<=0):
                                 datos['route_id']=1
                                 datos['product_id']=c.serie.x_studio_toner_compatible.id
                                 weirtihgone=c.serie.x_studio_toner_compatible.id
