@@ -19,7 +19,9 @@ class CreacionRuta(Model):
 	EstadoPais=fields.Many2one('res.country.state',string="Estado")
 	EstadoPaisName=fields.Char(related='EstadoPais.name',string="Estado")
 	ticket=fields.Char()
-
+	almacen=fields.Many2one('stock.warehouse')
+	picking_type=fields.Many2one('stock.picking.type')
+	
 	# @api.onchange('tipo')
 	# def domin(self):
 	# 	res={}

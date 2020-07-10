@@ -254,15 +254,15 @@ class tfs(models.Model):
                     #self.env['stock.move'].create(ori)
 
                 for des in pickDestino:
-                    des['location_id']=17
+                    des['location_id']=al.wh_input_stock_loc_id.id
                     des['picking_id']=pick_dest.id
                     self.env['stock.move'].create(des)
                 sale.action_confirm()
                 ww=self.env['stock.picking'].search([['sale_id','=',sale.id],['picking_type_id.code','=','outgoing']])
                 ww.write({'location_dest_id':17})
                 for w in ww.move_ids_without_package:
-                    w.write({'location_dest_id':17})
-                    self.env['stock.move.line'].search([['move_id','=',w.id]]).write({'location_dest_id':17})
+                    w.write({'location_dest_id':al.wh_input_stock_loc_id.id})
+                    self.env['stock.move.line'].search([['move_id','=',w.id]]).write({'location_dest_id':al.wh_input_stock_loc_id.id})
                 #pick_origin1.action_confirm()
                 #pick_origin1.action_assign()
                 #pick_origin2.action_confirm()
