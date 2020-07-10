@@ -265,47 +265,6 @@ class gastos_gnsys(models.Model):
         gasto = self.env['gastos'].search([('id', '=', self.id)])
         gasto.write({'quienesAutorizan': self.env.user.name})
 
-    # @api.multi
-    # def validarGasto(self):
-    #     #_logger.info()
-    #     gasto = self.env['gastos'].search([('id', '=', self.id)])        
-    #     gasto.write({'x_studio_field_VU6DU': 'aprobado'
-    #                  , 'quienValida': self.env.user.name
-    #                })
-
-    # @api.multi
-    # def validarComprobacion(self):
-    #     message = ""
-    #     mess = {}
-    #     if str(self.tipoDeComprobacion) == "Exacto":
-    #         if self.montoExacto < self.montoAprobado:
-    #             raise exceptions.ValidationError("El gasto comprobado exacto no es igual al monto aprobado.")
-                
-    #             message = ("El gasto comprobado exacto no es igual al monto aprobado.")
-    #             mess = {
-    #                     'title': _('Gasto no comprobado!!!'),
-    #                     'message' : message
-    #                 }
-    #             return {'warning': mess}
-
-    #         else:
-    #             gasto = self.env['gastos'].search([('id', '=', self.id)])        
-    #             gasto.write({'x_studio_field_VU6DU': 'Comprobado'
-    #                         , 'quienValidaMonto': self.env.user.name
-    #                         })
-                 
-    #     elif str(self.tipoDeComprobacion) == "Parcial":
-    #         _logger.info("Parcial")
-    #     elif str(self.tipoDeComprobacion) == "Excedido":
-    #         _logger.info("Excedido")
-    #     elif str(self.tipoDeComprobacion) == "noComprobado":
-    #         _logger.info("No comprobado")
-    #     #else:
-    #     #    pass
-
-
-
-
 
 class usuarios_gastos(models.Model):
     _inherit = 'res.users'
@@ -481,3 +440,42 @@ class Pagos(models.Model):
     fechaProgramada = fields.Datetime(string = 'Fecha programada')
     totalMonto = fields.Float(string = "Total de monto")
 
+
+
+# @api.multi
+# def validarGasto(self):
+#     #_logger.info()
+#     gasto = self.env['gastos'].search([('id', '=', self.id)])        
+#     gasto.write({'x_studio_field_VU6DU': 'aprobado'
+#                  , 'quienValida': self.env.user.name
+#                })
+
+# @api.multi
+# def validarComprobacion(self):
+#     message = ""
+#     mess = {}
+#     if str(self.tipoDeComprobacion) == "Exacto":
+#         if self.montoExacto < self.montoAprobado:
+#             raise exceptions.ValidationError("El gasto comprobado exacto no es igual al monto aprobado.")
+            
+#             message = ("El gasto comprobado exacto no es igual al monto aprobado.")
+#             mess = {
+#                     'title': _('Gasto no comprobado!!!'),
+#                     'message' : message
+#                 }
+#             return {'warning': mess}
+
+#         else:
+#             gasto = self.env['gastos'].search([('id', '=', self.id)])        
+#             gasto.write({'x_studio_field_VU6DU': 'Comprobado'
+#                         , 'quienValidaMonto': self.env.user.name
+#                         })
+                
+#     elif str(self.tipoDeComprobacion) == "Parcial":
+#         _logger.info("Parcial")
+#     elif str(self.tipoDeComprobacion) == "Excedido":
+#         _logger.info("Excedido")
+#     elif str(self.tipoDeComprobacion) == "noComprobado":
+#         _logger.info("No comprobado")
+#     #else:
+#     #    pass
