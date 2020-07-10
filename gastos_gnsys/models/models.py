@@ -117,11 +117,17 @@ class gastos_gnsys(models.Model):
         if listaComprobaciones != []:
             for comprobacion in listaComprobaciones:
                 montoPagadoTotal += comprobacion.monto
-                montoComprobadoAprobadoTotal += comprobacion.montoAprobado
         self.montoComprobado = montoPagadoTotal
         self.montoComprobadoAprobado = montoComprobadoAprobadoTotal
 
-
+    @api.onchange('comprobaciones')
+    def calcularTotalMontoComprobadoAprobadoTotal(self):
+        listaComprobaciones = self.comprobaciones
+        montoComprobadoAprobadoTotal = 0.0
+        if listaComprobaciones != []:
+            for comprobacion in listaComprobaciones:
+                montoComprobadoAprobadoTotal += comprobacion.montoAprobado
+        self.montoComprobadoAprobado = montoComprobadoAprobadoTotal
     #quienSolcita     = fields.Char(string="Quien solicita?" ,track_visibility='onchange')
     #quienesAutorizan = fields.One2many('res.users', 'gastoAutoriza', string = "Responsable de autorizacion",track_visibility='onchange')
     #quienesAutorizan = fields.Char(string = "Responsable de autorizacion", track_visibility='onchange')
