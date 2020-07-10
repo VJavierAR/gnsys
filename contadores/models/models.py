@@ -879,13 +879,15 @@ class contadores(models.Model):
                if rht>0:
                   worksheet.write(i, 15, 'Retencion $'+str(round(rht,2)),neg)
                   worksheet.write(i, 14, '$'+str(round(tfs*.16,2)+tfs),neg)
-                  totalsr = tfs + totalsr-rht
+                  totalsr = tfs + totalsr
+                  ttotal=round(tfs*.16,2)+tfs+ttotal-rht     
                else:
                   worksheet.write(i, 14, '$'+str(round(tfs*.16,2)+tfs),neg)
-                  totalsr = tfs + totalsr  
+                  totalsr = tfs + totalsr
+                  ttotal=round(tfs*.16,2)+tfs+ttotal   
     
                ivatt=round(float(tfs)*.16,2)+ivatt 
-               ttotal=round(tfs*.16,2)+tfs+ttotal   
+               
                 
                 
             if rd.nombreAnte=='SERVICIO DE MANTENIMIENTO':                        
