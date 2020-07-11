@@ -113,6 +113,7 @@ class gastos_gnsys(models.Model):
     def calcularTotalComprobaciones(self):
         listaComprobaciones = self.comprobaciones
         montoPagadoTotal = 0.0
+        montoComprobadoAprobadoTotal = 0.0
         if listaComprobaciones != []:
             for comprobacion in listaComprobaciones:
                 montoPagadoTotal += comprobacion.monto
