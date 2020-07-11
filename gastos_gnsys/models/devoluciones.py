@@ -10,7 +10,7 @@ _logger = logging.getLogger(__name__)
 
 
 class devoluciones(models.Model):
-    _name = "gastos.devolucion"
+    _name = "gastos.pagoSolicitante"
     _description = 'Complemento/devolución'
     gasto = fields.Many2one('gastos', string="Gasto relacionado", track_visibility='onchange')
 
