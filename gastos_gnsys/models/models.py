@@ -342,6 +342,8 @@ class comprobaciones(models.Model):
     cliente = fields.Many2one('res.partner', string = 'Cliente', track_visibility='onchange')
     servicio = fields.Text(string = 'Servicio')
 
+
+    @api.onchange('porcentajeAceptado','monto')
     def calcularMontoAprobado(self):
         if self.porcentajeAceptado :
             if self.monto:
