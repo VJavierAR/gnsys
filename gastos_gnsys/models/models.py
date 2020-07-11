@@ -341,11 +341,9 @@ class comprobaciones(models.Model):
     servicio = fields.Text(string = 'Servicio')
 
 
-    @api.onchange('porcentajeAceptado','monto')
+    @api.onchange('porcentajeAceptado')
     def calcularMontoAprobado(self):
-        if self.porcentajeAceptado :
-            if self.monto:
-                self.montoAprobado = self.monto * self.porcentajeAceptado
+        self.montoAprobado = self.monto * self.porcentajeAceptado
 
 
 class PagoSolicitante(models.Model):
