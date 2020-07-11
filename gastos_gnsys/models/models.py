@@ -120,6 +120,8 @@ class gastos_gnsys(models.Model):
                 montoComprobadoAprobadoTotal += comprobacion.montoAprobado
         if montoComprobadoAprobadoTotal != self.montoComprobadoAprobado :
             self.montoComprobadoAprobado = montoComprobadoAprobadoTotal
+        else :
+            self.montoComprobadoAprobado = self.montoComprobadoAprobado
         self.montoComprobado = montoPagadoTotal
     
     #quienSolcita     = fields.Char(string="Quien solicita?" ,track_visibility='onchange')
