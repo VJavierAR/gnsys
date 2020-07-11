@@ -118,12 +118,8 @@ class gastos_gnsys(models.Model):
             for comprobacion in listaComprobaciones:
                 montoPagadoTotal += comprobacion.monto
                 montoComprobadoAprobadoTotal += comprobacion.montoAprobado
-        if montoComprobadoAprobadoTotal != self.montoComprobadoAprobado :
-            self.montoComprobadoAprobado = montoComprobadoAprobadoTotal
-        else :
-            self.montoComprobadoAprobado = self.montoComprobadoAprobado
         self.montoComprobado = montoPagadoTotal
-    
+        self.montoComprobadoAprobado = montoComprobadoAprobadoTotal
     #quienSolcita     = fields.Char(string="Quien solicita?" ,track_visibility='onchange')
     #quienesAutorizan = fields.One2many('res.users', 'gastoAutoriza', string = "Responsable de autorizacion",track_visibility='onchange')
     #quienesAutorizan = fields.Char(string = "Responsable de autorizacion", track_visibility='onchange')
