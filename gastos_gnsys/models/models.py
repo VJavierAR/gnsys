@@ -55,7 +55,7 @@ class gastos_gnsys(models.Model):
     #   _name = 'motivos'
     #   _description = 'Motivos de un gasto'
 
-    motivos = fields.One2many('motivos', 'gasto', string = "Motivos",track_visibility='onchange')
+    motivos = fields.One2many('motivos', 'gasto', string = "Motivo",track_visibility='onchange')
     totalMontoMotivos = fields.Float(string = 'Total monto de motivos',track_visibility='onchange')
 
     @api.onchange('motivos')
@@ -84,7 +84,7 @@ class gastos_gnsys(models.Model):
     #   _name = "gastos.devolucion"
     #   _description = 'Pago a solicitante'
 
-    devoluciones = fields.One2many('gastos.devolucion', 'gasto' , string = 'Devoluciones', track_visibility = 'onchange')
+    devoluciones = fields.One2many('gastos.devolucion', 'gasto' , string = 'Pago a solicitante', track_visibility = 'onchange')
     totalPagosSolitantes = fields.Float(string = "Total monto pagado", track_visibility='onchange')
     montoPorCubrir = fields.Float(string = "Monto por cubrir a solicitante", track_visibility='onchange')
 
@@ -104,7 +104,7 @@ class gastos_gnsys(models.Model):
     # _name = 'gastos.comprobaciones'
     # _description = 'Tipos de comprobaciónes del gasto'
 
-    comprobaciones = fields.One2many('gastos.comprobaciones', 'comprobante', string = "Comprobantes",track_visibility='onchange')
+    comprobaciones = fields.One2many('gastos.comprobaciones', 'comprobante', string = "Comprobante",track_visibility='onchange')
     montoPagadoComprobado = fields.Float(string = "Monto pagado", track_visibility='onchange')
     montoComprobado = fields.Float(string = "Monto comprobado", track_visibility='onchange')
     montoComprobadoAprobado =  fields.Float(string = " Monto comprobado aprobado", track_visibility='onchange')
@@ -218,7 +218,7 @@ class gastos_gnsys(models.Model):
 
     # --------------------
     #Modelo de devoluciónes
-    pagos = fields.One2many('gastos.pago', 'gasto' , string = 'Pagos', track_visibility = 'onchange')    
+    pagos = fields.One2many('gastos.pago', 'gasto' , string = 'Pago', track_visibility = 'onchange')    
     
     montoComprobadoPago = fields.Float(string = "Monto comprobado", track_visibility='onchange')
     montoComprobadoAprobadoPago = fields.Float(string = "Monto comprobado aprobado", track_visibility='onchange')
