@@ -118,7 +118,7 @@ class gastos_gnsys(models.Model):
             for comprobacion in listaComprobaciones:
                 montoPagadoTotal += comprobacion.monto
                 montoComprobadoAprobadoTotal += comprobacion.montoAprobado
-        if montoComprobadoAprobadoTotal == self.montoComprobadoAprobado :
+        if montoComprobadoAprobadoTotal != self.montoComprobadoAprobado :
             self.montoComprobadoAprobado = montoComprobadoAprobadoTotal
         self.montoComprobado = montoPagadoTotal
     
