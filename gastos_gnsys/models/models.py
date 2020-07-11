@@ -329,14 +329,13 @@ class comprobaciones(models.Model):
     comprobantes            = fields.Many2many('ir.attachment', string="Evidencia")
     # -------Finanzas------------
     porcentajeAceptado      = fields.Float(string = "Porcentaje Aceptado",track_visibility='onchange')
-    montoAprobado           = fields.Float(string = "Monto aprobado", compute='calcularMontoAprobado',track_visibility='onchange')
+    montoAprobado           = fields.Float(string = "Monto aprobado",track_visibility='onchange')
     cuentaContableDestino   = fields.Text(string = "Aplicación contable", track_visibility='onchange')
     montoAprobadooriginalMante = fields.Float(string = "Monto aprobado originalmente", track_visibility='onchange')
     justificacionContable   = fields.Text(string = "Justificación contable", track_visibility='onchange')
     #----------------------------
     monto                   = fields.Float(string = "Monto",         track_visibility='onchange')
     nombre                  = fields.Char(string="Nombre de comprobación", track_visibility='onchange')
-    montoJustificado        = fields.Float(string = 'Monto aprobado', compute='calcularMontoAprobado', track_visibility='onchange')
     
     centoDeCostos           = fields.Text(string = "Centro de Costos", track_visibility='onchange')
     cliente = fields.Many2one('res.partner', string = 'Cliente', track_visibility='onchange')
