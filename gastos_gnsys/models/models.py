@@ -36,16 +36,16 @@ class gastos_gnsys(models.Model):
             fechaCompleta = str(self.fechaLimitePagoGasto).split(' ')[0]
             fechaCompleta = fechaCompleta.split('-')
 
-            fecha1 = datetime.datetime(int(fechaCompleta[0]), int(fechaCompleta[1]), int(fechaCompleta[2]))
+            fechaUsuario = datetime.datetime(int(fechaCompleta[0]), int(fechaCompleta[1]), int(fechaCompleta[2]))
             fechaHoy = datetime.date.today()
             fechaHoy = str(fechaHoy)
             fechaHoy = fechaHoy.split('-')
 
-            fecha2 = datetime.datetime(int(fechaHoy[0]), int(fechaHoy[1]), int(fechaHoy[2]))
+            fechaActual = datetime.datetime(int(fechaHoy[0]), int(fechaHoy[1]), int(fechaHoy[2]))
             message = ""
             mess = {}
-            if fecha1 > fecha2 :
-                _logger.info("||||-:   Es mayot")
+            if fechaUsuario > fechaActual :
+                _logger.info("Todo bien")
             else:
                 # _logger.info("||||-:   "+esMayor)
                 self.fechaLimitePagoGasto = ""
