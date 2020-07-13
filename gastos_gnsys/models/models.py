@@ -20,7 +20,6 @@ class gastos_gnsys(models.Model):
     proyecto = fields.Text(string="Proyecto", track_visibility='onchange')
     montoRequerido = fields.Float(string = 'Monto requerido',track_visibility='onchange')
     fechaDeSolicitud = fields.Datetime(compute='computarfechaDeSolicitud',string = 'Fecha de solicitud', track_visibility='onchange')
-    fechaLimitePagoGasto = fields.Datetime(string = 'Fecha limite de pago', track_visibility='onchange')
     fechaLimite = fields.Datetime(string = 'Fecha limite de pago', track_visibility='onchange')
     def computarfechaDeSolicitud(self):
         for rec in self:
@@ -48,7 +47,7 @@ class gastos_gnsys(models.Model):
                 _logger.info("Todo bien")
             else:
                 # _logger.info("||||-:   "+esMayor)
-                self.fechaLimite = ""
+                self.fechaLimite = " "
                 raise exceptions.ValidationError("La fecha no puede ser menor al día de hoy .")
                 message = ("La fecha no puede ser menor al día de hoy .")
                 mess = { 'title': _('Error'), 'message' : message}
