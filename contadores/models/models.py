@@ -722,6 +722,7 @@ class contadores(models.Model):
                                   #eebn=ebn+eebn  
                                   cal=float(rd.rentaMensual)+(ebn*rd.clickExcedenteBN)  
                                   worksheet.write(i, 12, cal,neg)
+                                  worksheet.write(i, 10, ebn,neg)
                                   iva=round(cal*.16,2)
                                   worksheet.write(i, 13,'$ '+str(iva) ,neg)
                                   _logger.info('iva: ' + str(iva))
@@ -749,6 +750,7 @@ class contadores(models.Model):
                                   ebn=ebn-rd.bolsaBN
                                   #eebn=ebn+eebn  
                                   ebnx=(ebn*rd.clickExcedenteBN)
+                                  worksheet.write(i, 10, ebn,neg)  
                                   _logger.info("totals cnsi: " + str(totalsr))  
                                   _logger.info("tota cnsi: " + str(ttotal))     
                                if rd.bolsaColor<ec:
@@ -756,6 +758,7 @@ class contadores(models.Model):
                                   #eec=ec+eec  
                                   call=float(rd.rentaMensual)+(ec*rd.clickExcedenteColor)+ebnx                                
                                   worksheet.write(i, 12, call,neg)
+                                  worksheet.write(i, 11, ec,neg)
                                   iva=round(call*.16,2)
                                   ivatt=iva+ivatt
                                   worksheet.write(i, 13,'$ '+str(iva) ,neg)     
