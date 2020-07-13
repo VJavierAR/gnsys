@@ -832,7 +832,6 @@ class HelpdeskTicketMassAction(TransientModel):
             fecha2=fecha-datetime.timedelta(days=90)
             self.fechaInicial=fecha2
             self.fechaFinal=fecha
-
     def report(self):
         i=[]
         d=[]
