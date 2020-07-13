@@ -32,24 +32,30 @@ class gastos_gnsys(models.Model):
     @api.onchange('fechaLimite')
     def calculaFechaLimite(self):
         if self.fechaLimite :
+
             fechaCompleta = str(self.fechaLimite).split(' ')[0]
             fechaCompleta = fechaCompleta.split('-')
 
-            fechaUsuario = datetime.datetime(int(fechaCompleta[0]), int(fechaCompleta[1]), int(fechaCompleta[2]))
+            fecha1 = datetime.datetime(int(fechaCompleta[0]), int(fechaCompleta[1]), int(fechaCompleta[2]))
+            
+
             fechaHoy = datetime.date.today()
             fechaHoy = str(fechaHoy)
             fechaHoy = fechaHoy.split('-')
 
-            fechaActual = datetime.datetime(int(fechaHoy[0]), int(fechaHoy[1]), int(fechaHoy[2]))
+            fecha2 = datetime.datetime(int(fechaHoy[0]), int(fechaHoy[1]), int(fechaHoy[2]))
             message = ""
             mess = {}
-            if fechaUsuario >= fechaActual :
-                _logger.info("Todo bien")
+            esMenor = "Es menor"
+            esMayor = "Es mayor"
+            if fecha1 >= fecha2 :
+                _logger.info("||||-:   "+esMayor)
+
             else:
                 # _logger.info("||||-:   "+esMayor)
                 self.fechaLimite = ""
-                raise exceptions.ValidationError("La fecha no puede ser menor al día de hoy .")
-                message = ("La fecha no puede ser menor al día de hoy .")
+                raise exceptions.ValidationError("La fecha no pude ser menor al día de hoy .")
+                message = ("La fecha no pude ser menor al día de hoy .")
                 mess = { 'title': _('Error'), 'message' : message}
                 return {'warning': mess}
 
