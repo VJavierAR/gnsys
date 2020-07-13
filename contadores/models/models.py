@@ -719,7 +719,7 @@ class contadores(models.Model):
                             if rpt.x_studio_color_o_bn=='B/N':                            
                                if rd.bolsaBN<ebn:
                                   ebn=ebn-rd.bolsaBN
-                                  eebn=ebn+eebn  
+                                  #eebn=ebn+eebn  
                                   cal=float(rd.rentaMensual)+(ebn*rd.clickExcedenteBN)  
                                   worksheet.write(i, 12, cal,neg)
                                   iva=round(cal*.16,2)
