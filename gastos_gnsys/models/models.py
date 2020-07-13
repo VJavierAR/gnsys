@@ -27,7 +27,33 @@ class gastos_gnsys(models.Model):
             fecha = str(rec.create_date).split(' ')[0]
             converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
             self.fechaDeSolicitud = converted_date 
+    
+    # --- FUNCION PARA VERFICAR QUE LA FECHA NO ES MENOR AL DÍA DE HOY
+    
+    @api.onchange('fechaLimitePagoGasto')
+    def fechaLimite(self):
+        if self.fechaLimitePagoGasto :
+            fechaCompleta = str(self.fechaLimitePagoGasto).split(' ')[0]
+            fechaCompleta = fechaCompleta.split('-')
 
+            fecha1 = datetime.datetime(int(fechaCompleta[0]), int(fechaCompleta[1]), int(fechaCompleta[2]))
+            fechaHoy = datetime.date.today()
+            fechaHoy = str(fechaHoy)
+            fechaHoy = fechaHoy.split('-')
+
+            fecha2 = datetime.datetime(int(fechaHoy[0]), int(fechaHoy[1]), int(fechaHoy[2]))
+            message = ""
+            mess = {}
+            esMenor = "Es menor"
+            if fecha1 <= fecha2 :
+                _logger.info("||||-:   "+esMenor)
+            else:
+                # _logger.info("||||-:   "+esMayor)
+                self.fechaLimitePagoGasto = ""
+                raise exceptions.ValidationError("El pago no puede ser mayor al día de hoy .")
+                message = ("El pago no puede ser mayor al día de hoy .")
+                mess = { 'title': _('Error'), 'message' : message}
+                return {'warning': mess}
 
     # --- AUTORIZACIÓN | LÍDER (PUEDE SER MULTIPLE)
     quienesAutorizan = fields.Many2one('res.users',string = "Responsable de autorizacion", track_visibility='onchange', default=lambda self: self.env.user)
@@ -120,6 +146,28 @@ class gastos_gnsys(models.Model):
                 montoComprobadoAprobadoTotal += comprobacion.montoAprobado
         self.montoComprobado = montoPagadoTotal
         self.montoComprobadoAprobado = montoComprobadoAprobadoTotal
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     #quienSolcita     = fields.Char(string="Quien solicita?" ,track_visibility='onchange')
     #quienesAutorizan = fields.One2many('res.users', 'gastoAutoriza', string = "Responsable de autorizacion",track_visibility='onchange')
     #quienesAutorizan = fields.Char(string = "Responsable de autorizacion", track_visibility='onchange')
@@ -348,7 +396,6 @@ class comprobaciones(models.Model):
 
 class PagoSolicitante(models.Model):
     _name = "gastos.devolucion"
-    #_description = 'Complemento/devolución'
     _description = 'Pago a solicitante'
     gasto = fields.Many2one('gastos', string="Pagos solitatados", track_visibility='onchange')
     quienesReciben = fields.Many2one('res.users',string = "Quien recibe", track_visibility='onchange', default=lambda self: self.env.user)
