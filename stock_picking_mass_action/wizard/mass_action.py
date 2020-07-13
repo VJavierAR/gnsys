@@ -823,6 +823,16 @@ class HelpdeskTicketMassAction(TransientModel):
     estado=fields.Many2one('helpdesk.state')
     tipo=fields.Selection([["Falla","Falla"],["Toner","Toner"]])
     area=fields.Many2one('helpdesk.team')
+    fechaauto=fields.Boolean('Fecha Automatica',default=True)
+
+    @api.onchange('fechaauto')
+    def automatica(self):
+        if(self.fechaauto==True):
+            fecha=datatime.datatime.now()
+            fecha2=fecha-datetime.timedelta(days=90)
+            self.fechaInicial=fecha2
+            self.fechaFinal=fecha
+
     def report(self):
         i=[]
         d=[]

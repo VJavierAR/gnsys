@@ -145,6 +145,7 @@
             <form string="Mass Action for the selected sale order">
                 <group>
                     <group>
+                    <field name="fechaauto"/>
                     <field name="fechaInicial" string="Fecha Inicial" required="1"/>
                     <field name="fechaFinal" string="Fecha Inicial" required="1"/>
                 </group>
