@@ -97,7 +97,7 @@ class PartnerXlsx(models.AbstractModel):
                 if(obj.x_studio_coment):
                     sheet.write(i, 16, obj.x_studio_coment, bold)
                 if(obj.x_studio_coment==False):
-                    sheet.write(i, 16, user.write_uid.name,bold)
+                    sheet.write(i, 16, user[0].write_uid.name,bold)
                 i=i+1
             sheet.add_table('A2:Q2',{'columns': [{'header': 'Categoria'},{'header': 'Fecha'},{'header': 'Almacen'},{'header':'Tipo'},{'header': 'Modelo'},{'header': 'No Parte'},{'header': 'Cantidad'},{'header': 'Cliente'},{'header': 'Localidad'},{'header': 'Comentario'},{'header': 'Documento Origen'},{'header': 'Numero'},{'header': 'Serie Destino'},{'header': 'Modelo Destino'},{'header': 'Estado'},{'header': 'Delegación'},{'header': 'Usuario'}]})
             #sheet.add_table('A2:Q'+str(i),{'columns': [{'header': 'Categoria'},{'header': 'Fecha'},{'header': 'Almacen'},{'header':'Tipo'},{'header': 'Modelo'},{'header': 'No Parte'},{'header': 'Cantidad'},{'header': 'Cliente'},{'header': 'Localidad'},{'header': 'Comentario'},{'header': 'Documento Origen'},{'header': 'Numero'},{'header': 'Serie Destino'},{'header': 'Modelo Destino'},{'header': 'Estado'},{'header': 'Delegación'},{'header': 'Usuario'}]})
@@ -244,9 +244,14 @@ class PartnerXlsx(models.AbstractModel):
         sheet = workbook.add_worksheet('Tickets')
         sheet.merge_range('A1:R1', 'Tickets', merge_format)
         for obj in ticket:
+            tipo=''
+            if(obj.x_studio_tipo_de_vale=='Requerimiento'):
+                tipo='Toner'
+            if(obj.x_studio_tipo_de_vale==False):
+                tipo=''
             if(len(obj.x_studio_equipo_por_nmero_de_serie_1)==1 or len(obj.x_studio_equipo_por_nmero_de_serie)==1):
-                sheet.write(i, 0, obj.name.replace('Ticket0',''), bold)
-                sheet.write(i, 1, obj.x_studio_tipo_de_vale if(obj.x_studio_tipo_de_vale) else '', bold)
+                sheet.write(i, 0, str(obj.id).replace(',',''), bold)
+                sheet.write(i, 1, tipo, bold)
                 sheet.write(i, 2, obj.create_date.strftime("%Y/%m/%d"), bold)
                 sheet.write(i, 3, obj.days_difference, bold)
                 sheet.write(i, 4, obj.partner_id.name if(obj.partner_id) else '', bold)
@@ -283,8 +288,8 @@ class PartnerXlsx(models.AbstractModel):
                 if(len(obj.x_studio_equipo_por_nmero_de_serie)>1):
                     series=obj.x_studio_equipo_por_nmero_de_serie
                 for s in series:
-                    sheet.write(i, 0, obj.name.replace('Ticket0',''), bold)
-                    sheet.write(i, 1, obj.x_studio_tipo_de_vale if(obj.x_studio_tipo_de_vale) else '', bold)
+                    sheet.write(i, 0, str(obj.id).replace(',',''), bold)
+                    sheet.write(i, 1, tipo, bold)
                     sheet.write(i, 2, obj.create_date.strftime("%Y/%m/%d %H:%M:%S"), bold)
                     sheet.write(i, 3, obj.days_difference, bold)
                     sheet.write(i, 4, obj.partner_id.name if(obj.partner_id) else '', bold)
