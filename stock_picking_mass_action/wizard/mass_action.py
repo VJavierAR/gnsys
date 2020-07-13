@@ -1153,6 +1153,6 @@ class ReporteCompras(TransientModel):
     usuario=fields.Selection([["Claudia Moreno","Claudia Moreno"],["Veronica Aparicio","Veronica Aparicio"]])
 
     def report(self):
-        d=self.env['purchase.order'].search(['state','=','purchase'])
+        d=self.env['purchase.order'].search([['state','=','purchase']])
         d[0].write({'x_studio_arreglo':str(d.mapped('id'))})
         return self.env.ref('stock_picking_mass_action.compras_xlsx').report_action(d[0])
