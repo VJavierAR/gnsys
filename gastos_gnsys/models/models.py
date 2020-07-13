@@ -44,14 +44,13 @@ class gastos_gnsys(models.Model):
             fecha2 = datetime.datetime(int(fechaHoy[0]), int(fechaHoy[1]), int(fechaHoy[2]))
             message = ""
             mess = {}
-            esMenor = "Es menor"
-            if fecha1 <= fecha2 :
-                _logger.info("||||-:   "+esMenor)
+            if fecha1 > fecha2 :
+                _logger.info("||||-:   Es mayot")
             else:
                 # _logger.info("||||-:   "+esMayor)
                 self.fechaLimitePagoGasto = ""
-                raise exceptions.ValidationError("El pago no puede ser mayor al día de hoy .")
-                message = ("El pago no puede ser mayor al día de hoy .")
+                raise exceptions.ValidationError("La fecha no puede ser menor al día de hoy .")
+                message = ("La fecha no puede ser menor al día de hoy .")
                 mess = { 'title': _('Error'), 'message' : message}
                 return {'warning': mess}
 
