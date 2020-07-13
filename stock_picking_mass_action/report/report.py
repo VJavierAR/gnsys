@@ -97,7 +97,7 @@ class PartnerXlsx(models.AbstractModel):
                 if(obj.x_studio_coment):
                     sheet.write(i, 16, obj.x_studio_coment, bold)
                 if(obj.x_studio_coment==False):
-                    sheet.write(i, 16, user[0].write_uid.name,bold)
+                    sheet.write(i, 16, obj.write_uid.name,bold)
                 i=i+1
             sheet.add_table('A2:Q2',{'columns': [{'header': 'Categoria'},{'header': 'Fecha'},{'header': 'Almacen'},{'header':'Tipo'},{'header': 'Modelo'},{'header': 'No Parte'},{'header': 'Cantidad'},{'header': 'Cliente'},{'header': 'Localidad'},{'header': 'Comentario'},{'header': 'Documento Origen'},{'header': 'Numero'},{'header': 'Serie Destino'},{'header': 'Modelo Destino'},{'header': 'Estado'},{'header': 'Delegación'},{'header': 'Usuario'}]})
             #sheet.add_table('A2:Q'+str(i),{'columns': [{'header': 'Categoria'},{'header': 'Fecha'},{'header': 'Almacen'},{'header':'Tipo'},{'header': 'Modelo'},{'header': 'No Parte'},{'header': 'Cantidad'},{'header': 'Cliente'},{'header': 'Localidad'},{'header': 'Comentario'},{'header': 'Documento Origen'},{'header': 'Numero'},{'header': 'Serie Destino'},{'header': 'Modelo Destino'},{'header': 'Estado'},{'header': 'Delegación'},{'header': 'Usuario'}]})
