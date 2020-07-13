@@ -104,6 +104,8 @@ class PartnerXlsx(models.AbstractModel):
         workbook.close()
 
 
+
+
 class ExistenciasXML(models.AbstractModel):
     _name = 'report.existencias.report'
     _inherit = 'report.report_xlsx.abstract'
