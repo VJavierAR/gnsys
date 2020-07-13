@@ -405,7 +405,7 @@ class PartnerXlsx(models.AbstractModel):
             sheet.write(i, 0, obj.name if(obj.name) else '', bold)
             sheet.write(i, 1, obj.partner_id.name if(obj.partner_id) else '', bold)
             sheet.write(i, 2, obj.x_studio_rubro if(obj.x_studio_rubro) else '', bold)
-            sheet.write(i, 3, obj.x_studio_aplicacin if(obj.x_studio_aplicacin) else '', bold)            
+            sheet.write(i, 3, obj.x_studio_aplicacin.x_name if(obj.x_studio_aplicacin) else '', bold)            
             sheet.write(i, 4, obj.x_studio_concepto if(obj.x_studio_concepto) else '', bold)
             sheet.write(i, 5, '', bold)
             sheet.write(i, 6, '', bold)
