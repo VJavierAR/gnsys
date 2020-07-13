@@ -103,6 +103,7 @@ class PartnerXlsx(models.AbstractModel):
             #sheet.add_table('A2:Q'+str(i),{'columns': [{'header': 'Categoria'},{'header': 'Fecha'},{'header': 'Almacen'},{'header':'Tipo'},{'header': 'Modelo'},{'header': 'No Parte'},{'header': 'Cantidad'},{'header': 'Cliente'},{'header': 'Localidad'},{'header': 'Comentario'},{'header': 'Documento Origen'},{'header': 'Numero'},{'header': 'Serie Destino'},{'header': 'Modelo Destino'},{'header': 'Estado'},{'header': 'Delegación'},{'header': 'Usuario'}]})
         workbook.close()
 
+
 class ExistenciasXML(models.AbstractModel):
     _name = 'report.existencias.report'
     _inherit = 'report.report_xlsx.abstract'
