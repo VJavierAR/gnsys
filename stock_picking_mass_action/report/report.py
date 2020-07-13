@@ -385,5 +385,39 @@ class PartnerXlsx(models.AbstractModel):
         #sheet.add_table('A2:X'+str(i),{'columns': [{'header': 'NombreCliente'},{'header': 'NombreGrupo'},{'header': 'RFCEmisor'},{'header':'Localidad'},{'header': 'NoSerie'},{'header': 'Modelo'},{'header': 'FechaIngresoCliente'},{'header': 'Tipo'},{'header': 'FechaInicioContrato'},{'header': 'FechaTerminoContrato'},{'header': 'Contrato'},{'header': 'Servicio'},{'header': 'EjecutivoCuenta'},{'header': 'EjecutivoAtencionCliente'},{'header': 'Calle'},{'header': 'No Int'},{'header': 'No Ext'},{'header': 'Colonia'},{'header': 'Delegación'},{'header': 'Ciudad'},{'header': 'Estado'},{'header': 'Zona'},{'header': 'Pais'},{'header': 'Codigo Postal'}]}) 
         workbook.close()
 
+class PartnerXlsx(models.AbstractModel):
+    _name = 'report.compras.report'
+    _inherit = 'report.report_xlsx.abstract'
 
+    def generate_xlsx_report(self, workbook, data, purchase):
+        i=2
+        d=[]
+        if(len(purchase)==1 and purchase.x_studio_arreglo!='/' and purchase.x_studio_arreglo!=False):
+            copia=purchase
+            compras=self.env['purchase.order'].browse(eval(purchase.x_studio_arreglo)).sorted(key='create_date',reverse=True) 
+            copia.write({'x_studio_arreglo':'/'})
+        merge_format = workbook.add_format({'bold': 1,'border': 1,'align': 'center','valign': 'vcenter','fg_color': 'blue'})
+        report_name = 'Reporte Pagos'
+        bold = workbook.add_format({'bold': True})
+        sheet = workbook.add_worksheet('Reporte Pagos')
+        sheet.merge_range('A1:O1', 'Reporte Pagos', merge_format)
+        for obj in compras:
+            sheet.write(i, 0, obj.name if(obj.name) else '', bold)
+            sheet.write(i, 1, obj.partner_id.name if(obj.partner_id) else '', bold)
+            sheet.write(i, 2, obj.x_studio_rubro if(obj.x_studio_rubro) else '', bold)
+            sheet.write(i, 3, obj.x_studio_aplicacin if(obj.x_studio_aplicacin) else '', bold)            
+            sheet.write(i, 4, obj.x_studio_concepto if(obj.x_studio_concepto) else '', bold)
+            sheet.write(i, 5, '', bold)
+            sheet.write(i, 6, '', bold)
+            sheet.write(i, 7, obj.x_studio_notas if(obj.x_studio_notas) else '', bold)
+            sheet.write(i, 8, obj.amount_untaxed if(obj.amount_untaxed) else '', bold)
+            sheet.write(i, 9, obj.amount_tax if(obj.amount_tax) else '', bold)
+            sheet.write(i, 10, obj.amount_total if(obj.amount_total) else '', bold)
+            sheet.write(i, 11, 'VERONICA APARICIO' if(obj.x_studio_vernica) else 'CLAUDIA MORENO', bold)
+            sheet.write(i, 12, '', bold)
+            sheet.write(i, 13, '', bold)
+            sheet.write(i, 14, '', bold)
+            i=i+1
+        sheet.add_table('A2:O'+str(i),{'columns': [{'header': 'NO TRNSFER'},{'header': 'PROVEEDOR'},{'header': 'RUBRO'},{'header':'APLICACIÓN '},{'header': 'CONCEPTO'},{'header': 'UBICACIÓN'},{'header': 'FECHA DE FACTURA'},{'header': 'FACTURA'},{'header': 'IMPORTE'},{'header': 'IVA'},{'header': 'TOTAL MN'},{'header': 'RECIBE PARA PAGO'},{'header': 'FECHA DE PAGO'},{'header': 'BANCO'},{'header': 'REFERENCIA'}]}) 
+        workbook.close()  
 

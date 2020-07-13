@@ -1143,3 +1143,16 @@ class AddCompatibles(TransientModel):
 
     def confirmar(self):
         self.productoInicial.write({'x_studio_toner_compatible':[(4,self.productoCompatible.id)]})
+
+class ReporteCompras(TransientModel):
+    _name='purchase.order.action'
+    _description='Reporte de compras'
+    fechaInicial=fields.Datetime()
+    fechaFinal=fields.Datetime()
+    tipo=fields.Selection([["Pagos","Pagos"],["Compras","Compras"]])
+    usuario=fields.Selection([["Claudia Moreno","Claudia Moreno"],["Veronica Aparicio","Veronica Aparicio"]])
+
+    def report(self):
+        d=self.env['purchase.order'].search(['state','=','purchase'])
+        d[0].write({'x_studio_arreglo':str(d.mapped('id'))})
+        return self.env.ref('stock_picking_mass_action.compras_xlsx').report_action(d[0])

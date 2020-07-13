@@ -1,5 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="view_purchase_order_action_form" model="ir.ui.view">
+        <field name="model">purchase.order.action</field>
+        <field name="arch" type="xml">
+            <form string="Mass Action for the selected sale order">
+                <group>
+                    <group>
+                    <field name="fechaInicial" string="Fecha Inicial" required="1"/>
+                    <field name="fechaFinal" string="Fecha Inicial" required="1"/>
+                </group>
+                <group>
+                    <field name="tipo" string="Tipo"/>
+                    <field name="usuario" string="Tipo"/>
+                </group>
+                </group>
+                <footer>
+                    <button name="report" string="Reporte" type="object" class="oe_highlight"/>
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
         <record id="view_addcompatile_action_form" model="ir.ui.view">
         <field name="model">add.compatible</field>
         <field name="arch" type="xml">
