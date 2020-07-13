@@ -21,7 +21,7 @@ class gastos_gnsys(models.Model):
     montoRequerido = fields.Float(string = 'Monto requerido',track_visibility='onchange')
     fechaDeSolicitud = fields.Datetime(compute='computarfechaDeSolicitud',string = 'Fecha de solicitud', track_visibility='onchange')
     fechaLimitePagoGasto = fields.Datetime(string = 'Fecha limite de pago', track_visibility='onchange')
-
+    fechaLimite = fields.Datetime(string = 'Fecha limite de pago', track_visibility='onchange')
     def computarfechaDeSolicitud(self):
         for rec in self:
             fecha = str(rec.create_date).split(' ')[0]
@@ -30,10 +30,10 @@ class gastos_gnsys(models.Model):
     
     # --- FUNCION PARA VERFICAR QUE LA FECHA NO ES MENOR AL DÍA DE HOY
     
-    @api.onchange('fechaLimitePagoGasto')
-    def fechaLimite(self):
-        if self.fechaLimitePagoGasto :
-            fechaCompleta = str(self.fechaLimitePagoGasto).split(' ')[0]
+    @api.onchange('fechaLimite')
+    def calculaFechaLimite(self):
+        if self.fechaLimite :
+            fechaCompleta = str(self.fechaLimite).split(' ')[0]
             fechaCompleta = fechaCompleta.split('-')
 
             fechaUsuario = datetime.datetime(int(fechaCompleta[0]), int(fechaCompleta[1]), int(fechaCompleta[2]))
@@ -48,7 +48,7 @@ class gastos_gnsys(models.Model):
                 _logger.info("Todo bien")
             else:
                 # _logger.info("||||-:   "+esMayor)
-                self.fechaLimitePagoGasto = ""
+                self.fechaLimite = ""
                 raise exceptions.ValidationError("La fecha no puede ser menor al día de hoy .")
                 message = ("La fecha no puede ser menor al día de hoy .")
                 mess = { 'title': _('Error'), 'message' : message}
