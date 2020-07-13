@@ -47,7 +47,7 @@ class gastos_gnsys(models.Model):
                 _logger.info("Todo bien")
             else:
                 # _logger.info("||||-:   "+esMayor)
-                self.fechaLimite = " "
+                self.fechaLimite = ""
                 raise exceptions.ValidationError("La fecha no puede ser menor al día de hoy .")
                 message = ("La fecha no puede ser menor al día de hoy .")
                 mess = { 'title': _('Error'), 'message' : message}
