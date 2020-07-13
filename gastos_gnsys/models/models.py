@@ -43,7 +43,7 @@ class gastos_gnsys(models.Model):
             fechaActual = datetime.datetime(int(fechaHoy[0]), int(fechaHoy[1]), int(fechaHoy[2]))
             message = ""
             mess = {}
-            if fechaUsuario > fechaActual :
+            if fechaUsuario => fechaActual :
                 _logger.info("Todo bien")
             else:
                 # _logger.info("||||-:   "+esMayor)
