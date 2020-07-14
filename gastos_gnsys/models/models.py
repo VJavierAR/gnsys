@@ -29,7 +29,7 @@ class gastos_gnsys(models.Model):
     
     # --- FUNCION PARA VERFICAR QUE LA FECHA NO ES MENOR AL DÍA DE HOY
     
-    @api.onchange('fechaLimite')
+    @api.constrains('fechaLimite')
     def calculaFechaLimite(self):
         if self.fechaLimite :
 
@@ -49,7 +49,7 @@ class gastos_gnsys(models.Model):
             esMenor = "Es menor"
             esMayor = "Es mayor"
             if fecha1 < fecha2 :
-                self.fechaLimite = datetime.datetime.now()
+                # self.fechaLimite = datetime.datetime.now()
                 raise exceptions.ValidationError("La fecha límite no puede ser menor al día de hoy .")
             else:
                 _logger.info("||||-:   "+esMayor)
