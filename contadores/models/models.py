@@ -608,12 +608,14 @@ class contadores(models.Model):
                         worksheet.write(i, 15, rpt.x_studio_ubicacin,neg)                                                            
                         worksheet.write(i, 16, rpt.comentarioLecturas,neg)                                                            
                         worksheet.write(i, 8, ebn,neg)
-                        worksheet.write(i, 9, ec,neg)                                            
+                        worksheet.write(i, 9, ec,neg)
+                        
                         if rpt.x_studio_color_o_bn=='B/N':                                                         
                            eebn=ebn+eebn
                         if rpt.x_studio_color_o_bn=='Color':                                                         
                            eebn=ebn+eebn                                                                                   
-                           eec=ec+eec               
+                           eec=ec+eec
+                            
                         i=i+1
                if eebn>rd.bolsaBN:
                    resto=eebn-rd.bolsaBN
@@ -656,7 +658,7 @@ class contadores(models.Model):
                         worksheet.write(i, 9, ec,neg)                        
                         if rpt.x_studio_color_o_bn=='B/N':                                    
                            bs= (ebn*rd.clickExcedenteBN)
-                           eebn=ebn+eebn
+                           #eebn=ebn+eebn
                            worksheet.write(i, 12, bs,neg)
                            iva=round(bs*.16,2)
                            ivatt=iva+ivatt
@@ -666,7 +668,7 @@ class contadores(models.Model):
                            ttotal=(iva +bs)+ttotal                        
                         if rpt.x_studio_color_o_bn=='Color':
                            bsc=(ec*rd.clickExcedenteColor)+(ebn*rd.clickExcedenteBN)
-                           eec=ec+eec
+                           #eec=ec+eec
                            worksheet.write(i, 12, bsc,neg) 
                            iva=round(bsc*.16,2)
                            ivatt=iva+ivatt
