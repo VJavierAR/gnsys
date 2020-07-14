@@ -48,16 +48,16 @@ class gastos_gnsys(models.Model):
             mess = {}
             esMenor = "Es menor"
             esMayor = "Es mayor"
-            if fecha1 >= fecha2 :
-                _logger.info("||||-:   "+esMayor)
-
-            else:
-                # _logger.info("||||-:   "+esMayor)
+            if fecha1 <= fecha2 :
                 self.fechaLimite = ""
-                raise exceptions.ValidationError("La fecha no pude ser menor al día de hoy .")
-                message = ("La fecha no pude ser menor al día de hoy .")
+                raise exceptions.ValidationError("El pago no puede ser mayor al día de hoy .")
+                message = ("El pago no puede ser mayor al día de hoy .")
                 mess = { 'title': _('Error'), 'message' : message}
                 return {'warning': mess}
+            else:
+                _logger.info("||||-:   "+esMayor)
+                
+            #diasAtraso = 0
 
     # --- AUTORIZACIÓN | LÍDER (PUEDE SER MULTIPLE)
     quienesAutorizan = fields.Many2one('res.users',string = "Responsable de autorizacion", track_visibility='onchange', default=lambda self: self.env.user)
