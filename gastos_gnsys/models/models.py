@@ -435,7 +435,7 @@ class PagoSolicitante(models.Model):
             else:
                 # _logger.info("||||-:   "+esMayor)
                 self.fecha = ""
-                raise exceptions.ValidationError("El pago no puede ser mayor al día de hoy .")
+                # raise exceptions.ValidationError("El pago no puede ser mayor al día de hoy .")
                 message = ("El pago no puede ser mayor al día de hoy .")
                 mess = { 'title': _('Error'), 'message' : message}
                 return {'warning': mess}
