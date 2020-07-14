@@ -40,9 +40,10 @@ class CreacionRuta(Model):
                 if(o.sale_id.id==False):
                     t=t+str(o.origin)+','
             odometroAnterior=self.env['registro.odometro'].search([['rel_vehiculo','=',self.vehiculo.id]],order='id desc',limit=1)
-            if(odometroAnterior.odometro>=self.odometro):
+            odometroAnt=odometroAnterior.odometro if(odometroAnterior.id) else 0
+            if(odometroAnt>=self.odometro):
                 raise UserError(_('Registro de odometro invalido debe ser mayor al anterior. Favor de revisar'))    
-            if(self.odometro>odometroAnterior.odometro): 
+            if(self.odometro>odometroAnt): 
                 self.env['registro.odometro'].sudo().create({'rel_vehiculo':self.vehiculo.id,'odometro':self.odometro,'nivel_tanque':self.nivel_tanque,'chofer':self.chofer.id})
             self.ticket=t
         else:
