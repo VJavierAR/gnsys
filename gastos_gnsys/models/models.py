@@ -51,7 +51,7 @@ class gastos_gnsys(models.Model):
             if fecha1 <= fecha2 :
                 for rec in self:
                     fecha = str(rec.create_date).split(' ')[0]
-                    converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
+                    converted_date = datetime.datetime.strptime(fecha, '%Y/%m/%d').date()
                     self.fechaDeSolicitud = converted_date
                 raise exceptions.ValidationError("El pago no puede ser mayor al día de hoy .")
                 message = ("El pago no puede ser mayor al día de hoy .")
