@@ -78,7 +78,7 @@ class helpdesk_update(models.Model):
                                         , compute = 'cambiaContactoLocalidad'
                                         , domain = "['&',('parent_id.id','=',idLocalidadAyuda),('type','=','contact')]")
     
-    @api.depends('x_studio_equipo_por_nmero_de_serie','x_studio_equipo_por_nmero_de_serie_1')
+    @api.depends('x_studio_equipo_por_nmero_de_serie')
     def cambiaContactoLocalidad(self):
         _logger.info("Entre por toner")
         if self.team_id.id != 8:
@@ -175,6 +175,7 @@ class helpdesk_update(models.Model):
         ticket.x_studio_id_ticket = ticket.id
         ticket.abiertoPor = self.env.user.name
         ticket.user_id = self.env.user.id
+
         if self.x_studio_empresas_relacionadas:
             ticket.x_studio_field_6furK = ticket.x_studio_empresas_relacionadas.x_studio_field_SqU5B
             ticket.write({'x_studio_field_6furK': ticket.x_studio_empresas_relacionadas.x_studio_field_SqU5B})
@@ -3330,6 +3331,36 @@ class helpdesk_update(models.Model):
     @api.onchange('x_studio_equipo_por_nmero_de_serie','x_studio_equipo_por_nmero_de_serie_1.serie','x_studio_equipo_por_nmero_de_serie_1')
     #@api.depends('x_studio_equipo_por_nmero_de_serie')
     def actualiza_datos_cliente(self):
+        if self.team_id.id == 8:
+            for dca in self.x_studio_equipo_por_nmero_de_serie_1:
+                if dca.colorEquipo == 'Color':
+                    if not dca.x_studio_cartuchonefro and not dca.x_studio_cartucho_amarillo and not dca.x_studio_cartucho_cian_1 and not dca.x_studio_cartucho_magenta:
+                        self.noCrearTicket = True
+                        mensajeTitulo = "Alerta!!!"
+                        mensajeCuerpo = "Crearas un ticket sin cartucho seleccionado. Selecciona al menos uno para la serie " + str(dca.serie.name)
+                        warning = {'title': _(mensajeTitulo)
+                                , 'message': _(mensajeCuerpo),
+                        }
+                        return {'warning': warning}
+                elif dca.colorEquipo == 'B/N':
+                    if not dca.x_studio_cartuchonefro:
+                        self.noCrearTicket = True
+                        mensajeTitulo = "Alerta!!!"
+                        mensajeCuerpo = "Crearas un ticket sin cartucho seleccionado. Selecciona al menos uno para la serie " + str(dca.serie.name)
+                        warning = {'title': _(mensajeTitulo)
+                                , 'message': _(mensajeCuerpo),
+                        }
+                        return {'warning': warning}
+                if dca.serie.x_studio_mini:
+                    self.x_studio_equipo_por_nmero_de_serie_1 = [(5,0,0)]
+                    mensajeTitulo = "Alerta!!!"
+                    mensajeCuerpo = "La serie " + str(dca.serie.name) + " pertenece a un mini almacén, no es posible crear el ticket de un mini almacén."
+                    warning = {'title': _(mensajeTitulo)
+                            , 'message': _(mensajeCuerpo),
+                    }
+                    return {'warning': warning}
+
+
         v = {}
         ids = []
         localidad = []
