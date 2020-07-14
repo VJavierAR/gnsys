@@ -448,6 +448,8 @@ class ComemtarioTicket(TransientModel):
     ruta=fields.Integer(related='pick.ruta_id.id')
 
     def confirmar(self):
+        if(5>len(self.comentario)):
+            raise UserError(_("Ingresar un comentario más extenso"))
         if(self.ruta==False):
             self.pick.x_studio_evidencia_a_ticket=self.evidencia
             self.pick.x_studio_comentario_1=self.comentario
