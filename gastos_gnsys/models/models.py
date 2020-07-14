@@ -50,7 +50,7 @@ class gastos_gnsys(models.Model):
             esMayor = "Es mayor"
             if fecha1 < fecha2 :
                 # self.fechaLimite = datetime.datetime.now()
-                raise exceptions.ValidationError("La fecha límite no puede ser menor al día de hoy .")
+                raise exceptions.ValidationError("La fecha límite al solicitante no puede ser menor al día de hoy .")
             else:
                 _logger.info("||||-:   "+esMayor)
                 
