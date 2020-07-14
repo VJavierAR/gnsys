@@ -27,34 +27,6 @@ class gastos_gnsys(models.Model):
             converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
             self.fechaDeSolicitud = converted_date 
     
-    # --- FUNCION PARA VERFICAR QUE LA FECHA NO ES MENOR AL DÍA DE HOY
-    
-    @api.constrains('fechaLimite')
-    def calculaFechaLimite(self):
-        if self.fechaLimite :
-
-            fechaCompleta = str(self.fechaLimite).split(' ')[0]
-            fechaCompleta = fechaCompleta.split('-')
-
-            fecha1 = datetime.datetime(int(fechaCompleta[0]), int(fechaCompleta[1]), int(fechaCompleta[2]))
-            
-
-            fechaHoy = datetime.date.today()
-            fechaHoy = str(fechaHoy)
-            fechaHoy = fechaHoy.split('-')
-
-            fecha2 = datetime.datetime(int(fechaHoy[0]), int(fechaHoy[1]), int(fechaHoy[2]))
-            message = ""
-            mess = {}
-            esMenor = "Es menor"
-            esMayor = "Es mayor"
-            if fecha1 < fecha2 :
-                # self.fechaLimite = datetime.datetime.now()
-                raise exceptions.ValidationError("La fecha límite al solicitante no puede ser menor al día de hoy .")
-            else:
-                _logger.info("||||-:   "+esMayor)
-                
-            #diasAtraso = 0
 
     # --- AUTORIZACIÓN | LÍDER (PUEDE SER MULTIPLE)
     quienesAutorizan = fields.Many2one('res.users',string = "Responsable de autorizacion", track_visibility='onchange', default=lambda self: self.env.user)
@@ -77,6 +49,47 @@ class gastos_gnsys(models.Model):
     autorizacionFinanzas = fields.Selection([('Aprobar','Aprobar'), ('Rechazar','Rechazada')], string = "Autorización", track_visibility='onchange')
     fechaLimiteComprobacionFinanzas = fields.Datetime(string = 'Fecha limite de comprobacion',track_visibility='onchange')
 
+    
+    # --- FUNCION PARA VERFICAR QUE LA FECHA NO ES MENOR AL DÍA DE HOY
+    
+    @api.constrains('fechaLimite', 'porCubrirAnticipo','fechaLimiteComprobacionFinanzas')
+    def calculaFechaLimite(self):
+        fechaHoy = datetime.date.today()
+        fechaHoy = str(fechaHoy)
+        fechaHoy = fechaHoy.split('-')
+
+        fecha2 = datetime.datetime(int(fechaHoy[0]), int(fechaHoy[1]), int(fechaHoy[2]))
+        
+        message = ""
+        mess = {}
+        esMenor = "Es menor"
+        esMayor = "Es mayor"
+        if self.fechaLimite :
+            fechaCompleta = str(self.fechaLimite).split(' ')[0]
+            fechaCompleta = fechaCompleta.split('-')
+            fecha1 = datetime.datetime(int(fechaCompleta[0]), int(fechaCompleta[1]), int(fechaCompleta[2]))
+            if fecha1 < fecha2 :
+                # self.fechaLimite = datetime.datetime.now()
+                raise exceptions.ValidationError("La fecha límite al solicitante no puede ser menor al día de hoy .")
+            else:
+                _logger.info("||||-:   "+esMayor)
+        
+        if self.porCubrirAnticipo:
+            fechaCompleta = str(self.porCubrirAnticipo).split(' ')[0]
+            fechaCompleta = fechaCompleta.split('-')
+            fecha1 = datetime.datetime(int(fechaCompleta[0]), int(fechaCompleta[1]), int(fechaCompleta[2]))
+            if fecha1 < fecha2 :
+                # self.fechaLimite = datetime.datetime.now()
+                raise exceptions.ValidationError("La fecha de compromiso de adelanto en aprobación no puede ser menor al día de hoy .")
+        
+        if self.fechaLimiteComprobacionFinanzas:
+            fechaCompleta = str(self.fechaLimiteComprobacionFinanzas).split(' ')[0]
+            fechaCompleta = fechaCompleta.split('-')
+            fecha1 = datetime.datetime(int(fechaCompleta[0]), int(fechaCompleta[1]), int(fechaCompleta[2]))
+            if fecha1 < fecha2 :
+                # self.fechaLimite = datetime.datetime.now()
+                raise exceptions.ValidationError("La fecha limite de comprobacion en aprobaciòn no puede ser menor al día de hoy .")
+    
     # --- MOTIVOS | SON LOS MOTIVOS DEL GASTO (QUIEN SOLICITA - USUARIO FINAL)
     # MODELO : motivos
     #   _name = 'motivos'
