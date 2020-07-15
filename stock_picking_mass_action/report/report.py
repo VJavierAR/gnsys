@@ -252,7 +252,9 @@ class PartnerXlsx(models.AbstractModel):
             if(obj.x_studio_tipo_de_vale==False):
                 tipo=''
             if(len(obj.x_studio_equipo_por_nmero_de_serie_1)==1 or len(obj.x_studio_equipo_por_nmero_de_serie)==1):
-                sheet.write(i, 0, str(obj.id).replace(',',''), bold)
+                #sheet.write(i, 0, str(obj.x_studio_id_ticket).replace(',',''), bold)
+                #sheet.write(i, 0, obj.name.replace('Ticket0',''), bold)
+                sheet.write(i, 0, obj.id, bold)
                 sheet.write(i, 1, tipo, bold)
                 sheet.write(i, 2, obj.create_date.strftime("%Y/%m/%d"), bold)
                 sheet.write(i, 3, obj.days_difference, bold)
