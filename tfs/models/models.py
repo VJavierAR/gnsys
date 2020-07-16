@@ -88,6 +88,8 @@ class tfs(models.Model):
                         self.arreglo=str([In[0].id])
                         if(record.actualporcentajeNegro<60):
                             self.write({'estado':'xValidar'})
+                            template_id=self.env['mail.template'].search([('id','=',59)], limit=1)
+                            template_id.send_mail(self.id, force_send=True)
                         else:
                             self.write({'estado':'Valido'})
                             self.valida()
@@ -143,7 +145,9 @@ class tfs(models.Model):
                     final=suma/i
                     self.arreglo=str(d)
                     if(final<60):
-                        self.write({'estado':'xValidar'})                    
+                        self.write({'estado':'xValidar'})
+                        template_id=self.env['mail.template'].search([('id','=',59)], limit=1)
+                        template_id.send_mail(self.id, force_send=True)                    
                     if(final>60):
                         self.write({'estado':'Valido'})
                         self.valida()
