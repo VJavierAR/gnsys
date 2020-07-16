@@ -486,7 +486,7 @@ class Pagos(models.Model):
     concepto = fields.Text(string = "Concepto", track_visibility='onchange')
     fechaDePago = fields.Datetime(string = 'Fecha de pago', track_visibility='onchange')
     montoPagado = fields.Float(string = "Monto", track_visibility='onchange')
-    formaDePago = fields.Selection((('Efectivo','Efectivo'), ('Cheque','Cheque'),('Deposito','Deposito'),('Transferencia','Transferencia')), string = "Forma de pago")
+    formaDePago = fields.Selection((('Efectivo','Efectivo'), ('Cheque','Cheque'),('Deposito','Deposito'),('Transferencia','Transferencia'),('Nómina','Nómina')), string = "Forma de pago")
     comprobanteDePago = fields.Many2many('ir.attachment', string="Evidencia")
     # -----------------------
     #datos tabla pago de complemento/devolucion
