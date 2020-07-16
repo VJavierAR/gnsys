@@ -1735,23 +1735,23 @@ class helpdesk_update(models.Model):
                                         requisicion[0].product_rel=[{'cliente':sale.partner_shipping_id.id,'ticket':sale.x_studio_field_bxHgp.id,'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
                                         
                                 estadoAntes = str(self.stage_id.name)
-                                if (self.stage_id.name == 'Solicitud de Refacción' or self.stage_id.name == 'Cotización') and self.estadoSolicitudDeRefaccionValidada == False:
-                                    query = "update helpdesk_ticket set stage_id = 102 where id = " + str(self.x_studio_id_ticket) + ";"
-                                    ss = self.env.cr.execute(query)
-                                    ultimaEvidenciaTec = []
-                                    ultimoComentario = ''
-                                    if self.diagnosticos:
-                                        if self.diagnosticos[-1].evidencia.ids:
-                                            ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
-                                        ultimoComentario = self.diagnosticos[-1].comentario
-                                    
-                                    message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Refacción Autorizada' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
-                                    mess= {
-                                            'title': _('Estado de ticket actualizado!!!'),
-                                            'message' : message
-                                          }
-                                    self.estadoSolicitudDeRefaccionValidada = True
-                                    return {'warning': mess}
+                                #if (self.stage_id.name == 'Solicitud de Refacción' or self.stage_id.name == 'Cotización') and self.estadoSolicitudDeRefaccionValidada == False:
+                                query = "update helpdesk_ticket set stage_id = 102 where id = " + str(self.x_studio_id_ticket) + ";"
+                                ss = self.env.cr.execute(query)
+                                ultimaEvidenciaTec = []
+                                ultimoComentario = ''
+                                if self.diagnosticos:
+                                    if self.diagnosticos[-1].evidencia.ids:
+                                        ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
+                                    ultimoComentario = self.diagnosticos[-1].comentario
+
+                                message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Refacción Autorizada' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
+                                mess= {
+                                        'title': _('Estado de ticket actualizado!!!'),
+                                        'message' : message
+                                      }
+                                self.estadoSolicitudDeRefaccionValidada = True
+                                return {'warning': mess}
                             else:
                                 message = ("No es posible validar una solicitud que no tiene productos.")
                                 mess = {'title': _('Solicitud sin productos!!!')
