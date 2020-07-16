@@ -93,8 +93,8 @@ class tfs(models.Model):
                         else:
                             self.write({'estado':'Valido'})
                             self.valida()
-                    if(0>self.actualporcentajeNegro):
-                        raise exceptions.UserError("Contador Monocromatico debe ser mayor al anterior.")
+                    #if(0>self.actualporcentajeNegro):
+                    #    raise exceptions.UserError("Contador Monocromatico debe ser mayor al anterior.")
                     else:
                         self.arreglo=str([])
                         raise exceptions.UserError("No existen cantidades en el almacen para el producto " + self.productoNegro.name)
@@ -108,8 +108,8 @@ class tfs(models.Model):
                             d.append(In[0].id)
                             i=i+1
                             suma=suma+record.actualporcentajeNegro
-                        if(0>self.actualporcentajeNegro):
-                            raise exceptions.UserError("Contador Monocromatico debe ser mayor al anterior.")
+                        #if(0>self.actualporcentajeNegro):
+                        #    raise exceptions.UserError("Contador Monocromatico debe ser mayor al anterior.")
                         else:
                             raise exceptions.UserError("No existen cantidades en el almacen para el producto " + self.productoNegro.name)
                     if(record.productoCian):
@@ -118,8 +118,8 @@ class tfs(models.Model):
                             d.append(In[0].id)
                             i=i+1
                             suma=suma+record.actualporcentajeCian
-                        if(0>self.actualporcentajeCian):
-                            raise exceptions.UserError("Contador Color debe ser mayor al anterior.")
+                        #if(0>self.actualporcentajeCian):
+                        #    raise exceptions.UserError("Contador Color debe ser mayor al anterior.")
                         else:
                             raise exceptions.UserError("No existen cantidades en el almacen para el producto " + self.productoCian.name)
                     if(record.productoMagenta):
@@ -128,8 +128,8 @@ class tfs(models.Model):
                             d.append(In[0].id)
                             i=i+1
                             suma=suma+record.actualporcentajeMagenta
-                        if(0>self.actualporcentajeMagenta):
-                            raise exceptions.UserError("Contador Color debe ser mayor al anterior.")
+                        #if(0>self.actualporcentajeMagenta):
+                        #    raise exceptions.UserError("Contador Color debe ser mayor al anterior.")
                         else:
                             raise exceptions.UserError("No existen cantidades en el almacen para el producto " + self.productoMagenta.name)
                     if(record.productoAmarillo):
@@ -138,8 +138,8 @@ class tfs(models.Model):
                             d.append(In[0].id)
                             i=i+1
                             suma=suma+record.actualporcentajeAmarillo
-                        if(0>self.actualporcentajeAmarillo):
-                            raise exceptions.UserError("Contador Color debe ser mayor al anterior.")
+                        #if(0>self.actualporcentajeAmarillo):
+                        #    raise exceptions.UserError("Contador Color debe ser mayor al anterior.")
                         else:
                             raise exceptions.UserError("No existen cantidades en el almacen para el producto " + self.productoAmarillo.name)
                     final=suma/i
