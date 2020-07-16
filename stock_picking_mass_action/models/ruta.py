@@ -34,6 +34,7 @@ class CreacionRuta(Model):
             if(self.odometro==0 and self.tipo.lower()=="local"):
                 raise UserError(_('Tiene que ingresas el Odometro'))
             for o in self.ordenes:
+                o.write({'ruta_id':self.id})
                 if(o.sale_id.id):
                     o.sale_id.x_studio_field_bxHgp.write({'stage_id':108})
                     t=t+str(o.sale_id.x_studio_field_bxHgp.id)+','
@@ -41,7 +42,7 @@ class CreacionRuta(Model):
                     t=t+str(o.origin)+','
             odometroAnterior=self.env['registro.odometro'].search([['rel_vehiculo','=',self.vehiculo.id]],order='id desc',limit=1)
             odometroAnt=odometroAnterior.odometro if(odometroAnterior.id) else 0
-            if(odometroAnt>=self.odometro):
+            if(odometroAnt>=self.odometro and self.tipo.lower()=="local"):
                 raise UserError(_('Registro de odometro invalido debe ser mayor al anterior. Favor de revisar'))    
             if(self.odometro>odometroAnt): 
                 self.env['registro.odometro'].sudo().create({'rel_vehiculo':self.vehiculo.id,'odometro':self.odometro,'nivel_tanque':self.nivel_tanque,'chofer':self.chofer.id})
