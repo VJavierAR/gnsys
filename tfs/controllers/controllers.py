@@ -1,20 +1,21 @@
 # -*- coding: utf-8 -*-
 from odoo import http
+from odoo.http import request
+import logging, ast
+from odoo.tools import config, DEFAULT_SERVER_DATE_FORMAT, DEFAULT_SERVER_DATETIME_FORMAT, pycompat
+_logger = logging.getLogger(__name__)
 
-# class Tfs(http.Controller):
-#     @http.route('/tfs/tfs/', auth='public')
-#     def index(self, **kw):
-#         return "Hello, world"
+class SaleOrderCompatibles(http.Controller):
+    @http.route('/tfs/autoriza/<int:tfs_id>', auth='public')
+    def index(self, sale_id,**kw):
+        p=request.env['tfs.tfs'].search([['id','=',tfs_id]])
+        p.valida()   
+        return "Proceso  "+str(p.name)+" Autorizado"
 
-#     @http.route('/tfs/tfs/objects/', auth='public')
-#     def list(self, **kw):
-#         return http.request.render('tfs.listing', {
-#             'root': '/tfs/tfs',
-#             'objects': http.request.env['tfs.tfs'].search([]),
-#         })
 
-#     @http.route('/tfs/tfs/objects/<model("tfs.tfs"):obj>/', auth='public')
-#     def object(self, obj, **kw):
-#         return http.request.render('tfs.object', {
-#             'object': obj
-#         })
+class SaleOrderCompatiblesCancel(http.Controller):
+    @http.route('/tfs/cancela/<int:tfs_id>', auth='public')
+    def index(self, sale_id,**kw):
+        p=request.env['tfs.tfs'].search([['id','=',tfs_id]])
+        p.canc()
+        return "Proceso  "+str(p.name)+" Cancelado"
