@@ -356,7 +356,8 @@ class fac_order(models.Model):
                            idtax = self.env['account.tax'].search([('amount','=',rht*(-1)),('name','=','Retenciones '+str(int(float(s.retencion))))],limit=1)
                            _logger.info("retencion  in xD "+'Retenciones '+str(int(float(s.retencion))) + ' id tax'+ str(idtax))  
                            acci=self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':s.id,'product_id':11419 ,'product_uom_qty':1.0,'price_unit':s.rentaMensual})                                    
-                           self.env['account_tax_sale_order_line_rel'].create({'sale_order_line_id': acci.id,'account_tax_id':idtax.id})                                    
+                           acci.tax_id=idtax.id
+                           #self.env['account_tax_sale_order_line_rel'].create({'sale_order_line_id': acci.id,'account_tax_id':idtax.id})                                    
                         else:
                            self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':s.id,'product_id':11419 ,'product_uom_qty':1.0,'price_unit':s.rentaMensual})                                   
                         #self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':s.id,'product_id':11419 ,'product_uom_qty':1.0,'price_unit':s.rentaMensual,'discount':int(self.x_studio_descuento)})                                                                                                    
