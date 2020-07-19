@@ -350,8 +350,10 @@ class fac_order(models.Model):
                      if s.nombreAnte=='SERVICIO DE PCOUNTER' or s.nombreAnte=='SERVICIO DE PCOUNTER1' or s.nombreAnte=='ADMINISTRACION DE DOCUMENTOS CON PCOUNTER' or s.nombreAnte=='SERVICIO DE MANTENIMIENTO DE PCOUNTER' or s.nombreAnte=='SERVICIO DE MANTENIMIENTO PCOUNTER' or s.nombreAnte=='RENTA DE LICENCIAMIENTO PCOUNTER':                        
                         self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':s.id,'product_id':11325 ,'product_uom_qty':1.0,'price_unit':s.rentaMensual})                                                                                                    
                      if s.nombreAnte=='SERVICIO DE TFS' or s.nombreAnte=='OPERADOR TFS' or s.nombreAnte=='TFS' or s.nombreAnte=='SERVICIO DE TFS ' :                        
+                        _logger.info(" afuera retencion xD "+'Retenciones '+str(int(float(s.retencion))) )  
                         if str(s.retencion)!='N/A':
                            rht = float(s.retencion)
+                           _logger.info("retencion  in xD "+'Retenciones '+str(int(float(s.retencion))) )  
                            idtax = self.env['account.tax'].search([('amount','=',rht*(-1)),('name','=','Retenciones '+str(int(float(s.retencion))))])                           
                            self.env['sale.order.line'].create({'order_id': sale.id,'tax_id':idtax,'x_studio_servicio':s.id,'product_id':11419 ,'product_uom_qty':1.0,'price_unit':s.rentaMensual})                                    
                         else:
