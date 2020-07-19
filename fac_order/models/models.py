@@ -352,7 +352,7 @@ class fac_order(models.Model):
                      if s.nombreAnte=='SERVICIO DE TFS' or s.nombreAnte=='OPERADOR TFS' or s.nombreAnte=='TFS' or s.nombreAnte=='SERVICIO DE TFS ' :                        
                         if str(s.retencion)!='N/A':
                            rht = float(s.retencion)
-                           idtax = self.env['account.tax'].search([('amount','=',rht*(-1)),('name','=','Retenciones '+int(float(s.retencion)))])                           
+                           idtax = self.env['account.tax'].search([('amount','=',rht*(-1)),('name','=','Retenciones '+str(int(float(s.retencion))))])                           
                            self.env['sale.order.line'].create({'order_id': sale.id,'tax_id':idtax,'x_studio_servicio':s.id,'product_id':11419 ,'product_uom_qty':1.0,'price_unit':s.rentaMensual})                                    
                         else:
                            self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':s.id,'product_id':11419 ,'product_uom_qty':1.0,'price_unit':s.rentaMensual})                                   
