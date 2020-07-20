@@ -3493,13 +3493,13 @@ class HelpdeskTicketReporte(TransientModel):
             if self.tipo == "Toner":
                 #m=['x_studio_tipo_de_vale','=','Falla']
                 #i.append(m)
-                m = ['team_id.id', '=', 8]
+                m = ['team_id', '=', 8]
                 i.append(m)
                 #j.append('&')
             elif self.tipo == 'Falla':
                 #m=['x_studio_tipo_de_vale','=','Requerimiento']
                 #i.append(m)
-                m = ['team_id.id', '!=', 8]
+                m = ['team_id', '!=', 8]
                 i.append(m)
                 #j.append('&')
             #elif self.tipo == 'Todos':
