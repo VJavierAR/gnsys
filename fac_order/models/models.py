@@ -31,18 +31,18 @@ class fac_order(models.Model):
       @api.multi
       def llamado_boton(self):
         for r in self:           
-           pbn=0
-           pcolor=0
-           rentaG=0
-           rentaE=0
-           spc=0
-           tfs=0
-           sm=0
-           sme=0
-           netMa=0
-           paginasbn=0
-           embeded=0
-           if str(self.partner_id.razonSocial)=='1':
+          pbn=0
+          pcolor=0
+          rentaG=0
+          rentaE=0
+          spc=0
+          tfs=0
+          sm=0
+          sme=0
+          netMa=0
+          paginasbn=0
+          embeded=0
+          if str(self.partner_id.razonSocial)=='1':
                pbn=11396
                pcolor=11397
                rentaG=11395
@@ -54,7 +54,7 @@ class fac_order(models.Model):
                netMa=11421
                paginasbn=11422
                embeded=11423
-           if str(self.partner_id.razonSocial)=='2': #Grupo
+          if str(self.partner_id.razonSocial)=='2': #Grupo
                pbn=12290
                pcolor=12288
                rentaG=12294
@@ -66,7 +66,7 @@ class fac_order(models.Model):
                netMa=12304
                paginasbn=12306
                embeded=12308
-           if str(self.partner_id.razonSocial)=='1': #servicios
+          if str(self.partner_id.razonSocial)=='3': #servicios
                pbn=12289
                pcolor=12287
                rentaG=12293
