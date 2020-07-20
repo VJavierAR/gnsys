@@ -93,9 +93,9 @@ class tfs(models.Model):
                         else:
                             self.write({'estado':'Valido'})
                             self.valida()
-                    #if(0>self.actualporcentajeNegro):
-                    #    raise exceptions.UserError("Contador Monocromatico debe ser mayor al anterior.")
-                    else:
+                    if(0>self.actualporcentajeNegro):
+                       raise exceptions.UserError("Contador Monocromatico debe ser mayor al anterior.")
+                    if(len(In)==0 and In[0].quantity==0):
                         self.arreglo=str([])
                         raise exceptions.UserError("No existen cantidades en el almacen para el producto " + self.productoNegro.name)
                 else:
@@ -108,9 +108,9 @@ class tfs(models.Model):
                             d.append(In[0].id)
                             i=i+1
                             suma=suma+record.actualporcentajeNegro
-                        #if(0>self.actualporcentajeNegro):
-                        #    raise exceptions.UserError("Contador Monocromatico debe ser mayor al anterior.")
-                        else:
+                        if(0>self.actualporcentajeNegro):
+                           raise exceptions.UserError("Contador Monocromatico debe ser mayor al anterior.")
+                        if(len(In)==0 or In[0].quantity==0):
                             raise exceptions.UserError("No existen cantidades en el almacen para el producto " + self.productoNegro.name)
                     if(record.productoCian):
                         In=self.inventario.search([['product_id.name','=',self.productoCian.name],['location_id','=',self.almacen.lot_stock_id.id]]).sorted(key='quantity',reverse=True)
@@ -118,9 +118,9 @@ class tfs(models.Model):
                             d.append(In[0].id)
                             i=i+1
                             suma=suma+record.actualporcentajeCian
-                        #if(0>self.actualporcentajeCian):
-                        #    raise exceptions.UserError("Contador Color debe ser mayor al anterior.")
-                        else:
+                        if(0>self.actualporcentajeCian):
+                           raise exceptions.UserError("Contador Color debe ser mayor al anterior.")
+                        if(len(In)==0 or In[0].quantity==0):
                             raise exceptions.UserError("No existen cantidades en el almacen para el producto " + self.productoCian.name)
                     if(record.productoMagenta):
                         In=self.inventario.search([['product_id.name','=',self.productoMagenta.name],['location_id','=',self.almacen.lot_stock_id.id]]).sorted(key='quantity',reverse=True)
@@ -128,9 +128,9 @@ class tfs(models.Model):
                             d.append(In[0].id)
                             i=i+1
                             suma=suma+record.actualporcentajeMagenta
-                        #if(0>self.actualporcentajeMagenta):
-                        #    raise exceptions.UserError("Contador Color debe ser mayor al anterior.")
-                        else:
+                        if(0>self.actualporcentajeMagenta):
+                           raise exceptions.UserError("Contador Color debe ser mayor al anterior.")
+                        if(len(In)==0 or In[0].quantity==0):
                             raise exceptions.UserError("No existen cantidades en el almacen para el producto " + self.productoMagenta.name)
                     if(record.productoAmarillo):
                         In=self.inventario.search([['product_id.name','=',self.productoAmarillo.name],['location_id','=',self.almacen.lot_stock_id.id]]).sorted(key='quantity',reverse=True)
@@ -138,9 +138,9 @@ class tfs(models.Model):
                             d.append(In[0].id)
                             i=i+1
                             suma=suma+record.actualporcentajeAmarillo
-                        #if(0>self.actualporcentajeAmarillo):
-                        #    raise exceptions.UserError("Contador Color debe ser mayor al anterior.")
-                        else:
+                        if(0>self.actualporcentajeAmarillo):
+                           raise exceptions.UserError("Contador Color debe ser mayor al anterior.")
+                        if(len(In)==0 or In[0].quantity==0):
                             raise exceptions.UserError("No existen cantidades en el almacen para el producto " + self.productoAmarillo.name)
                     final=suma/i
                     self.arreglo=str(d)
@@ -211,10 +211,10 @@ class tfs(models.Model):
                             rule.append(re.id)
             if(len(pickOrigen)>0):
                 c=self.env['res.partner'].search([['name','=',al.name],['parent_id','=',1]])
-                ticket=self.env['helpdesk.ticket'].create({'x_studio_tipo_de_vale':'Resurtido de Almacen','parent_id':c.id,'partner_shipping_id':c.id})
+                ticket=self.env['helpdesk.ticket'].create({'x_studio_tipo_de_vale':'Resurtido de Almacen','partner_id':c.id})
                 sale = self.env['sale.order'].create({'partner_id' : c.id, 'origin' : "Ticket: " + str(ticket.id), 'x_studio_tipo_de_solicitud' : 'Venta', 'partner_shipping_id' : c.id , 'warehouse_id' : 1 , 'team_id' : 1, 'x_studio_field_bxHgp': ticket.id})
                 destino=self.env['stock.picking.type'].search([['name','=','Receipts'],['warehouse_id','=',al.id]])
-                pick_dest = self.env['stock.picking'].create({'picking_type_id' : destino.id, 'location_id':17,'almacenOrigen':6299,'almacenDestino':al.id,'location_dest_id':al.lot_stock_id.id,'reglas':[(6,0,rule)]})
+                pick_dest = self.env['stock.picking'].create({'picking_type_id' : destino.id, 'location_id':al.wh_input_stock_loc_id.id,'almacenOrigen':6299,'almacenDestino':al.id,'location_dest_id':al.lot_stock_id.id,'reglas':[(6,0,rule)]})
                 ticket.x_studio_field_nO7Xg=sale.id
                 for ori in pickOrigen:
                     ticket.x_studio_productos=[(4,ori['product_id'])]
@@ -222,10 +222,12 @@ class tfs(models.Model):
                 for des in pickDestino:
                     des['location_id']=al.wh_input_stock_loc_id.id
                     des['picking_id']=pick_dest.id
-                    self.env['stock.move'].create(des)
+                    #m=self.env['stock.move'].create(des)
+                    #des['move_id']=m.id
+                    #self.env['stock.move.line'].create(des)
                 sale.action_confirm()
                 ww=self.env['stock.picking'].search([['sale_id','=',sale.id],['picking_type_id.code','=','outgoing']])
-                ww.write({'location_dest_id':17})
+                ww.write({'location_dest_id':al.wh_input_stock_loc_id.id})
                 for w in ww.move_ids_without_package:
                     w.write({'location_dest_id':al.wh_input_stock_loc_id.id})
                     self.env['stock.move.line'].search([['move_id','=',w.id]]).write({'location_dest_id':al.wh_input_stock_loc_id.id})
@@ -238,9 +240,9 @@ class tfs(models.Model):
         self.write({'estado':'Confirmado'})
         dat=eval(self.arreglo)
         if(dat!=[]):
-            quants=self.env['stock.quant'].browse(dat)
+            quants=self.sudo().env['stock.quant'].browse(dat)
         for q in quants:
-            q.write({'quantity':q.quantity-1})
+            q.sudo().write({'quantity':q.quantity-1})
         if(self.productoNegro):
             self.env['dcas.dcas'].create({'serie':self.serie.id,'contadorMono':self.actualMonocromatico,'contadorColor':self.actualColor,'fuente':'tfs.tfs','x_studio_contador_color_anterior':self.contadorMono.contadorColor,'x_studio_contador_mono_anterior_1':self.contadorAnteriorMono,'x_studio_toner_negro':1})
         if(self.productoMagenta):
@@ -357,4 +359,4 @@ class notificacion(models.Model):
     _name='tfs.notificacion.ticket'
     _description='tfs notificacion'
     name=fields.Char(string='Descripcion')
-    tickets=fields.Many2one('helpdesk.ticket')
+    tickets=fields.Many2many('helpdesk.ticket')
