@@ -1155,6 +1155,26 @@ class ReporteCompras(TransientModel):
     usuario=fields.Selection([["Claudia Moreno","Claudia Moreno"],["Veronica Aparicio","Veronica Aparicio"]])
 
     def report(self):
-        d=self.env['purchase.order'].search([['state','=','purchase']])
+        i=[]
+        d=[]
+        j=[]
+        if(self.fechaInicial):
+            m=['date_planned','>=',self.fechaInicial]
+            i.append(m)
+        if(self.fechaFinal):
+            m=['date_planned','<=',self.fechaFinal]
+            i.append(m)
+        if(self.usuario=="Claudia Moreno"):
+            m=['x_studio_claudia','=',True]
+            i.append(m)
+        if(self.usuario=="Veronica Aparicio"):
+            m=['x_studio_vernica','=',True]
+            i.append(m)
+        if(self.tipo=="Pagos"):
+            m=['x_studio_impuesto','!=',0]
+            i.append(m)
+        if(self.tipo=="Compras"):
+            i.append(['state','=','purchase'])    
+        d=self.env['purchase.order'].search(i,order='date_planned asc')
         d[0].write({'x_studio_arreglo':str(d.mapped('id'))})
         return self.env.ref('stock_picking_mass_action.compras_xlsx').report_action(d[0])
