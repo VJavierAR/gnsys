@@ -222,7 +222,7 @@ class tfs(models.Model):
                 for des in pickDestino:
                     des['location_id']=al.wh_input_stock_loc_id.id
                     des['picking_id']=pick_dest.id
-                    #m=self.env['stock.move'].create(des)
+                    m=self.env['stock.move'].create(des)
                     #des['move_id']=m.id
                     #self.env['stock.move.line'].create(des)
                 sale.action_confirm()
