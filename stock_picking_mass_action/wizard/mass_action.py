@@ -895,6 +895,8 @@ class SolicitudestockInventoryMassAction(TransientModel):
                         ubicacion=None
                         template=self.env['product.template'].search([('default_code','=',str(row[1].value).replace('.0',''))]).sorted(key='id',reverse=True)
                         productid=self.env['product.product'].search([('product_tmpl_id','=',template[0].id if(len(template)>1) else template.id)])
+                        if(productid.id==False):
+                            productid=self.env['product.product'].create({'name':row[0].value,'default_code':row[1].value,'description':row[4].value})
                         quant={'product_id':productid.id,'reserved_quantity':'0','quantity':row[2].value, 'location_id':self.almacen.lot_stock_id.id}
                         inventoty={'inventory_id':id3.id, 'partner_id':'1','product_id':productid.id,'product_uom_id':'1','product_qty':row[2].value, 'location_id':self.almacen.lot_stock_id.id}
                         if(row[3].ctype!=0 and row[3].value!=''):
@@ -903,10 +905,10 @@ class SolicitudestockInventoryMassAction(TransientModel):
                                 ubicacion=self.env['x_ubicacion_inventario'].create({'x_name':str(row[3].value).replace('.0','')})
                         if(ubicacion!=None):
                             inventoty['x_studio_field_yVDjd']=ubicacion.id
+                        _logger.info(str(row[1].value))
                         self.env['stock.inventory.line'].create(inventoty)
                         busqueda=self.env['stock.quant'].search([['product_id','=',productid.id],['location_id','=',self.almacen.lot_stock_id.id]])
                         _logger.info(str(busqueda))
-                        _logger.info(str(row[1].value))
                         if(len(busqueda)>0):
                             jj=0
                             if(len(busqueda)>1):
