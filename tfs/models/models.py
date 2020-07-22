@@ -169,13 +169,14 @@ class tfs(models.Model):
         ticket=None
         for al in almacenes:
             quants=self.env['stock.quant'].search([['location_id','=',al.lot_stock_id.id]])
-            reglasabs=self.env['stock.warehouse.orderpoint'].search([['warehouse_id','=',al.id],['active','=',False]])
+            reglasabs=self.env['stock.warehouse.orderpoint'].search([['warehouse_id','=',al.id]])
             pickPosibles=self.env['stock.picking'].search(['&',['state','!=','done'],['location_dest_id','=',al.lot_stock_id.id]])
             if(len(pickPosibles)!=0):
                 _logger.info("entre 1"+str(al.name))
                 for pix in pickPosibles:
-                    for rl in pix.reglas:
-                        rule2.append(rl.id)
+                    #for rl in pix.reglas:
+                    #    rule2.append(rl.id)
+                    pix.mapped('reglas.id')
                     _logger.info(str(pix.id))
                     for re in reglasabs:
                         quant=quants.filtered(lambda x: x.product_id.id == re.product_id.id)
