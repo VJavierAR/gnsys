@@ -110,22 +110,20 @@ class StockPickingMassAction(TransientModel):
         draft_picking_lst.sudo().action_confirm()
         pickings_to_check = self.picking_ids.filtered(lambda x: x.state not in ['draft','cancel','done',]).sorted(key=lambda r: r.scheduled_date)
         pickings_to_check.sudo().action_assign()
+        cantidad=self.picking_ids.mapped('sale_id.delivery_count')
+        loca=self.picking_ids.mapped('sale_id.warehouse_id.lot_stock_id.id')
         assigned_picking_lst = self.picking_ids.filtered(lambda x: x.state == 'assigned').sorted(key=lambda r: r.scheduled_date)
-        assigned_picking_lst2 = self.picking_ids.filtered(lambda x: x.picking_type_id.id == 3 and x.state == 'assigned')
+        assigned_picking_lst2 = self.picking_ids.filtered(lambda x:(loca[0] ==x.location_id.id and x.state == 'assigned' and  1 not in cantidad) or (x.state == 'assigned' and  1 in cantidad) )
         quantities_done = sum(move_line.qty_done for move_line in assigned_picking_lst.mapped('move_line_ids').filtered(lambda m: m.state not in ('done', 'cancel')))
         validacion=assigned_picking_lst.mapped('picking_type_id.id')
         tipo=assigned_picking_lst.mapped('picking_type_id.code')
         _logger.info(str(tipo))
-        if(3 in validacion or 31485 in validacion):
+        if(self.check ==2 or self.check ==1):
             CON=str(self.env['ir.sequence'].next_by_code('concentrado'))
-            self.check=2
-            #assigned_picking_lst.write({'concentrado':CON})
             self.env['stock.picking'].search([['sale_id','in',assigned_picking_lst.mapped('sale_id.id')]]).write({'concentrado':CON})
             resto=assigned_picking_lst.filtered(lambda x:x.sale_id.id==False)
             for r in resto:
                 self.env['stock.picking'].search([['origin','=',r.origin]]).write({'concentrado':CON})        
-        if(29314 in validacion):
-            self.check=1
         pick_to_backorder = self.env['stock.picking']
         pick_to_do = self.env['stock.picking']
         for picking in assigned_picking_lst:
@@ -140,38 +138,14 @@ class StockPickingMassAction(TransientModel):
             pick_to_do.action_done()
         if pick_to_backorder and assigned_picking_lst.mapped('sale_id.id')==[]:
             pick_to_backorder.action_done()
-        if assigned_picking_lst._check_backorder() and assigned_picking_lst.mapped('sale_id.id')!=[]:
-            cancel_backorder=True
-            if cancel_backorder:
-               for pick_id in self.picking_ids:
-                   moves_to_log = {}
-                   for move in pick_id.move_lines:
-                       if float_compare(move.product_uom_qty, move.quantity_done, precision_rounding=move.product_uom.rounding) > 0:
-                           moves_to_log[move] = (move.quantity_done, move.product_uom_qty)
-                   pick_id._log_less_quantities_than_expected(moves_to_log)
-            self.picking_ids.action_done()
-            if cancel_backorder:
-                for pick_id in self.picking_ids:
-                    backorder_pick = self.env['stock.picking'].search([('backorder_id', '=', pick_id.id)])
-                    if((pick_id.picking_type_id.id==3 or pick_id.picking_type_id.id==29314) and pick_id.sale_id.id !=False):
-                        sale = self.env['sale.order'].create({'x_studio_backorder':True,'partner_id' : pick_id.sale_id.partner_id.id, 'origin' : pick_id.sale_id.origin, 'x_studio_tipo_de_solicitud' : 'Venta', 'x_studio_requiere_instalacin' : True, 'x_studio_field_RnhKr': pick_id.sale_id.x_studio_field_RnhKr.id, 'partner_shipping_id' : pick_id.sale_id.partner_shipping_id.id, 'warehouse_id' :pick_id.sale_id.warehouse_id.id, 'team_id' : 1, 'x_studio_field_bxHgp': pick_id.x_studio_ticket_relacionado.id})
-                        pick_id.write({'sale_child':sale.id})
-                        for rr in backorder_pick.move_ids_without_package:
-                            datosr={'order_id' : sale.id, 'product_id' : rr.product_id.id, 'product_uom_qty' :rr.product_uom_qty,'x_studio_field_9nQhR':rr.x_studio_serie_destino.id, 'price_unit': 0}
-                            if(pick_id.x_studio_ticket_relacionado.team_id.id==10 or pick_id.x_studio_ticket_relacionado.team_id.id==11):
-                                datosr['route_id']=22548
-                            self.env['sale.order.line'].create(datosr)
-                        pick_id.x_studio_ticket_relacionado.write({'x_studio_field_0OAPP':[(4,sale.id)]})
-                        sale.sudo().action_confirm()
-                    backorder_pick.action_cancel()
+        self.picking_ids.action_done()
         if(len(assigned_picking_lst2)>0):
             return self.env.ref('stock_picking_mass_action.report_custom').report_action(assigned_picking_lst2)
         for pp in assigned_picking_lst.filtered(lambda x:x.sale_id.x_studio_tipo_de_solicitud!="Retiro" and x.sale_id.x_studio_field_bxHgp==False):
             if('incoming' not in tipo):
                 if('outgoing' in tipo):
                     if(pp.sale_id.x_studio_requiere_instalacin==True):
-                        self.env['helpdesk.ticket'].create({'x_studio_tipo_de_vale':'Instalación','partner_id':pp.partner_id.parent_id.id,'x_studio_empresas_relacionadas':pp.partner_id.id,'team_id':9,'diagnosticos':[(0,0,{'estadoTicket':'Abierto','comentario':'Instalacion de Equipo'})],'stage_id':89,'name':'Instalaccion '+'Serie: '})
-                        
+                        self.env['helpdesk.ticket'].create({'x_studio_tipo_de_vale':'Instalación','partner_id':pp.partner_id.parent_id.id,'x_studio_empresas_relacionadas':pp.partner_id.id,'team_id':9,'diagnosticos':[(0,0,{'estadoTicket':'Abierto','comentario':'Instalacion de Equipo'})],'stage_id':89,'name':'Instalaccion '+'Serie: '})                
                 else:
                     move_lines=self.env['stock.move.line'].search([['move_id','in',pp.mapped('move_lines.id')]])
                     tipo2=move_lines.mapped('move_id.picking_type_id.name')
@@ -181,10 +155,6 @@ class StockPickingMassAction(TransientModel):
                       record.lot_id.write({'x_studio_etapa':'Tránsito'})
                     if('Tránsito' in tipo2):
                       record.lot_id.write({'x_studio_etapa':'Ruta'})
-        
-
-        #return {'type': 'ir.actions.client','tag': 'reload'}
-
 
     @api.multi
     def vales(self):
