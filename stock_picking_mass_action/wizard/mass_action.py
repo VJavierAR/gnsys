@@ -906,6 +906,7 @@ class SolicitudestockInventoryMassAction(TransientModel):
                         self.env['stock.inventory.line'].create(inventoty)
                         busqueda=self.env['stock.quant'].search([['product_id','=',productid.id],['location_id','=',self.almacen.lot_stock_id.id]])
                         _logger.info(str(busqueda))
+                        _logger.info(str(row[1].value))
                         if(len(busqueda)>0):
                             jj=0
                             if(len(busqueda)>1):
