@@ -177,7 +177,7 @@ class tfs(models.Model):
                     #for rl in pix.reglas:
                     #    rule2.append(rl.id)
                 rule2=pickPosibles.mapped('reglas.id')
-                _logger.info(str(pix.id))
+                _logger.info(str(rule2))
                 for re in reglasabs:
                     quant=quants.filtered(lambda x: x.product_id.id == re.product_id.id)
                     _logger.info(str(rule2))
