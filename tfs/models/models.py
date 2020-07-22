@@ -173,28 +173,28 @@ class tfs(models.Model):
             pickPosibles=self.env['stock.picking'].search(['&',['state','!=','done'],['location_dest_id','=',al.lot_stock_id.id]])
             if(len(pickPosibles)!=0):
                 _logger.info("entre 1"+str(al.name))
-                for pix in pickPosibles:
+                #for pix in pickPosibles:
                     #for rl in pix.reglas:
                     #    rule2.append(rl.id)
-                    pix.mapped('reglas.id')
-                    _logger.info(str(pix.id))
-                    for re in reglasabs:
-                        quant=quants.filtered(lambda x: x.product_id.id == re.product_id.id)
-                        _logger.info(str(rule2))
-                        if(re.id not in rule2):
-                            if(len(quant)==0):
-                                datos1={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':41911,'location_dest_id':re.location_id.id}
-                                datos2={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':re.location_id.id,'location_dest_id':41911}
+                rule2=pickPosibles.mapped('reglas.id')
+                _logger.info(str(pix.id))
+                for re in reglasabs:
+                    quant=quants.filtered(lambda x: x.product_id.id == re.product_id.id)
+                    _logger.info(str(rule2))
+                    if(re.id not in rule2):
+                        if(len(quant)==0):
+                            datos1={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':41911,'location_dest_id':re.location_id.id}
+                            datos2={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':re.location_id.id,'location_dest_id':41911}
+                            pickOrigen.append(datos1)
+                            pickDestino.append(datos2)
+                            rule.append(re.id)
+                        if(len(quant)>0):
+                            if(quant.quantity<re.product_min_qty):
+                                datos1={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty-quant.quantity,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':41911,'location_dest_id':re.location_id.id}
+                                datos2={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty-quant.quantity,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':re.location_id.id,'location_dest_id':41911}
                                 pickOrigen.append(datos1)
                                 pickDestino.append(datos2)
                                 rule.append(re.id)
-                            if(len(quant)>0):
-                                if(quant.quantity<re.product_min_qty):
-                                    datos1={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty-quant.quantity,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':41911,'location_dest_id':re.location_id.id}
-                                    datos2={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty-quant.quantity,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':re.location_id.id,'location_dest_id':41911}
-                                    pickOrigen.append(datos1)
-                                    pickDestino.append(datos2)
-                                    rule.append(re.id)
             else:
                 _logger.info("entre 2"+str(al.name))
                 for re in reglasabs:
