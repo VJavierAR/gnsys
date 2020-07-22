@@ -179,7 +179,7 @@ class tfs(models.Model):
                     _logger.info(str(pix.id))
                     for re in reglasabs:
                         quant=quants.filtered(lambda x: x.product_id.id == re.product_id.id)
-                        _logger.info(str(re.id not in rule2))
+                        _logger.info(str(rule2))
                         if(re.id not in rule2):
                             if(len(quant)==0):
                                 datos1={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':41911,'location_dest_id':re.location_id.id}
