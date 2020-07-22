@@ -192,13 +192,14 @@ class tfs(models.Model):
                         if(len(quant)>0):
                             _logger.info('quant mayor')
                             _logger.info(str(quant.quantity)+'|||'+str(re.product_min_qty))
-                            if(quant.quantity<re.product_min_qty):
+                            if(quant.quantity<=re.product_min_qty):
                                 _logger.info('ot')
-                                datos1={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty-quant.quantity,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':41911,'location_dest_id':re.location_id.id}
-                                datos2={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty-quant.quantity,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':re.location_id.id,'location_dest_id':41911}
-                                pickOrigen.append(datos1)
-                                pickDestino.append(datos2)
-                                rule.append(re.id)
+                                if((re.product_max_qty-quant.quantity)>0):
+                                    datos1={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty-quant.quantity,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':41911,'location_dest_id':re.location_id.id}
+                                    datos2={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty-quant.quantity,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':re.location_id.id,'location_dest_id':41911}
+                                    pickOrigen.append(datos1)
+                                    pickDestino.append(datos2)
+                                    rule.append(re.id)
             else:
                 _logger.info("entre 2"+str(al.name))
                 for re in reglasabs:
@@ -211,11 +212,12 @@ class tfs(models.Model):
                         rule.append(re.id)
                     if(len(quant)>0):
                         if(quant.quantity<re.product_min_qty):
-                            datos1={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty-quant.quantity,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':41911,'location_dest_id':re.location_id.id}
-                            datos2={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty-quant.quantity,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':re.location_id.id,'location_dest_id':41911}
-                            pickOrigen.append(datos1)
-                            pickDestino.append(datos2)
-                            rule.append(re.id)
+                            if((re.product_max_qty-quant.quantity)>0):
+                                datos1={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty-quant.quantity,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':41911,'location_dest_id':re.location_id.id}
+                                datos2={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty-quant.quantity,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':re.location_id.id,'location_dest_id':41911}
+                                pickOrigen.append(datos1)
+                                pickDestino.append(datos2)
+                                rule.append(re.id)
             if(len(pickOrigen)>0):
                 c=self.env['res.partner'].search([['name','=',al.name],['parent_id','=',1]])
                 ticket=self.env['helpdesk.ticket'].create({'x_studio_tipo_de_vale':'Resurtido de Almacen','partner_id':c.id})
