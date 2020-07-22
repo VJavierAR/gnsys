@@ -134,7 +134,7 @@ class ExistenciasXML(models.AbstractModel):
                 sheet.write(i, 7, obj.x_studio_field_kUc4x.x_name if(obj.x_studio_field_kUc4x.x_name) else '', bold)
                 precio=self.env['purchase.order.line'].sudo().search([['product_id','=',obj.product_id.id]])
                 sheet.write(i, 8, precio.sorted(key='id',reverse=True)[0].price_unit if(precio) else obj.product_id.lst_price, bold)
-                m=self.env['stock.warehouse.orderpoint'].sudo().search([['location_id','=',obj.location_id.id],['product_id','=',obj.product_id.id],['active','=',False]])
+                m=self.env['stock.warehouse.orderpoint'].sudo().search([['location_id','=',obj.location_id.id],['product_id','=',obj.product_id.id]])
                 sheet.write(i, 9, m.product_min_qty if(m.id) else 0, bold)
                 sheet.write(i, 10, m.product_max_qty if(m.id) else 0, bold)
                 i=i+1
@@ -153,7 +153,7 @@ class ExistenciasXML(models.AbstractModel):
                 sheet.write(i, 6, obj.x_studio_field_kUc4x.x_name if(obj.x_studio_field_kUc4x.x_name) else '', bold)
                 precio=self.env['purchase.order.line'].sudo().search([['product_id','=',obj.product_id.id]])
                 sheet.write(i, 7, precio.sorted(key='id',reverse=True)[0].price_unit if(precio) else obj.product_id.lst_price, bold)
-                m=self.env['stock.warehouse.orderpoint'].sudo().search([['location_id','=',obj.location_id.id],['product_id','=',obj.product_id.id],['active','=',False]])
+                m=self.env['stock.warehouse.orderpoint'].sudo().search([['location_id','=',obj.location_id.id],['product_id','=',obj.product_id.id]])
                 sheet.write(i, 8, m.product_min_qty if(m.id) else 0, bold)
                 sheet.write(i, 9, m.product_max_qty if(m.id) else 0, bold)
                 i=i+1
