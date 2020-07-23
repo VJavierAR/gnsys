@@ -98,25 +98,25 @@ class gastos_gnsys(models.Model):
     motivos = fields.One2many('motivos', 'gasto', string = "Motivo",track_visibility='onchange')
     totalMontoMotivos = fields.Float(string = 'Total monto de motivos',track_visibility='onchange')
 
-    @api.onchange('motivos')
-    def calcularTotalMotivos(self):
-        message = ""
-        mess = {}
-        listaDeMotivos = self.motivos
-        montoTotal = 0.0
-        montoOriginal = self.totalMontoMotivos
-        if listaDeMotivos != []:
-            for motivo in listaDeMotivos:
-                montoTotal += motivo.monto
+    # @api.onchange('motivos')
+    # def calcularTotalMotivos(self):
+    #     message = ""
+    #     mess = {}
+    #     listaDeMotivos = self.motivos
+    #     montoTotal = 0.0
+    #     montoOriginal = self.totalMontoMotivos
+    #     if listaDeMotivos != []:
+    #         for motivo in listaDeMotivos:
+    #             montoTotal += motivo.monto
         
-        if montoTotal > self.montoRequerido :
-            self.totalMontoMotivos = montoOriginal
-            raise exceptions.ValidationError("La suma de los montos no puede ser mayor al monto requerido .")
-            message = ("La suma de los montos no puede ser mayor al monto requerido .")
-            mess = { 'title': _('Error'), 'message' : message}
-            return {'warning': mess}
-        else :
-            self.totalMontoMotivos = montoTotal
+    #     if montoTotal > self.montoRequerido :
+    #         self.totalMontoMotivos = montoOriginal
+    #         raise exceptions.ValidationError("La suma de los montos no puede ser mayor al monto requerido .")
+    #         message = ("La suma de los montos no puede ser mayor al monto requerido .")
+    #         mess = { 'title': _('Error'), 'message' : message}
+    #         return {'warning': mess}
+    #     else :
+    #         self.totalMontoMotivos = montoTotal
 
     # --- PAGO A SOLICITANTE | ESTOS SON LOS PAGOS QUE SE ESTAN DANDO AL SOLICITANTE (LO EDITA EL AREA DE FINANZAS)
     # NOTA : El modelo dice devolución cambiar a pago a solicitante
