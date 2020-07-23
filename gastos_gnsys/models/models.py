@@ -104,7 +104,7 @@ class gastos_gnsys(models.Model):
         mess = {}
         listaDeMotivos = self.motivos
         montoTotal = 0.0
-        montoOriginal = self.totalMontoMotivos
+        # montoOriginal = self.totalMontoMotivos
         if listaDeMotivos != []:
             for motivo in listaDeMotivos:
                 montoTotal += motivo.monto
