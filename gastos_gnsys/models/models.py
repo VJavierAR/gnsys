@@ -43,7 +43,7 @@ class gastos_gnsys(models.Model):
 
     # --- APROBACIÓN | FINANSAS
     quienValida = fields.Many2one('res.users',string = "Responsable de aprobacion", track_visibility='onchange', default=lambda self: self.env.user)
-    montoAprobadoA = fields.Float(string = 'Monto aprobado',track_visibility='onchange')
+    montoAprobado = fields.Float(string = 'Monto aprobado',track_visibility='onchange')
     montoAtnticipado = fields.Float(string = 'Monto anticipo',track_visibility='onchange')
     porCubrirAnticipo = fields.Datetime(string = 'Fecha compromiso de adelanto', track_visibility='onchange')
     autorizacionFinanzas = fields.Selection([('Aprobar','Aprobar'), ('Rechazar','Rechazada')], string = "Autorización", track_visibility='onchange')
@@ -104,20 +104,19 @@ class gastos_gnsys(models.Model):
         mess = {}
         listaDeMotivos = self.motivos
         montoTotal = 0.0
-        # montoOriginal = self.totalMontoMotivos
+        montoOriginal = self.totalMontoMotivos
         if listaDeMotivos != []:
             for motivo in listaDeMotivos:
                 montoTotal += motivo.monto
+        
+        if montoTotal > self.montoRequerido :
+            self.totalMontoMotivos = montoOriginal
+            raise exceptions.ValidationError("La suma de los montos no puede ser mayor al monto requerido .")
+            message = ("La suma de los montos no puede ser mayor al monto requerido .")
+            mess = { 'title': _('Error'), 'message' : message}
+            return {'warning': mess}
+        else :
             self.totalMontoMotivos = montoTotal
-        # if montoTotal != 0.0 :
-        #     if montoTotal > self.montoRequerido :
-        #         self.totalMontoMotivos = montoOriginal
-        #         raise exceptions.ValidationError("La suma de los montos no puede ser mayor al monto requerido .")
-        #         message = ("La suma de los montos no puede ser mayor al monto requerido .")
-        #         mess = { 'title': _('Error'), 'message' : message}
-        #         return {'warning': mess}
-        #     else :
-        #         self.totalMontoMotivos = montoTotal
 
     # --- PAGO A SOLICITANTE | ESTOS SON LOS PAGOS QUE SE ESTAN DANDO AL SOLICITANTE (LO EDITA EL AREA DE FINANZAS)
     # NOTA : El modelo dice devolución cambiar a pago a solicitante
@@ -137,9 +136,9 @@ class gastos_gnsys(models.Model):
             for devolucion in listaDevoluciones:
                 montoPagadoTotal += devolucion.montoEntregado
         if montoPagadoTotal != self.totalPagosSolitantes :
-            self.montoPorCubrir = self.montoAprobadoA - montoPagadoTotal
+            self.montoPorCubrir = self.montoAprobado - montoPagadoTotal
         else :
-            self.montoPorCubrir = self.montoAprobadoA - self.totalPagosSolitantes
+            self.montoPorCubrir = self.montoAprobado - self.totalPagosSolitantes
         self.totalPagosSolitantes = montoPagadoTotal
     # --- COMPROBACIÓNES | PARTE DE LOS CAMPOS LOS UTILIZA EL USUARIO FINAL Y OTROS EL AREA DE FINANZAS
     # _name = 'gastos.comprobaciones'
