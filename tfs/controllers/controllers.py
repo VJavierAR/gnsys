@@ -13,7 +13,8 @@ class SaleOrderCompatibles(http.Controller):
         uido=request.env.context.get('uid')
         u=request.env['res.groups'].search([['name','=','miniAlmacen']]).users.filtered(lambda x:x.id==uido)
         if(u.id!=False):
-            p.valida()
+            if(p.estado=="xValidar"):
+                p.valida()
             mensaje="Proceso  "+str(p.name)+" Autorizado"
         return mensaje
 
