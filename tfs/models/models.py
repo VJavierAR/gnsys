@@ -61,7 +61,6 @@ class tfs(models.Model):
     
     evidencias=fields.One2many('tfs.evidencia',string='Evidencias',inverse_name='tfs_id')
     estado=fields.Selection([('borrador','Tfs autoriza'),('xValidar','Por Validar'),('Valido','Valido'),('Confirmado','Confirmado'),('Auditar','Auditar'),('Cancelado','Cancelado')],default='borrador')
-
     colorBN=fields.Selection(related='serie.x_studio_color_bn')
     arreglo=fields.Char()
     direccion=fields.Char(widget="html")
