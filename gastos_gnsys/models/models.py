@@ -18,7 +18,7 @@ class gastos_gnsys(models.Model):
     # --- SOLICITUD | USUARIO FINAL ---
     quienSolcita = fields.Many2one('res.users', string = "Quien solicita",track_visibility='onchange', default=lambda self: self.env.user)
     proyecto = fields.Text(string="Proyecto", track_visibility='onchange')
-    montoRequerido = fields.Float(string = 'Monto requerido',track_visibility='onchange')
+    # montoRequerido = fields.Float(string = 'Monto requerido',track_visibility='onchange')
     fechaDeSolicitud = fields.Datetime(compute='computarfechaDeSolicitud',string = 'Fecha de solicitud', track_visibility='onchange')
     fechaLimite = fields.Datetime(string = 'Fecha limite de pago', track_visibility='onchange')
     def computarfechaDeSolicitud(self):
@@ -31,15 +31,15 @@ class gastos_gnsys(models.Model):
     # --- AUTORIZACIÓN | LÍDER (PUEDE SER MULTIPLE)
     quienesAutorizan = fields.Many2one('res.users',string = "Responsable de autorizacion", track_visibility='onchange', default=lambda self: self.env.user)
     autorizacionLider = fields.Selection([('Aprobar','Aprobar'), ('Rechazar','Rechazar')], string = "Autorización", track_visibility='onchange')
-    montoAutorizado = fields.Float(string = 'Monto autorizado',track_visibility='onchange')
+    # montoAutorizado = fields.Float(string = 'Monto autorizado',track_visibility='onchange')
 
-    @api.onchange('montoRequerido')
-    def definirMontoAutorizado(self):
-        if self.montoRequerido :
-            if self.montoAutorizado :
-                self.montoAutorizado = self.montoAutorizado    
-            else :
-                self.montoAutorizado = self.montoRequerido
+    # @api.onchange('montoRequerido')
+    # def definirMontoAutorizado(self):
+    #     if self.montoRequerido :
+    #         if self.montoAutorizado :
+    #             self.montoAutorizado = self.montoAutorizado    
+    #         else :
+    #             self.montoAutorizado = self.montoRequerido
 
     # --- APROBACIÓN | FINANSAS
     quienValida = fields.Many2one('res.users',string = "Responsable de aprobacion", track_visibility='onchange', default=lambda self: self.env.user)
