@@ -202,6 +202,10 @@ class StockIngreso(TransientModel):
             m.write({'location_dest_id':self.almacen.lot_stock_id.id})
             l=self.env['stock.move.line'].search([['move_id','=',m.move.id]])
             l.write({'location_dest_id':self.almacen.lot_stock_id.id,'qty_done':m.cantidad})
+            if(m.producto.id!=m.producto2.id):
+                l.write({'state':'draft'})
+                l.write({'product_id':m.producto2.id})
+                l.write({'state':'assigned'})
         self.pick.purchase_id.write({'recibido':'recibido'})
         self.env['stock.picking'].search([['state','=','assigned']]).action_assign()
         self.pick.action_done()
@@ -212,6 +216,7 @@ class StockIngresoLines(TransientModel):
     _description='lineas de ingreso'
     rel_ingreso=fields.Many2one('ingreso.almacen')
     producto=fields.Many2one('product.product')
+    producto2=fields.Many2one('product.product')
     cantidad=fields.Integer()
     move=fields.Many2one('stock.move')    
 

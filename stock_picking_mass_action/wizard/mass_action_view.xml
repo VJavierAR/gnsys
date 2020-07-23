@@ -382,6 +382,7 @@
                         <field name="move_line" string="Productos" options="{'no_create_edit': True}">
                                 <tree editable="bottom" >
                                 <field name="producto" readonly="1" string="Producto"/>
+                                <field name="producto2" string="Producto editable"/>
                                 <field name="cantidad" />
                                 </tree>
                             </field>
