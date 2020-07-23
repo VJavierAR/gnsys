@@ -137,9 +137,9 @@ class gastos_gnsys(models.Model):
             for devolucion in listaDevoluciones:
                 montoPagadoTotal += devolucion.montoEntregado
         if montoPagadoTotal != self.totalPagosSolitantes :
-            self.montoPorCubrir = self.montoAprobado - montoPagadoTotal
+            self.montoPorCubrir = self.montoAprobadoA - montoPagadoTotal
         else :
-            self.montoPorCubrir = self.montoAprobado - self.totalPagosSolitantes
+            self.montoPorCubrir = self.montoAprobadoA - self.totalPagosSolitantes
         self.totalPagosSolitantes = montoPagadoTotal
     # --- COMPROBACIÓNES | PARTE DE LOS CAMPOS LOS UTILIZA EL USUARIO FINAL Y OTROS EL AREA DE FINANZAS
     # _name = 'gastos.comprobaciones'
