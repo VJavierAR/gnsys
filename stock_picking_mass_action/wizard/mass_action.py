@@ -85,7 +85,6 @@ class StockPickingMassAction(models.Model):
         help="",
     )
     check=fields.Integer(compute='che')
-    tecnico=fields.Many2one('hr.employee')
     tecnicos=fields.One2many('mass.tecnico','mass_id')
 
     @api.depends('picking_ids')
@@ -126,10 +125,10 @@ class StockPickingMassAction(models.Model):
         validacion=assigned_picking_lst.mapped('picking_type_id.id')
         tipo=assigned_picking_lst.mapped('picking_type_id.code')
         _logger.info(str(tipo))
-        if(self.check==1):
-            for t in self.tecnicos:
-                _logger.info('tecnico'+str(t.tecnico.id)+'pic'+str(t.pick_id.id))
-                t.pick_id.write({'x_studio_field_SJeHG':t.tecnico.id})
+        #if(self.check==1):
+        #    for t in self.tecnicos:
+        #        _logger.info('tecnico'+str(t.tecnico.id)+'pic'+str(t.pick_id.id))
+        #        t.pick_id.write({'x_studio_field_SJeHG':t.tecnico.id})
         if(self.check ==2 or self.check ==1):
             CON=str(self.env['ir.sequence'].next_by_code('concentrado'))
             self.env['stock.picking'].search([['sale_id','in',assigned_picking_lst.mapped('sale_id.id')]]).write({'concentrado':CON})
@@ -213,11 +212,11 @@ class MassActionTecnico(models.Model):
     scheduled_date=fields.Datetime(related='pick_id.scheduled_date')
     x_studio_toneres=fields.Char(related='pick_id.x_studio_toneres')
 
-    #@api.depends('tecnico')
-    #def escribeTecnico(self):
-    #    for record in self:
-    #        if(record.tecnico):
-    #            record.pick_id.write({'x_studio_tecnico':record.tecnico.id})
+    @api.depends('tecnico')
+    def escribeTecnico(self):
+       for record in self:
+           if(record.tecnico):
+               record.pick_id.write({'x_studio_tecnico':record.tecnico.id})
 
 
 
