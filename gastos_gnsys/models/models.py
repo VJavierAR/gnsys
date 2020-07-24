@@ -359,6 +359,11 @@ class motivos_gastos(models.Model):
     motivoTipoDeMotivo = fields.Selection((('!','1'), ('2','2')), string = "Tipo de motivo",track_visibility='onchange')
     monto = fields.Float(string = "Monto", track_visibility='onchange')
 
+    @api.onchange('monto')
+    def verificaMonto(self):
+        if self.monto == 0.0:
+            raise exceptions.ValidationError("El monto a justificar no puede ser igual a cero.")
+
 
 class comprobaciones(models.Model):
     _name = 'gastos.comprobaciones'
