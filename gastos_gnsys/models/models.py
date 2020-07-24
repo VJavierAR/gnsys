@@ -111,7 +111,9 @@ class gastos_gnsys(models.Model):
                 raise exceptions.ValidationError("La suma de los montos no puede ser mayor al monto requerido .")
             else :
                 self.totalMontoMotivosFinal = montoTotal
-
+            
+            if montoTotal != self.totalMontoMotivosFinal:
+                raise exceptions.ValidationError("No puedes modificar el monto total de los motivos.")
     # --- PAGO A SOLICITANTE | ESTOS SON LOS PAGOS QUE SE ESTAN DANDO AL SOLICITANTE (LO EDITA EL AREA DE FINANZAS)
     # NOTA : El modelo dice devolución cambiar a pago a solicitante
     # MODELO : devolucion
