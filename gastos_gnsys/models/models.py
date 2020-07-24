@@ -145,7 +145,7 @@ class gastos_gnsys(models.Model):
             self.montoPorCubrir = self.montoAprobadoFinal - self.totalPagosSolitantes
         self.totalPagosSolitantes = montoPagadoTotal
     
-    @api.constrains('totalPagosSolitantes')
+    @api.constrains('totalPagosSolitantes','montoPorCubrir')
     def verificaTotalPagosSolicitantes(self):
         listaDevoluciones = self.devoluciones
         montoPagadoTotal = 0.0
@@ -154,7 +154,11 @@ class gastos_gnsys(models.Model):
                 montoPagadoTotal += devolucion.montoEntregado
         if montoPagadoTotal != self.totalPagosSolitantes :
             raise exceptions.ValidationError("No puedes modificar el monto total de las devoluciones.")
-    
+        if self.montoAprobadoFinal  :
+            if self.totalPagosSolitantes :
+                montoPorCubrir = self.montoAprobadoFinal - self.totalPagosSolitantes
+                if montoPorCubrir != self.montoPorCubrir :
+                    raise exceptions.ValidationError("No puedes modificar el monto por cubrir de las devoluciones.")
     # --- COMPROBACIÓNES | PARTE DE LOS CAMPOS LOS UTILIZA EL USUARIO FINAL Y OTROS EL AREA DE FINANZAS
     # _name = 'gastos.comprobaciones'
     # _description = 'Tipos de comprobaciónes del gasto'
