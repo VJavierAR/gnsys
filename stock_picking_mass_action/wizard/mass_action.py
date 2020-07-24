@@ -211,8 +211,9 @@ class MassActionTecnico(TransientModel):
 
     @api.depends('tecnico')
     def escribeTecnico(self):
-        if(self.tecnico):
-            self.pick_id.write({'x_studio_tecnico':self.tecnico.id})
+        for record in self:
+            if(record.tecnico):
+                record.pick_id.write({'x_studio_tecnico':record.tecnico.id})
 
 
 
