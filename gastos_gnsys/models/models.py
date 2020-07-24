@@ -41,7 +41,7 @@ class gastos_gnsys(models.Model):
 
     # --- APROBACIÓN | FINANSAS
     quienValida = fields.Many2one('res.users',string = "Responsable de aprobacion", track_visibility='onchange', default=lambda self: self.env.user)
-    # montoAprobado = fields.Float(string = 'Monto aprobado',track_visibility='onchange')
+    montoAprobadoFinal = fields.Float(string = 'Monto aprobado',track_visibility='onchange')
     montoAnticipado = fields.Float(string = 'Monto anticipo',track_visibility='onchange')
     porCubrirAnticipo = fields.Datetime(string = 'Fecha compromiso de adelanto', track_visibility='onchange')
     autorizacionFinanzas = fields.Selection([('Aprobar','Aprobar'), ('Rechazar','Rechazada')], string = "Autorización", track_visibility='onchange')
