@@ -84,25 +84,28 @@ class StockPickingMassAction(TransientModel):
         default=lambda self: self._default_picking_ids(),
         help="",
     )
-    check=fields.Integer(compute='che')
-    @api.depends('picking_ids')
+    
+    #@api.depends('picking_ids')
     def che(self):
+        i=0
         for s in self.picking_ids:
             #Almacen
             if(s.picking_type_id.id==3 or s.picking_type_id.id==31485):
-                self.check=2
+                i=2
             #refacion
             if(s.picking_type_id.id==29314):
-                self.check=1
+                i=1
             #ruta
             if(s.picking_type_id.id==2):
-                self.check=3
+                i=3
             #distribucion
             if(s.picking_type_id.id==29302):
-                self.check=4
+                i=4
+        return i
+    check=fields.Integer(default=lambda self: self.che())
     tecnico=fields.Many2one('hr.employee')
     tecnicos=fields.One2many('mass.tecnico','mass_id')
-    
+
     def mass_action(self):
         self.ensure_one()
         draft_picking_lst = self.picking_ids.filtered(lambda x: x.state == 'draft').sorted(key=lambda r: r.scheduled_date)
@@ -180,7 +183,7 @@ class StockPickingMassAction(TransientModel):
                       record.lot_id.write({'x_studio_etapa':'Ruta'})
     
     @api.onchange('check')
-    def massTecnico(self):
+    def massTecnicoSSSS(self):
         if(self.check==1):
             for picki in self.picking_ids:
                 self.env['mass.tecnico'].create({'mass_id':self.id,'pick_id':picki.id})
