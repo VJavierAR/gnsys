@@ -252,6 +252,7 @@ class tfs(models.Model):
             quants=self.sudo().env['stock.quant'].browse(dat)
         for q in quants:
             q.sudo().write({'quantity':q.quantity-1})
+            q.actualizaRegla()
         if(self.productoNegro):
             self.env['dcas.dcas'].create({'serie':self.serie.id,'contadorMono':self.actualMonocromatico,'contadorColor':self.actualColor,'fuente':'tfs.tfs','x_studio_contador_color_anterior':self.contadorMono.contadorColor,'x_studio_contador_mono_anterior_1':self.contadorAnteriorMono,'x_studio_toner_negro':1})
         if(self.productoMagenta):
@@ -260,7 +261,7 @@ class tfs(models.Model):
             self.env['dcas.dcas'].create({'serie':self.serie.id,'contadorMono':self.actualMonocromatico,'contadorColor':self.actualColor,'fuente':'tfs.tfs','x_studio_contador_color_anterior':self.contadorAmarillo.contadorColor,'x_studio_contador_mono_anterior_1':self.contadorAmarillo.contadorMono,'x_studio_toner_amarillo':1})
         if(self.productoCian):           
             self.env['dcas.dcas'].create({'serie':self.serie.id,'contadorMono':self.actualMonocromatico,'contadorColor':self.actualColor,'fuente':'tfs.tfs','x_studio_contador_color_anterior':self.contadorCian.contadorColor,'x_studio_contador_mono_anterior_1':self.contadorCian.contadorMono,'x_studio_toner_cian':1})
-        quants.actualizaRegla()
+        
 
 
     @api.multi
