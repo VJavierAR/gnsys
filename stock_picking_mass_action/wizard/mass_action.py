@@ -42,7 +42,7 @@ EXTENSIONS = {
     for mime, (ext, handler, req) in FILE_TYPE_DICT.items()
 }
 
-class StockPickingMassAction(TransientModel):
+class StockPickingMassAction(model.Models):
     _name = 'stock.picking.mass.action'
     _description = 'Stock Picking Mass Action'
 
