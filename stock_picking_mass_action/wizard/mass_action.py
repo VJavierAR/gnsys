@@ -84,11 +84,9 @@ class StockPickingMassAction(TransientModel):
         default=lambda self: self._default_picking_ids(),
         help="",
     )
-    check=fields.Integer(compute='che')
-    tecnico=fields.Many2one('hr.employee')
-
-    @api.depends('picking_ids')
+    #@api.depends('picking_ids')
     def che(self):
+        i=0
         for s in self.picking_ids:
             #Almacen
             if(s.picking_type_id.id==3 or s.picking_type_id.id==31485):
@@ -102,7 +100,9 @@ class StockPickingMassAction(TransientModel):
             #distribucion
             if(s.picking_type_id.id==29302):
                 self.check=4
-
+        return i
+    check=fields.Integer(default=lambda self: self.che())
+    tecnico=fields.Many2one('hr.employee')
 
     def mass_action(self):
         self.ensure_one()
