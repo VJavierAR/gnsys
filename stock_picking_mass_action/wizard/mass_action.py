@@ -1,4 +1,4 @@
-from odoo import _,fields, api
+from odoo import _,fields, api,models
 from odoo.models import TransientModel
 import datetime, time
 from odoo.exceptions import UserError,RedirectWarning
@@ -202,7 +202,7 @@ class StockPickingMassAction(TransientModel):
         assigned_picking_lst2 = self.picking_ids.\
         filtered(lambda x: x.picking_type_id.id == 3 and x.state == 'done')
         return self.env.ref('studio_customization.transferir_reporte_4541ad13-9ccb-4a0f-9758-822064db7c9a').report_action(assigned_picking_lst2)
-class MassActionTecnico(TransientModel):
+class MassActionTecnico(models.Model):
     _name='mass.tecnico'
     _description='Listado para tecnicos'
     mass_id=fields.Many2one('stock.picking.mass.action',store=True)
