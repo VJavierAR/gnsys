@@ -259,7 +259,7 @@
                                 <field name="partner_id" readonly="1" attrs="{'invisible':[['picking_type_id','!=',29314]]}"/>
                                 <field name="scheduled_date" readonly="1" attrs="{'invisible':[['picking_type_id','!=',29314]]}"/>
                                 <field name="x_studio_toneres" widget="html" string="productos" readonly="1" attrs="{'invisible':[['picking_type_id','!=',29314]]}"/>
-                                <field name="x_studio_tecnico" attrs="{'invisible':[['picking_type_id','!=',29314]]}"/>
+                                <field name="x_studio_tecnico"/>
                                 <field name="estado"  readonly="1" attrs="{'invisible':[['picking_type_id','!=',29314]]}"/>
                                 <field name="date_done" readonly="1" attrs="{'invisible':[['picking_type_id','!=',29314]]}"/>
                         </tree>
