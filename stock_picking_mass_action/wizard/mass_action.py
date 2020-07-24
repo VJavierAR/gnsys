@@ -96,7 +96,8 @@ class StockPickingMassAction(TransientModel):
                 self.check=2
             #refacion
             if(s.picking_type_id.id==29314):
-                self.env['mass.tecnico'].create({'mass_id':self.id,'pick_id':s.id})
+                self.tecnicos=[{'pick_id':s.id}]
+                #self.env['mass.tecnico'].create({'mass_id':self.id,'pick_id':s.id})
                 self.check=1
             #ruta
             if(s.picking_type_id.id==2):
