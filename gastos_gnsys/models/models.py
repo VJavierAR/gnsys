@@ -114,6 +114,13 @@ class gastos_gnsys(models.Model):
             
             if montoTotal != self.totalMontoMotivosFinal:
                 raise exceptions.ValidationError("No puedes modificar el monto total de los motivos.")
+    @api.constrains('totalMontoMotivosFinal')
+    def verificaTotalMotivos(self):
+        if listaDeMotivos != []:
+            for motivo in listaDeMotivos:
+                montoTotal += motivo.monto
+            if montoTotal != self.totalMontoMotivosFinal:
+                raise exceptions.ValidationError("No puedes modificar el monto total de los motivos.")
     # --- PAGO A SOLICITANTE | ESTOS SON LOS PAGOS QUE SE ESTAN DANDO AL SOLICITANTE (LO EDITA EL AREA DE FINANZAS)
     # NOTA : El modelo dice devolución cambiar a pago a solicitante
     # MODELO : devolucion
