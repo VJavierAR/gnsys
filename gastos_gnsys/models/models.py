@@ -362,7 +362,7 @@ class motivos_gastos(models.Model):
     @api.constrains('monto')
     def verificaMonto(self):
         if self.monto == 0.0:
-            raise exceptions.ValidationError("El monto a justificar no puede ser igual a cero.")
+            raise exceptions.ValidationError("En MOTIVOS : El monto no puede ser igual a cero.")
 
 
 class comprobaciones(models.Model):
