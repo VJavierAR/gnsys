@@ -85,8 +85,6 @@ class StockPickingMassAction(TransientModel):
         help="",
     )
     check=fields.Integer(compute='che')
-    tecnico=fields.Many2one('hr.employee')
-    tecnicos=fields.One2many('mass.tecnico','mass_id')
     @api.depends('picking_ids')
     def che(self):
         for s in self.picking_ids:
@@ -102,8 +100,9 @@ class StockPickingMassAction(TransientModel):
             #distribucion
             if(s.picking_type_id.id==29302):
                 self.check=4
-
-
+    tecnico=fields.Many2one('hr.employee')
+    tecnicos=fields.One2many('mass.tecnico','mass_id')
+    
     def mass_action(self):
         self.ensure_one()
         draft_picking_lst = self.picking_ids.filtered(lambda x: x.state == 'draft').sorted(key=lambda r: r.scheduled_date)
