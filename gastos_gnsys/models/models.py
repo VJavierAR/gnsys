@@ -116,6 +116,7 @@ class gastos_gnsys(models.Model):
                 raise exceptions.ValidationError("No puedes modificar el monto total de los motivos.")
     @api.constrains('totalMontoMotivosFinal')
     def verificaTotalMotivos(self):
+        listaDeMotivos = self.motivos
         if listaDeMotivos != []:
             for motivo in listaDeMotivos:
                 montoTotal += motivo.monto
@@ -131,18 +132,18 @@ class gastos_gnsys(models.Model):
     totalPagosSolitantes = fields.Float(string = "Total monto pagado", track_visibility='onchange')
     montoPorCubrir = fields.Float(string = "Monto por cubrir a solicitante", track_visibility='onchange')
 
-    # @api.onchange('devoluciones')
-    # def calcularTotalPagoDevolucion(self):
-    #     listaDevoluciones = self.devoluciones
-    #     montoPagadoTotal = 0.0
-    #     if listaDevoluciones != []:
-    #         for devolucion in listaDevoluciones:
-    #             montoPagadoTotal += devolucion.montoEntregado
-    #     if montoPagadoTotal != self.totalPagosSolitantes :
-    #         self.montoPorCubrir = self.montoAprobado - montoPagadoTotal
-    #     else :
-    #         self.montoPorCubrir = self.montoAprobado - self.totalPagosSolitantes
-    #     self.totalPagosSolitantes = montoPagadoTotal
+    @api.onchange('devoluciones')
+    def calcularTotalPagoDevolucion(self):
+        listaDevoluciones = self.devoluciones
+        montoPagadoTotal = 0.0
+        if listaDevoluciones != []:
+            for devolucion in listaDevoluciones:
+                montoPagadoTotal += devolucion.montoEntregado
+        if montoPagadoTotal != self.totalPagosSolitantes :
+            self.montoPorCubrir = self.montoAprobado - montoPagadoTotal
+        else :
+            self.montoPorCubrir = self.montoAprobado - self.totalPagosSolitantes
+        self.totalPagosSolitantes = montoPagadoTotal
     # --- COMPROBACIÓNES | PARTE DE LOS CAMPOS LOS UTILIZA EL USUARIO FINAL Y OTROS EL AREA DE FINANZAS
     # _name = 'gastos.comprobaciones'
     # _description = 'Tipos de comprobaciónes del gasto'
