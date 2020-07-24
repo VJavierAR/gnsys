@@ -144,6 +144,21 @@ class gastos_gnsys(models.Model):
         else :
             self.montoPorCubrir = self.montoAprobadoFinal - self.totalPagosSolitantes
         self.totalPagosSolitantes = montoPagadoTotal
+    
+    @api.constrains('totalPagosSolitantes','montoPorCubrir')
+    def verificaTotalPagosSolicitantes(self):
+        listaDevoluciones = self.devoluciones
+        montoPagadoTotal = 0.0
+        if listaDevoluciones != []:
+            for devolucion in listaDevoluciones:
+                montoPagadoTotal += devolucion.montoEntregado
+        if montoPagadoTotal != self.totalPagosSolitantes :
+            raise exceptions.ValidationError("No puedes modificar el monto total de las devoluciones.")
+        if self.montoAprobadoFinal  :
+            if self.totalPagosSolitantes :
+                montoPorCubrir = self.montoAprobadoFinal - self.totalPagosSolitantes
+                if montoPorCubrir != self.montoPorCubrir :
+                    raise exceptions.ValidationError("No puedes modificar el monto por cubrir de las devoluciones.")
     # --- COMPROBACIÓNES | PARTE DE LOS CAMPOS LOS UTILIZA EL USUARIO FINAL Y OTROS EL AREA DE FINANZAS
     # _name = 'gastos.comprobaciones'
     # _description = 'Tipos de comprobaciónes del gasto'
@@ -431,6 +446,11 @@ class PagoSolicitante(models.Model):
     evidencia = fields.Many2many('ir.attachment', string="Evidencia")
     montoAprobadoOriginalMante  = fields.Float(string = "Monto aprobado originalmente", track_visibility='onchange')
     montoPagado = fields.Float(string = "Monto pagado")
+
+    @api.constrains('montoEntregado')
+    def verificaMonto(self):
+        if self.montoEntregado == 0.0:
+            raise exceptions.ValidationError("En PAGOS A SOLICITANTE : El monto no puede ser igual a cero.")
 
     @api.onchange('fecha')
     def computarDiasAtrasoPago(self):
