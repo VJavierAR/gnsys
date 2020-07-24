@@ -184,6 +184,9 @@ class StockPickingMassAction(TransientModel):
                       record.lot_id.write({'x_studio_etapa':'Tránsito'})
                     if('Tránsito' in tipo2):
                       record.lot_id.write({'x_studio_etapa':'Ruta'})
+        if(self.check==1):
+            for t in self.tecnicos:
+                _logger.info('tecnico'+t.tecnico.id+'pic'+t.pick_id.id)
 
     @api.multi
     def vales(self):
