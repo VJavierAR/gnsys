@@ -161,7 +161,10 @@ class StockPickingMassAction(TransientModel):
             pick_to_backorder.action_done()
         self.picking_ids.action_done()
         if(len(assigned_picking_lst2)>0):
-            return self.env.ref('stock_picking_mass_action.report_custom').report_action(assigned_picking_lst2)
+            if(self.check==2):
+                return self.env.ref('stock_picking_mass_action.report_custom').report_action(assigned_picking_lst2)
+            if(self.check==1):
+                return self.env.ref('studio_customization.vale_de_entrega_56cdb2f0-51e3-447e-8a67-6e5c7a6b3af9').report_action(assigned_picking_lst2)
         for pp in assigned_picking_lst.filtered(lambda x:x.sale_id.x_studio_tipo_de_solicitud!="Retiro" and x.sale_id.x_studio_field_bxHgp==False):
             if('incoming' not in tipo):
                 if('outgoing' in tipo):
