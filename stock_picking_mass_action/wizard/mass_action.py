@@ -187,6 +187,7 @@ class StockPickingMassAction(TransientModel):
         if(self.check==1):
             for t in self.tecnicos:
                 _logger.info('tecnico'+t.tecnico.id+'pic'+t.pick_id.id)
+                t.pick_id.write({'x_studio_tecnico':t.tecnico.id})
 
     @api.multi
     def vales(self):
@@ -206,17 +207,17 @@ class MassActionTecnico(TransientModel):
     _description='Listado para tecnicos'
     mass_id=fields.Many2one('stock.picking.mass.action')
     pick_id=fields.Many2one('stock.picking')
-    tecnico=fields.Many2one('hr.employee',compute='escribeTecnico',readonly=False)
+    tecnico=fields.Many2one('hr.employee')
     origin=fields.Char(related='pick_id.origin')
     partner_id=fields.Many2one(related='pick_id.partner_id')
     scheduled_date=fields.Datetime(related='pick_id.scheduled_date')
     x_studio_toneres=fields.Char(related='pick_id.x_studio_toneres')
 
-    @api.depends('tecnico')
-    def escribeTecnico(self):
-        for record in self:
-            if(record.tecnico):
-                record.pick_id.write({'x_studio_tecnico':record.tecnico.id})
+    #@api.depends('tecnico')
+    #def escribeTecnico(self):
+    #    for record in self:
+    #        if(record.tecnico):
+    #            record.pick_id.write({'x_studio_tecnico':record.tecnico.id})
 
 
 
