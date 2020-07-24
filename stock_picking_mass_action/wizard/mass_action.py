@@ -86,7 +86,7 @@ class StockPickingMassAction(TransientModel):
     )
     check=fields.Integer(compute='che')
     tecnico=fields.Many2one('hr.employee')
-
+    tecnicos=fields.One2many('mass.tecnico','mass_id')
     @api.depends('picking_ids')
     def che(self):
         for s in self.picking_ids:
@@ -179,7 +179,13 @@ class StockPickingMassAction(TransientModel):
                       record.lot_id.write({'x_studio_etapa':'Tránsito'})
                     if('Tránsito' in tipo2):
                       record.lot_id.write({'x_studio_etapa':'Ruta'})
-
+    
+    @api.onchange('check')
+    def massTecnico(self):
+        if(self.check==1):
+            for picki in self.picking_ids:
+                self.env['mass.tecnico'].create({'mass_id':self.id,'pick_id':picki.id})
+    
     @api.multi
     def vales(self):
         assigned_picking_lst2 = self.picking_ids.\
@@ -193,6 +199,26 @@ class StockPickingMassAction(TransientModel):
         assigned_picking_lst2 = self.picking_ids.\
         filtered(lambda x: x.picking_type_id.id == 3 and x.state == 'done')
         return self.env.ref('studio_customization.transferir_reporte_4541ad13-9ccb-4a0f-9758-822064db7c9a').report_action(assigned_picking_lst2)
+
+class MassActionTecnico(TransientModel):
+    _name='mass.tecnico'
+    _description='Listado para tecnicos'
+    mass_id=fields.Many2one('stock.picking.mass.action')
+    pick_id=fields.Many2one('stock.picking')
+    tecnico=fields.Many2one('hr.employee')
+    origin=fields.Char(related='pick_id.origin')
+    partner_id=fields.Char(related='pick_id.parent_id')
+    scheduled_date=fields.Datetime(related='pick_id.scheduled_date')
+    x_studio_toneres=fields.Char(related='pick_id.x_studio_toneres')
+
+    @api.onchange('tecnico')
+    def escribeTecnico(self):
+        if(self.tecnico):
+            self.pick_id.write({'x_studio_tecnico':self.tecnico.id})
+
+
+
+
 class StockIngreso(TransientModel):
     _name='ingreso.almacen'
     _description='Ingreso Almacen'
