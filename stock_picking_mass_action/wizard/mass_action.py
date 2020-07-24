@@ -129,7 +129,7 @@ class StockPickingMassAction(TransientModel):
         if(self.check==1):
             for t in self.tecnicos:
                 _logger.info('tecnico'+str(t.tecnico.id)+'pic'+str(t.pick_id.id))
-                t.pick_id.write({'x_studio_tecnico':t.tecnico.id})
+                t.pick_id.write({'x_studio_field_SJeHG':t.tecnico.id})
         if(self.check ==2 or self.check ==1):
             CON=str(self.env['ir.sequence'].next_by_code('concentrado'))
             self.env['stock.picking'].search([['sale_id','in',assigned_picking_lst.mapped('sale_id.id')]]).write({'concentrado':CON})
