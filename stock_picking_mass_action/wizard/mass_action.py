@@ -88,14 +88,6 @@ class StockPickingMassAction(TransientModel):
     tecnico=fields.Many2one('hr.employee')
     tecnicos=fields.One2many('mass.tecnico','mass_id')
 
-    @api.onchange('check')
-    def massTecnicoSSSS(self):
-        if(self.check==1):
-            for picki in self.picking_ids:
-                self.env['mass.tecnico'].create({'mass_id':self.id,'pick_id':picki.id})
-
-
-
     @api.depends('picking_ids')
     def che(self):
         for s in self.picking_ids:
@@ -104,6 +96,7 @@ class StockPickingMassAction(TransientModel):
                 self.check=2
             #refacion
             if(s.picking_type_id.id==29314):
+                self.env['mass.tecnico'].create({'mass_id':self.id,'pick_id':picki.id})
                 self.check=1
             #ruta
             if(s.picking_type_id.id==2):
@@ -112,6 +105,11 @@ class StockPickingMassAction(TransientModel):
             if(s.picking_type_id.id==29302):
                 self.check=4
 
+    #@api.onchange('check')
+    #def massTecnicoSSSS(self):
+    #    if(self.check==1):
+    #        for picki in self.picking_ids:
+    #            self.env['mass.tecnico'].create({'mass_id':self.id,'pick_id':picki.id})
 
     def mass_action(self):
         self.ensure_one()
