@@ -203,7 +203,7 @@ class MassActionTecnico(TransientModel):
     _description='Listado para tecnicos'
     mass_id=fields.Many2one('stock.picking.mass.action')
     pick_id=fields.Many2one('stock.picking')
-    tecnico=fields.Many2one('hr.employee',compute='escribeTecnico')
+    tecnico=fields.Many2one('hr.employee',compute='escribeTecnico',readonly=False)
     origin=fields.Char(related='pick_id.origin')
     partner_id=fields.Many2one(related='pick_id.partner_id')
     scheduled_date=fields.Datetime(related='pick_id.scheduled_date')
