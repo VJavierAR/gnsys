@@ -126,6 +126,10 @@ class StockPickingMassAction(TransientModel):
         validacion=assigned_picking_lst.mapped('picking_type_id.id')
         tipo=assigned_picking_lst.mapped('picking_type_id.code')
         _logger.info(str(tipo))
+        if(self.check==1):
+            for t in self.tecnicos:
+                _logger.info('tecnico'+str(t.tecnico.id)+'pic'+str(t.pick_id.id))
+                t.pick_id.write({'x_studio_tecnico':t.tecnico.id})
         if(self.check ==2 or self.check ==1):
             CON=str(self.env['ir.sequence'].next_by_code('concentrado'))
             self.env['stock.picking'].search([['sale_id','in',assigned_picking_lst.mapped('sale_id.id')]]).write({'concentrado':CON})
@@ -184,10 +188,6 @@ class StockPickingMassAction(TransientModel):
                       record.lot_id.write({'x_studio_etapa':'Tránsito'})
                     if('Tránsito' in tipo2):
                       record.lot_id.write({'x_studio_etapa':'Ruta'})
-        if(self.check==1):
-            for t in self.tecnicos:
-                _logger.info('tecnico'+str(t.tecnico.id)+'pic'+str(t.pick_id.id))
-                t.pick_id.write({'x_studio_tecnico':t.tecnico.id})
 
     @api.multi
     def vales(self):
@@ -205,9 +205,9 @@ class StockPickingMassAction(TransientModel):
 class MassActionTecnico(TransientModel):
     _name='mass.tecnico'
     _description='Listado para tecnicos'
-    mass_id=fields.Many2one('stock.picking.mass.action')
-    pick_id=fields.Many2one('stock.picking')
-    tecnico=fields.Many2one('hr.employee')
+    mass_id=fields.Many2one('stock.picking.mass.action',store=True)
+    pick_id=fields.Many2one('stock.picking',store=True)
+    tecnico=fields.Many2one('hr.employee',store=True)
     origin=fields.Char(related='pick_id.origin')
     partner_id=fields.Many2one(related='pick_id.partner_id')
     scheduled_date=fields.Datetime(related='pick_id.scheduled_date')
