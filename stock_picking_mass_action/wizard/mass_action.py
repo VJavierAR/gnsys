@@ -207,7 +207,7 @@ class MassActionTecnico(TransientModel):
     pick_id=fields.Many2one('stock.picking')
     tecnico=fields.Many2one('hr.employee')
     origin=fields.Char(related='pick_id.origin')
-    partner_id=fields.Char(related='pick_id.partner_id')
+    partner_id=fields.Many2one(related='pick_id.partner_id')
     scheduled_date=fields.Datetime(related='pick_id.scheduled_date')
     x_studio_toneres=fields.Char(related='pick_id.x_studio_toneres')
 
