@@ -50,14 +50,16 @@ class gastos_gnsys(models.Model):
             if not self.montoAutorizado :    
                 self.montoAutorizado = self.montoRequerido
     
-    @api.onchange('autorizacionLider')
+    
     @api.multi
     def gastoAutorizado(self) : 
         if self.autorizacionLider :
             if self.autorizacionLider == 'Aprobar':
                 for rec in self : 
                     rec.write({'statusGasto':'autorizacion'})
-
+            if self.autorizacionLider == 'Rechazar':
+                for rec in self : 
+                    rec.write({'statusGasto':'cancelado'})
     # --- APROBACIÓN | FINANSAS
     quienValida = fields.Many2one('res.users',string = "Responsable de aprobacion", track_visibility='onchange', default=lambda self: self.env.user)
     montoAprobadoFinal = fields.Float(string = 'Monto aprobado',track_visibility='onchange')
