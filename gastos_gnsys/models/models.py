@@ -57,11 +57,9 @@ class gastos_gnsys(models.Model):
         if self.autorizacionLider :
             _logger.info("||||-:   "+str(self.autorizacionLider))
             if str(self.autorizacionLider) == 'Aprobar':
-                for rec in self : 
-                    rec.write({'statusGasto':'autorizacion'})
+                self.write({'statusGasto':'autorizacion'})
             if str(self.autorizacionLider) == 'Rechazar':
-                for rec in self : 
-                    rec.write({'statusGasto':'cancelado'})
+                self.write({'statusGasto':'cancelado'})
     # --- APROBACIÓN | FINANSAS
     quienValida = fields.Many2one('res.users',string = "Responsable de aprobacion", track_visibility='onchange', default=lambda self: self.env.user)
     montoAprobadoFinal = fields.Float(string = 'Monto aprobado',track_visibility='onchange')
