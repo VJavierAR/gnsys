@@ -51,11 +51,10 @@ class gastos_gnsys(models.Model):
                 self.montoAutorizado = self.montoRequerido
     
     
-    @api.multi
+    @api.onchange('autorizacionLider')
     def gastoAutorizado(self) : 
-        
         if self.autorizacionLider :
-            _logger.info("||||-:   "+self.autorizacionLider)
+            _logger.info("||||-:   "+str(self.autorizacionLider))
             if str(self.autorizacionLider) == 'Aprobar':
                 for rec in self : 
                     rec.write({'statusGasto':'autorizacion'})
