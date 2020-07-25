@@ -15,10 +15,10 @@ class gastos_gnsys(models.Model):
 
     nombre = fields.Char(string="Nombre de gasto")
     statusGasto = fields.Selection(selection=[('enSolicitud','En solicitud'), ('autorizacion','En autorización'), ('aprovacion','En aprovación'), ('cancelado','Cancelado')], string = "Status de gasto" ,widget="statusbar", readonly=True , default='enSolicitud' , track_visibility='onchange')
-    @api.multi
+    @api.one
     def cancelarGasto(self):
         #_logger.info()
-        self.statusGasto = 'cancelado'
+        self.write({'statusGasto':'cancelado'})
     
     # --- SOLICITUD | USUARIO FINAL ---
     quienSolcita = fields.Many2one('res.users', string = "Quien solicita",track_visibility='onchange', default=lambda self: self.env.user)
