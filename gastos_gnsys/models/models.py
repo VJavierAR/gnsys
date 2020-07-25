@@ -18,11 +18,13 @@ class gastos_gnsys(models.Model):
     @api.multi
     def cancelarGasto(self):
         #_logger.info()
-        esMayor = "HOLA"
-        _logger.info("||||-:   "+esMayor)
+        # esMayor = "HOLA"
+        # _logger.info("||||-:   "+esMayor)
         for rec in self : 
             rec.write({'statusGasto':'cancelado'})
-    
+    def reactivaGasto(self) : 
+        for rec in self : 
+            rec.write({'enSolicitud':'aprovacion'})
     # --- SOLICITUD | USUARIO FINAL ---
     quienSolcita = fields.Many2one('res.users', string = "Quien solicita",track_visibility='onchange', default=lambda self: self.env.user)
     proyecto = fields.Text(string="Proyecto", track_visibility='onchange')
