@@ -14,7 +14,7 @@ class gastos_gnsys(models.Model):
     # --- NOMBRE DEL GASTO | USUARIO FINAL ---
 
     nombre = fields.Char(string="Nombre de gasto")
-    statusGasto = fields.Selection([('enSolicitud','En solicitud'), ('autorizacion','En autorización'), ('aprovacion','En aprovación'), ('cancelado','Cancelado')], string = "Status de gasto")
+    statusGasto = fields.Selection([('enSolicitud','En solicitud'), ('autorizacion','En autorización'), ('aprovacion','En aprovación'), ('cancelado','Cancelado')],'StatusGasto')
     @api.one
     def cancelarGasto(self):
         #_logger.info()
