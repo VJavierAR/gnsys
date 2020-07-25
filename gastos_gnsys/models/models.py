@@ -14,7 +14,7 @@ class gastos_gnsys(models.Model):
     # --- NOMBRE DEL GASTO | USUARIO FINAL ---
 
     nombre = fields.Char(string="Nombre de gasto")
-    statusGasto = fields.Selection([('enSolicitud','En solicitud'), ('autorizacion','En autorización'), ('aprovacion','En aprovación'), ('cancelado','Cancelado')], required = True, default='enSolicitud')
+    statusGasto = fields.Selection([('enSolicitud','En solicitud'), ('autorizacion','GASTO AUTORIZADO'), ('aprovacion','GASTO APROBADO'), ('cancelado','Cancelado')], required = True, default='enSolicitud')
     @api.multi
     def cancelarGasto(self):
         #_logger.info()
@@ -22,6 +22,7 @@ class gastos_gnsys(models.Model):
         # _logger.info("||||-:   "+esMayor)
         for rec in self : 
             rec.write({'statusGasto':'cancelado'})
+    @api.multi
     def reactivaGasto(self) : 
         for rec in self : 
             rec.write({'enSolicitud':'aprovacion'})
