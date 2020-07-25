@@ -21,7 +21,7 @@ class gastos_gnsys(models.Model):
         esMayor = "HOLA"
         _logger.info("||||-:   "+esMayor)
         for rec in self : 
-            rec.state = 'cancelado'
+            rec.write({'statusGasto':'cancelado'})
     
     # --- SOLICITUD | USUARIO FINAL ---
     quienSolcita = fields.Many2one('res.users', string = "Quien solicita",track_visibility='onchange', default=lambda self: self.env.user)
