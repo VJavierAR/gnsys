@@ -22,15 +22,37 @@ class gastos_gnsys(models.Model):
         # _logger.info("||||-:   "+esMayor)
         for rec in self : 
             rec.write({'statusGasto':'cancelado'})
+        
+        message = _('El gasto se a cancelado')
+        warning_mess = {
+            'title': _('Status del gasto'),
+            'message': message
+        }
+        return {'warning': warning_mess}
+    
     @api.multi
     def reactivaGasto(self) : 
         for rec in self : 
             rec.write({'statusGasto':'aprovacion'})
+        
+        message = _('El gasto se a aprobado')
+        warning_mess = {
+            'title': _('Status del gasto'),
+            'message': message
+        }
+        return {'warning': warning_mess}
     
     @api.multi
     def autorizarGasto(self):
         for rec in self : 
             rec.write({'statusGasto':'autorizacion'})
+        
+        message = _('El gasto se a aurotizado')
+        warning_mess = {
+            'title': _('Status del gasto'),
+            'message': message
+        }
+        return {'warning': warning_mess}
     
     # --- SOLICITUD | USUARIO FINAL ---
     quienSolcita = fields.Many2one('res.users', string = "Quien solicita",track_visibility='onchange', default=lambda self: self.env.user)
