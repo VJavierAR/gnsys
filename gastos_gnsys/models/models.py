@@ -54,10 +54,10 @@ class gastos_gnsys(models.Model):
     @api.multi
     def gastoAutorizado(self) : 
         if self.autorizacionLider :
-            if self.autorizacionLider == 'Aprobar':
+            if str(self.autorizacionLider) == 'Aprobar':
                 for rec in self : 
                     rec.write({'statusGasto':'autorizacion'})
-            if self.autorizacionLider == 'Rechazar':
+            if str(self.autorizacionLider) == 'Rechazar':
                 for rec in self : 
                     rec.write({'statusGasto':'cancelado'})
     # --- APROBACIÓN | FINANSAS
