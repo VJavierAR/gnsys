@@ -25,7 +25,7 @@ class gastos_gnsys(models.Model):
     @api.multi
     def reactivaGasto(self) : 
         for rec in self : 
-            rec.write({'enSolicitud':'aprovacion'})
+            rec.write({'statusGasto':'aprovacion'})
     # --- SOLICITUD | USUARIO FINAL ---
     quienSolcita = fields.Many2one('res.users', string = "Quien solicita",track_visibility='onchange', default=lambda self: self.env.user)
     proyecto = fields.Text(string="Proyecto", track_visibility='onchange')
