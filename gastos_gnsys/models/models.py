@@ -355,10 +355,10 @@ class gastos_gnsys(models.Model):
             rec.diasAtrasoPago = (datetime.date.today() - converted_date).days
     
 
-    @api.multi
-    def autorizarGasto(self):
-        gasto = self.env['gastos'].search([('id', '=', self.id)])
-        gasto.write({'quienesAutorizan': self.env.user.name})
+    # @api.multi
+    # def autorizarGasto(self):
+    #     gasto = self.env['gastos'].search([('id', '=', self.id)])
+    #     gasto.write({'quienesAutorizan': self.env.user.name})
 
 
 class usuarios_gastos(models.Model):
