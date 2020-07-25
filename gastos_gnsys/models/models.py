@@ -52,6 +52,7 @@ class gastos_gnsys(models.Model):
     
     
     @api.onchange('autorizacionLider')
+    @api.multi
     def gastoAutorizado(self) : 
         if self.autorizacionLider :
             _logger.info("||||-:   "+str(self.autorizacionLider))
