@@ -26,6 +26,12 @@ class gastos_gnsys(models.Model):
     def reactivaGasto(self) : 
         for rec in self : 
             rec.write({'statusGasto':'aprovacion'})
+    
+    @api.multi
+    def autorizarGasto(self):
+        for rec in self : 
+            rec.write({'statusGasto':'autorizacion'})
+    
     # --- SOLICITUD | USUARIO FINAL ---
     quienSolcita = fields.Many2one('res.users', string = "Quien solicita",track_visibility='onchange', default=lambda self: self.env.user)
     proyecto = fields.Text(string="Proyecto", track_visibility='onchange')
@@ -51,15 +57,6 @@ class gastos_gnsys(models.Model):
                 self.montoAutorizado = self.montoRequerido
     
     
-    @api.onchange('autorizacionLider')
-    @api.multi
-    def gastoAutorizado(self) : 
-        if self.autorizacionLider :
-            _logger.info("||||-:   "+str(self.autorizacionLider))
-            if str(self.autorizacionLider) == 'Aprobar':
-                self.write({'statusGasto':'autorizacion'})
-            if str(self.autorizacionLider) == 'Rechazar':
-                self.write({'statusGasto':'cancelado'})
     # --- APROBACIÓN | FINANSAS
     quienValida = fields.Many2one('res.users',string = "Responsable de aprobacion", track_visibility='onchange', default=lambda self: self.env.user)
     montoAprobadoFinal = fields.Float(string = 'Monto aprobado',track_visibility='onchange')
