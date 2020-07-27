@@ -389,8 +389,8 @@ class gastos_gnsys(models.Model):
         if listaPagos != []:
             for pago in listaPagos:
                 montoPagadoTotal += pago.montoPagado
-        self.montoADevolverPago = montoPagadoTotal
-
+            self.montoDevueltoPago = montoPagadoTotal
+    
     totalDeMontoPagado = fields.Float(string = 'Total')
 
     # @api.onchange('devoluciones')
