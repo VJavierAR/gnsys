@@ -51,7 +51,7 @@ class gastos_gnsys(models.Model):
 
 
     @api.onchange('porCubrirAnticipo')
-    def mensajeEsMayorFechaLimite(self)
+    def mensajeEsMayorFechaLimite(self):
         fechaCompleta = str(self.porCubrirAnticipo).split(' ')[0]
         fechaCompleta = fechaCompleta.split('-')
 
