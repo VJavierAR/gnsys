@@ -72,7 +72,23 @@ class gastos_gnsys(models.Model):
 
                 else:
                     return { 'warning': { 'title': 'Mensaje de aviso ', 'message': 'La fecha de compromiso de adelanto es mayor a la fecha limite, usted puede continuar'} }
+    @api.onchange('fechaLimiteComprobacionFinanzas')
+    def mensajeIgualFechaAdelanto(self):
+        if self.fechaLimiteComprobacionFinanzas :
+            if self.porCubrirAnticipo:
+                fechaCompleta = str(self.fechaLimiteComprobacionFinanzas).split(' ')[0]
+                fechaCompleta = fechaCompleta.split('-')
 
+                fecha1 = datetime.datetime(int(fechaCompleta[0]), int(fechaCompleta[1]), int(fechaCompleta[2]))
+                
+                fechaHoy = str(self.porCubrirAnticipo).split(' ')[0]
+                fechaHoy = fechaHoy.split('-')
+
+                fecha2 = datetime.datetime(int(fechaHoy[0]), int(fechaHoy[1]), int(fechaHoy[2]))
+                message = ""
+                mess = {}
+                if fecha1 == fecha2 :
+                    return { 'warning': { 'title': 'Mensaje de aviso ', 'message': 'La fecha de compromiso de adelanto es mayor a la fecha limite, usted puede continuar'} }
     # --- FUNCION PARA VERFICAR QUE LA FECHA NO ES MENOR AL DÍA DE HOY
     
     @api.constrains('fechaLimite', 'porCubrirAnticipo','fechaLimiteComprobacionFinanzas')
