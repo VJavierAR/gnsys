@@ -67,11 +67,11 @@ class gastos_gnsys(models.Model):
                 mess = {}
                 esMenor = "Es menor"
                 esMayor = "Es mayor"
-                if fecha1 > fecha2 :
+                if fecha1 < fecha2 :
                     _logger.info("||||-:   "+esMayor)
 
                 else:
-                    return { 'warning': { 'title': 'La fecha de compromiso de adelanto es mayor a la fecha limite, usted puede continuar', 'message': 'Mensaje de aviso'} }
+                    return { 'warning': { 'title': 'Mensaje de aviso ', 'message': 'La fecha de compromiso de adelanto es mayor a la fecha limite, usted puede continuar'} }
 
     # --- FUNCION PARA VERFICAR QUE LA FECHA NO ES MENOR AL DÍA DE HOY
     
