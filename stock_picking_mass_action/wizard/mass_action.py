@@ -727,7 +727,7 @@ class StockPickingMassAction(TransientModel):
             almacenes=self.env['stock.warehouse'].search([['x_studio_cliente','=',False]])
             for alm in almacenes:
                 b=alm.wh_output_stock_loc_id.id
-                c=alm.wh_input_stock_loc_id.id
+                c=alm.lot_stock_id.id
                 if(self.tipo=="Todos"):
                     origenes.append(b)
                     destinos.append(c)
@@ -737,7 +737,7 @@ class StockPickingMassAction(TransientModel):
                     origenes.append(b)
         if(self.almacen.id):
             b=self.almacen.wh_output_stock_loc_id.id
-            c=self.almacen.wh_input_stock_loc_id.id
+            c=self.almacen.lot_stock_id.id
             if(self.tipo=="Todos"):
                 origenes.append(b)
                 destinos.append(c)
