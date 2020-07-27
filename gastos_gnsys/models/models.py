@@ -211,7 +211,8 @@ class gastos_gnsys(models.Model):
     montoComprobado = fields.Float(string = "Monto comprobado", track_visibility='onchange')
     montoComprobadoAprobado =  fields.Float(string = " Monto comprobado aprobado", track_visibility='onchange')
     estatusComprobaciones = fields.Selection([('activo','Puede agregar comprobaciónes'), ('desactivado','No puede agregar comprobaciónes')], default='activo',string = "Status de comprobaciónes", track_visibility='onchange')
-    
+    montoPorComprobar =  fields.Float(string = "Monto por comprobar", track_visibility='onchange')
+
     @api.multi
     def activarComprovaciones(self):
         for rec in self : 
@@ -231,9 +232,19 @@ class gastos_gnsys(models.Model):
             for comprobacion in listaComprobaciones:
                 montoPagadoTotal += comprobacion.monto
                 montoComprobadoAprobadoTotal += comprobacion.montoAprobado
-        self.montoComprobado = montoPagadoTotal
-        self.montoComprobadoAprobado = montoComprobadoAprobadoTotal
+            self.montoComprobado = montoPagadoTotal
+            self.montoComprobadoAprobado = montoComprobadoAprobadoTotal
     
+    @api.onchange('comprobantes')
+    def calcularMontoPorComprobar(self):
+        listaComprobaciones = self.comprobaciones
+        montoPagadoTotal = 0.0
+        montoComprobadoAprobadoTotal = 0.0
+        if listaComprobaciones != []:
+            for comprobacion in listaComprobaciones:
+                montoPagadoTotal += comprobacion.monto
+                montoComprobadoAprobadoTotal += comprobacion.montoAprobado
+            self.montoPorComprobar = montoPagadoTotal - montoComprobadoAprobadoTotal
     
     #Codigo de estatus del gasto
 
