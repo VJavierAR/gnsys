@@ -3634,7 +3634,7 @@ class helpdesk_reiniciar_contadores_mesa(TransientModel):
         ultimoDcaHelpdeskTicket = self.env['dcas.dcas'].search([['fuente', '=', q],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
         q = 'tfs.tfs'
         ultimoDcaTfsTfs = self.env['dcas.dcas'].search([['fuente', '=', q],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
-        self.textoInformativo = 'ultimoDcaStockProductionLot: ' + str(ultimoDcaStockProductionLot.id) + '\nultimoDcaDcasDcas: ' + str(ultimoDcaDcasDcas.id) + '\nultimoDcaHelpdeskTicket: ' + str(ultimoDcaHelpdeskTicket.id) + '\nultimoDcaTfsTfs: ' + str(ultimoDcaTfsTfs.id) + '\n\n'
+        #self.textoInformativo = 'ultimoDcaStockProductionLot: ' + str(ultimoDcaStockProductionLot.id) + '\nultimoDcaDcasDcas: ' + str(ultimoDcaDcasDcas.id) + '\nultimoDcaHelpdeskTicket: ' + str(ultimoDcaHelpdeskTicket.id) + '\nultimoDcaTfsTfs: ' + str(ultimoDcaTfsTfs.id) + '\n\n'
 
         for c in self.ticket_id.x_studio_equipo_por_nmero_de_serie:
             comentarioDeReinicio = """
