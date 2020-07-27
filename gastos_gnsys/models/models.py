@@ -218,7 +218,7 @@ class gastos_gnsys(models.Model):
             rec.write({'estatusComprobaciones':'activo'})
     
     @api.multi
-    def activarComprovaciones(self):
+    def desactivaComprovaciones(self):
         for rec in self : 
             rec.write({'estatusComprobaciones':'desactivado'})
     
