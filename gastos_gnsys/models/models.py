@@ -19,11 +19,15 @@ class gastos_gnsys(models.Model):
     def cancelarGasto(self):
         for rec in self : 
             rec.write({'statusGasto':'cancelado'})
+            rec.write({'autorizacionFinanzas':'Rechazar'})
+            rec.write({'autorizacionLider':'Rechazar'})
     
     @api.multi
     def reactivaGasto(self) : 
         for rec in self : 
             rec.write({'statusGasto':'aprovacion'})
+            rec.write({'autorizacionFinanzas':'Aprobar'})
+            rec.write({'autorizacionLider':'Aprobar'})
     
     @api.multi
     def autorizarGasto(self):
@@ -46,7 +50,7 @@ class gastos_gnsys(models.Model):
 
     # --- AUTORIZACIÓN | LÍDER (PUEDE SER MULTIPLE)
     quienesAutorizan = fields.Many2one('res.users',string = "Responsable de autorizacion", track_visibility='onchange', default=lambda self: self.env.user)
-    autorizacionLider = fields.Selection([('Aprobar','Aprobar'), ('Rechazar','Rechazar'),('enEspera','En espera')], default='enEspera',string = "Autorización", track_visibility='onchange')
+    autorizacionLider = fields.Selection([('Aprobar','Aprobado'), ('Rechazar','Rechazado'),('enEspera','En espera')], default='enEspera',string = "Autorización", track_visibility='onchange')
     montoAutorizado = fields.Float(string = 'Monto autorizado',track_visibility='onchange')
 
     @api.onchange('montoRequerido')
@@ -61,7 +65,7 @@ class gastos_gnsys(models.Model):
     montoAprobadoFinal = fields.Float(string = 'Monto aprobado',track_visibility='onchange')
     montoAnticipado = fields.Float(string = 'Monto anticipo',track_visibility='onchange')
     porCubrirAnticipo = fields.Datetime(string = 'Fecha compromiso de adelanto', track_visibility='onchange')
-    autorizacionFinanzas = fields.Selection([('Aprobar','Aprobar'), ('Rechazar','Rechazada')], string = "Autorización", track_visibility='onchange')
+    autorizacionFinanzas = fields.Selection([('Aprobar','Aprobado'), ('Rechazado','Rechazada'),('enEspera','En espera')], default='enEspera', string = "Autorización", track_visibility='onchange')
     fechaLimiteComprobacionFinanzas = fields.Datetime(string = 'Fecha limite de comprobacion',track_visibility='onchange')
 
     
