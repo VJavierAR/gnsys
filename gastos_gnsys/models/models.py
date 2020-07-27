@@ -210,7 +210,18 @@ class gastos_gnsys(models.Model):
     montoPagadoComprobado = fields.Float(string = "Monto pagado", track_visibility='onchange')
     montoComprobado = fields.Float(string = "Monto comprobado", track_visibility='onchange')
     montoComprobadoAprobado =  fields.Float(string = " Monto comprobado aprobado", track_visibility='onchange')
-
+    estatusComprobaciones = fields.Selection([('activo','Puede agregar comprobaciónes'), ('desactivado','No puede agregar comprobaciónes')], default='activo',string = "Status de comprobaciónes", track_visibility='onchange')
+    
+    @api.multi
+    def activarComprovaciones(self):
+        for rec in self : 
+            rec.write({'estatusComprobaciones':'activo'})
+    
+    @api.multi
+    def activarComprovaciones(self):
+        for rec in self : 
+            rec.write({'estatusComprobaciones':'desactivado'})
+    
     @api.onchange('comprobaciones')
     def calcularTotalComprobaciones(self):
         listaComprobaciones = self.comprobaciones
