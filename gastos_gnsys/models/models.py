@@ -395,27 +395,28 @@ class gastos_gnsys(models.Model):
     
     totalDeMontoPagado = fields.Float(string = 'Total')
 
-    @api.onchange('pagos','comprobaciones')
-    def calculaMontoADevolver(self):
-        listaComprobaciones = self.comprobaciones
-        montoComprobadoAprobadoTotal = 0.0
-        if listaComprobaciones != []:
-            for comprobacion in listaComprobaciones:
-                montoComprobadoAprobadoTotal += comprobacion.montoAprobado
-        if self.montoAprobadoFinal :
-            verifica = montoComprobadoAprobadoTotal - self.montoAprobadoFinal
-            if  verifica > 0.0 :
-                listaPagos = self.pagos
-                montoPagadoTotal = 0.0
-                if listaPagos != []:
-                    for pago in listaPagos:
-                        montoPagadoTotal += pago.montoPagado
-                    if montoPagadoTotal != 0.0 :
-                        verifica2 = verifica - montoPagadoTotal
-                        if verifica2 > 0.0 :
-                            self.montoADevolverPago = verifica2
-            else:
-                self.montoADevolverPago = verifica
+    # @api.onchange('pagos','comprobaciones')
+    # def calculaMontoADevolver(self):
+    #     listaComprobaciones = self.comprobaciones
+    #     montoComprobadoAprobadoTotal = 0.0
+    #     verifica = 0.0
+    #     if listaComprobaciones != []:
+    #         for comprobacion in listaComprobaciones:
+    #             montoComprobadoAprobadoTotal += comprobacion.montoAprobado
+    #     if self.montoAprobadoFinal :
+    #         verifica = montoComprobadoAprobadoTotal - self.montoAprobadoFinal
+    #         if  verifica > 0.0 :
+    #             listaPagos = self.pagos
+    #             montoPagadoTotal = 0.0
+    #             if listaPagos != []:
+    #                 for pago in listaPagos:
+    #                     montoPagadoTotal += pago.montoPagado
+    #                 if montoPagadoTotal != 0.0 :
+    #                     verifica2 = verifica - montoPagadoTotal
+    #                     if verifica2 > 0.0 :
+    #                         self.montoADevolverPago = verifica2
+    #         else:
+    #             self.montoADevolverPago = verifica
     # @api.onchange('devoluciones')
     # def calcularTotalPagoDevolucion(self):
     #     listaDevoluciones = self.devoluciones
