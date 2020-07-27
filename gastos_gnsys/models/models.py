@@ -206,6 +206,7 @@ class gastos_gnsys(models.Model):
         for rec in self : 
             rec.write({'statusGasto':'autorizacion'})
             rec.write({'autorizacionLider':'aprobado'})
+            rec.write({'autorizacionFinanzas':'enEspera'})
     
     
     
