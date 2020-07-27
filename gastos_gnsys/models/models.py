@@ -401,10 +401,15 @@ class gastos_gnsys(models.Model):
             if self.montoAprobadoFinal :
                 verifica = self.montoComprobadoAprobado - self.montoAprobadoFinal
                 if  verifica > 0.0 :
-                    if self.montoDevueltoPago != 0.0 :
-                        verifica2 = verifica - self.montoDevueltoPago
-                        if verifica2 > 0.0 :
-                            self.montoADevolverPago = verifica2
+                    listaPagos = self.pagos
+                    montoPagadoTotal = 0.0
+                    if listaPagos != []:
+                        for pago in listaPagos:
+                            montoPagadoTotal += pago.montoPagado
+                        if montoPagadoTotal != 0.0 :
+                            verifica2 = verifica - montoPagadoTotal
+                            if verifica2 > 0.0 :
+                                self.montoADevolverPago = verifica2
                     else:
                         self.montoADevolverPago = verifica
     # @api.onchange('devoluciones')
