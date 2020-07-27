@@ -192,6 +192,7 @@ class gastos_gnsys(models.Model):
         for rec in self : 
             rec.write({'statusGasto':'cancelado'})
             rec.write({'autorizacionLider':'Rechazar'})
+            rec.write({'autorizacionFinanzas':'Rechazar'})
     
     @api.multi
     def reactivaGasto(self) : 
