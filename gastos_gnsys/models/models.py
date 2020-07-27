@@ -15,25 +15,6 @@ class gastos_gnsys(models.Model):
 
     nombre = fields.Char(string="Nombre de gasto")
     statusGasto = fields.Selection([('enSolicitud','En solicitud'), ('autorizacion','GASTO AUTORIZADO'), ('aprovacion','GASTO APROBADO'), ('cancelado','Cancelado')], required = True, default='enSolicitud', string = "Status de gasto")
-    @api.multi
-    def cancelarGasto(self):
-        for rec in self : 
-            rec.write({'statusGasto':'cancelado'})
-            rec.write({'autorizacionFinanzas':'Rechazar'})
-            rec.write({'autorizacionLider':'Rechazar'})
-    
-    @api.multi
-    def reactivaGasto(self) : 
-        for rec in self : 
-            rec.write({'statusGasto':'aprovacion'})
-            rec.write({'autorizacionFinanzas':'Aprobar'})
-            rec.write({'autorizacionLider':'Aprobar'})
-    
-    @api.multi
-    def autorizarGasto(self):
-        for rec in self : 
-            rec.write({'statusGasto':'autorizacion'})
-            rec.write({'autorizacionLider':'Aprobar'})
     
     # --- SOLICITUD | USUARIO FINAL ---
     quienSolcita = fields.Many2one('res.users', string = "Quien solicita",track_visibility='onchange', default=lambda self: self.env.user)
@@ -204,7 +185,26 @@ class gastos_gnsys(models.Model):
         self.montoComprobadoAprobado = montoComprobadoAprobadoTotal
     
     
+    #Codigo de estatus del gasto
+
+    @api.multi
+    def cancelarGasto(self):
+        for rec in self : 
+            rec.write({'statusGasto':'cancelado'})
+            rec.write({'autorizacionLider':'Rechazar'})
     
+    @api.multi
+    def reactivaGasto(self) : 
+        for rec in self : 
+            rec.write({'statusGasto':'aprovacion'})
+            rec.write({'autorizacionFinanzas':'Aprobar'})
+            rec.write({'autorizacionLider':'Aprobar'})
+    
+    @api.multi
+    def autorizarGasto(self):
+        for rec in self : 
+            rec.write({'statusGasto':'autorizacion'})
+            rec.write({'autorizacionLider':'Aprobar'})
     
     
     
