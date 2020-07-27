@@ -52,24 +52,26 @@ class gastos_gnsys(models.Model):
 
     @api.onchange('porCubrirAnticipo')
     def mensajeEsMayorFechaLimite(self):
-        fechaCompleta = str(self.porCubrirAnticipo).split(' ')[0]
-        fechaCompleta = fechaCompleta.split('-')
+        if self.porCubrirAnticipo :
+            if self.fechaLimite:
+                fechaCompleta = str(self.porCubrirAnticipo).split(' ')[0]
+                fechaCompleta = fechaCompleta.split('-')
 
-        fecha1 = datetime.datetime(int(fechaCompleta[0]), int(fechaCompleta[1]), int(fechaCompleta[2]))
-        
-        fechaHoy = str(self.fechaLimite).split(' ')[0]
-        fechaHoy = fechaHoy.split('-')
+                fecha1 = datetime.datetime(int(fechaCompleta[0]), int(fechaCompleta[1]), int(fechaCompleta[2]))
+                
+                fechaHoy = str(self.fechaLimite).split(' ')[0]
+                fechaHoy = fechaHoy.split('-')
 
-        fecha2 = datetime.datetime(int(fechaHoy[0]), int(fechaHoy[1]), int(fechaHoy[2]))
-        message = ""
-        mess = {}
-        esMenor = "Es menor"
-        esMayor = "Es mayor"
-        if fecha1 > fecha2 :
-            _logger.info("||||-:   "+esMayor)
+                fecha2 = datetime.datetime(int(fechaHoy[0]), int(fechaHoy[1]), int(fechaHoy[2]))
+                message = ""
+                mess = {}
+                esMenor = "Es menor"
+                esMayor = "Es mayor"
+                if fecha1 > fecha2 :
+                    _logger.info("||||-:   "+esMayor)
 
-        else:
-            return { 'warning': { 'title': 'La fecha de compromiso de adelanto es mayor a la fecha limite, usted puede continuar', 'message': 'Mensaje de aviso'} }
+                else:
+                    return { 'warning': { 'title': 'La fecha de compromiso de adelanto es mayor a la fecha limite, usted puede continuar', 'message': 'Mensaje de aviso'} }
 
     # --- FUNCION PARA VERFICAR QUE LA FECHA NO ES MENOR AL DÍA DE HOY
     
