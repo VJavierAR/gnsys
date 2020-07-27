@@ -493,7 +493,9 @@ class comprobaciones(models.Model):
 
     @api.onchange('porcentajeAceptado')
     def calcularMontoAprobado(self):
-        self.montoAprobado = self.monto * self.porcentajeAceptado
+        if self.montoAprobado : 
+            if self.monto :
+                self.montoAprobado = self.monto * self.porcentajeAceptado
 
 
 class PagoSolicitante(models.Model):
