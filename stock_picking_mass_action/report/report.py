@@ -32,7 +32,7 @@ class PartnerXlsx(models.AbstractModel):
                 sheet.write(i, 2, obj.x_studio_field_3lDS0.name, bold)
                 if(obj.location_dest_id.id==obj.x_studio_field_3lDS0.lot_stock_id.id):
                     sheet.write(i, 3, "Entrada", bold)
-                if(obj.location_dest_id.id!=obj.x_studio_field_3lDS0.lot_stock_id.id):
+                if(obj.location_id.id!=obj.x_studio_field_3lDS0.lot_stock_id.id):
                     sheet.write(i, 3, "Salida", bold)
                 sheet.write(i, 4, obj.product_id.name, bold)
                 sheet.write(i, 5, obj.product_id.default_code, bold)
@@ -76,7 +76,7 @@ class PartnerXlsx(models.AbstractModel):
                 sheet.write(i, 2, obj.x_studio_field_3lDS0.name, bold)
                 if(obj.location_dest_id.id==obj.x_studio_field_3lDS0.lot_stock_id.id):
                     sheet.write(i, 3, "Entrada", bold)
-                if(obj.location_dest_id.id!=obj.x_studio_field_3lDS0.lot_stock_id.id):
+                if(obj.location_id.id!=obj.x_studio_field_3lDS0.lot_stock_id.id):
                     sheet.write(i, 3, "Salida", bold)
                 sheet.write(i, 4, obj.product_id.name, bold)
                 sheet.write(i, 5, obj.product_id.default_code, bold)
