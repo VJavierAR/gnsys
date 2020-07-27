@@ -235,16 +235,7 @@ class gastos_gnsys(models.Model):
             self.montoComprobado = montoPagadoTotal
             self.montoComprobadoAprobado = montoComprobadoAprobadoTotal
     
-    @api.onchange('comprobantes')
-    def calcularMontoPorComprobar(self):
-        listaComprobaciones = self.comprobaciones
-        montoPagadoTotal = 0.0
-        montoComprobadoAprobadoTotal = 0.0
-        if listaComprobaciones != []:
-            for comprobacion in listaComprobaciones:
-                montoPagadoTotal += comprobacion.monto
-                montoComprobadoAprobadoTotal += comprobacion.montoAprobado
-            self.montoPorComprobar = montoPagadoTotal - montoComprobadoAprobadoTotal
+
     
     #Codigo de estatus del gasto
 
