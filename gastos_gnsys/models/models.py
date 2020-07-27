@@ -414,8 +414,8 @@ class gastos_gnsys(models.Model):
                         verifica2 = verifica - montoPagadoTotal
                         if verifica2 > 0.0 :
                             self.montoADevolverPago = verifica2
-                else:
-                    self.montoADevolverPago = verifica
+            else:
+                self.montoADevolverPago = verifica
     # @api.onchange('devoluciones')
     # def calcularTotalPagoDevolucion(self):
     #     listaDevoluciones = self.devoluciones
