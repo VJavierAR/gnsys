@@ -3702,7 +3702,7 @@ class helpdesk_reiniciar_contadores_mesa(TransientModel):
                     </div>
                     """
 
-        self.textoInformativo = self.textoInformativo + comentarioDeReinicio
+        self.textoInformativo = comentarioDeReinicio
 
 
     def comentarioDeReinicio(self, tipoEquipo, serie, ticket_id, fecha, usuario, contadorAnteriorNegro, contadorAnteriorColor):
