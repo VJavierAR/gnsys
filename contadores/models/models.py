@@ -98,8 +98,8 @@ class dcas(models.Model):
 
     fechaTemporal = fields.Text(string = 'Fecha temporal', store = True)
     
-    
-                
+    comentarioDeReinicio = fields.Text(string = 'Comentario de reinicio de contador')
+    reinicioDeContador = fields.Boolean(string = 'Reinicio de contador')
     
     
    
@@ -414,9 +414,9 @@ class dcas(models.Model):
             'res_id': wiz.id,
             'context': self.env.context,
         }
-    
 
     
+
 
 class contadoresexcel(models.Model):
     _name = 'contadores.excel'    
