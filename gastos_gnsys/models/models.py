@@ -393,6 +393,18 @@ class gastos_gnsys(models.Model):
     
     totalDeMontoPagado = fields.Float(string = 'Total')
 
+    @api.onchange('pagos')
+    def calculaMontoADevolver(self):
+        if self.montoComprobadoAprobado :
+            if self.montoAprobadoFinal :
+                verifica = self.montoComprobadoAprobado - self.montoAprobadoFinal
+                if  verifica > 0.0 :
+                    if self.montoDevueltoPago != 0.0 :
+                        verifica2 = verifica - self.montoDevueltoPago
+                        if verifica2 > 0.0 :
+                            self.montoADevolverPago = verifica2
+                    else:
+                        self.montoADevolverPago = verifica
     # @api.onchange('devoluciones')
     # def calcularTotalPagoDevolucion(self):
     #     listaDevoluciones = self.devoluciones
