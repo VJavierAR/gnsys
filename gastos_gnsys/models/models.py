@@ -13,7 +13,7 @@ class gastos_gnsys(models.Model):
     
     # --- NOMBRE DEL GASTO | USUARIO FINAL ---
 
-    nombre = fields.Char(string="Nombre de gasto")
+    nombre = fields.Char(string="Nombre de gasto", track_visibility='onchange')
     statusGasto = fields.Selection([('enSolicitud','En solicitud'), ('autorizacion','GASTO AUTORIZADO'), ('aprovacion','GASTO APROBADO'), ('cancelado','Cancelado')], required = True, default='enSolicitud', string = "Status de gasto")
     
     # --- SOLICITUD | USUARIO FINAL ---
