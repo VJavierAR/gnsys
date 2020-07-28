@@ -2,6 +2,8 @@ from odoo import fields, api
 from odoo.models import TransientModel
 import logging, ast
 import datetime, time
+import pytz
+
 _logger = logging.getLogger(__name__)
 from odoo.exceptions import UserError
 from odoo import exceptions, _
@@ -1832,7 +1834,14 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                                     requisicion[0].product_rel=[{'cliente':sale.partner_shipping_id.id,'ticket':sale.x_studio_field_bxHgp.id,'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
                         sale.action_confirm()
                         listaDeTicketsValidados.append(ticket.id)
-
+                        self.env['helpdesk.diagnostico'].create({
+                                                            'ticketRelacion': ticket.id,
+                                                            'estadoTicket': ticket.stage_id.name,
+                                                            #'evidencia': [(6,0,self.evidencia.ids)],
+                                                            #'mostrarComentario': self.check,
+                                                            'write_uid':  self.env.user.name,
+                                                            'comentario': 'Tickt validado. Pasa al proceso de almacén.' 
+                                                        })
                     else:
                         listaDeTicketsSinPoroductos.append(ticket.id)
                         
@@ -3521,3 +3530,1036 @@ class HelpdeskTicketReporte(TransientModel):
             return self.env.ref('stock_picking_mass_action.ticket_xlsx').report_action(d[0])
         if len(d) == 0:
             raise UserError(_("No hay registros para la selecion actual"))
+
+
+
+class helpdesk_reiniciar_contadores_mesa(TransientModel):
+    _name = 'helpdesk.contadores.reiniciar.mesa'
+    _description = 'helpdesk permite reiniciar los contadores actuales en mesa de ayuda.'
+
+    ticket_id = fields.Many2one(
+                                    "helpdesk.ticket",
+                                    string = 'Ticket'
+                                )
+    serieSeleccionada = fields.Text(
+                            string = 'Serie seleccionada',
+                            compute = "_compute_serieSeleccionada"
+                        )
+    tipoEquipo = fields.Selection(
+                                    [('Color','Color'),('B/N','B/N')],
+                                    string = 'Equipo color o B/N',
+                                    compute = '_compute_equipoSeleccionado'
+                                )
+    contadorMonoActual = fields.Integer(
+                                            string = 'Contador Monocromatico actual',
+                                            store = False,
+                                            compute = '_compute_contador_bn_actual'
+                                        )
+    contadorColorActual = fields.Integer(
+                                            string = 'Contador Color actual',
+                                            store = False,
+                                            compute = '_compute_contador_color_actual'
+                                        )
+    contadorMonoActualizado = fields.Integer(
+                                                string = 'Contador Monocromatico nuevo',
+                                                store = True,
+                                                default = 0
+                                            )
+    contadorColorActualizado = fields.Integer(
+                                                string = 'Contador Color nuevo',
+                                                store = True,
+                                                default = 0
+                                            )
+
+    evidencia = fields.Many2many(
+                                    'ir.attachment',
+                                    string = "Evidencias"
+                                )
+    comentario = fields.Text(
+                                string = 'Comentario'
+                            )
+    check = fields.Boolean(
+                                string = 'Mostrar en reporte',
+                                default = False
+                            )
+    estado = fields.Char(
+                            string = 'Estado', 
+                            compute = "_compute_estadoTicket"
+                        )
+    textoInformativo = fields.Text(
+                                        string = ' ',
+                                        default = ' ',
+                                        store = False,
+                                        compute = '_compute_textoInformativo'
+                                    )
+
+    def _compute_equipoSeleccionado(self):
+        for record in self:
+            if record.ticket_id.x_studio_equipo_por_nmero_de_serie and record.ticket_id.x_studio_equipo_por_nmero_de_serie.x_studio_color_bn:
+                record.tipoEquipo = record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_color_bn
+
+    def _compute_serieSeleccionada(self):
+        if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+            self.serieSeleccionada = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].name
+
+    def _compute_estadoTicket(self):
+        if self.ticket_id:
+            self.estado = self.ticket_id.stage_id.name
+
+    def _compute_contador_bn_actual(self):
+        for record in self:
+            fuente = 'stock.production.lot'
+            ultimoDcaStockProductionLot = self.env['dcas.dcas'].search([['fuente', '=', fuente],['serie', '=', record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+            if ultimoDcaStockProductionLot:
+                record.contadorMonoActual = ultimoDcaStockProductionLot.contadorMono
+            #if record.ticket_id.x_studio_equipo_por_nmero_de_serie:
+            #    record.contadorMonoActual = record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_bn_mesa
+            
+
+    def _compute_contador_color_actual(self):
+        for record in self:
+            fuente = 'stock.production.lot'
+            ultimoDcaStockProductionLot = self.env['dcas.dcas'].search([['fuente', '=', fuente],['serie', '=', record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+            if ultimoDcaStockProductionLot:
+                record.contadorMonoActual = ultimoDcaStockProductionLot.contadorColor
+            #if record.ticket_id.x_studio_equipo_por_nmero_de_serie:
+            #    record.contadorColorActual = record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_color_mesa
+
+    def _compute_textoInformativo(self):
+        q = 'stock.production.lot'
+        ultimoDcaStockProductionLot = self.env['dcas.dcas'].search([['fuente', '=', q],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+        q = 'dcas.dcas'
+        ultimoDcaDcasDcas = self.env['dcas.dcas'].search([['fuente', '=', q],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+        q = 'helpdesk.ticket'
+        ultimoDcaHelpdeskTicket = self.env['dcas.dcas'].search([['fuente', '=', q],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+        q = 'tfs.tfs'
+        ultimoDcaTfsTfs = self.env['dcas.dcas'].search([['fuente', '=', q],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+        #self.textoInformativo = 'ultimoDcaStockProductionLot: ' + str(ultimoDcaStockProductionLot.id) + '\nultimoDcaDcasDcas: ' + str(ultimoDcaDcasDcas.id) + '\nultimoDcaHelpdeskTicket: ' + str(ultimoDcaHelpdeskTicket.id) + '\nultimoDcaTfsTfs: ' + str(ultimoDcaTfsTfs.id) + '\n\n'
+
+        for c in self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+            comentarioDeReinicio = """
+                    <div class='alert alert-info' role='alert'>
+                        <h4 class="alert-heading">Reinicio de contadores por realizar !!!</h4>
+
+                        <p>Se reiniciara el contador de la serie <strong>""" + str(c.name) + """</strong> por medio del ticket <strong>""" + str(self.ticket_id.id) + """</strong> y con los siguientes detalles: </p>
+                        <br/>
+                        <div class='row'>
+                            <div class='col-sm-3'>
+                                <div class='row'>
+                                    <div class='col-sm-12'>
+                                        <p>Realizado el día:</p>
+                                    </div>
+                                </div>
+                                <div class='row'>
+                                    <div class='col-sm-12'>
+                                        <p>""" + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ) + """</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class='col-sm-3'>
+                                <div class='row'>
+                                    <div class='col-sm-12'>
+                                        <p>Realizado por:</p>
+                                    </div>
+                                </div>
+                                <div class='row'>
+                                    <div class='col-sm-12'>
+                                        <p>""" + self.env.user.name + """</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class='col-sm-3'>
+                                <div class='row'>
+                                    <div class='col-sm-12'>
+                                        <p>Contador anterior B/N:</p>
+                                    </div>
+                                </div>
+                                <div class='row'>
+                                    <div class='col-sm-12'>
+                                        <p>""" + str(ultimoDcaStockProductionLot.contadorMono) + """</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class='col-sm-3'>
+                                <div class='row'>
+                                    <div class='col-sm-12'>
+                                        <p>Contador anterior Color:</p>
+                                    </div>
+                                </div>
+                                <div class='row'>
+                                    <div class='col-sm-12'>
+                                        <p>""" + str(ultimoDcaStockProductionLot.contadorColor) + """</p>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        
+                    </div>
+                    """
+
+        self.textoInformativo = comentarioDeReinicio
+
+
+    def comentarioDeReinicio(self, tipoEquipo, serie, ticket_id, fecha, usuario, contadorAnteriorNegro, contadorAnteriorColor):
+        comentarioDeReinicio = """ """
+        if tipoEquipo == 'B/N':
+            comentarioDeReinicio = """
+                                            <div class='alert alert-info' role='alert'>
+                                                <h4 class="alert-heading">Reinicio de contadores realizado !!!</h4>
+
+                                                <p>Se reinicio el contador de la serie <strong>""" + serie + """</strong> por medio del ticket <strong>""" + ticket_id + """</strong> y con los siguientes detalles: </p>
+                                                <br/>
+                                                <div class='row'>
+                                                    <div class='col-sm-4'>
+                                                        <div class='row'>
+                                                            <div class='col-sm-12'>
+                                                                <p>Realizado el día:</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class='row'>
+                                                            <div class='col-sm-12'>
+                                                                <p>""" + fecha + """</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class='col-sm-4'>
+                                                        <div class='row'>
+                                                            <div class='col-sm-12'>
+                                                                <p>Realizado por:</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class='row'>
+                                                            <div class='col-sm-12'>
+                                                                <p>""" + usuario + """</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class='col-sm-4'>
+                                                        <div class='row'>
+                                                            <div class='col-sm-12'>
+                                                                <p>Contador anterior B/N:</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class='row'>
+                                                            <div class='col-sm-12'>
+                                                                <p>""" + contadorAnteriorNegro + """</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                            </div>
+                                            """
+        elif tipoEquipo == 'Color':
+            comentarioDeReinicio = """
+                                            <div class='alert alert-info' role='alert'>
+                                                <h4 class="alert-heading">Reinicio de contadores realizado !!!</h4>
+
+                                                <p>Se reinicio el contador de la serie <strong>""" + serie + """</strong> por medio del ticket <strong>""" + ticket_id + """</strong> y con los siguientes detalles: </p>
+                                                <br/>
+                                                <div class='row'>
+                                                    <div class='col-sm-3'>
+                                                        <div class='row'>
+                                                            <div class='col-sm-12'>
+                                                                <p>Realizado el día:</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class='row'>
+                                                            <div class='col-sm-12'>
+                                                                <p>""" + fecha + """</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class='col-sm-3'>
+                                                        <div class='row'>
+                                                            <div class='col-sm-12'>
+                                                                <p>Realizado por:</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class='row'>
+                                                            <div class='col-sm-12'>
+                                                                <p>""" + usuario + """</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class='col-sm-3'>
+                                                        <div class='row'>
+                                                            <div class='col-sm-12'>
+                                                                <p>Contador anterior B/N:</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class='row'>
+                                                            <div class='col-sm-12'>
+                                                                <p>""" + contadorAnteriorNegro + """</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class='col-sm-3'>
+                                                        <div class='row'>
+                                                            <div class='col-sm-12'>
+                                                                <p>Contador anterior Color:</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class='row'>
+                                                            <div class='col-sm-12'>
+                                                                <p>""" + contadorAnteriorColor + """</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+                                                </div>
+                                                
+                                            </div>
+                                            """
+        return comentarioDeReinicio
+
+
+    def reiniciarContadores(self):
+        for c in self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+            q = 'stock.production.lot'
+            if str(c.x_studio_color_bn) == 'B/N':
+                #if int(self.contadorBNActual) >= int(c.x_studio_contador_bn):
+                negrot = c.x_studio_contador_bn_mesa
+                colort = c.x_studio_contador_color_mesa
+                negroMesa = 0
+                colorMesa = 0
+                comentarioDeReinicio = """ """
+
+                rr = ''
+                dcaFuente = ''
+                mesaFuente = ''
+                tfsFuente = ''
+                #Creando dca para mesa stock.production.lot
+                ultimoDcaStockProductionLot = self.env['dcas.dcas'].search([['fuente', '=', q],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+                if ultimoDcaStockProductionLot:
+                    negrot = ultimoDcaStockProductionLot.contadorMono
+                    negroMesa = ultimoDcaStockProductionLot.contadorMono
+                    rr = self.env['dcas.dcas'].create({
+                                                        'x_studio_cliente': ultimoDcaStockProductionLot.x_studio_cliente,
+                                                        'serie': c.id,
+                                                        'x_studio_color_o_bn': ultimoDcaStockProductionLot.x_studio_color_o_bn,
+                                                        'x_studio_cartuchonefro': ultimoDcaStockProductionLot.x_studio_cartuchonefro.id,
+                                                        'x_studio_rendimiento_negro': ultimoDcaStockProductionLot.x_studio_rendimiento_negro,
+                                                        'x_studio_cartucho_amarillo': ultimoDcaStockProductionLot.x_studio_cartucho_amarillo.id,
+                                                        'x_studio_rendimientoa': ultimoDcaStockProductionLot.x_studio_rendimientoa,
+                                                        'x_studio_cartucho_cian_1': ultimoDcaStockProductionLot.x_studio_cartucho_cian_1.id,
+                                                        'x_studio_rendimientoc': ultimoDcaStockProductionLot.x_studio_rendimientoc,
+                                                        'x_studio_cartucho_magenta': ultimoDcaStockProductionLot.x_studio_cartucho_magenta.id,
+                                                        'x_studio_rendimientom': ultimoDcaStockProductionLot.x_studio_rendimientom,
+                                                        'x_studio_fecha': ultimoDcaStockProductionLot.x_studio_fecha,
+                                                        'x_studio_tiquete': self.ticket_id.id,
+                                                        'x_studio_tickett': self.ticket_id.id,
+                                                        'fuente': q,
+
+                                                        'contadorColor': 0,
+                                                        'x_studio_contador_color_anterior': 0,
+                                                        'contadorMono': self.contadorMonoActualizado,
+                                                        'x_studio_contador_mono_anterior_1': negrot,
+
+                                                        'paginasProcesadasBN': ultimoDcaStockProductionLot.paginasProcesadasBN,
+                                                        'porcentajeNegro': ultimoDcaStockProductionLot.porcentajeNegro,
+                                                        'porcentajeAmarillo': ultimoDcaStockProductionLot.porcentajeAmarillo,
+                                                        'porcentajeCian': ultimoDcaStockProductionLot.porcentajeCian,
+                                                        'porcentajeMagenta': ultimoDcaStockProductionLot.porcentajeMagenta,
+                                                        'x_studio_rendimiento': ultimoDcaStockProductionLot.x_studio_rendimiento,
+                                                        'x_studio_rendimiento_color': ultimoDcaStockProductionLot.x_studio_rendimiento_color,
+                                                        'x_studio_toner_negro': ultimoDcaStockProductionLot.x_studio_toner_negro,
+                                                        'x_studio_toner_cian': ultimoDcaStockProductionLot.x_studio_toner_cian,
+                                                        'x_studio_toner_magenta': ultimoDcaStockProductionLot.x_studio_toner_magenta,
+                                                        'x_studio_toner_amarillo': ultimoDcaStockProductionLot.x_studio_toner_amarillo,
+                                                        'nivelCA': ultimoDcaStockProductionLot.nivelCA,
+                                                        'nivelMA': ultimoDcaStockProductionLot.nivelMA,
+                                                        'nivelNA': ultimoDcaStockProductionLot.nivelNA,
+                                                        'nivelAA': ultimoDcaStockProductionLot.nivelAA,
+                                                        'contadorAnteriorNegro': ultimoDcaStockProductionLot.contadorAnteriorNegro,
+                                                        'contadorAnteriorAmarillo': ultimoDcaStockProductionLot.contadorAnteriorAmarillo,
+                                                        'contadorAnteriorMagenta': ultimoDcaStockProductionLot.contadorAnteriorMagenta,
+                                                        'contadorAnteriorCian': ultimoDcaStockProductionLot.contadorAnteriorCian,
+                                                        'paginasProcesadasA': ultimoDcaStockProductionLot.paginasProcesadasA,
+                                                        'paginasProcesadasC': ultimoDcaStockProductionLot.paginasProcesadasC,
+                                                        'paginasProcesadasM': ultimoDcaStockProductionLot.paginasProcesadasM,
+                                                        'renM': ultimoDcaStockProductionLot.renM,
+                                                        'renA': ultimoDcaStockProductionLot.renA,
+                                                        'renC': ultimoDcaStockProductionLot.renC,
+                                                        'reinicioDeContador': True
+                                                  })
+                else:
+                    negrot = 0
+                    rr = self.env['dcas.dcas'].create({
+                                                        
+                                                        'serie': c.id,
+                                                        'x_studio_tiquete': self.ticket_id.id,
+                                                        'x_studio_tickett': self.ticket_id.id,
+                                                        'fuente': q,
+                                                        'contadorColor': 0,
+                                                        'x_studio_contador_color_anterior': 0,
+                                                        'contadorMono': self.contadorMonoActualizado,
+                                                        'x_studio_contador_mono_anterior_1': negrot,
+                                                        'reinicioDeContador': True
+                                                  })
+                tipoEquipoTemp = str(c.x_studio_color_bn)
+                nombreSerieTemp = c.name
+                idTicketTemp = str(self.ticket_id.id)
+                fechaCreacionTemp = str(rr.create_date)
+                nombreUsuarioTemp = self.env.user.name
+                contadorAnteriorNegroTemp = str(negrot)
+                contadorAnteriorColorTemp = str(0)
+                #comentarioDeReinicio(tipoEquipo, serie, ticket_id, fecha, usuario, contadorAnteriorNegro, contadorAnteriorColor)
+                comentarioDeReinicio = self.comentarioDeReinicio(tipoEquipoTemp, nombreSerieTemp, idTicketTemp, fechaCreacionTemp, nombreUsuarioTemp, contadorAnteriorNegroTemp, contadorAnteriorColorTemp)
+                rr.comentarioDeReinicio = comentarioDeReinicio
+                q = 'dcas.dcas'
+                ultimoDcaDcasDcas = self.env['dcas.dcas'].search([['fuente', '=', q],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+                if ultimoDcaDcasDcas:
+                    negrot = ultimoDcaDcasDcas.contadorMono
+                    dcaFuente = self.env['dcas.dcas'].create({
+                                                        'x_studio_cliente': ultimoDcaDcasDcas.x_studio_cliente,
+                                                        'serie': c.id,
+                                                        'x_studio_color_o_bn': ultimoDcaDcasDcas.x_studio_color_o_bn,
+                                                        'x_studio_cartuchonefro': ultimoDcaDcasDcas.x_studio_cartuchonefro.id,
+                                                        'x_studio_rendimiento_negro': ultimoDcaDcasDcas.x_studio_rendimiento_negro,
+                                                        'x_studio_cartucho_amarillo': ultimoDcaDcasDcas.x_studio_cartucho_amarillo.id,
+                                                        'x_studio_rendimientoa': ultimoDcaDcasDcas.x_studio_rendimientoa,
+                                                        'x_studio_cartucho_cian_1': ultimoDcaDcasDcas.x_studio_cartucho_cian_1.id,
+                                                        'x_studio_rendimientoc': ultimoDcaDcasDcas.x_studio_rendimientoc,
+                                                        'x_studio_cartucho_magenta': ultimoDcaDcasDcas.x_studio_cartucho_magenta.id,
+                                                        'x_studio_rendimientom': ultimoDcaDcasDcas.x_studio_rendimientom,
+                                                        'x_studio_fecha': ultimoDcaDcasDcas.x_studio_fecha,
+                                                        'x_studio_tiquete': self.ticket_id.id,
+                                                        'x_studio_tickett': self.ticket_id.id,
+                                                        'fuente': q,
+
+                                                        'contadorColor': 0,
+                                                        'x_studio_contador_color_anterior': 0,
+                                                        'contadorMono': self.contadorMonoActualizado,
+                                                        'x_studio_contador_mono_anterior_1': negrot,
+
+                                                        'paginasProcesadasBN': ultimoDcaDcasDcas.paginasProcesadasBN,
+                                                        'porcentajeNegro': ultimoDcaDcasDcas.porcentajeNegro,
+                                                        'porcentajeAmarillo': ultimoDcaDcasDcas.porcentajeAmarillo,
+                                                        'porcentajeCian': ultimoDcaDcasDcas.porcentajeCian,
+                                                        'porcentajeMagenta': ultimoDcaDcasDcas.porcentajeMagenta,
+                                                        'x_studio_rendimiento': ultimoDcaDcasDcas.x_studio_rendimiento,
+                                                        'x_studio_rendimiento_color': ultimoDcaDcasDcas.x_studio_rendimiento_color,
+                                                        'x_studio_toner_negro': ultimoDcaDcasDcas.x_studio_toner_negro,
+                                                        'x_studio_toner_cian': ultimoDcaDcasDcas.x_studio_toner_cian,
+                                                        'x_studio_toner_magenta': ultimoDcaDcasDcas.x_studio_toner_magenta,
+                                                        'x_studio_toner_amarillo': ultimoDcaDcasDcas.x_studio_toner_amarillo,
+                                                        'nivelCA': ultimoDcaDcasDcas.nivelCA,
+                                                        'nivelMA': ultimoDcaDcasDcas.nivelMA,
+                                                        'nivelNA': ultimoDcaDcasDcas.nivelNA,
+                                                        'nivelAA': ultimoDcaDcasDcas.nivelAA,
+                                                        'contadorAnteriorNegro': ultimoDcaDcasDcas.contadorAnteriorNegro,
+                                                        'contadorAnteriorAmarillo': ultimoDcaDcasDcas.contadorAnteriorAmarillo,
+                                                        'contadorAnteriorMagenta': ultimoDcaDcasDcas.contadorAnteriorMagenta,
+                                                        'contadorAnteriorCian': ultimoDcaDcasDcas.contadorAnteriorCian,
+                                                        'paginasProcesadasA': ultimoDcaDcasDcas.paginasProcesadasA,
+                                                        'paginasProcesadasC': ultimoDcaDcasDcas.paginasProcesadasC,
+                                                        'paginasProcesadasM': ultimoDcaDcasDcas.paginasProcesadasM,
+                                                        'renM': ultimoDcaDcasDcas.renM,
+                                                        'renA': ultimoDcaDcasDcas.renA,
+                                                        'renC': ultimoDcaDcasDcas.renC,
+
+                                                        'reinicioDeContador': True
+                                                  })
+                else:
+                    negrot = 0
+                    dcaFuente = self.env['dcas.dcas'].create({
+                                                        
+                                                        'serie': c.id,
+                                                        'x_studio_tiquete': self.ticket_id.id,
+                                                        'x_studio_tickett': self.ticket_id.id,
+                                                        'fuente': q,
+                                                        'contadorColor': 0,
+                                                        'x_studio_contador_color_anterior': 0,
+                                                        'contadorMono': self.contadorMonoActualizado,
+                                                        'x_studio_contador_mono_anterior_1': negrot,
+                                                        'reinicioDeContador': True
+                                                  })
+                tipoEquipoTemp = str(c.x_studio_color_bn)
+                nombreSerieTemp = c.name
+                idTicketTemp = str(self.ticket_id.id)
+                fechaCreacionTemp = str(dcaFuente.create_date)
+                nombreUsuarioTemp = self.env.user.name
+                contadorAnteriorNegroTemp = str(negrot)
+                contadorAnteriorColorTemp = str(0)
+                comentarioDeReinicio = self.comentarioDeReinicio(tipoEquipoTemp, nombreSerieTemp, idTicketTemp, fechaCreacionTemp, nombreUsuarioTemp, contadorAnteriorNegroTemp, contadorAnteriorColorTemp)
+                dcaFuente.comentarioDeReinicio = comentarioDeReinicio
+                q = 'helpdesk.ticket'
+                ultimoDcaHelpdeskTicket = self.env['dcas.dcas'].search([['fuente', '=', q],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+                if ultimoDcaHelpdeskTicket:
+                    negrot = ultimoDcaHelpdeskTicket.contadorMono
+                    mesaFuente = self.env['dcas.dcas'].create({
+                                                        #'serie': c.id,
+                                                        #'contadorMono' : self.contadorBNActual,
+                                                        #'x_studio_contador_color_anterior': colort,
+                                                        #'contadorColor': self.contadorColorMesa
+                                                        #'x_studio_tickett': self.ticket_id.id,
+                                                        #'x_studio_contador_mono_anterior_1': negrot,
+                                                        #'x_studio_tiquete': self.ticket_id.id,
+                                                        #'x_studio_tickett': self.ticket_id.id,
+                                                        #'fuente': q,
+
+                                                        'x_studio_cliente': ultimoDcaHelpdeskTicket.x_studio_cliente,
+                                                        'serie': c.id,
+                                                        'x_studio_color_o_bn': ultimoDcaHelpdeskTicket.x_studio_color_o_bn,
+                                                        'x_studio_cartuchonefro': ultimoDcaHelpdeskTicket.x_studio_cartuchonefro.id,
+                                                        'x_studio_rendimiento_negro': ultimoDcaHelpdeskTicket.x_studio_rendimiento_negro,
+                                                        'x_studio_cartucho_amarillo': ultimoDcaHelpdeskTicket.x_studio_cartucho_amarillo.id,
+                                                        'x_studio_rendimientoa': ultimoDcaHelpdeskTicket.x_studio_rendimientoa,
+                                                        'x_studio_cartucho_cian_1': ultimoDcaHelpdeskTicket.x_studio_cartucho_cian_1.id,
+                                                        'x_studio_rendimientoc': ultimoDcaHelpdeskTicket.x_studio_rendimientoc,
+                                                        'x_studio_cartucho_magenta': ultimoDcaHelpdeskTicket.x_studio_cartucho_magenta.id,
+                                                        'x_studio_rendimientom': ultimoDcaHelpdeskTicket.x_studio_rendimientom,
+                                                        'x_studio_fecha': ultimoDcaHelpdeskTicket.x_studio_fecha,
+                                                        'x_studio_tiquete': self.ticket_id.id,
+                                                        'x_studio_tickett': self.ticket_id.id,
+                                                        'fuente': q,
+
+                                                        'contadorColor': 0,
+                                                        'x_studio_contador_color_anterior': 0,
+                                                        'contadorMono': self.contadorMonoActualizado,
+                                                        'x_studio_contador_mono_anterior_1': negrot,
+
+                                                        'paginasProcesadasBN': ultimoDcaHelpdeskTicket.paginasProcesadasBN,
+                                                        'porcentajeNegro': ultimoDcaHelpdeskTicket.porcentajeNegro,
+                                                        'porcentajeAmarillo': ultimoDcaHelpdeskTicket.porcentajeAmarillo,
+                                                        'porcentajeCian': ultimoDcaHelpdeskTicket.porcentajeCian,
+                                                        'porcentajeMagenta': ultimoDcaHelpdeskTicket.porcentajeMagenta,
+                                                        'x_studio_rendimiento': ultimoDcaHelpdeskTicket.x_studio_rendimiento,
+                                                        'x_studio_rendimiento_color': ultimoDcaHelpdeskTicket.x_studio_rendimiento_color,
+                                                        'x_studio_toner_negro': ultimoDcaHelpdeskTicket.x_studio_toner_negro,
+                                                        'x_studio_toner_cian': ultimoDcaHelpdeskTicket.x_studio_toner_cian,
+                                                        'x_studio_toner_magenta': ultimoDcaHelpdeskTicket.x_studio_toner_magenta,
+                                                        'x_studio_toner_amarillo': ultimoDcaHelpdeskTicket.x_studio_toner_amarillo,
+                                                        'nivelCA': ultimoDcaHelpdeskTicket.nivelCA,
+                                                        'nivelMA': ultimoDcaHelpdeskTicket.nivelMA,
+                                                        'nivelNA': ultimoDcaHelpdeskTicket.nivelNA,
+                                                        'nivelAA': ultimoDcaHelpdeskTicket.nivelAA,
+                                                        'contadorAnteriorNegro': ultimoDcaHelpdeskTicket.contadorAnteriorNegro,
+                                                        'contadorAnteriorAmarillo': ultimoDcaHelpdeskTicket.contadorAnteriorAmarillo,
+                                                        'contadorAnteriorMagenta': ultimoDcaHelpdeskTicket.contadorAnteriorMagenta,
+                                                        'contadorAnteriorCian': ultimoDcaHelpdeskTicket.contadorAnteriorCian,
+                                                        'paginasProcesadasA': ultimoDcaHelpdeskTicket.paginasProcesadasA,
+                                                        'paginasProcesadasC': ultimoDcaHelpdeskTicket.paginasProcesadasC,
+                                                        'paginasProcesadasM': ultimoDcaHelpdeskTicket.paginasProcesadasM,
+                                                        'renM': ultimoDcaHelpdeskTicket.renM,
+                                                        'renA': ultimoDcaHelpdeskTicket.renA,
+                                                        'renC': ultimoDcaHelpdeskTicket.renC,
+                                                        'reinicioDeContador': True
+                                                  })
+                else:
+                    negrot = 0
+                    mesaFuente = self.env['dcas.dcas'].create({
+                                                        
+                                                        'serie': c.id,
+                                                        'x_studio_tiquete': self.ticket_id.id,
+                                                        'x_studio_tickett': self.ticket_id.id,
+                                                        'fuente': q,
+                                                        'contadorColor': 0,
+                                                        'x_studio_contador_color_anterior': 0,
+                                                        'contadorMono': self.contadorMonoActualizado,
+                                                        'x_studio_contador_mono_anterior_1': negrot,
+                                                        'reinicioDeContador': True
+                                                  })
+                tipoEquipoTemp = str(c.x_studio_color_bn)
+                nombreSerieTemp = c.name
+                idTicketTemp = str(self.ticket_id.id)
+                fechaCreacionTemp = str(mesaFuente.create_date)
+                nombreUsuarioTemp = self.env.user.name
+                contadorAnteriorNegroTemp = str(negrot)
+                contadorAnteriorColorTemp = str(0)
+                comentarioDeReinicio = self.comentarioDeReinicio(tipoEquipoTemp, nombreSerieTemp, idTicketTemp, fechaCreacionTemp, nombreUsuarioTemp, contadorAnteriorNegroTemp, contadorAnteriorColorTemp)
+                mesaFuente.comentarioDeReinicio = comentarioDeReinicio
+                q = 'tfs.tfs'
+                ultimoDcaTfsTfs = self.env['dcas.dcas'].search([['fuente', '=', q],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+                if ultimoDcaTfsTfs:
+                    negrot = ultimoDcaTfsTfs.contadorMono
+                    tfsFuente = self.env['dcas.dcas'].create({
+                                                        #'serie': c.id,
+                                                        #'contadorMono' : self.contadorBNActual,
+                                                        #'x_studio_contador_color_anterior': colort,
+                                                        #'contadorColor': self.contadorColorMesa
+                                                        #'x_studio_tickett': self.ticket_id.id,
+                                                        #'x_studio_contador_mono_anterior_1': negrot,
+                                                        #'x_studio_tiquete': self.ticket_id.id,
+                                                        #'x_studio_tickett': self.ticket_id.id,
+                                                        #'fuente': q,
+
+                                                        'x_studio_cliente': ultimoDcaTfsTfs.x_studio_cliente,
+                                                        'serie': c.id,
+                                                        'x_studio_color_o_bn': ultimoDcaTfsTfs.x_studio_color_o_bn,
+                                                        'x_studio_cartuchonefro': ultimoDcaTfsTfs.x_studio_cartuchonefro.id,
+                                                        'x_studio_rendimiento_negro': ultimoDcaTfsTfs.x_studio_rendimiento_negro,
+                                                        'x_studio_cartucho_amarillo': ultimoDcaTfsTfs.x_studio_cartucho_amarillo.id,
+                                                        'x_studio_rendimientoa': ultimoDcaTfsTfs.x_studio_rendimientoa,
+                                                        'x_studio_cartucho_cian_1': ultimoDcaTfsTfs.x_studio_cartucho_cian_1.id,
+                                                        'x_studio_rendimientoc': ultimoDcaTfsTfs.x_studio_rendimientoc,
+                                                        'x_studio_cartucho_magenta': ultimoDcaTfsTfs.x_studio_cartucho_magenta.id,
+                                                        'x_studio_rendimientom': ultimoDcaTfsTfs.x_studio_rendimientom,
+                                                        'x_studio_fecha': ultimoDcaTfsTfs.x_studio_fecha,
+                                                        'x_studio_tiquete': self.ticket_id.id,
+                                                        'x_studio_tickett': self.ticket_id.id,
+                                                        'fuente': q,
+
+                                                        'contadorColor': 0,
+                                                        'x_studio_contador_color_anterior': 0,
+                                                        'contadorMono': self.contadorMonoActualizado,
+                                                        'x_studio_contador_mono_anterior_1': negrot,
+
+                                                        'paginasProcesadasBN': ultimoDcaTfsTfs.paginasProcesadasBN,
+                                                        'porcentajeNegro': ultimoDcaTfsTfs.porcentajeNegro,
+                                                        'porcentajeAmarillo': ultimoDcaTfsTfs.porcentajeAmarillo,
+                                                        'porcentajeCian': ultimoDcaTfsTfs.porcentajeCian,
+                                                        'porcentajeMagenta': ultimoDcaTfsTfs.porcentajeMagenta,
+                                                        'x_studio_rendimiento': ultimoDcaTfsTfs.x_studio_rendimiento,
+                                                        'x_studio_rendimiento_color': ultimoDcaTfsTfs.x_studio_rendimiento_color,
+                                                        'x_studio_toner_negro': ultimoDcaTfsTfs.x_studio_toner_negro,
+                                                        'x_studio_toner_cian': ultimoDcaTfsTfs.x_studio_toner_cian,
+                                                        'x_studio_toner_magenta': ultimoDcaTfsTfs.x_studio_toner_magenta,
+                                                        'x_studio_toner_amarillo': ultimoDcaTfsTfs.x_studio_toner_amarillo,
+                                                        'nivelCA': ultimoDcaTfsTfs.nivelCA,
+                                                        'nivelMA': ultimoDcaTfsTfs.nivelMA,
+                                                        'nivelNA': ultimoDcaTfsTfs.nivelNA,
+                                                        'nivelAA': ultimoDcaTfsTfs.nivelAA,
+                                                        'contadorAnteriorNegro': ultimoDcaTfsTfs.contadorAnteriorNegro,
+                                                        'contadorAnteriorAmarillo': ultimoDcaTfsTfs.contadorAnteriorAmarillo,
+                                                        'contadorAnteriorMagenta': ultimoDcaTfsTfs.contadorAnteriorMagenta,
+                                                        'contadorAnteriorCian': ultimoDcaTfsTfs.contadorAnteriorCian,
+                                                        'paginasProcesadasA': ultimoDcaTfsTfs.paginasProcesadasA,
+                                                        'paginasProcesadasC': ultimoDcaTfsTfs.paginasProcesadasC,
+                                                        'paginasProcesadasM': ultimoDcaTfsTfs.paginasProcesadasM,
+                                                        'renM': ultimoDcaTfsTfs.renM,
+                                                        'renA': ultimoDcaTfsTfs.renA,
+                                                        'renC': ultimoDcaTfsTfs.renC,
+                                                        'reinicioDeContador': True
+                                                  })
+                else:
+                    negrot = 0
+                    tfsFuente = self.env['dcas.dcas'].create({
+                                                        
+                                                        'serie': c.id,
+                                                        'x_studio_tiquete': self.ticket_id.id,
+                                                        'x_studio_tickett': self.ticket_id.id,
+                                                        'fuente': q,
+                                                        'contadorColor': 0,
+                                                        'x_studio_contador_color_anterior': 0,
+                                                        'contadorMono': self.contadorMonoActualizado,
+                                                        'x_studio_contador_mono_anterior_1': negrot,
+                                                        'reinicioDeContador': True
+                                                  })
+                tipoEquipoTemp = str(c.x_studio_color_bn)
+                nombreSerieTemp = c.name
+                idTicketTemp = str(self.ticket_id.id)
+                fechaCreacionTemp = str(tfsFuente.create_date)
+                nombreUsuarioTemp = self.env.user.name
+                contadorAnteriorNegroTemp = str(negrot)
+                contadorAnteriorColorTemp = str(0)
+                comentarioDeReinicio = self.comentarioDeReinicio(tipoEquipoTemp, nombreSerieTemp, idTicketTemp, fechaCreacionTemp, nombreUsuarioTemp, contadorAnteriorNegroTemp, contadorAnteriorColorTemp)
+                tfsFuente.comentarioDeReinicio = comentarioDeReinicio
+                
+                self.env['helpdesk.diagnostico'].create({
+                                                            'ticketRelacion':self.ticket_id.x_studio_id_ticket,
+                                                            'estadoTicket': 'Reinicio de contadores en el estado ' + self.estado,
+                                                            'evidencia': [(6,0,self.evidencia.ids)],
+                                                            'mostrarComentario': self.check,
+                                                            'write_uid':  self.env.user.name,
+                                                            'comentario': 'Reinicio de contadores.\n Contador BN anterior: ' + str(negroMesa) + '\nContador BN capturado: ' + str(self.contadorMonoActualizado) + '\n\n' + self.comentario
+                                                        })
+                self.ticket_id.write({'contadores_anteriores': '</br>Equipo BN o Color: ' + str(self.tipoEquipo) + ' </br></br>Contador BN: ' + str(self.contadorMonoActualizado) + '</br></br>Contador Color: ' + str(self.contadorColorActualizado)
+                                    , 'x_studio_contador_bn': int(negroMesa)
+                                    , 'x_studio_contador_bn_a_capturar': int(self.contadorMonoActualizado)
+                                    , 'x_studio_contador_color': 0
+                                    , 'x_studio_contador_color_a_capturar': 0
+                                    })
+                mensajeTitulo = "Contador reiniciado!!!"
+                mensajeCuerpo = "Se reinicio el contador del equipo " + str(c.name) + "."
+                wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
+                view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+                return {
+                        'name': _(mensajeTitulo),
+                        'type': 'ir.actions.act_window',
+                        'view_type': 'form',
+                        'view_mode': 'form',
+                        'res_model': 'helpdesk.alerta',
+                        'views': [(view.id, 'form')],
+                        'view_id': view.id,
+                        'target': 'new',
+                        'res_id': wiz.id,
+                        'context': self.env.context,
+                        }
+                #else:
+                #    raise exceptions.ValidationError("Contador Monocromatico Menor")                                   
+            if str(c.x_studio_color_bn) != 'B/N':
+                #if int(self.contadorColorMesa) >= int(c.x_studio_contador_color) and int(self.contadorBNActual) >= int(c.x_studio_contador_bn):                      
+                if self.ticket_id.team_id.id == 8:
+                    negrot = c.x_studio_contador_bn
+                    colort = c.x_studio_contador_color
+                else:
+                    negrot = c.x_studio_contador_bn_mesa
+                    colort = c.x_studio_contador_color_mesa
+
+                negroMesa = 0
+                colorMesa = 0
+                comentarioDeReinicio = """ """
+
+                rr = ''
+                dcaFuente = ''
+                mesaFuente = ''
+                tfsFuente = ''
+
+                ultimoDcaStockProductionLot = self.env['dcas.dcas'].search([['fuente', '=', q],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+                if ultimoDcaStockProductionLot:
+                    negrot = ultimoDcaStockProductionLot.contadorMono
+                    colort = ultimoDcaStockProductionLot.contadorColor
+                    negroMesa = ultimoDcaStockProductionLot.contadorMono
+                    colorMesa = ultimoDcaStockProductionLot.contadorColor
+                    rr = self.env['dcas.dcas'].create({
+                                                        'x_studio_cliente': ultimoDcaStockProductionLot.x_studio_cliente,
+                                                        'serie': c.id,
+                                                        'x_studio_color_o_bn': ultimoDcaStockProductionLot.x_studio_color_o_bn,
+                                                        'x_studio_cartuchonefro': ultimoDcaStockProductionLot.x_studio_cartuchonefro.id,
+                                                        'x_studio_rendimiento_negro': ultimoDcaStockProductionLot.x_studio_rendimiento_negro,
+                                                        'x_studio_cartucho_amarillo': ultimoDcaStockProductionLot.x_studio_cartucho_amarillo.id,
+                                                        'x_studio_rendimientoa': ultimoDcaStockProductionLot.x_studio_rendimientoa,
+                                                        'x_studio_cartucho_cian_1': ultimoDcaStockProductionLot.x_studio_cartucho_cian_1.id,
+                                                        'x_studio_rendimientoc': ultimoDcaStockProductionLot.x_studio_rendimientoc,
+                                                        'x_studio_cartucho_magenta': ultimoDcaStockProductionLot.x_studio_cartucho_magenta.id,
+                                                        'x_studio_rendimientom': ultimoDcaStockProductionLot.x_studio_rendimientom,
+                                                        'x_studio_fecha': ultimoDcaStockProductionLot.x_studio_fecha,
+                                                        'x_studio_tiquete': self.ticket_id.id,
+                                                        'x_studio_tickett': self.ticket_id.id,
+                                                        'fuente': q,
+
+                                                        'contadorColor': self.contadorColorActualizado,
+                                                        'x_studio_contador_color_anterior': colort,
+                                                        'contadorMono': self.contadorMonoActualizado,
+                                                        'x_studio_contador_mono_anterior_1': negrot,
+
+                                                        'paginasProcesadasBN': ultimoDcaStockProductionLot.paginasProcesadasBN,
+                                                        'porcentajeNegro': ultimoDcaStockProductionLot.porcentajeNegro,
+                                                        'porcentajeAmarillo': ultimoDcaStockProductionLot.porcentajeAmarillo,
+                                                        'porcentajeCian': ultimoDcaStockProductionLot.porcentajeCian,
+                                                        'porcentajeMagenta': ultimoDcaStockProductionLot.porcentajeMagenta,
+                                                        'x_studio_rendimiento': ultimoDcaStockProductionLot.x_studio_rendimiento,
+                                                        'x_studio_rendimiento_color': ultimoDcaStockProductionLot.x_studio_rendimiento_color,
+                                                        'x_studio_toner_negro': ultimoDcaStockProductionLot.x_studio_toner_negro,
+                                                        'x_studio_toner_cian': ultimoDcaStockProductionLot.x_studio_toner_cian,
+                                                        'x_studio_toner_magenta': ultimoDcaStockProductionLot.x_studio_toner_magenta,
+                                                        'x_studio_toner_amarillo': ultimoDcaStockProductionLot.x_studio_toner_amarillo,
+                                                        'nivelCA': ultimoDcaStockProductionLot.nivelCA,
+                                                        'nivelMA': ultimoDcaStockProductionLot.nivelMA,
+                                                        'nivelNA': ultimoDcaStockProductionLot.nivelNA,
+                                                        'nivelAA': ultimoDcaStockProductionLot.nivelAA,
+                                                        'contadorAnteriorNegro': ultimoDcaStockProductionLot.contadorAnteriorNegro,
+                                                        'contadorAnteriorAmarillo': ultimoDcaStockProductionLot.contadorAnteriorAmarillo,
+                                                        'contadorAnteriorMagenta': ultimoDcaStockProductionLot.contadorAnteriorMagenta,
+                                                        'contadorAnteriorCian': ultimoDcaStockProductionLot.contadorAnteriorCian,
+                                                        'paginasProcesadasA': ultimoDcaStockProductionLot.paginasProcesadasA,
+                                                        'paginasProcesadasC': ultimoDcaStockProductionLot.paginasProcesadasC,
+                                                        'paginasProcesadasM': ultimoDcaStockProductionLot.paginasProcesadasM,
+                                                        'renM': ultimoDcaStockProductionLot.renM,
+                                                        'renA': ultimoDcaStockProductionLot.renA,
+                                                        'renC': ultimoDcaStockProductionLot.renC,
+
+                                                        'reinicioDeContador': True
+                                                  })
+                else:
+                    negrot = 0
+                    colort = 0
+                    rr = self.env['dcas.dcas'].create({
+                                                        'serie': c.id,
+                                                        'x_studio_tiquete': self.ticket_id.id,
+                                                        'x_studio_tickett': self.ticket_id.id,
+                                                        'fuente': q,
+                                                        'contadorColor': self.contadorColorActualizado,
+                                                        'x_studio_contador_color_anterior': colort,
+                                                        'contadorMono': self.contadorMonoActualizado,
+                                                        'x_studio_contador_mono_anterior_1': negrot,
+                                                        'reinicioDeContador': True
+                                                  })
+                tipoEquipoTemp = str(c.x_studio_color_bn)
+                nombreSerieTemp = c.name
+                idTicketTemp = str(self.ticket_id.id)
+                fechaCreacionTemp = str(rr.create_date)
+                nombreUsuarioTemp = self.env.user.name
+                contadorAnteriorNegroTemp = str(negrot)
+                contadorAnteriorColorTemp = str(colort)
+                comentarioDeReinicio = self.comentarioDeReinicio(tipoEquipoTemp, nombreSerieTemp, idTicketTemp, fechaCreacionTemp, nombreUsuarioTemp, contadorAnteriorNegroTemp, contadorAnteriorColorTemp)
+                rr.comentarioDeReinicio = comentarioDeReinicio
+                q = 'dcas.dcas'
+                ultimoDcaDcasDcas = self.env['dcas.dcas'].search([['fuente', '=', q],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+                if ultimoDcaDcasDcas:
+                    negrot = ultimoDcaDcasDcas.contadorMono
+                    colort = ultimoDcaDcasDcas.contadorColor
+                    dcaFuente = self.env['dcas.dcas'].create({
+                                                        'x_studio_cliente': ultimoDcaDcasDcas.x_studio_cliente,
+                                                        'serie': c.id,
+                                                        'x_studio_color_o_bn': ultimoDcaDcasDcas.x_studio_color_o_bn,
+                                                        'x_studio_cartuchonefro': ultimoDcaDcasDcas.x_studio_cartuchonefro.id,
+                                                        'x_studio_rendimiento_negro': ultimoDcaDcasDcas.x_studio_rendimiento_negro,
+                                                        'x_studio_cartucho_amarillo': ultimoDcaDcasDcas.x_studio_cartucho_amarillo.id,
+                                                        'x_studio_rendimientoa': ultimoDcaDcasDcas.x_studio_rendimientoa,
+                                                        'x_studio_cartucho_cian_1': ultimoDcaDcasDcas.x_studio_cartucho_cian_1.id,
+                                                        'x_studio_rendimientoc': ultimoDcaDcasDcas.x_studio_rendimientoc,
+                                                        'x_studio_cartucho_magenta': ultimoDcaDcasDcas.x_studio_cartucho_magenta.id,
+                                                        'x_studio_rendimientom': ultimoDcaDcasDcas.x_studio_rendimientom,
+                                                        'x_studio_fecha': ultimoDcaDcasDcas.x_studio_fecha,
+                                                        'x_studio_tiquete': self.ticket_id.id,
+                                                        'x_studio_tickett': self.ticket_id.id,
+                                                        'fuente': q,
+
+                                                        'contadorColor': self.contadorColorActualizado,
+                                                        'x_studio_contador_color_anterior': colort,
+                                                        'contadorMono': self.contadorMonoActualizado,
+                                                        'x_studio_contador_mono_anterior_1': negrot,
+
+                                                        'paginasProcesadasBN': ultimoDcaDcasDcas.paginasProcesadasBN,
+                                                        'porcentajeNegro': ultimoDcaDcasDcas.porcentajeNegro,
+                                                        'porcentajeAmarillo': ultimoDcaDcasDcas.porcentajeAmarillo,
+                                                        'porcentajeCian': ultimoDcaDcasDcas.porcentajeCian,
+                                                        'porcentajeMagenta': ultimoDcaDcasDcas.porcentajeMagenta,
+                                                        'x_studio_rendimiento': ultimoDcaDcasDcas.x_studio_rendimiento,
+                                                        'x_studio_rendimiento_color': ultimoDcaDcasDcas.x_studio_rendimiento_color,
+                                                        'x_studio_toner_negro': ultimoDcaDcasDcas.x_studio_toner_negro,
+                                                        'x_studio_toner_cian': ultimoDcaDcasDcas.x_studio_toner_cian,
+                                                        'x_studio_toner_magenta': ultimoDcaDcasDcas.x_studio_toner_magenta,
+                                                        'x_studio_toner_amarillo': ultimoDcaDcasDcas.x_studio_toner_amarillo,
+                                                        'nivelCA': ultimoDcaDcasDcas.nivelCA,
+                                                        'nivelMA': ultimoDcaDcasDcas.nivelMA,
+                                                        'nivelNA': ultimoDcaDcasDcas.nivelNA,
+                                                        'nivelAA': ultimoDcaDcasDcas.nivelAA,
+                                                        'contadorAnteriorNegro': ultimoDcaDcasDcas.contadorAnteriorNegro,
+                                                        'contadorAnteriorAmarillo': ultimoDcaDcasDcas.contadorAnteriorAmarillo,
+                                                        'contadorAnteriorMagenta': ultimoDcaDcasDcas.contadorAnteriorMagenta,
+                                                        'contadorAnteriorCian': ultimoDcaDcasDcas.contadorAnteriorCian,
+                                                        'paginasProcesadasA': ultimoDcaDcasDcas.paginasProcesadasA,
+                                                        'paginasProcesadasC': ultimoDcaDcasDcas.paginasProcesadasC,
+                                                        'paginasProcesadasM': ultimoDcaDcasDcas.paginasProcesadasM,
+                                                        'renM': ultimoDcaDcasDcas.renM,
+                                                        'renA': ultimoDcaDcasDcas.renA,
+                                                        'renC': ultimoDcaDcasDcas.renC,
+
+                                                        'reinicioDeContador': True
+                                                  })
+                else:
+                    negrot = 0
+                    colort = 0
+                    dcaFuente = self.env['dcas.dcas'].create({
+                                                        'serie': c.id,
+                                                        'x_studio_tiquete': self.ticket_id.id,
+                                                        'x_studio_tickett': self.ticket_id.id,
+                                                        'fuente': q,
+                                                        'contadorColor': self.contadorColorActualizado,
+                                                        'x_studio_contador_color_anterior': colort,
+                                                        'contadorMono': self.contadorMonoActualizado,
+                                                        'x_studio_contador_mono_anterior_1': negrot,
+                                                        'reinicioDeContador': True
+                                                  })
+                tipoEquipoTemp = str(c.x_studio_color_bn)
+                nombreSerieTemp = c.name
+                idTicketTemp = str(self.ticket_id.id)
+                fechaCreacionTemp = str(dcaFuente.create_date)
+                nombreUsuarioTemp = self.env.user.name
+                contadorAnteriorNegroTemp = str(negrot)
+                contadorAnteriorColorTemp = str(colort)
+                comentarioDeReinicio = self.comentarioDeReinicio(tipoEquipoTemp, nombreSerieTemp, idTicketTemp, fechaCreacionTemp, nombreUsuarioTemp, contadorAnteriorNegroTemp, contadorAnteriorColorTemp)
+                dcaFuente.comentarioDeReinicio = comentarioDeReinicio
+                q = 'helpdesk.ticket'
+                ultimoDcaHelpdeskTicket = self.env['dcas.dcas'].search([['fuente', '=', q],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+                if ultimoDcaHelpdeskTicket:
+                    negrot = ultimoDcaHelpdeskTicket.contadorMono
+                    colort = ultimoDcaHelpdeskTicket.contadorColor
+                    mesaFuente = self.env['dcas.dcas'].create({
+                                                        'x_studio_cliente': ultimoDcaHelpdeskTicket.x_studio_cliente,
+                                                        'serie': c.id,
+                                                        'x_studio_color_o_bn': ultimoDcaHelpdeskTicket.x_studio_color_o_bn,
+                                                        'x_studio_cartuchonefro': ultimoDcaHelpdeskTicket.x_studio_cartuchonefro.id,
+                                                        'x_studio_rendimiento_negro': ultimoDcaHelpdeskTicket.x_studio_rendimiento_negro,
+                                                        'x_studio_cartucho_amarillo': ultimoDcaHelpdeskTicket.x_studio_cartucho_amarillo.id,
+                                                        'x_studio_rendimientoa': ultimoDcaHelpdeskTicket.x_studio_rendimientoa,
+                                                        'x_studio_cartucho_cian_1': ultimoDcaHelpdeskTicket.x_studio_cartucho_cian_1.id,
+                                                        'x_studio_rendimientoc': ultimoDcaHelpdeskTicket.x_studio_rendimientoc,
+                                                        'x_studio_cartucho_magenta': ultimoDcaHelpdeskTicket.x_studio_cartucho_magenta.id,
+                                                        'x_studio_rendimientom': ultimoDcaHelpdeskTicket.x_studio_rendimientom,
+                                                        'x_studio_fecha': ultimoDcaHelpdeskTicket.x_studio_fecha,
+                                                        'x_studio_tiquete': self.ticket_id.id,
+                                                        'x_studio_tickett': self.ticket_id.id,
+                                                        'fuente': q,
+
+                                                        'contadorColor': self.contadorColorActualizado,
+                                                        'x_studio_contador_color_anterior': colort,
+                                                        'contadorMono': self.contadorMonoActualizado,
+                                                        'x_studio_contador_mono_anterior_1': negrot,
+
+                                                        'paginasProcesadasBN': ultimoDcaHelpdeskTicket.paginasProcesadasBN,
+                                                        'porcentajeNegro': ultimoDcaHelpdeskTicket.porcentajeNegro,
+                                                        'porcentajeAmarillo': ultimoDcaHelpdeskTicket.porcentajeAmarillo,
+                                                        'porcentajeCian': ultimoDcaHelpdeskTicket.porcentajeCian,
+                                                        'porcentajeMagenta': ultimoDcaHelpdeskTicket.porcentajeMagenta,
+                                                        'x_studio_rendimiento': ultimoDcaHelpdeskTicket.x_studio_rendimiento,
+                                                        'x_studio_rendimiento_color': ultimoDcaHelpdeskTicket.x_studio_rendimiento_color,
+                                                        'x_studio_toner_negro': ultimoDcaHelpdeskTicket.x_studio_toner_negro,
+                                                        'x_studio_toner_cian': ultimoDcaHelpdeskTicket.x_studio_toner_cian,
+                                                        'x_studio_toner_magenta': ultimoDcaHelpdeskTicket.x_studio_toner_magenta,
+                                                        'x_studio_toner_amarillo': ultimoDcaHelpdeskTicket.x_studio_toner_amarillo,
+                                                        'nivelCA': ultimoDcaHelpdeskTicket.nivelCA,
+                                                        'nivelMA': ultimoDcaHelpdeskTicket.nivelMA,
+                                                        'nivelNA': ultimoDcaHelpdeskTicket.nivelNA,
+                                                        'nivelAA': ultimoDcaHelpdeskTicket.nivelAA,
+                                                        'contadorAnteriorNegro': ultimoDcaHelpdeskTicket.contadorAnteriorNegro,
+                                                        'contadorAnteriorAmarillo': ultimoDcaHelpdeskTicket.contadorAnteriorAmarillo,
+                                                        'contadorAnteriorMagenta': ultimoDcaHelpdeskTicket.contadorAnteriorMagenta,
+                                                        'contadorAnteriorCian': ultimoDcaHelpdeskTicket.contadorAnteriorCian,
+                                                        'paginasProcesadasA': ultimoDcaHelpdeskTicket.paginasProcesadasA,
+                                                        'paginasProcesadasC': ultimoDcaHelpdeskTicket.paginasProcesadasC,
+                                                        'paginasProcesadasM': ultimoDcaHelpdeskTicket.paginasProcesadasM,
+                                                        'renM': ultimoDcaHelpdeskTicket.renM,
+                                                        'renA': ultimoDcaHelpdeskTicket.renA,
+                                                        'renC': ultimoDcaHelpdeskTicket.renC,
+                                                        'reinicioDeContador': True
+                                                  })
+                else:
+                    negrot = 0
+                    colort = 0
+                    mesaFuente = self.env['dcas.dcas'].create({
+                                                        'serie': c.id,
+                                                        'x_studio_tiquete': self.ticket_id.id,
+                                                        'x_studio_tickett': self.ticket_id.id,
+                                                        'fuente': q,
+                                                        'contadorColor': self.contadorColorActualizado,
+                                                        'x_studio_contador_color_anterior': colort,
+                                                        'contadorMono': self.contadorMonoActualizado,
+                                                        'x_studio_contador_mono_anterior_1': negrot,
+                                                        'reinicioDeContador': True
+                                                  })
+                tipoEquipoTemp = str(c.x_studio_color_bn)
+                nombreSerieTemp = c.name
+                idTicketTemp = str(self.ticket_id.id)
+                fechaCreacionTemp = str(mesaFuente.create_date)
+                nombreUsuarioTemp = self.env.user.name
+                contadorAnteriorNegroTemp = str(negrot)
+                contadorAnteriorColorTemp = str(colort)
+                comentarioDeReinicio = self.comentarioDeReinicio(tipoEquipoTemp, nombreSerieTemp, idTicketTemp, fechaCreacionTemp, nombreUsuarioTemp, contadorAnteriorNegroTemp, contadorAnteriorColorTemp)
+                mesaFuente.comentarioDeReinicio = comentarioDeReinicio
+                q = 'tfs.tfs'
+                ultimoDcaTfsTfs = self.env['dcas.dcas'].search([['fuente', '=', q],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+                if ultimoDcaTfsTfs:
+                    negrot = ultimoDcaTfsTfs.contadorMono
+                    colort = ultimoDcaTfsTfs.contadorColor
+                    tfsFuente = self.env['dcas.dcas'].create({
+                                                        'x_studio_cliente': ultimoDcaTfsTfs.x_studio_cliente,
+                                                        'serie': c.id,
+                                                        'x_studio_color_o_bn': ultimoDcaTfsTfs.x_studio_color_o_bn,
+                                                        'x_studio_cartuchonefro': ultimoDcaTfsTfs.x_studio_cartuchonefro.id,
+                                                        'x_studio_rendimiento_negro': ultimoDcaTfsTfs.x_studio_rendimiento_negro,
+                                                        'x_studio_cartucho_amarillo': ultimoDcaTfsTfs.x_studio_cartucho_amarillo.id,
+                                                        'x_studio_rendimientoa': ultimoDcaTfsTfs.x_studio_rendimientoa,
+                                                        'x_studio_cartucho_cian_1': ultimoDcaTfsTfs.x_studio_cartucho_cian_1.id,
+                                                        'x_studio_rendimientoc': ultimoDcaTfsTfs.x_studio_rendimientoc,
+                                                        'x_studio_cartucho_magenta': ultimoDcaTfsTfs.x_studio_cartucho_magenta.id,
+                                                        'x_studio_rendimientom': ultimoDcaTfsTfs.x_studio_rendimientom,
+                                                        'x_studio_fecha': ultimoDcaTfsTfs.x_studio_fecha,
+                                                        'x_studio_tiquete': self.ticket_id.id,
+                                                        'x_studio_tickett': self.ticket_id.id,
+                                                        'fuente': q,
+
+                                                        'contadorColor': self.contadorColorActualizado,
+                                                        'x_studio_contador_color_anterior': colort,
+                                                        'contadorMono': self.contadorMonoActualizado,
+                                                        'x_studio_contador_mono_anterior_1': negrot,
+
+                                                        'paginasProcesadasBN': ultimoDcaTfsTfs.paginasProcesadasBN,
+                                                        'porcentajeNegro': ultimoDcaTfsTfs.porcentajeNegro,
+                                                        'porcentajeAmarillo': ultimoDcaTfsTfs.porcentajeAmarillo,
+                                                        'porcentajeCian': ultimoDcaTfsTfs.porcentajeCian,
+                                                        'porcentajeMagenta': ultimoDcaTfsTfs.porcentajeMagenta,
+                                                        'x_studio_rendimiento': ultimoDcaTfsTfs.x_studio_rendimiento,
+                                                        'x_studio_rendimiento_color': ultimoDcaTfsTfs.x_studio_rendimiento_color,
+                                                        'x_studio_toner_negro': ultimoDcaTfsTfs.x_studio_toner_negro,
+                                                        'x_studio_toner_cian': ultimoDcaTfsTfs.x_studio_toner_cian,
+                                                        'x_studio_toner_magenta': ultimoDcaTfsTfs.x_studio_toner_magenta,
+                                                        'x_studio_toner_amarillo': ultimoDcaTfsTfs.x_studio_toner_amarillo,
+                                                        'nivelCA': ultimoDcaTfsTfs.nivelCA,
+                                                        'nivelMA': ultimoDcaTfsTfs.nivelMA,
+                                                        'nivelNA': ultimoDcaTfsTfs.nivelNA,
+                                                        'nivelAA': ultimoDcaTfsTfs.nivelAA,
+                                                        'contadorAnteriorNegro': ultimoDcaTfsTfs.contadorAnteriorNegro,
+                                                        'contadorAnteriorAmarillo': ultimoDcaTfsTfs.contadorAnteriorAmarillo,
+                                                        'contadorAnteriorMagenta': ultimoDcaTfsTfs.contadorAnteriorMagenta,
+                                                        'contadorAnteriorCian': ultimoDcaTfsTfs.contadorAnteriorCian,
+                                                        'paginasProcesadasA': ultimoDcaTfsTfs.paginasProcesadasA,
+                                                        'paginasProcesadasC': ultimoDcaTfsTfs.paginasProcesadasC,
+                                                        'paginasProcesadasM': ultimoDcaTfsTfs.paginasProcesadasM,
+                                                        'renM': ultimoDcaTfsTfs.renM,
+                                                        'renA': ultimoDcaTfsTfs.renA,
+                                                        'renC': ultimoDcaTfsTfs.renC,
+                                                        'reinicioDeContador': True
+                                                  })
+                else:
+                    negrot = 0
+                    colort = 0
+                    tfsFuente = self.env['dcas.dcas'].create({
+                                                        'serie': c.id,
+                                                        'x_studio_tiquete': self.ticket_id.id,
+                                                        'x_studio_tickett': self.ticket_id.id,
+                                                        'fuente': q,
+                                                        'contadorColor': self.contadorColorActualizado,
+                                                        'x_studio_contador_color_anterior': colort,
+                                                        'contadorMono': self.contadorMonoActualizado,
+                                                        'x_studio_contador_mono_anterior_1': negrot,
+                                                        'reinicioDeContador': True
+                                                  })
+                tipoEquipoTemp = str(c.x_studio_color_bn)
+                nombreSerieTemp = c.name
+                idTicketTemp = str(self.ticket_id.id)
+                fechaCreacionTemp = str(tfsFuente.create_date)
+                nombreUsuarioTemp = self.env.user.name
+                contadorAnteriorNegroTemp = str(negrot)
+                contadorAnteriorColorTemp = str(colort)
+                comentarioDeReinicio = self.comentarioDeReinicio(tipoEquipoTemp, nombreSerieTemp, idTicketTemp, fechaCreacionTemp, nombreUsuarioTemp, contadorAnteriorNegroTemp, contadorAnteriorColorTemp)
+                tfsFuente.comentarioDeReinicio = comentarioDeReinicio
+                
+                self.env['helpdesk.diagnostico'].create({
+                                                            'ticketRelacion':self.ticket_id.x_studio_id_ticket,
+                                                            'estadoTicket': 'Reinicio de contadores en el estado ' + self.estado,
+                                                            'evidencia': [(6,0,self.evidencia.ids)],
+                                                            'mostrarComentario': self.check,
+                                                            'write_uid':  self.env.user.name,
+                                                            'comentario': 'Reinicio de contadores.\nContador BN anterior: ' + str(negroMesa) + '\nContador BN capturado: ' + str(self.contadorMonoActualizado) + '\nContador color anterior: ' + str(colorMesa) + '\nContador color capturado: ' + str(self.contadorColorActualizado) + '\n\n' + self.comentario 
+                                                        })
+                self.ticket_id.write({'contadores_anteriores': '</br>Equipo BN o Color: ' + str(self.bnColor) + ' </br></br>Contador BN: ' + str(self.contadorMonoActualizado) + '</br></br>Contador Color: ' + str(self.contadorColorActualizado)
+                                    , 'x_studio_contador_bn': int(negroMesa)
+                                    , 'x_studio_contador_bn_a_capturar': int(self.contadorMonoActualizado)
+                                    , 'x_studio_contador_color': int(colorMesa)
+                                    , 'x_studio_contador_color_a_capturar': int(self.contadorColorActualizado)
+                                    })
+                mensajeTitulo = "Contador reiniciado!!!"
+                mensajeCuerpo = "Se reinicio el contador del equipo " + str(c.name) + "."
+                wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
+                view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+                return {
+                        'name': _(mensajeTitulo),
+                        'type': 'ir.actions.act_window',
+                        'view_type': 'form',
+                        'view_mode': 'form',
+                        'res_model': 'helpdesk.alerta',
+                        'views': [(view.id, 'form')],
+                        'view_id': view.id,
+                        'target': 'new',
+                        'res_id': wiz.id,
+                        'context': self.env.context,
+                        }
+                #else:
+                #    raise exceptions.ValidationError("Error al capturar contador, el contador capturado debe ser mayor.")
+

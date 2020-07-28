@@ -49,7 +49,46 @@ class gastos_gnsys(models.Model):
     autorizacionFinanzas = fields.Selection([('aprobado','El gasto esta aprobado'), ('rechazado','El gasto esta rechazado'),('enEspera','En espera')], default='enEspera', string = "Autorización", track_visibility='onchange')
     fechaLimiteComprobacionFinanzas = fields.Datetime(string = 'Fecha limite de comprobacion',track_visibility='onchange')
 
-    
+
+    @api.onchange('porCubrirAnticipo')
+    def mensajeEsMayorFechaLimite(self):
+        if self.porCubrirAnticipo :
+            if self.fechaLimite:
+                fechaCompleta = str(self.porCubrirAnticipo).split(' ')[0]
+                fechaCompleta = fechaCompleta.split('-')
+
+                fecha1 = datetime.datetime(int(fechaCompleta[0]), int(fechaCompleta[1]), int(fechaCompleta[2]))
+                
+                fechaHoy = str(self.fechaLimite).split(' ')[0]
+                fechaHoy = fechaHoy.split('-')
+
+                fecha2 = datetime.datetime(int(fechaHoy[0]), int(fechaHoy[1]), int(fechaHoy[2]))
+                message = ""
+                mess = {}
+                esMenor = "Es menor"
+                esMayor = "Es mayor"
+                if fecha1 < fecha2 :
+                    _logger.info("||||-:   "+esMayor)
+
+                else:
+                    return { 'warning': { 'title': 'Mensaje de aviso ', 'message': 'La fecha de compromiso de adelanto es mayor a la fecha limite, usted puede continuar'} }
+    @api.onchange('fechaLimiteComprobacionFinanzas')
+    def mensajeIgualFechaAdelanto(self):
+        if self.fechaLimiteComprobacionFinanzas :
+            if self.porCubrirAnticipo:
+                fechaCompleta = str(self.fechaLimiteComprobacionFinanzas).split(' ')[0]
+                fechaCompleta = fechaCompleta.split('-')
+
+                fecha1 = datetime.datetime(int(fechaCompleta[0]), int(fechaCompleta[1]), int(fechaCompleta[2]))
+                
+                fechaHoy = str(self.porCubrirAnticipo).split(' ')[0]
+                fechaHoy = fechaHoy.split('-')
+
+                fecha2 = datetime.datetime(int(fechaHoy[0]), int(fechaHoy[1]), int(fechaHoy[2]))
+                message = ""
+                mess = {}
+                if fecha1 == fecha2 :
+                    return { 'warning': { 'title': 'Mensaje de aviso ', 'message': 'La fecha de compromiso de adelanto es igual a la fecha limite de comprobacion, usted puede continuar'} }
     # --- FUNCION PARA VERFICAR QUE LA FECHA NO ES MENOR AL DÍA DE HOY
     
     @api.constrains('fechaLimite', 'porCubrirAnticipo','fechaLimiteComprobacionFinanzas')
@@ -171,7 +210,19 @@ class gastos_gnsys(models.Model):
     montoPagadoComprobado = fields.Float(string = "Monto pagado", track_visibility='onchange')
     montoComprobado = fields.Float(string = "Monto comprobado", track_visibility='onchange')
     montoComprobadoAprobado =  fields.Float(string = " Monto comprobado aprobado", track_visibility='onchange')
+    estatusComprobaciones = fields.Selection([('activo','Puede agregar comprobaciónes'), ('desactivado','No puede agregar comprobaciónes')], default='activo',string = "Status de comprobaciónes", track_visibility='onchange')
+    montoPorComprobar =  fields.Float(string = "Monto por comprobar", track_visibility='onchange')
 
+    @api.multi
+    def activarComprovaciones(self):
+        for rec in self : 
+            rec.write({'estatusComprobaciones':'activo'})
+    
+    @api.multi
+    def desactivaComprovaciones(self):
+        for rec in self : 
+            rec.write({'estatusComprobaciones':'desactivado'})
+    
     @api.onchange('comprobaciones')
     def calcularTotalComprobaciones(self):
         listaComprobaciones = self.comprobaciones
@@ -181,9 +232,10 @@ class gastos_gnsys(models.Model):
             for comprobacion in listaComprobaciones:
                 montoPagadoTotal += comprobacion.monto
                 montoComprobadoAprobadoTotal += comprobacion.montoAprobado
-        self.montoComprobado = montoPagadoTotal
-        self.montoComprobadoAprobado = montoComprobadoAprobadoTotal
+            self.montoComprobado = montoPagadoTotal
+            self.montoComprobadoAprobado = montoComprobadoAprobadoTotal
     
+
     
     #Codigo de estatus del gasto
 
@@ -339,10 +391,32 @@ class gastos_gnsys(models.Model):
         if listaPagos != []:
             for pago in listaPagos:
                 montoPagadoTotal += pago.montoPagado
-        self.montoADevolverPago = montoPagadoTotal
-
+            self.montoDevueltoPago = montoPagadoTotal
+    
     totalDeMontoPagado = fields.Float(string = 'Total')
 
+    # @api.onchange('pagos','comprobaciones')
+    # def calculaMontoADevolver(self):
+    #     listaComprobaciones = self.comprobaciones
+    #     montoComprobadoAprobadoTotal = 0.0
+    #     verifica = 0.0
+    #     if listaComprobaciones != []:
+    #         for comprobacion in listaComprobaciones:
+    #             montoComprobadoAprobadoTotal += comprobacion.montoAprobado
+    #     if self.montoAprobadoFinal :
+    #         verifica = montoComprobadoAprobadoTotal - self.montoAprobadoFinal
+    #         if  verifica > 0.0 :
+    #             listaPagos = self.pagos
+    #             montoPagadoTotal = 0.0
+    #             if listaPagos != []:
+    #                 for pago in listaPagos:
+    #                     montoPagadoTotal += pago.montoPagado
+    #                 if montoPagadoTotal != 0.0 :
+    #                     verifica2 = verifica - montoPagadoTotal
+    #                     if verifica2 > 0.0 :
+    #                         self.montoADevolverPago = verifica2
+    #         else:
+    #             self.montoADevolverPago = verifica
     # @api.onchange('devoluciones')
     # def calcularTotalPagoDevolucion(self):
     #     listaDevoluciones = self.devoluciones
@@ -454,7 +528,9 @@ class comprobaciones(models.Model):
 
     @api.onchange('porcentajeAceptado')
     def calcularMontoAprobado(self):
-        self.montoAprobado = self.monto * self.porcentajeAceptado
+        if self.porcentajeAceptado : 
+            if self.monto :
+                self.montoAprobado = self.monto * self.porcentajeAceptado
 
 
 class PagoSolicitante(models.Model):
