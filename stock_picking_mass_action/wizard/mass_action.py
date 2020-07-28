@@ -159,12 +159,13 @@ class StockPickingMassAction(TransientModel):
                     picking.sale_id.x_studio_field_bxHgp.write({'stage_id':94})
                     self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id, 'estadoTicket' : "Distribución", 'comentario':''}) 
                 if(self.check==1):
+                    comentario=picking.x_studio_comentario_1 if(picking.x_studio_comentario_1) else 'refacion entregada'
                     if(picking.location_dest_id.id!=16):
                         picking.sale_id.x_studio_field_bxHgp.write({'stage_id':104})
-                        self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id, 'estadoTicket' : "Entregado", 'comentario':picking.x_studio_comentario_1+' Evidenciado'})
+                        self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id, 'estadoTicket' : "Entregado", 'comentario':str(comentario)+' Evidenciado'})
                     else:
                         picking.sale_id.x_studio_field_bxHgp.write({'stage_id':18})
-                        self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id, 'estadoTicket' : "Entregado", 'comentario':picking.x_studio_comentario_1+' Evidenciado'})    
+                        self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id, 'estadoTicket' : "Entregado", 'comentario':str(comentario)+' Evidenciado'})    
             pick_to_do |= picking
         if pick_to_do:
             pick_to_do.action_done()
