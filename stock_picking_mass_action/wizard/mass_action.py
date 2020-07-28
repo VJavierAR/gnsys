@@ -120,7 +120,7 @@ class StockPickingMassAction(TransientModel):
         cantidad=self.picking_ids.mapped('sale_id.delivery_count')
         loca=self.picking_ids.mapped('sale_id.warehouse_id.lot_stock_id.id')
         assigned_picking_lst = self.picking_ids.filtered(lambda x: x.state == 'assigned').sorted(key=lambda r: r.scheduled_date)
-        assigned_picking_lst2 = self.picking_ids.filtered(lambda x:(loca[0] ==x.location_id.id and x.state == 'assigned' and  1 not in cantidad) or (x.state == 'assigned' and  1 in cantidad) )
+        assigned_picking_lst2 = self.picking_ids.filtered(lambda x:x.state == 'assigned' and (self.check==1 or self.check==2) )
         quantities_done = sum(move_line.qty_done for move_line in assigned_picking_lst.mapped('move_line_ids').filtered(lambda m: m.state not in ('done', 'cancel')))
         validacion=assigned_picking_lst.mapped('picking_type_id.id')
         tipo=assigned_picking_lst.mapped('picking_type_id.code')
