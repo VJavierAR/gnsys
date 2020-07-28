@@ -329,7 +329,7 @@
                                 <field name="producto1" readonly="1" string="Registro Original"/>
                                 <field name="tipo" invisible="1"/>
                                 <field name="categoria" invisible="1"/>
-                                <field name="producto2" string="Registro a Cambiar"  attrs="{'invisible':[['tipo','!=',3]],'readonly':[['categoria','=',13]]}"/>
+                                <field name="producto2" string="Registro a Cambiar"  attrs="{'readonly':[['categoria','=',13]]}"/>
                                 <field name="almacen" domain="[['x_studio_cliente','=',False]]"/>
                                 <field name="existeciaAlmacen" readonly="1"/>                        
                                 <!-- <field name="existencia1" readonly="1"/>
