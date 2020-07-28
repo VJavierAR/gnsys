@@ -1699,6 +1699,26 @@ class helpdesk_update(models.Model):
     @api.multi
     def crear_y_validar_solicitud_refaccion(self):
         for record in self:
+            if record.x_studio_productos:
+                for producto in record.x_studio_productos:
+                    if producto.x_studio_cantidad_pedida <= 0:
+                        mensajeTitulo = 'Refacción o accesorio seleccionado con cantidad 0!!!'
+                        mensajeCuerpo = 'Se selecciono ' + producto.default_code + ' con cantidad 0. Favor de ingresar una catidad mayor a 0.'
+                        
+                        wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
+                        view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+                        return {
+                                'name': _(mensajeTitulo),
+                                'type': 'ir.actions.act_window',
+                                'view_type': 'form',
+                                'view_mode': 'form',
+                                'res_model': 'helpdesk.alerta',
+                                'views': [(view.id, 'form')],
+                                'view_id': view.id,
+                                'target': 'new',
+                                'res_id': wiz.id,
+                                'context': self.env.context,
+                                }
             if not record.x_studio_field_nO7Xg:
                 if len(record.x_studio_productos) > 0:
                     if self.x_studio_field_nO7Xg.id != False and self.x_studio_field_nO7Xg.state == 'sale':
