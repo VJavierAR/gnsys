@@ -192,7 +192,7 @@ class StockPickingMassAction(TransientModel):
     @api.multi
     def vales(self):
         assigned_picking_lst2 = self.picking_ids.\
-        filtered(lambda x: x.picking_type_id.id == 3 and x.state == 'done')
+        filtered(lambda x: (x.picking_type_id.id == 3 or x.picking_type_id.id == 29314) and x.state == 'done')
         if(assigned_picking_lst2.mapped('sale_id.id')==[]):
             return self.env.ref('stock.action_report_picking').report_action(assigned_picking_lst2)
         else:
@@ -200,7 +200,7 @@ class StockPickingMassAction(TransientModel):
     @api.multi
     def etiquetas(self):
         assigned_picking_lst2 = self.picking_ids.\
-        filtered(lambda x: x.picking_type_id.id == 3 and x.state == 'done')
+        filtered(lambda x: (x.picking_type_id.id == 3 or x.picking_type_id.id == 29314) and x.state == 'done')
         return self.env.ref('studio_customization.transferir_reporte_4541ad13-9ccb-4a0f-9758-822064db7c9a').report_action(assigned_picking_lst2)
 class MassActionTecnico(TransientModel):
     _name='mass.tecnico'
