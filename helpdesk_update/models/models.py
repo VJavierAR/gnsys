@@ -1434,6 +1434,44 @@ class helpdesk_update(models.Model):
     
     
     
+
+
+    def cambioEstadoSolicitudRefaccion(self):
+        estadoAntes = str(self.stage_id.name)
+        query = "update helpdesk_ticket set stage_id = 100 where id = " + str(self.x_studio_id_ticket) + ";"
+        
+        ss = self.env.cr.execute(query)
+        #message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Solicitud de refacción' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
+        #mess= {
+        #        'title': _('Estado de ticket actualizado!!!'),
+        #        'message' : message
+        #    }
+        self.estadoSolicitudDeRefaccion = True
+
+
+        mensajeTitulo = 'Estado de ticket actualizado!!!'
+        mensajeCuerpo = 'Se cambio el estado del ticket ' + str(self.x_studio_id_ticket) +'. \nEstado anterior: ' + estadoAntes + ' Estado actual: Solicitud de refacción' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página."
+        #wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
+        wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
+        view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+        return {
+                'name': _(mensajeTitulo),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'helpdesk.alerta',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'res_id': wiz.id,
+                'context': self.env.context,
+                }
+
+
+        #return {'warning': mess}
+
+
+
     
     
             
