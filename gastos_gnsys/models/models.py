@@ -139,25 +139,25 @@ class gastos_gnsys(models.Model):
     
     def hola(self):
         return { 'warning': { 'title': 'Mensaje de aviso ', 'message': 'La fecha de compromiso de adelanto es mayor a la fecha limite, usted puede continuar'} }
-    # @api.multi
-    # @api.onchange('motivos')
-    # def calcularTotalMotivos(self):
-    #     message = ""
-    #     mess = {}
-    #     listaDeMotivos = self.motivos
-    #     # montoOriginal = self.totalMontoMotivos
-    #     if listaDeMotivos != []:
-    #         montoTotal = 0.0
-    #         for motivo in listaDeMotivos:
-    #             montoTotal += motivo.monto
+    @api.multi
+    @api.onchange('motivos')
+    def calcularTotalMotivos(self):
+        message = ""
+        mess = {}
+        listaDeMotivos = self.motivos
+        # montoOriginal = self.totalMontoMotivos
+        if listaDeMotivos != []:
+            montoTotal = 0.0
+            for motivo in listaDeMotivos:
+                montoTotal += motivo.monto
             
-    #         if montoTotal > self.montoRequerido :
-    #             raise exceptions.ValidationError("La suma de los montos no puede ser mayor al monto requerido .")
-    #         else :
-    #             self.totalMontoMotivosFinal = montoTotal
+            if montoTotal > self.montoRequerido :
+                raise exceptions.ValidationError("La suma de los montos no puede ser mayor al monto requerido .")
+            else :
+                self.totalMontoMotivosFinal = montoTotal
             
-    #         if montoTotal != self.totalMontoMotivosFinal:
-    #             raise exceptions.ValidationError("No puedes modificar el monto total de los motivos.")
+            if montoTotal != self.totalMontoMotivosFinal:
+                raise exceptions.ValidationError("No puedes modificar el monto total de los motivos.")
     @api.constrains('totalMontoMotivosFinal')
     def verificaTotalMotivos(self):
         listaDeMotivos = self.motivos
