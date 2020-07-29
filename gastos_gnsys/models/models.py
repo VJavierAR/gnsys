@@ -391,7 +391,7 @@ class gastos_gnsys(models.Model):
         if listaPagos != []:
             for pago in listaPagos:
                 montoPagadoTotal += pago.montoPagado
-            self.montoDevueltoPago = montoPagadoTotal
+            self.montoADevolverPago = montoPagadoTotal
     
     totalDeMontoPagado = fields.Float(string = 'Total')
 
