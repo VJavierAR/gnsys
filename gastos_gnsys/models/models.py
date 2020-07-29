@@ -136,7 +136,9 @@ class gastos_gnsys(models.Model):
 
     motivos = fields.One2many('motivos', 'gasto', string = "Motivo",track_visibility='onchange')
     totalMontoMotivosFinal = fields.Float(string = 'Total monto de motivos',track_visibility='onchange')
-
+    
+    def hola(self):
+        return { 'warning': { 'title': 'Mensaje de aviso ', 'message': 'La fecha de compromiso de adelanto es mayor a la fecha limite, usted puede continuar'} }
     @api.onchange('motivos')
     def calcularTotalMotivos(self):
         message = ""
