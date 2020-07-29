@@ -142,7 +142,7 @@ class gastos_gnsys(models.Model):
         message = ""
         mess = {}
         
-        
+        listaDeMotivos = []
         # montoOriginal = self.totalMontoMotivos
         if listaDeMotivos != []:
             listaDeMotivos = self.motivos
