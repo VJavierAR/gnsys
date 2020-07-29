@@ -139,6 +139,7 @@ class gastos_gnsys(models.Model):
     
     def hola(self):
         return { 'warning': { 'title': 'Mensaje de aviso ', 'message': 'La fecha de compromiso de adelanto es mayor a la fecha limite, usted puede continuar'} }
+    @api.multi
     @api.onchange('motivos')
     def calcularTotalMotivos(self):
         message = ""
