@@ -141,10 +141,11 @@ class gastos_gnsys(models.Model):
     def calcularTotalMotivos(self):
         message = ""
         mess = {}
-        listaDeMotivos = self.motivos
+        
         
         # montoOriginal = self.totalMontoMotivos
         if listaDeMotivos != []:
+            listaDeMotivos = self.motivos
             montoTotal = 0.0
             for motivo in listaDeMotivos:
                 montoTotal += motivo.monto
