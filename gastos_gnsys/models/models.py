@@ -170,10 +170,10 @@ class gastos_gnsys(models.Model):
     # --- PAGO A SOLICITANTE | ESTOS SON LOS PAGOS QUE SE ESTAN DANDO AL SOLICITANTE (LO EDITA EL AREA DE FINANZAS)
     # NOTA : El modelo dice devolución cambiar a pago a solicitante
     # MODELO : devolucion
-    #   _name = "gastos.pagos"
+    #   _name = "gastos.devolucion"
     #   _description = 'Pago a solicitante'
 
-    devoluciones = fields.One2many('gastos.pagos', 'gasto' , string = 'Pago a solicitante', track_visibility = 'onchange')
+    devoluciones = fields.One2many('gastos.devolucion', 'gasto' , string = 'Pago a solicitante', track_visibility = 'onchange')
     totalPagosSolitantes = fields.Float(string = "Total monto pagado", track_visibility='onchange')
     montoPorCubrir = fields.Float(string = "Monto por cubrir a solicitante", track_visibility='onchange')
 
@@ -451,8 +451,8 @@ class usuarios_gastos(models.Model):
 
     gastoRecibe = fields.Many2one('gastos', string="Gasto autoriza")
     devoResponsableAjuste = fields.Text(string = "Devolucion responsable",track_visibility='onchange')
-    pagoSolicitanteAutoriza = fields.One2many('gastos.pagos','quienesReciben' ,string="Pago autoriza")
-    #devoResponsableAjuste = fields.One2many('gastos.pagos', 'responsableDeMontoAjustado', string = "Devolucion responsable")
+    pagoSolicitanteAutoriza = fields.One2many('gastos.devolucion','quienesReciben' ,string="Pago autoriza")
+    #devoResponsableAjuste = fields.One2many('gastos.devolucion', 'responsableDeMontoAjustado', string = "Devolucion responsable")
 
 class cliente_comprobante(object):
     _inherit = 'res.partner'
@@ -536,7 +536,7 @@ class comprobaciones(models.Model):
 
 
 class PagoSolicitante(models.Model):
-    _name = "gastos.pagos"
+    _name = 'gastos.devolucion'
     _description = 'Pago a solicitante'
     gasto = fields.Many2one('gastos', string="Pagos solitatados", track_visibility='onchange')
     quienesReciben = fields.Many2one('res.users',string = "Quien recibe", track_visibility='onchange', default=lambda self: self.env.user)
