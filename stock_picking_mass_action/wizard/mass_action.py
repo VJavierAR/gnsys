@@ -387,7 +387,7 @@ class StockCambioLine(TransientModel):
             if(record.producto1.categ_id.id!=5):
                 res['domain']={'producto2':[['categ_id','=',record.producto1.categ_id.id]]}
             if(record.producto1.categ_id==5):
-                res['domain']={'producto2':[['name','ilike',record.producto.name]]}
+                res['domain']={'producto2':[['name','=',record.producto.name]]}
         return res
     
     # @api.onchange('almacen','estado')
@@ -436,7 +436,7 @@ class StockCambioLine(TransientModel):
             if(record.producto1.categ_id.id!=5):
                 res['domain']={'producto2':[['categ_id','=',record.producto1.categ_id.id]]}
             if(record.producto1.categ_id==5):
-                res['domain']={'producto2':[['name','ilike',record.producto.name]]}
+                res['domain']={'producto2':[['name','=',record.producto.name]]}
         return res
 
 class StockCambioLine(TransientModel):
@@ -464,7 +464,7 @@ class StockCambioLine(TransientModel):
             if(record.producto1.categ_id.id!=5):
                 res['domain']={'producto2':[['categ_id','=',record.producto1.categ_id.id]]}
             if(record.producto1.categ_id==5):
-                res['domain']={'producto2':[['name','ilike',record.producto.name]]}
+                res['domain']={'producto2':[['name','=',record.producto.name]]}
         return res
 
 
