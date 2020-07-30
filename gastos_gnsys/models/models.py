@@ -559,7 +559,11 @@ class PagoSolicitante(models.Model):
     def verificaMonto(self):
         if self.montoEntregado == 0.0:
             raise exceptions.ValidationError("En PAGOS A SOLICITANTE : El monto no puede ser igual a cero.")
-
+    
+    @api.constrains('depositoDeducible')
+    def verificaDepositoDeducible(self):
+        if self.depositoDeducible:
+            raise exceptions.ValidationError("Indica si el pago a sera deducible o no.")
     @api.onchange('fecha')
     def computarDiasAtrasoPago(self):
         if self.fecha :
