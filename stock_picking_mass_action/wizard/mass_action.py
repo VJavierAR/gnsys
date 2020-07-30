@@ -248,7 +248,6 @@ class StockIngresoLines(TransientModel):
     rel_ingreso=fields.Many2one('ingreso.almacen')
     producto=fields.Many2one('product.product')
     producto2=fields.Many2one('product.product')
-    nombreP1=fields.Char(related='producto1.name')
     cantidad=fields.Integer()
     move=fields.Many2one('stock.move')    
 
@@ -348,7 +347,6 @@ class StockCambioLine(TransientModel):
     _description = 'Lineas cambio toner'
     producto1=fields.Many2one('product.product')
     producto2=fields.Many2one('product.product')
-    #nombreP1=fields.Char(related='producto1.name')
     cantidad=fields.Float()
     rel_cambio=fields.Many2one('cambio.toner')
     serie=fields.Many2one('stock.production.lot')
@@ -417,7 +415,6 @@ class StockCambioLine(TransientModel):
     _description = 'Lineas cambio toner'
     producto1=fields.Many2one('product.product')
     producto2=fields.Many2one('product.product')
-    #nombreP1=fields.Char(related='producto1.name')
     cantidad=fields.Float()
     rel_cambio=fields.Many2one('cambio.toner')
     serie=fields.Many2one('stock.production.lot')
@@ -447,7 +444,6 @@ class StockCambioLine(TransientModel):
     _description = 'Lineas cambio toner'
     producto1=fields.Many2one('product.product')
     producto2=fields.Many2one('product.product')
-    #nombreP1=fields.Char(related='producto1.name')
     cantidad=fields.Float()
     rel_cambio=fields.Many2one('cambio.toner')
     serie=fields.Many2one('stock.production.lot')
