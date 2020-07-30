@@ -351,9 +351,9 @@ class StockCambioLine(TransientModel):
     rel_cambio=fields.Many2one('cambio.toner')
     serie=fields.Many2one('stock.production.lot')
     almacen=fields.Many2one('stock.warehouse',string='Almacen')
-    existencia1=fields.Integer(compute='nuevo',string='Existencia Nuevo')
-    existencia2=fields.Integer(compute='nuevo',string='Existencia Usado')
-    existeciaAlmacen=fields.Integer(compute='almac',string='Existencia de Almacen seleccionado')
+    existencia1=fields.Integer(string='Existencia Nuevo')
+    existencia2=fields.Integer(string='Existencia Usado')
+    existeciaAlmacen=fields.Integer(string='Existencia de Almacen seleccionado')
     tipo=fields.Integer()
    
     serieOrigen=fields.Many2one('stock.production.lot',domain="['&',('product_id.id','=',producto1),('x_studio_estado','=',estado)]")
@@ -369,40 +369,40 @@ class StockCambioLine(TransientModel):
     nivelAmarillo=fields.Float()
     nivelMagenta=fields.Float()
 
-    @api.depends('producto1')
-    def nuevo(self):
-        for record in self:
-            ex=self.env['stock.quant'].search([['location_id','=',12],['product_id','=',record.producto1.id]]).sorted(key='quantity',reverse=True)
-            record.existencia1=int(ex[0].quantity) if(len(ex)>0) else 0
-            ex2=self.env['stock.quant'].search([['location_id','=',41917],['product_id','=',record.producto1.id]]).sorted(key='quantity',reverse=True)
-            record.existencia2=int(ex2[0].quantity) if(len(ex2)>0) else 0
+    #@api.onchange('producto1')
+    #def nuevo(self):
+    #    for record in self:
+    #        ex=self.env['stock.quant'].search([['location_id','=',12],['product_id','=',record.producto1.id]]).sorted(key='quantity',reverse=True)
+    #        record.existencia1=int(ex[0].quantity) if(len(ex)>0) else 0
+    #        ex2=self.env['stock.quant'].search([['location_id','=',41917],['product_id','=',record.producto1.id]]).sorted(key='quantity',reverse=True)
+    #        record.existencia2=int(ex2[0].quantity) if(len(ex2)>0) else 0
     
-    @api.depends('almacen')
+    @api.onchange('almacen')
     def almac(self):
         for record in self:
             if(record.almacen):
                 ex=self.env['stock.quant'].search([['location_id','=',record.almacen.lot_stock_id.id],['product_id','=',record.producto1.id]]).sorted(key='quantity',reverse=True)
                 record.existeciaAlmacen=int(ex[0].quantity) if(len(ex)>0) else 0
     
-    @api.onchange('almacen','estado')
-    def filtroEqui(self):
-        res={}
-        ubicacion=0
-        if(self.producto1.categ_id.id==13):
-            series=[]
-            ubicacion=self.move_id.location_id.id
-            if(self.almacen):
-                ubicacion=self.almacen.lot_stock_id.id
-            existencias=self.env['stock.quant'].search([['location_id','=',ubicacion],['product_id','=',self.producto1.id]]).mapped('lot_id.id')
-            if(len(existencias)>1):
-                series=self.env['stock.production.lot'].search([['id','in',existencias]])
-            if(self.estado):
-                if(series!=[]):
-                    series=series.filtered(lambda x:x.x_studio_estado==self.estado)
-                else:
-                    series=self.env['stock.production.lot'].search([['x_studio_estado','=',self.estado],['product_id','=',self.producto1.id],['id','in',existencias]])
-            res['domain']={'serieOrigen':[['id','in',series.mapped('id')]]}
-        return res
+    # @api.onchange('almacen','estado')
+    # def filtroEqui(self):
+    #     res={}
+    #     ubicacion=0
+    #     if(self.producto1.categ_id.id==13):
+    #         series=[]
+    #         ubicacion=self.move_id.location_id.id
+    #         if(self.almacen):
+    #             ubicacion=self.almacen.lot_stock_id.id
+    #         existencias=self.env['stock.quant'].search([['location_id','=',ubicacion],['product_id','=',self.producto1.id]]).mapped('lot_id.id')
+    #         if(len(existencias)>1):
+    #             series=self.env['stock.production.lot'].search([['id','in',existencias]])
+    #         if(self.estado):
+    #             if(series!=[]):
+    #                 series=series.filtered(lambda x:x.x_studio_estado==self.estado)
+    #             else:
+    #                 series=self.env['stock.production.lot'].search([['x_studio_estado','=',self.estado],['product_id','=',self.producto1.id],['id','in',existencias]])
+    #         res['domain']={'serieOrigen':[['id','in',series.mapped('id')]]}
+    #     return res
 
 class StockCambioLine(TransientModel):
     _name = 'cambio.toner.line.toner'
@@ -413,14 +413,14 @@ class StockCambioLine(TransientModel):
     rel_cambio=fields.Many2one('cambio.toner')
     serie=fields.Many2one('stock.production.lot')
     almacen=fields.Many2one('stock.warehouse',string='Almacen')
-    existencia1=fields.Integer(compute='nuevo',string='Existencia Nuevo')
-    existencia2=fields.Integer(compute='nuevo',string='Existencia Usado')
-    existeciaAlmacen=fields.Integer(compute='almac',string='Existencia de Almacen seleccionado')
+    existencia1=fields.Integer(string='Existencia Nuevo')
+    existencia2=fields.Integer(string='Existencia Usado')
+    existeciaAlmacen=fields.Integer(string='Existencia de Almacen seleccionado')
     tipo=fields.Integer()
     move_id=fields.Many2one('stock.move')
     #modelo=fields.Char(related='move_id.x_studio_modelo')
     
-    @api.depends('almacen')
+    @api.onchange('almacen')
     def almac(self):
         for record in self:
             if(record.almacen):
@@ -436,14 +436,14 @@ class StockCambioLine(TransientModel):
     rel_cambio=fields.Many2one('cambio.toner')
     serie=fields.Many2one('stock.production.lot')
     almacen=fields.Many2one('stock.warehouse',string='Almacen')
-    existencia1=fields.Integer(compute='nuevo',string='Existencia Nuevo')
-    existencia2=fields.Integer(compute='nuevo',string='Existencia Usado')
-    existeciaAlmacen=fields.Integer(compute='almac',string='Existencia de Almacen seleccionado')
+    existencia1=fields.Integer(string='Existencia Nuevo')
+    existencia2=fields.Integer(string='Existencia Usado')
+    existeciaAlmacen=fields.Integer(string='Existencia de Almacen seleccionado')
     tipo=fields.Integer()
     move_id=fields.Many2one('stock.move')
     #modelo=fields.Char(related='move_id.x_studio_modelo')
 
-    @api.depends('almacen')
+    @api.onchange('almacen')
     def almac(self):
         for record in self:
             if(record.almacen):
