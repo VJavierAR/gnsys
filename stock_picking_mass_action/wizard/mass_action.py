@@ -377,12 +377,18 @@ class StockCambioLine(TransientModel):
     #        ex2=self.env['stock.quant'].search([['location_id','=',41917],['product_id','=',record.producto1.id]]).sorted(key='quantity',reverse=True)
     #        record.existencia2=int(ex2[0].quantity) if(len(ex2)>0) else 0
     
-    @api.onchange('almacen')
+    @api.onchange('producto2')
     def almac(self):
+        res={}
         for record in self:
             if(record.almacen):
                 ex=self.env['stock.quant'].search([['location_id','=',record.almacen.lot_stock_id.id],['product_id','=',record.producto1.id]]).sorted(key='quantity',reverse=True)
                 record.existeciaAlmacen=int(ex[0].quantity) if(len(ex)>0) else 0
+            if(record.producto1.categ_id.id!=5):
+                res['domain']={'producto2':[['categ_id','=',record.producto1.categ_id.id]]}
+            if(record.producto1.categ_id==5):
+                res['domain']={'producto2':[['name','ilike',record.producto.name]]}
+        return res
     
     # @api.onchange('almacen','estado')
     # def filtroEqui(self):
