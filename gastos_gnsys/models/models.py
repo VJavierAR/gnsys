@@ -575,7 +575,7 @@ class PagoSolicitante(models.Model):
     
     @api.constrains('depositoDeducible')
     def verificaDepositoDeducible(self):
-        if self.depositoDeducible:
+        if not self.depositoDeducible:
             raise exceptions.ValidationError("Indica si el pago a sera deducible o no.")
     @api.onchange('fecha')
     def computarDiasAtrasoPago(self):
