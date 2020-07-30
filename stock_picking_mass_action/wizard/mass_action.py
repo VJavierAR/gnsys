@@ -426,12 +426,18 @@ class StockCambioLine(TransientModel):
     move_id=fields.Many2one('stock.move')
     #modelo=fields.Char(related='move_id.x_studio_modelo')
     
-    @api.onchange('almacen')
+    @api.onchange('almacen','producto2')
     def almac(self):
+        res={}
         for record in self:
             if(record.almacen):
                 ex=self.env['stock.quant'].search([['location_id','=',record.almacen.lot_stock_id.id],['product_id','=',record.producto1.id]]).sorted(key='quantity',reverse=True)
                 record.existeciaAlmacen=int(ex[0].quantity) if(len(ex)>0) else 0
+            if(record.producto1.categ_id.id!=5):
+                res['domain']={'producto2':[['categ_id','=',record.producto1.categ_id.id]]}
+            if(record.producto1.categ_id==5):
+                res['domain']={'producto2':[['name','ilike',record.producto.name]]}
+        return res
 
 class StockCambioLine(TransientModel):
     _name = 'cambio.toner.line.accesorios'
