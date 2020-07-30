@@ -81,8 +81,8 @@ class PartnerXlsx(models.AbstractModel):
                 sheet.write(i, 4, obj.product_id.name, bold)
                 sheet.write(i, 5, obj.product_id.default_code, bold)
                 sheet.write(i, 6, obj.qty_done, bold)
-                sheet.write(i, 7, obj.x_studio_cliente_1 if(obj.x_studio_cliente_1) else '', bold)
-                sheet.write(i, 8, obj.x_studio_localidad if(obj.x_studio_localidad) else '', bold)
+                sheet.write(i, 7, obj.x_studio_cliente_2.parent_id.name if(obj.x_studio_cliente_2) else '', bold)
+                sheet.write(i, 8, obj.x_studio_cliente_2.name if(obj.x_studio_cliente_2.name) else '', bold)
                 sheet.write(i, 9, obj.x_studio_comentarios if(obj.x_studio_comentarios) else '', bold)
                 if(obj.x_studio_ticket):
                     sheet.write(i,10, obj.x_studio_ticket if(obj.x_studio_ticket) else '', bold)
