@@ -41,8 +41,8 @@ class PartnerXlsx(models.AbstractModel):
                     sheet.write(i, 7, obj.product_id.default_code, bold)
                 if(obj.lot_id!=False):
                     sheet.write(i, 7, obj.lot_id.name, bold)
-                sheet.write(i, 8, obj.x_studio_cliente_2.parent_id.name if(obj.x_studio_cliente_2.parent_id.name) else '', bold)
-                sheet.write(i, 9, obj.x_studio_cliente_2.name if(obj.x_studio_cliente_2.name) else '', bold)
+                sheet.write(i, 8, obj.move_id.picking_id.partner_id.parent_id.name if(obj.move_id.picking_id.partner_id) else '', bold)
+                sheet.write(i, 9, obj.move_id.picking_id.partner_id.name if(obj.move_id.picking_id.partner_id) else '', bold)
                 sheet.write(i, 10, obj.x_studio_comentarios if(obj.x_studio_comentarios) else '', bold)
                 if(obj.x_studio_ticket):
                     sheet.write(i,11, str(obj.x_studio_ticket) if(obj.x_studio_ticket) else '', bold)
@@ -81,8 +81,8 @@ class PartnerXlsx(models.AbstractModel):
                 sheet.write(i, 4, obj.product_id.name, bold)
                 sheet.write(i, 5, obj.product_id.default_code, bold)
                 sheet.write(i, 6, obj.qty_done, bold)
-                sheet.write(i, 7, obj.x_studio_cliente_2.parent_id.name if(obj.x_studio_cliente_2) else '', bold)
-                sheet.write(i, 8, obj.x_studio_cliente_2.name if(obj.x_studio_cliente_2.name) else '', bold)
+                sheet.write(i, 7, obj.move_id.picking_id.partner_id.parent_id.name if(obj.move_id.picking_id.partner_id) else '', bold)
+                sheet.write(i, 8, obj.move_id.picking_id.partner_id.name if(obj.move_id.picking_id.partner_id) else '', bold)
                 sheet.write(i, 9, obj.x_studio_comentarios if(obj.x_studio_comentarios) else '', bold)
                 if(obj.x_studio_ticket):
                     sheet.write(i,10, obj.x_studio_ticket if(obj.x_studio_ticket) else '', bold)
