@@ -323,8 +323,8 @@
                 <group>
                     <notebook >
                     <field name="tonerUorden" invisible="1"/>
-                        <page string="Equipos" attrs="{'invisible':[['tonerUorden','=',False]]}">
-                            <field name="pro_ids" string="Lineas">
+                        <page string="Equipos" >
+                            <field name="pro_ids" attrs="{'invisible':[['tonerUorden','=',False]]}" string="Lineas">
                                 <tree editable="bottom">
                                 <field name="producto1" readonly="1" string="Registro Original"/>
                                 <field name="tipo" invisible="1"/>
