@@ -194,9 +194,9 @@ class gastos_gnsys(models.Model):
                     mnotNoDeduclible += devolucion.montoEntregado
                 montoPagadoTotal += devolucion.montoEntregado
         if montoPagadoTotal != self.totalPagosSolitantes :
-            self.montoPorCubrir = self.montoAprobadoFinal - montoPagadoTotal
+            self.montoPorCubrir = (self.montoAprobadoFinal-self.montoAnticipado) - montoPagadoTotal
         else :
-            self.montoPorCubrir = self.montoAprobadoFinal - self.totalPagosSolitantes
+            self.montoPorCubrir = (self.montoAprobadoFinal-self.montoAnticipado) - self.totalPagosSolitantes
         self.totalPagosSolitantes = montoPagadoTotal
         self.totalMontoDeducible = montoDeducible
         self.totalMontoNoDeducible = mnotNoDeduclible
@@ -214,7 +214,7 @@ class gastos_gnsys(models.Model):
             raise exceptions.ValidationError("No puedes modificar el monto total de las devoluciones.")
         if self.montoAprobadoFinal  :
             if self.totalPagosSolitantes :
-                montoPorCubrir = self.montoAprobadoFinal - self.totalPagosSolitantes
+                montoPorCubrir = (self.montoAprobadoFinal-self.montoAnticipado) - self.totalPagosSolitantes
                 if montoPorCubrir != self.montoPorCubrir :
                     raise exceptions.ValidationError("No puedes modificar el monto por cubrir de las devoluciones.")
     # --- COMPROBACIÓNES | PARTE DE LOS CAMPOS LOS UTILIZA EL USUARIO FINAL Y OTROS EL AREA DE FINANZAS
