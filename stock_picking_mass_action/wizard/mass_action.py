@@ -351,7 +351,7 @@ class StockCambioLine(TransientModel):
     rel_cambio=fields.Many2one('cambio.toner')
     serie=fields.Many2one('stock.production.lot')
     almacen=fields.Many2one('stock.warehouse',string='Almacen')
-    existencia1=fields.Integer(compute='alma',string='Existencia Nuevo')
+    existencia1=fields.Integer(compute='almac',string='Existencia Nuevo')
     existencia2=fields.Integer(string='Existencia Usado')
     existeciaAlmacen=fields.Integer(string='Existencia de Almacen seleccionado')
     tipo=fields.Integer()
@@ -377,7 +377,7 @@ class StockCambioLine(TransientModel):
     #        ex2=self.env['stock.quant'].search([['location_id','=',41917],['product_id','=',record.producto1.id]]).sorted(key='quantity',reverse=True)
     #        record.existencia2=int(ex2[0].quantity) if(len(ex2)>0) else 0
     
-    @api.onchange('producto2','almacen')
+    @api.depends('producto2','almacen')
     def almac(self):
         res={}
         for record in self:
@@ -419,14 +419,14 @@ class StockCambioLine(TransientModel):
     rel_cambio=fields.Many2one('cambio.toner')
     serie=fields.Many2one('stock.production.lot')
     almacen=fields.Many2one('stock.warehouse',string='Almacen')
-    existencia1=fields.Integer(compute='alma',string='Existencia Nuevo')
+    existencia1=fields.Integer(compute='almac',string='Existencia Nuevo')
     existencia2=fields.Integer(string='Existencia Usado')
     existeciaAlmacen=fields.Integer(string='Existencia de Almacen seleccionado')
     tipo=fields.Integer()
     move_id=fields.Many2one('stock.move')
     #modelo=fields.Char(related='move_id.x_studio_modelo')
     
-    @api.onchange('almacen','producto2')
+    @api.depends('almacen','producto2')
     def almac(self):
         res={}
         for record in self:
@@ -448,14 +448,14 @@ class StockCambioLine(TransientModel):
     rel_cambio=fields.Many2one('cambio.toner')
     serie=fields.Many2one('stock.production.lot')
     almacen=fields.Many2one('stock.warehouse',string='Almacen')
-    existencia1=fields.Integer(compute='alma',string='Existencia Nuevo')
+    existencia1=fields.Integer(compute='almac',string='Existencia Nuevo')
     existencia2=fields.Integer(string='Existencia Usado')
     existeciaAlmacen=fields.Integer(string='Existencia de Almacen seleccionado')
     tipo=fields.Integer()
     move_id=fields.Many2one('stock.move')
     #modelo=fields.Char(related='move_id.x_studio_modelo')
 
-    @api.onchange('almacen','producto2')
+    @api.depends('almacen','producto2')
     def almac(self):
         for record in self:
             if(record.almacen):
@@ -744,7 +744,7 @@ class StockPickingMassAction(TransientModel):
         if(self.almacen.id==False):
             almacenes=self.env['stock.warehouse'].search([['x_studio_cliente','=',False]])
             for alm in almacenes:
-                b=alm.wh_output_stock_loc_id.id
+                b=alm.lot_stock_id.id
                 c=alm.lot_stock_id.id
                 if(self.tipo=="Todos"):
                     origenes.append(b)
@@ -754,7 +754,7 @@ class StockPickingMassAction(TransientModel):
                 if(self.tipo=="Salida"):
                     origenes.append(b)
         if(self.almacen.id):
-            b=self.almacen.wh_output_stock_loc_id.id
+            b=self.almacen.lot_stock_id.id
             c=self.almacen.lot_stock_id.id
             if(self.tipo=="Todos"):
                 origenes.append(b)
