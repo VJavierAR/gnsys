@@ -407,7 +407,7 @@ class gastos_gnsys(models.Model):
             for pago in listaPagos:
                 montoPagadoTotal += pago.montoPagado
             self.montoADevolverPago = montoPagadoTotal
-            self.montoDevueltoPago = self.montoComprobadoAprobado - self.totalDeMontoPagado
+            self.montoDevueltoPago = self.montoComprobadoAprobadoPago - self.totalPagosSolitantes
     
     totalDeMontoPagado = fields.Float(string = 'Total')
 
