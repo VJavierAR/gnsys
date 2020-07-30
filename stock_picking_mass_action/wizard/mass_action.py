@@ -351,9 +351,9 @@ class StockCambioLine(TransientModel):
     rel_cambio=fields.Many2one('cambio.toner')
     serie=fields.Many2one('stock.production.lot')
     almacen=fields.Many2one('stock.warehouse',string='Almacen')
-    existencia1=fields.Integer(compute='nuevo',string='Existencia Nuevo')
-    existencia2=fields.Integer(compute='nuevo',string='Existencia Usado')
-    existeciaAlmacen=fields.Integer(compute='almac',string='Existencia de Almacen seleccionado')
+    existencia1=fields.Integer(string='Existencia Nuevo')
+    existencia2=fields.Integer(string='Existencia Usado')
+    existeciaAlmacen=fields.Integer(string='Existencia de Almacen seleccionado')
     tipo=fields.Integer()
    
     serieOrigen=fields.Many2one('stock.production.lot',domain="['&',('product_id.id','=',producto1),('x_studio_estado','=',estado)]")
@@ -369,13 +369,13 @@ class StockCambioLine(TransientModel):
     nivelAmarillo=fields.Float()
     nivelMagenta=fields.Float()
 
-    @api.depends('producto1')
-    def nuevo(self):
-        for record in self:
-            ex=self.env['stock.quant'].search([['location_id','=',12],['product_id','=',record.producto1.id]]).sorted(key='quantity',reverse=True)
-            record.existencia1=int(ex[0].quantity) if(len(ex)>0) else 0
-            ex2=self.env['stock.quant'].search([['location_id','=',41917],['product_id','=',record.producto1.id]]).sorted(key='quantity',reverse=True)
-            record.existencia2=int(ex2[0].quantity) if(len(ex2)>0) else 0
+    #@api.onchange('producto1')
+    #def nuevo(self):
+    #    for record in self:
+    #        ex=self.env['stock.quant'].search([['location_id','=',12],['product_id','=',record.producto1.id]]).sorted(key='quantity',reverse=True)
+    #        record.existencia1=int(ex[0].quantity) if(len(ex)>0) else 0
+    #        ex2=self.env['stock.quant'].search([['location_id','=',41917],['product_id','=',record.producto1.id]]).sorted(key='quantity',reverse=True)
+    #        record.existencia2=int(ex2[0].quantity) if(len(ex2)>0) else 0
     
     @api.depends('almacen')
     def almac(self):
