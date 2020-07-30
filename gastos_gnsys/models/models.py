@@ -549,6 +549,11 @@ class PagoSolicitante(models.Model):
     evidencia = fields.Many2many('ir.attachment', string="Evidencia")
     montoAprobadoOriginalMante  = fields.Float(string = "Monto aprobado originalmente", track_visibility='onchange')
     montoPagado = fields.Float(string = "Monto pagado")
+    #Campos agregados
+
+    banco = fields.Selection((('bajio','BAJIO'), ('banamex','BANAMEX'),('banorte','BANORTE'),('santnder','SANTANDER'),('hsbc','HSBC'),('azteca','AZTECA'),('bancomer','BANCOMER')), string = "Banco a depositar")
+    claveInterbancaria = fields.Char(string="Clave interbancaria", track_visibility='onchange')
+    depositoDeducible = fields.Selection((('si','Si'), ('no','No')), string = "Depósito deducible")
 
     @api.constrains('montoEntregado')
     def verificaMonto(self):
