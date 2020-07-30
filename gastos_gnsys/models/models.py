@@ -177,19 +177,32 @@ class gastos_gnsys(models.Model):
     totalPagosSolitantes = fields.Float(string = "Total monto pagado", track_visibility='onchange')
     montoPorCubrir = fields.Float(string = "Monto por cubrir a solicitante", track_visibility='onchange')
 
+    totalMontoDeducible = fields.Float(string = "Total monto deducible", track_visibility='onchange')
+    totalMontoNoDeducible = fields.Float(string = "Total monto no deducible", track_visibility='onchange')
+
     @api.onchange('devoluciones')
     def calcularTotalPagoDevolucion(self):
         listaDevoluciones = self.devoluciones
         montoPagadoTotal = 0.0
+        montoDeducible = 0.0
+        mnotNoDeduclible = 0.0
         if listaDevoluciones != []:
             for devolucion in listaDevoluciones:
+                if str(devolucion.depositoDeducible) == "si":
+                    montoDeducible += devolucion.montoEntregado
+                else :
+                    mnotNoDeduclible += devolucion.montoEntregado
                 montoPagadoTotal += devolucion.montoEntregado
         if montoPagadoTotal != self.totalPagosSolitantes :
             self.montoPorCubrir = self.montoAprobadoFinal - montoPagadoTotal
         else :
             self.montoPorCubrir = self.montoAprobadoFinal - self.totalPagosSolitantes
         self.totalPagosSolitantes = montoPagadoTotal
-    
+        self.totalMontoDeducible = montoDeducible
+        self.totalMontoNoDeducible = mnotNoDeduclible
+
+
+
     @api.constrains('totalPagosSolitantes','montoPorCubrir')
     def verificaTotalPagosSolicitantes(self):
         listaDevoluciones = self.devoluciones
