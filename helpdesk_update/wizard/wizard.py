@@ -1656,7 +1656,7 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                                                                 , 'x_studio_tipo_de_solicitud' : "Venta"
                                                                 , 'x_studio_requiere_instalacin' : True                                       
                                                                 , 'user_id' : ticket.user_id.id                                           
-                                                                , 'x_studio_tcnico' : ticket.x_studio_tcnico.id
+                                                                #, 'x_studio_tcnico' : ticket.x_studio_tcnico.id
                                                                 , 'x_studio_field_RnhKr': ticket.localidadContacto.id
                                                                 , 'partner_shipping_id' : ticket.x_studio_empresas_relacionadas.id
                                                                 , 'warehouse_id' : self.almacenes.id
