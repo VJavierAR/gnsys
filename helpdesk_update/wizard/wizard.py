@@ -1836,11 +1836,11 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                         listaDeTicketsValidados.append(ticket.id)
                         self.env['helpdesk.diagnostico'].create({
                                                             'ticketRelacion': ticket.id,
-                                                            'estadoTicket': ticket.stage_id.name,
+                                                            'estadoTicket': 'A almacén',
                                                             #'evidencia': [(6,0,self.evidencia.ids)],
                                                             #'mostrarComentario': self.check,
                                                             'write_uid':  self.env.user.name,
-                                                            'comentario': 'Tickt validado. Pasa al proceso de almacén.' 
+                                                            'comentario': 'Ticket validado por ' + str(self.env.user.name) +'. Pasa al proceso de almacén.' 
                                                         })
                     else:
                         listaDeTicketsSinPoroductos.append(ticket.id)
