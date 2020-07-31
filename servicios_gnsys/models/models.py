@@ -42,12 +42,11 @@ class servicios_gnsys(models.Model):
     procesadoColor = fields.Integer(string="Procesado color")
 
     modelo = fields.Text(string="Modelo")
-    
+    serviciosNombre=fields.Selection([("SOPORTE Y MANTENIMIENTO DE EQUIPOS","SOPORTE Y MANTENIMIENTO DE EQUIPOS"),("SERVICIO DE ADMINISTRADOR KM NET MANAGER","SERVICIO DE ADMINISTRADOR KM NET MANAGER"),("Costo por página procesada BN o color","Costo por página procesada BN o color"),("RENTA MENSUAL DE LICENCIA EMBEDED","RENTA MENSUAL DE LICENCIA EMBEDED"),("Renta base con ML incluidas BN o color + ML. excedentes","Renta base con ML incluidas BN o color + ML. excedentes"),("TFS","TFS"),("SERVICIO DE PCOUNTER","SERVICIO DE PCOUNTER"),("Renta global + costo de página procesada BN o color","Renta global + costo de página procesada BN o color"),("Renta global con páginas incluidas BN o color + pag. Excedentes","Renta global con páginas incluidas BN o color + pag. Excedentes"),("Renta base + costo de página procesada BN o color","Renta base + costo de página procesada BN o color"),("PAGINAS IMPRESAS EN BN","PAGINAS IMPRESAS EN BN")],String="nombre servicio",track_visibility='onchange')    
     contrato = fields.Many2one('contrato', string="Contrato")
     tarifa = fields.Integer(string="Tarifa")
     tipo = fields.Text(string="Tipo")
     estado = fields.Text(string="Estado")
-    
     cantidad = fields.Text(string="cantidad")
     importe = fields.Text(string="Importe")
     retencion = fields.Text(string="Retencion")
@@ -75,7 +74,13 @@ class servicios_gnsys(models.Model):
     nombreAnte = fields.Text(string="Nombre otro sistema servicio",track_visibility='onchange')
 
     polizaServicios = fields.Boolean(string="Póliza de servicios",track_visibility='onchange') 
-
+    
+    
+    @api.onchange('serviciosNombre')
+    def cambiarNombre(self):
+        if self.serviciosNombre:            
+            self.nombreAnte=str(self.serviciosNombre)
+    
     @api.multi
     def crear_solicitud_arrendamineto(self):
         for record in self:            
