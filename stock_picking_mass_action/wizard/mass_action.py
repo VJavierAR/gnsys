@@ -302,8 +302,18 @@ class StockCambio(TransientModel):
                     else:
                         if(d[0]['almacen']['id']):
                             self.env['stock.move'].search([['origin','=',str(self.pick.sale_id.name)],['product_id','=',d[0]['producto2']['id']]]).write({'location_dest_id':copia,'location_id':d[0]['almacen']['lot_stock_id']['id']})
-
-
+    @api.onchange('tonerUorden')
+    def te(self):
+        res={}
+        for record in self:
+            for t in toner_ids:
+                _logger.info(str(record.producto1.name))
+                if(record.producto1.categ_id.id!=5):
+                    res['domain']={'toner_ids.producto2':[['categ_id','=',record.producto1.categ_id.id]]}
+                if(record.producto1.categ_id.id==5):
+                    p=self.env['product.product'].search([['categ_id','=',5],['name','ilike',record.producto1.name]])
+                    res['domain']={'toner_ids.producto2':[['id','in',p.mapped('id')]]}
+        return res
 
 
 
@@ -347,16 +357,16 @@ class StockCambioLine(TransientModel):
     _description = 'Lineas cambio toner'
 
     producto1=fields.Many2one('product.product')
-    def te(self):
-        res={}
-        #for record in self:
-        _logger.info(str(self.producto1.name))
-        if(self.producto1.categ_id.id!=5):
-            res['domain']={'producto2':[['categ_id','=',self.producto1.categ_id.id]]}
-        if(self.producto1.categ_id.id==5):
-            p=self.env['product.product'].search([['categ_id','=',5],['name','ilike',self.producto1.name]])
-            res['domain']={'producto2':[['id','in',p.mapped('id')]]}
-        return res
+    # def te(self):
+    #     res={}
+    #     #for record in self:
+    #     _logger.info(str(self.producto1.name))
+    #     if(self.producto1.categ_id.id!=5):
+    #         res['domain']={'producto2':[['categ_id','=',self.producto1.categ_id.id]]}
+    #     if(self.producto1.categ_id.id==5):
+    #         p=self.env['product.product'].search([['categ_id','=',5],['name','ilike',self.producto1.name]])
+    #         res['domain']={'producto2':[['id','in',p.mapped('id')]]}
+    #     return res
     producto2=fields.Many2one('product.product',default=lambda self: self.te())
     cantidad=fields.Float()
     rel_cambio=fields.Many2one('cambio.toner')
