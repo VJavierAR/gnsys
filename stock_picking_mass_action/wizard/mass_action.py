@@ -306,8 +306,9 @@ class StockCambio(TransientModel):
     
     @api.onchange('compatibles')
     def compatiblesT(self):
-        for t in self.pro_ids:
-            t.write({'compatibilidad':True})
+        for recor in self:
+            for t in record.pro_ids:
+                t.write({'compatibilidad':True})
 
 
 
