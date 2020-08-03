@@ -387,6 +387,7 @@ class StockCambioLine(TransientModel):
                 record.existeciaAlmacen=int(ex[0].quantity) if(len(ex)>0) else 0
     @api.onchange('existeciaAlmacen')
     def te(self):
+        res={}
         _logger.info(str(self.producto1.name))
         if(self.producto1.categ_id.id!=5):
             res['domain']={'producto2':[['categ_id','=',self.producto1.categ_id.id]]}
