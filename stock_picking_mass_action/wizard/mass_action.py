@@ -357,7 +357,7 @@ class StockCambioLine(TransientModel):
                 p=self.env['product.product'].search([['categ_id','=',5],['name','ilike',record.producto1.name]])
                 res['domain']={'producto2':[['id','in',p.mapped('id')]]}
         return res
-    producto2=fields.Many2one('product.product'(default=lambda self: self.te()))
+    producto2=fields.Many2one('product.product',default=lambda self: self.te())
     cantidad=fields.Float()
     rel_cambio=fields.Many2one('cambio.toner')
     serie=fields.Many2one('stock.production.lot')
