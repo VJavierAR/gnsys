@@ -229,14 +229,14 @@ class tfs(models.Model):
                     ticket.x_studio_productos=[(4,ori['product_id'])]
                     sl=self.env['sale.order.line'].create({'order_id' : sale.id,'product_id':ori['product_id'],'product_uom_qty':ori['product_uom_qty'], 'price_unit': 0})
                 for des in pickDestino:
-                    des['location_id']=al.wh_input_stock_loc_id.id
+                    des['location_id']=17
                     des['picking_id']=pick_dest.id
-                    m=self.env['stock.move'].create(des)
+                    #m=self.env['stock.move'].create(des)
                     #des['move_id']=m.id
                     #self.env['stock.move.line'].create(des)
                 sale.action_confirm()
                 ww=self.env['stock.picking'].search([['sale_id','=',sale.id],['picking_type_id.code','=','outgoing']])
-                ww.write({'location_dest_id':al.wh_input_stock_loc_id.id})
+                ww.write({'location_dest_id':17})
                 for w in ww.move_ids_without_package:
                     w.write({'location_dest_id':al.wh_input_stock_loc_id.id})
                     self.env['stock.move.line'].search([['move_id','=',w.id]]).write({'location_dest_id':al.wh_input_stock_loc_id.id})
