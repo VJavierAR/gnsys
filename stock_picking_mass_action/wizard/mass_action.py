@@ -351,7 +351,7 @@ class StockCambioLine(TransientModel):
     rel_cambio=fields.Many2one('cambio.toner')
     serie=fields.Many2one('stock.production.lot')
     almacen=fields.Many2one('stock.warehouse',string='Almacen')
-    existencia1=fields.Integer(string='Existencia Nuevo')
+    existencia1=fields.Integer(compute='almac',string='Existencia Nuevo')
     existencia2=fields.Integer(string='Existencia Usado')
     existeciaAlmacen=fields.Integer(string='Existencia de Almacen seleccionado')
     tipo=fields.Integer()
@@ -377,7 +377,7 @@ class StockCambioLine(TransientModel):
     #        ex2=self.env['stock.quant'].search([['location_id','=',41917],['product_id','=',record.producto1.id]]).sorted(key='quantity',reverse=True)
     #        record.existencia2=int(ex2[0].quantity) if(len(ex2)>0) else 0
     
-    @api.onchange('producto1','almacen')
+    @api.depends('producto1','almacen')
     def almac(self):
         _logger.info('entre1')
         res={}
