@@ -353,7 +353,7 @@ class StockCambioLine(TransientModel):
     almacen=fields.Many2one('stock.warehouse',string='Almacen')
     existencia1=fields.Integer(string='Existencia Nuevo')
     existencia2=fields.Integer(string='Existencia Usado')
-    existeciaAlmacen=fields.Integer(compute='almac',string='Existencia de Almacen seleccionado')
+    existeciaAlmacen=fields.Integer(string='Existencia de Almacen seleccionado')
     tipo=fields.Integer()
    
     serieOrigen=fields.Many2one('stock.production.lot',domain="['&',('product_id.id','=',producto1),('x_studio_estado','=',estado)]")
@@ -377,14 +377,14 @@ class StockCambioLine(TransientModel):
     #        ex2=self.env['stock.quant'].search([['location_id','=',41917],['product_id','=',record.producto1.id]]).sorted(key='quantity',reverse=True)
     #        record.existencia2=int(ex2[0].quantity) if(len(ex2)>0) else 0
     
-    @api.depends('almacen','producto2')
-    def almac(self):
-        _logger.info('entre1')
-        res={}
-        for record in self:
-            if(record.almacen):
-                ex=self.env['stock.quant'].search([['location_id','=',record.almacen.lot_stock_id.id],['product_id','=',record.producto2.id]]).sorted(key='quantity',reverse=True)
-                record.existeciaAlmacen=int(ex[0].quantity) if(len(ex)>0) else 0
+    # @api.depends('almacen','producto2')
+    # def almac(self):
+    #     _logger.info('entre1')
+    #     res={}
+    #     for record in self:
+    #         if(record.almacen):
+    #             ex=self.env['stock.quant'].search([['location_id','=',record.almacen.lot_stock_id.id],['product_id','=',record.producto2.id]]).sorted(key='quantity',reverse=True)
+    #             record.existeciaAlmacen=int(ex[0].quantity) if(len(ex)>0) else 0
         #     if(record.producto1.categ_id.id!=5):
         #         res['domain']={'producto2':[['categ_id','=',record.producto1.categ_id.id]]}
         #     if(record.producto1.categ_id.id==5):
