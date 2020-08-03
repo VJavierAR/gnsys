@@ -379,6 +379,7 @@ class StockCambioLine(TransientModel):
     
     @api.onchange('producto2','almacen')
     def almac(self):
+        _logger.info('entre1')
         res={}
         for record in self:
             if(record.almacen):
@@ -429,6 +430,7 @@ class StockCambioLine(TransientModel):
     
     @api.onchange('almacen','producto2')
     def almac(self):
+        _logger.info('entre2')
         res={}
         for record in self:
             if(record.almacen):
@@ -459,6 +461,7 @@ class StockCambioLine(TransientModel):
 
     @api.onchange('almacen','producto2')
     def almac(self):
+        _logger.info('entre3')
         for record in self:
             if(record.almacen):
                 ex=self.env['stock.quant'].search([['location_id','=',record.almacen.lot_stock_id.id],['product_id','=',record.producto1.id]]).sorted(key='quantity',reverse=True)
