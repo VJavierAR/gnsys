@@ -314,12 +314,7 @@ class StockCambio(TransientModel):
                     p=self.env['product.product'].search([['categ_id','=',5],['name','ilike',record.producto1.name]])
                     res['domain']={'toner_ids.producto2':[['id','in',p.mapped('id')]]}
         return res
-
-
-
-
-
-            """
+        """
             for prp in self.pro_ids:
                 if(prp.producto1.id !=prp.producto2.id):
                     dt.append(prp.producto1.id)
@@ -346,7 +341,7 @@ class StockCambio(TransientModel):
                             alm2=list(filter(lambda x:x['producto']==p1.product_id.id,al))
                             if(alm2!=[]):
                                 p1.write({'location_id':alm2[0]['almacen']})
-            """
+        """
     def confirmarE(self,equipos):
         for s in equipos:
             d=self.env['stock.move.line'].search([['move_id','=',s.move_id.id]])
