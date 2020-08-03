@@ -393,7 +393,7 @@ class StockCambioLine(TransientModel):
         # _logger.info(str(res))
         # return res
 
-    @api.depends('producto1')
+    @api.depends('existeciaAlmacen')
     def te(self):
         res={}
         for record in self:
