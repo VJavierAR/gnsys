@@ -261,6 +261,7 @@ class StockCambio(TransientModel):
     tonerUorden=fields.Boolean()
     toner_ids = fields.One2many('cambio.toner.line.toner','rel_cambio')
     accesorios_ids = fields.One2many('cambio.toner.line.accesorios','rel_cambio')
+    #compatibles=fields.Boolean()
 
 
 
@@ -302,6 +303,13 @@ class StockCambio(TransientModel):
                     else:
                         if(d[0]['almacen']['id']):
                             self.env['stock.move'].search([['origin','=',str(self.pick.sale_id.name)],['product_id','=',d[0]['producto2']['id']]]).write({'location_dest_id':copia,'location_id':d[0]['almacen']['lot_stock_id']['id']})
+    
+    @api.onchange('tonerUorden')
+    def compatiblesT(self):
+        for t in self.toner_ids:
+            t.write({'compatibilidad':True})
+
+
 
         """
             for prp in self.pro_ids:
