@@ -393,7 +393,7 @@
                             </field>
                 </group>
                 <footer>
-                    <button name="confirmar" string="Apply" type="object" class="oe_highlight"/>
+                    <button name="confirmar" string="Ingresar Productos" type="object" class="oe_highlight"/>
                     or
                     <button string="Cancel" class="oe_link" special="cancel"/>
                 </footer>
