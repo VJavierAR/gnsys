@@ -377,7 +377,7 @@ class StockCambioLine(TransientModel):
     #        ex2=self.env['stock.quant'].search([['location_id','=',41917],['product_id','=',record.producto1.id]]).sorted(key='quantity',reverse=True)
     #        record.existencia2=int(ex2[0].quantity) if(len(ex2)>0) else 0
     
-    @api.onchange('producto2','almacen')
+    @api.onchange('producto1','almacen')
     def almac(self):
         _logger.info('entre1')
         res={}
@@ -459,7 +459,7 @@ class StockCambioLine(TransientModel):
     move_id=fields.Many2one('stock.move')
     #modelo=fields.Char(related='move_id.x_studio_modelo')
 
-    @api.onchange('almacen','producto1')
+    @api.onchange('almacen','producto2')
     def almac(self):
         _logger.info('entre3')
         for record in self:
