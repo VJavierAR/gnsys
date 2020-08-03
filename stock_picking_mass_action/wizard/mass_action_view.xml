@@ -332,8 +332,6 @@
                                 <field name="producto2" string="Registro a Cambiar"  attrs="{'readonly':[['categoria','=',13]]}"/>
                                 <field name="almacen" domain="[['x_studio_cliente','=',False]]"/>
                                 <field name="existeciaAlmacen" readonly="1"/>                        
-                                <!-- <field name="existencia1" readonly="1"/>
-                                <field name="existencia2" readonly="1"/> -->
                                 <field name="estado"  attrs="{'invisible':[['tipo','!=',3]],'readonly':[['categoria','!=',13]]}"/>
                                 <field name="serieOrigen" string="Serie" attrs="{'invisible':[['tipo','!=',3]],'readonly':[['categoria','!=',13]]}"/>
                                 <field name="color"  attrs="{'invisible':[['tipo','!=',3]],'readonly':[['categoria','!=',13]]}"/>
@@ -353,7 +351,6 @@
                                 <field name="producto1" readonly="1" string="Registro Original"/>
                                 <field name="tipo" invisible="1"/>
                                 <field name="producto2" string="Registro a Cambiar" />
-                                <!--<field name="modelo"/>-->
                                 <field name="almacen" domain="[['x_studio_cliente','=',False]]"/>
                                 <field name="existeciaAlmacen" readonly="1"/>                        
                                 </tree>
@@ -365,7 +362,6 @@
                                 <field name="producto1" readonly="1" string="Registro Original"/>
                                 <field name="tipo" invisible="1"/>
                                 <field name="producto2" string="Registro a Cambiar" />
-                                <!--<field name="modelo"/>-->
                                 <field name="almacen" domain="[['x_studio_cliente','=',False]]"/>
                                 <field name="existeciaAlmacen" readonly="1"/>
                                 </tree>
@@ -448,8 +444,6 @@
                                 <field name="producto2" string="Registro a Cambiar"  />
                                 <field name="almacen" domain="[['x_studio_cliente','=',False]]"/>
                                 <field name="existeciaAlmacen" />                        
-                                <field name="existencia1" readonly="1"/>
-                                <field name="existencia2" readonly="1"/>
                                 </tree>
                             </field>
                         </page>

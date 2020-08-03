@@ -351,11 +351,8 @@ class StockCambioLine(TransientModel):
     rel_cambio=fields.Many2one('cambio.toner')
     serie=fields.Many2one('stock.production.lot')
     almacen=fields.Many2one('stock.warehouse',string='Almacen')
-    existencia1=fields.Integer(string='Existencia Nuevo')
-    existencia2=fields.Integer(string='Existencia Usado')
     existeciaAlmacen=fields.Integer(string='Existencia de Almacen seleccionado',compute='almac',readonly=False)
     tipo=fields.Integer()
-   
     serieOrigen=fields.Many2one('stock.production.lot',domain="['&',('product_id.id','=',producto1),('x_studio_estado','=',estado)]")
     estado=fields.Selection([["Obsoleto","Obsoleto"],["Usado","Usado"],["Hueso","Hueso"],["Para reparación","Para reparación"],["Nuevo","Nuevo"],["Buenas condiciones","Buenas condiciones"],["Excelentes condiciones","Excelentes condiciones"],["Back-up","Back-up"],["Dañado","Dañado"]])
     #modelo=fields.Many2one(related='serieOrigen.product_id')
@@ -368,7 +365,7 @@ class StockCambioLine(TransientModel):
     nivelCian=fields.Float()
     nivelAmarillo=fields.Float()
     nivelMagenta=fields.Float()
-
+    compatibilidad=fields.Boolean()
     #@api.onchange('producto1')
     #def nuevo(self):
     #    for record in self:
