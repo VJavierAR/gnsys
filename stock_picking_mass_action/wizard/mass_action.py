@@ -387,7 +387,8 @@ class StockCambioLine(TransientModel):
             if(record.producto1.categ_id.id!=5):
                 res['domain']={'producto2':[['categ_id','=',record.producto1.categ_id.id]]}
             if(record.producto1.categ_id==5):
-                res['domain']={'producto2':[['name','=',record.producto1.name]]}
+                p=self.env['product.product'].search([['categ_id','=',5],['name','ilike',record.producto1.name]])
+                res['domain']={'producto2':[['id','in',p.mapped('id')]]}
         return res
     
     # @api.onchange('almacen','estado')
