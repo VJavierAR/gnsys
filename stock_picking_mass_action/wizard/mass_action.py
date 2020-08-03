@@ -387,7 +387,7 @@ class StockCambioLine(TransientModel):
                 record.existeciaAlmacen=int(ex[0].quantity) if(len(ex)>0) else 0
             if(record.producto1.categ_id.id!=5):
                 res['domain']={'producto2':[['categ_id','=',record.producto1.categ_id.id]]}
-            if(record.producto1.categ_id==5):
+            if(record.producto1.categ_id.id==5):
                 p=self.env['product.product'].search([['categ_id','=',5],['name','ilike',record.producto1.name]])
                 res['domain']={'producto2':[['id','in',p.mapped('id')]]}
         return res
@@ -438,7 +438,7 @@ class StockCambioLine(TransientModel):
                 record.existeciaAlmacen=int(ex[0].quantity) if(len(ex)>0) else 0
             if(record.producto1.categ_id.id!=5):
                 res['domain']={'producto2':[['categ_id','=',record.producto1.categ_id.id]]}
-            if(record.producto1.categ_id==5):
+            if(record.producto1.categ_id.id==5):
                 p=self.env['product.product'].search([['categ_id','=',5],['name','ilike',record.producto1.name]])
                 res['domain']={'producto2':[['id','in',p.mapped('id')]]}
         return res
@@ -468,7 +468,7 @@ class StockCambioLine(TransientModel):
                 record.existeciaAlmacen=int(ex[0].quantity) if(len(ex)>0) else 0
             if(record.producto1.categ_id.id!=5):
                 res['domain']={'producto2':[['categ_id','=',record.producto1.categ_id.id]]}
-            if(record.producto1.categ_id==5):
+            if(record.producto1.categ_id.id==5):
                 p=self.env['product.product'].search([['categ_id','=',5],['name','ilike',record.producto1.name]])
                 res['domain']={'producto2':[['id','in',p.mapped('id')]]}
         return res
