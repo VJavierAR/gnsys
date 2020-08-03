@@ -296,7 +296,7 @@ class StockCambio(TransientModel):
                         i=i+1
                         #l=self.env['stock.production.lot'].search([['name','=',d[0]['serie']]])
                         datos={'x_studio_field_9nQhR':d[0]['serie']['id'],'order_id':self.pick.sale_id.id,'product_id':d[0]['producto2']['id'],'product_uom':d[0]['producto2']['uom_id']['id'],'product_uom_qty':d[0]['cantidad'],'name':d[0]['producto2']['description'] if(d[0]['producto2']['description']) else '/','price_unit':0.00}
-                        q=self.env['stock.quant'].search([['product_id':d[0]['producto1'],['location_id','=',self.pick.location_id.id]]],limit=1)
+                        q=self.env['stock.quant'].search([['product_id':d[0]['producto1']],['location_id','=',self.pick.location_id.id]],limit=1)
                         q.sudo().write({'quantity':q.quantity-d[0]['cantidad']})
                         ss=self.env['sale.order.line'].sudo().create(datos)
                     if(d[0]['almacen']['id']):
