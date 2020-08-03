@@ -459,7 +459,7 @@ class StockCambioLine(TransientModel):
     move_id=fields.Many2one('stock.move')
     #modelo=fields.Char(related='move_id.x_studio_modelo')
 
-    @api.onchange('almacen','producto2')
+    @api.onchange('almacen','producto1')
     def almac(self):
         _logger.info('entre3')
         for record in self:
