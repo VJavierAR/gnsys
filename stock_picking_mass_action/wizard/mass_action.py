@@ -345,8 +345,19 @@ class StockCambio(TransientModel):
 class StockCambioLine(TransientModel):
     _name = 'cambio.toner.line'
     _description = 'Lineas cambio toner'
+
     producto1=fields.Many2one('product.product')
-    producto2=fields.Many2one('product.product')
+    def te(self):
+    res={}
+    for record in self:
+        _logger.info(str(record.producto1.name))
+        if(record.producto1.categ_id.id!=5):
+            res['domain']={'producto2':[['categ_id','=',record.producto1.categ_id.id]]}
+        if(record.producto1.categ_id.id==5):
+            p=self.env['product.product'].search([['categ_id','=',5],['name','ilike',record.producto1.name]])
+            res['domain']={'producto2':[['id','in',p.mapped('id')]]}
+    return res
+    producto2=fields.Many2one('product.product'(default=lambda self: self.te()))
     cantidad=fields.Float()
     rel_cambio=fields.Many2one('cambio.toner')
     serie=fields.Many2one('stock.production.lot')
@@ -390,7 +401,7 @@ class StockCambioLine(TransientModel):
         # _logger.info(str(res))
         # return res
 
-    @api.onchange('existeciaAlmacen')
+    #@api.onchange('existeciaAlmacen')
     def te(self):
         res={}
         for record in self:
