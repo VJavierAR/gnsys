@@ -346,7 +346,7 @@ class StockCambioLine(TransientModel):
     _name = 'cambio.toner.line'
     _description = 'Lineas cambio toner'
     producto1=fields.Many2one('product.product')
-    producto2=fields.Many2one('product.product')
+    producto2=fields.Many2one(compute='te','product.product')
     cantidad=fields.Float()
     rel_cambio=fields.Many2one('cambio.toner')
     serie=fields.Many2one('stock.production.lot')
@@ -377,7 +377,7 @@ class StockCambioLine(TransientModel):
     #        ex2=self.env['stock.quant'].search([['location_id','=',41917],['product_id','=',record.producto1.id]]).sorted(key='quantity',reverse=True)
     #        record.existencia2=int(ex2[0].quantity) if(len(ex2)>0) else 0
     
-    @api.depends('producto1','almacen','producto1')
+    @api.depends('almacen','producto2')
     def almac(self):
         _logger.info('entre1')
         res={}
@@ -385,24 +385,25 @@ class StockCambioLine(TransientModel):
             if(record.almacen):
                 ex=self.env['stock.quant'].search([['location_id','=',record.almacen.lot_stock_id.id],['product_id','=',record.producto2.id]]).sorted(key='quantity',reverse=True)
                 record.existeciaAlmacen=int(ex[0].quantity) if(len(ex)>0) else 0
+        #     if(record.producto1.categ_id.id!=5):
+        #         res['domain']={'producto2':[['categ_id','=',record.producto1.categ_id.id]]}
+        #     if(record.producto1.categ_id.id==5):
+        #         p=self.env['product.product'].search([['categ_id','=',5],['name','ilike',record.producto1.name]])
+        #         res['domain']={'producto2':[['id','in',p.mapped('id')]]}
+        # _logger.info(str(res))
+        # return res
+
+    @api.depends('producto1')
+    def te(self):
+        res={}
+        _logger.info(str(self.producto1.name))
+        for record in self:
             if(record.producto1.categ_id.id!=5):
                 res['domain']={'producto2':[['categ_id','=',record.producto1.categ_id.id]]}
             if(record.producto1.categ_id.id==5):
                 p=self.env['product.product'].search([['categ_id','=',5],['name','ilike',record.producto1.name]])
                 res['domain']={'producto2':[['id','in',p.mapped('id')]]}
-        _logger.info(str(res))
         return res
-
-    # @api.onchange('existeciaAlmacen')
-    # def te(self):
-    #     res={}
-    #     _logger.info(str(self.producto1.name))
-    #     if(self.producto1.categ_id.id!=5):
-    #         res['domain']={'producto2':[['categ_id','=',self.producto1.categ_id.id]]}
-    #     if(self.producto1.categ_id.id==5):
-    #         p=self.env['product.product'].search([['categ_id','=',5],['name','ilike',self.producto1.name]])
-    #         res['domain']={'producto2':[['id','in',p.mapped('id')]]}
-    #     return res
     # @api.onchange('almacen','estado')
     # def filtroEqui(self):
     #     res={}
