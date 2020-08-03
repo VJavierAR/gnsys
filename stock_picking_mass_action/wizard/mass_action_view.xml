@@ -434,9 +434,6 @@
         <field name="arch" type="xml">
             <form string="Cambio">
                 <group>
-                <field name="compatibles"/>
-                </group>
-                <group>
                     <notebook >
                     <field name="tonerUorden" invisible="1"/>
                         <page attrs="{'invisible':[['tonerUorden','=',True]]}">
