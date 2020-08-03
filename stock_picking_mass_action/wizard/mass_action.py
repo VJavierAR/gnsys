@@ -396,8 +396,8 @@ class StockCambioLine(TransientModel):
     @api.depends('producto1')
     def te(self):
         res={}
-        _logger.info(str(self.producto1.name))
         for record in self:
+            _logger.info(str(record.producto1.name))
             if(record.producto1.categ_id.id!=5):
                 res['domain']={'producto2':[['categ_id','=',record.producto1.categ_id.id]]}
             if(record.producto1.categ_id.id==5):
