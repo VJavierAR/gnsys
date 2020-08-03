@@ -433,7 +433,7 @@
         <field name="model">cambio.toner</field>
         <field name="arch" type="xml">
             <form string="Cambio">
-                <group>
+                <group><field name="compatibles"/>
                     <notebook >
                     <field name="tonerUorden" invisible="1"/>
                         <page attrs="{'invisible':[['tonerUorden','=',True]]}">
