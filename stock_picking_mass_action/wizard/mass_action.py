@@ -346,14 +346,14 @@ class StockCambioLine(TransientModel):
     _name = 'cambio.toner.line'
     _description = 'Lineas cambio toner'
     producto1=fields.Many2one('product.product')
-    producto2=fields.Many2one('product.product',compute='te',readonly=False)
+    producto2=fields.Many2one('product.product')
     cantidad=fields.Float()
     rel_cambio=fields.Many2one('cambio.toner')
     serie=fields.Many2one('stock.production.lot')
     almacen=fields.Many2one('stock.warehouse',string='Almacen')
     existencia1=fields.Integer(string='Existencia Nuevo')
     existencia2=fields.Integer(string='Existencia Usado')
-    existeciaAlmacen=fields.Integer(string='Existencia de Almacen seleccionado')
+    existeciaAlmacen=fields.Integer(string='Existencia de Almacen seleccionado',compute='te',readonly=False)
     tipo=fields.Integer()
    
     serieOrigen=fields.Many2one('stock.production.lot',domain="['&',('product_id.id','=',producto1),('x_studio_estado','=',estado)]")
