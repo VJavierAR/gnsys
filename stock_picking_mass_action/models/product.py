@@ -21,7 +21,7 @@ from xml.dom import minidom
 class compras(models.Model):
     _inherit = 'product.product'
     _sql_constraints = [
-        ('name_uniq', 'unique (deault_code)','No Parte ya existe')
+        ('name_uniq', 'unique (default_code)','No Parte ya existe')
     ]
 
     def agregarCompatible(self):
