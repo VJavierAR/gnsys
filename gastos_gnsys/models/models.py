@@ -14,7 +14,7 @@ class gastos_gnsys(models.Model):
     # --- NOMBRE DEL GASTO | USUARIO FINAL ---
 
     nombre = fields.Char(string="Nombre de gasto", track_visibility='onchange')
-    statusGasto = fields.Selection([('enSolicitud','En solicitud'), ('autorizacion','GASTO AUTORIZADO'), ('aprovacion','GASTO APROBADO'), ('cancelado','Cancelado')], required = True, default='enSolicitud', string = "Status de gasto")
+    statusGasto = fields.Selection([('enSolicitud','EN SOLICITUD'), ('autorizacion','GASTO AUTORIZADO'), ('aprovacion','GASTO APROBADO'), ('cancelado','Cancelado')], required = True, default='enSolicitud', string = "Status de gasto")
     
     # --- SOLICITUD | USUARIO FINAL ---
     quienSolcita = fields.Many2one('res.users', string = "Quien solicita",track_visibility='onchange', default=lambda self: self.env.user)
