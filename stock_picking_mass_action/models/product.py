@@ -21,7 +21,10 @@ from xml.dom import minidom
 class compras(models.Model):
     _inherit = 'product.product'
     _sql_constraints = [
-        ('name_uniq', 'unique (default_code)','No Parte ya existe')
+        ('name_uniq', 'unique (name)','No Parte ya existe')
+    ]
+    _sql_constraints = [
+        ('name_uniq', 'UNIQUE (default_code)',  'You can not have two users with the same name !')
     ]
 
     def agregarCompatible(self):
