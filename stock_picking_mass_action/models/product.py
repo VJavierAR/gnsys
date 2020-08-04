@@ -21,12 +21,12 @@ from xml.dom import minidom
 class compras(models.Model):
     _inherit = 'product.product'
 
-    @api.constrains('default_code')
-    def noDuplicado(self):
-        p=self.env['product.product'].search([['default_code','=',self.default_code]],limit=1)
-        _logger.info(str(p))
-        if(p.id):
-            raise exceptions.ValidationError("No parte ya existe")
+    #@api.constrains('default_code')
+    #def noDuplicado(self):
+    #    p=self.env['product.product'].search([['default_code','=',self.default_code]],limit=1)
+    #    _logger.info(str(p))
+    #    if(p.id):
+    #        raise exceptions.ValidationError("No parte ya existe")
 
 
     def agregarCompatible(self):
