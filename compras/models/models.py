@@ -308,6 +308,7 @@ class compras(models.Model):
                                     if(template.id!=False):                                  
                                         productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
                                     _logger.info(str(productid))
+                                    
                                     if(len(arr)==i+1):
                                         arr[i]['product_id']=productid.id
                                         desc=productid.description if(productid.description) else '|'
