@@ -23,8 +23,8 @@ class compras(models.Model):
 
     @api.constrains('default_code')
     def noDuplicado(self):
-        p=self.env['product.product'].search([['default_code','=',self.default_code]])
-        if(len(p)>0):
+        p=self.env['product.product'].search([['default_code','=',self.default_code]],limit=1)
+        if(p.id):
             raise exceptions.ValidationError("No parte ya existe")
 
 
