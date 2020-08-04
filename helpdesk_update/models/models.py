@@ -96,6 +96,8 @@ class helpdesk_update(models.Model):
                     self.env.cr.execute(query)
                     self.env.cr.commit()
 
+                    
+
     @api.model
     def _contacto_definido(self):
         if self.x_studio_empresas_relacionadas:
@@ -406,6 +408,36 @@ class helpdesk_update(models.Model):
                     listaDeSerie.append((str(serie.name),str(serie.name)))
         return listaDeSerie
     """
+
+
+    backorderActivo = fields.Boolean(string = '¿Tiene backorder?', compute = '_compute_backorderActivo')
+    mensajeBackOrder = fields.Text(string = 'Mensaje backorder')
+
+    #@api.depends('x_studio_backorders')
+    def _compute_backorderActivo(self):
+        for rec in self:
+            if rec.x_studio_backorder:
+                rec.backorderActivo = True
+                #rec.write({'backorderActivo': True})
+                rec.mensajeBackOrder = """
+                                            <div class='row'>
+                                                <div class='col-sm-12'>
+                                                    <div class="alert alert-info" role="alert">
+                                                        <h4 class="alert-heading">Existe backorder</h4>
+                                                        <p>Advertencia, este ticket cuenta con solicitudes de almacen pendientes.</p>
+                                                        <hr>
+                                                        <p class="mb-0"> </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        """
+                #rec.write({'mensajeBackOrder': mensajeBackOrder})
+            else:
+                rec.backorderActivo = False
+                rec.mensajeBackOrder = """ """
+                #rec.write({'backorderActivo': False})
+                #rec.write({'mensajeBackOrder': ' '})
+    
     
     @api.depends('x_studio_empresas_relacionadas')
     def _compute_id_localidad(self):
@@ -1110,7 +1142,7 @@ class helpdesk_update(models.Model):
             if self.x_studio_id_ticket:
                 estadoAntes = str(self.stage_id.name)
                 #if self.stage_id.name == 'Abierto' and self.estadoAsignacion == False and self.team_id.id != False:
-                if self.estadoAsignacion == False and self.team_id.id != False:
+                if self.team_id.id != False:
                     query = "update helpdesk_ticket set stage_id = 2 where id = " + str(self.x_studio_id_ticket) + ";"
                     ss = self.env.cr.execute(query)
                     ultimaEvidenciaTec = []
@@ -1182,7 +1214,9 @@ class helpdesk_update(models.Model):
                     #for eviden in ultimaEvidenciaTec:
                     #    diagnosticoCreado.write({'evidencia': [(4,eviden)] })
                     #self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name})
-                    self.estadoAsignacion = True
+                    
+
+                    #self.estadoAsignacion = True
                     message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Asignado' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
                     mess= {
                             'title': _('Estado de ticket actualizado!!!'),
@@ -1201,6 +1235,42 @@ class helpdesk_update(models.Model):
                     
                     dominio = [('id', 'in', listaUsuarios)]
                     
+
+                    """
+                    listaDiagnosticos = [(5, 0, 0)]
+                    if record.diagnosticos:
+                        for diagnostico in record.diagnosticos:
+                            listaDiagnosticos.append((0, 0, {
+                                                                'ticketRelacion': diagnostico.ticketRelacion.id,
+                                                                'estadoTicket': diagnostico.estadoTicket,
+                                                                'evidencia': [(6, 0, diagnostico.evidencia.ids)],
+                                                                'mostrarComentario': diagnostico.mostrarComentario,
+                                                                'write_uid':  diagnostico.write_uid.id,
+                                                                'comentario': diagnostico.comentario,
+                                                    }))
+                    listaDiagnosticos.append((0, 0, {
+                                                        #'comentario': "Hola",
+                                                        'ticketRelacion': int(self.x_studio_id_ticket),
+                                                        'estadoTicket': 'Asignado',
+                                                        'mostrarComentario': False,
+                                                        'write_uid':  self.env.user.id,
+                                                        'comentario': 'Cambio de estado al seleccionar ' + self.team_id.name + ' como área de atención. Seleccion realizada por ' + str(self.env.user.name) +'.'
+                                                    }))
+                    
+                    _logger.info('3312: ' + str(listaDiagnosticos))
+                    record.diagnosticos = listaDiagnosticos
+                    """
+
+                    """
+                    self.env['helpdesk.diagnostico'].create({
+                                                            'ticketRelacion': self.x_studio_id_ticket,
+                                                            'estadoTicket': 'Asignado',
+                                                            #'evidencia': [(6,0,self.evidencia.ids)],
+                                                            #'mostrarComentario': self.check,
+                                                            'write_uid':  self.env.user.name,
+                                                            'comentario': 'Cambio de estado al seleccionar ' + self.team_id.name + ' como área de atención. Seleccion realizada por ' + str(self.env.user.name) +'.' 
+                                                        })
+                    """
                     return {'warning': mess, 'domain': {'user_id': dominio}}
                 #else:
                     #reasingado
@@ -1244,7 +1314,7 @@ class helpdesk_update(models.Model):
     def cambioEstadoAtencion(self):
         if self.x_studio_id_ticket:
             estadoAntes = str(self.stage_id.name)
-            if (self.stage_id.name == 'Asignado' or self.stage_id.name == 'Resuelto' or self.stage_id.name == 'Cerrado') and self.x_studio_tcnico.id != False and self.estadoAtencion == False:
+            if (self.stage_id.name == 'Asignado' or self.stage_id.name == 'Resuelto' or self.stage_id.name == 'Cerrado'):
                 query = "update helpdesk_ticket set stage_id = 13 where id = " + str(self.x_studio_id_ticket) + ";"
                 ss = self.env.cr.execute(query)
                 #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
@@ -1700,6 +1770,20 @@ class helpdesk_update(models.Model):
     def crear_y_validar_solicitud_refaccion(self):
         for record in self:
             
+            """
+            en produccion
+            productos_ids = []
+            if record.x_studio_field_nO7Xg: #existe solicitud
+                if record.x_studio_productos: #existen productos
+                    #Añadiendo productos que no estan en la solicitud anterior 
+                    for productoSolNueva in record.x_studio_productos:
+                        for productoSolAnterior in record.x_studio_field_nO7Xg.order_line:
+                            if productoSolNueva.id != productoSolAnterior.id:
+                                productos_ids.append(productoSolNueva.id)
+            """
+
+
+
             if not record.x_studio_field_nO7Xg:
                 if len(record.x_studio_productos) > 0:
                     if self.x_studio_field_nO7Xg.id != False and self.x_studio_field_nO7Xg.state == 'sale':
@@ -1733,6 +1817,11 @@ class helpdesk_update(models.Model):
                                                                      , 'x_studio_field_bxHgp': int(record.x_studio_id_ticket) 
                                                                     })
                         record['x_studio_field_nO7Xg'] = sale.id
+                        """
+                        en produccion
+                        self.env.cr.commit()
+                        self.productos = [[6, 0, (sale.id)]]
+                        """
                         for c in record.x_studio_productos:
                             datosr = {'order_id' : sale.id
                                     , 'product_id' : c.id
@@ -3828,6 +3917,12 @@ class helpdesk_update(models.Model):
     """
 
     diagnosticos = fields.One2many('helpdesk.diagnostico', 'ticketRelacion', string = 'Diagnostico')
+
+    """
+    en produccion
+    ordenes = fields.One2many('sale.order', 'x_studio_field_bxHgp', string = 'Ordenes')
+    """
+
     
     order_line = fields.One2many('helpdesk.lines','ticket',string='Order Lines')
     @api.multi
@@ -4023,6 +4118,26 @@ class helpdesk_update(models.Model):
             'view_type': 'form',
             'view_mode': 'form',
             'res_model': 'helpdesk.agregar.productos',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            #'domain': [["series", "=", ids]],
+            #'context': self.env.context,
+            'context': self.env.context,
+        }
+
+    @api.multi
+    def helpdesk_confirmar_validar_refacciones_wizard(self):
+        wiz = self.env['helpdesk.confirmar.validar.refacciones'].create({'ticket_id':self.id})
+        wiz.productos = [(6, 0, self.x_studio_productos.ids)]
+        view = self.env.ref('helpdesk_update.view_helpdesk_crear_y_validar_refacciones')
+        return {
+            'name': _('Crear y validar solicitud de refacciones'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'helpdesk.confirmar.validar.refacciones',
             'views': [(view.id, 'form')],
             'view_id': view.id,
             'target': 'new',

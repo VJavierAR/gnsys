@@ -294,7 +294,8 @@ class HelpDeskCerrarConComentario(TransientModel):
       if self.ticket_id.stage_id.name == 'Resuelto' or self.ticket_id.stage_id.name == 'Abierto' or self.ticket_id.stage_id.name == 'Asignado' or self.ticket_id.stage_id.name == 'Atención' and self.ticket_id.estadoCerrado == False:
         self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.ticket_id.id
                                                 ,'comentario': self.comentario
-                                                ,'estadoTicket': self.ticket_id.stage_id.name
+                                                #,'estadoTicket': self.ticket_id.stage_id.name
+                                                ,'estadoTicket': 'Cerrado'
                                                 ,'evidencia': [(6,0,ultimaEvidenciaTec)]
                                                 ,'mostrarComentario': self.check
                                                 })
@@ -4563,3 +4564,196 @@ class helpdesk_reiniciar_contadores_mesa(TransientModel):
                 #else:
                 #    raise exceptions.ValidationError("Error al capturar contador, el contador capturado debe ser mayor.")
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class helpdesk_confirmar_validar_refacciones(TransientModel):
+    _name = 'helpdesk.confirmar.validar.refacciones'
+    _description = 'helpdesk valida y confirma proceso de refacciones.'
+    
+    ticket_id = fields.Many2one(
+                                    "helpdesk.ticket",
+                                    string = 'Ticket'
+                                )
+
+    productos = fields.Many2many(
+                                    'product.product', 
+                                    string = "Productos"
+                                )
+    activar_compatibilidad = fields.Boolean(
+                                                string = 'Activar compatibilidad',
+                                                default = False
+                                            )
+    check = fields.Boolean(
+                                string = 'Mostrar en reporte',
+                                default = False
+                            )
+    diagnostico_id = fields.One2many(
+                                        'helpdesk.diagnostico',
+                                        'ticketRelacion',
+                                        string = 'Diagnostico',
+                                        compute = '_compute_diagnosticos'
+                                    )
+    estado = fields.Char(
+                            'Estado previo a cerrar el ticket',
+                            compute = "_compute_estadoTicket"
+                        )
+    comentario = fields.Text(
+                                string = 'Comentario'
+                            )
+    evidencia = fields.Many2many(
+                                    'ir.attachment',
+                                    string = "Evidencias"
+                                )
+    historicoTickets = fields.One2many(
+                                        'dcas.dcas', 
+                                        'serie', 
+                                        string = 'Historico de tickets', 
+                                        compute='_compute_historico_tickets'
+                                        )
+    lecturas = fields.One2many(
+                                'dcas.dcas', 
+                                'serie', 
+                                string = 'Lecturas', 
+                                compute='_compute_lecturas'
+                                )
+    toner = fields.One2many(
+                                'dcas.dcas', 
+                                'serie', 
+                                string = 'Tóner', 
+                                compute='_compute_toner'
+                            )
+    historicoDeComponentes = fields.One2many(
+                                                'x_studio_historico_de_componentes', 
+                                                'x_studio_field_MH4DO', 
+                                                string = 'Historico de Componentes', 
+                                                compute='_compute_historico_de_componentes'
+                                            )
+    movimientos = fields.One2many( 
+                                    'stock.move.line', 
+                                    'lot_id', 
+                                    string = 'Movimientos', 
+                                    compute='_compute_movimientos'
+                                )
+    serie = fields.Text(
+                            string = "Serie", 
+                            compute = '_compute_serie_nombre'
+                        )
+
+    def _compute_estadoTicket(self):
+        self.estado = self.ticket_id.stage_id.name
+
+    def _compute_diagnosticos(self):
+        self.diagnostico_id = self.ticket_id.diagnosticos.ids
+
+    def _compute_serie_nombre(self):
+        if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+            self.serie = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].name
+
+    def _compute_historico_tickets(self):
+        if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+            self.historicoTickets = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_field_Yxv2m.ids
+
+    def _compute_lecturas(self):
+        if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+            self.lecturas = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_field_PYss4.ids
+
+    def _compute_toner(self):
+        if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+            self.toner = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_toner_1.ids
+
+    def _compute_historico_de_componentes(self):
+        if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+            self.historicoDeComponentes = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_histrico_de_componentes.ids
+
+    def _compute_movimientos(self):
+        if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+            self.movimientos = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_move_line.ids
+
+    @api.onchange('activar_compatibilidad')
+    def productos_filtro(self):
+        res = {}             
+        g = str(self.ticket_id.x_studio_nombretmp)
+        
+        if self.activar_compatibilidad and self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+            if g != 'False':
+                list = ast.literal_eval(g)
+                idf = self.ticket_id.team_id.id
+                tam = len(list)
+                if idf == 8 or idf == 13 :  
+                   res['domain']={'productos':[('categ_id', '=', 5),('x_studio_toner_compatible.id','in',list)]}
+                if idf == 9:
+                   res['domain']={'productos':[('categ_id', '=', 7),('x_studio_toner_compatible.id','=',list[0])]}
+                if idf != 9 and idf != 8:
+                   res['domain']={'productos':[('categ_id', '!=', 5),('x_studio_toner_compatible.id','=',list[0])]}
+        else:
+            res['domain']={'productos':[('categ_id', '=', 7)]}
+        return res
+
+
+
+    def confirmarYValidarRefacciones(self):
+        self.ticket_id.x_studio_productos = [(6, 0, self.productos.ids)]
+        comentarioGenerico = 'Solicitud de refacción autorizada por ' + str(self.env.user.name) + '.\nEl día ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S")) + '.\n\n'
+        comentarioGenerico = comentarioGenerico + str(self.comentario)
+        self.env['helpdesk.diagnostico'].create({
+                                                    'ticketRelacion': self.ticket_id.id,
+                                                    'comentario': comentarioGenerico,
+                                                    'estadoTicket': self.ticket_id.stage_id.name,
+                                                    'evidencia': [(6,0,self.evidencia.ids)],
+                                                    'mostrarComentario': self.check
+                                                })
+        self.ticket_id.crear_y_validar_solicitud_refaccion()
+        mensajeTitulo = 'Creación y validación de refacción!!!'
+        mensajeCuerpo = 'Se creo y valido la solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) + ' para el ticket ' + str(self.ticket_id.id) + '.'
+        wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
+        view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+        return {
+                'name': _(mensajeTitulo),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'helpdesk.alerta',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'res_id': wiz.id,
+                'context': self.env.context,
+                }
+
+
+    def agregarProductos(self):
+        #for producto in self.productos:
+            #ticket_id.write({})
+
+        self.ticket_id.x_studio_productos = [(6, 0, self.productos.ids)]
+        mensajeTitulo = 'Productos agregados!!!'
+        mensajeCuerpo = 'Se agregaron los productos y sus cantidades.'
+        #wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
+        wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
+        view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+        return {
+                'name': _(mensajeTitulo),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'helpdesk.alerta',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'res_id': wiz.id,
+                'context': self.env.context,
+                }
