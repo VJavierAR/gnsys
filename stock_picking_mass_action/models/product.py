@@ -20,12 +20,13 @@ from xml.dom import minidom
 
 class compras(models.Model):
     _inherit = 'product.product'
-    _sql_constraints = [
-        ('name_uniq', 'unique (name)','No Parte ya existe')
-    ]
-    _sql_constraints = [
-        ('name_uniq', 'UNIQUE (default_code)',  'You can not have two users with the same name !')
-    ]
+    
+    @api.constrains('default_code')
+    def noDuplicado(self):
+        p=self.env['product.product'].search([['default_code','=',self.default_code]])
+        if(len(p)>0):
+            raise exceptions.ValidationError("No parte ya existe")
+
 
     def agregarCompatible(self):
         wiz = self.env['add.compatible'].create({'productoInicial':self.id})
