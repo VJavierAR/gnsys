@@ -24,6 +24,7 @@ class compras(models.Model):
     @api.constrains('default_code')
     def noDuplicado(self):
         p=self.env['product.product'].search([['default_code','=',self.default_code]],limit=1)
+        _logger.info(str(p))
         if(p.id):
             raise exceptions.ValidationError("No parte ya existe")
 
