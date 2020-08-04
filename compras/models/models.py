@@ -307,6 +307,7 @@ class compras(models.Model):
                                         productid=self.env['product.product'].create({'name':'/','description':'falta','categ_id':self.x_studio_tipo_de_producto.id,'default_code':str(q),'type':'product'})
                                     if(template.id!=False):                                  
                                         productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
+                                    _logger.info(str(productid))
                                     if(len(arr)==i+1):
                                         arr[i]['product_id']=productid.id
                                         desc=productid.description if(productid.description) else '|'
