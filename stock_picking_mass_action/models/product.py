@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import models, fields, api,_
+from odoo import models, fields, api,_,exceptions
 import base64
 from PIL import Image, ImageEnhance, ImageFilter
 import pytesseract
@@ -20,7 +20,7 @@ from xml.dom import minidom
 
 class compras(models.Model):
     _inherit = 'product.product'
-    
+
     @api.constrains('default_code')
     def noDuplicado(self):
         p=self.env['product.product'].search([['default_code','=',self.default_code]])
