@@ -193,12 +193,12 @@ class sale_update(models.Model):
 	    for p in pii:
 	    	i=0
 	    	for pi in p.move_ids_without_package.sorted(key='id'):
+	    		pi.write({'sale_line_id':sal[i]})
 	    		if(p.picking_type_id.code=='outgoing'):
 	    			almacen=self.env['stock.warehouse'].search([['x_studio_field_E0H1Z','=',self.partner_shipping_id.id]])
 	    			if(almacen.id!=False):
 	    				pi.write({'location_dest_id':almacen.lot_stock_id.id})
 	    				self.env['stock.move.line'].search([['move_id','=',pi.id]]).write({'location_dest_id':almacen.lot_stock_id.id})
-	    		pi.write({'sale_line_id':sal[i]})
 	    		i=i+1
 	    return True
 
