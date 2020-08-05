@@ -24,10 +24,10 @@ class HelpDeskComentario(TransientModel):
     def creaComentario(self):
       if self.ultimaEvidencia:
           if self.evidencia:
-            self.ticket_id.write({'stage_id': 3 
+            self.ticket_id.sudo().write({'stage_id': 3 
                                 , 'team_id': 9
                                 })
-            self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.ticket_id.id
+            self.env['helpdesk.diagnostico'].sudo().create({'ticketRelacion': self.ticket_id.id
                                                 ,'comentario': self.comentario
                                                 ,'estadoTicket': self.ticket_id.stage_id.name
                                                 ,'evidencia': [(6,0,self.evidencia.ids)]
