@@ -310,7 +310,8 @@ class StockCambio(TransientModel):
             for mov in self.pick.move_ids_without_package.filtered(lambda x:x.product_id.categ_id.id!=13):
                 if(cantidades):
                     d=list(filter(lambda x:x['producto1']['id']==mov.product_id.id,data))
-                    self.env['stock.move.line'].search([['move_id','=',mov.id]]).write({'qty_done':d[0]['cantidad2']})
+                    if(mov.reserved_availability>=d[0]['cantidad2']):
+                        self.env['stock.move.line'].search([['move_id','=',mov.id]]).write({'qty_done':d[0]['cantidad2']})
 
     
 
