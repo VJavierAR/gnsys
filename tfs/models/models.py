@@ -240,8 +240,8 @@ class tfs(models.Model):
                 ww=self.env['stock.picking'].search([['sale_id','=',sale.id],['picking_type_id.code','=','outgoing']])
                 ww.write({'location_dest_id':17})
                 for w in ww.move_ids_without_package:
-                    w.write({'location_dest_id':al.wh_input_stock_loc_id.id})
-                    self.env['stock.move.line'].search([['move_id','=',w.id]]).write({'location_dest_id':al.wh_input_stock_loc_id.id})
+                    w.write({'location_dest_id':17})
+                    self.env['stock.move.line'].search([['move_id','=',w.id]]).write({'location_dest_id':17})
                 pick_dest.action_confirm()
                 pick_dest.action_assign()    
         return ticket
