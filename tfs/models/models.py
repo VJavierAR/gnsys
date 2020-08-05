@@ -242,8 +242,8 @@ class tfs(models.Model):
                 for w in ww.move_ids_without_package:
                     w.write({'location_dest_id':al.wh_input_stock_loc_id.id})
                     self.env['stock.move.line'].search([['move_id','=',w.id]]).write({'location_dest_id':al.wh_input_stock_loc_id.id})
-                #pick_dest.action_confirm()
-                #pick_dest.action_assign()    
+                pick_dest.action_confirm()
+                pick_dest.action_assign()    
         return ticket
 
     @api.multi
