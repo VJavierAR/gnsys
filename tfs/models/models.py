@@ -233,7 +233,7 @@ class tfs(models.Model):
                 for des in pickDestino:
                     des['location_id']=17
                     des['picking_id']=pick_dest.id
-                    #m=self.env['stock.move'].create(des)
+                    m=self.env['stock.move'].create(des)
                     #des['move_id']=m.id
                     #self.env['stock.move.line'].create(des)
                 sale.action_confirm()
@@ -242,8 +242,8 @@ class tfs(models.Model):
                 for w in ww.move_ids_without_package:
                     w.write({'location_dest_id':17})
                     self.env['stock.move.line'].search([['move_id','=',w.id]]).write({'location_dest_id':17})
-                #pick_dest.action_confirm()
-                #pick_dest.action_assign()    
+                pick_dest.action_confirm()
+                pick_dest.action_assign()    
         return ticket
 
     @api.multi
