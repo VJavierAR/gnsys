@@ -443,6 +443,8 @@
                                 <field name="tipo" invisible="1"/>
                                 <field name="producto2" string="Registro a Cambiar"  />
                                 <field name="almacen" domain="[['x_studio_cliente','=',False]]"/>
+                                <field name="cantidad" string="Cantidad Solicitada" readonly="1"/>
+                                <field name="cantidad2" string="Cantidad Enviada"/>  
                                 <field name="compatibilidad" />   
                                 <field name="existeciaAlmacen" />                        
                                 </tree>

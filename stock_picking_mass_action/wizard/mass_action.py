@@ -283,6 +283,7 @@ class StockCambio(TransientModel):
             self.pick.backorder=''
             dt=[]
             al=[]
+            cantidades=False
             for sa in self.pick.move_ids_without_package.filtered(lambda x:x.product_id.categ_id.id!=13):
                 copia=sa.location_dest_id.id
                 d=list(filter(lambda x:x['producto1']['id']==sa.product_id.id,data))
@@ -304,6 +305,13 @@ class StockCambio(TransientModel):
                     else:
                         if(d[0]['almacen']['id']):
                             self.env['stock.move'].search([['origin','=',str(self.pick.sale_id.name)],['product_id','=',d[0]['producto2']['id']]]).write({'location_dest_id':copia,'location_id':d[0]['almacen']['lot_stock_id']['id']})
+                    if(d[0]['cantidad']!=d[0]['cantidad2']):
+                        cantidades=True
+            for mov in self.pick.move_ids_without_package.filtered(lambda x:x.product_id.categ_id.id!=13):
+                if(cantidades):
+                    d=list(filter(lambda x:x['producto1']['id']==mov.product_id.id,data))
+                    self.env['stock.move.line'].search([['move_id','=',mov.id]]).write({'qty_done':d[0]['cantidad2']})
+
     
 
 
@@ -348,6 +356,7 @@ class StockCambioLine(TransientModel):
     producto1=fields.Many2one('product.product')
     producto2=fields.Many2one('product.product',default=lambda self: self.te())
     cantidad=fields.Float()
+    cantidad2=fields.Float()
     rel_cambio=fields.Many2one('cambio.toner')
     serie=fields.Many2one('stock.production.lot')
     almacen=fields.Many2one('stock.warehouse',string='Almacen')
