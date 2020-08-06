@@ -164,7 +164,7 @@ class StockPickingMassAction(TransientModel):
                         picking.sale_id.x_studio_field_bxHgp.write({'stage_id':104})
                         self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id, 'estadoTicket' : "Entregado", 'comentario':str(comentario)+' Evidenciado'})
                     else:
-                        picking.sale_id.x_studio_field_bxHgp.write({'stage_id':18})
+                        picking.sale_id.x_studio_field_bxHgp.write({'stage_id':112})
                         self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id, 'estadoTicket' : "Entregado", 'comentario':str(comentario)+' Evidenciado'})    
             pick_to_do |= picking
         if pick_to_do:
