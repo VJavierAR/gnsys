@@ -1265,7 +1265,7 @@ class AltaProductoOne(TransientModel):
                     if(self.existencia!=0):
                         quant.write({'quantity':self.existencia})
                 else:
-                    self.env['stock.quant'].sudo().create({'produt_id':find.id,'location_id':self.almacen.lot_stock_id.id,'quantity':self.existencia})
+                    self.env['stock.quant'].sudo().create({'product_id':find.id,'location_id':self.almacen.lot_stock_id.id,'quantity':self.existencia})
         else:
             p=self.env['product.product'].create({'name':self.modelo,'default_code':self.noParte,'description':self.descripcion,'categ_id':self.tipo.id})
             if(self.almacen.id):
