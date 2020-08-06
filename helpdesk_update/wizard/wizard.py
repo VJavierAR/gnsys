@@ -4573,6 +4573,423 @@ class helpdesk_reiniciar_contadores_mesa(TransientModel):
 
 
 
+class helpdesk_editar_contadores_mesa(TransientModel):
+    _name = 'helpdesk.contadores.editar.mesa'
+    _description = 'helpdesk permite editar los contadores actuales en mesa de ayuda.'
+
+    ticket_id = fields.Many2one(
+                                    "helpdesk.ticket",
+                                    string = 'Ticket'
+                                )
+    serieSeleccionada = fields.Text(
+                            string = 'Serie seleccionada',
+                            compute = "_compute_serieSeleccionada"
+                        )
+    tipoEquipo = fields.Selection(
+                                    [('Color','Color'),('B/N','B/N')],
+                                    string = 'Equipo color o B/N',
+                                    compute = '_compute_equipoSeleccionado'
+                                )
+    contadorMonoActual = fields.Integer(
+                                            string = 'Contador Monocromatico actual',
+                                            store = False,
+                                            compute = '_compute_contador_bn_actual'
+                                        )
+    contadorColorActual = fields.Integer(
+                                            string = 'Contador Color actual',
+                                            store = False,
+                                            compute = '_compute_contador_color_actual'
+                                        )
+    contadorMonoActualizado = fields.Integer(
+                                                string = 'Contador Monocromatico nuevo',
+                                                store = True,
+                                                default = 0
+                                            )
+    contadorColorActualizado = fields.Integer(
+                                                string = 'Contador Color nuevo',
+                                                store = True,
+                                                default = 0
+                                            )
+
+    evidencia = fields.Many2many(
+                                    'ir.attachment',
+                                    string = "Evidencias"
+                                )
+    comentario = fields.Text(
+                                string = 'Comentario'
+                            )
+    check = fields.Boolean(
+                                string = 'Mostrar en reporte',
+                                default = False
+                            )
+    estado = fields.Char(
+                            string = 'Estado', 
+                            compute = "_compute_estadoTicket"
+                        )
+    textoInformativo = fields.Text(
+                                        string = ' ',
+                                        default = ' ',
+                                        store = False,
+                                        compute = '_compute_textoInformativo'
+                                    )
+
+    def _compute_equipoSeleccionado(self):
+        for record in self:
+            if record.ticket_id.x_studio_equipo_por_nmero_de_serie and record.ticket_id.x_studio_equipo_por_nmero_de_serie.x_studio_color_bn:
+                record.tipoEquipo = record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_color_bn
+
+    def _compute_serieSeleccionada(self):
+        if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+            self.serieSeleccionada = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].name
+
+    def _compute_estadoTicket(self):
+        if self.ticket_id:
+            self.estado = self.ticket_id.stage_id.name
+
+    def _compute_contador_bn_actual(self):
+        for record in self:
+            fuente = 'stock.production.lot'
+            ultimoDcaStockProductionLot = self.env['dcas.dcas'].search([['fuente', '=', fuente],['serie', '=', record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+            if ultimoDcaStockProductionLot:
+                record.contadorMonoActual = ultimoDcaStockProductionLot.contadorMono
+            #if record.ticket_id.x_studio_equipo_por_nmero_de_serie:
+            #    record.contadorMonoActual = record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_bn_mesa
+            
+
+    def _compute_contador_color_actual(self):
+        for record in self:
+            fuente = 'stock.production.lot'
+            ultimoDcaStockProductionLot = self.env['dcas.dcas'].search([['fuente', '=', fuente],['serie', '=', record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+            if ultimoDcaStockProductionLot:
+                record.contadorMonoActual = ultimoDcaStockProductionLot.contadorColor
+            #if record.ticket_id.x_studio_equipo_por_nmero_de_serie:
+            #    record.contadorColorActual = record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_color_mesa
+
+    def _compute_textoInformativo(self):
+        q = 'stock.production.lot'
+        ultimoDcaStockProductionLot = self.env['dcas.dcas'].search([['fuente', '=', q],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+        q = 'dcas.dcas'
+        ultimoDcaDcasDcas = self.env['dcas.dcas'].search([['fuente', '=', q],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+        q = 'helpdesk.ticket'
+        ultimoDcaHelpdeskTicket = self.env['dcas.dcas'].search([['fuente', '=', q],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+        q = 'tfs.tfs'
+        ultimoDcaTfsTfs = self.env['dcas.dcas'].search([['fuente', '=', q],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+        #self.textoInformativo = 'ultimoDcaStockProductionLot: ' + str(ultimoDcaStockProductionLot.id) + '\nultimoDcaDcasDcas: ' + str(ultimoDcaDcasDcas.id) + '\nultimoDcaHelpdeskTicket: ' + str(ultimoDcaHelpdeskTicket.id) + '\nultimoDcaTfsTfs: ' + str(ultimoDcaTfsTfs.id) + '\n\n'
+
+        for c in self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+            comentarioDeReinicio = """
+                    <div class='alert alert-info' role='alert'>
+                        <h4 class="alert-heading">Edición de contadores por realizar !!!</h4>
+
+                        <p>Se editara el contador de la serie <strong>""" + str(c.name) + """</strong> por medio del ticket <strong>""" + str(self.ticket_id.id) + """</strong> y con los siguientes detalles: </p>
+                        <br/>
+                        <div class='row'>
+                            <div class='col-sm-3'>
+                                <div class='row'>
+                                    <div class='col-sm-12'>
+                                        <p>Realizado el día:</p>
+                                    </div>
+                                </div>
+                                <div class='row'>
+                                    <div class='col-sm-12'>
+                                        <p>""" + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ) + """</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class='col-sm-3'>
+                                <div class='row'>
+                                    <div class='col-sm-12'>
+                                        <p>Realizado por:</p>
+                                    </div>
+                                </div>
+                                <div class='row'>
+                                    <div class='col-sm-12'>
+                                        <p>""" + self.env.user.name + """</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class='col-sm-3'>
+                                <div class='row'>
+                                    <div class='col-sm-12'>
+                                        <p>Contador anterior B/N:</p>
+                                    </div>
+                                </div>
+                                <div class='row'>
+                                    <div class='col-sm-12'>
+                                        <p>""" + str(ultimoDcaStockProductionLot.contadorMono) + """</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class='col-sm-3'>
+                                <div class='row'>
+                                    <div class='col-sm-12'>
+                                        <p>Contador anterior Color:</p>
+                                    </div>
+                                </div>
+                                <div class='row'>
+                                    <div class='col-sm-12'>
+                                        <p>""" + str(ultimoDcaStockProductionLot.contadorColor) + """</p>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        
+                    </div>
+                    """
+
+        self.textoInformativo = comentarioDeReinicio
+
+
+    def comentarioDeReinicio(self, tipoEquipo, serie, ticket_id, fecha, usuario, contadorAnteriorNegro, contadorAnteriorColor):
+        comentarioDeReinicio = """ """
+        if tipoEquipo == 'B/N':
+            comentarioDeReinicio = """
+                                            <div class='alert alert-info' role='alert'>
+                                                <h4 class="alert-heading">Edición de contadores realizado !!!</h4>
+
+                                                <p>Se edito el contador de la serie <strong>""" + serie + """</strong> por medio del ticket <strong>""" + ticket_id + """</strong> y con los siguientes detalles: </p>
+                                                <br/>
+                                                <div class='row'>
+                                                    <div class='col-sm-4'>
+                                                        <div class='row'>
+                                                            <div class='col-sm-12'>
+                                                                <p>Realizado el día:</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class='row'>
+                                                            <div class='col-sm-12'>
+                                                                <p>""" + fecha + """</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class='col-sm-4'>
+                                                        <div class='row'>
+                                                            <div class='col-sm-12'>
+                                                                <p>Realizado por:</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class='row'>
+                                                            <div class='col-sm-12'>
+                                                                <p>""" + usuario + """</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class='col-sm-4'>
+                                                        <div class='row'>
+                                                            <div class='col-sm-12'>
+                                                                <p>Contador anterior B/N:</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class='row'>
+                                                            <div class='col-sm-12'>
+                                                                <p>""" + contadorAnteriorNegro + """</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                            </div>
+                                            """
+        elif tipoEquipo == 'Color':
+            comentarioDeReinicio = """
+                                            <div class='alert alert-info' role='alert'>
+                                                <h4 class="alert-heading">Edición de contadores realizado !!!</h4>
+
+                                                <p>Se edito el contador de la serie <strong>""" + serie + """</strong> por medio del ticket <strong>""" + ticket_id + """</strong> y con los siguientes detalles: </p>
+                                                <br/>
+                                                <div class='row'>
+                                                    <div class='col-sm-3'>
+                                                        <div class='row'>
+                                                            <div class='col-sm-12'>
+                                                                <p>Realizado el día:</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class='row'>
+                                                            <div class='col-sm-12'>
+                                                                <p>""" + fecha + """</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class='col-sm-3'>
+                                                        <div class='row'>
+                                                            <div class='col-sm-12'>
+                                                                <p>Realizado por:</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class='row'>
+                                                            <div class='col-sm-12'>
+                                                                <p>""" + usuario + """</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class='col-sm-3'>
+                                                        <div class='row'>
+                                                            <div class='col-sm-12'>
+                                                                <p>Contador anterior B/N:</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class='row'>
+                                                            <div class='col-sm-12'>
+                                                                <p>""" + contadorAnteriorNegro + """</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class='col-sm-3'>
+                                                        <div class='row'>
+                                                            <div class='col-sm-12'>
+                                                                <p>Contador anterior Color:</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class='row'>
+                                                            <div class='col-sm-12'>
+                                                                <p>""" + contadorAnteriorColor + """</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+                                                </div>
+                                                
+                                            </div>
+                                            """
+        return comentarioDeReinicio
+
+
+    def editarContadores(self):
+        for c in self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+            q = 'stock.production.lot'
+            if str(c.x_studio_color_bn) == 'B/N':
+                #if int(self.contadorBNActual) >= int(c.x_studio_contador_bn):
+                negrot = c.x_studio_contador_bn_mesa
+                colort = c.x_studio_contador_color_mesa
+                negroMesa = 0
+                colorMesa = 0
+                comentarioDeReinicio = """ """
+
+                rr = ''
+                #Creando dca para mesa stock.production.lot
+                ultimoDcaCapturado = self.env['dcas.dcas'].search([['x_studio_tiquete', '=', self.ticket_id.id],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+                if ultimoDcaCapturado:
+                    ultimoDcaCapturado.write({
+                                                        'contadorMono': self.contadorMonoActualizado
+                                                    })
+                
+                tipoEquipoTemp = str(c.x_studio_color_bn)
+                nombreSerieTemp = c.name
+                idTicketTemp = str(self.ticket_id.id)
+                fechaCreacionTemp = str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") )
+                nombreUsuarioTemp = self.env.user.name
+                contadorAnteriorNegroTemp = str(self.contadorMonoActual)
+                contadorAnteriorColorTemp = str(self.contadorColorActual)
+                comentarioDeReinicio = self.comentarioDeReinicio(tipoEquipoTemp, nombreSerieTemp, idTicketTemp, fechaCreacionTemp, nombreUsuarioTemp, contadorAnteriorNegroTemp, contadorAnteriorColorTemp)
+                ultimoDcaCapturado.write({'comentarioDeReinicio': comentarioDeReinicio})
+
+                self.env['helpdesk.diagnostico'].create({
+                                                            'ticketRelacion':self.ticket_id.x_studio_id_ticket,
+                                                            'estadoTicket': 'Reinicio de contadores en el estado ' + self.estado,
+                                                            'evidencia': [(6,0,self.evidencia.ids)],
+                                                            'mostrarComentario': self.check,
+                                                            'write_uid':  self.env.user.name,
+                                                            'comentario': 'Reinicio de contadores.\n Contador BN anterior: ' + str(self.contadorMonoActual) + '\nContador BN capturado: ' + str(self.contadorMonoActualizado) + '\n\n' + self.comentario
+                                                        })
+                self.ticket_id.write({'contadores_anteriores': '</br>Equipo BN o Color: ' + str(self.tipoEquipo) + ' </br></br>Contador BN: ' + str(self.contadorMonoActualizado) + '</br></br>Contador Color: ' + str(self.contadorColorActualizado)
+                                    , 'x_studio_contador_bn': int(self.contadorMonoActual)
+                                    , 'x_studio_contador_bn_a_capturar': int(self.contadorMonoActualizado)
+                                    , 'x_studio_contador_color': 0
+                                    , 'x_studio_contador_color_a_capturar': 0
+                                    })
+                mensajeTitulo = "Contador actualizado!!!"
+                mensajeCuerpo = "Se edito el contador del equipo " + str(c.name) + "."
+                wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
+                view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+                return {
+                        'name': _(mensajeTitulo),
+                        'type': 'ir.actions.act_window',
+                        'view_type': 'form',
+                        'view_mode': 'form',
+                        'res_model': 'helpdesk.alerta',
+                        'views': [(view.id, 'form')],
+                        'view_id': view.id,
+                        'target': 'new',
+                        'res_id': wiz.id,
+                        'context': self.env.context,
+                        }
+                
+            if str(c.x_studio_color_bn) != 'B/N':
+                #if int(self.contadorColorMesa) >= int(c.x_studio_contador_color) and int(self.contadorBNActual) >= int(c.x_studio_contador_bn):                      
+                if self.ticket_id.team_id.id == 8:
+                    negrot = c.x_studio_contador_bn
+                    colort = c.x_studio_contador_color
+                else:
+                    negrot = c.x_studio_contador_bn_mesa
+                    colort = c.x_studio_contador_color_mesa
+
+                negroMesa = 0
+                colorMesa = 0
+                comentarioDeReinicio = """ """
+
+                rr = ''
+                dcaFuente = ''
+                mesaFuente = ''
+                tfsFuente = ''
+                ultimoDcaCapturado = self.env['dcas.dcas'].search([['x_studio_tiquete', '=', self.ticket_id.id],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)                
+                if ultimoDcaCapturado:
+                    ultimoDcaCapturado.write({
+                                                'contadorColor': self.contadorColorActualizado,
+                                                'contadorMono': self.contadorMonoActualizado
+                                            })
+                tipoEquipoTemp = str(c.x_studio_color_bn)
+                nombreSerieTemp = c.name
+                idTicketTemp = str(self.ticket_id.id)
+                fechaCreacionTemp = str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") )
+                nombreUsuarioTemp = self.env.user.name
+                contadorAnteriorNegroTemp = str(self.contadorMonoActual)
+                contadorAnteriorColorTemp = str(self.contadorColorActual)
+                comentarioDeReinicio = self.comentarioDeReinicio(tipoEquipoTemp, nombreSerieTemp, idTicketTemp, fechaCreacionTemp, nombreUsuarioTemp, contadorAnteriorNegroTemp, contadorAnteriorColorTemp)
+                ultimoDcaCapturado.write({'comentarioDeReinicio': comentarioDeReinicio})
+                                
+                self.env['helpdesk.diagnostico'].create({
+                                                            'ticketRelacion':self.ticket_id.x_studio_id_ticket,
+                                                            'estadoTicket': 'Reinicio de contadores en el estado ' + self.estado,
+                                                            'evidencia': [(6,0,self.evidencia.ids)],
+                                                            'mostrarComentario': self.check,
+                                                            'write_uid':  self.env.user.name,
+                                                            'comentario': 'Reinicio de contadores.\nContador BN anterior: ' + str(self.contadorMonoActual) + '\nContador BN capturado: ' + str(self.contadorMonoActualizado) + '\nContador color anterior: ' + str(self.contadorColorActual) + '\nContador color capturado: ' + str(self.contadorColorActualizado) + '\n\n' + self.comentario 
+                                                        })
+                self.ticket_id.write({'contadores_anteriores': '</br>Equipo BN o Color: ' + str(self.bnColor) + ' </br></br>Contador BN: ' + str(self.contadorMonoActualizado) + '</br></br>Contador Color: ' + str(self.contadorColorActualizado)
+                                    , 'x_studio_contador_bn': int(self.contadorMonoActual)
+                                    , 'x_studio_contador_bn_a_capturar': int(self.contadorMonoActualizado)
+                                    , 'x_studio_contador_color': int(self.contadorColorActual)
+                                    , 'x_studio_contador_color_a_capturar': int(self.contadorColorActualizado)
+                                    })
+                mensajeTitulo = "Contador actualizado!!!"
+                mensajeCuerpo = "Se edito el contador del equipo " + str(c.name) + "."
+                wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
+                view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+                return {
+                        'name': _(mensajeTitulo),
+                        'type': 'ir.actions.act_window',
+                        'view_type': 'form',
+                        'view_mode': 'form',
+                        'res_model': 'helpdesk.alerta',
+                        'views': [(view.id, 'form')],
+                        'view_id': view.id,
+                        'target': 'new',
+                        'res_id': wiz.id,
+                        'context': self.env.context,
+                        }
+                #else:
+                #    raise exceptions.ValidationError("Error al capturar contador, el contador capturado debe ser mayor.")
 
 
 
