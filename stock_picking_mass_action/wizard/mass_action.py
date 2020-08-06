@@ -274,7 +274,7 @@ class StockCambio(TransientModel):
             self.confirmarE(equipos)
             #self.confirmar()
         self.pick.action_confirm()
-        self.pick.action_assign()
+        #self.pick.action_assign()
 
 
     def confirmar(self,data):
