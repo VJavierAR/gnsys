@@ -29,11 +29,13 @@ odoo.define('invoice.action_button', function (require) {
                         this.$buttons.find('.oe_action_button_stock_inventory').click(this.proxy('action_inter6'));
                         break;
                       case 3122:
+                        this.$buttons.find('.o_button_import').hide();
                         this.$buttons.find('.oe_action_button_stock_rule').click(this.proxy('action_inter10'));
                         break;
                       case 672:
                         this.$buttons.find('.o_button_import').hide();
                         this.$buttons.find('.o_list_button_add').hide();
+                        this.$buttons.find('.oe_action_button_stock_rule').click(this.proxy('action_inter10')).hide();
                         break;
                       default:
                         this.$buttons.find('.oe_action_button_purchase_order').click(this.proxy('action_inter8')); 
