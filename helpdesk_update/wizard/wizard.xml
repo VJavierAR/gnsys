@@ -1654,6 +1654,51 @@
 
 
 
+    <record id="view_helpdesk_editar_contadores" model="ir.ui.view">
+        <field name="model">helpdesk.contadores.editar.mesa</field>
+        <field name="arch" type="xml">
+            <form string="Editar contadores">
+
+                <group string='Datos del equipo'>
+                    <group>
+                        <field name='ticket_id' readonly='1' />
+                        <field name='serieSeleccionada' readonly='1' />
+                        <field name='tipoEquipo' readonly='1' />
+                    </group>
+                </group>
+
+                <group string='Motivo por el que se reiniciara el contador'>
+                    <group>
+                        <field name='estado' force_save='1' readonly='1' />
+                        <field name='comentario' force_save='1' />
+                    </group>
+                    <group>
+                        <field name='check' force_save='1' />
+                        <field name='evidencia' widget="many2many_binary" force_save='1' />
+                    </group>
+                </group>
+
+                <group string='Contadores actuales y actualizados'>
+                    <group>
+                        <field name='contadorMonoActual' readonly='1' force_save='1' />
+                        <field name='contadorColorActual' readonly='1' force_save='1' attrs="{'invisible': [('tipoEquipo', '=', 'B/N')]}" />
+                    </group>
+                    <group>
+                        <field name='contadorMonoActualizado' force_save='1' readonly='0' />
+                        <field name='contadorColorActualizado' attrs="{'invisible': [('tipoEquipo', '=', 'B/N')]}" force_save='1' readonly='0' />
+                    </group>
+                </group>
+                <group> 
+                    <field name='textoInformativo' force_save='1' readonly='1' widget='html' />
+                </group>
+                <footer>
+                    <button name="editarContadores" string="Editar contador" type="object" class="oe_highlight" />
+                    <button special="cancel" string="Cerrar" class="oe_highlight" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
 
 
 

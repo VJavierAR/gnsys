@@ -6,11 +6,66 @@ from odoo.exceptions import UserError,RedirectWarning
 from odoo import exceptions, _
 import logging, ast
 import datetime, time
+import pytz
 _logger = logging.getLogger(__name__)
+
+
 
 
 #mensajeTituloGlobal = ''
 #mensajeCuerpoGlobal = ''
+
+
+listaTipoDeVale = [('Falla','Falla'),
+                                ('Incidencia','Incidencia'),
+                                ('Reeincidencia','Reeincidencia'),
+                                ('Pregunta','Pregunta'),
+                                ('Requerimiento','Requerimiento'),
+                                ('Solicitud de refacción','Solicitud de refacción'),
+                                ('Conectividad','Conectividad'),
+                                ('Reincidencias','Reincidencias'),
+                                ('Instalación','Instalación'),
+                                ('Mantenimiento Preventivo','Mantenimiento Preventivo'),
+                                ('IMAC','IMAC'),
+                                ('Proyecto','Proyecto'),
+                                ('Retiro de equipo','Retiro de equipo'),
+                                ('Cambio','Cambio'),
+                                ('Servicio de Software','Servicio de Software'),
+                                ('Resurtido de Almacen','Resurtido de Almacen'),
+                                ('Supervisión','Supervisión'),
+                                ('Demostración','Demostración'),
+                                ('Toma de lectura','Toma de lectura')
+                               ]
+def cambiaTipoDeVale(idEquipo):
+    listaEquiposDeCoordinadoras = [11]
+    if idEquipo in listaEquiposDeCoordinadoras:
+            listaTipoDeVale = [('Mantenimiento Preventivo', 'Mantenimiento Preventivo')]
+            #return listaTipoDeVale
+    else:
+            listaTipoDeVale = [('Falla','Falla'),
+                                ('Incidencia','Incidencia'),
+                                ('Reeincidencia','Reeincidencia'),
+                                ('Pregunta','Pregunta'),
+                                ('Requerimiento','Requerimiento'),
+                                ('Solicitud de refacción','Solicitud de refacción'),
+                                ('Conectividad','Conectividad'),
+                                ('Reincidencias','Reincidencias'),
+                                ('Instalación','Instalación'),
+                                ('Mantenimiento Preventivo','Mantenimiento Preventivo'),
+                                ('IMAC','IMAC'),
+                                ('Proyecto','Proyecto'),
+                                ('Retiro de equipo','Retiro de equipo'),
+                                ('Cambio','Cambio'),
+                                ('Servicio de Software','Servicio de Software'),
+                                ('Resurtido de Almacen','Resurtido de Almacen'),
+                                ('Supervisión','Supervisión'),
+                                ('Demostración','Demostración'),
+                                ('Toma de lectura','Toma de lectura')
+                               ]
+    return listaTipoDeVale
+
+idTeamGlobal = 11
+
 
 def convert_timedelta(duration):
     days, seconds = duration.days, duration.seconds
@@ -24,7 +79,14 @@ class helpdesk_update(models.Model):
     #_inherit = ['mail.thread', 'helpdesk.ticket']
     _inherit = 'helpdesk.ticket'
 
-    
+    x_studio_tipo_de_vale = fields.Selection(listaTipoDeVale, store = True, track_visibility = 'onchange')
+    #x_studio_tipo_de_vale = fields.Selection(lambda self: self._obtenerId(), store = True, track_visibility = 'onchange')
+    """
+    @api.onchange('team_id')
+    def _obtenerId(self):
+        _logger.info('3312: ' + str(cambiaTipoDeVale(self.team_id.id)))
+        return cambiaTipoDeVale(self.team_id.id)
+    """
 
     #priority = fields.Selection([('all','Todas'),('baja','Baja'),('media','Media'),('alta','Alta'),('critica','Critica')])
     x_studio_field_6furK = fields.Selection([('CHIHUAHUA','CHIHUAHUA'), ('SUR','SUR'),('NORTE','NORTE'),('PONIENTE','PONIENTE'),('ORIENTE','ORIENTE'),('CENTRO','CENTRO'),('DISTRIBUIDOR','DISTRIBUIDOR'),('MONTERREY','MONTERREY'),('CUERNAVACA','CUERNAVACA'),('GUADALAJARA','GUADALAJARA'),('QUERETARO','QUERETARO'),('CANCUN','CANCUN'),('VERACRUZ','VERACRUZ'),('PUEBLA','PUEBLA'),('TOLUCA','TOLUCA'),('LEON','LEON'),('COMODIN','COMODIN'),('VILLAHERMOSA','VILLAHERMOSA'),('MERIDA','MERIDA'),('ALTAMIRA','ALTAMIRA'),('COMODIN','COMODIN'),('DF00','DF00'),('SAN LP','SAN LP'),('ESTADO DE MÉXICO','ESTADO DE MÉXICO'),('Foraneo Norte','Foraneo Norte'),('Foraneo Sur','Foraneo Sur')], string = 'Zona localidad', store = True, track_visibility='onchange')
@@ -1518,6 +1580,15 @@ class helpdesk_update(models.Model):
         #    }
         self.estadoSolicitudDeRefaccion = True
 
+        comentarioGenerico = 'Cambio de ' + estadoAntes +' a solicitud de refacción. Cambio generado por ' + str(self.env.user.name) + '.\nEl día ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S")) + '.\n\n'
+        self.env['helpdesk.diagnostico'].sudo().create({
+                                                            'ticketRelacion': self.id,
+                                                            'comentario': comentarioGenerico,
+                                                            'estadoTicket': 'Pendiente por autorizar solicitud',
+                                                            'mostrarComentario': True,
+                                                            'write_uid':  self.env.user.id,
+                                                            'create_uid':  self.env.user.id
+                                                        })
 
         mensajeTitulo = 'Estado de ticket actualizado!!!'
         mensajeCuerpo = 'Se cambio el estado del ticket ' + str(self.x_studio_id_ticket) +'. \nEstado anterior: ' + estadoAntes + ' Estado actual:  Pendiente por autorizar solicitud' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página."
@@ -4167,7 +4238,25 @@ class helpdesk_update(models.Model):
             'context': self.env.context,
         }
 
-
+    @api.multi
+    def editar_contadores_wizard(self):
+        wiz = self.env['helpdesk.contadores.editar.mesa'].create({'ticket_id': self.id})
+        #wiz.productos = [(6, 0, self.x_studio_productos.ids)]
+        view = self.env.ref('helpdesk_update.view_helpdesk_editar_contadores')
+        return {
+            'name': _('Editar contadores'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'helpdesk.contadores.editar.mesa',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            #'domain': [["series", "=", ids]],
+            #'context': self.env.context,
+            'context': self.env.context,
+        }
 
     # @api.multi
     # def write(self, vals):
