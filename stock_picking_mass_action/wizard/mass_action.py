@@ -1294,10 +1294,14 @@ class AltaProductoOne(TransientModel):
                 j=0
                 check=False
                 for row_num, row in enumerate(sheet.get_rows()):
-                    almacen=self.env['stock.warehouse'].search([['name','ilike',str(row[0].value).lower()],['x_studio_cliente','=',False]])
-                    producto=self.env['product.product'].search([['default_code','=',str(row[2].value).replace(' ','')]])
-                    regla=self.env['stock.warehouse.orderpoint'].search([['location_id','=',almacen.lot_stock_id.id],['product_id','=',producto.id]])
-                    if(regla.id):
-                        regla.write({'product_min_qty':row[3].value,'product_max_qty':row[4].value})
-                    else:
-                        self.env['stock.warehouse.orderpoint'].create({'location_id':almacen.lot_stock_id.id,'product_id':producto.id,'product_min_qty':row[3].value,'product_max_qty':row[4].value})
+                    if(i!=0):
+                        almacen=self.env['stock.warehouse'].search([['name','ilike',str(row[0].value).lower()],['x_studio_cliente','=',False]])
+                        producto=self.env['product.product'].search([['default_code','=',str(row[2].value).replace(' ','')]])
+                        regla=self.env['stock.warehouse.orderpoint'].search([['location_id','=',almacen.lot_stock_id.id],['product_id','=',producto.id]])
+                        if(regla.id):
+                            regla.write({'product_min_qty':row[3].value,'product_max_qty':row[4].value})
+                        else:
+                            self.env['stock.warehouse.orderpoint'].create({'location_id':almacen.lot_stock_id.id,'product_id':producto.id,'product_min_qty':row[3].value,'product_max_qty':row[4].value})
+                    i=i+1
+            else:
+                raise UserError(_("Error en el formato del archivo"))
