@@ -1244,3 +1244,29 @@ class ReporteCompras(TransientModel):
         d=self.env['purchase.order'].search(i,order='date_planned asc')
         d[0].write({'x_studio_arreglo':str(d.mapped('id'))})
         return self.env.ref('stock_picking_mass_action.compras_xlsx').report_action(d[0])
+
+class AltaProductoOne(TransientModel):
+    _name='product.product.one'
+    _description='Alta de referencia'
+    modelo=fields.Char()
+    noParte=fields.Char()
+    descripcion=fields.Char()
+    almacen=fields.Many2one('stock.warehouse',domain=[['x_studio_cliente','=',False]])
+    tipo=fields.Many2one('product.category')
+    existencia=fields.Float()
+
+    def crear(self):
+        find=self.env['product.product'].search([['default_code','ilike',self.noParte.replace(' ','').replace('-','')],['categ_id','=',self.tipo.id]])
+        if(find.id):
+            if(self.almacen.id):
+                quant=self.env['stock.quant'].search([['produt_id','=',find.id],['location_id','=',self.almacen.lot_stock_id.id]])
+                if(quant.id):
+                    if(self.existencia!=0):
+                        quant.write({'quantity':self.existencia})
+                else:
+                    self.env['stock.quant'].sudo().create({'produt_id':find.id,'location_id':self.almacen.lot_stock_id.id,'quantity':self.existencia})
+        else:
+            p=self.env['product.product'].create({'name':self.modelo,'default_code':self.noParte,'description':self.descripcion,'categ_id':self.tipo.id})
+            if(almacen.id):
+                self.env['stock.quant'].sudo().create({'product_id':p.id,'location_id':almacen.id,'quantity':self.existencia})
+                
