@@ -187,20 +187,24 @@ class sale_update(models.Model):
 	    self._action_confirm()
 	    if self.env['ir.config_parameter'].sudo().get_param('sale.auto_done_setting'):
 	        self.action_done()
-	    pii=self.env['stock.picking'].search(['&',['sale_id','=',self.id],['state','!=','draft']])
-	    sal=self.order_line.sorted(key='id').mapped('id')
+	    self.saleLinesMove()
+	    return True
 
-	    for p in pii:
+	def saleLinesMove(self):
+		picks=self.env['stock.picking'].search(['&',['sale_id','=',self.id],['state','!=','draft']])
+	    sal=self.order_line.sorted(key='id').mapped('id')
+	    cliente=self.partner_shipping_id
+		for p in picks:
 	    	i=0
 	    	for pi in p.move_ids_without_package.sorted(key='id'):
 	    		pi.write({'sale_line_id':sal[i]})
 	    		if(p.picking_type_id.code=='outgoing'):
-	    			almacen=self.env['stock.warehouse'].search([['x_studio_field_E0H1Z','=',self.partner_shipping_id.id]])
+	    			almacen=self.env['stock.warehouse'].search([['x_studio_field_E0H1Z','=',cliente.id]])
 	    			if(almacen.id!=False):
 	    				pi.write({'location_dest_id':almacen.lot_stock_id.id})
 	    				self.env['stock.move.line'].search([['move_id','=',pi.id]]).write({'location_dest_id':almacen.lot_stock_id.id})
 	    		i=i+1
-	    return True
+
 
 	def cambio(self):
 		self.action_confirm()

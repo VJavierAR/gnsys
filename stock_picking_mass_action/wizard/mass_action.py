@@ -284,6 +284,7 @@ class StockCambio(TransientModel):
             dt=[]
             al=[]
             cantidades=False
+            self.pick.sale_id.saleLinesMove()
             for sa in self.pick.move_ids_without_package.filtered(lambda x:x.product_id.categ_id.id!=13):
                 copia=sa.location_dest_id.id
                 d=list(filter(lambda x:x['producto1']['id']==sa.product_id.id,data))
