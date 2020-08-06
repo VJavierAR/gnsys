@@ -1270,3 +1270,34 @@ class AltaProductoOne(TransientModel):
             p=self.env['product.product'].create({'name':self.modelo,'default_code':self.noParte,'description':self.descripcion,'categ_id':self.tipo.id})
             if(self.almacen.id):
                 self.env['stock.quant'].sudo().create({'product_id':p.id,'location_id':self.almacen.lot_stock_id.id,'quantity':self.existencia})
+
+
+class AltaProductoOne(TransientModel):
+    _name='stock.warehouse.orderpoint.import'
+    _description='Importacion de reglas o actulización'
+    archivo=fields.Binary()
+
+
+
+    def importar(self):
+        if(self.archivo):
+            f2=base64.b64decode(self.archivo)
+            H=StringIO(f2)
+            mimetype = guess_mimetype(f2 or b'')
+            #_logger.info(str(mimetype))
+            if(mimetype=='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' or mimetype=='application/vnd.ms-excel'):
+                book = xlrd.open_workbook(file_contents=f2 or b'')
+                sheet = book.sheet_by_index(0)
+                header=[]
+                arr=[]
+                i=0
+                j=0
+                check=False
+                for row_num, row in enumerate(sheet.get_rows()):
+                    almacen=self.env['stock.warehouse'].search([['name','ilike',str(row[0].value).lower()],['x_studio_cliente','=',False]])
+                    producto=self.env['product.product'].search([['default_code','=',str(row[2].value).replace(' ','')]])
+                    regla=self.env['stock.warehouse.orderpoint'].search([['location_id','=',almacen.lot_stock_id.id],['product_id','=',producto.id]])
+                    if(regla.id):
+                        regla.write({'product_min_qty':row[3].value,'product_max_qty':row[4].value})
+                    else:
+                        self.env['stock.warehouse.orderpoint'].create({'location_id':almacen.lot_stock_id.id,'product_id':producto.id,'product_min_qty':row[3].value,'product_max_qty':row[4].value})

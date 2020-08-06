@@ -1,5 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="view_stock_warehousw_orderpoint_import_action_form" model="ir.ui.view">
+        <field name="model">stock.warehouse.orderpoint.import</field>
+        <field name="arch" type="xml">
+            <form string="Mass Action for the selected sale order">
+                <h1>Estructura del archivo</h1>
+                <table class="table">
+                <thead>
+                  <tr>
+                    <th>Almacen</th>
+                    <th>Modelo</th>
+                    <th>No Parte</th>
+                    <th>Minimo</th>
+                    <th>Maximo</th>
+                  </tr>
+                </thead>
+                </table>
+                <group>
+                    <group>
+                    <field name="archivo" string="Archivo" required="1"/>
+                    </group>
+                <group>
+                </group>
+                </group>
+                <footer>
+                    <button name="importar" string="Importar o actualizar" type="object" class="oe_highlight"/>
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
     <record id="view_product_product_one_action_form" model="ir.ui.view">
         <field name="model">product.product.one</field>
         <field name="arch" type="xml">

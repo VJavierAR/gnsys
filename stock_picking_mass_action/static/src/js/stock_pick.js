@@ -28,6 +28,13 @@ odoo.define('invoice.action_button', function (require) {
                         this.$buttons.find('.o_button_import').hide();
                         this.$buttons.find('.oe_action_button_stock_inventory').click(this.proxy('action_inter6'));
                         break;
+                      case 3122:
+                        this.$buttons.find('.oe_action_button_stock_rule').click(this.proxy('action_inter10'));
+                        break;
+                      case 672:
+                        this.$buttons.find('.o_button_import').hide();
+                        this.$buttons.find('.o_list_button_add').hide();
+                        break;
                       default:
                         this.$buttons.find('.oe_action_button_purchase_order').click(this.proxy('action_inter8')); 
                         this.$buttons.find('.oe_action_button_sale_report').click(this.proxy('action_inter4')); 
@@ -43,6 +50,21 @@ odoo.define('invoice.action_button', function (require) {
                 }
                 
             }
+        },
+        action_inter10: function (e) {
+            var self = this
+            var user = session.uid;
+            self.do_action({
+                name: _t('Importacion'),
+                type : 'ir.actions.act_window',
+                res_model: 'stock.warehouse.orderpoint.import',
+                view_type: 'form',
+                view_mode: 'form',
+                view_id: 'view_stock_warehousw_orderpoint_import_action_form',
+                views: [[false, 'form']],
+                target: 'new',
+            
+            });
         },
         action_inter9: function (e) {
             var self = this
