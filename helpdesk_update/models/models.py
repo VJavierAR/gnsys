@@ -1297,47 +1297,61 @@ class helpdesk_update(models.Model):
                     
                     dominio = [('id', 'in', listaUsuarios)]
                     
-
+                    comentarioGenerico = 'Hola prueba'
+                    
                     """
+                    objTicket = self.env['helpdesk.ticket'].search([['id', '=', self.x_studio_id_ticket]], order='create_date desc', limit=1)
+                    
+                    _logger.info('3312: ' + str(objTicket.id) +  ' id: ' + str(objTicket.id) + ' objTicket.diagnosticos: ' + str(objTicket.diagnosticos))
                     listaDiagnosticos = [(5, 0, 0)]
+                    listaDeFechas = []
                     if record.diagnosticos:
                         for diagnostico in record.diagnosticos:
+                            _logger.info('antes create_date' + str(diagnostico.create_date))
                             listaDiagnosticos.append((0, 0, {
-                                                                'ticketRelacion': diagnostico.ticketRelacion.id,
+                                                                'ticketRelacion': int(diagnostico.ticketRelacion.x_studio_id_ticket),
                                                                 'estadoTicket': diagnostico.estadoTicket,
                                                                 'evidencia': [(6, 0, diagnostico.evidencia.ids)],
                                                                 'mostrarComentario': diagnostico.mostrarComentario,
                                                                 'write_uid':  diagnostico.write_uid.id,
-                                                                'comentario': diagnostico.comentario,
-                                                    }))
+                                                                'comentario': str(diagnostico.comentario) + str(diagnostico.create_date),
+                                                                'create_date': diagnostico.create_date,
+                                                                'create_uid': diagnostico.create_uid.id
+                                                            }))
+                            _logger.info('despues create_date' + str(diagnostico.create_date))
+                            listaDeFechas.append(diagnostico.create_date)
                     listaDiagnosticos.append((0, 0, {
                                                         #'comentario': "Hola",
                                                         'ticketRelacion': int(self.x_studio_id_ticket),
                                                         'estadoTicket': 'Asignado',
-                                                        'mostrarComentario': False,
+                                                        'mostrarComentario': True,
                                                         'write_uid':  self.env.user.id,
+                                                        'create_uid': self.env.user.id,
                                                         'comentario': 'Cambio de estado al seleccionar ' + self.team_id.name + ' como área de atención. Seleccion realizada por ' + str(self.env.user.name) +'.'
                                                     }))
                     
                     _logger.info('3312: ' + str(listaDiagnosticos))
-                    record.diagnosticos = listaDiagnosticos
-                    """
+                    objTicket.write({'diagnosticos': listaDiagnosticos})
+                    _logger.info('3312 listaDeFechas: ' + str(listaDeFechas))
+                    _logger.info('3312 diagnosticos objetos: ' + str(objTicket.diagnosticos))
 
-                    """
-                    self.env['helpdesk.diagnostico'].create({
-                                                            'ticketRelacion': self.x_studio_id_ticket,
-                                                            'estadoTicket': 'Asignado',
-                                                            #'evidencia': [(6,0,self.evidencia.ids)],
-                                                            #'mostrarComentario': self.check,
-                                                            'write_uid':  self.env.user.name,
-                                                            'comentario': 'Cambio de estado al seleccionar ' + self.team_id.name + ' como área de atención. Seleccion realizada por ' + str(self.env.user.name) +'.' 
-                                                        })
+                    i = 0
+                    for fecha in listaDeFechas:
+                        _logger.info('3312: ' + str(fecha))
+                        _logger.info('3312 diagnosticos: ' + str(objTicket.diagnosticos[i]) + ' i:' + str(i))
+                        fechaMX = (fecha - datetime.timedelta(hours=5)).strftime('%Y-%m-%d %H:%M:%S')
+
+                        _logger.info('fechaMX: ' + str(fechaMX))
+                        query = "update helpdesk_diagnostico set create_date = '" + fechaMX + "' where id = " + str(objTicket.diagnosticos[i].id) + ";"
+                        self.env.cr.execute(query)
+                        objTicket.diagnosticos[i].create_date = fecha
+                        i = i + 1
                     """
                     return {'warning': mess, 'domain': {'user_id': dominio}}
                 #else:
                     #reasingado
                 
-        
+                
         if self.team_id.id != False:
             res = {}
             idEquipoDeAsistencia = self.team_id.id
@@ -3568,47 +3582,48 @@ class helpdesk_update(models.Model):
                     for numeros_serie in record.x_studio_equipo_por_nmero_de_serie:
                         ids.append(numeros_serie.id)
                         
-                        for move_line in numeros_serie.x_studio_move_line:
+                        #for move_line in numeros_serie.x_studio_move_line:
                             
-                            cliente = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
-                            self._origin.sudo().write({'partner_id' : cliente})
-                            record.partner_id = cliente
-                            idM=self._origin.id
-                            
-                            if cliente == []:
-                                self.env.cr.execute("update helpdesk_ticket set partner_id = " + cliente + "  where  id = " + idM + ";")
-                            v['partner_id'] = cliente
-                            cliente_telefono = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.phone
-                            self._origin.sudo().write({'x_studio_telefono' : cliente_telefono})
-                            record.x_studio_telefono = cliente_telefono
-                            if cliente_telefono != []:
-                                srtt="update helpdesk_ticket set x_studio_telefono = '" + str(cliente_telefono) + "' where  id = " + str(idM) + ";"                                
-                            v['x_studio_telefono'] = cliente_telefono
-                            cliente_movil = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.mobile
-                            self._origin.sudo().write({'x_studio_movil' : cliente_movil})
-                            record.x_studio_movil = cliente_movil
-                            if cliente_movil == []:
-                                self.env.cr.execute("update helpdesk_ticket set x_studio_movil = '" + str(cliente_movil) + "' where  id = " +idM + ";")
-                            v['x_studio_movil'] = cliente_movil
-                            
-                            cliente_nivel = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.x_studio_nivel_del_cliente
-                            self._origin.sudo().write({'x_studio_nivel_del_cliente' : cliente_nivel})
-                            record.x_studio_nivel_del_cliente = cliente_nivel
-                            if cliente_nivel == []:
-                                self.env.cr.execute("update helpdesk_ticket set x_studio_nivel_del_cliente = '" + str(cliente_nivel) + "' where  id = " + idM + ";")
-                            v['x_studio_nivel_del_cliente'] = cliente_nivel
+                        #cliente = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
+                        cliente = numeros_serie.x_studio_cliente.id
+                        self._origin.sudo().write({'partner_id' : cliente})
+                        record.partner_id = cliente
+                        idM=self._origin.id
+                        
+                        if cliente == []:
+                            self.env.cr.execute("update helpdesk_ticket set partner_id = " + cliente + "  where  id = " + idM + ";")
+                        v['partner_id'] = cliente
+                        cliente_telefono = cliente.phone
+                        self._origin.sudo().write({'x_studio_telefono' : cliente_telefono})
+                        record.x_studio_telefono = cliente_telefono
+                        if cliente_telefono != []:
+                            srtt="update helpdesk_ticket set x_studio_telefono = '" + str(cliente_telefono) + "' where  id = " + str(idM) + ";"                                
+                        v['x_studio_telefono'] = cliente_telefono
+                        cliente_movil = cliente.mobile
+                        self._origin.sudo().write({'x_studio_movil' : cliente_movil})
+                        record.x_studio_movil = cliente_movil
+                        if cliente_movil == []:
+                            self.env.cr.execute("update helpdesk_ticket set x_studio_movil = '" + str(cliente_movil) + "' where  id = " +idM + ";")
+                        v['x_studio_movil'] = cliente_movil
+                        
+                        cliente_nivel = cliente.x_studio_nivel_del_cliente
+                        self._origin.sudo().write({'x_studio_nivel_del_cliente' : cliente_nivel})
+                        record.x_studio_nivel_del_cliente = cliente_nivel
+                        if cliente_nivel == []:
+                            self.env.cr.execute("update helpdesk_ticket set x_studio_nivel_del_cliente = '" + str(cliente_nivel) + "' where  id = " + idM + ";")
+                        v['x_studio_nivel_del_cliente'] = cliente_nivel
 
 
-                            localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
+                        localidad = numeros_serie.x_studio_localidad_2.id
 
-                            self._origin.sudo().write({'x_studio_empresas_relacionadas' : localidad})
-                            record.x_studio_empresas_relacionadas = localidad
+                        self._origin.sudo().write({'x_studio_empresas_relacionadas' : localidad})
+                        record.x_studio_empresas_relacionadas = localidad
 
-                            if record.x_studio_empresas_relacionadas.id != False:
-                                self.env.cr.execute("select * from res_partner where id = " + str(record.x_studio_empresas_relacionadas.id) + ";")
-                                localidad_tempo = self.env.cr.fetchall()
-                                if str(localidad_tempo[0][80]) != 'None':
-                                    record.x_studio_field_29UYL = str(localidad_tempo[0][80])
+                        if record.x_studio_empresas_relacionadas.id != False:
+                            self.env.cr.execute("select * from res_partner where id = " + str(record.x_studio_empresas_relacionadas.id) + ";")
+                            localidad_tempo = self.env.cr.fetchall()
+                            if str(localidad_tempo[0][80]) != 'None':
+                                record.x_studio_field_29UYL = str(localidad_tempo[0][80])
 
                             #self._origin.sudo().write({'x_studio_field_6furK' : self._origin.sudo().write({'x_studio_field_6furK' : move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.x_studio_field_SqU5B})})
                         lista_ids = []
@@ -3622,23 +3637,16 @@ class helpdesk_update(models.Model):
                     raise exceptions.ValidationError("No es posible registrar más de un número de serie")
             if record.team_id.id == 8 or record.team_id.id == 13:
                 _my_object = self.env['helpdesk.ticket']
-                #v['x_studio_equipo_por_nmero_de_serie'] = {record.x_studio_equipo_por_nmero_de_serie.id}
-
-
-                #_logger.info('record_feliz : ' + str(record.x_studio_equipo_por_nmero_de_serie.id))
-                #ids.append(record.x_studio_equipo_por_nmero_de_serie.id)
-
-                #record['x_studio_equipo_por_nmero_de_serie'] = [(4,record.x_studio_equipo_por_nmero_de_serie.id)]
 
                 for numeros_serie in record.x_studio_equipo_por_nmero_de_serie_1:
                     ids.append(numeros_serie.serie.id)
 
                     #Cliente
-                    clienteId = numeros_serie.serie.x_studio_move_line[-1].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id
+                    clienteId = numeros_serie.x_studio_cliente
                     self.partner_id = clienteId.id
                     self.x_studio_nivel_del_cliente = clienteId.x_studio_nivel_del_cliente
                     #Localidad
-                    localidadTemp = numeros_serie.serie.x_studio_move_line[-1].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z
+                    localidadTemp = numeros_serie.x_studio_localidad_2
                     self.x_studio_empresas_relacionadas = localidadTemp.id
                     self.x_studio_field_6furK = localidadTemp.x_studio_field_SqU5B
                     self.x_studio_zona = localidadTemp.x_studio_field_SqU5B
@@ -3649,51 +3657,6 @@ class helpdesk_update(models.Model):
                     self.movilLocalidadContacto = localidadTemp.mobile
                     self.correoLocalidadContacto = localidadTemp.email
 
-
-
-                    """
-                    for move_line in numeros_serie.serie.x_studio_move_line:
-
-                        cliente = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
-                        _logger.info('record_feliz : ' + str(cliente))
-                        self._origin.sudo().write({'partner_id' : cliente})
-                        record.partner_id = cliente
-                        idM=self._origin.id
-
-                        if cliente == []:
-                            self.env.cr.execute("update helpdesk_ticket set partner_id = " + cliente + "  where  id = " + idM + ";")
-                        v['partner_id'] = cliente
-
-                        cliente_telefono = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.phone
-                        self._origin.sudo().write({'x_studio_telefono' : cliente_telefono})
-                        record.x_studio_telefono = cliente_telefono
-                        if cliente_telefono != []:
-                            srtt="update helpdesk_ticket set x_studio_telefono = '" + str(cliente_telefono) + "' where  id = " + str(idM) + ";"
-
-                        v['x_studio_telefono'] = cliente_telefono
-
-                        cliente_movil = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.mobile
-                        self._origin.sudo().write({'x_studio_movil' : cliente_movil})
-                        record.x_studio_movil = cliente_movil
-                        if cliente_movil == []:
-                            self.env.cr.execute("update helpdesk_ticket set x_studio_movil = '" + str(cliente_movil) + "' where  id = " +idM + ";")
-                        v['x_studio_movil'] = cliente_movil
-
-                        cliente_nivel = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.x_studio_nivel_del_cliente
-                        self._origin.sudo().write({'x_studio_nivel_del_cliente' : cliente_nivel})
-                        record.x_studio_nivel_del_cliente = cliente_nivel
-                        if cliente_nivel == []:
-                            self.env.cr.execute("update helpdesk_ticket set x_studio_nivel_del_cliente = '" + str(cliente_nivel) + "' where  id = " + idM + ";")
-                        v['x_studio_nivel_del_cliente'] = cliente_nivel
-
-                        
-
-                        localidad = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
-
-                        self._origin.sudo().write({'x_studio_empresas_relacionadas' : localidad})
-                        record.x_studio_empresas_relacionadas = localidad
-
-                    """  
                     lista_ids = []
                     for id in ids:
                         lista_ids.append((4,id))
@@ -4202,6 +4165,7 @@ class helpdesk_update(models.Model):
     def helpdesk_confirmar_validar_refacciones_wizard(self):
         wiz = self.env['helpdesk.confirmar.validar.refacciones'].create({'ticket_id':self.id})
         wiz.productos = [(6, 0, self.x_studio_productos.ids)]
+        wiz.contadoresAnterioresText = self.contadores_anteriores
         view = self.env.ref('helpdesk_update.view_helpdesk_crear_y_validar_refacciones')
         return {
             'name': _('Crear y validar solicitud de refacciones'),

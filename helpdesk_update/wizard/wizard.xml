@@ -904,7 +904,7 @@
 
 
 
-    <record id="action_validar_toner" model="ir.actions.act_window">
+    <record id="action_validar_toner" model="ir.actions.act_window" groups="studio_customization.validar_toner_d61119fe-f670-4dd0-9dee-6d2bfdd1824e">
         <field name="name">Crear y validar toner</field>
         <field name="res_model">helpdesk.validar.toner</field>
         <field name="view_type">form</field>
@@ -1508,6 +1508,13 @@
                                     <field name='movimientos' />
                                 </page>
                             </notebook>
+                        </page>
+                        <page>
+                            <group>
+                                <group>
+                                    <field name='contadoresAnterioresText' readonly='1' />
+                                </group>
+                            </group>
                         </page>
                         <page string = 'Productos'>
                             <group>
