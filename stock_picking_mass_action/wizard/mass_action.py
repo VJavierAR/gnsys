@@ -937,9 +937,9 @@ class HelpdeskTicketMassAction(TransientModel):
                 m=['team_id.id','!=',8]
                 i.append(m)
                 #j.append('&')
-        if(self.tipo==False):
-            m=['x_studio_tipo_de_vale','in',['Requerimiento','Falla']]
-            i.append(m)
+        #if(self.tipo==False):
+        #    m=['x_studio_tipo_de_vale','in',['Requerimiento','Falla']]
+        #    i.append(m)
         #for ii in range(len(i)-2):
         #    j.append('&')
         i.append(['x_studio_field_nO7Xg','!=',False])
