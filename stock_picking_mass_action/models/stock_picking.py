@@ -30,6 +30,7 @@ class StockPicking(Model):
     internas=fields.Boolean()
     distribucion=fields.Boolean()
     retiro=fields.Boolean()
+    mini=fields.Boolean()
 
     #documentosDistro = fields.Many2many('ir.attachment', string="Evidencias ")
     #historialTicket = fields.One2many('ir.attachment','res_id',string='Evidencias al ticket',store=True,track_visibility='onchange')

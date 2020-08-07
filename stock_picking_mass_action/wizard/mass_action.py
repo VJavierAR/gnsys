@@ -91,7 +91,7 @@ class StockPickingMassAction(TransientModel):
     def che(self):
         for s in self.picking_ids:
             #Almacen
-            if(s.picking_type_id.id==3 or s.picking_type_id.id==31485):
+            if(s.picking_type_id.id==3 or s.picking_type_id.id==31485 or s.picking_type_id==89):
                 self.check=2
             #refacion
             if(s.picking_type_id.id==29314):
@@ -227,7 +227,18 @@ class StockIngreso(TransientModel):
     pick=fields.Many2one('stock.picking')
     move_line=fields.One2many('ingreso.lines','rel_ingreso')
     almacen=fields.Many2one('stock.warehouse','Almacen')
+
     def confirmar(self):
+        if(self.pick.mini):
+            p=self.env['stock.picking'].search([['origin','=',self.pick.origin]],order='id desc')
+            for pi in p:
+                if(pi.sale_id.id):
+                    if(pi.state!='done'):
+                        wiz=self.env['stock.picking.mass.action'].create({'picking_ids':[(4,pi.id)],'confirm':True,'check_availability':True,'transfer':True})
+                        wiz.mass_action()
+                else:
+                    pi.action_confirm()
+                    pi.action_assign()
         self.pick.write({'location_dest_id':self.almacen.lot_stock_id.id})
         for m in self.move_line:
             m.write({'location_dest_id':self.almacen.lot_stock_id.id})
@@ -274,7 +285,7 @@ class StockCambio(TransientModel):
             self.confirmarE(equipos)
             #self.confirmar()
         self.pick.action_confirm()
-        #self.pick.action_assign()
+        self.pick.action_assign()
 
 
     def confirmar(self,data):
@@ -292,7 +303,8 @@ class StockCambio(TransientModel):
                     if(sa.product_id.id!=d[0]['producto2']['id']):
                         self.env.cr.execute("delete from stock_move_line where reference='"+self.pick.name+"' and product_id="+str(sa.product_id.id)+";")
                         self.env.cr.execute("delete from stock_move where origin='"+self.pick.sale_id.name+"' and product_id="+str(sa.product_id.id)+";")
-                        self.env.cr.execute("delete from sale_order_line where id="+str(sa.sale_line_id.id)+";")
+                        if(len(self.pick.sale_id.order_line)!=0):
+                            self.env.cr.execute("delete from sale_order_line where id="+str(sa.sale_line_id.id)+";")
                         if(i==0):
                             self.env.cr.execute("update stock_picking set state='draft' where sale_id="+str(self.pick.sale_id.id)+";")
                         i=i+1

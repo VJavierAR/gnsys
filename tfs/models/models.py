@@ -225,7 +225,7 @@ class tfs(models.Model):
                 ticket=self.env['helpdesk.ticket'].create({'x_studio_tipo_de_vale':'Resurtido de Almacen','partner_id':c.id})
                 sale = self.env['sale.order'].create({'partner_id' : c.id, 'origin' : "Ticket: " + str(ticket.id), 'x_studio_tipo_de_solicitud' : 'Venta', 'partner_shipping_id' : c.id , 'warehouse_id' : 1 , 'team_id' : 1, 'x_studio_field_bxHgp': ticket.id})
                 destino=self.env['stock.picking.type'].search([['name','=','Receipts'],['warehouse_id','=',al.id]])
-                pick_dest = self.env['stock.picking'].create({'x_studio_ticket':'Ticket de tóner: '+str(ticket.id),'origin':sale.name,'picking_type_id' : destino.id, 'location_id':17,'almacenOrigen':6299,'almacenDestino':al.id,'location_dest_id':al.lot_stock_id.id,'reglas':[(6,0,rule)]})
+                pick_dest = self.env['stock.picking'].create({'mini':True,'x_studio_ticket':'Ticket de tóner: '+str(ticket.id),'origin':sale.name,'picking_type_id' : destino.id, 'location_id':17,'almacenOrigen':6299,'almacenDestino':al.id,'location_dest_id':al.lot_stock_id.id,'reglas':[(6,0,rule)]})
                 ticket.x_studio_field_nO7Xg=sale.id
                 for ori in pickOrigen:
                     ticket.x_studio_productos=[(4,ori['product_id'])]
@@ -242,6 +242,7 @@ class tfs(models.Model):
                 for w in ww.move_ids_without_package:
                     w.write({'location_dest_id':17})
                     self.env['stock.move.line'].search([['move_id','=',w.id]]).write({'location_dest_id':17})
+                pick_dest.write({'x_studio_ticket':'Ticket de tóner: '+str(ticket.id)})
                 pick_dest.action_confirm()
                 pick_dest.action_assign()    
         return ticket
