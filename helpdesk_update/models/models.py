@@ -1302,12 +1302,11 @@ class helpdesk_update(models.Model):
                     """
                     objTicket = self.env['helpdesk.ticket'].search([['id', '=', self.x_studio_id_ticket]], order='create_date desc', limit=1)
                     
-                    _logger.info('3312: ' + str(objTicket.id) +  ' id: ' + str(objTicket.id) + ' objTicket.diagnosticos: ' + str(objTicket.diagnosticos))
+                    #_logger.info('3312: ' + str(objTicket.id) +  ' id: ' + str(objTicket.id) + ' objTicket.diagnosticos: ' + str(objTicket.diagnosticos))
                     listaDiagnosticos = [(5, 0, 0)]
                     listaDeFechas = []
                     if record.diagnosticos:
                         for diagnostico in record.diagnosticos:
-                            _logger.info('antes create_date' + str(diagnostico.create_date))
                             listaDiagnosticos.append((0, 0, {
                                                                 'ticketRelacion': int(diagnostico.ticketRelacion.x_studio_id_ticket),
                                                                 'estadoTicket': diagnostico.estadoTicket,
@@ -1318,7 +1317,6 @@ class helpdesk_update(models.Model):
                                                                 'create_date': diagnostico.create_date,
                                                                 'create_uid': diagnostico.create_uid.id
                                                             }))
-                            _logger.info('despues create_date' + str(diagnostico.create_date))
                             listaDeFechas.append(diagnostico.create_date)
                     listaDiagnosticos.append((0, 0, {
                                                         #'comentario': "Hola",
@@ -1329,7 +1327,6 @@ class helpdesk_update(models.Model):
                                                         'create_uid': self.env.user.id,
                                                         'comentario': 'Cambio de estado al seleccionar ' + self.team_id.name + ' como área de atención. Seleccion realizada por ' + str(self.env.user.name) +'.'
                                                     }))
-                    
                     _logger.info('3312: ' + str(listaDiagnosticos))
                     objTicket.write({'diagnosticos': listaDiagnosticos})
                     _logger.info('3312 listaDeFechas: ' + str(listaDeFechas))
@@ -1337,17 +1334,16 @@ class helpdesk_update(models.Model):
 
                     i = 0
                     for fecha in listaDeFechas:
-                        _logger.info('3312: ' + str(fecha))
-                        _logger.info('3312 diagnosticos: ' + str(objTicket.diagnosticos[i]) + ' i:' + str(i))
+                        #_logger.info('3312 diagnosticos: ' + str(objTicket.diagnosticos[i]) + ' i:' + str(i))
                         fechaMX = (fecha - datetime.timedelta(hours=5)).strftime('%Y-%m-%d %H:%M:%S')
-
                         _logger.info('fechaMX: ' + str(fechaMX))
                         query = "update helpdesk_diagnostico set create_date = '" + fechaMX + "' where id = " + str(objTicket.diagnosticos[i].id) + ";"
                         self.env.cr.execute(query)
                         objTicket.diagnosticos[i].create_date = fecha
                         i = i + 1
-                    """
+                    
                     return {'warning': mess, 'domain': {'user_id': dominio}}
+                    """
                 #else:
                     #reasingado
                 
@@ -3642,11 +3638,11 @@ class helpdesk_update(models.Model):
                     ids.append(numeros_serie.serie.id)
 
                     #Cliente
-                    clienteId = numeros_serie.x_studio_cliente
+                    clienteId = numeros_serie.serie.x_studio_cliente
                     self.partner_id = clienteId.id
                     self.x_studio_nivel_del_cliente = clienteId.x_studio_nivel_del_cliente
                     #Localidad
-                    localidadTemp = numeros_serie.x_studio_localidad_2
+                    localidadTemp = numeros_serie.serie.x_studio_localidad_2
                     self.x_studio_empresas_relacionadas = localidadTemp.id
                     self.x_studio_field_6furK = localidadTemp.x_studio_field_SqU5B
                     self.x_studio_zona = localidadTemp.x_studio_field_SqU5B
