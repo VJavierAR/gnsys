@@ -329,12 +329,12 @@ class tfs(models.Model):
                 if(record.serie.x_studio_mini==False):
                     raise exceptions.UserError("El No. de Serie"+ record.serie.name+"no corresponde a Mini Almacen" )
                 if(len(record.serie.x_studio_move_line)>0):
-                    moveli=record.serie.x_studio_move_line.sorted(key='id',reverse=True)
-                    cliente = moveli[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id if(len(record.serie.x_studio_move_line)>1) else record.serie.x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
-                    localidad=moveli[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id if(len(record.serie.x_studio_move_line)>1) else record.serie.x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
+                    #moveli=record.serie.x_studio_move_line.sorted(key='id',reverse=True)
+                    cliente = record.serie.x_studio_localidad_2.parent_id.id
+                    localidad=record.serie.x_studio_localidad_2.id
                     record['cliente'] = cliente
                     record['localidad'] = localidad
-                    lo=moveli[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z
+                    lo=record.serie.x_studio_localidad_2
                     record['direccion']="<table><tr><td>Calle</td><td>"+str(lo.street)+"</td></tr><tr><td>No.Exterior</td><td>"+str(lo.street_number2)+"</td></tr><tr><td>No. Interior</td><td>"+str(lo.street_number)+"</td></tr><tr><td>Cp</td><td>"+str(lo.zip)+"</td></tr><tr><td>Estado</td><td>"+str(lo.state_id.name)+"</td></tr><tr><td>Delegación</td><td>"+str(lo.city)+"</td></tr></table>"
                     #_logger.info(str(localidad.name))
                     record['almacen'] =self.env['stock.warehouse'].search([['x_studio_field_E0H1Z','=',localidad]]).lot_stock_id.x_studio_almacn_padre.id
