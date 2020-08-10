@@ -322,7 +322,7 @@ class compras(models.Model):
                                         arr.append(product)
                                     i=i+1       
                                 #if('Customer' in o or 'SUPPLY' in o or 'PARTS' in o):
-                                if 'SUPPLY' in o or ('PARTS' in o and '$' in o):
+                                if ('SUPPLY' in o and '$' in o) or ('PARTS' in o and '$' in o):
                                     s = o.split("$")
                                     _logger.info(str(s))
                                     h=float(s[2])
