@@ -118,13 +118,14 @@ class helpdesk_update(models.Model):
                                                 'comentario': comentarioGenerico
                                             }))
             objTicket.write({'diagnosticos': listaDiagnosticos})
-
-            i = 0
-            for fecha in listaDeFechas:
-                query = "update helpdesk_diagnostico set create_date = '" + str(fecha.strftime('%Y-%m-%d %H:%M:%S')) + "' where id = " + str(objTicket.diagnosticos[i].id) + ";"
-                self.env.cr.execute(query)
-                objTicket.diagnosticos[i].create_date = fecha
-                i = i + 1
+            _logger.info('3312 listaDeFechas: ' + str(listaDeFechas))
+            if listaDeFechas:
+                i = 0
+                for fecha in listaDeFechas:
+                    query = "update helpdesk_diagnostico set create_date = '" + str(fecha.strftime('%Y-%m-%d %H:%M:%S')) + "' where id = " + str(objTicket.diagnosticos[i].id) + ";"
+                    self.env.cr.execute(query)
+                    objTicket.diagnosticos[i].create_date = fecha
+                    i = i + 1
 
 
     #priority = fields.Selection([('all','Todas'),('baja','Baja'),('media','Media'),('alta','Alta'),('critica','Critica')])
@@ -3771,9 +3772,10 @@ class helpdesk_update(models.Model):
     
     @api.onchange('x_studio_tipo_de_vale')
     def registrarTipoDeReporte(self):
-        comentarioGenerico = 'Se seleccionó ' + self.x_studio_tipo_de_vale + ' como tipo de reporte. Seleccion realizada por ' + str(self.env.user.name) +'.'
-        estado = self.stage_id.name
-        self.creaDiagnosticoVistaLista(comentarioGenerico, estado)
+        if self.x_studio_tipo_de_vale:
+            comentarioGenerico = 'Se seleccionó ' + self.x_studio_tipo_de_vale + ' como tipo de reporte. Seleccion realizada por ' + str(self.env.user.name) +'.'
+            estado = self.stage_id.name
+            self.creaDiagnosticoVistaLista(comentarioGenerico, estado)
 
                 
     """

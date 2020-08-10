@@ -4989,7 +4989,7 @@ class helpdesk_editar_contadores_mesa(TransientModel):
                                                             'write_uid':  self.env.user.name,
                                                             'comentario': 'Reinicio de contadores.\nContador BN anterior: ' + str(self.contadorMonoActual) + '\nContador BN capturado: ' + str(self.contadorMonoActualizado) + '\nContador color anterior: ' + str(self.contadorColorActual) + '\nContador color capturado: ' + str(self.contadorColorActualizado) + '\n\n' + self.comentario 
                                                         })
-                self.ticket_id.write({'contadores_anteriores': '</br>Equipo BN o Color: ' + str(self.bnColor) + ' </br></br>Contador BN: ' + str(self.contadorMonoActualizado) + '</br></br>Contador Color: ' + str(self.contadorColorActualizado)
+                self.ticket_id.write({'contadores_anteriores': '</br>Equipo BN o Color: ' + str(self.tipoEquipo) + ' </br></br>Contador BN: ' + str(self.contadorMonoActualizado) + '</br></br>Contador Color: ' + str(self.contadorColorActualizado)
                                     , 'x_studio_contador_bn': int(self.contadorMonoActual)
                                     , 'x_studio_contador_bn_a_capturar': int(self.contadorMonoActualizado)
                                     , 'x_studio_contador_color': int(self.contadorColorActual)
