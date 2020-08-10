@@ -3611,14 +3611,14 @@ class helpdesk_update(models.Model):
                         #for move_line in numeros_serie.x_studio_move_line:
                             
                         #cliente = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
-                        cliente = numeros_serie.x_studio_cliente.id
-                        self._origin.sudo().write({'partner_id' : cliente})
-                        record.partner_id = cliente
+                        cliente = numeros_serie.x_studio_cliente
+                        self._origin.sudo().write({'partner_id' : cliente.id})
+                        record.partner_id = cliente.id
                         idM=self._origin.id
                         
-                        if cliente == []:
-                            self.env.cr.execute("update helpdesk_ticket set partner_id = " + cliente + "  where  id = " + idM + ";")
-                        v['partner_id'] = cliente
+                        if cliente:
+                            self.env.cr.execute("update helpdesk_ticket set partner_id = " + cliente.id + "  where  id = " + idM + ";")
+                        v['partner_id'] = cliente.id
                         cliente_telefono = cliente.phone
                         self._origin.sudo().write({'x_studio_telefono' : cliente_telefono})
                         record.x_studio_telefono = cliente_telefono
@@ -3642,8 +3642,8 @@ class helpdesk_update(models.Model):
 
                         localidad = numeros_serie.x_studio_localidad_2.id
 
-                        self._origin.sudo().write({'x_studio_empresas_relacionadas' : localidad})
-                        record.x_studio_empresas_relacionadas = localidad
+                        self._origin.sudo().write({'x_studio_empresas_relacionadas' : localidad.id})
+                        record.x_studio_empresas_relacionadas = localidad.id
 
                         if record.x_studio_empresas_relacionadas.id != False:
                             self.env.cr.execute("select * from res_partner where id = " + str(record.x_studio_empresas_relacionadas.id) + ";")
