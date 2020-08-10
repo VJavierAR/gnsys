@@ -94,6 +94,7 @@ class helpdesk_update(models.Model):
         objTicket = self.env['helpdesk.ticket'].search([['id', '=', self.x_studio_id_ticket]], order='create_date desc', limit=1)
         listaDiagnosticos = [(5, 0, 0)]
         listaDeFechas = []
+        listaDeUsuariosCreadores = []
         for record in self:
             if record.diagnosticos:
                 for diagnostico in record.diagnosticos:
@@ -105,9 +106,11 @@ class helpdesk_update(models.Model):
                                                         'write_uid':  diagnostico.write_uid.id,
                                                         'comentario': str(diagnostico.comentario),
                                                         'create_date': diagnostico.create_date,
-                                                        'create_uid': diagnostico.create_uid.id
+                                                        'create_uid': diagnostico.create_uid.id,
+                                                        'creadoPorSistema': diagnostico.creadoPorSistema
                                                     }))
                     listaDeFechas.append(diagnostico.create_date)
+                    listaDeUsuariosCreadores.append(diagnostico.create_uid.id)
             comentarioGenerico = comentario
             listaDiagnosticos.append((0, 0, {
                                                 'ticketRelacion': int(self.x_studio_id_ticket),
@@ -125,6 +128,10 @@ class helpdesk_update(models.Model):
                 for fecha in listaDeFechas:
                     query = "update helpdesk_diagnostico set create_date = '" + str(fecha.strftime('%Y-%m-%d %H:%M:%S')) + "' where id = " + str(objTicket.diagnosticos[i].id) + ";"
                     self.env.cr.execute(query)
+                    query = "update helpdesk_diagnostico set create_uid = " + str(listaDeUsuariosCreadores[i]) + " where id = " + str(objTicket.diagnosticos[i].id) + ";"
+                    self.env.cr.execute(query)
+                    #query = "update helpdesk_diagnostico set \"creadoPorSistema\" = '" + 't' + "' where id = " + str(objTicket.diagnosticos[i].id) + ";"
+                    #self.env.cr.execute(query)
                     objTicket.diagnosticos[i].create_date = fecha
                     i = i + 1
 
