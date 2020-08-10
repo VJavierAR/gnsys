@@ -3,6 +3,7 @@ from odoo.models import TransientModel
 import logging, ast
 import datetime, time
 import pytz
+import base64
 
 _logger = logging.getLogger(__name__)
 from odoo.exceptions import UserError
@@ -2091,6 +2092,25 @@ class HelpDeskDatosToner(TransientModel):
                                             string = 'Tiempo de atraso distribución',
                                             compute = '_compute_tiempo_distribucion'
                                         )
+    reportes = fields.Many2one(
+                                    'ir.actions.report',
+                                    string = 'Reportes disponibles',
+                                    store = True
+                                )
+
+    pdfToner = fields.Binary(
+                                string = "PDF",
+                                store = True
+                            )
+
+    @api.depends('reportes')
+    def obtenerReportePdf(self):
+        for record in self:
+            idExterno = record.reportes.xml_id
+            pdf = self.env.ref(idExterno).sudo().render_qweb_pdf([record.ticket_id.id])[0]
+            #pdf = self.env['report'].sudo().get_pdf([self.ticket_id.id], report_name)
+            record.pdfToner = False
+            record.pdfToner = base64.encodestring(pdf)
 
 
     def _compute_serie_nombre(self):
@@ -2243,7 +2263,7 @@ class HelpDeskDetalleSerieToner(TransientModel):
                             #default = lambda self: self._default_dominio(),
                             compute = '_default_dominio'
                         )
-        
+    
 
     def _default_dominio(self):
         ids = []

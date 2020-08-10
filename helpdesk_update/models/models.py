@@ -7,6 +7,7 @@ from odoo import exceptions, _
 import logging, ast
 import datetime, time
 import pytz
+import base64
 _logger = logging.getLogger(__name__)
 
 
@@ -87,6 +88,44 @@ class helpdesk_update(models.Model):
         _logger.info('3312: ' + str(cambiaTipoDeVale(self.team_id.id)))
         return cambiaTipoDeVale(self.team_id.id)
     """
+
+
+    def creaDiagnosticoVistaLista(self, comentario, estado):
+        objTicket = self.env['helpdesk.ticket'].search([['id', '=', self.x_studio_id_ticket]], order='create_date desc', limit=1)
+        listaDiagnosticos = [(5, 0, 0)]
+        listaDeFechas = []
+        for record in self:
+            if record.diagnosticos:
+                for diagnostico in record.diagnosticos:
+                    listaDiagnosticos.append((0, 0, {
+                                                        'ticketRelacion': int(diagnostico.ticketRelacion.x_studio_id_ticket),
+                                                        'estadoTicket': diagnostico.estadoTicket,
+                                                        'evidencia': [(6, 0, diagnostico.evidencia.ids)],
+                                                        'mostrarComentario': diagnostico.mostrarComentario,
+                                                        'write_uid':  diagnostico.write_uid.id,
+                                                        'comentario': str(diagnostico.comentario),
+                                                        'create_date': diagnostico.create_date,
+                                                        'create_uid': diagnostico.create_uid.id
+                                                    }))
+                    listaDeFechas.append(diagnostico.create_date)
+            comentarioGenerico = comentario
+            listaDiagnosticos.append((0, 0, {
+                                                'ticketRelacion': int(self.x_studio_id_ticket),
+                                                'estadoTicket': estado,
+                                                'mostrarComentario': True,
+                                                'write_uid':  self.env.user.id,
+                                                'create_uid': self.env.user.id,
+                                                'comentario': comentarioGenerico
+                                            }))
+            objTicket.write({'diagnosticos': listaDiagnosticos})
+
+            i = 0
+            for fecha in listaDeFechas:
+                query = "update helpdesk_diagnostico set create_date = '" + str(fecha.strftime('%Y-%m-%d %H:%M:%S')) + "' where id = " + str(objTicket.diagnosticos[i].id) + ";"
+                self.env.cr.execute(query)
+                objTicket.diagnosticos[i].create_date = fecha
+                i = i + 1
+
 
     #priority = fields.Selection([('all','Todas'),('baja','Baja'),('media','Media'),('alta','Alta'),('critica','Critica')])
     x_studio_field_6furK = fields.Selection([('CHIHUAHUA','CHIHUAHUA'), ('SUR','SUR'),('NORTE','NORTE'),('PONIENTE','PONIENTE'),('ORIENTE','ORIENTE'),('CENTRO','CENTRO'),('DISTRIBUIDOR','DISTRIBUIDOR'),('MONTERREY','MONTERREY'),('CUERNAVACA','CUERNAVACA'),('GUADALAJARA','GUADALAJARA'),('QUERETARO','QUERETARO'),('CANCUN','CANCUN'),('VERACRUZ','VERACRUZ'),('PUEBLA','PUEBLA'),('TOLUCA','TOLUCA'),('LEON','LEON'),('COMODIN','COMODIN'),('VILLAHERMOSA','VILLAHERMOSA'),('MERIDA','MERIDA'),('ALTAMIRA','ALTAMIRA'),('COMODIN','COMODIN'),('DF00','DF00'),('SAN LP','SAN LP'),('ESTADO DE MÉXICO','ESTADO DE MÉXICO'),('Foraneo Norte','Foraneo Norte'),('Foraneo Sur','Foraneo Sur')], string = 'Zona localidad', store = True, track_visibility='onchange')
@@ -473,12 +512,13 @@ class helpdesk_update(models.Model):
 
 
     backorderActivo = fields.Boolean(string = '¿Tiene backorder?', compute = '_compute_backorderActivo')
-    mensajeBackOrder = fields.Text(string = 'Mensaje backorder')
+    mensajeBackOrder = fields.Text(string = 'Mensaje backorder', compute = '_compute_backorderActivo')
 
     #@api.depends('x_studio_backorders')
     def _compute_backorderActivo(self):
         for rec in self:
             if rec.x_studio_backorder:
+            #if rec.x_studio_backorders:
                 rec.backorderActivo = True
                 #rec.write({'backorderActivo': True})
                 rec.mensajeBackOrder = """
@@ -1198,6 +1238,8 @@ class helpdesk_update(models.Model):
             #    diagnosticoCreado.write({'evidencia': [(4,eviden)] })
             #self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name})
 
+    
+
     @api.onchange('team_id')
     def asignacion(self):
         for record in self:
@@ -1210,20 +1252,14 @@ class helpdesk_update(models.Model):
                     ultimaEvidenciaTec = []
                     ultimoComentario = ''
                     if self.diagnosticos:
-                        #_logger.info("*********************************Entre")
-                        #_logger.info("*********************************Entre: " + str(self.diagnosticos[-1].evidencia))
                         if self.diagnosticos[-1].evidencia.ids:
                             ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                         ultimoComentario = self.diagnosticos[-1].comentario
                         
-                        #if self.diagnosticos.evidencia:
-                        #    ultimaEvidenciaTec += self.diagnosticos.evidencia.ids
-                    _logger.info("*********************************Entre: " + str(ultimoComentario))
+                    #_logger.info("*********************************Entre: " + str(ultimoComentario))
                     lineas = [(5, 0, 0)]
-                    #lineas = []
                     if ultimaEvidenciaTec != []:
                         for linea in self.diagnosticos:
-                            #_logger.info("Dato ticketRelacion: " + str(linea.ticketRelacion) + " comentario: " + str(linea.comentario) + " estadoTicket: " + str(linea.estadoTicket) + " evidencia: " + str(linea.evidencia.ids) + " mostrarComentario: " + str(linea.mostrarComentario))
                             val = {}
                             if linea.evidencia.ids != []:
                                 val = {
@@ -1240,7 +1276,6 @@ class helpdesk_update(models.Model):
                                     'estadoTicket': linea.estadoTicket,
                                     'mostrarComentario': linea.mostrarComentario
                                 }
-                            _logger.info("datos val: " + str(val))
                             lineas.append((0, 0, val))
                         lineas.append((0, 0, {'ticketRelacion': int(self.x_studio_id_ticket), 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'evidencia': [(6,0,ultimaEvidenciaTec)], 'write_uid':  self.env.user.id}))
                     else:
@@ -1261,23 +1296,10 @@ class helpdesk_update(models.Model):
                                     'estadoTicket': linea.estadoTicket,
                                     'mostrarComentario': linea.mostrarComentario
                                 }
-                            _logger.info("datos val: " + str(val))
                             lineas.append((0, 0, val))
                         lineas.append((0, 0, {'ticketRelacion': int(self.x_studio_id_ticket), 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.id}))
-                        _logger.info("datos lineas: " + str(lineas))
-                    #self.sudo().write({'diagnosticos': [(0, 0, {'ticketRelacion': int(self.x_studio_id_ticket), 'comentario': ultimoComentario, 'estadoTicket': "Asignado"})]})
-                    #record.diagnosticos = lineas
-                    #self.env['helpdesk.diagnostico'].create({'ticketRelacion': int(self.x_studio_id_ticket), 'comentario': ultimoComentario, 'estadoTicket': 'Asignado'})
-                    #self.diagnosticos = [(6, 0, [])]
-                    #self.diagnosticos = lineas
-                    #self.sudo().write({'diagnosticos': [(0, 0, {'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name})]})
-                    #self.diagnosticos = [(0, 0, {'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name})]
-                    #diagnosticoCreado = self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name})
-                    #for eviden in ultimaEvidenciaTec:
-                    #    diagnosticoCreado.write({'evidencia': [(4,eviden)] })
-                    #self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.name})
+                        
                     
-
                     #self.estadoAsignacion = True
                     message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Asignado' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
                     mess= {
@@ -1291,18 +1313,17 @@ class helpdesk_update(models.Model):
                     self.env.cr.execute(query)
                     informacion = self.env.cr.fetchall()
                     listaUsuarios = []
-                    #res['domain']={'x_studio_productos':[('categ_id', '=', 5),('x_studio_toner_compatible.id','in',list)]}
+                    
                     for idUsuario in informacion:
                         listaUsuarios.append(idUsuario[1])
                     
                     dominio = [('id', 'in', listaUsuarios)]
-                    
-                    comentarioGenerico = 'Hola prueba'
-                    
+                    comentarioGenerico = 'Cambio de estado al seleccionar ' + self.team_id.name + ' como área de atención. Seleccion realizada por ' + str(self.env.user.name) +'.'
+                    estado = 'Asignado'
+                    self.creaDiagnosticoVistaLista(comentarioGenerico, estado)
+
                     """
                     objTicket = self.env['helpdesk.ticket'].search([['id', '=', self.x_studio_id_ticket]], order='create_date desc', limit=1)
-                    
-                    #_logger.info('3312: ' + str(objTicket.id) +  ' id: ' + str(objTicket.id) + ' objTicket.diagnosticos: ' + str(objTicket.diagnosticos))
                     listaDiagnosticos = [(5, 0, 0)]
                     listaDeFechas = []
                     if record.diagnosticos:
@@ -1313,37 +1334,34 @@ class helpdesk_update(models.Model):
                                                                 'evidencia': [(6, 0, diagnostico.evidencia.ids)],
                                                                 'mostrarComentario': diagnostico.mostrarComentario,
                                                                 'write_uid':  diagnostico.write_uid.id,
-                                                                'comentario': str(diagnostico.comentario) + str(diagnostico.create_date),
+                                                                'comentario': str(diagnostico.comentario),
                                                                 'create_date': diagnostico.create_date,
                                                                 'create_uid': diagnostico.create_uid.id
                                                             }))
                             listaDeFechas.append(diagnostico.create_date)
+                    comentarioGenerico = 'Cambio de estado al seleccionar ' + self.team_id.name + ' como área de atención. Seleccion realizada por ' + str(self.env.user.name) +'.'
                     listaDiagnosticos.append((0, 0, {
-                                                        #'comentario': "Hola",
                                                         'ticketRelacion': int(self.x_studio_id_ticket),
                                                         'estadoTicket': 'Asignado',
                                                         'mostrarComentario': True,
                                                         'write_uid':  self.env.user.id,
                                                         'create_uid': self.env.user.id,
-                                                        'comentario': 'Cambio de estado al seleccionar ' + self.team_id.name + ' como área de atención. Seleccion realizada por ' + str(self.env.user.name) +'.'
+                                                        'comentario': comentarioGenerico
                                                     }))
-                    _logger.info('3312: ' + str(listaDiagnosticos))
                     objTicket.write({'diagnosticos': listaDiagnosticos})
-                    _logger.info('3312 listaDeFechas: ' + str(listaDeFechas))
-                    _logger.info('3312 diagnosticos objetos: ' + str(objTicket.diagnosticos))
 
                     i = 0
                     for fecha in listaDeFechas:
-                        #_logger.info('3312 diagnosticos: ' + str(objTicket.diagnosticos[i]) + ' i:' + str(i))
-                        fechaMX = (fecha - datetime.timedelta(hours=5)).strftime('%Y-%m-%d %H:%M:%S')
-                        _logger.info('fechaMX: ' + str(fechaMX))
-                        query = "update helpdesk_diagnostico set create_date = '" + fechaMX + "' where id = " + str(objTicket.diagnosticos[i].id) + ";"
+                        #fechaMX = (fecha - datetime.timedelta(hours=5)).strftime('%Y-%m-%d %H:%M:%S')
+                        #_logger.info('fechaMX: ' + str(fechaMX))
+                        #_logger.info('3312 fecha: ' + str(fecha.strftime('%Y-%m-%d %H:%M:%S')))
+                        query = "update helpdesk_diagnostico set create_date = '" + str(fecha.strftime('%Y-%m-%d %H:%M:%S')) + "' where id = " + str(objTicket.diagnosticos[i].id) + ";"
                         self.env.cr.execute(query)
                         objTicket.diagnosticos[i].create_date = fecha
                         i = i + 1
-                    
-                    return {'warning': mess, 'domain': {'user_id': dominio}}
                     """
+                    return {'warning': mess, 'domain': {'user_id': dominio}}
+                    
                 #else:
                     #reasingado
                 
@@ -1363,6 +1381,8 @@ class helpdesk_update(models.Model):
             return res
     
     
+
+
     
     """
     @api.onchange('x_studio_tcnico')
@@ -1396,9 +1416,11 @@ class helpdesk_update(models.Model):
                     if self.diagnosticos[-1].evidencia.ids:
                         ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                     ultimoComentario = self.diagnosticos[-1].comentario
-                    
-                #self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Atención", 'evidencia': [(0,0,ultimaEvidenciaTec)], 'write_uid':  self.env.user.name})
-                #self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket,'estadoTicket': "Atención", 'write_uid':  self.env.user.name})
+
+                comentarioGenerico = 'Cambio de estado al seleccionar ' + self.x_studio_tcnico.name + ' como técnico. Se cambio al estado Atención. Seleccion realizada por ' + str(self.env.user.name) +'.'
+                estado = 'Atención'
+                self.creaDiagnosticoVistaLista(comentarioGenerico, estado)
+
                 message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Atención' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
                 mess= {
                         'title': _('Estado de ticket actualizado!!!'),
@@ -1427,9 +1449,11 @@ class helpdesk_update(models.Model):
                 if self.diagnosticos[-1].evidencia.ids:
                     ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                 ultimoComentario = self.diagnosticos[-1].comentario
-                    
-            #self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Resuelto", 'evidencia': [(0,0,ultimaEvidenciaTec)], 'write_uid':  self.env.user.name})
-            #self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': "Resuelto", 'write_uid':  self.env.user.name})
+            
+            comentarioGenerico = 'Cambio de estado al seleccionar botón Resuelto. Se cambio al estado Resuelto. Seleccion realizada por ' + str(self.env.user.name) +'.'
+            estado = 'Resuelto'
+            self.creaDiagnosticoVistaLista(comentarioGenerico, estado)
+
             message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Resuelto' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
             mess= {
                     'title': _('Estado de ticket actualizado!!!'),
@@ -1459,8 +1483,10 @@ class helpdesk_update(models.Model):
                     ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                 ultimoComentario = self.diagnosticos[-1].comentario
                     
-            #self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Cotización", 'evidencia': [(0,0,ultimaEvidenciaTec)], 'write_uid':  self.env.user.name})
-            #self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': "Cotización", 'write_uid':  self.env.user.name})
+            comentarioGenerico = 'Cambio de estado al seleccionar botón Cotización. Se cambio al estado Cotización. Seleccion realizada por ' + str(self.env.user.name) +'.'
+            estado = 'Cotización'
+            self.creaDiagnosticoVistaLista(comentarioGenerico, estado)
+
             message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Cotización' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
             mess= {
                     'title': _('Estado de ticket actualizado!!!'),
@@ -1487,8 +1513,10 @@ class helpdesk_update(models.Model):
                     ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                 ultimoComentario = self.diagnosticos[-1].comentario
                 
-            #self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Resuelto", 'evidencia': [(0,0,ultimaEvidenciaTec)], 'write_uid':  self.env.user.name})
-            #self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': "Resuelto", 'write_uid':  self.env.user.name})
+            comentarioGenerico = 'Cambio de estado al subir utlima evidencia como técnico. Se cambio al estado Resuelto. Cambio realizado por ' + str(self.env.user.name) +'.'
+            estado = 'Resuelto'
+            self.creaDiagnosticoVistaLista(comentarioGenerico, estado)
+
             message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Resuelto' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
             mess= {
                     'title': _('Estado de ticket actualizado!!!'),
@@ -1514,9 +1542,11 @@ class helpdesk_update(models.Model):
                 if self.diagnosticos[-1].evidencia.ids:
                     ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                 ultimoComentario = self.diagnosticos[-1].comentario
-                
-            #self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Cerrado", 'evidencia': [(0,0,ultimaEvidenciaTec)], 'write_uid':  self.env.user.name})
-            #self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': "Cerrado", 'write_uid':  self.env.user.name})
+            
+            comentarioGenerico = 'Cambio de estado al seleccionar botón Cerrar. Se cambio al estado Cerrado. Seleccion realizada por ' + str(self.env.user.name) +'.'
+            estado = 'Cerrado'
+            self.creaDiagnosticoVistaLista(comentarioGenerico, estado)
+
             message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Cerrado' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
             mess= {
                     'title': _('Estado de ticket actualizado!!!'),
@@ -1543,12 +1573,11 @@ class helpdesk_update(models.Model):
                 if self.diagnosticos[-1].evidencia.ids:
                     ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                 ultimoComentario = self.diagnosticos[-1].comentario
-                
-            #self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.x_studio_id_ticket, 'comentario': ultimoComentario, 'estadoTicket': "Cancelado", 'evidencia': [(0,0,ultimaEvidenciaTec)], 'write_uid':  self.env.user.name})
-            #self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': "Cancelado", 'write_uid':  self.env.user.name})
             
-
-
+            comentarioGenerico = 'Cambio de estado al seleccionar botón Cancelar. Se cambio al estado Cancelado. Seleccion realizada por ' + str(self.env.user.name) +'.'
+            estado = 'Cancelado'
+            self.creaDiagnosticoVistaLista(comentarioGenerico, estado)    
+            
             message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Cancelado' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
             mess= {
                     'title': _('Estado de ticket actualizado!!!'),
@@ -3740,6 +3769,11 @@ class helpdesk_update(models.Model):
                         }                                             
                 """
     
+    @api.onchange('x_studio_tipo_de_vale')
+    def registrarTipoDeReporte(self):
+        comentarioGenerico = 'Se seleccionó ' + self.x_studio_tipo_de_vale + ' como tipo de reporte. Seleccion realizada por ' + str(self.env.user.name) +'.'
+        estado = self.stage_id.name
+        self.creaDiagnosticoVistaLista(comentarioGenerico, estado)
 
                 
     """
@@ -4099,6 +4133,10 @@ class helpdesk_update(models.Model):
         wiz = self.env['helpdesk.datos.toner'].create({
                                                         'ticket_id': self.id
                                                     })
+        idExterno = 'studio_customization.tiquete_del_servicio_e501a40f-0bd7-4726-b219-50085c31c177'
+        idExternoToner = 'studio_customization.tiquete_del_servicio_8a770195-f5a2-4b6c-b905-fc0ff46c1258'
+        pdf = self.env.ref(idExternoToner).sudo().render_qweb_pdf([self.id])[0]
+        wiz.pdfToner = base64.encodestring(pdf)
         view = self.env.ref('helpdesk_update.view_helpdesk_detalle_toner')
         return {
             'name': _('Datos tóner'),
