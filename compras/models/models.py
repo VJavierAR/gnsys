@@ -324,6 +324,7 @@ class compras(models.Model):
                                 #if('Customer' in o or 'SUPPLY' in o or 'PARTS' in o):
                                 if 'SUPPLY' in o or ('PARTS' in o and '$' in o):
                                     s = o.split("$")
+                                    _logger.info(str(s))
                                     h=float(s[2])
                                     g=float(s[1].split(' ')[0])
                                     qty=round(h/g)
