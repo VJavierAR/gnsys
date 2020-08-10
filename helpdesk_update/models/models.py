@@ -3617,7 +3617,7 @@ class helpdesk_update(models.Model):
                         idM=self._origin.id
                         
                         if cliente:
-                            self.env.cr.execute("update helpdesk_ticket set partner_id = " + cliente.id + "  where  id = " + idM + ";")
+                            self.env.cr.execute("update helpdesk_ticket set partner_id = " + str(cliente.id) + "  where  id = " + idM + ";")
                         v['partner_id'] = cliente.id
                         cliente_telefono = cliente.phone
                         self._origin.sudo().write({'x_studio_telefono' : cliente_telefono})
