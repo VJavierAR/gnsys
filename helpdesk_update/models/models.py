@@ -115,7 +115,8 @@ class helpdesk_update(models.Model):
                                                 'mostrarComentario': True,
                                                 'write_uid':  self.env.user.id,
                                                 'create_uid': self.env.user.id,
-                                                'comentario': comentarioGenerico
+                                                'comentario': comentarioGenerico,
+                                                'creadoPorSistema': True
                                             }))
             objTicket.write({'diagnosticos': listaDiagnosticos})
             _logger.info('3312 listaDeFechas: ' + str(listaDeFechas))
@@ -1627,7 +1628,8 @@ class helpdesk_update(models.Model):
                                                             'estadoTicket': 'Pendiente por autorizar solicitud',
                                                             'mostrarComentario': True,
                                                             'write_uid':  self.env.user.id,
-                                                            'create_uid':  self.env.user.id
+                                                            'create_uid':  self.env.user.id,
+                                                            'creadoPorSistema': False
                                                         })
 
         mensajeTitulo = 'Estado de ticket actualizado!!!'
@@ -3640,7 +3642,7 @@ class helpdesk_update(models.Model):
                         v['x_studio_nivel_del_cliente'] = cliente_nivel
 
 
-                        localidad = numeros_serie.x_studio_localidad_2.id
+                        localidad = numeros_serie.x_studio_localidad_2
 
                         self._origin.sudo().write({'x_studio_empresas_relacionadas' : localidad.id})
                         record.x_studio_empresas_relacionadas = localidad.id
@@ -4323,6 +4325,7 @@ class helpdes_diagnostico(models.Model):
     comentario = fields.Text(string='Diagnostico / comentario')
     evidencia = fields.Many2many('ir.attachment', string="Evidencias")
     mostrarComentario = fields.Boolean(string = "Mostrar comentario en documento impreso", default = False)
+    creadoPorSistema = fields.Boolean(string = "Creado por sistema", default = False)
 
 
 

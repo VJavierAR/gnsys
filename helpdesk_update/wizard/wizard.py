@@ -32,7 +32,8 @@ class HelpDeskComentario(TransientModel):
                                                 ,'comentario': self.comentario
                                                 ,'estadoTicket': self.ticket_id.stage_id.name
                                                 ,'evidencia': [(6,0,self.evidencia.ids)]
-                                                ,'mostrarComentario': self.check
+                                                ,'mostrarComentario': self.check,
+                                                'creadoPorSistema': False
                                                 })
             if self.editarZona:
                 self.ticket_id.write({'x_studio_zona': self.zona
@@ -63,7 +64,8 @@ class HelpDeskComentario(TransientModel):
                                                 ,'comentario': self.comentario
                                                 ,'estadoTicket': self.ticket_id.stage_id.name
                                                 ,'evidencia': [(6,0,self.evidencia.ids)]
-                                                ,'mostrarComentario': self.check
+                                                ,'mostrarComentario': self.check,
+                                                'creadoPorSistema': False
                                                 })
         if self.editarZona:
             self.ticket_id.write({'x_studio_zona': self.zona
@@ -248,7 +250,8 @@ class HelpDeskNoValidarConComentario(TransientModel):
                                                 ,'comentario': self.comentario
                                                 ,'estadoTicket': self.ticket_id.stage_id.name
                                                 ,'evidencia': [(6,0,self.evidencia.ids)]
-                                                ,'mostrarComentario': self.check
+                                                ,'mostrarComentario': self.check,
+                                                'creadoPorSistema': False
                                                 })
         
         mess = 'Ticket "' + str(self.ticket_id.id) + '" no validado y Diagnostico / Comentario añadido al ticket "' + str(self.ticket_id.id) + '" de forma exitosa. \n\nComentario agregado: ' + str(self.comentario) + '.'
@@ -298,7 +301,8 @@ class HelpDeskCerrarConComentario(TransientModel):
                                                 #,'estadoTicket': self.ticket_id.stage_id.name
                                                 ,'estadoTicket': 'Cerrado'
                                                 ,'evidencia': [(6,0,ultimaEvidenciaTec)]
-                                                ,'mostrarComentario': self.check
+                                                ,'mostrarComentario': self.check,
+                                                'creadoPorSistema': False
                                                 })
         self.ticket_id.write({'stage_id': 18 
                             , 'estadoResueltoPorDocTecnico': True
@@ -346,7 +350,8 @@ class HelpDeskCancelarConComentario(TransientModel):
                                               ,'comentario': self.comentario
                                               ,'estadoTicket': self.ticket_id.stage_id.name
                                               ,'evidencia': [(6,0,self.evidencia.ids)]
-                                              ,'mostrarComentario': self.check
+                                              ,'mostrarComentario': self.check,
+                                              'creadoPorSistema': False
                                               })
       self.ticket_id.write({'stage_id': 4
                           , 'estadoResueltoPorDocTecnico': True
@@ -766,7 +771,8 @@ class helpdesk_contadores(TransientModel):
                                         , 'x_studio_contador_bn': int(negrot)
                                         , 'x_studio_contador_bn_a_capturar': int(self.contadorBNActual)
                                         , 'x_studio_contador_color': 0
-                                        , 'x_studio_contador_color_a_capturar': 0
+                                        , 'x_studio_contador_color_a_capturar': 0,
+                                        'creadoPorSistema': True
                                         })
                     #self.ticket_id.write({'contadorBNWizard': self.contadorBNActual
                     #                    })
@@ -809,7 +815,8 @@ class helpdesk_contadores(TransientModel):
                                         , 'x_studio_contador_bn': int(negrot)
                                         , 'x_studio_contador_bn_a_capturar': int(self.contadorBNActual)
                                         , 'x_studio_contador_color': int(colort)
-                                        , 'x_studio_contador_color_a_capturar': int(self.contadorColorActual)
+                                        , 'x_studio_contador_color_a_capturar': int(self.contadorColorActual),
+                                        'creadoPorSistema': True
                                         })
                     #self.ticket_id.write({'contadorBNWizard': self.contadorBNActual
                     #                    , 'contadorColorWizard': self.contadorColorActual
@@ -1420,7 +1427,8 @@ class HelpDeskReincidencia(TransientModel):
                                                   ,'comentario': 'Ticket creado por reincidencia. Número de ticket relacionado: ' + str(self.ticket_id.id) + ' Motivo: ' + self.motivo
                                                   ,'estadoTicket': ticket.stage_id.name
                                                   #,'evidencia': [(6,0,self.evidencia.ids)]
-                                                  ,'mostrarComentario': True
+                                                  ,'mostrarComentario': True,
+                                                  'creadoPorSistema': True
                                                   })
 
 
@@ -1471,7 +1479,8 @@ class HelpDeskReincidencia(TransientModel):
                                                   ,'comentario': 'Ticket creado por reincidencia. Número de ticket relacionado: ' + str(self.ticket_id.id) + ' Motivo: ' + self.motivo
                                                   ,'estadoTicket': ticket.stage_id.name
                                                   #,'evidencia': [(6,0,self.evidencia.ids)]
-                                                  ,'mostrarComentario': True
+                                                  ,'mostrarComentario': True,
+                                                  'creadoPorSistema': True
                                                   })
 
 
@@ -1845,7 +1854,8 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                                                             #'evidencia': [(6,0,self.evidencia.ids)],
                                                             #'mostrarComentario': self.check,
                                                             'write_uid':  self.env.user.name,
-                                                            'comentario': 'Ticket validado por ' + str(self.env.user.name) +'. Pasa al proceso de almacén.' 
+                                                            'comentario': 'Ticket validado por ' + str(self.env.user.name) +'. Pasa al proceso de almacén.' ,
+                                                            'creadoPorSistema': True
                                                         })
                     else:
                         listaDeTicketsSinPoroductos.append(ticket.id)
@@ -4198,7 +4208,8 @@ class helpdesk_reiniciar_contadores_mesa(TransientModel):
                                                             'evidencia': [(6,0,self.evidencia.ids)],
                                                             'mostrarComentario': self.check,
                                                             'write_uid':  self.env.user.name,
-                                                            'comentario': 'Reinicio de contadores.\n Contador BN anterior: ' + str(negroMesa) + '\nContador BN capturado: ' + str(self.contadorMonoActualizado) + '\n\n' + self.comentario
+                                                            'comentario': 'Reinicio de contadores.\n Contador BN anterior: ' + str(negroMesa) + '\nContador BN capturado: ' + str(self.contadorMonoActualizado) + '\n\n' + self.comentario,
+                                                            'creadoPorSistema': True
                                                         })
                 self.ticket_id.write({'contadores_anteriores': '</br>Equipo BN o Color: ' + str(self.tipoEquipo) + ' </br></br>Contador BN: ' + str(self.contadorMonoActualizado) + '</br></br>Contador Color: ' + str(self.contadorColorActualizado)
                                     , 'x_studio_contador_bn': int(negroMesa)
@@ -4560,7 +4571,8 @@ class helpdesk_reiniciar_contadores_mesa(TransientModel):
                                                             'evidencia': [(6,0,self.evidencia.ids)],
                                                             'mostrarComentario': self.check,
                                                             'write_uid':  self.env.user.name,
-                                                            'comentario': 'Reinicio de contadores.\nContador BN anterior: ' + str(negroMesa) + '\nContador BN capturado: ' + str(self.contadorMonoActualizado) + '\nContador color anterior: ' + str(colorMesa) + '\nContador color capturado: ' + str(self.contadorColorActualizado) + '\n\n' + self.comentario 
+                                                            'comentario': 'Reinicio de contadores.\nContador BN anterior: ' + str(negroMesa) + '\nContador BN capturado: ' + str(self.contadorMonoActualizado) + '\nContador color anterior: ' + str(colorMesa) + '\nContador color capturado: ' + str(self.contadorColorActualizado) + '\n\n' + self.comentario,
+                                                            'creadoPorSistema': True
                                                         })
                 self.ticket_id.write({'contadores_anteriores': '</br>Equipo BN o Color: ' + str(self.bnColor) + ' </br></br>Contador BN: ' + str(self.contadorMonoActualizado) + '</br></br>Contador Color: ' + str(self.contadorColorActualizado)
                                     , 'x_studio_contador_bn': int(negroMesa)
@@ -4923,7 +4935,8 @@ class helpdesk_editar_contadores_mesa(TransientModel):
                                                             'evidencia': [(6,0,self.evidencia.ids)],
                                                             'mostrarComentario': self.check,
                                                             'write_uid':  self.env.user.name,
-                                                            'comentario': 'Reinicio de contadores.\n Contador BN anterior: ' + str(self.contadorMonoActual) + '\nContador BN capturado: ' + str(self.contadorMonoActualizado) + '\n\n' + self.comentario
+                                                            'comentario': 'Reinicio de contadores.\n Contador BN anterior: ' + str(self.contadorMonoActual) + '\nContador BN capturado: ' + str(self.contadorMonoActualizado) + '\n\n' + self.comentario,
+                                                            'creadoPorSistema': False
                                                         })
                 self.ticket_id.write({'contadores_anteriores': '</br>Equipo BN o Color: ' + str(self.tipoEquipo) + ' </br></br>Contador BN: ' + str(self.contadorMonoActualizado) + '</br></br>Contador Color: ' + str(self.contadorColorActualizado)
                                     , 'x_studio_contador_bn': int(self.contadorMonoActual)
@@ -4987,7 +5000,8 @@ class helpdesk_editar_contadores_mesa(TransientModel):
                                                             'evidencia': [(6,0,self.evidencia.ids)],
                                                             'mostrarComentario': self.check,
                                                             'write_uid':  self.env.user.name,
-                                                            'comentario': 'Reinicio de contadores.\nContador BN anterior: ' + str(self.contadorMonoActual) + '\nContador BN capturado: ' + str(self.contadorMonoActualizado) + '\nContador color anterior: ' + str(self.contadorColorActual) + '\nContador color capturado: ' + str(self.contadorColorActualizado) + '\n\n' + self.comentario 
+                                                            'comentario': 'Reinicio de contadores.\nContador BN anterior: ' + str(self.contadorMonoActual) + '\nContador BN capturado: ' + str(self.contadorMonoActualizado) + '\nContador color anterior: ' + str(self.contadorColorActual) + '\nContador color capturado: ' + str(self.contadorColorActualizado) + '\n\n' + self.comentario,
+                                                            'creadoPorSistema': False
                                                         })
                 self.ticket_id.write({'contadores_anteriores': '</br>Equipo BN o Color: ' + str(self.tipoEquipo) + ' </br></br>Contador BN: ' + str(self.contadorMonoActualizado) + '</br></br>Contador Color: ' + str(self.contadorColorActualizado)
                                     , 'x_studio_contador_bn': int(self.contadorMonoActual)
@@ -5159,8 +5173,11 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                                                     'comentario': comentarioGenerico,
                                                     'estadoTicket': self.ticket_id.stage_id.name,
                                                     'evidencia': [(6,0,self.evidencia.ids)],
-                                                    'mostrarComentario': self.check
+                                                    'mostrarComentario': self.check,
+                                                    'creadoPorSistema': True
                                                 })
+        if self.productos:
+            self.ticket_id.x_studio_productos = [(6, 0, self.productos.ids)]
         self.ticket_id.crear_y_validar_solicitud_refaccion()
         mensajeTitulo = 'Creación y validación de refacción!!!'
         mensajeCuerpo = 'Se creo y valido la solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) + ' para el ticket ' + str(self.ticket_id.id) + '.'
