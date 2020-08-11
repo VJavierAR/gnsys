@@ -5098,12 +5098,14 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                                                 string = 'Historico de Componentes', 
                                                 compute='_compute_historico_de_componentes'
                                             )
+    """
     movimientos = fields.One2many( 
                                     'stock.move.line', 
                                     'lot_id', 
                                     string = 'Movimientos', 
                                     compute='_compute_movimientos'
                                 )
+    """
     serie = fields.Text(
                             string = "Serie", 
                             compute = '_compute_serie_nombre'
@@ -5140,11 +5142,11 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
     def _compute_historico_de_componentes(self):
         if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
             self.historicoDeComponentes = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_histrico_de_componentes.ids
-
+    """
     def _compute_movimientos(self):
         if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
             self.movimientos = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_move_line.ids
-
+    """
     @api.onchange('activar_compatibilidad')
     def productos_filtro(self):
         res = {}             

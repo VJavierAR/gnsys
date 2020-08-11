@@ -1426,7 +1426,13 @@ class helpdesk_update(models.Model):
                         ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                     ultimoComentario = self.diagnosticos[-1].comentario
 
-                comentarioGenerico = 'Cambio de estado al seleccionar ' + str(self.x_studio_tcnico.name) + ' como técnico. Se cambio al estado Atención. Seleccion realizada por ' + str(self.env.user.name) +'.'
+                tecnicoActual = ''
+                if self.x_studio_tcnico.name:
+                    tecnicoActual = str(self.x_studio_tcnico.name)
+                else:
+                    tecnicoActual = 'Sin técnico asociado'
+                comentarioGenerico = 'Cambio de estado al seleccionar botón atención o al cambiar de técnico. Técnico actual: ' + tecnicoActual + '. Se cambio al estado Atención. Seleccion realizada por ' + str(self.env.user.name) +'.'
+                
                 estado = 'Atención'
                 self.creaDiagnosticoVistaLista(comentarioGenerico, estado)
 

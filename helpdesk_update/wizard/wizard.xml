@@ -1517,9 +1517,11 @@
                                 <page string = 'Historico de componentes'>
                                     <field name='historicoDeComponentes' />
                                 </page>
+                                <!--
                                 <page string = 'Movimientos'>
                                     <field name='movimientos' />
                                 </page>
+                                -->
                             </notebook>
                         </page>
                         <page string = 'Contadores'>
@@ -1592,7 +1594,7 @@
 
                 <footer>
                     <button name="confirmarYValidarRefacciones" string="Confirmar solicitud" type="object" class="oe_highlight" />
-                    <button name="validacionSolicitud" string="Validar solicitud con SO existente" help='Valida la solicitud que se genero previamente y no se logro validar' type="object" class="oe_highlight" />
+                    <button name="validacionSolicitud" invisible='1' string="Validar solicitud con SO existente" help='Valida la solicitud que se genero previamente y no se logro validar' type="object" class="oe_highlight" />
                     <button string="Cerrar ventana" class="oe_link" special="cancel"/>
                 </footer>
             </form>
