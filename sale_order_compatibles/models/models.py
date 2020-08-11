@@ -87,14 +87,14 @@ class sale_update(models.Model):
 
 	serieRetiro2=fields.Many2one('stock.production.lot','Serie retiro')
 
-	@api.onchange('serieRetiro')
+	@api.onchange('serieRetiro2')
 	def serieRetiro(self):
 		for record in self:
-		  if(record.serieRetiro.id):
-		    if(record.serieRetiro.x_studio_localidad_2.id):
-		      record['partner_id']=record.serieRetiro.x_studio_localidad_2.parent_id.id
-		      record['partner_shipping_id']=record.serieRetiro.x_studio_localidad_2.id
-		      record['compatiblesLineas']=[{'serie':record.serieRetiro.id,'cantidad':1,'tipo':record.x_studio_tipo_de_solicitud,'equipos':record.serieRetiro.product_id.id}]
+		  if(record.serieRetiro2.id):
+		    if(record.serieRetiro2.x_studio_localidad_2.id):
+		      record['partner_id']=record.serieRetiro2.x_studio_localidad_2.parent_id.id
+		      record['partner_shipping_id']=record.serieRetiro2.x_studio_localidad_2.id
+		      record['compatiblesLineas']=[{'serie':record.serieRetiro2.id,'cantidad':1,'tipo':record.x_studio_tipo_de_solicitud,'equipos':record.serieRetiro2.product_id.id}]
 
 	@api.multi
 	def mail_action_quotation_send(self):
