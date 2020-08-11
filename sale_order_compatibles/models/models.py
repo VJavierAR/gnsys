@@ -84,9 +84,8 @@ class miniModeloAccesorio(models.Model):
 class sale_update(models.Model):
 	_inherit = 'sale.order'
 	compatiblesLineas = fields.One2many('sale_order_compatibles', 'saleOrder', string = 'nombre temp',copy=True)
-	serieRetiro=fields.Many2one('stock.production.lot','Serie')
 
-
+	serieRetiro2=fields.Many2one('stock.production.lot','Serie retiro')
 
 	@api.onchange('serieRetiro')
 	def serieRetiro(self):
