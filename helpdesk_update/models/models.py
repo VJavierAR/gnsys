@@ -1925,7 +1925,7 @@ class helpdesk_update(models.Model):
                             #self.env.cr.commit()
                     
                     else:
-                        sale = self.env['sale.order'].create({'partner_id' : record.partner_id.id
+                        sale = self.env['sale.order'].sudo().create({'partner_id' : record.partner_id.id
                                                                      , 'origin' : "Ticket de refacción: " + str(record.x_studio_id_ticket)
                                                                      , 'x_studio_tipo_de_solicitud' : 'Venta'
                                                                      , 'x_studio_requiere_instalacin' : True
@@ -1950,8 +1950,8 @@ class helpdesk_update(models.Model):
                                     , 'price_unit': 0}
                             if (self.team_id.id == 10 or self.team_id.id == 11):
                                 datosr['route_id'] = 22548
-                            self.env['sale.order.line'].create(datosr)
-                            sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta'})
+                            self.env['sale.order.line'].sudo().create(datosr)
+                            sale.env['sale.order'].sudo().write({'x_studio_tipo_de_solicitud' : 'Venta'})
                             #sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta', 'validity_date' : sale.date_order + datetime.timedelta(days=30)})
                             self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
 
@@ -1975,7 +1975,7 @@ class helpdesk_update(models.Model):
                                     else:
                                         requisicion=self.env['requisicion.requisicion'].search([['state','!=','done'],['create_date','<=',datetime.datetime.now()],['origen','=','Refacción']]).sorted(key='create_date',reverse=True)
                                     if(requisicion!=False ):
-                                        re=self.env['requisicion.requisicion'].create({'origen':'Refacción','area':'Almacen','state':'draft'})
+                                        re=self.env['requisicion.requisicion'].sudo().create({'origen':'Refacción','area':'Almacen','state':'draft'})
                                         re.product_rel=[{'cliente':sale.partner_shipping_id.id,'ticket':sale.x_studio_field_bxHgp.id,'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
                                     if(requisicion):                                            
                                         requisicion[0].product_rel=[{'cliente':sale.partner_shipping_id.id,'ticket':sale.x_studio_field_bxHgp.id,'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
