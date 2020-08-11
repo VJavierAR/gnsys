@@ -84,7 +84,18 @@ class miniModeloAccesorio(models.Model):
 class sale_update(models.Model):
 	_inherit = 'sale.order'
 	compatiblesLineas = fields.One2many('sale_order_compatibles', 'saleOrder', string = 'nombre temp',copy=True)
+	serieRetiro=fields.Many2one('stock.production.lot','Serie')
 
+
+
+	@api.onchange('serieRetiro')
+	def serieRetiro(self):
+		for record in self:
+		  if(record.serieRetiro.id):
+		    if(record.serieRetiro.x_studio_localidad_2.id):
+		      record['partner_id']=record.serieRetiro.x_studio_localidad_2.parent_id.id
+		      record['partner_shipping_id']=record.serieRetiro.x_studio_localidad_2.id
+		      record['compatiblesLineas']=[{'serie':record.serieRetiro.id,'cantidad':1,'tipo':record.x_studio_tipo_de_solicitud,'equipos':record.serieRetiro.product_id.id}]
 
 	@api.multi
 	def mail_action_quotation_send(self):
