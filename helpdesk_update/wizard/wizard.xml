@@ -1483,9 +1483,10 @@
                     <notebook>
                         <page string = 'Bitácora'>
                             <notebook>
+                                <!--
                                 <page string = 'Tickets'>
                                     <field name='historicoTickets'>
-                                        <tree default_order="create_date desc"><!--x_studio_fecha-->
+                                        <tree default_order="create_date desc">
                                             <field name='x_studio_tickett' attrs='{"domain": [["fuente","=","Equipo"]]}'/>
                                             <field name='create_date' />
                                             <field name='fuente' />
@@ -1512,6 +1513,7 @@
                                 <page string = 'Tóner'>
                                     <field name='toner' />
                                 </page>
+                                -->
                                 <page string = 'Historico de componentes'>
                                     <field name='historicoDeComponentes' />
                                 </page>

@@ -5072,6 +5072,7 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                                     'ir.attachment',
                                     string = "Evidencias"
                                 )
+    """
     historicoTickets = fields.One2many(
                                         'dcas.dcas', 
                                         'serie', 
@@ -5090,6 +5091,7 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                                 string = 'Tóner', 
                                 compute='_compute_toner'
                             )
+    """
     historicoDeComponentes = fields.One2many(
                                                 'x_studio_historico_de_componentes', 
                                                 'x_studio_field_MH4DO', 
@@ -5122,6 +5124,7 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
         if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
             self.serie = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].name
 
+    """
     def _compute_historico_tickets(self):
         if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
             self.historicoTickets = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_field_Yxv2m.ids
@@ -5133,7 +5136,7 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
     def _compute_toner(self):
         if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
             self.toner = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_toner_1.ids
-
+    """
     def _compute_historico_de_componentes(self):
         if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
             self.historicoDeComponentes = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_histrico_de_componentes.ids
