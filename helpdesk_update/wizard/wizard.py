@@ -5182,6 +5182,16 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                 self.ticket_id.x_studio_field_nO7Xg.action_confirm()
             
             if self.ticket_id.x_studio_field_nO7Xg.state == 'sale':
+                comentarioGenerico = 'Solicitud de refacción autorizada por ' + str(self.env.user.name) + '.\nEl día ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S")) + '.\n\n'
+                comentarioGenerico = comentarioGenerico
+                self.env['helpdesk.diagnostico'].create({
+                                                            'ticketRelacion': self.ticket_id.id,
+                                                            'comentario': comentarioGenerico,
+                                                            'estadoTicket': self.ticket_id.stage_id.name,
+                                                            'evidencia': [(6,0,self.evidencia.ids)],
+                                                            'mostrarComentario': self.check,
+                                                            'creadoPorSistema': True
+                                                        })
                 mensajeTitulo = 'Validación de refacción!!!'
                 mensajeCuerpo = 'Se valido la solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) + ' para el ticket ' + str(self.ticket_id.id) + '.'
                 wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
@@ -5219,6 +5229,11 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
 
     def confirmarYValidarRefacciones(self):
         self.ticket_id.x_studio_productos = [(6, 0, self.productos.ids)]
+        
+        if self.productos:
+            self.ticket_id.x_studio_productos = [(6, 0, self.productos.ids)]
+        self.ticket_id.crear_y_validar_solicitud_refaccion()
+
         comentarioGenerico = 'Solicitud de refacción autorizada por ' + str(self.env.user.name) + '.\nEl día ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S")) + '.\n\n'
         comentarioGenerico = comentarioGenerico + str(self.comentario)
         self.env['helpdesk.diagnostico'].create({
@@ -5229,9 +5244,6 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                                                     'mostrarComentario': self.check,
                                                     'creadoPorSistema': True
                                                 })
-        if self.productos:
-            self.ticket_id.x_studio_productos = [(6, 0, self.productos.ids)]
-        self.ticket_id.crear_y_validar_solicitud_refaccion()
         mensajeTitulo = 'Creación y validación de refacción!!!'
         mensajeCuerpo = 'Se creo y valido la solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) + ' para el ticket ' + str(self.ticket_id.id) + '.'
         wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
