@@ -1937,7 +1937,7 @@ class helpdesk_update(models.Model):
                                                                      , 'x_studio_requiere_instalacin' : True
                                                                      , 'x_studio_field_RnhKr': self.localidadContacto.id
                                                                      , 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id
-                                                                     , 'x_studio_tcnico' : record.x_studio_tcnico.id
+                                                                     #, 'x_studio_tcnico' : record.x_studio_tcnico.id
                                                                      , 'warehouse_id' : 5865   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
                                                                      , 'team_id' : 1
                                                                      , 'x_studio_field_bxHgp': int(record.x_studio_id_ticket) 
@@ -1956,7 +1956,9 @@ class helpdesk_update(models.Model):
                                     , 'price_unit': 0}
                             if (self.team_id.id == 10 or self.team_id.id == 11):
                                 datosr['route_id'] = 22548
+                            _logger.info('3312: fecha inicio de sale.roder.line: ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S")) )
                             self.env['sale.order.line'].sudo().create(datosr)
+                            _logger.info('3312: fecha fin de sale.roder.line: ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S")) )
                             sale.env['sale.order'].sudo().write({'x_studio_tipo_de_solicitud' : 'Venta'})
                             #sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta', 'validity_date' : sale.date_order + datetime.timedelta(days=30)})
                             self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
