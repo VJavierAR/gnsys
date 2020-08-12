@@ -2036,7 +2036,70 @@ class helpdesk_update(models.Model):
 
 
 
+    def optimiza_lineas(self):
+        _logger.info('3312: optimiza_lineas()')
+        sale = self.x_studio_field_nO7Xg
+        if sale.id != 0 or self.x_studio_productos != []:
+            if self.x_studio_field_nO7Xg.order_line:
+                #self.sudo().env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
+                #sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
+                #sale.action_confirm()
 
+                for lineas in sale.order_line:
+                    st=self.env['stock.quant'].search([['location_id','in',(35204,12)],['product_id','=',lineas.product_id.id]]).sorted(key='quantity',reverse=True)
+                    requisicion=False
+                    if(len(st)>0):
+                        if(st[0].quantity==0):
+                            requisicion=self.env['requisicion.requisicion'].search([['state','!=','done'],['create_date','<=',datetime.datetime.now()],['origen','=','Refacción']]).sorted(key='create_date',reverse=True)
+                    else:
+                        requisicion=self.env['requisicion.requisicion'].search([['state','!=','done'],['create_date','<=',datetime.datetime.now()],['origen','=','Refacción']]).sorted(key='create_date',reverse=True)
+                    if(requisicion!=False ):
+                        re=self.env['requisicion.requisicion'].sudo().create({'origen':'Refacción','area':'Almacen','state':'draft'})
+                        re.product_rel=[{'cliente':sale.partner_shipping_id.id,'ticket':sale.x_studio_field_bxHgp.id,'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
+                    if(requisicion):                                            
+                        requisicion[0].product_rel=[{'cliente':sale.partner_shipping_id.id,'ticket':sale.x_studio_field_bxHgp.id,'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
+                        
+                estadoAntes = str(self.stage_id.name)
+                #if (self.stage_id.name == 'Solicitud de Refacción' or self.stage_id.name == 'Cotización') and self.estadoSolicitudDeRefaccionValidada == False:
+                query = "update helpdesk_ticket set stage_id = 102 where id = " + str(self.x_studio_id_ticket) + ";"
+                ss = self.env.cr.execute(query)
+                ultimaEvidenciaTec = []
+                ultimoComentario = ''
+                if self.diagnosticos:
+                    if self.diagnosticos[-1].evidencia.ids:
+                        ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
+                    ultimoComentario = self.diagnosticos[-1].comentario
+
+
+                comentarioGenerico = 'Solicitud de refacción autorizada por ' + str(self.env.user.name) + '.\nEl día ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S")) + '.\n\n'
+                #comentarioGenerico = comentarioGenerico + str(self.comentario)
+                self.env['helpdesk.diagnostico'].sudo().create({
+                                                                    'ticketRelacion': self.id,
+                                                                    'comentario': comentarioGenerico,
+                                                                    'estadoTicket': self.stage_id.name,
+                                                                    #'evidencia': [(6,0,self.evidencia.ids)],
+                                                                    'mostrarComentario': True,
+                                                                    'creadoPorSistema': True
+                                                                })
+
+                message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Refacción Autorizada' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
+                mess= {
+                        'title': _('Estado de ticket actualizado!!!'),
+                        'message' : message
+                      }
+                self.estadoSolicitudDeRefaccionValidada = True
+                return {'warning': mess}
+            else:
+                message = ("No es posible validar una solicitud que no tiene productos.")
+                mess = {'title': _('Solicitud sin productos!!!')
+                        , 'message' : message
+                        }
+                return {'warning': mess}
+        else:
+            errorRefaccionNoValidada = "Solicitud de refacción no validada"
+            mensajeSolicitudRefaccionNoValida = "No es posible validar una solicitud de refacción en el estado actual debido a falta de productos o porque no existe la solicitud."
+            estadoActual = str(self.stage_id.name)
+            raise exceptions.except_orm(_(errorRefaccionNoValidada), _(mensajeSolicitudRefaccionNoValida + " Estado: " + estadoActual))
 
 
 

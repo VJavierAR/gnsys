@@ -5241,6 +5241,99 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                 }
 
 
+    def validar(self):
+        _logger.info('3312: validar()')
+        self.ticket_id.x_studio_productos = [(6, 0, self.productos.ids)]
+        if self.productos:
+            self.ticket_id.x_studio_productos = [(6, 0, self.productos.ids)]
+        
+        if not self.ticket_id.x_studio_field_nO7Xg:
+            if len(self.ticket_id.x_studio_productos) > 0:
+                if self.ticket_id.x_studio_field_nO7Xg.id != False and self.ticket_id.x_studio_field_nO7Xg.state == 'sale':
+                    message = ('Existe una solicitud ya generada y esta fue validada. \n\nNo es posible realizar cambios a una solicitud ya validada.')
+                    mess= {'title': _('Solicitud existente validada!!!')
+                            , 'message' : message
+                    }
+                    return {'warning': mess}
+                
+                if self.ticket_id.x_studio_field_nO7Xg.id != False and self.ticket_id.x_studio_field_nO7Xg.state != 'sale':
+                    sale = self.ticket_id.x_studio_field_nO7Xg
+                    self.env.cr.execute("delete from sale_order_line where order_id = " + str(sale.id) +";")
+                    for c in self.ticket_id.x_studio_productos:
+                        datosr={'order_id' : sale.id, 'product_id' : c.id, 'product_uom_qty' : c.x_studio_cantidad_pedida, 'x_studio_field_9nQhR':self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id}
+                        if(self.ticket_id.team_id.id == 10 or self.ticket_id.team_id.id==11):
+                            datosr['route_id']=22548
+                        self.env['sale.order.line'].sudo().create(datosr)
+                        self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
+                        #self.env.cr.commit()
+                else:
+                    sale = self.env['sale.order'].sudo().create({'partner_id' : self.ticket_id.partner_id.id
+                                                                 , 'origin' : "Ticket de refacción: " + str(self.ticket_id.x_studio_id_ticket)
+                                                                 , 'x_studio_tipo_de_solicitud' : 'Venta'
+                                                                 , 'x_studio_requiere_instalacin' : True
+                                                                 , 'x_studio_field_RnhKr': self.ticket_id.localidadContacto.id
+                                                                 , 'partner_shipping_id' : self.ticket_id.x_studio_empresas_relacionadas.id
+                                                                 , 'x_studio_tcnico' : self.ticket_id.x_studio_tcnico.id
+                                                                 , 'warehouse_id' : 5865   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
+                                                                 , 'team_id' : 1
+                                                                 , 'x_studio_field_bxHgp': int(self.ticket_id.x_studio_id_ticket) 
+                                                                })
+                    #record['x_studio_field_nO7Xg'] = sale.id
+                    self.ticket_id.write({
+                                            'x_studio_field_nO7Xg': sale.id
+                                        })
+                    """
+                    en produccion
+                    self.env.cr.commit()
+                    self.productos = [[6, 0, (sale.id)]]
+                    """
+                    for c in self.ticket_id.x_studio_productos:
+                        datosr = {'order_id' : sale.id
+                                , 'product_id' : c.id
+                                , 'product_uom_qty' : c.x_studio_cantidad_pedida
+                                ,'x_studio_field_9nQhR': self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id
+                                , 'price_unit': 0}
+                        if (self.ticket_id.team_id.id == 10 or self.ticket_id.team_id.id == 11):
+                            datosr['route_id'] = 22548
+                        self.env['sale.order.line'].sudo().create(datosr)
+                        sale.env['sale.order'].sudo().write({'x_studio_tipo_de_solicitud' : 'Venta'})
+                        #sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta', 'validity_date' : sale.date_order + datetime.timedelta(days=30)})
+                        self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
+
+
+                    sale = self.ticket_id.x_studio_field_nO7Xg
+                    if sale.id != 0 or self.ticket_id.x_studio_productos != []:
+                        if self.ticket_id.x_studio_field_nO7Xg.order_line:
+                            self.sudo().env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
+                            sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
+                            
+
+
+                            #sale.action_confirm()
+                            return { 'type': 'ir.actions.act_url',
+                                     'url': '/helpdesk_update/validar_solicitud_de_refacciones/%s' % self.ticket_id.id,
+                                     'target': 'self',
+                                     'res_id': self.id,
+                                     }
+            else:
+                message = ('No existen productos para generar y validar la solicitud.')
+                mess= {
+                        'title': _('Ticket sin productos !!!'),
+                        'message' : message
+                      }
+                return {'warning': mess}
+        else:
+            message = ('Ya existe una solicitud, no es posible generan una solicitud.')
+            mess= {
+                    'title': _('Ticket con solicitud existente !!!'),
+                    'message' : message
+                  }
+            return {'warning': mess}
+
+
+
+
+
     def agregarProductos(self):
         #for producto in self.productos:
             #ticket_id.write({})

@@ -6,6 +6,25 @@ from odoo.tools import config, DEFAULT_SERVER_DATE_FORMAT, DEFAULT_SERVER_DATETI
 _logger = logging.getLogger(__name__)
 
 
+class Helpdesk_Controller(http.Controller):
+    @http.route('/helpdesk_update/validar_solicitud_de_refacciones/<int:ticket_id>', auth='public')
+    def validar_solicitud_de_refacciones(self, sale_id,**kw):
+    	_logger.info('3312: validar_solicitud_de_refacciones()')
+    	ticket_id = request.env['helpdesk.ticket'].search([['id', '=', ticket_id]])
+    	uido = request.env.context.get('uid')
+    	_logger.info('3312: usuiaro sesion' + str(uido))
+    	ticket_id.x_studio_field_nO7Xg.action_confirm()
+    	ticket_id.optimiza_lineas()
+    	respuesta = """
+    				<div class='row'>
+    					<div class='col-sm-12'>
+    						<p>
+    							Hola, esto fue lo que resulto: """ + str(ticket_id.x_studio_field_nO7Xg.name) + """
+    						</p>
+    					</div>
+    				</div>
+    				"""
+    	return respuesta
 
 
 # class Requisicion(http.Controller):
