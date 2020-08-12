@@ -247,23 +247,20 @@ class PartnerXlsx(models.AbstractModel):
         sheet.merge_range('A1:R1', 'Tickets', merge_format)
         for obj in ticket:
             tipo=''
-            #if(obj.x_studio_tipo_de_vale=='Requerimiento'):
             if obj.x_studio_equipo_por_nmero_de_serie_1:
                 tipo='Toner'
             if(obj.x_studio_tipo_de_vale==False):
                 tipo=''
             if(len(obj.x_studio_equipo_por_nmero_de_serie_1)==1 or len(obj.x_studio_equipo_por_nmero_de_serie)==1):
-                #sheet.write(i, 0, str(obj.x_studio_id_ticket).replace(',',''), bold)
-                #sheet.write(i, 0, obj.name.replace('Ticket0',''), bold)
-                sheet.write(i, 0, obj.id, bold)
-                #sheet.write(i, 1, tipo, bold)
-                sheet.write(i, 1, obj.x_studio_tipo_de_vale if(obj.x_studio_tipo_de_vale) else '', bold)
-                sheet.write(i, 2, obj.create_date.strftime("%Y/%m/%d, %H:%M:%S"), bold)
-                sheet.write(i, 3, obj.days_difference, bold)
-                sheet.write(i, 4, obj.partner_id.name if(obj.partner_id) else '', bold)
-                sheet.write(i, 5, obj.x_studio_empresas_relacionadas.name if(obj.x_studio_empresas_relacionadas) else '', bold)
-                sheet.write(i, 6, str(obj.x_studio_equipo_por_nmero_de_serie_1.serie.name) if(obj.team_id.id==8) else str(obj.x_studio_equipo_por_nmero_de_serie.name), bold)
-                sheet.write(i, 7, str(obj.x_studio_equipo_por_nmero_de_serie_1.serie.product_id.name) if(obj.team_id.id==8) else str(obj.x_studio_equipo_por_nmero_de_serie.product_id.name), bold)
+                sheet.write(i, 0, obj.x_studio_field_nO7Xg.warehouse_id.name if(obj.x_studio_field_nO7Xg.id) else '', bold)
+                sheet.write(i, 1, obj.id, bold)
+                sheet.write(i, 2, obj.x_studio_tipo_de_vale if(obj.x_studio_tipo_de_vale) else '', bold)
+                sheet.write(i, 3, obj.create_date.strftime("%Y/%m/%d, %H:%M:%S"), bold)
+                sheet.write(i, 4, obj.days_difference, bold)
+                sheet.write(i, 5, obj.partner_id.name if(obj.partner_id) else '', bold)
+                sheet.write(i, 6, obj.x_studio_empresas_relacionadas.name if(obj.x_studio_empresas_relacionadas) else '', bold)
+                sheet.write(i, 7, str(obj.x_studio_equipo_por_nmero_de_serie_1.serie.name) if(obj.team_id.id==8) else str(obj.x_studio_equipo_por_nmero_de_serie.name), bold)
+                sheet.write(i, 8, str(obj.x_studio_equipo_por_nmero_de_serie_1.serie.product_id.name) if(obj.team_id.id==8) else str(obj.x_studio_equipo_por_nmero_de_serie.product_id.name), bold)
                 p=[]
                 if(len(obj.x_studio_equipo_por_nmero_de_serie_1)==1):
                     if(obj.x_studio_equipo_por_nmero_de_serie_1.x_studio_cartuchonefro):
@@ -274,16 +271,15 @@ class PartnerXlsx(models.AbstractModel):
                         p.append(obj.x_studio_equipo_por_nmero_de_serie_1.x_studio_cartucho_cian_1.name)
                     if(obj.x_studio_equipo_por_nmero_de_serie_1.x_studio_cartucho_magenta):
                         p.append(obj.x_studio_equipo_por_nmero_de_serie_1.x_studio_cartucho_magenta.name)
-                sheet.write(i, 8, str(obj.x_studio_productos.mapped('name')).replace('[\'','').replace('\']','').replace('\'','') if(len(obj.x_studio_equipo_por_nmero_de_serie)==1) else str(p).replace('[\'','').replace('\']','').replace('\'',''), bold)
-                sheet.write(i, 9, obj.team_id.name if(obj.team_id.id) else "", bold)
-                sheet.write(i, 10,obj.x_studio_empresas_relacionadas.state_id.name if(obj.x_studio_empresas_relacionadas.state_id) else '' , bold)
-                #sheet.write(i, 11, obj.description if(obj.description) else '', bold)
-                sheet.write(i, 11, obj.stage_id.name if(obj.stage_id.id) else '', bold)
-                sheet.write(i, 12, obj.x_studio_ultima_nota if(obj.x_studio_ultima_nota) else '', bold)
-                sheet.write(i, 13, obj.write_date.strftime("%Y/%m/%d, %H:%M:%S"), bold)
-                sheet.write(i, 14, obj.x_studio_tecnico if(obj.x_studio_tecnico) else obj.write_uid.name, bold)
-                sheet.write(i, 15, str(str(obj.x_studio_empresas_relacionadas.street_name)+" No. Ext. "+str(obj.x_studio_empresas_relacionadas.street_number)+" No. Int. "+str(obj.x_studio_empresas_relacionadas.street_number2)+" ,COL. "+str(obj.x_studio_empresas_relacionadas.l10n_mx_edi_colony)+" "+str(obj.x_studio_empresas_relacionadas.city)+" México, "+str(obj.x_studio_empresas_relacionadas.state_id.name)+"C.P "+str(obj.x_studio_empresas_relacionadas.zip)), bold)
-                sheet.write(i, 16, obj.x_studio_nmero_de_ticket_cliente if(obj.x_studio_nmero_de_ticket_cliente) else '', bold)
+                sheet.write(i, 9, str(obj.x_studio_productos.mapped('name')).replace('[\'','').replace('\']','').replace('\'','') if(len(obj.x_studio_equipo_por_nmero_de_serie)==1) else str(p).replace('[\'','').replace('\']','').replace('\'',''), bold)
+                sheet.write(i, 10, obj.team_id.name if(obj.team_id.id) else "", bold)
+                sheet.write(i, 11,obj.x_studio_empresas_relacionadas.state_id.name if(obj.x_studio_empresas_relacionadas.state_id) else '' , bold)
+                sheet.write(i, 12, obj.stage_id.name if(obj.stage_id.id) else '', bold)
+                sheet.write(i, 13, obj.x_studio_ultima_nota if(obj.x_studio_ultima_nota) else '', bold)
+                sheet.write(i, 14, obj.write_date.strftime("%Y/%m/%d, %H:%M:%S"), bold)
+                sheet.write(i, 15, obj.x_studio_tecnico if(obj.x_studio_tecnico) else obj.write_uid.name, bold)
+                sheet.write(i, 16, str(str(obj.x_studio_empresas_relacionadas.street_name)+" No. Ext. "+str(obj.x_studio_empresas_relacionadas.street_number)+" No. Int. "+str(obj.x_studio_empresas_relacionadas.street_number2)+" ,COL. "+str(obj.x_studio_empresas_relacionadas.l10n_mx_edi_colony)+" "+str(obj.x_studio_empresas_relacionadas.city)+" México, "+str(obj.x_studio_empresas_relacionadas.state_id.name)+"C.P "+str(obj.x_studio_empresas_relacionadas.zip)), bold)
+                sheet.write(i, 17, obj.x_studio_nmero_de_ticket_cliente if(obj.x_studio_nmero_de_ticket_cliente) else '', bold)
                 i=i+1
             if(len(obj.x_studio_equipo_por_nmero_de_serie_1)>1 or len(obj.x_studio_equipo_por_nmero_de_serie)>1):
                 series=None
@@ -294,16 +290,15 @@ class PartnerXlsx(models.AbstractModel):
                 if(len(obj.x_studio_equipo_por_nmero_de_serie)>1):
                     series=obj.x_studio_equipo_por_nmero_de_serie
                 for s in series:
-                    #sheet.write(i, 0, str(obj.id).replace(',',''), bold)
-                    sheet.write(i, 0, obj.id, bold)
-                    #sheet.write(i, 1, tipo, bold)
-                    sheet.write(i, 1, obj.x_studio_tipo_de_vale if(obj.x_studio_tipo_de_vale) else '', bold)
-                    sheet.write(i, 2, obj.create_date.strftime("%Y/%m/%d, %H:%M:%S"), bold)
-                    sheet.write(i, 3, obj.days_difference, bold)
-                    sheet.write(i, 4, obj.partner_id.name if(obj.partner_id) else '', bold)
-                    sheet.write(i, 5, obj.x_studio_empresas_relacionadas.name if(obj.x_studio_empresas_relacionadas) else '', bold)
-                    sheet.write(i, 6, str(s.serie.name) if(a) else str(s.name), bold)
-                    sheet.write(i, 7, str(s.serie.product_id.name) if(a) else str(s.name), bold)
+                    sheet.write(i, 0, obj.x_studio_field_nO7Xg.warehouse_id.name if(obj.x_studio_field_nO7Xg.id) else '', bold)
+                    sheet.write(i, 1, obj.id, bold)
+                    sheet.write(i, 2, obj.x_studio_tipo_de_vale if(obj.x_studio_tipo_de_vale) else '', bold)
+                    sheet.write(i, 3, obj.create_date.strftime("%Y/%m/%d, %H:%M:%S"), bold)
+                    sheet.write(i, 4, obj.days_difference, bold)
+                    sheet.write(i, 5, obj.partner_id.name if(obj.partner_id) else '', bold)
+                    sheet.write(i, 6, obj.x_studio_empresas_relacionadas.name if(obj.x_studio_empresas_relacionadas) else '', bold)
+                    sheet.write(i, 7, str(s.serie.name) if(a) else str(s.name), bold)
+                    sheet.write(i, 8, str(s.serie.product_id.name) if(a) else str(s.name), bold)
                     p=[]
                     if(a):
                         if(s.x_studio_cartuchonefro):
@@ -314,41 +309,36 @@ class PartnerXlsx(models.AbstractModel):
                             p.append(s.x_studio_cartucho_cian_1.name)
                         if(s.x_studio_cartucho_magenta):
                             p.append(s.x_studio_cartucho_magenta.name)
-                    sheet.write(i, 8, str(p).replace('[\'','').replace('\']','').replace('\'','') if(a) else str(obj.x_studio_productos.mapped('name')).replace('[\'','').replace('\']','').replace('\'',''), bold)
-                    sheet.write(i, 9, obj.team_id.name if(obj.team_id.id) else "", bold)
-                    sheet.write(i, 10,obj.x_studio_empresas_relacionadas.state_id.name if(obj.x_studio_empresas_relacionadas.state_id) else '' , bold)
-                    #sheet.write(i, 11, obj.description if(obj.description) else '', bold)
-                    sheet.write(i, 11, obj.stage_id.name if(obj.stage_id.id) else '', bold)
-                    sheet.write(i, 12, obj.x_studio_ultima_nota if(obj.x_studio_ultima_nota) else '', bold)
-                    sheet.write(i, 13, obj.write_date.strftime("%Y/%m/%d, %H:%M:%S"), bold)
-                    sheet.write(i, 14, obj.x_studio_tecnico if(obj.x_studio_tecnico) else obj.write_uid.name, bold)
-                    sheet.write(i, 15, str(str(obj.x_studio_empresas_relacionadas.street_name)+" No. Ext. "+str(obj.x_studio_empresas_relacionadas.street_number)+" No. Int. "+str(obj.x_studio_empresas_relacionadas.street_number2)+" ,COL. "+str(obj.x_studio_empresas_relacionadas.l10n_mx_edi_colony)+" "+str(obj.x_studio_empresas_relacionadas.city)+" México, "+str(obj.x_studio_empresas_relacionadas.state_id.name)+"C.P "+str(obj.x_studio_empresas_relacionadas.zip)), bold)
-                    sheet.write(i, 16, obj.x_studio_nmero_de_ticket_cliente if(obj.x_studio_nmero_de_ticket_cliente) else '', bold)
+                    sheet.write(i, 9, str(p).replace('[\'','').replace('\']','').replace('\'','') if(a) else str(obj.x_studio_productos.mapped('name')).replace('[\'','').replace('\']','').replace('\'',''), bold)
+                    sheet.write(i, 10, obj.team_id.name if(obj.team_id.id) else "", bold)
+                    sheet.write(i, 11,obj.x_studio_empresas_relacionadas.state_id.name if(obj.x_studio_empresas_relacionadas.state_id) else '' , bold)
+                    sheet.write(i, 12, obj.stage_id.name if(obj.stage_id.id) else '', bold)
+                    sheet.write(i, 13, obj.x_studio_ultima_nota if(obj.x_studio_ultima_nota) else '', bold)
+                    sheet.write(i, 14, obj.write_date.strftime("%Y/%m/%d, %H:%M:%S"), bold)
+                    sheet.write(i, 15, obj.x_studio_tecnico if(obj.x_studio_tecnico) else obj.write_uid.name, bold)
+                    sheet.write(i, 16, str(str(obj.x_studio_empresas_relacionadas.street_name)+" No. Ext. "+str(obj.x_studio_empresas_relacionadas.street_number)+" No. Int. "+str(obj.x_studio_empresas_relacionadas.street_number2)+" ,COL. "+str(obj.x_studio_empresas_relacionadas.l10n_mx_edi_colony)+" "+str(obj.x_studio_empresas_relacionadas.city)+" México, "+str(obj.x_studio_empresas_relacionadas.state_id.name)+"C.P "+str(obj.x_studio_empresas_relacionadas.zip)), bold)
+                    sheet.write(i, 17, obj.x_studio_nmero_de_ticket_cliente if(obj.x_studio_nmero_de_ticket_cliente) else '', bold)
                     i=i+1
                 else:
-                    #sheet.write(i, 0, obj.name.replace('Ticket',''), bold)
-                    sheet.write(i, 0, obj.id, bold)
-                    sheet.write(i, 1, obj.x_studio_tipo_de_vale if(obj.x_studio_tipo_de_vale) else '', bold)
-                    #sheet.write(i, 1, tipo, bold)
-                    sheet.write(i, 2, obj.create_date.strftime("%Y/%m/%d, %H:%M:%S"), bold)
-                    sheet.write(i, 3, obj.days_difference, bold)
-                    sheet.write(i, 4, obj.partner_id.name if(obj.partner_id) else '', bold)
-                    sheet.write(i, 5, obj.x_studio_empresas_relacionadas.name if(obj.x_studio_empresas_relacionadas) else '', bold)
-                    sheet.write(i, 6, '', bold)
+                    sheet.write(i, 0, obj.x_studio_field_nO7Xg.warehouse_id.name if(obj.x_studio_field_nO7Xg.id) else '', bold)
+                    sheet.write(i, 1, obj.id, bold)
+                    sheet.write(i, 2, obj.x_studio_tipo_de_vale if(obj.x_studio_tipo_de_vale) else '', bold)
+                    sheet.write(i, 3, obj.create_date.strftime("%Y/%m/%d, %H:%M:%S"), bold)
+                    sheet.write(i, 4, obj.days_difference, bold)
+                    sheet.write(i, 5, obj.partner_id.name if(obj.partner_id) else '', bold)
+                    sheet.write(i, 6, obj.x_studio_empresas_relacionadas.name if(obj.x_studio_empresas_relacionadas) else '', bold)
                     sheet.write(i, 7, '', bold)
                     sheet.write(i, 8, '', bold)
-                    sheet.write(i, 9, obj.team_id.name, bold)
-                    sheet.write(i, 10, obj.x_studio_empresas_relacionadas.state_id.name if(obj.x_studio_empresas_relacionadas.state_id) else '' , bold)
-                    #sheet.write(i, 11, obj.description if(obj.description) else '', bold)
-                    sheet.write(i, 11, obj.stage_id.name if(obj.stage_id.id) else '', bold)
-                    sheet.write(i, 12, obj.x_studio_ultima_nota if(obj.x_studio_ultima_nota) else '', bold)
-                    sheet.write(i, 13, obj.write_date.strftime("%Y/%m/%d, %H:%M:%S"), bold)
-                    sheet.write(i, 14, obj.x_studio_tecnico if(obj.x_studio_tecnico) else obj.write_uid.name, bold)
-                    sheet.write(i, 15, str(str(obj.x_studio_empresas_relacionadas.street_name)+" No. Ext. "+str(obj.x_studio_empresas_relacionadas.street_number)+" No. Int. "+str(obj.x_studio_empresas_relacionadas.street_number2)+" ,COL. "+str(obj.x_studio_empresas_relacionadas.l10n_mx_edi_colony)+" "+str(obj.x_studio_empresas_relacionadas.city)+" México, "+str(obj.x_studio_empresas_relacionadas.state_id.name)+"C.P "+str(obj.x_studio_empresas_relacionadas.zip)), bold)
-                    sheet.write(i, 16, obj.x_studio_nmero_de_ticket_cliente if(obj.x_studio_nmero_de_ticket_cliente) else '', bold)
-        #sheet.add_table('A2:R2',{'columns': [{'header': 'Ticket'},{'header': 'Tipo de Reporte'},{'header': 'Fecha'},{'header':'Dias de atraso'},{'header': 'Cliente'},{'header': 'Localidad'},{'header': 'Serie'},{'header': 'Modelo'},{'header': 'Productos'},{'header': 'Area de Atención'},{'header': 'Zona'},{'header': 'Último estatus ticket'},{'header': 'Última nota'},{'header': 'Fecha nota'},{'header': 'Tecnico'},{'header': 'Dirección'},{'header': 'No. Ticket cliente'}]}) 
-        #sheet.add_table('A2:R2',{'columns': [{'header': 'Ticket'},{'header': 'Tipo de Reporte'},{'header': 'Fecha'},{'header':'Dias de atraso'},{'header': 'Cliente'},{'header': 'Localidad'},{'header': 'Serie'},{'header': 'Modelo'},{'header': 'Productos'},{'header': 'Area de Atención'},{'header': 'Zona'},{'header': 'Falla'},{'header': 'Último estatus ticket'},{'header': 'Última nota'},{'header': 'Fecha nota'},{'header': 'Tecnico'},{'header': 'Dirección'},{'header': 'No. Ticket cliente'}]}) 
-        sheet.add_table('A2:R'+str(i),{'columns': [{'header': 'Ticket'},{'header': 'Tipo de Reporte'},{'header': 'Fecha'},{'header':'Dias de atraso'},{'header': 'Cliente'},{'header': 'Localidad'},{'header': 'Serie'},{'header': 'Modelo'},{'header': 'Productos'},{'header': 'Area de Atención'},{'header': 'Zona'},{'header': 'Falla'},{'header': 'Último estatus ticket'},{'header': 'Última nota'},{'header': 'Fecha nota'},{'header': 'Tecnico'},{'header': 'Dirección'},{'header': 'No. Ticket cliente'}]}) 
+                    sheet.write(i, 9, '', bold)
+                    sheet.write(i, 10, obj.team_id.name, bold)
+                    sheet.write(i, 11, obj.x_studio_empresas_relacionadas.state_id.name if(obj.x_studio_empresas_relacionadas.state_id) else '' , bold)
+                    sheet.write(i, 12, obj.stage_id.name if(obj.stage_id.id) else '', bold)
+                    sheet.write(i, 13, obj.x_studio_ultima_nota if(obj.x_studio_ultima_nota) else '', bold)
+                    sheet.write(i, 14, obj.write_date.strftime("%Y/%m/%d, %H:%M:%S"), bold)
+                    sheet.write(i, 15, obj.x_studio_tecnico if(obj.x_studio_tecnico) else obj.write_uid.name, bold)
+                    sheet.write(i, 16, str(str(obj.x_studio_empresas_relacionadas.street_name)+" No. Ext. "+str(obj.x_studio_empresas_relacionadas.street_number)+" No. Int. "+str(obj.x_studio_empresas_relacionadas.street_number2)+" ,COL. "+str(obj.x_studio_empresas_relacionadas.l10n_mx_edi_colony)+" "+str(obj.x_studio_empresas_relacionadas.city)+" México, "+str(obj.x_studio_empresas_relacionadas.state_id.name)+"C.P "+str(obj.x_studio_empresas_relacionadas.zip)), bold)
+                    sheet.write(i, 17, obj.x_studio_nmero_de_ticket_cliente if(obj.x_studio_nmero_de_ticket_cliente) else '', bold)
+        sheet.add_table('A2:R'+str(i),{'columns': [{'header': 'Almacen'},{'header': 'Ticket'},{'header': 'Tipo de Reporte'},{'header': 'Fecha'},{'header':'Dias de atraso'},{'header': 'Cliente'},{'header': 'Localidad'},{'header': 'Serie'},{'header': 'Modelo'},{'header': 'Productos'},{'header': 'Area de Atención'},{'header': 'Zona'},{'header': 'Estado'},{'header': 'Ultima nota'},{'header': 'Fecha nota'},{'header': 'Tecnico'},{'header': 'Dirección'},{'header': 'No. Ticket cliente'}]}) 
         workbook.close()
 
 class PartnerXlsx(models.AbstractModel):
