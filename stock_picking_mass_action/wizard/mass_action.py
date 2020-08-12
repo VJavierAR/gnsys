@@ -299,7 +299,7 @@ class StockCambio(TransientModel):
             dt=[]
             al=[]
             cantidades=False
-            self.pick.sale_id.saleLinesMove()
+            #self.pick.sale_id.saleLinesMove()
             for sa in self.pick.move_ids_without_package.filtered(lambda x:x.product_id.categ_id.id!=13):
                 copia=sa.location_dest_id.id
                 d=list(filter(lambda x:x['producto1']['id']==sa.product_id.id,data))
@@ -307,10 +307,10 @@ class StockCambio(TransientModel):
                     if(sa.product_id.id!=d[0]['producto2']['id']):
                         self.env.cr.execute("delete from stock_move_line where reference='"+self.pick.name+"' and product_id="+str(sa.product_id.id)+";")
                         self.env.cr.execute("delete from stock_move where origin='"+self.pick.sale_id.name+"' and product_id="+str(sa.product_id.id)+";")
-                        if(len(self.pick.sale_id.order_line)!=0):
-                            self.env.cr.execute("delete from sale_order_line where id="+str(sa.sale_line_id.id)+";")
-                        if(i==0):
-                            self.env.cr.execute("update stock_picking set state='draft' where sale_id="+str(self.pick.sale_id.id)+";")
+                        #if(len(self.pick.sale_id.order_line)!=0):
+                        #    self.env.cr.execute("delete from sale_order_line where id="+str(sa.sale_line_id.id)+";")
+                        #if(i==0):
+                        #    self.env.cr.execute("update stock_picking set state='draft' where sale_id="+str(self.pick.sale_id.id)+";")
                         i=i+1
                         #l=self.env['stock.production.lot'].search([['name','=',d[0]['serie']]])
                         datos={'x_studio_field_9nQhR':d[0]['serie']['id'],'order_id':self.pick.sale_id.id,'product_id':d[0]['producto2']['id'],'product_uom':d[0]['producto2']['uom_id']['id'],'product_uom_qty':d[0]['cantidad'],'name':d[0]['producto2']['description'] if(d[0]['producto2']['description']) else '/','price_unit':0.00}
