@@ -28,6 +28,7 @@
                         <field name="create_uid" readonly="1" string='Encargado'/>
                         <field name="evidencia" widget="many2many_binary"/>
                         <field name="mostrarComentario" />
+                        <field name='creadoPorSistema' />
                     </tree>
                     <form>
                         <group>
@@ -904,7 +905,7 @@
 
 
 
-    <record id="action_validar_toner" model="ir.actions.act_window" groups="studio_customization.validar_toner_d61119fe-f670-4dd0-9dee-6d2bfdd1824e">
+    <record id="action_validar_toner" model="ir.actions.act_window" >
         <field name="name">Crear y validar toner</field>
         <field name="res_model">helpdesk.validar.toner</field>
         <field name="view_type">form</field>
@@ -971,7 +972,7 @@
                         <field name='ticket_id' string='Ticket' readonly='1'/>
                     </group>
                     <group>
-                    
+
                     </group>
                 </group>
                 <group>
@@ -1055,6 +1056,16 @@
                                 <group>
                                     <field name='comentarioLocalidad' />
                                 </group>
+                            </group>
+                        </page>
+                        <page string = 'Vista previa reporte'>
+                            <group>
+                                <group>
+                                    <field name='reportes' force_save='1' invisible='1' options="{'no_create_edit': True, 'no_create': True, 'no_edit': True}" domain="[['model', '=', 'helpdesk.ticket']]" />
+                                </group>
+                            </group>
+                            <group>
+                                <field name='pdfToner' string=' ' force_save='1' widget='pdf_viewer' />
                             </group>
                         </page>
                         <page string = 'Días de atraso'>
@@ -1420,6 +1431,9 @@
                         <field name='ticket_id' readonly='1' options="{'no_create_edit': True, 'no_create': True}" />
                         <field name='activar_compatibilidad' />
                     </group>
+                    <group>
+                        <field name='estadoSolicitud' readonly='1' force_save='1' />
+                    </group>
                 </group>
                 
                 <group>
@@ -1472,9 +1486,10 @@
                     <notebook>
                         <page string = 'Bitácora'>
                             <notebook>
+                                <!--
                                 <page string = 'Tickets'>
                                     <field name='historicoTickets'>
-                                        <tree default_order="create_date desc"><!--x_studio_fecha-->
+                                        <tree default_order="create_date desc">
                                             <field name='x_studio_tickett' attrs='{"domain": [["fuente","=","Equipo"]]}'/>
                                             <field name='create_date' />
                                             <field name='fuente' />
@@ -1501,18 +1516,21 @@
                                 <page string = 'Tóner'>
                                     <field name='toner' />
                                 </page>
+                                -->
                                 <page string = 'Historico de componentes'>
                                     <field name='historicoDeComponentes' />
                                 </page>
+                                <!--
                                 <page string = 'Movimientos'>
                                     <field name='movimientos' />
                                 </page>
+                                -->
                             </notebook>
                         </page>
-                        <page>
+                        <page string = 'Contadores'>
                             <group>
                                 <group>
-                                    <field name='contadoresAnterioresText' readonly='1' />
+                                    <field name='contadoresAnterioresText' widget='html' readonly='1' />
                                 </group>
                             </group>
                         </page>
@@ -1571,13 +1589,16 @@
                                     </group>
                                 </form>
                             </field>
-
                         </page>
+
                     </notebook>
+
                 </group>
 
                 <footer>
                     <button name="confirmarYValidarRefacciones" string="Confirmar solicitud" type="object" class="oe_highlight" />
+                    <button name="validar" string="Confirmar solicitud 2" invisible='1' type="object" class="oe_highlight" />
+                    <button name="validacionSolicitud" invisible='1' string="Validar solicitud con SO existente" help='Valida la solicitud que se genero previamente y no se logro validar' type="object" class="oe_highlight" />
                     <button string="Cerrar ventana" class="oe_link" special="cancel"/>
                 </footer>
             </form>
