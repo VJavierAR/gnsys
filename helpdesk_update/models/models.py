@@ -1937,7 +1937,7 @@ class helpdesk_update(models.Model):
                                                                      , 'x_studio_requiere_instalacin' : True
                                                                      , 'x_studio_field_RnhKr': self.localidadContacto.id
                                                                      , 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id
-                                                                     , 'x_studio_tcnico' : record.x_studio_tcnico.id
+                                                                     #, 'x_studio_tcnico' : record.x_studio_tcnico.id
                                                                      , 'warehouse_id' : 5865   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
                                                                      , 'team_id' : 1
                                                                      , 'x_studio_field_bxHgp': int(record.x_studio_id_ticket) 
