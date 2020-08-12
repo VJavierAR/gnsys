@@ -28,19 +28,75 @@ odoo.define('invoice.action_button', function (require) {
                         this.$buttons.find('.o_button_import').hide();
                         this.$buttons.find('.oe_action_button_stock_inventory').click(this.proxy('action_inter6'));
                         break;
+                      case 3122:
+                        this.$buttons.find('.o_button_import').hide();
+                        this.$buttons.find('.oe_action_button_stock_rule').click(this.proxy('action_inter10'));
+                        break;
+                      case 672:
+                        this.$buttons.find('.o_button_import').hide();
+                        this.$buttons.find('.o_list_button_add').hide();
+                        this.$buttons.find('.oe_action_button_stock_rule').click(this.proxy('action_inter10')).hide();
+                        break;
                       default:
+                        this.$buttons.find('.oe_action_button_purchase_order').click(this.proxy('action_inter8')); 
                         this.$buttons.find('.oe_action_button_sale_report').click(this.proxy('action_inter4')); 
                         this.$buttons.find('.oe_action_button_ticket_report').hide();
                         this.$buttons.find('.o_button_import').hide();
                         this.$buttons.find('.oe_action_button').hide();
                         this.$buttons.find('.oe_action_button_move_line').click(this.proxy('action_inter1'));
                         this.$buttons.find('.oe_action_button_product_product').click(this.proxy('action_inter7'));
+                        this.$buttons.find('.oe_action_button_product_product_one').click(this.proxy('action_inter9'));
                         this.$buttons.find('.oe_action_button_stock_quant').click(this.proxy('action_inter3'));
                         
                     }
                 }
                 
             }
+        },
+        action_inter10: function (e) {
+            var self = this
+            var user = session.uid;
+            self.do_action({
+                name: _t('Importacion'),
+                type : 'ir.actions.act_window',
+                res_model: 'stock.warehouse.orderpoint.import',
+                view_type: 'form',
+                view_mode: 'form',
+                view_id: 'view_stock_warehousw_orderpoint_import_action_form',
+                views: [[false, 'form']],
+                target: 'new',
+            
+            });
+        },
+        action_inter9: function (e) {
+            var self = this
+            var user = session.uid;
+            self.do_action({
+                name: _t('Alta'),
+                type : 'ir.actions.act_window',
+                res_model: 'product.product.one',
+                view_type: 'form',
+                view_mode: 'form',
+                view_id: 'view_product_product_one_action_form',
+                views: [[false, 'form']],
+                target: 'new',
+            
+            });
+        },
+        action_inter8: function (e) {
+            var self = this
+            var user = session.uid;
+            self.do_action({
+                name: _t('Reporte'),
+                type : 'ir.actions.act_window',
+                res_model: 'purchase.order.action',
+                view_type: 'form',
+                view_mode: 'form',
+                view_id: 'view_purchase_order_action_form',
+                views: [[false, 'form']],
+                target: 'new',
+            
+            });
         },
         action_inter7: function (e) {
             var self = this

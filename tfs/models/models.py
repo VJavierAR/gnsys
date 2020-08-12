@@ -60,8 +60,7 @@ class tfs(models.Model):
     actualporcentajeMagenta=fields.Integer(string='Actual Magenta')
     
     evidencias=fields.One2many('tfs.evidencia',string='Evidencias',inverse_name='tfs_id')
-    estado=fields.Selection([('borrador','Borrador'),('xValidar','Por Validar'),('Valido','Valido'),('Confirmado','Confirmado'),('Auditar','Auditar'),('Cancelado','Cancelado')])
-
+    estado=fields.Selection([('borrador','Tfs autoriza'),('xValidar','Por Validar'),('Valido','Valido'),('Confirmado','Confirmado'),('Auditar','Auditar'),('Cancelado','Cancelado')],default='borrador')
     colorBN=fields.Selection(related='serie.x_studio_color_bn')
     arreglo=fields.Char()
     direccion=fields.Char(widget="html")
@@ -88,9 +87,14 @@ class tfs(models.Model):
                         self.arreglo=str([In[0].id])
                         if(record.actualporcentajeNegro<60):
                             self.write({'estado':'xValidar'})
+                            template_id=self.env['mail.template'].search([('id','=',59)], limit=1)
+                            template_id.send_mail(self.id, force_send=True)
                         else:
                             self.write({'estado':'Valido'})
-                    else:
+                            self.valida()
+                    if(0>self.actualporcentajeNegro):
+                       raise exceptions.UserError("Contador Monocromatico debe ser mayor al anterior.")
+                    if(len(In)==0 and In[0].quantity==0):
                         self.arreglo=str([])
                         raise exceptions.UserError("No existen cantidades en el almacen para el producto " + self.productoNegro.name)
                 else:
@@ -103,7 +107,9 @@ class tfs(models.Model):
                             d.append(In[0].id)
                             i=i+1
                             suma=suma+record.actualporcentajeNegro
-                        else:
+                        if(0>self.actualporcentajeNegro):
+                           raise exceptions.UserError("Contador Monocromatico debe ser mayor al anterior.")
+                        if(len(In)==0 or In[0].quantity==0):
                             raise exceptions.UserError("No existen cantidades en el almacen para el producto " + self.productoNegro.name)
                     if(record.productoCian):
                         In=self.inventario.search([['product_id.name','=',self.productoCian.name],['location_id','=',self.almacen.lot_stock_id.id]]).sorted(key='quantity',reverse=True)
@@ -111,7 +117,9 @@ class tfs(models.Model):
                             d.append(In[0].id)
                             i=i+1
                             suma=suma+record.actualporcentajeCian
-                        else:
+                        if(0>self.actualporcentajeCian):
+                           raise exceptions.UserError("Contador Color debe ser mayor al anterior.")
+                        if(len(In)==0 or In[0].quantity==0):
                             raise exceptions.UserError("No existen cantidades en el almacen para el producto " + self.productoCian.name)
                     if(record.productoMagenta):
                         In=self.inventario.search([['product_id.name','=',self.productoMagenta.name],['location_id','=',self.almacen.lot_stock_id.id]]).sorted(key='quantity',reverse=True)
@@ -119,7 +127,9 @@ class tfs(models.Model):
                             d.append(In[0].id)
                             i=i+1
                             suma=suma+record.actualporcentajeMagenta
-                        else:
+                        if(0>self.actualporcentajeMagenta):
+                           raise exceptions.UserError("Contador Color debe ser mayor al anterior.")
+                        if(len(In)==0 or In[0].quantity==0):
                             raise exceptions.UserError("No existen cantidades en el almacen para el producto " + self.productoMagenta.name)
                     if(record.productoAmarillo):
                         In=self.inventario.search([['product_id.name','=',self.productoAmarillo.name],['location_id','=',self.almacen.lot_stock_id.id]]).sorted(key='quantity',reverse=True)
@@ -127,42 +137,19 @@ class tfs(models.Model):
                             d.append(In[0].id)
                             i=i+1
                             suma=suma+record.actualporcentajeAmarillo
-                        else:
+                        if(0>self.actualporcentajeAmarillo):
+                           raise exceptions.UserError("Contador Color debe ser mayor al anterior.")
+                        if(len(In)==0 or In[0].quantity==0):
                             raise exceptions.UserError("No existen cantidades en el almacen para el producto " + self.productoAmarillo.name)
                     final=suma/i
+                    self.arreglo=str(d)
                     if(final<60):
                         self.write({'estado':'xValidar'})
-                    else:
+                        template_id=self.env['mail.template'].search([('id','=',59)], limit=1)
+                        template_id.send_mail(self.id, force_send=True)                    
+                    if(final>60):
                         self.write({'estado':'Valido'})
                         self.valida()
-                    self.arreglo=str(d)
-
-                
-                # if(len(In)>0 and In[0].quantity>0):
-                #     if(self.tipo=='Negro'):
-                #         rendimientoMono=self.actualMonocromatico-self.contadorAnteriorMono
-                #         porcentaje=(100*rendimientoMono)/self.producto.x_studio_rendimiento_toner if self.producto.x_studio_rendimiento_toner>0 else 1
-                #         _logger.info('porcentaje'+str(porcentaje))
-                #         self.actualporcentajeNegro=porcentaje
-                #         if(porcentaje<60):
-                #             self.write({'estado':'xValidar'})
-                #         else:
-                #             self.write({'estado':'Valido'})
-                #             self.env['dcas.dcas'].create({'x_studio_toner_'+str(self.tipo).lower():1,'serie':record.serie.id,'contadorMono':record.actualMonocromatico,'contadorColor':record.actualColor,'fuente':'tfs.tfs','porcentajeMagenta':self.actualporcentajeMagenta,'porcentajeNegro':self.actualporcentajeNegro,'porcentajeAmarillo':self.actualporcentajeAmarillo,'porcentajeCian':self.actualporcentajeCian})
-                #             #In[0].write({'quantity':In[0].quantity-1})
-                #     else:
-                #         rendimientoColor=self.actualColor-self.contadorAnteriorColor
-                #         porcentaje=(100*rendimientoColor)/self.producto.x_studio_rendimiento_toner if self.producto.x_studio_rendimiento_toner>0 else 1
-                        
-                #         self.write({'actualporcentaje'+str(self.Tipo):porcentaje})
-                #         if(porcentaje<60):
-                #             self.write({'estado':'xValidar'})
-                #         else:
-                #             self.write({'estado':'Valido'})
-                #             #_logger.info(In[0])
-                #             #In[0].write({'quantity':In[0].quantity-1})
-                #             self.env['dcas.dcas'].create({'x_studio_toner_'+str(self.tipo).lower():1,'serie':record.serie.id,'contadorMono':record.actualMonocromatico,'contadorColor':record.actualColor,'fuente':'tfs.tfs','porcentajeMagenta':self.actualporcentajeMagenta,'porcentajeNegro':self.actualporcentajeNegro,'porcentajeAmarillo':self.actualporcentajeAmarillo,'porcentajeCian':self.actualporcentajeCian})
-
             else:
                     raise exceptions.UserError("No hay inventario en la ubicación selecionada")
 
@@ -178,26 +165,38 @@ class tfs(models.Model):
         pickDestino=[]
         rule2=[]
         rule=[]
+        ticket=None
         for al in almacenes:
             quants=self.env['stock.quant'].search([['location_id','=',al.lot_stock_id.id]])
-            reglasabs=self.env['stock.warehouse.orderpoint'].search([['warehouse_id','=',al.id],['active','=',False]])
+            reglasabs=self.env['stock.warehouse.orderpoint'].search([['warehouse_id','=',al.id]])
             pickPosibles=self.env['stock.picking'].search(['&',['state','!=','done'],['location_dest_id','=',al.lot_stock_id.id]])
             if(len(pickPosibles)!=0):
                 _logger.info("entre 1"+str(al.name))
-                for pix in pickPosibles:
-                    for rl in pix.reglas.search([['active','=',False]]):
-                        rule2.append(rl.id)
-                    for re in reglasabs:
-                        quant=quants.filtered(lambda x: x.product_id.id == re.product_id.id)
-                        if(re.id not in rule2):
-                            if(len(quant)==0):
-                                datos1={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':41911,'location_dest_id':re.location_id.id}
-                                datos2={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':re.location_id.id,'location_dest_id':41911}
-                                pickOrigen.append(datos1)
-                                pickDestino.append(datos2)
-                                rule.append(re.id)
-                            if(len(quant)>0):
-                                if(quant.quantity<re.product_min_qty):
+                #for pix in pickPosibles:
+                    #for rl in pix.reglas:
+                    #    rule2.append(rl.id)
+                tt=pickPosibles.mapped('id')
+                rule2=pickPosibles.mapped('reglas.id')
+                _logger.info(str(tt))
+                _logger.info(str(rule2))
+                for re in reglasabs:
+                    quant=quants.filtered(lambda x: x.product_id.id == re.product_id.id)
+                    _logger.info(str(re.id not in rule2))
+                    if(re.id not in rule2):
+                        if(len(quant)==0):
+                            _logger.info('quant')
+                            datos1={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':41911,'location_dest_id':re.location_id.id}
+                            datos2={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':re.location_id.id,'location_dest_id':41911}
+                            pickOrigen.append(datos1)
+                            pickDestino.append(datos2)
+                            rule.append(re.id)
+                        if(len(quant)>0):
+                            _logger.info('quant mayor')
+                            _logger.info(str(quant.quantity)+'|||'+str(re.product_min_qty))
+                            if(quant.quantity<=re.product_min_qty):
+                                _logger.info('ot')
+                                _logger.info(str(re.product_max_qty-quant.quantity))
+                                if((re.product_max_qty-quant.quantity)>0):
                                     datos1={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty-quant.quantity,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':41911,'location_dest_id':re.location_id.id}
                                     datos2={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty-quant.quantity,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':re.location_id.id,'location_dest_id':41911}
                                     pickOrigen.append(datos1)
@@ -215,73 +214,48 @@ class tfs(models.Model):
                         rule.append(re.id)
                     if(len(quant)>0):
                         if(quant.quantity<re.product_min_qty):
-                            datos1={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty-quant.quantity,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':41911,'location_dest_id':re.location_id.id}
-                            datos2={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty-quant.quantity,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':re.location_id.id,'location_dest_id':41911}
-                            pickOrigen.append(datos1)
-                            pickDestino.append(datos2)
-                            rule.append(re.id)
+                            if((re.product_max_qty-quant.quantity)>0):
+                                datos1={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty-quant.quantity,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':41911,'location_dest_id':re.location_id.id}
+                                datos2={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty-quant.quantity,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':re.location_id.id,'location_dest_id':41911}
+                                pickOrigen.append(datos1)
+                                pickDestino.append(datos2)
+                                rule.append(re.id)
             if(len(pickOrigen)>0):
                 c=self.env['res.partner'].search([['name','=',al.name],['parent_id','=',1]])
-                ticket=self.env['helpdesk.ticket'].create({'x_studio_tipo_de_vale':'Resurtido de Almacen','parent_id':c.id,'partner_shipping_id':c.id})
+                ticket=self.env['helpdesk.ticket'].create({'x_studio_tipo_de_vale':'Resurtido de Almacen','partner_id':c.id})
                 sale = self.env['sale.order'].create({'partner_id' : c.id, 'origin' : "Ticket: " + str(ticket.id), 'x_studio_tipo_de_solicitud' : 'Venta', 'partner_shipping_id' : c.id , 'warehouse_id' : 1 , 'team_id' : 1, 'x_studio_field_bxHgp': ticket.id})
-                #origen1=self.env['stock.picking.type'].search([['name','=','Pick'],['warehouse_id','=',6299]])
-                #origen2=self.env['stock.picking.type'].search([['name','=','Distribución'],['warehouse_id','=',1]])
-                #origen3=self.env['stock.picking.type'].search([['name','=','Tránsito'],['warehouse_id','=',1]])
                 destino=self.env['stock.picking.type'].search([['name','=','Receipts'],['warehouse_id','=',al.id]])
-                #_logger.info(str(origen2.default_location_src_id.id))
-                #pick_origin1= self.env['stock.picking'].create({'picking_type_id' : origen1.id,'almacenOrigen':6299,'almacenDestino':al.id,'location_id':origen1.default_location_src_id.id,'location_dest_id':origen2.default_location_src_id.id})
-                #pick_origin2= self.env['stock.picking'].create({'picking_type_id' : origen2.id,'almacenOrigen':6299,'almacenDestino':al.id,'location_id':origen2.default_location_src_id.id,'location_dest_id':origen3.default_location_src_id.id})
-                #pick_origin3= self.env['stock.picking'].create({'picking_type_id' : origen3.id,'almacenOrigen':6299,'almacenDestino':al.id,'location_id':origen3.default_location_src_id.id,'location_dest_id':17})
-                pick_dest = self.env['stock.picking'].create({'picking_type_id' : destino.id, 'location_id':17,'almacenOrigen':6299,'almacenDestino':al.id,'location_dest_id':al.lot_stock_id.id,'reglas':[(6,0,rule)]})
+                pick_dest = self.env['stock.picking'].create({'mini':True,'x_studio_ticket':'Ticket de tóner: '+str(ticket.id),'origin':sale.name,'picking_type_id' : destino.id, 'location_id':17,'almacenOrigen':6299,'almacenDestino':al.id,'location_dest_id':al.lot_stock_id.id,'reglas':[(6,0,rule)]})
                 ticket.x_studio_field_nO7Xg=sale.id
                 for ori in pickOrigen:
                     ticket.x_studio_productos=[(4,ori['product_id'])]
                     sl=self.env['sale.order.line'].create({'order_id' : sale.id,'product_id':ori['product_id'],'product_uom_qty':ori['product_uom_qty'], 'price_unit': 0})
-                    #1
-                    #ori['picking_id']=pick_origin1.id
-                    #ori['location_id']=pick_origin1.location_id.id
-                    #ori['location_dest_id']=pick_origin1.location_dest_id.id
-                    #self.env['stock.move'].create(ori)
-                    #2
-                    #ori['picking_id']=pick_origin2.id
-                    #ori['location_id']=pick_origin2.location_id.id
-                    #ori['location_dest_id']=pick_origin2.location_dest_id.id
-                    #self.env['stock.move'].create(ori)
-                    #3
-                    #ori['picking_id']=pick_origin3.id
-                    #ori['location_id']=pick_origin3.location_id.id
-                    #ori['location_dest_id']=17
-                    #self.env['stock.move'].create(ori)
-
                 for des in pickDestino:
                     des['location_id']=17
                     des['picking_id']=pick_dest.id
-                    self.env['stock.move'].create(des)
+                    m=self.env['stock.move'].create(des)
+                    #des['move_id']=m.id
+                    #self.env['stock.move.line'].create(des)
                 sale.action_confirm()
                 ww=self.env['stock.picking'].search([['sale_id','=',sale.id],['picking_type_id.code','=','outgoing']])
                 ww.write({'location_dest_id':17})
                 for w in ww.move_ids_without_package:
                     w.write({'location_dest_id':17})
                     self.env['stock.move.line'].search([['move_id','=',w.id]]).write({'location_dest_id':17})
-                #pick_origin1.action_confirm()
-                #pick_origin1.action_assign()
-                #pick_origin2.action_confirm()
-                #pick_origin2.action_assign()
-                #pick_origin3.action_confirm()
-                #pick_origin3.action_assign()
+                pick_dest.write({'x_studio_ticket':'Ticket de tóner: '+str(ticket.id)})
                 pick_dest.action_confirm()
                 pick_dest.action_assign()    
-
+        return ticket
 
     @api.multi
     def valida(self):
         self.write({'estado':'Confirmado'})
-        #self.env['dcas.dcas'].create({'serie':self.serie.id,'contadorMono':self.actualMonocromatico,'contadorColor':self.actualColor,'fuente':'tfs.tfs'})
         dat=eval(self.arreglo)
         if(dat!=[]):
-            quants=self.env['stock.quant'].browse(dat)
-            for q in quants:
-                q.write({'quantity':q.quantity-1})
+            quants=self.sudo().env['stock.quant'].browse(dat)
+        for q in quants:
+            q.sudo().write({'quantity':q.quantity-1})
+            q.actualizaRegla()
         if(self.productoNegro):
             self.env['dcas.dcas'].create({'serie':self.serie.id,'contadorMono':self.actualMonocromatico,'contadorColor':self.actualColor,'fuente':'tfs.tfs','x_studio_contador_color_anterior':self.contadorMono.contadorColor,'x_studio_contador_mono_anterior_1':self.contadorAnteriorMono,'x_studio_toner_negro':1})
         if(self.productoMagenta):
@@ -290,7 +264,7 @@ class tfs(models.Model):
             self.env['dcas.dcas'].create({'serie':self.serie.id,'contadorMono':self.actualMonocromatico,'contadorColor':self.actualColor,'fuente':'tfs.tfs','x_studio_contador_color_anterior':self.contadorAmarillo.contadorColor,'x_studio_contador_mono_anterior_1':self.contadorAmarillo.contadorMono,'x_studio_toner_amarillo':1})
         if(self.productoCian):           
             self.env['dcas.dcas'].create({'serie':self.serie.id,'contadorMono':self.actualMonocromatico,'contadorColor':self.actualColor,'fuente':'tfs.tfs','x_studio_contador_color_anterior':self.contadorCian.contadorColor,'x_studio_contador_mono_anterior_1':self.contadorCian.contadorMono,'x_studio_toner_cian':1})
-
+        
 
 
     @api.multi
@@ -309,14 +283,6 @@ class tfs(models.Model):
         'res_id': wiz.id,
         'context': self.env.context,
             }
-
-    #@api.onchange('cliente')
-    #def onchange_cliente(self):
-    #    res = {}
-    #    for record in self:
-     #       res['domain'] = {'localidad': ['&',('parent_id.id', '=', record.cliente.id),('type', '=', 'delivery')]}
-      #      record['usuario']=self.env.user.partner_id.id
-      #  return res
     
     @api.model
     def create(self, vals):
@@ -327,23 +293,6 @@ class tfs(models.Model):
     def canc(self):
         self.write({'estado':'Auditar'})
 
-    
-    #@api.onchange('usuario')
-    #def onchange_user(self):
-    #    res={}
-    #    cont=[]
-    #    condic=[]
-     #   for record in self:
-     #       almacenes=self.env['stock.warehouse'].search([['x_studio_tfs','=',record.usuario.id]])
-     #       for al in almacenes:
-     #           if(al.x_studio_field_E0H1Z.parent_id.id not in cont):
-     #               cont.append(('id','=',al.x_studio_field_E0H1Z.parent_id.id))
-     #       tot=len(cont)-1
-     #       for i in range(tot):
-     #           condic.append('|')
-     #       condic.extend(cont)
-     #       res['domain'] = {'cliente': condic}
-     #   return res
     
     @api.onchange('actualMonocromatico')
     def _onchange_mono(self):
@@ -370,22 +319,6 @@ class tfs(models.Model):
             porcentaje=(100*rendimientoMono)/self.productoMagenta.x_studio_rendimiento_toner if self.productoMagenta.x_studio_rendimiento_toner>0 else 1
             self.actualporcentajeMagenta=porcentaje
     
-    #@api.depends('tipo')
-    #def type(self):
-    #    for record in self:
-    #        if(record.tipo):
-
-
-    #@api.depends('almacen')
-    #def cambio(self):
-    #    res={}
-    #    for record in self:
-    #        if record.almacen:
-    #            record['domi']=0
-                #record.almacenlot_stock_id.id
-                
-                #res['domain'] = {'serie': [('x_studio_ubicacion_id', '=', record.almacen.lot_stock_id.id)]}
-        #return res
     @api.multi
     @api.onchange('serie')
     def ultimoContador(self):
@@ -396,12 +329,12 @@ class tfs(models.Model):
                 if(record.serie.x_studio_mini==False):
                     raise exceptions.UserError("El No. de Serie"+ record.serie.name+"no corresponde a Mini Almacen" )
                 if(len(record.serie.x_studio_move_line)>0):
-                    moveli=record.serie.x_studio_move_line.sorted(key='id',reverse=True)
-                    cliente = moveli[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id if(len(record.serie.x_studio_move_line)>1) else record.serie.x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
-                    localidad=moveli[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id if(len(record.serie.x_studio_move_line)>1) else record.serie.x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
+                    #moveli=record.serie.x_studio_move_line.sorted(key='id',reverse=True)
+                    cliente = record.serie.x_studio_localidad_2.parent_id.id
+                    localidad=record.serie.x_studio_localidad_2.id
                     record['cliente'] = cliente
                     record['localidad'] = localidad
-                    lo=moveli[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z
+                    lo=record.serie.x_studio_localidad_2
                     record['direccion']="<table><tr><td>Calle</td><td>"+str(lo.street)+"</td></tr><tr><td>No.Exterior</td><td>"+str(lo.street_number2)+"</td></tr><tr><td>No. Interior</td><td>"+str(lo.street_number)+"</td></tr><tr><td>Cp</td><td>"+str(lo.zip)+"</td></tr><tr><td>Estado</td><td>"+str(lo.state_id.name)+"</td></tr><tr><td>Delegación</td><td>"+str(lo.city)+"</td></tr></table>"
                     #_logger.info(str(localidad.name))
                     record['almacen'] =self.env['stock.warehouse'].search([['x_studio_field_E0H1Z','=',localidad]]).lot_stock_id.x_studio_almacn_padre.id
@@ -425,11 +358,6 @@ class tfs(models.Model):
                     record['contadorAmarillo'] =dc1[0].id if(len(dc1)>0) else self.env['dcas.dcas'].search([['serie','=',record.serie.id]]).sorted(key='create_date',reverse=True)[0].id
                     record['contadorCian'] =dc2[0].id if(len(dc2)>0) else self.env['dcas.dcas'].search([['serie','=',record.serie.id]]).sorted(key='create_date',reverse=True)[0].id
                     record['contadorMagenta'] =dc3[0].id if(len(dc3)>0) else self.env['dcas.dcas'].search([['serie','=',record.serie.id]]).sorted(key='create_date',reverse=True)[0].id
-                
-  
-            #if record.localidad:
-             #   record['almacen'] =self.env['stock.warehouse'].search([['x_studio_field_E0H1Z','=',record.localidad.id]])
-            #self.onchange_localidad()
         return res
 
 class evidencias(models.Model):
@@ -438,3 +366,10 @@ class evidencias(models.Model):
     name=fields.Char(string='Descripcion')
     evidencia=fields.Binary(string='Archivo')
     tfs_id=fields.Many2one('tfs.tfs')
+
+    
+class notificacion(models.Model):
+    _name='tfs.notificacion.ticket'
+    _description='tfs notificacion'
+    name=fields.Char(string='Descripcion')
+    tickets=fields.Many2many('helpdesk.ticket')

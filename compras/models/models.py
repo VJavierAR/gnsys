@@ -56,6 +56,8 @@ class compras(models.Model):
     pagos=fields.Char(widget='html')
     active = fields.Boolean('Active', default=True, track_visibility=True)
     requisicion=fields.Many2one('requisicion.requisicion')
+    x_studio_arreglo=fields.Char()
+
     @api.depends('x_studio_field_H9kGQ','state')
     def pay(self):
         pago=False
@@ -127,12 +129,14 @@ class compras(models.Model):
                         product={'product_uom':1,'date_planned':self.date_order if(self.date_order) else fecha,'product_qty':cantidad,'price_unit':precio,'taxes_id':[10]}
                         descuento=float(c.getAttribute("Descuento")) if(c.getAttribute("Descuento")!='') else 0
                         precioCdesc=(round(precio,6)-round(descuento,6))/int(cantidad)
+                        productid=0
                         #_logger.info(noparte=='')
                         if(noparte!=''):
                             template=self.env['product.template'].search([('default_code','=',noparte.split('0',1)[1] if(noparte[0]=="0") else noparte)])
                             if(template.id==False):
-                                template=self.env['product.template'].create({'name':'','description':description,'categ_id':self.x_studio_tipo_de_producto.id,'default_code':noparte})
-                            productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
+                                productid=self.env['product.product'].create({'name':'','description':description,'categ_id':self.x_studio_tipo_de_producto.id,'default_code':noparte})
+                            else:
+                                productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
                             product['product_id']=productid.id
                             product['name']=description
                             product['price_unit']=precioCdesc
@@ -172,6 +176,7 @@ class compras(models.Model):
                         arr=string.split('\n')
                         arreglo=[]
                         for ar in arr:
+                            productid=0
                             if('Pieza' in ar):
                                 cantidad=float(ar.split('      ',1)[1].split('        ',1)[0].replace(' ',''))
                                 _logger.info(str(str(ar.split(' '+str(int(cantidad))+' '))[2].split(' ')))
@@ -183,8 +188,9 @@ class compras(models.Model):
                                 precioCdesc=((cantidad*precio)-descuento)/cantidad
                                 template=self.env['product.template'].search([('default_code','=',noparte.replace(' ',''))])
                                 if(template.id==False):
-                                    template=self.env['product.template'].create({'name':'','description':'/','categ_id':self.x_studio_tipo_de_producto.id,'default_code':noparte})
-                                productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
+                                    productid=self.env['product.product'].create({'name':'','description':'/','categ_id':self.x_studio_tipo_de_producto.id,'default_code':noparte})
+                                else:
+                                    productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
                                 product={'product_uom':1,'date_planned':self.date_order if(self.date_order) else fecha,'product_id':productid.id,'product_qty':cantidad,'price_unit':precioCdesc,'taxes_id':[10],'name':productid.description if(productid.description) else '/'}
                                 arreglo.append(product)
                             if('E48' in ar):
@@ -213,6 +219,7 @@ class compras(models.Model):
                         fff=open("tt.txt","w")
                         arreglo=[]
                         for t in text:
+                            productid=0
                             if('H87 -' in t):
                                 tt=t.split('H87 -')
                                 cantidad=float(tt[0].replace(' ',''))
@@ -223,8 +230,9 @@ class compras(models.Model):
                                 precioCdesc=((cantidad*precio)-descuento)/cantidad
                                 template=self.env['product.template'].search([('default_code','=',noparte)])
                                 if(template.id==False):
-                                    template=self.env['product.template'].create({'name':'','description':'/','categ_id':self.x_studio_tipo_de_producto.id,'default_code':noparte})
-                                productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
+                                    productid=self.env['product.product'].create({'name':'','description':'/','categ_id':self.x_studio_tipo_de_producto.id,'default_code':noparte})
+                                else:
+                                    productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
                                 product={'product_uom':1,'date_planned':self.date_order if(self.date_order) else fecha,'product_id':productid.id,'product_qty':cantidad,'price_unit':precioCdesc,'taxes_id':[10],'name':productid.description if(productid.description) else '/'}
                                 fff.write(str(product)+str(noparte))
                                 arreglo.append(product)
@@ -293,12 +301,13 @@ class compras(models.Model):
                                 if('#' in o ):
                                     r = o.split("Artículo # ")
                                     q = r[1].split(' ')[0]
-                                    _logger.info(str(r))
+                                    _logger.info(str(q))
                                     template=self.env['product.template'].search([('default_code','=',q)])
                                     if(template.id==False):
                                         productid=self.env['product.product'].create({'name':'/','description':'falta','categ_id':self.x_studio_tipo_de_producto.id,'default_code':str(q),'type':'product'})
                                     if(template.id!=False):                                  
                                         productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
+                                    _logger.info(str(productid))
                                     if(len(arr)==i+1):
                                         arr[i]['product_id']=productid.id
                                         desc=productid.description if(productid.description) else '|'
@@ -313,8 +322,9 @@ class compras(models.Model):
                                         arr.append(product)
                                     i=i+1       
                                 #if('Customer' in o or 'SUPPLY' in o or 'PARTS' in o):
-                                if 'SUPPLY' in o or ('PARTS' in o and '$' in o):
+                                if ('SUPPLY' in o and '$' in o) or ('PARTS' in o and '$' in o):
                                     s = o.split("$")
+                                    _logger.info(str(s))
                                     h=float(s[2])
                                     g=float(s[1].split(' ')[0])
                                     qty=round(h/g)

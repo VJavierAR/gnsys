@@ -41,5 +41,14 @@
     name="lot_serial.report"
     file="Base Instalada"
     attachment_use="False"/>
+
+<report
+    id="compras_xlsx"
+    model="purchase.order"
+    string="Reporte de compras"
+    report_type="xlsx"
+    name="compras.report"
+    file="Reporte de compras"
+    attachment_use="False"/>
 </data>
 </odoo>

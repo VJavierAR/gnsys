@@ -1,5 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="view_stock_warehousw_orderpoint_import_action_form" model="ir.ui.view">
+        <field name="model">stock.warehouse.orderpoint.import</field>
+        <field name="arch" type="xml">
+            <form string="Mass Action for the selected sale order">
+                <h1>Estructura del archivo</h1>
+                <table class="table">
+                <thead>
+                  <tr>
+                    <th>Almacen</th>
+                    <th>Modelo</th>
+                    <th>No Parte</th>
+                    <th>Minimo</th>
+                    <th>Maximo</th>
+                  </tr>
+                </thead>
+                </table>
+                <group>
+                    <group>
+                    <field name="archivo" string="Archivo" required="1"/>
+                    </group>
+                <group>
+                </group>
+                </group>
+                <footer>
+                    <button name="importar" string="Importar o actualizar" type="object" class="oe_highlight"/>
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="view_product_product_one_action_form" model="ir.ui.view">
+        <field name="model">product.product.one</field>
+        <field name="arch" type="xml">
+            <form string="Mass Action for the selected sale order">
+                <group>
+                    <group>
+                    <field name="modelo" string="Modelo" required="1"/>
+                    <field name="noParte" string="No parte" required="1"/>
+                    <field name="descripcion" string="Descripción" required="1"/>
+                    </group>
+                <group>
+                    <field name="tipo" string="Tipo de Componente" required="1"/>
+                    <field name="existencia" string="Existencia"/>
+                    <field name="almacen" string="Almacen"/>
+                </group>
+                </group>
+                <footer>
+                    <button name="crear" string="Crear" type="object" class="oe_highlight"/>
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="view_purchase_order_action_form" model="ir.ui.view">
+        <field name="model">purchase.order.action</field>
+        <field name="arch" type="xml">
+            <form string="Mass Action for the selected sale order">
+                <group>
+                    <group>
+                    <field name="fechaInicial" string="Fecha Inicial" required="1"/>
+                    <field name="fechaFinal" string="Fecha Final" required="1"/>
+                </group>
+                <group>
+                    <field name="tipo" string="Tipo"/>
+                    <field name="usuario" string="Usuario"/>
+                </group>
+                </group>
+                <footer>
+                    <button name="report" string="Reporte" type="object" class="oe_highlight"/>
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
         <record id="view_addcompatile_action_form" model="ir.ui.view">
         <field name="model">add.compatible</field>
         <field name="arch" type="xml">
@@ -145,6 +220,7 @@
             <form string="Mass Action for the selected sale order">
                 <group>
                     <group>
+                    <field name="fechaauto"/>
                     <field name="fechaInicial" string="Fecha Inicial" required="1"/>
                     <field name="fechaFinal" string="Fecha Inicial" required="1"/>
                 </group>
@@ -226,7 +302,7 @@
                     <field name="confirm" invisible="1"/>
                     <field name="check_availability" invisible="1"/>
                     <field name="transfer" invisible="1"/>
-                    <field name="picking_ids" attrs="{'invisible':[['check','!=',1]]}">
+                    <field name="picking_ids" invisible="1">
                         <tree editable="bottom">
                                 <field name="id" invisible="1" readonly="1" attrs="{'invisible':[['picking_type_id','!=',29314]]}"/>
                                 <field name="picking_type_id" invisible="1"/>
@@ -241,11 +317,20 @@
                                 <field name="date_done" readonly="1" attrs="{'invisible':[['picking_type_id','!=',29314]]}"/>
                         </tree>
                     </field>
+                    <field name="tecnicos" attrs="{'invisible':[['check','!=',1]]}">
+                        <tree editable="bottom">
+                                <field name="origin" string="Orden" readonly="1" />
+                                <field name="partner_id" readonly="1" />
+                                <field name="scheduled_date" readonly="1" />
+                                <field name="x_studio_toneres" widget="html" string="productos" readonly="1"/>
+                                <field name="tecnico" readonly="0"/>
+                        </tree>
+                    </field>
                 </group>
                 <footer>
                     <button name="mass_action" string="Apply" type="object" class="oe_highlight"/>
-                    <button name="vales" string="Vale de Entrega" type="object" class="oe_highlight" attrs="{'invisible':[['check','!=',2]]}"/>
-                    <button name="etiquetas" string="Etiquetas" type="object" attrs="{'invisible':[['check','!=',2]]}" class="oe_highlight"/>
+                    <button name="vales" string="Vale de Entrega" type="object" class="oe_highlight" attrs="{'invisible':[['check','not in',[1,2]]]}"/>
+                    <button name="etiquetas" string="Etiquetas" type="object" attrs="{'invisible':[['check','not in',[1,2]]]}" class="oe_highlight"/>
                     <button string="Cancel" class="oe_link" special="cancel"/>
                 </footer>
             </form>
@@ -291,17 +376,15 @@
                 <group>
                     <notebook >
                     <field name="tonerUorden" invisible="1"/>
-                        <page string="Equipos" attrs="{'invisible':[['tonerUorden','=',False]]}">
-                            <field name="pro_ids" string="Lineas">
+                        <page string="Equipos" >
+                            <field name="pro_ids" attrs="{'invisible':[['tonerUorden','=',False]]}" string="Lineas">
                                 <tree editable="bottom">
                                 <field name="producto1" readonly="1" string="Registro Original"/>
                                 <field name="tipo" invisible="1"/>
                                 <field name="categoria" invisible="1"/>
-                                <field name="producto2" string="Registro a Cambiar"  attrs="{'invisible':[['tipo','!=',3]],'readonly':[['categoria','=',13]]}"/>
+                                <field name="producto2" string="Registro a Cambiar"  attrs="{'readonly':[['categoria','=',13]]}"/>
                                 <field name="almacen" domain="[['x_studio_cliente','=',False]]"/>
                                 <field name="existeciaAlmacen" readonly="1"/>                        
-                                <!-- <field name="existencia1" readonly="1"/>
-                                <field name="existencia2" readonly="1"/> -->
                                 <field name="estado"  attrs="{'invisible':[['tipo','!=',3]],'readonly':[['categoria','!=',13]]}"/>
                                 <field name="serieOrigen" string="Serie" attrs="{'invisible':[['tipo','!=',3]],'readonly':[['categoria','!=',13]]}"/>
                                 <field name="color"  attrs="{'invisible':[['tipo','!=',3]],'readonly':[['categoria','!=',13]]}"/>
@@ -320,8 +403,7 @@
                                 <tree editable="bottom">
                                 <field name="producto1" readonly="1" string="Registro Original"/>
                                 <field name="tipo" invisible="1"/>
-                                <field name="producto2" string="Registro a Cambiar"  attrs="{'invisible':[['tipo','!=',3]]}"/>
-                                <!--<field name="modelo"/>-->
+                                <field name="producto2" string="Registro a Cambiar" />
                                 <field name="almacen" domain="[['x_studio_cliente','=',False]]"/>
                                 <field name="existeciaAlmacen" readonly="1"/>                        
                                 </tree>
@@ -332,8 +414,7 @@
                                 <tree editable="bottom">
                                 <field name="producto1" readonly="1" string="Registro Original"/>
                                 <field name="tipo" invisible="1"/>
-                                <field name="producto2" string="Registro a Cambiar"  attrs="{'invisible':[['tipo','!=',3]]}"/>
-                                <!--<field name="modelo"/>-->
+                                <field name="producto2" string="Registro a Cambiar" />
                                 <field name="almacen" domain="[['x_studio_cliente','=',False]]"/>
                                 <field name="existeciaAlmacen" readonly="1"/>
                                 </tree>
@@ -359,12 +440,13 @@
                         <field name="move_line" string="Productos" options="{'no_create_edit': True}">
                                 <tree editable="bottom" >
                                 <field name="producto" readonly="1" string="Producto"/>
+                                <field name="producto2" string="Producto editable"/>
                                 <field name="cantidad" />
                                 </tree>
                             </field>
                 </group>
                 <footer>
-                    <button name="confirmar" string="Apply" type="object" class="oe_highlight"/>
+                    <button name="confirmar" string="Ingresar Productos" type="object" class="oe_highlight"/>
                     or
                     <button string="Cancel" class="oe_link" special="cancel"/>
                 </footer>
@@ -412,11 +494,12 @@
                                 <tree editable="bottom">
                                 <field name="producto1" readonly="1" string="Registro Original"/>
                                 <field name="tipo" invisible="1"/>
-                                <field name="producto2" string="Registro a Cambiar"  attrs="{'invisible':[['tipo','!=',3]]}"/>
+                                <field name="producto2" string="Registro a Cambiar"  />
                                 <field name="almacen" domain="[['x_studio_cliente','=',False]]"/>
-                                <field name="existeciaAlmacen" readonly="1"/>                        
-                                <field name="existencia1" readonly="1"/>
-                                <field name="existencia2" readonly="1"/>
+                                <field name="cantidad" string="Cantidad Solicitada" readonly="1"/>
+                                <field name="cantidad2" string="Cantidad Enviada"/>  
+                                <field name="compatibilidad" />   
+                                <field name="existeciaAlmacen" />                        
                                 </tree>
                             </field>
                         </page>

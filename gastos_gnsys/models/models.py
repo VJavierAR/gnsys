@@ -13,90 +13,286 @@ class gastos_gnsys(models.Model):
     
     # --- NOMBRE DEL GASTO | USUARIO FINAL ---
 
-    nombre = fields.Char(string="Nombre de gasto")
+    nombre = fields.Char(string="Nombre de gasto", track_visibility='onchange')
+    statusGasto = fields.Selection([('enSolicitud','EN SOLICITUD'), ('autorizacion','GASTO AUTORIZADO'), ('aprovacion','GASTO APROBADO'), ('cancelado','Cancelado')], required = True, default='enSolicitud', string = "Status de gasto")
     
     # --- SOLICITUD | USUARIO FINAL ---
     quienSolcita = fields.Many2one('res.users', string = "Quien solicita",track_visibility='onchange', default=lambda self: self.env.user)
     proyecto = fields.Text(string="Proyecto", track_visibility='onchange')
     montoRequerido = fields.Float(string = 'Monto requerido',track_visibility='onchange')
     fechaDeSolicitud = fields.Datetime(compute='computarfechaDeSolicitud',string = 'Fecha de solicitud', track_visibility='onchange')
-    fechaLimitePagoGasto = fields.Datetime(string = 'Fecha limite de pago', track_visibility='onchange')
-
+    fechaLimite = fields.Datetime(string = 'Fecha limite de pago', track_visibility='onchange')
     def computarfechaDeSolicitud(self):
         for rec in self:
             fecha = str(rec.create_date).split(' ')[0]
             converted_date = datetime.datetime.strptime(fecha, '%Y-%m-%d').date()
             self.fechaDeSolicitud = converted_date 
-
+    
 
     # --- AUTORIZACIÓN | LÍDER (PUEDE SER MULTIPLE)
     quienesAutorizan = fields.Many2one('res.users',string = "Responsable de autorizacion", track_visibility='onchange', default=lambda self: self.env.user)
-    autorizacionLider = fields.Selection([('Aprobada','Aprobada'), ('Rechazada','Rechazada')], string = "Autorización", track_visibility='onchange')
+    autorizacionLider = fields.Selection([('aprobado','El gasto esta autoriazado'), ('rechazado','El gasto esta rechazado'),('enEspera','En espera')], default='enEspera',string = "Autorización", track_visibility='onchange')
+    montoAutorizado = fields.Float(string = 'Monto autorizado',track_visibility='onchange')
 
+    @api.onchange('montoRequerido')
+    def definirMontoAutorizado(self):
+        if self.montoRequerido :
+            if not self.montoAutorizado :    
+                self.montoAutorizado = self.montoRequerido
+    
+    
     # --- APROBACIÓN | FINANSAS
     quienValida = fields.Many2one('res.users',string = "Responsable de aprobacion", track_visibility='onchange', default=lambda self: self.env.user)
-    montoAprobado = fields.Float(string = 'Monto aprobado',track_visibility='onchange')
-    montoAtnticipado = fields.Float(string = 'Monto anticipo',track_visibility='onchange')
+    montoAprobadoFinal = fields.Float(string = 'Monto aprobado',track_visibility='onchange')
+    montoAnticipado = fields.Float(string = 'Monto anticipo',track_visibility='onchange')
     porCubrirAnticipo = fields.Datetime(string = 'Fecha compromiso de adelanto', track_visibility='onchange')
-    autorizacionFinanzas = fields.Selection([('Aprobada','Aprobada'), ('Rechazada','Rechazada')], string = "Autorización", track_visibility='onchange')
+    autorizacionFinanzas = fields.Selection([('aprobado','El gasto esta aprobado'), ('rechazado','El gasto esta rechazado'),('enEspera','En espera')], default='enEspera', string = "Autorización", track_visibility='onchange')
     fechaLimiteComprobacionFinanzas = fields.Datetime(string = 'Fecha limite de comprobacion',track_visibility='onchange')
 
+
+    @api.onchange('porCubrirAnticipo')
+    def mensajeEsMayorFechaLimite(self):
+        if self.porCubrirAnticipo :
+            if self.fechaLimite:
+                fechaCompleta = str(self.porCubrirAnticipo).split(' ')[0]
+                fechaCompleta = fechaCompleta.split('-')
+
+                fecha1 = datetime.datetime(int(fechaCompleta[0]), int(fechaCompleta[1]), int(fechaCompleta[2]))
+                
+                fechaHoy = str(self.fechaLimite).split(' ')[0]
+                fechaHoy = fechaHoy.split('-')
+
+                fecha2 = datetime.datetime(int(fechaHoy[0]), int(fechaHoy[1]), int(fechaHoy[2]))
+                message = ""
+                mess = {}
+                esMenor = "Es menor"
+                esMayor = "Es mayor"
+                if fecha1 < fecha2 :
+                    _logger.info("||||-:   "+esMayor)
+
+                else:
+                    return { 'warning': { 'title': 'Mensaje de aviso ', 'message': 'La fecha de compromiso de adelanto es mayor a la fecha limite, usted puede continuar'} }
+    @api.onchange('fechaLimiteComprobacionFinanzas')
+    def mensajeIgualFechaAdelanto(self):
+        if self.fechaLimiteComprobacionFinanzas :
+            if self.porCubrirAnticipo:
+                fechaCompleta = str(self.fechaLimiteComprobacionFinanzas).split(' ')[0]
+                fechaCompleta = fechaCompleta.split('-')
+
+                fecha1 = datetime.datetime(int(fechaCompleta[0]), int(fechaCompleta[1]), int(fechaCompleta[2]))
+                
+                fechaHoy = str(self.porCubrirAnticipo).split(' ')[0]
+                fechaHoy = fechaHoy.split('-')
+
+                fecha2 = datetime.datetime(int(fechaHoy[0]), int(fechaHoy[1]), int(fechaHoy[2]))
+                message = ""
+                mess = {}
+                if fecha1 == fecha2 :
+                    return { 'warning': { 'title': 'Mensaje de aviso ', 'message': 'La fecha de compromiso de adelanto es igual a la fecha limite de comprobacion, usted puede continuar'} }
+    # --- FUNCION PARA VERFICAR QUE LA FECHA NO ES MENOR AL DÍA DE HOY
+    
+    @api.constrains('fechaLimite', 'porCubrirAnticipo','fechaLimiteComprobacionFinanzas')
+    def calculaFechaLimite(self):
+        fechaHoy = datetime.date.today()
+        fechaHoy = str(fechaHoy)
+        fechaHoy = fechaHoy.split('-')
+
+        fecha2 = datetime.datetime(int(fechaHoy[0]), int(fechaHoy[1]), int(fechaHoy[2]))
+        
+        message = ""
+        mess = {}
+        esMenor = "Es menor"
+        esMayor = "Es mayor"
+        if self.fechaLimite :
+            fechaCompleta = str(self.fechaLimite).split(' ')[0]
+            fechaCompleta = fechaCompleta.split('-')
+            fecha1 = datetime.datetime(int(fechaCompleta[0]), int(fechaCompleta[1]), int(fechaCompleta[2]))
+            if fecha1 < fecha2 :
+                # self.fechaLimite = datetime.datetime.now()
+                raise exceptions.ValidationError("La fecha límite al solicitante no puede ser menor al día de hoy .")
+            else:
+                _logger.info("||||-:   "+esMayor)
+        
+        if self.porCubrirAnticipo:
+            fechaCompleta = str(self.porCubrirAnticipo).split(' ')[0]
+            fechaCompleta = fechaCompleta.split('-')
+            fecha1 = datetime.datetime(int(fechaCompleta[0]), int(fechaCompleta[1]), int(fechaCompleta[2]))
+            if fecha1 < fecha2 :
+                # self.fechaLimite = datetime.datetime.now()
+                raise exceptions.ValidationError("La fecha de compromiso de adelanto en aprobación no puede ser menor al día de hoy .")
+        
+        if self.fechaLimiteComprobacionFinanzas:
+            fechaCompleta = str(self.fechaLimiteComprobacionFinanzas).split(' ')[0]
+            fechaCompleta = fechaCompleta.split('-')
+            fecha1 = datetime.datetime(int(fechaCompleta[0]), int(fechaCompleta[1]), int(fechaCompleta[2]))
+            if fecha1 < fecha2 :
+                # self.fechaLimite = datetime.datetime.now()
+                raise exceptions.ValidationError("La fecha limite de comprobacion en aprobaciòn no puede ser menor al día de hoy .")
+    
     # --- MOTIVOS | SON LOS MOTIVOS DEL GASTO (QUIEN SOLICITA - USUARIO FINAL)
     # MODELO : motivos
     #   _name = 'motivos'
     #   _description = 'Motivos de un gasto'
 
-    motivos = fields.One2many('motivos', 'gasto', string = "Motivos",track_visibility='onchange')
-    totalMontoMotivos = fields.Float(string = 'Total',track_visibility='onchange')
-
+    motivos = fields.One2many('motivos', 'gasto', string = "Motivo",track_visibility='onchange')
+    totalMontoMotivosFinal = fields.Float(string = 'Total monto de motivos',track_visibility='onchange')
+    
+    def hola(self):
+        return { 'warning': { 'title': 'Mensaje de aviso ', 'message': 'La fecha de compromiso de adelanto es mayor a la fecha limite, usted puede continuar'} }
+    @api.multi
     @api.onchange('motivos')
     def calcularTotalMotivos(self):
         message = ""
         mess = {}
         listaDeMotivos = self.motivos
-        montoTotal = 0.0
-        montoOriginal = self.totalMontoMotivos
+        # montoOriginal = self.totalMontoMotivos
         if listaDeMotivos != []:
+            montoTotal = 0.0
             for motivo in listaDeMotivos:
                 montoTotal += motivo.monto
-        
-        if montoTotal > self.montoRequerido :
-            self.totalMontoMotivos = montoOriginal
-            raise exceptions.ValidationError("La suma de los montos no puede ser mayor al monto requerido .")
-            message = ("La suma de los montos no puede ser mayor al monto requerido .")
-            mess = { 'title': _('Error'), 'message' : message}
-            return {'warning': mess}
-        else :
-            self.totalMontoMotivos = montoTotal
-
+            
+            if montoTotal > self.montoRequerido :
+                raise exceptions.ValidationError("La suma de los montos no puede ser mayor al monto requerido .")
+            else :
+                self.totalMontoMotivosFinal = montoTotal
+            
+            if montoTotal != self.totalMontoMotivosFinal:
+                raise exceptions.ValidationError("No puedes modificar el monto total de los motivos.")
+    @api.constrains('totalMontoMotivosFinal')
+    def verificaTotalMotivos(self):
+        listaDeMotivos = self.motivos
+        if listaDeMotivos != []:
+            montoTotal = 0.0
+            for motivo in listaDeMotivos:
+                montoTotal += motivo.monto
+            if montoTotal != self.totalMontoMotivosFinal:
+                raise exceptions.ValidationError("No puedes modificar el monto total de los motivos.")
     # --- PAGO A SOLICITANTE | ESTOS SON LOS PAGOS QUE SE ESTAN DANDO AL SOLICITANTE (LO EDITA EL AREA DE FINANZAS)
     # NOTA : El modelo dice devolución cambiar a pago a solicitante
     # MODELO : devolucion
     #   _name = "gastos.devolucion"
     #   _description = 'Pago a solicitante'
 
-    devoluciones = fields.One2many('gastos.devolucion', 'gasto' , string = 'Devoluciones', track_visibility = 'onchange')
+    devoluciones = fields.One2many('gastos.devolucion', 'gasto' , string = 'Pago a solicitante', track_visibility = 'onchange')
     totalPagosSolitantes = fields.Float(string = "Total monto pagado", track_visibility='onchange')
     montoPorCubrir = fields.Float(string = "Monto por cubrir a solicitante", track_visibility='onchange')
+
+    totalMontoDeducible = fields.Float(string = "Total monto deducible", track_visibility='onchange')
+    totalMontoNoDeducible = fields.Float(string = "Total monto no deducible", track_visibility='onchange')
 
     @api.onchange('devoluciones')
     def calcularTotalPagoDevolucion(self):
         listaDevoluciones = self.devoluciones
         montoPagadoTotal = 0.0
+        montoDeducible = 0.0
+        mnotNoDeduclible = 0.0
+        if listaDevoluciones != []:
+            for devolucion in listaDevoluciones:
+                if str(devolucion.depositoDeducible) == "si":
+                    montoDeducible += devolucion.montoEntregado
+                else :
+                    mnotNoDeduclible += devolucion.montoEntregado
+                montoPagadoTotal += devolucion.montoEntregado
+        if montoPagadoTotal != self.totalPagosSolitantes :
+            self.montoPorCubrir = (self.montoAprobadoFinal-self.montoAnticipado) - montoPagadoTotal
+        else :
+            self.montoPorCubrir = (self.montoAprobadoFinal-self.montoAnticipado) - self.totalPagosSolitantes
+        self.totalPagosSolitantes = montoPagadoTotal
+        self.totalMontoDeducible = montoDeducible
+        self.totalMontoNoDeducible = mnotNoDeduclible
+
+
+
+    @api.constrains('totalPagosSolitantes','montoPorCubrir')
+    def verificaTotalPagosSolicitantes(self):
+        listaDevoluciones = self.devoluciones
+        montoPagadoTotal = 0.0
         if listaDevoluciones != []:
             for devolucion in listaDevoluciones:
                 montoPagadoTotal += devolucion.montoEntregado
-        self.totalPagosSolitantes = montoPagadoTotal
-        self.montoPorCubrir = self.montoAprobado - self.totalPagosSolitantes
-    
+        if montoPagadoTotal != self.totalPagosSolitantes :
+            raise exceptions.ValidationError("No puedes modificar el monto total de las devoluciones.")
+        if self.montoAprobadoFinal  :
+            if self.totalPagosSolitantes :
+                montoPorCubrir = (self.montoAprobadoFinal-self.montoAnticipado) - self.totalPagosSolitantes
+                if montoPorCubrir != self.montoPorCubrir :
+                    raise exceptions.ValidationError("No puedes modificar el monto por cubrir de las devoluciones.")
     # --- COMPROBACIÓNES | PARTE DE LOS CAMPOS LOS UTILIZA EL USUARIO FINAL Y OTROS EL AREA DE FINANZAS
     # _name = 'gastos.comprobaciones'
     # _description = 'Tipos de comprobaciónes del gasto'
 
+    comprobaciones = fields.One2many('gastos.comprobaciones', 'comprobante', string = "Comprobante",track_visibility='onchange')
+    montoPagadoComprobado = fields.Float(string = "Monto pagado", track_visibility='onchange')
+    montoComprobado = fields.Float(string = "Monto comprobado", track_visibility='onchange')
+    montoComprobadoAprobado =  fields.Float(string = " Monto comprobado aprobado", track_visibility='onchange')
+    estatusComprobaciones = fields.Selection([('activo','Puede agregar comprobaciónes'), ('desactivado','No puede agregar comprobaciónes')], default='activo',string = "Status de comprobaciónes", track_visibility='onchange')
+    montoPorComprobar =  fields.Float(string = "Monto por comprobar", track_visibility='onchange')
 
+    @api.multi
+    def activarComprovaciones(self):
+        for rec in self : 
+            rec.write({'estatusComprobaciones':'activo'})
+    
+    @api.multi
+    def desactivaComprovaciones(self):
+        for rec in self : 
+            rec.write({'estatusComprobaciones':'desactivado'})
+    
+    @api.onchange('comprobaciones')
+    def calcularTotalComprobaciones(self):
+        listaComprobaciones = self.comprobaciones
+        montoPagadoTotal = 0.0
+        montoComprobadoAprobadoTotal = 0.0
+        if listaComprobaciones != []:
+            for comprobacion in listaComprobaciones:
+                montoPagadoTotal += comprobacion.monto
+                montoComprobadoAprobadoTotal += comprobacion.montoAprobado
+            self.montoComprobado = montoPagadoTotal
+            self.montoComprobadoAprobado = montoComprobadoAprobadoTotal
+    
 
+    
+    #Codigo de estatus del gasto
 
-
+    @api.multi
+    def cancelarGasto(self):
+        for rec in self : 
+            rec.write({'statusGasto':'cancelado'})
+            rec.write({'autorizacionLider':'rechazado'})
+            rec.write({'autorizacionFinanzas':'rechazado'})
+    
+    @api.multi
+    def reactivaGasto(self) : 
+        for rec in self : 
+            rec.write({'statusGasto':'aprovacion'})
+            rec.write({'autorizacionFinanzas':'aprobado'})
+            rec.write({'autorizacionLider':'aprobado'})
+    
+    @api.multi
+    def autorizarGasto(self):
+        for rec in self : 
+            rec.write({'statusGasto':'autorizacion'})
+            rec.write({'autorizacionLider':'aprobado'})
+            rec.write({'autorizacionFinanzas':'enEspera'})
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     #quienSolcita     = fields.Char(string="Quien solicita?" ,track_visibility='onchange')
     #quienesAutorizan = fields.One2many('res.users', 'gastoAutoriza', string = "Responsable de autorizacion",track_visibility='onchange')
     #quienesAutorizan = fields.Char(string = "Responsable de autorizacion", track_visibility='onchange')
@@ -188,24 +384,14 @@ class gastos_gnsys(models.Model):
 
     #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$4
 
-    comprobaciones = fields.One2many('gastos.comprobaciones', 'comprobante', string = "Comprobantes",track_visibility='onchange')
-    montoPagadoComprobado = fields.Float(string = "Monto pagado", track_visibility='onchange')
-    montoComprobado = fields.Float(string = "Monto comprobado", track_visibility='onchange')
-    montoComprobadoAprobado =  fields.Float(string = " Monto comprobado aprobado", track_visibility='onchange')
+
     
-    @api.onchange('comprobaciones')
-    def calcularTotalComprobaciones(self):
-        listaComprobaciones = self.comprobaciones
-        montoPagadoTotal = 0.0
-        if listaComprobaciones != []:
-            for comprobacion in listaComprobaciones:
-                montoPagadoTotal += comprobacion.monto
-        self.montoComprobado = montoPagadoTotal
+
     # --------------------
 
     # --------------------
     #Modelo de devoluciónes
-    pagos = fields.One2many('gastos.pago', 'gasto' , string = 'Pagos', track_visibility = 'onchange')    
+    pagos = fields.One2many('gastos.pago', 'gasto' , string = 'Pago', track_visibility = 'onchange')    
     
     montoComprobadoPago = fields.Float(string = "Monto comprobado", track_visibility='onchange')
     montoComprobadoAprobadoPago = fields.Float(string = "Monto comprobado aprobado", track_visibility='onchange')
@@ -220,10 +406,33 @@ class gastos_gnsys(models.Model):
         if listaPagos != []:
             for pago in listaPagos:
                 montoPagadoTotal += pago.montoPagado
-        self.montoADevolverPago = montoPagadoTotal
-
+            self.montoADevolverPago = montoPagadoTotal
+            self.montoDevueltoPago = self.montoComprobadoAprobado - self.totalPagosSolitantes
+    
     totalDeMontoPagado = fields.Float(string = 'Total')
 
+    # @api.onchange('pagos','comprobaciones')
+    # def calculaMontoADevolver(self):
+    #     listaComprobaciones = self.comprobaciones
+    #     montoComprobadoAprobadoTotal = 0.0
+    #     verifica = 0.0
+    #     if listaComprobaciones != []:
+    #         for comprobacion in listaComprobaciones:
+    #             montoComprobadoAprobadoTotal += comprobacion.montoAprobado
+    #     if self.montoAprobadoFinal :
+    #         verifica = montoComprobadoAprobadoTotal - self.montoAprobadoFinal
+    #         if  verifica > 0.0 :
+    #             listaPagos = self.pagos
+    #             montoPagadoTotal = 0.0
+    #             if listaPagos != []:
+    #                 for pago in listaPagos:
+    #                     montoPagadoTotal += pago.montoPagado
+    #                 if montoPagadoTotal != 0.0 :
+    #                     verifica2 = verifica - montoPagadoTotal
+    #                     if verifica2 > 0.0 :
+    #                         self.montoADevolverPago = verifica2
+    #         else:
+    #             self.montoADevolverPago = verifica
     # @api.onchange('devoluciones')
     # def calcularTotalPagoDevolucion(self):
     #     listaDevoluciones = self.devoluciones
@@ -241,51 +450,10 @@ class gastos_gnsys(models.Model):
             rec.diasAtrasoPago = (datetime.date.today() - converted_date).days
     
 
-    @api.multi
-    def autorizarGasto(self):
-        gasto = self.env['gastos'].search([('id', '=', self.id)])
-        gasto.write({'quienesAutorizan': self.env.user.name})
-
     # @api.multi
-    # def validarGasto(self):
-    #     #_logger.info()
-    #     gasto = self.env['gastos'].search([('id', '=', self.id)])        
-    #     gasto.write({'x_studio_field_VU6DU': 'aprobado'
-    #                  , 'quienValida': self.env.user.name
-    #                })
-
-    # @api.multi
-    # def validarComprobacion(self):
-    #     message = ""
-    #     mess = {}
-    #     if str(self.tipoDeComprobacion) == "Exacto":
-    #         if self.montoExacto < self.montoAprobado:
-    #             raise exceptions.ValidationError("El gasto comprobado exacto no es igual al monto aprobado.")
-                
-    #             message = ("El gasto comprobado exacto no es igual al monto aprobado.")
-    #             mess = {
-    #                     'title': _('Gasto no comprobado!!!'),
-    #                     'message' : message
-    #                 }
-    #             return {'warning': mess}
-
-    #         else:
-    #             gasto = self.env['gastos'].search([('id', '=', self.id)])        
-    #             gasto.write({'x_studio_field_VU6DU': 'Comprobado'
-    #                         , 'quienValidaMonto': self.env.user.name
-    #                         })
-                 
-    #     elif str(self.tipoDeComprobacion) == "Parcial":
-    #         _logger.info("Parcial")
-    #     elif str(self.tipoDeComprobacion) == "Excedido":
-    #         _logger.info("Excedido")
-    #     elif str(self.tipoDeComprobacion) == "noComprobado":
-    #         _logger.info("No comprobado")
-    #     #else:
-    #     #    pass
-
-
-
+    # def autorizarGasto(self):
+    #     gasto = self.env['gastos'].search([('id', '=', self.id)])
+    #     gasto.write({'quienesAutorizan': self.env.user.name})
 
 
 class usuarios_gastos(models.Model):
@@ -331,6 +499,11 @@ class motivos_gastos(models.Model):
     motivoTipoDeMotivo = fields.Selection((('!','1'), ('2','2')), string = "Tipo de motivo",track_visibility='onchange')
     monto = fields.Float(string = "Monto", track_visibility='onchange')
 
+    @api.constrains('monto')
+    def verificaMonto(self):
+        if self.monto == 0.0:
+            raise exceptions.ValidationError("En MOTIVOS : El monto no puede ser igual a cero.")
+
 
 class comprobaciones(models.Model):
     _name = 'gastos.comprobaciones'
@@ -342,6 +515,7 @@ class comprobaciones(models.Model):
         # Justificación
         # Tipo de Comprobante
         # Evidencia
+        # Monto aprobado
     #FINANSAS
         # Porcentaje aceptado
         # Justicación contable de Porcentaje no aceptado (Con comprobante fiscal)
@@ -353,28 +527,30 @@ class comprobaciones(models.Model):
     tipoDeComprobante       = fields.Selection((('Factura','Factura'),('FacturaSinIva','Factura sin IVA'),('TiketFacturable','Ticket facturable'),('Tiket','Ticket'),('Nota','Nota')), string = "Tipo de Comprobante",track_visibility='onchange')
     comprobantes            = fields.Many2many('ir.attachment', string="Evidencia")
     # -------Finanzas------------
-    porcentajeAceptado      = fields.Selection((('100','100%'),('75','75%'),('50','50%'),('25','25%'),('0','0%')), string = "Porcentaje Aceptado",track_visibility='onchange')
+    porcentajeAceptado      = fields.Float(string = "Porcentaje Aceptado",track_visibility='onchange')
+    montoAprobado           = fields.Float(string = "Monto aprobado",track_visibility='onchange')
     cuentaContableDestino   = fields.Text(string = "Aplicación contable", track_visibility='onchange')
     montoAprobadooriginalMante = fields.Float(string = "Monto aprobado originalmente", track_visibility='onchange')
     justificacionContable   = fields.Text(string = "Justificación contable", track_visibility='onchange')
     #----------------------------
     monto                   = fields.Float(string = "Monto",         track_visibility='onchange')
     nombre                  = fields.Char(string="Nombre de comprobación", track_visibility='onchange')
-    montoJustificado        = fields.Float(string = 'Monto aprobado', compute='calcularMontoAprobado', track_visibility='onchange')
+    # montoJustificado        = fields.Float(string = 'Monto aprobado', compute='calcularMontoAprobado', track_visibility='onchange')
     
     centoDeCostos           = fields.Text(string = "Centro de Costos", track_visibility='onchange')
     cliente = fields.Many2one('res.partner', string = 'Cliente', track_visibility='onchange')
     servicio = fields.Text(string = 'Servicio')
 
-    # def calcularMontoAprobado(self):
-    #     for rec in self:
-    #         if str(rec.porcentajeAceptado) != 'false':
-    #             montoJustificado = rec.monto * rec.porcentajeAceptado
+
+    @api.onchange('porcentajeAceptado')
+    def calcularMontoAprobado(self):
+        if self.porcentajeAceptado : 
+            if self.monto :
+                self.montoAprobado = self.monto * self.porcentajeAceptado
 
 
 class PagoSolicitante(models.Model):
-    _name = "gastos.devolucion"
-    #_description = 'Complemento/devolución'
+    _name = 'gastos.devolucion'
     _description = 'Pago a solicitante'
     gasto = fields.Many2one('gastos', string="Pagos solitatados", track_visibility='onchange')
     quienesReciben = fields.Many2one('res.users',string = "Quien recibe", track_visibility='onchange', default=lambda self: self.env.user)
@@ -387,7 +563,21 @@ class PagoSolicitante(models.Model):
     evidencia = fields.Many2many('ir.attachment', string="Evidencia")
     montoAprobadoOriginalMante  = fields.Float(string = "Monto aprobado originalmente", track_visibility='onchange')
     montoPagado = fields.Float(string = "Monto pagado")
+    #Campos agregados
 
+    banco = fields.Selection((('bajio','BAJIO'), ('banamex','BANAMEX'),('banorte','BANORTE'),('santnder','SANTANDER'),('hsbc','HSBC'),('azteca','AZTECA'),('bancomer','BANCOMER')), string = "Banco a depositar")
+    claveInterbancaria = fields.Char(string="Clave interbancaria", track_visibility='onchange')
+    depositoDeducible = fields.Selection((('si','Si'), ('no','No')), string = "Depósito deducible")
+
+    @api.constrains('montoEntregado')
+    def verificaMonto(self):
+        if self.montoEntregado == 0.0:
+            raise exceptions.ValidationError("En PAGOS A SOLICITANTE : El monto no puede ser igual a cero.")
+    
+    @api.constrains('depositoDeducible')
+    def verificaDepositoDeducible(self):
+        if not self.depositoDeducible:
+            raise exceptions.ValidationError("Indica si el pago a sera deducible o no.")
     @api.onchange('fecha')
     def computarDiasAtrasoPago(self):
         if self.fecha :
@@ -413,7 +603,7 @@ class PagoSolicitante(models.Model):
             else:
                 # _logger.info("||||-:   "+esMayor)
                 self.fecha = ""
-                raise exceptions.ValidationError("El pago no puede ser mayor al día de hoy .")
+                # raise exceptions.ValidationError("El pago no puede ser mayor al día de hoy .")
                 message = ("El pago no puede ser mayor al día de hoy .")
                 mess = { 'title': _('Error'), 'message' : message}
                 return {'warning': mess}
@@ -451,7 +641,7 @@ class Pagos(models.Model):
     concepto = fields.Text(string = "Concepto", track_visibility='onchange')
     fechaDePago = fields.Datetime(string = 'Fecha de pago', track_visibility='onchange')
     montoPagado = fields.Float(string = "Monto", track_visibility='onchange')
-    formaDePago = fields.Selection((('Efectivo','Efectivo'), ('Cheque','Cheque'),('Deposito','Deposito'),('Transferencia','Transferencia')), string = "Forma de pago")
+    formaDePago = fields.Selection((('Efectivo','Efectivo'), ('Cheque','Cheque'),('Deposito','Deposito'),('Transferencia','Transferencia'),('Nómina','Nómina')), string = "Forma de pago")
     comprobanteDePago = fields.Many2many('ir.attachment', string="Evidencia")
     # -----------------------
     #datos tabla pago de complemento/devolucion
@@ -460,3 +650,42 @@ class Pagos(models.Model):
     fechaProgramada = fields.Datetime(string = 'Fecha programada')
     totalMonto = fields.Float(string = "Total de monto")
 
+
+
+# @api.multi
+# def validarGasto(self):
+#     #_logger.info()
+#     gasto = self.env['gastos'].search([('id', '=', self.id)])        
+#     gasto.write({'x_studio_field_VU6DU': 'aprobado'
+#                  , 'quienValida': self.env.user.name
+#                })
+
+# @api.multi
+# def validarComprobacion(self):
+#     message = ""
+#     mess = {}
+#     if str(self.tipoDeComprobacion) == "Exacto":
+#         if self.montoExacto < self.montoAprobado:
+#             raise exceptions.ValidationError("El gasto comprobado exacto no es igual al monto aprobado.")
+            
+#             message = ("El gasto comprobado exacto no es igual al monto aprobado.")
+#             mess = {
+#                     'title': _('Gasto no comprobado!!!'),
+#                     'message' : message
+#                 }
+#             return {'warning': mess}
+
+#         else:
+#             gasto = self.env['gastos'].search([('id', '=', self.id)])        
+#             gasto.write({'x_studio_field_VU6DU': 'Comprobado'
+#                         , 'quienValidaMonto': self.env.user.name
+#                         })
+                
+#     elif str(self.tipoDeComprobacion) == "Parcial":
+#         _logger.info("Parcial")
+#     elif str(self.tipoDeComprobacion) == "Excedido":
+#         _logger.info("Excedido")
+#     elif str(self.tipoDeComprobacion) == "noComprobado":
+#         _logger.info("No comprobado")
+#     #else:
+#     #    pass

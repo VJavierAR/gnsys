@@ -30,6 +30,7 @@ class StockPicking(Model):
     internas=fields.Boolean()
     distribucion=fields.Boolean()
     retiro=fields.Boolean()
+    mini=fields.Boolean()
 
     #documentosDistro = fields.Many2many('ir.attachment', string="Evidencias ")
     #historialTicket = fields.One2many('ir.attachment','res_id',string='Evidencias al ticket',store=True,track_visibility='onchange')
@@ -375,7 +376,7 @@ class StockPicking(Model):
         d=[]
         wiz = self.env['cambio.toner'].create({'display_name':'h','pick':self.id,'tonerUorden':self.oculta})
         for p in self.move_ids_without_package:
-            data={'move_id':p.id,'rel_cambio':wiz.id,'producto1':p.product_id.id,'producto2':p.product_id.id,'cantidad':p.product_uom_qty,'serie':p.x_studio_serie_destino.id,'tipo':self.picking_type_id.id}
+            data={'almacen':p.location_id.x_studio_field_JoD2k.id,'move_id':p.id,'rel_cambio':wiz.id,'producto1':p.product_id.id,'producto2':p.product_id.id,'cantidad2':p.product_uom_qty,'cantidad':p.product_uom_qty,'serie':p.x_studio_serie_destino.id,'tipo':self.picking_type_id.id}
             self.env['cambio.toner.line'].create(data)
             #d.append(data)
         
@@ -455,7 +456,7 @@ class StockPicking(Model):
         wiz = self.env['ingreso.almacen'].create({'pick':self.id,'almacen':self.picking_type_id.warehouse_id.id})
         view = self.env.ref('stock_picking_mass_action.view_ingreso_almacen')
         for r in self.move_ids_without_package:
-            self.env['ingreso.lines'].create({'move':r.id,'producto':r.product_id.id,'rel_ingreso':wiz.id,'cantidad':int(r.product_uom_qty)})
+            self.env['ingreso.lines'].create({'move':r.id,'producto':r.product_id.id,'producto2':r.product_id.id,'rel_ingreso':wiz.id,'cantidad':int(r.product_uom_qty)})
         return {
             'name': _('Ingreso'),
             'type': 'ir.actions.act_window',

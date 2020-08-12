@@ -10,14 +10,14 @@ _logger = logging.getLogger(__name__)
 
 
 class devoluciones(models.Model):
-    _name = "gastos.devolucion"
+    _name = "gastos.pagoSolicitante"
     _description = 'Complemento/devolución'
     gasto = fields.Many2one('gastos', string="Gasto relacionado", track_visibility='onchange')
 
 
     #datos tabla compleneto/Devolucion
     montoEntregado = fields.Float(string = "Monto entregado")
-    montoJustificado = fields.Float(string = "Monto justificado")
+    # montoJustificado = fields.Float(string = "Monto justificado")
     saldo = fields.Float(string = "Saldo", compute = "calcularSaldo", readonly = True)
     montoAjustado = fields.Float(string = "Monto ajustado")
     responsableDeMontoAjustado = fields.Many2one('res.users', string = "Responsable de monto ajustado", track_visibility='onchange')
@@ -25,6 +25,6 @@ class devoluciones(models.Model):
     devolucionPorRecuperar = fields.Float(string = "Devolución por recuperar")
 
 
-    def calcularSaldo(self):
-        for rec in self:
-            rec.saldo = rec.montoEntregado - rec.montoJustificado
+    # def calcularSaldo(self):
+    #     for rec in self:
+    #         rec.saldo = rec.montoEntregado - rec.montoJustificado

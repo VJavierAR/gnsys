@@ -904,7 +904,7 @@
 
 
 
-    <record id="action_validar_toner" model="ir.actions.act_window">
+    <record id="action_validar_toner" model="ir.actions.act_window" groups="studio_customization.validar_toner_d61119fe-f670-4dd0-9dee-6d2bfdd1824e">
         <field name="name">Crear y validar toner</field>
         <field name="res_model">helpdesk.validar.toner</field>
         <field name="view_type">form</field>
@@ -1427,9 +1427,9 @@
                         <field name="productos" string="Productos " domain="[]" options="{'no_create_edit': True, 'no_create': True}" readonly='0' >
                             <tree string="Productos" editable="bottom" >
                                 <field name='product_variant_id' string='Producto' />
-                                <field name='categ_id' string='Categoría del producto' />
-                                <field name='default_code' string='Referencia interna' />
-                                <field name='name' string='Nombre' />
+                                <field name='categ_id' string='Categoría del producto' readonly='1'/>
+                                <field name='default_code' string='Referencia interna' readonly='1'/>
+                                <field name='name' string='Nombre' readonly='1'/>
                                 <field name='qty_available' string='Cantidad a mano' />
                                 <field name='virtual_available' string='Cantidad prevista' />
                                 <field name='x_studio_cantidad_pedida' string='Cantidad a pedir' />
@@ -1457,6 +1457,134 @@
 
 
 
+    <record id="view_helpdesk_crear_y_validar_refacciones" model="ir.ui.view">
+        <field name="model">helpdesk.confirmar.validar.refacciones</field>
+        <field name="arch" type="xml">
+            <form string="Crear y validar solicitud de refacciones">
+                
+                <group>
+                    <group>
+                        <field name='ticket_id' readonly='1' options="{'no_create_edit': True, 'no_create': True}" />
+                    </group>
+                </group>
+                
+                <group>
+                    <notebook>
+                        <page string = 'Bitácora'>
+                            <notebook>
+                                <page string = 'Tickets'>
+                                    <field name='historicoTickets'>
+                                        <tree default_order="create_date desc"><!--x_studio_fecha-->
+                                            <field name='x_studio_tickett' attrs='{"domain": [["fuente","=","Equipo"]]}'/>
+                                            <field name='create_date' />
+                                            <field name='fuente' />
+                                            <field name='x_studio_fecha_techra' />
+                                            <field name='serie' />
+                                            <field name='hTicketCliente' />
+                                            <field name='hTicketAreaDeAtencion' />
+                                            <field name='hTicketUbicacion' />
+                                            <field name='hTicketFalla' />
+                                            <field name='hTicketUltimaEtapaTicket' />
+                                            <field name='contadorMono' />
+                                            <field name='contadorColor' />
+                                            <field name='hTicketHojaDeEstado' />
+                                            <field name='hTicketUltimaNota' />
+                                            <field name='hTicketFechaNota' />
+                                        </tree>
+                                        <form>
+                                        </form>
+                                    </field>
+                                </page>
+                                <page string = 'Lecturas'>
+                                    <field name='lecturas' />
+                                </page>
+                                <page string = 'Tóner'>
+                                    <field name='toner' />
+                                </page>
+                                <page string = 'Historico de componentes'>
+                                    <field name='historicoDeComponentes' />
+                                </page>
+                                <page string = 'Movimientos'>
+                                    <field name='movimientos' />
+                                </page>
+                            </notebook>
+                        </page>
+                        <page>
+                            <group>
+                                <group>
+                                    <field name='contadoresAnterioresText' readonly='1' />
+                                </group>
+                            </group>
+                        </page>
+                        <page string = 'Productos'>
+                            <group>
+                                <group>
+                                    <field name='activar_compatibilidad' />
+                                </group>
+                                <group>
+                                    <field name="productos" string="Refacciones y accesorios " domain="[]" options="{'no_create_edit': True, 'no_create': True}" readonly='0' >
+                                        <tree string="Productos" editable="bottom" >
+                                            <field name='product_variant_id' string='Producto' />
+                                            <field name='categ_id' string='Categoría del producto' readonly='1'/>
+                                            <field name='default_code' string='Referencia interna' readonly='1'/>
+                                            <field name='name' string='Nombre' readonly='1'/>
+                                            <field name='qty_available' string='Cantidad a mano' />
+                                            <field name='virtual_available' string='Cantidad prevista' />
+                                            <field name='x_studio_cantidad_pedida' string='Cantidad a pedir' />
+                                        </tree>
+                                    </field>
+                                </group>
+                            </group>
+                        </page>
+                        <page string = 'Diagnostico antes de validar'>
+                            <group>
+                                <group>
+                                    <field name="estado" readonly="1"/>
+                                    <field name="comentario" attrs='{"readonly": [["estado","=","Cerrado"]]}'/>
+                                </group>
+                                <group>
+                                    <field name="check" attrs='{"readonly": [["estado","=","Cerrado"]]}'/>
+                                    <field name="evidencia" widget="many2many_binary" attrs='{"readonly": [["estado","=","Cerrado"]]}'/>
+                                </group>
+                            </group>
+
+                            <field name="diagnostico_id" options="{'no_create': True}" readonly="1">
+                                <tree>
+                                    <field name="create_date" string='Creado el' readonly="1"/>
+                                    <field name="estadoTicket" readonly="1"/>
+                                    <field name="comentario" string='Diagnostico / Comentario'/>
+                                    <field name="create_uid" readonly="1" string='Encargado'/>
+                                    <field name="evidencia" widget="many2many_binary"/>
+                                    <field name="mostrarComentario" />
+                                </tree>
+                                <form>
+                                    <group>
+                                        <group>
+                                            <field name="ticketRelacion" can_create="true" can_write="true" modifiers="{}" invisible="1"/>
+                                            <field name="estadoTicket" modifiers="{}" readonly="1"/>
+                                            <field name="comentario" modifiers="{}"/>
+                                        </group>
+                                        <group>
+                                            <field name="evidencia" can_create="true" can_write="true" modifiers="{}" widget="many2many_binary"/>
+                                            <field name="mostrarComentario" modifiers="{}"/>
+                                        </group>
+                                    </group>
+                                </form>
+                            </field>
+
+                        </page>
+                    </notebook>
+                </group>
+
+                <footer>
+                    <button name="confirmarYValidarRefacciones" string="Confirmar solicitud" type="object" class="oe_highlight" />
+                    <button string="Cerrar ventana" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
 
 
     <record id="view_helpdesk_ticket_reporte" model="ir.ui.view">
@@ -1479,6 +1607,130 @@
             </form>
         </field>
     </record>
+
+
+
+
+
+    <record id="view_helpdesk_reiniciar_contadores" model="ir.ui.view">
+        <field name="model">helpdesk.contadores.reiniciar.mesa</field>
+        <field name="arch" type="xml">
+            <form string="Reiniciar contadores">
+
+                <group string='Datos del equipo'>
+                    <group>
+                        <field name='ticket_id' readonly='1' />
+                        <field name='serieSeleccionada' readonly='1' />
+                        <field name='tipoEquipo' readonly='1' />
+                    </group>
+                </group>
+
+                <group string='Motivo por el que se reiniciara el contador'>
+                    <group>
+                        <field name='estado' force_save='1' readonly='1' />
+                        <field name='comentario' force_save='1' />
+                    </group>
+                    <group>
+                        <field name='check' force_save='1' />
+                        <field name='evidencia' widget="many2many_binary" force_save='1' />
+                    </group>
+                </group>
+
+                <group string='Contadores actuales y actualizados'>
+                    <group>
+                        <field name='contadorMonoActual' readonly='1' force_save='1' />
+                        <field name='contadorColorActual' readonly='1' force_save='1' attrs="{'invisible': [('tipoEquipo', '=', 'B/N')]}" />
+                    </group>
+                    <group>
+                        <field name='contadorMonoActualizado' force_save='1' readonly='1' />
+                        <field name='contadorColorActualizado' attrs="{'invisible': [('tipoEquipo', '=', 'B/N')]}" force_save='1' readonly='1' />
+                    </group>
+                </group>
+                <group> 
+                    <field name='textoInformativo' force_save='1' readonly='1' widget='html' />
+                </group>
+                <footer>
+                    <button name="reiniciarContadores" string="Reiniciar contador" type="object" class="oe_highlight" />
+                    <button special="cancel" string="Cerrar" class="oe_highlight" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+
+
+
+    <record id="view_helpdesk_editar_contadores" model="ir.ui.view">
+        <field name="model">helpdesk.contadores.editar.mesa</field>
+        <field name="arch" type="xml">
+            <form string="Editar contadores">
+
+                <group string='Datos del equipo'>
+                    <group>
+                        <field name='ticket_id' readonly='1' />
+                        <field name='serieSeleccionada' readonly='1' />
+                        <field name='tipoEquipo' readonly='1' />
+                    </group>
+                </group>
+
+                <group string='Motivo por el que se reiniciara el contador'>
+                    <group>
+                        <field name='estado' force_save='1' readonly='1' />
+                        <field name='comentario' force_save='1' />
+                    </group>
+                    <group>
+                        <field name='check' force_save='1' />
+                        <field name='evidencia' widget="many2many_binary" force_save='1' />
+                    </group>
+                </group>
+
+                <group string='Contadores actuales y actualizados'>
+                    <group>
+                        <field name='contadorMonoActual' readonly='1' force_save='1' />
+                        <field name='contadorColorActual' readonly='1' force_save='1' attrs="{'invisible': [('tipoEquipo', '=', 'B/N')]}" />
+                    </group>
+                    <group>
+                        <field name='contadorMonoActualizado' force_save='1' readonly='0' />
+                        <field name='contadorColorActualizado' attrs="{'invisible': [('tipoEquipo', '=', 'B/N')]}" force_save='1' readonly='0' />
+                    </group>
+                </group>
+                <group> 
+                    <field name='textoInformativo' force_save='1' readonly='1' widget='html' />
+                </group>
+                <footer>
+                    <button name="editarContadores" string="Editar contador" type="object" class="oe_highlight" />
+                    <button special="cancel" string="Cerrar" class="oe_highlight" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

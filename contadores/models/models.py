@@ -98,8 +98,8 @@ class dcas(models.Model):
 
     fechaTemporal = fields.Text(string = 'Fecha temporal', store = True)
     
-    
-                
+    comentarioDeReinicio = fields.Text(string = 'Comentario de reinicio de contador')
+    reinicioDeContador = fields.Boolean(string = 'Reinicio de contador')
     
     
    
@@ -414,9 +414,9 @@ class dcas(models.Model):
             'res_id': wiz.id,
             'context': self.env.context,
         }
-    
 
     
+
 
 class contadoresexcel(models.Model):
     _name = 'contadores.excel'    
@@ -608,12 +608,14 @@ class contadores(models.Model):
                         worksheet.write(i, 15, rpt.x_studio_ubicacin,neg)                                                            
                         worksheet.write(i, 16, rpt.comentarioLecturas,neg)                                                            
                         worksheet.write(i, 8, ebn,neg)
-                        worksheet.write(i, 9, ec,neg)                                            
+                        worksheet.write(i, 9, ec,neg)
+                        
                         if rpt.x_studio_color_o_bn=='B/N':                                                         
                            eebn=ebn+eebn
                         if rpt.x_studio_color_o_bn=='Color':                                                         
                            eebn=ebn+eebn                                                                                   
-                           eec=ec+eec               
+                           eec=ec+eec
+                            
                         i=i+1
                if eebn>rd.bolsaBN:
                    resto=eebn-rd.bolsaBN
@@ -656,7 +658,7 @@ class contadores(models.Model):
                         worksheet.write(i, 9, ec,neg)                        
                         if rpt.x_studio_color_o_bn=='B/N':                                    
                            bs= (ebn*rd.clickExcedenteBN)
-                           eebn=ebn+eebn
+                           #eebn=ebn+eebn
                            worksheet.write(i, 12, bs,neg)
                            iva=round(bs*.16,2)
                            ivatt=iva+ivatt
@@ -666,7 +668,7 @@ class contadores(models.Model):
                            ttotal=(iva +bs)+ttotal                        
                         if rpt.x_studio_color_o_bn=='Color':
                            bsc=(ec*rd.clickExcedenteColor)+(ebn*rd.clickExcedenteBN)
-                           eec=ec+eec
+                           #eec=ec+eec
                            worksheet.write(i, 12, bsc,neg) 
                            iva=round(bsc*.16,2)
                            ivatt=iva+ivatt
@@ -719,9 +721,10 @@ class contadores(models.Model):
                             if rpt.x_studio_color_o_bn=='B/N':                            
                                if rd.bolsaBN<ebn:
                                   ebn=ebn-rd.bolsaBN
-                                  eebn=ebn+eebn  
+                                  #eebn=ebn+eebn  
                                   cal=float(rd.rentaMensual)+(ebn*rd.clickExcedenteBN)  
                                   worksheet.write(i, 12, cal,neg)
+                                  worksheet.write(i, 10, ebn,neg)
                                   iva=round(cal*.16,2)
                                   worksheet.write(i, 13,'$ '+str(iva) ,neg)
                                   _logger.info('iva: ' + str(iva))
@@ -749,6 +752,7 @@ class contadores(models.Model):
                                   ebn=ebn-rd.bolsaBN
                                   #eebn=ebn+eebn  
                                   ebnx=(ebn*rd.clickExcedenteBN)
+                                  worksheet.write(i, 10, ebn,neg)  
                                   _logger.info("totals cnsi: " + str(totalsr))  
                                   _logger.info("tota cnsi: " + str(ttotal))     
                                if rd.bolsaColor<ec:
@@ -756,6 +760,7 @@ class contadores(models.Model):
                                   #eec=ec+eec  
                                   call=float(rd.rentaMensual)+(ec*rd.clickExcedenteColor)+ebnx                                
                                   worksheet.write(i, 12, call,neg)
+                                  worksheet.write(i, 11, ec,neg)
                                   iva=round(call*.16,2)
                                   ivatt=iva+ivatt
                                   worksheet.write(i, 13,'$ '+str(iva) ,neg)     
@@ -865,16 +870,31 @@ class contadores(models.Model):
                worksheet.write(i, 14, '$'+str(round(float(rd.rentaMensual)*.16,2)+float(rd.rentaMensual)),neg)
                totalsr=float(rd.rentaMensual)+totalsr 
                ivatt=round(float(rd.rentaMensual)*.16,2)+ivatt 
-               ttotal=(round(float(rd.rentaMensual)*.16,2)+float(rd.rentaMensual))+ttotal 
-            if rd.nombreAnte=='SERVICIO DE TFS' or rd.nombreAnte=='OPERADOR TFS' or rd.nombreAnte=='TFS' or rd.nombreAnte=='SERVICIO DE TFS ' :
+               ttotal=(round(float(rd.rentaMensual)*.16,2)+float(rd.rentaMensual))+ttotal                                                
+            if rd.nombreAnte=='SERVICIO DE TFS' or rd.nombreAnte=='OPERADOR TFS' or rd.nombreAnte=='TFS' or rd.nombreAnte=='SERVICIO DE TFS ' :               
                worksheet.write(i, 0, rd.nombreAnte,neg)
-               tfs=float(rd.rentaMensual)*int(rd.cantidad)
+               tfs=float(rd.rentaMensual)*int(rd.cantidad)               
+               retnecion=rd.retencion
+               rht=0
+               #raise exceptions.ValidationError("Nada que generar "+retnecion+" "+str(retnecion)!='N/A' )
+               if str(retnecion)!='N/A':
+                  rht=float(rd.retencion)  
                worksheet.write(i, 12, '$'+str(tfs),neg)
-               worksheet.write(i, 13, '$'+str(round(tfs*.16,2)),neg)       
-               worksheet.write(i, 14, '$'+str(round(tfs*.16,2)+tfs),neg)
-               totalsr = tfs + totalsr                                
+               worksheet.write(i, 13, '$'+str(round(tfs*.16,2)),neg)                     
+               if rht>0:
+                  worksheet.write(i, 15, 'Retencion $'+str(round(rht,2)),neg)
+                  worksheet.write(i, 14, '$'+str(round(tfs*.16,2)+tfs),neg)
+                  totalsr = tfs + totalsr
+                  ttotal=round(tfs*.16,2)+tfs+ttotal-rht     
+               else:
+                  worksheet.write(i, 14, '$'+str(round(tfs*.16,2)+tfs),neg)
+                  totalsr = tfs + totalsr
+                  ttotal=round(tfs*.16,2)+tfs+ttotal   
+    
                ivatt=round(float(tfs)*.16,2)+ivatt 
-               ttotal=round(tfs*.16,2)+tfs+ttotal                 
+               
+                
+                
             if rd.nombreAnte=='SERVICIO DE MANTENIMIENTO':                        
                worksheet.write(i, 0, rd.nombreAnte,neg)
                worksheet.write(i, 12, '$'+rd.rentaMensual,neg)
@@ -1275,6 +1295,8 @@ class contadores_lines(models.Model):
             destino2=self.env['stock.warehouse'].search([('x_studio_field_E0H1Z','=',self.destino.id)])
             self.env['stock.move.line'].create({'product_id':self.serie.product_id.id, 'product_uom_id':1,'location_id':origen2.lot_stock_id.id,'product_uom_qty':1,'lot_id':self.serie.id
                                                 ,'date':datetime.datetime.now(),'location_dest_id':destino2.lot_stock_id.id})
+            destino2.lot_stock_id.write({'x_studio_field_JoD2k':destino2.id})
+            self.serie.write({'x_studio_cliente':self.destino.parent_id.id,'x_studio_localidad_2':self.destino.id})
             self.serie.x_studio_cambio = not self.serie.x_studio_cambio
             self.estado='2'
             self.serie.x_studio_ubicacion_id=destino2.lot_stock_id.id
