@@ -1431,6 +1431,9 @@
                         <field name='ticket_id' readonly='1' options="{'no_create_edit': True, 'no_create': True}" />
                         <field name='activar_compatibilidad' />
                     </group>
+                    <group>
+                        <field name='estadoSolicitud' readonly='1' force_save='1' />
+                    </group>
                 </group>
                 
                 <group>

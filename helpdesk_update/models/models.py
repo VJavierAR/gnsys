@@ -4259,6 +4259,10 @@ class helpdesk_update(models.Model):
     def agregar_productos_wizard(self):
         wiz = self.env['helpdesk.agregar.productos'].create({'ticket_id':self.id})
         wiz.productos = [(6, 0, self.x_studio_productos.ids)]
+        if self.x_studio_field_nO7Xg:
+            wiz.estadoSolicitud = str(self.x_studio_field_nO7Xg.state)
+        else:
+            wiz.estadoSolicitud = 'No existe una SO.'
         view = self.env.ref('helpdesk_update.view_helpdesk_agregar_productos')
         return {
             'name': _('Agregar productos'),

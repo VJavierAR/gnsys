@@ -3033,6 +3033,14 @@ class helpdesk_agregar_productos(TransientModel):
                                                 string = 'Activar compatibilidad',
                                                 default = False
                                             )
+    estadoSolicitud = fields.Text(
+                                    string = 'Estado de la SO',
+                                    store = True,
+                                    help = """
+                                                Estado en el que se encuentra la solicitud de refacción y/o accesorios.
+                                                En caso de que no exista se muestra el mensaje 'No existe un SO'.
+                                            """
+                                )
 
     @api.onchange('activar_compatibilidad')
     #@api.multi
