@@ -1172,7 +1172,8 @@ class helpdesk_crearconserie(TransientModel):
                 #listaMovimeintos.reverse()
                 _logger.info("test serie reverse: " + str(self.serie[0].x_studio_move_line))
 
-                if self.serie[0].x_studio_move_line:
+                #if self.serie[0].x_studio_move_line:
+                if self.serie[0].x_studio_localidad_2 and self.serie[0].x_studio_cliente:
                     #moveLineOrdenado = self.serie[0].x_studio_move_line.sorted(key="date", reverse=True)
                     moveLineOrdenado = self.serie[0].x_studio_cliente
                     loc = self.serie[0].x_studio_localidad_2
@@ -1222,7 +1223,7 @@ class helpdesk_crearconserie(TransientModel):
                     
                 else:
                     mensajeTitulo = "Alerta!!!"
-                    mensajeCuerpo = "La serie seleccionada no cuenta con una ubicación."
+                    mensajeCuerpo = "La serie seleccionada no cuenta con una ubicación y/o cliente."
                     warning = {'title': _(mensajeTitulo)
                             , 'message': _(mensajeCuerpo),
                     }
