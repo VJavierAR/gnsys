@@ -526,8 +526,8 @@ class helpdesk_update(models.Model):
     #@api.depends('x_studio_backorders')
     def _compute_backorderActivo(self):
         for rec in self:
-            #if rec.x_studio_backorder:
-            if rec.x_studio_backorders:
+            if rec.x_studio_backorder:
+            #if rec.x_studio_backorders:
                 rec.backorderActivo = True
                 #rec.write({'backorderActivo': True})
                 rec.mensajeBackOrder = """
