@@ -3501,14 +3501,14 @@ class HelpDeskContactoToner(TransientModel):
 class HelpdeskTicketReporte(TransientModel):
     _name = 'helpdesk.ticket.reporte'
     _description = 'Reporte de Tickets todo'
-    fechaInicial = fields.Datetime(
-                                        string = 'Fecha inicial',
-                                        store = True
-                                    )
-    fechaFinal = fields.Datetime(
-                                    string = 'Fecha final',
+    fechaInicial = fields.Date(
+                                    string = 'Fecha inicial',
                                     store = True
                                 )
+    fechaFinal = fields.Date(
+                                string = 'Fecha final',
+                                store = True
+                            )
     estado = fields.Many2one(
                                 'helpdesk.state',
                                 string = 'Etapa'
@@ -3555,7 +3555,7 @@ class HelpdeskTicketReporte(TransientModel):
         #    j.append('&')
         #i.append(['x_studio_field_nO7Xg', '!=', False])
         #j.extend(i)
-        
+        [ ['create_date', '>=', self.fechaInicial], ['create_date', '<=', self.fechaFinal],  ]
         d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x: len(x.x_studio_equipo_por_nmero_de_serie_1) > 0 or len(x.x_studio_equipo_por_nmero_de_serie) > 0)
         if len(d) > 0:
             d[0].write({
