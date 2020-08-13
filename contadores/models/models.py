@@ -1299,7 +1299,7 @@ class contadores_lines(models.Model):
             self.serie.write({'x_studio_cliente':self.destino.parent_id.id,'x_studio_localidad_2':self.destino.id})
             self.serie.x_studio_cambio = not self.serie.x_studio_cambio
             self.estado='2'
-            self.serie.x_studio_ubicacion_id=destino2.lot_stock_id.id
+            #self.serie.x_studio_ubicacion_id=destino2.lot_stock_id.id
 
 
             
