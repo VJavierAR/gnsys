@@ -91,7 +91,7 @@ class StockPickingMassAction(TransientModel):
     def che(self):
         for s in self.picking_ids:
             #Almacen
-            if(s.picking_type_id.id==3 or s.picking_type_id.id==31485 or s.picking_type_id==89):
+            if(s.picking_type_id.id==3 or s.picking_type_id.id==31485 or s.picking_type_id.id==89):
                 self.check=2
             #refacion
             if(s.picking_type_id.id==29314):
@@ -154,7 +154,7 @@ class StockPickingMassAction(TransientModel):
                         self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id,'write_uid':self.env.user.id, 'estadoTicket' : "Entregado", 'comentario':picking.x_studio_comentario_1+' Evidenciado'+' Hecho por'+self.env.user.name})                        
                     if(picking.sale_id.x_studio_field_bxHgp.team_id.id!=8):
                         picking.sale_id.x_studio_field_bxHgp.write({'stage_id':13})
-                        self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id,'write_uid':self.env.user.id, 'estadoTicket' : "Entregado", 'comentario':picking.x_studio_comentario_1+' Evidenciado'+' Hecho por'+self.env.user.name})    
+                        self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id,'write_uid':self.env.user.id, 'estadoTicket' : "Entregado", 'comentario':picking.x_studio_comentario_1 if(picking.x_studio_comentario_1) else ''+' Evidenciado'+' Hecho por'+self.env.user.name})    
                     else:
                         picking.sale_id.x_studio_field_bxHgp.write({'stage_id':18})
                         self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id,'write_uid':self.env.user.id, 'estadoTicket' : "Entregado", 'comentario':picking.x_studio_comentario_1+' Evidenciado'+' Hecho por'+self.env.user.name})    
