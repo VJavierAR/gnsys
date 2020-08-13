@@ -152,11 +152,10 @@ class fac_order(models.Model):
                   for rs in range(lenset-1):
                       fac = self.env['sale.order'].create({'partner_id' : self.partner_id.id
                                                                  ,'origin' : "dividir por servicios: " + str(self.name)
-                                                                 , 'x_studio_tipo_de_solicitud' : 'Arrendamiento'
-                                                                 , 'x_studio_requiere_instalacin' : True                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
                                                                  , 'team_id' : 1
                                                                  , 'x_studio_factura':'si'
                                                                 })
+                      self.env.cr.execute("insert into x_contrato_sale_order_rel (sale_order_id, contrato_id) values (" +str(fac.id) + ", " +  str(r.x_studio_contratosid).replace("[","").replace("]","") + ");")                                         
                       servicioshtml="<a href='https://gnsys-corp.odoo.com/web#id="+str(fac.id)+"&action=1167&model=sale.order&view_type=form&menu_id=406' target='_blank'>"+str(fac.name)+"</a>"+'<br> '+servicioshtml
                       for d in self.order_line:
                           #_logger.info("Informacion entre:"+str(asts[rs])+" "+str(d.x_studio_servicio))
