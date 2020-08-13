@@ -8,7 +8,7 @@ _logger = logging.getLogger(__name__)
 
 class Helpdesk_Controller(http.Controller):
     @http.route('/helpdesk_update/validar_solicitud_de_refacciones/<int:ticket_id>', auth='public')
-    def validar_solicitud_de_refacciones(self, sale_id,**kw):
+    def validar_solicitud_de_refacciones(self, ticket_id,**kw):
     	_logger.info('3312: validar_solicitud_de_refacciones()')
     	ticket_id = request.env['helpdesk.ticket'].search([['id', '=', ticket_id]])
     	uido = request.env.context.get('uid')
