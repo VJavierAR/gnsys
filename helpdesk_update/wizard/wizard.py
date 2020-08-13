@@ -5180,7 +5180,7 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
         if self.productos:
             if self.ticket_id.x_studio_field_nO7Xg and self.ticket_id.x_studio_field_nO7Xg.state != 'sale':
                 self.ticket_id.x_studio_field_nO7Xg.action_confirm()
-                self.ticket_id.write({'stage_id': 95})
+                self.ticket_id.write({'stage_id': 102})
             if self.ticket_id.x_studio_field_nO7Xg.state == 'sale':
                 comentarioGenerico = 'Solicitud de refacción autorizada por ' + str(self.env.user.name) + '.\nEl día ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S")) + '.\n\n'
                 comentarioGenerico = comentarioGenerico
