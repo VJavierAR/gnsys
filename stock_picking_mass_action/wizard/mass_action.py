@@ -1340,7 +1340,7 @@ class detalleTicket(TransientModel):
     tecnico=fields.Many2one(related='ticket.x_studio_tcnico')
     zona=fields.Selection(related='ticket.x_studio_zona')
     dias=fields.Integer(related='ticket.days_difference')
-    idTicket=self.Integer()    
+    idTicket=fields.Integer()    
 
     @api.onchange('idTicket')
     def searchTicket(self):
