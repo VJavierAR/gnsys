@@ -1349,4 +1349,5 @@ class detalleTicket(TransientModel):
         if(self.ticket):
             uno=self.ticket.mapped('x_studio_equipo_por_nmero_de_serie.id')
             dos=self.ticket.mapped('x_studio_equipo_por_nmero_de_serie_1.serie.id')
+            self.series=[(5,0,0)]
             self.series=uno if(uno!=[]) else dos
