@@ -39,6 +39,7 @@ odoo.define('invoice.action_button', function (require) {
                         this.$buttons.find('.oe_action_button_stock_rule').click(this.proxy('action_inter10')).hide();
                         break;
                       default:
+                        this.$buttons.find('.oe_action_button_helpdesk_detalle').hide();
                         this.$buttons.find('.oe_action_button_purchase_order').click(this.proxy('action_inter8')); 
                         this.$buttons.find('.oe_action_button_sale_report').click(this.proxy('action_inter4')); 
                         this.$buttons.find('.oe_action_button_ticket_report').hide();
