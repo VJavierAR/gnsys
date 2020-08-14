@@ -1329,7 +1329,7 @@ class detalleTicket(TransientModel):
     ticket=fields.Many2one('helpdesk.ticket')
     series=fields.Many2many('stock.production.lot')
     historico=fields.One2many(related='ticket.diagnosticos')
-    cliente=fields.Many2one(related='ticket.res_partner')
+    cliente=fields.Many2one(related='ticket.partner_id')
     localidad=fields.Many2one(related='ticket.x_studio_empresas_relacionadas')
     solicitud=fields.Many2one(related='ticket.x_studio_field_nO7Xg')
     pedido=fields.One2many(related='solicitud.order_line')
