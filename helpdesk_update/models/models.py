@@ -1917,7 +1917,8 @@ class helpdesk_update(models.Model):
                         mess= {'title': _('Solicitud existente validada!!!')
                                 , 'message' : message
                         }
-                        return {'warning': mess}
+                        return 'Solicitud ya generada y validada'
+                        #return {'warning': mess}
                     
                     if self.x_studio_field_nO7Xg.id != False and self.x_studio_field_nO7Xg.state != 'sale':
                         sale = self.x_studio_field_nO7Xg
@@ -1931,6 +1932,7 @@ class helpdesk_update(models.Model):
                             #self.env.cr.commit()
                     
                     else:
+                        _logger.info('3312: Creado pedido de venta ')
                         sale = self.env['sale.order'].sudo().create({'partner_id' : record.partner_id.id
                                                                      , 'origin' : "Ticket de refacción: " + str(record.x_studio_id_ticket)
                                                                      , 'x_studio_tipo_de_solicitud' : 'Venta'
@@ -1943,11 +1945,13 @@ class helpdesk_update(models.Model):
                                                                      , 'x_studio_field_bxHgp': int(record.x_studio_id_ticket) 
                                                                     })
                         record['x_studio_field_nO7Xg'] = sale.id
+                        _logger.info('3312: Creado pedido de venta: ya se creo ' + str(sale.id))
                         """
                         en produccion
                         self.env.cr.commit()
                         self.productos = [[6, 0, (sale.id)]]
                         """
+                        _logger.info('3312: Creado pedido de venta: cargando productos ')
                         for c in record.x_studio_productos:
                             datosr = {'order_id' : sale.id
                                     , 'product_id' : c.id
@@ -1956,16 +1960,16 @@ class helpdesk_update(models.Model):
                                     , 'price_unit': 0}
                             if (self.team_id.id == 10 or self.team_id.id == 11):
                                 datosr['route_id'] = 22548
+                            _logger.info('3312: fecha inicio de sale.roder.line: ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S")) )
                             self.env['sale.order.line'].sudo().create(datosr)
+                            _logger.info('3312: fecha fin de sale.roder.line: ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S")) )
                             sale.env['sale.order'].sudo().write({'x_studio_tipo_de_solicitud' : 'Venta'})
                             #sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta', 'validity_date' : sale.date_order + datetime.timedelta(days=30)})
                             self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
 
-                            
+                        _logger.info('3312: Creado pedido de venta: productos cargados ')
 
-
-
-
+                        
                         sale = record.x_studio_field_nO7Xg
                         if sale.id != 0 or record.x_studio_productos != []:
                             if self.x_studio_field_nO7Xg.order_line:
@@ -2003,13 +2007,15 @@ class helpdesk_update(models.Model):
                                         'message' : message
                                       }
                                 self.estadoSolicitudDeRefaccionValidada = True
-                                return {'warning': mess}
+                                return 'OK'
+                                #return {'warning': mess}
                             else:
                                 message = ("No es posible validar una solicitud que no tiene productos.")
                                 mess = {'title': _('Solicitud sin productos!!!')
                                         , 'message' : message
                                         }
-                                return {'warning': mess}
+                                return 'Sin refacciones y/o accesorios'
+                                #return {'warning': mess}
                         else:
                             errorRefaccionNoValidada = "Solicitud de refacción no validada"
                             mensajeSolicitudRefaccionNoValida = "No es posible validar una solicitud de refacción en el estado actual debido a falta de productos o porque no existe la solicitud."
@@ -2023,14 +2029,17 @@ class helpdesk_update(models.Model):
                             'title': _('Ticket sin productos !!!'),
                             'message' : message
                           }
-                    return {'warning': mess}
+                    return 'Sin refacciones y/o accesorios'
+                    #return {'warning': mess}
             else:
                 message = ('Ya existe una solicitud, no es posible generan una solicitud.')
                 mess= {
                         'title': _('Ticket con solicitud existente !!!'),
                         'message' : message
                       }
-                return {'warning': mess}
+                return 'Solicitud existente.'
+                       
+                #return {'warning': mess}
 
 
 
@@ -2038,6 +2047,7 @@ class helpdesk_update(models.Model):
 
     def optimiza_lineas(self):
         _logger.info('3312: optimiza_lineas()')
+        _logger.info('3312: llego a optimiza_lineas(): ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
         sale = self.x_studio_field_nO7Xg
         if sale.id != 0 or self.x_studio_productos != []:
             if self.x_studio_field_nO7Xg.order_line:
@@ -2088,7 +2098,9 @@ class helpdesk_update(models.Model):
                         'message' : message
                       }
                 self.estadoSolicitudDeRefaccionValidada = True
-                return {'warning': mess}
+                _logger.info('3312: saliendo de optimiza_lineas(): ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
+                #return {'warning': mess}
+                return
             else:
                 message = ("No es posible validar una solicitud que no tiene productos.")
                 mess = {'title': _('Solicitud sin productos!!!')
@@ -2102,7 +2114,18 @@ class helpdesk_update(models.Model):
             raise exceptions.except_orm(_(errorRefaccionNoValidada), _(mensajeSolicitudRefaccionNoValida + " Estado: " + estadoActual))
 
 
-
+    def alerta(self):
+        _logger.info('3312: creando mensaje de validación exitosa(): ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
+        mensajeTitulo = 'Creación y validación de refacción!!!'
+        mensajeCuerpo = 'Se creo y valido la solicitud ' + str(self.x_studio_field_nO7Xg.name) + ' para el ticket ' + str(self.id) + '.'
+        wiz = self.env['helpdesk.alerta'].sudo().create({'mensaje': mensajeCuerpo})
+        view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+        _logger.info('3312: wiz.id antes de irme: ' + str(wiz.id))
+        _logger.info('3312: view.id antes de irme: ' + str(view.id))
+        return {
+                    'wizid': wiz.id,
+                    'viewid': view.id
+                    }
 
 
 

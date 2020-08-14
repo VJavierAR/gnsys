@@ -5124,6 +5124,28 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                                                 string = 'Contadores anteriores',
                                                 store = True
                                             )
+    estadoSolicitud = fields.Text(
+                                    string = 'Estado de la solicitud',
+                                    compute = '_compute_estado_solicitud'
+                                )
+    solicitud = fields.Many2one(
+                                    'sale.order',
+                                    string = 'Solicitud',
+                                    compute = '_compute_solicitud'
+                                )
+    def _compute_solicitud(self):
+        if self.ticket_id.x_studio_field_nO7Xg:
+            self.solicitud = self.ticket_id.x_studio_field_nO7Xg
+        
+    def _compute_estado_solicitud(self):
+        if self.ticket_id.x_studio_field_nO7Xg:
+            if self.ticket_id.x_studio_field_nO7Xg.state.name == 'sale':
+                self.estadoSolicitud = 'Solicitud validada'
+            else:
+                self.estadoSolicitud = 'Solicitud no validada'
+        else:
+            self.estadoSolicitud = 'No hay solicitud'
+
 
     def _compute_estadoTicket(self):
         self.estado = self.ticket_id.stage_id.name
@@ -5180,18 +5202,8 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
         if self.productos:
             if self.ticket_id.x_studio_field_nO7Xg and self.ticket_id.x_studio_field_nO7Xg.state != 'sale':
                 self.ticket_id.x_studio_field_nO7Xg.action_confirm()
-                self.ticket_id.write({'stage_id': 102})
+            
             if self.ticket_id.x_studio_field_nO7Xg.state == 'sale':
-                comentarioGenerico = 'Solicitud de refacción autorizada por ' + str(self.env.user.name) + '.\nEl día ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S")) + '.\n\n'
-                comentarioGenerico = comentarioGenerico
-                self.env['helpdesk.diagnostico'].create({
-                                                            'ticketRelacion': self.ticket_id.id,
-                                                            'comentario': comentarioGenerico,
-                                                            'estadoTicket': self.ticket_id.stage_id.name,
-                                                            'evidencia': [(6,0,self.evidencia.ids)],
-                                                            'mostrarComentario': self.check,
-                                                            'creadoPorSistema': True
-                                                        })
                 mensajeTitulo = 'Validación de refacción!!!'
                 mensajeCuerpo = 'Se valido la solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) + ' para el ticket ' + str(self.ticket_id.id) + '.'
                 wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
@@ -5232,20 +5244,36 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
         
         if self.productos:
             self.ticket_id.x_studio_productos = [(6, 0, self.productos.ids)]
-        self.ticket_id.crear_y_validar_solicitud_refaccion()
-
-        comentarioGenerico = 'Solicitud de refacción autorizada por ' + str(self.env.user.name) + '.\nEl día ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S")) + '.\n\n'
-        comentarioGenerico = comentarioGenerico + str(self.comentario)
-        self.env['helpdesk.diagnostico'].create({
-                                                    'ticketRelacion': self.ticket_id.id,
-                                                    'comentario': comentarioGenerico,
-                                                    'estadoTicket': self.ticket_id.stage_id.name,
-                                                    'evidencia': [(6,0,self.evidencia.ids)],
-                                                    'mostrarComentario': self.check,
-                                                    'creadoPorSistema': True
-                                                })
-        mensajeTitulo = 'Creación y validación de refacción!!!'
-        mensajeCuerpo = 'Se creo y valido la solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) + ' para el ticket ' + str(self.ticket_id.id) + '.'
+        respuesta = 'sin respuesta.'
+        respuesta = self.ticket_id.crear_y_validar_solicitud_refaccion()
+        _logger.info('3312: respuesta de crear_y_validar_solicitud_refaccion: ' + str(respuesta))
+        if respuesta == 'sin respuesta':
+            mensajeTitulo = 'Error'
+            mensajeCuerpo = 'Algo salio mal'
+        elif respuesta == 'Sin refacciones y/o accesorios':
+            mensajeTitulo = 'Error'
+            mensajeCuerpo = 'El ticket no tiene refacciones y/o accesorios.'
+        elif respuesta == 'Solicitud existente.':
+            mensajeTitulo = 'Error'
+            mensajeCuerpo = 'El ticket no tiene refacciones y/o accesorios.'
+        elif respuesta == 'Solicitud ya generada y validada':
+            mensajeTitulo = 'Error'
+            mensajeCuerpo = 'Existe una solicitud ya generada y validada.'
+        elif respuesta == 'OK':
+            mensajeTitulo = 'Creación y validación de refacción!!!'
+            mensajeCuerpo = 'Se creo y valido la solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) + ' para el ticket ' + str(self.ticket_id.id) + '.'
+            comentarioGenerico = 'Solicitud de refacción autorizada por ' + str(self.env.user.name) + '.\nEl día ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S")) + '.\n\n'
+            comentarioGenerico = comentarioGenerico + str(self.comentario)
+            self.env['helpdesk.diagnostico'].create({
+                                                        'ticketRelacion': self.ticket_id.id,
+                                                        'comentario': comentarioGenerico,
+                                                        'estadoTicket': self.ticket_id.stage_id.name,
+                                                        'evidencia': [(6,0,self.evidencia.ids)],
+                                                        'mostrarComentario': self.check,
+                                                        'creadoPorSistema': True
+                                                    })
+        #mensajeTitulo = 'Creación y validación de refacción!!!'
+        #mensajeCuerpo = 'Se creo y valido la solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) + ' para el ticket ' + str(self.ticket_id.id) + '.'
         wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
         view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
         return {
@@ -5264,6 +5292,7 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
 
     def validar(self):
         _logger.info('3312: validar()')
+        _logger.info('3312: inicio validar(): ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
         self.ticket_id.x_studio_productos = [(6, 0, self.productos.ids)]
         if self.productos:
             self.ticket_id.x_studio_productos = [(6, 0, self.productos.ids)]
@@ -5294,20 +5323,14 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                                                                  , 'x_studio_requiere_instalacin' : True
                                                                  , 'x_studio_field_RnhKr': self.ticket_id.localidadContacto.id
                                                                  , 'partner_shipping_id' : self.ticket_id.x_studio_empresas_relacionadas.id
-                                                                 , 'x_studio_tcnico' : self.ticket_id.x_studio_tcnico.id
+                                                                 #, 'x_studio_tcnico' : self.ticket_id.x_studio_tcnico.id
                                                                  , 'warehouse_id' : 5865   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
                                                                  , 'team_id' : 1
                                                                  , 'x_studio_field_bxHgp': int(self.ticket_id.x_studio_id_ticket) 
                                                                 })
-                    #record['x_studio_field_nO7Xg'] = sale.id
                     self.ticket_id.write({
                                             'x_studio_field_nO7Xg': sale.id
                                         })
-                    """
-                    en produccion
-                    self.env.cr.commit()
-                    self.productos = [[6, 0, (sale.id)]]
-                    """
                     for c in self.ticket_id.x_studio_productos:
                         datosr = {'order_id' : sale.id
                                 , 'product_id' : c.id
@@ -5327,10 +5350,9 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                         if self.ticket_id.x_studio_field_nO7Xg.order_line:
                             self.sudo().env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
                             sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
-                            
-
 
                             #sale.action_confirm()
+                            _logger.info('3312: inicio peticion validar_solicitud_de_refacciones(): ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
                             return { 'type': 'ir.actions.act_url',
                                      'url': '/helpdesk_update/validar_solicitud_de_refacciones/%s' % self.ticket_id.id,
                                      'target': 'self',
