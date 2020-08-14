@@ -1321,3 +1321,32 @@ class AltaProductoOne(TransientModel):
                     i=i+1
             else:
                 raise UserError(_("Error en el formato del archivo"))
+
+
+class detalleTicket(TransientModel):
+    _name='helpdesk.detalle.ticket'
+    _description='detalle del ticket'
+    ticket=fields.Many2one('helpdesk.ticket')
+    series=fields.Many2many('stock.production.lot')
+    historico=fields.One2many(related='ticket.diagnosticos')
+    cliente=fields.Many2one(related='ticket.res_partner')
+    localidad=fields.Many2one(related='ticket.x_studio_empresas_relacionadas')
+    solicitud=fields.Many2one(related='ticket.x_studio_field_nO7Xg')
+    pedido=fields.One2many(related='solicitud.order_line')
+    backorders=fields.One2many(related='ticket.x_studio_backorder')
+    estado=fields.Many2one(related='ticket.stage_id')
+    area=fields.Many2one(related='ticket.team_id')
+    ejecutivo=fields.Many2one(related='ticket.user_id')
+    tecnico=fields.Many2one(related='ticket.x_studio_tcnico')
+    zona=fields.Selection(related='ticket.x_studio_zona')
+    dias=fields.Integer(related='ticket.days_difference')
+    
+
+
+
+    @api.onchange('ticket')
+    def seriesAsignadas(self):
+        if(self.ticket):
+            uno=self.ticket.mapped('x_studio_equipo_por_nmero_de_serie.id')
+            dos=self.ticket.mapped('x_studio_equipo_por_nmero_de_serie_1.serie.id')
+            self.series=uno if(uno!=[]) else dos

@@ -18,6 +18,7 @@ odoo.define('invoice.action_button', function (require) {
                         this.$buttons.find('.o_button_import').hide();
                         this.$buttons.find('.o_list_button_add').hide();
                         this.$buttons.find('.oe_action_button_ticket_report').click(this.proxy('action_inter5'));
+                        this.$buttons.find('.oe_action_button_helpdesk_detalle').click(this.proxy('action_inter11'));
                         break;
                       case 2941:
                         this.$buttons.find('.o_button_import').hide();
@@ -52,6 +53,21 @@ odoo.define('invoice.action_button', function (require) {
                 }
                 
             }
+        },
+        action_inter11: function (e) {
+            var self = this
+            var user = session.uid;
+            self.do_action({
+                name: _t('Detalle Ticket'),
+                type : 'ir.actions.act_window',
+                res_model: 'helpdesk.detalle.ticket',
+                view_type: 'form',
+                view_mode: 'form',
+                view_id: 'view_helpdesk_detalle_ticket_action_form',
+                views: [[false, 'form']],
+                target: 'new',
+            
+            });
         },
         action_inter10: function (e) {
             var self = this
