@@ -91,7 +91,7 @@ class StockPickingMassAction(TransientModel):
     def che(self):
         for s in self.picking_ids:
             #Almacen
-            if(s.picking_type_id.id==3 or s.picking_type_id.id==31485 or s.picking_type_id==89):
+            if(s.picking_type_id.id==3 or s.picking_type_id.id==31485 or s.picking_type_id.id==89):
                 self.check=2
             #refacion
             if(s.picking_type_id.id==29314):
@@ -154,7 +154,7 @@ class StockPickingMassAction(TransientModel):
                         self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id,'write_uid':self.env.user.id, 'estadoTicket' : "Entregado", 'comentario':picking.x_studio_comentario_1+' Evidenciado'+' Hecho por'+self.env.user.name})                        
                     if(picking.sale_id.x_studio_field_bxHgp.team_id.id!=8):
                         picking.sale_id.x_studio_field_bxHgp.write({'stage_id':13})
-                        self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id,'write_uid':self.env.user.id, 'estadoTicket' : "Entregado", 'comentario':picking.x_studio_comentario_1+' Evidenciado'+' Hecho por'+self.env.user.name})    
+                        self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id,'write_uid':self.env.user.id, 'estadoTicket' : "Entregado", 'comentario':picking.x_studio_comentario_1 if(picking.x_studio_comentario_1) else ''+' Evidenciado'+' Hecho por'+self.env.user.name})    
                     else:
                         picking.sale_id.x_studio_field_bxHgp.write({'stage_id':18})
                         self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id,'write_uid':self.env.user.id, 'estadoTicket' : "Entregado", 'comentario':picking.x_studio_comentario_1+' Evidenciado'+' Hecho por'+self.env.user.name})    
@@ -1321,3 +1321,36 @@ class AltaProductoOne(TransientModel):
                     i=i+1
             else:
                 raise UserError(_("Error en el formato del archivo"))
+
+
+class detalleTicket(TransientModel):
+    _name='helpdesk.detalle.ticket'
+    _description='detalle del ticket'
+    ticket=fields.Many2one('helpdesk.ticket')
+    series=fields.Many2many('stock.production.lot')
+    historico=fields.One2many(related='ticket.diagnosticos')
+    cliente=fields.Many2one(related='ticket.partner_id')
+    localidad=fields.Many2one(related='ticket.x_studio_empresas_relacionadas')
+    solicitud=fields.Many2one(related='ticket.x_studio_field_nO7Xg')
+    pedido=fields.One2many(related='solicitud.order_line')
+    backorders=fields.One2many(related='ticket.x_studio_backorder')
+    estado=fields.Many2one(related='ticket.stage_id')
+    area=fields.Many2one(related='ticket.team_id')
+    ejecutivo=fields.Many2one(related='ticket.user_id')
+    tecnico=fields.Many2one(related='ticket.x_studio_tcnico')
+    zona=fields.Selection(related='ticket.x_studio_zona')
+    dias=fields.Integer(related='ticket.days_difference')
+    idTicket=fields.Integer()    
+
+    @api.onchange('idTicket')
+    def searchTicket(self):
+        if(self.idTicket):
+            self.ticket=self.env['helpdesk.ticket'].search([['id','=',self.idTicket]]).id
+
+    @api.onchange('ticket')
+    def seriesAsignadas(self):
+        if(self.ticket):
+            uno=self.ticket.mapped('x_studio_equipo_por_nmero_de_serie.id')
+            dos=self.ticket.mapped('x_studio_equipo_por_nmero_de_serie_1.serie.id')
+            self.series=[(5,0,0)]
+            self.series=uno if(uno!=[]) else dos
