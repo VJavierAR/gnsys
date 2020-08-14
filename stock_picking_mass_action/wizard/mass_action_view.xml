@@ -4,6 +4,7 @@
         <field name="model">helpdesk.detalle.ticket</field>
         <field name="arch" type="xml">
             <form string="Detalle del ticket">
+                <field name="idTicket" string="ticket" required="1"/>
                 <field name="ticket" string="ticket" required="1"/>
                 <group>
                     <group>
