@@ -1282,12 +1282,10 @@ class contadores_lines(models.Model):
 
     @api.onchange('serie')
     def ubicacion(self):
-        if(self.serie.x_studio_move_line):
-            if(len(self.serie.x_studio_move_line)>0):
-                m=self.serie.x_studio_move_line.sorted(key='id',reverse=True)
-                if(m[0].location_dest_id.x_studio_field_JoD2k):
-                    if(m[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z):
-                        self.origen=m[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
+        m=self.serie.x_studio_localidad_2
+        if(m):
+           self.origen=m.id
+                    
                     
     def cambio(self):
         if(self.servicio1 and (self.tipo=='2' or self.tipo=='3')):
@@ -1301,7 +1299,7 @@ class contadores_lines(models.Model):
             self.serie.write({'x_studio_cliente':self.destino.parent_id.id,'x_studio_localidad_2':self.destino.id})
             self.serie.x_studio_cambio = not self.serie.x_studio_cambio
             self.estado='2'
-            self.serie.x_studio_ubicacion_id=destino2.lot_stock_id.id
+            #self.serie.x_studio_ubicacion_id=destino2.lot_stock_id.id
 
 
             
