@@ -1354,3 +1354,14 @@ class detalleTicket(TransientModel):
             dos=self.ticket.mapped('x_studio_equipo_por_nmero_de_serie_1.serie.id')
             self.series=[(5,0,0)]
             self.series=uno if(uno!=[]) else dos
+
+
+class reporteCreacionRuta(TransientModel):
+    _name='reporte.creacion.ruta'
+    _description='Reporte de creacion de ruta'
+    name=fields.Char()
+
+    def reporte(self):
+        ordenes=self.env['creacion.ruta'].search([['ordenes','!=',False]])
+        ordenes[0].write({'arreglo':ordenes.mapped('id')})
+        return self.env.ref('stock_picking_mass_action.ruta_xlsx').report_action(ordenes[0])

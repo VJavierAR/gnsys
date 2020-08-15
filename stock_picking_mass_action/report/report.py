@@ -420,3 +420,33 @@ class PartnerXlsx(models.AbstractModel):
         sheet.add_table('A2:O'+str(i),{'columns': [{'header': 'NO TRNSFER'},{'header': 'PROVEEDOR'},{'header': 'RUBRO'},{'header':'APLICACIÓN '},{'header': 'CONCEPTO'},{'header': 'UBICACIÓN'},{'header': 'FECHA DE FACTURA'},{'header': 'FACTURA'},{'header': 'IMPORTE'},{'header': 'IVA'},{'header': 'TOTAL MN'},{'header': 'RECIBE PARA PAGO'},{'header': 'FECHA DE PAGO'},{'header': 'BANCO'},{'header': 'REFERENCIA'}]}) 
         workbook.close()  
 
+class RutaXlsx(models.AbstractModel):
+    _name = 'report.ruta.report'
+    _inherit = 'report.report_xlsx.abstract'
+
+    def generate_xlsx_report(self, workbook, data, ruta):
+        i=2
+        d=[]
+        if(len(ruta)==1 and ruta.arreglo!='/' and ruta.arreglo!=False):
+            copia=ruta
+            ruta=self.env['creacion.ruta'].browse(eval(ruta.arreglo))
+            copia.write({'arreglo':'/'})
+        merge_format = workbook.add_format({'bold': 1,'border': 1,'align': 'center','valign': 'vcenter','fg_color': 'blue'})
+        report_name = 'Expedición'
+        bold = workbook.add_format({'bold': True})
+        sheet = workbook.add_worksheet('Expedición')
+        sheet.merge_range('A1:I1', 'Reporte Expedición', merge_format)
+        for obj in compras:
+            for orden in obj.ordenes:
+                sheet.write(i, 0, obj.name if(obj.name) else '', bold)
+                sheet.write(i, 1, obj.chofer.name if(obj.chofer) else '', bold)
+                sheet.write(i, 2, obj.vehiculo.name if(obj.vehiculo) else '', bold)
+                sheet.write(i, 3, obj.tipo if(obj.tipo) else '', bold)
+                sheet.write(i, 4, obj.estado if(obj.estado) else '', bold)            
+                sheet.write(i, 5, obj.zona if(obj.zona) else '', bold)
+                sheet.write(i, 6, orden.x_studio_ticket if(orden.x_studio_ticket) else '', bold)
+                sheet.write(i, 7, orden.origin if(orden.origin) else '', bold)
+                sheet.write(i, 8, orden.partner_id.name if(orden.partner_id.name) else '', bold)
+                i=i+1
+        sheet.add_table('A2:I'+str(i),{'columns': [{'header': 'Expedición'},{'header': 'chofer'},{'header': 'vehiculo'},{'header':'Tipo'},{'header': 'Estado'},{'header': 'Zona'},{'header': 'Ticket'},{'header': 'Orden'},{'header': 'Cliente'}]}) 
+        workbook.close()  
