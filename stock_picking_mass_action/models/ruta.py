@@ -22,6 +22,7 @@ class CreacionRuta(Model):
     #almacen=fields.Many2one('stock.warehouse')
     #picking_type=fields.Many2many('stock.picking.type')
     usuarios=fields.Many2many('res.users')
+    arreglo=fields.Char()
     
     @api.multi
     def confirmar(self):
