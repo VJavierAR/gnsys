@@ -23,7 +23,7 @@ class CreacionRuta(Model):
     #picking_type=fields.Many2many('stock.picking.type')
     usuarios=fields.Many2many('res.users')
     arreglo=fields.Char()
-    
+    active = fields.Boolean('Active', default=True, track_visibility=True)
     @api.multi
     def confirmar(self):
         t=""
