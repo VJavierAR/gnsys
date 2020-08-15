@@ -1438,12 +1438,13 @@
                 
                 <group>
                     <group>
-                        <field name="productos" string="Productos " domain="[]" options="{'no_create_edit': True, 'no_create': True}" readonly='0' >
+                        <field name="productos" string="Refacciones y accesorios " domain="['|', '|', '|', ('categ_id', '=', 7), ('categ_id', '=', 9), ('categ_id', '=', 10), ('categ_id', '=', 11) ]" options="{'no_create_edit': True, 'no_create': True}" readonly='0' >
                             <tree string="Productos" editable="bottom" >
-                                <field name='product_variant_id' string='Producto' />
                                 <field name='categ_id' string='Categoría del producto' readonly='1'/>
+                                <field name='product_variant_id' string='Producto' />
                                 <field name='default_code' string='Referencia interna' readonly='1'/>
                                 <field name='name' string='Nombre' readonly='1'/>
+                                <field name='description' string='Descripción' readonly='1'/>
                                 <field name='qty_available' string='Cantidad a mano' />
                                 <field name='virtual_available' string='Cantidad prevista' />
                                 <field name='x_studio_cantidad_pedida' string='Cantidad a pedir' />
@@ -1479,10 +1480,14 @@
                 <group>
                     <group>
                         <field name='ticket_id' readonly='1' options="{'no_create_edit': True, 'no_create': True}" />
+                    </group>
+                    <group>
                         <field name='estadoSolicitud' readonly='1' />
                         <field name='solicitud' readonly='1' options="{'no_create_edit': True, 'no_create': True}" />
-
                     </group>
+                </group>
+                <group>
+                    <field name='serie' readonly='1' widget='html' />
                 </group>
                 
                 <group>
@@ -1543,12 +1548,13 @@
                                     <field name='activar_compatibilidad' />
                                 </group>
                                 <group>
-                                    <field name="productos" string="Refacciones y accesorios " domain="[]" options="{'no_create_edit': True, 'no_create': True}" readonly='0' >
+                                    <field name="productos" string="Refacciones y accesorios " domain="['|', '|', '|', ('categ_id', '=', 7), ('categ_id', '=', 9), ('categ_id', '=', 10), ('categ_id', '=', 11) ]" options="{'no_create_edit': True, 'no_create': True}" readonly='0' >
                                         <tree string="Productos" editable="bottom" >
-                                            <field name='product_variant_id' string='Producto' />
                                             <field name='categ_id' string='Categoría del producto' readonly='1'/>
+                                            <field name='product_variant_id' string='Producto' />
                                             <field name='default_code' string='Referencia interna' readonly='1'/>
                                             <field name='name' string='Nombre' readonly='1'/>
+                                            <field name='description' string='Descripción' readonly='1'/>
                                             <field name='qty_available' string='Cantidad a mano' />
                                             <field name='virtual_available' string='Cantidad prevista' />
                                             <field name='x_studio_cantidad_pedida' string='Cantidad a pedir' />

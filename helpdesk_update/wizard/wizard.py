@@ -1342,49 +1342,78 @@ class helpdesk_crearconserie(TransientModel):
                     'context': self.env.context,
                     }
         elif self.clienteRelacion.id and self.localidadRelacion.id:
-          messageTemp = ''
-          ticket = self.env['helpdesk.ticket'].create({'stage_id': 89 
-                                              #,'x_studio_equipo_por_nmero_de_serie': [(6,0,self.serie.ids)]
-                                              ,'partner_id': int(self.idCliente)
-                                              ,'x_studio_empresas_relacionadas': int(self.idLocaliidad)
-                                              ,'team_id': equipoDeUsuario
-                                              ,'x_studio_field_6furK': self.zonaLocalidad
-                                              })
-          ticket.write({'partner_id': int(self.idCliente)
-                      ,'x_studio_empresas_relacionadas': int(self.idLocaliidad)
-                      ,'team_id': equipoDeUsuario
-                      ,'x_studio_field_6furK': self.zonaLocalidad
-                      })
-          if self.contactoInterno:
-                query = "update helpdesk_ticket set \"contactoInterno\" = " + str(self.contactoInterno.id) + " where id = " + str(ticket.id) + ";"
-                self.env.cr.execute(query)
-                self.env.cr.commit()
-          #query = "update helpdesk_ticket set \"partner_id\" = " + str(self.idCliente) + ", \"x_studio_empresas_relacionadas\" =" + str(self.idLocaliidad) + " where id = " + str(ticket.id) + ";"
-          #self.env.cr.execute(query)
-          #self.env.cr.commit()
-          ticket._compute_datosCliente()
-          #query = "select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!=" + str(ticket.x_studio_id_ticket) + "  and h.stage_id!=18 and h.team_id!=8 and  h.active='t' and stock_production_lot_id = " +  str(ticket.x_studio_equipo_por_nmero_de_serie[0].id) + " limit 1;"            
-          #self.env.cr.execute(query)                        
-          #informacion = self.env.cr.fetchall()
-          wiz = ''
-          mensajeTitulo = "Ticket generado!!!"
-          #mensajeCuerpo = "Se creo el ticket '" + str(ticket.id) + "' sin número de serie para cliente " + self.cliente + " con localidad " + self.localidad + "\n\n"
-          mensajeCuerpo = "Se creo el ticket '" + str(ticket.id) + "' sin número de serie. \n\n"
-          wiz = self.env['helpdesk.alerta.series'].create({'ticket_id': ticket.id, 'mensaje': mensajeCuerpo})
-          view = self.env.ref('helpdesk_update.view_helpdesk_alerta_series')
-          return {
-                  'name': _(mensajeTitulo),
-                  'type': 'ir.actions.act_window',
-                  'view_type': 'form',
-                  'view_mode': 'form',
-                  'res_model': 'helpdesk.alerta.series',
-                  'views': [(view.id, 'form')],
-                  'view_id': view.id,
-                  'target': 'new',
-                  'res_id': wiz.id,
-                  'context': self.env.context,
-                  }
+          query = "select helpdesk_team_id from helpdesk_team_res_users_rel where res_users_id = " + str(self.env.user.id) + ";"
+          self.env.cr.execute(query)
+          resultadoQuery = self.env.cr.fetchall()
+          puedoCrearSinSerie = False
+          for resultado in resultadoQuery:
+            if resultado[0] == 9:
+                puedoCrearSinSerie = True
+                break
+          if puedoCrearSinSerie:
+              #equiposRelacionados = self.env['helpdesk_team_res_users_rel'].search([['res_users_id', '=', self.env.user.id]]).helpdesk_team_id
+              _logger.info('3312 equiposRelacionados resultadoQuery: ' + str(resultadoQuery) )
 
+              messageTemp = ''
+              ticket = self.env['helpdesk.ticket'].create({'stage_id': 89 
+                                                  #,'x_studio_equipo_por_nmero_de_serie': [(6,0,self.serie.ids)]
+                                                  ,'partner_id': int(self.idCliente)
+                                                  ,'x_studio_empresas_relacionadas': int(self.idLocaliidad)
+                                                  ,'team_id': equipoDeUsuario
+                                                  ,'x_studio_field_6furK': self.zonaLocalidad
+                                                  })
+              ticket.write({'partner_id': int(self.idCliente)
+                          ,'x_studio_empresas_relacionadas': int(self.idLocaliidad)
+                          ,'team_id': equipoDeUsuario
+                          ,'x_studio_field_6furK': self.zonaLocalidad
+                          })
+              if self.contactoInterno:
+                    query = "update helpdesk_ticket set \"contactoInterno\" = " + str(self.contactoInterno.id) + " where id = " + str(ticket.id) + ";"
+                    self.env.cr.execute(query)
+                    self.env.cr.commit()
+              #query = "update helpdesk_ticket set \"partner_id\" = " + str(self.idCliente) + ", \"x_studio_empresas_relacionadas\" =" + str(self.idLocaliidad) + " where id = " + str(ticket.id) + ";"
+              #self.env.cr.execute(query)
+              #self.env.cr.commit()
+              ticket._compute_datosCliente()
+              #query = "select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!=" + str(ticket.x_studio_id_ticket) + "  and h.stage_id!=18 and h.team_id!=8 and  h.active='t' and stock_production_lot_id = " +  str(ticket.x_studio_equipo_por_nmero_de_serie[0].id) + " limit 1;"            
+              #self.env.cr.execute(query)                        
+              #informacion = self.env.cr.fetchall()
+              wiz = ''
+              mensajeTitulo = "Ticket generado!!!"
+              #mensajeCuerpo = "Se creo el ticket '" + str(ticket.id) + "' sin número de serie para cliente " + self.cliente + " con localidad " + self.localidad + "\n\n"
+              mensajeCuerpo = "Se creo el ticket '" + str(ticket.id) + "' sin número de serie. \n\n"
+              wiz = self.env['helpdesk.alerta.series'].create({'ticket_id': ticket.id, 'mensaje': mensajeCuerpo})
+              view = self.env.ref('helpdesk_update.view_helpdesk_alerta_series')
+              return {
+                      'name': _(mensajeTitulo),
+                      'type': 'ir.actions.act_window',
+                      'view_type': 'form',
+                      'view_mode': 'form',
+                      'res_model': 'helpdesk.alerta.series',
+                      'views': [(view.id, 'form')],
+                      'view_id': view.id,
+                      'target': 'new',
+                      'res_id': wiz.id,
+                      'context': self.env.context,
+                      }
+          else:
+            mensajeTitulo = 'No se puede generar ticket sin serie!!!'
+            mensajeCuerpo = 'El usuario no es de mesa de Servicio y no tiene los permisos para crear un ticket sin serie.'
+            #wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
+            wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
+            view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+            return {
+                    'name': _(mensajeTitulo),
+                    'type': 'ir.actions.act_window',
+                    'view_type': 'form',
+                    'view_mode': 'form',
+                    'res_model': 'helpdesk.alerta',
+                    'views': [(view.id, 'form')],
+                    'view_id': view.id,
+                    'target': 'new',
+                    'res_id': wiz.id,
+                    'context': self.env.context,
+                    }
 
 
 
@@ -5139,7 +5168,7 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
         
     def _compute_estado_solicitud(self):
         if self.ticket_id.x_studio_field_nO7Xg:
-            if self.ticket_id.x_studio_field_nO7Xg.state.name == 'sale':
+            if self.ticket_id.x_studio_field_nO7Xg.state == 'sale':
                 self.estadoSolicitud = 'Solicitud validada'
             else:
                 self.estadoSolicitud = 'Solicitud no validada'
@@ -5155,7 +5184,27 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
 
     def _compute_serie_nombre(self):
         if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
-            self.serie = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].name
+            #self.serie = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].name
+            self.serie = """
+
+                            <table class='table table-bordered table-dark text-white'>
+                                <thead >
+                                    <tr>
+                                        <th scope='col'>Número de serie</th>
+                                        <th scope='col'>Modelo</th>
+                                        <th scope='col'>Descripción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>""" + str(self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].name) + """</td>
+                                        <td>""" + str(self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_modelo_equipo) + """</td>
+                                        <td>""" + str(self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].product_id.description) + """</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        """
+
 
     """
     def _compute_historico_tickets(self):
