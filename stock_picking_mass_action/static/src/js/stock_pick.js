@@ -49,11 +49,27 @@ odoo.define('invoice.action_button', function (require) {
                         this.$buttons.find('.oe_action_button_product_product').click(this.proxy('action_inter7'));
                         this.$buttons.find('.oe_action_button_product_product_one').click(this.proxy('action_inter9'));
                         this.$buttons.find('.oe_action_button_stock_quant').click(this.proxy('action_inter3'));
+                        this.$buttons.find('.oe_action_button_creacion_ruta').click(this.proxy('action_inter12')); 
                         
                     }
                 }
                 
             }
+        },
+        action_inter12: function (e) {
+            var self = this
+            var user = session.uid;
+            self.do_action({
+                name: _t('Reporte de expedición'),
+                type : 'ir.actions.act_window',
+                res_model: 'reporte.creacion.ruta',
+                view_type: 'form',
+                view_mode: 'form',
+                view_id: 'view_reporte_creacion_ruta_action_form',
+                views: [[false, 'form']],
+                target: 'new',
+            
+            });
         },
         action_inter11: function (e) {
             var self = this
