@@ -436,7 +436,7 @@ class RutaXlsx(models.AbstractModel):
         bold = workbook.add_format({'bold': True})
         sheet = workbook.add_worksheet('Expedición')
         sheet.merge_range('A1:I1', 'Reporte Expedición', merge_format)
-        for obj in compras:
+        for obj in ruta:
             for orden in obj.ordenes:
                 sheet.write(i, 0, obj.name if(obj.name) else '', bold)
                 sheet.write(i, 1, obj.chofer.name if(obj.chofer) else '', bold)
