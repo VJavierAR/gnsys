@@ -1642,7 +1642,7 @@ class helpdesk_update(models.Model):
                                                             'mostrarComentario': True,
                                                             'write_uid':  self.env.user.id,
                                                             'create_uid':  self.env.user.id,
-                                                            'creadoPorSistema': False
+                                                            'creadoPorSistema': True
                                                         })
 
         mensajeTitulo = 'Estado de ticket actualizado!!!'
@@ -1969,7 +1969,7 @@ class helpdesk_update(models.Model):
 
                         _logger.info('3312: Creado pedido de venta: productos cargados ')
 
-                        
+
                         sale = record.x_studio_field_nO7Xg
                         if sale.id != 0 or record.x_studio_productos != []:
                             if self.x_studio_field_nO7Xg.order_line:
