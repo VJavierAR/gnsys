@@ -332,16 +332,18 @@ class StockCambio(TransientModel):
             if(ubicacion and (productos or cantidades)):
                 pic=self.env['stock.picking'].search([['location_id','=',orden.warehouse_id.lot_stock_id.id]])
                 pic.do_unreserve()
+                _logger.info(str('1'))
                 for t in temp:
                     dd=pic.move_ids_without_package.search([['sale_line_id','=',t['sale_line_id']],['product_id','=',t['product_id']]])
                     dd.write({'location_id':t['location_id']})
-                pic.action_assign()
+                #pic.action_assign()
             if(ubicacion and not(productos or cantidades)):
                 self.pick.do_unreserve()
+                _logger.info(str('2'))
                 for d in data:
                     if(d.almacen.id):
                         d.move_id.write({'location_id':d.almacen.lot_stock_id.id})
-                self.pick.action_assign()
+                #self.pick.action_assign()
 
                 
     def confirmarE(self,equipos):
