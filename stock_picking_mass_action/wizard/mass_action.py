@@ -296,72 +296,54 @@ class StockCambio(TransientModel):
         if(self.pick.sale_id):
             i=0
             self.pick.backorder=''
+            orden=self.env['sale.order'].browse(self.pick.sale_id.id)
+            lenOrderLine=len(orden.order_line)
             dt=[]
             al=[]
             cantidades=False
-            #self.pick.sale_id.saleLinesMove()
-            for sa in self.pick.move_ids_without_package.filtered(lambda x:x.product_id.categ_id.id!=13):
-                copia=sa.location_dest_id.id
-                d=list(filter(lambda x:x['producto1']['id']==sa.product_id.id,data))
-                if(d!=[]):
-                    if(sa.product_id.id!=d[0]['producto2']['id']):
-                        self.env.cr.execute("delete from stock_move_line where reference='"+self.pick.name+"' and product_id="+str(sa.product_id.id)+";")
-                        self.env.cr.execute("delete from stock_move where origin='"+self.pick.sale_id.name+"' and product_id="+str(sa.product_id.id)+";")
-                        #if(len(self.pick.sale_id.order_line)!=0):
-                        #    self.env.cr.execute("delete from sale_order_line where id="+str(sa.sale_line_id.id)+";")
-                        #if(i==0):
-                        #    self.env.cr.execute("update stock_picking set state='draft' where sale_id="+str(self.pick.sale_id.id)+";")
-                        i=i+1
-                        #l=self.env['stock.production.lot'].search([['name','=',d[0]['serie']]])
-                        datos={'x_studio_field_9nQhR':d[0]['serie']['id'],'order_id':self.pick.sale_id.id,'product_id':d[0]['producto2']['id'],'product_uom':d[0]['producto2']['uom_id']['id'],'product_uom_qty':d[0]['cantidad'],'name':d[0]['producto2']['description'] if(d[0]['producto2']['description']) else '/','price_unit':0.00}
-                        q=self.env['stock.quant'].search([['product_id','=',d[0]['producto1']['id']],['location_id','=',self.pick.location_id.id]],limit=1)
-                        q.sudo().write({'quantity':q.quantity-d[0]['cantidad']})
-                        ss=self.env['sale.order.line'].sudo().create(datos)
-                    if(d[0]['almacen']['id']):
-                        self.env['stock.move'].search([['picking_id.sale_id','=',self.pick.sale_id.id],['product_id','=',d[0]['producto2']['id']]]).write({'location_id':d[0]['almacen']['lot_stock_id']['id'],'location_dest_id':copia})
-                    else:
-                        if(d[0]['almacen']['id']):
-                            self.env['stock.move'].search([['origin','=',str(self.pick.sale_id.name)],['product_id','=',d[0]['producto2']['id']]]).write({'location_dest_id':copia,'location_id':d[0]['almacen']['lot_stock_id']['id']})
-                    if(d[0]['cantidad']!=d[0]['cantidad2']):
-                        cantidades=True
-            for mov in self.pick.move_ids_without_package.filtered(lambda x:x.product_id.categ_id.id!=13):
-                if(cantidades):
-                    d=list(filter(lambda x:x['producto1']['id']==mov.product_id.id,data))
-                    if(mov.reserved_availability>=d[0]['cantidad2']):
-                        self.env['stock.move.line'].search([['move_id','=',mov.id]]).write({'qty_done':d[0]['cantidad2']})
+            productos=False
+            ubicacion=False
+            temp=[]
+            ruta=orden.mapped('order_line.route_id.id')
+            if(lenOrderLine!=len(data)):
+                productos=True
+            for d in data:
+                if(data.producto1.id!=data.producto2.id):
+                    productos=True
+                if(data.cantidad!=data.cantidad2):
+                    cantidades=True
+                if(data.almacen.id):
+                    ubicacion=True
+            if(productos or cantidades):
+                orden.action_cancel()
+                orden.action_draft()
+                self.env['stock.picking'].search([['sale_id','=',orden.id]]).unlink()
+                self.env['sale.order.line'].search([['order_id','=',orden.id]]).unlink()
+                orden.action_confirm()
+                for d in data:
+                    datos={'x_studio_field_9nQhR':d.serie.id,'order_id':orden.id,'product_id':d.producto2.id,'product_uom':d.producto2.uom_id.id,'product_uom_qty':d.cantidad2,'name':d.producto2.description if(d.producto2.description) else '/','price_unit':0.00}
+                    if(ruta!=[]):
+                        datos['route_id']=ruta[0]
+                    ss=self.env['sale.order.line'].sudo().create(datos)
+                    if(ubicacion):
+                        temp.append({'sale_line_id':ss.id,'product_id':d.producto2.id,'location_id':d.almacen.lot_stock_id.id})
+            orden.saleLinesMove()
+            _logger.info(str(ubicacion))
+            if(ubicacion and (productos or cantidades)):
+                pic=self.env['stock.picking'].search([['location_id','=',orden.warehouse_id.lot_stock_id.id]])
+                pic.do_unreserve()
+                for t in temp:
+                    dd=pic.move_ids_without_package.search([['sale_line_id','=',t['sale_line_id']],['product_id','=',t['product_id']]])
+                    dd.write({'location_id':t['location_id']})
+                pic.action_assign()
+            if(ubicacion and not(productos or cantidades)):
+                self.pick.do_unreserve()
+                for d in data:
+                    if(d.almacen.id):
+                        d.move_id.write({'location_id':d.almacen.lot_stock_id.id})
+                self.pick.action_assign()
 
-    
-
-
-
-        """
-            for prp in self.pro_ids:
-                if(prp.producto1.id !=prp.producto2.id):
-                    dt.append(prp.producto1.id)
-                    dat={'producto':prp.producto1.id,'almacen':prp.almacen.lot_stock_id.id}
-                    al.append(dat)
-            for s in self.pick.sale_id.order_line:
-                if(s.product_id.id in dt):
-                    i=i+1
-
-            if(i>0):
-                self.env.cr.execute("update stock_picking set state='draft' where sale_id="+str(self.pick.sale_id.id)+";")
-                for li in self.pro_ids:
-                    if(s.product_id.id in dt):
-                        l=self.env['stock.production.lot'].search([['name','=',li.serie]])
-                        datos={'x_studio_field_9nQhR':l.id,'order_id':self.pick.sale_id.id,'product_id':li.producto2.id,'product_uom':li.producto2.uom_id.id,'product_uom_qty':li.cantidad,'name':li.producto2.description if(li.producto2.description) else '/','price_unit':0.00}
-                        ss=self.env['sale.order.line'].sudo().create(datos)
-            
-            for p1 in self.pick.move_ids_without_package:
-                    if(i>0):
-                    else:
-                        if()
-
-                    if(p1.product_id.id in dt):
-                            alm2=list(filter(lambda x:x['producto']==p1.product_id.id,al))
-                            if(alm2!=[]):
-                                p1.write({'location_id':alm2[0]['almacen']})
-        """
+                
     def confirmarE(self,equipos):
         for s in equipos:
             d=self.env['stock.move.line'].search([['move_id','=',s.move_id.id]])

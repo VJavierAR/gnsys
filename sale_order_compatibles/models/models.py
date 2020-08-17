@@ -208,7 +208,7 @@ class sale_update(models.Model):
 			i=0
 			for pi in p.move_ids_without_package.sorted(key='id'):
 				pi.write({'sale_line_id':sal[i]})
-				if(p.picking_type_id.code=='outgoing'):
+				if(p.picking_type_id.code=='outgoing' and 'REFACCIONES' not in p.sale_id.warehouse_id.name):
 					almacen=self.env['stock.warehouse'].search([['x_studio_field_E0H1Z','=',cliente.id]])
 					if(almacen.id!=False):
 						pi.write({'location_dest_id':almacen.lot_stock_id.id})
