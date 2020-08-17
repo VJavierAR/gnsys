@@ -258,7 +258,7 @@ class fac_order(models.Model):
 
 
                               self.env['sale.order.detalle'].create({'saleOrder': sale.id
-                                                                       ,'producto': k.product_id.display_name
+                                                                       ,'producto': k.product_id.name
                                                                        ,'serieEquipo': k.name
                                                                        ,'locacion':k.x_studio_locacion_recortada
                                                                        , 'ultimaLecturaBN': currentP.contadorMono
@@ -485,7 +485,7 @@ class detalle(models.Model):
             sale=self.env['sale.order'].search([('name', '=', self.name)])
             for h in p:
                   self.env['sale.order.detalle'].create({'saleOrder': sale.id
-                                                         , 'producto': h.product_id.display_name
+                                                         , 'producto': h.product_id.name
                                                          , 'serieEquipo': h.name
                                                          
                                                          , 'ultimaLecturaBN': h.x_studio_ultimalecturam
