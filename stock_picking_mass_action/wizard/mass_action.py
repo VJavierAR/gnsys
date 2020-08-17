@@ -1347,3 +1347,22 @@ class reporteCreacionRuta(TransientModel):
         d=self.env['creacion.ruta'].search([['ordenes','!=',False]])
         d[0].write({'arreglo':d.mapped('id')})
         return self.env.ref('stock_picking_mass_action.ruta_xlsx').report_action(d[0])
+
+class agregarConcentrado(TransientModel):
+    _name='stock.picking.mass.concentrado'
+    _description='Agregar concentrado'
+    def _default_picking_ids(self):
+        return self.env['stock.picking'].browse(
+            self.env.context.get('active_ids'))
+    picking_ids = fields.Many2many(
+        string='Pickings',
+        comodel_name="stock.picking",
+        default=lambda self: self._default_picking_ids(),
+        help="",
+    )
+
+    def concentrar(self):
+        CON=str(self.env['ir.sequence'].next_by_code('concentrado'))
+        for pic in picking_ids:
+            self.env['stock.picking'].search([['sale_id','=',pic.sale_id.id]]).write({'concentrado':CON})
+        return self.env.ref('stock_picking_mass_action.report_custom').report_action(self.picking_ids)

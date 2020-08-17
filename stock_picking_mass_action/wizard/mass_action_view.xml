@@ -1,5 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="action_transfer" model="ir.actions.act_window">
+        <field name="name">Concentrado</field>
+        <field name="res_model">stock.picking.mass.concentrado</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{}</field>
+        <field name="binding_model_id" ref="stock.model_stock_picking" />
+    </record>
+    <record id="view_agregar_concentrado_action_form" model="ir.ui.view">
+        <field name="model">stock.picking.mass.concentrado</field>
+        <field name="arch" type="xml">
+            <form string="Mass Action for the selected sale order">
+                <h1>Se agregaran las ordenes en un concentrado</h1>
+                <footer>
+                    <button name="concentrar" string="Agregar" type="object" class="oe_highlight"/>
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
     <record id="view_reporte_creacion_ruta_action_form" model="ir.ui.view">
         <field name="model">reporte.creacion.ruta</field>
         <field name="arch" type="xml">
