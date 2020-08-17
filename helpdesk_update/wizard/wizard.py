@@ -1683,8 +1683,9 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                     _logger.info("ticket.stage_id.id = " + str(ticket.stage_id.id))
                     _logger.info("ticket.x_studio_field_nO7Xg = " + str(ticket.x_studio_field_nO7Xg))
                     #self.stage_id.id = 93
-                    query = "update helpdesk_ticket set stage_id = 93 where id = " + str(ticket.x_studio_id_ticket) + ";"
-                    ss = self.env.cr.execute(query)
+                    
+                    #query = "update helpdesk_ticket set stage_id = 93 where id = " + str(ticket.x_studio_id_ticket) + ";"
+                    #ss = self.env.cr.execute(query)
                     break
                 if ticket.team_id.id == 8 or ticket.team_id.id == 13:
                     x = 1 ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
@@ -1963,9 +1964,9 @@ class CrearYValidarSolTonerMassAction(TransientModel):
         mensajeCuerpo = "Se crearon y validaron las solicitudes de los tickets. \n\n"
 
         for ticket in listaDeTicketsValidados:
-            query = "update helpdesk_ticket set stage_id = 93 where id = " + str(ticket) + ";"
-            ss = self.env.cr.execute(query)
-            self.env.cr.commit()
+            #query = "update helpdesk_ticket set stage_id = 93 where id = " + str(ticket) + ";"
+            #ss = self.env.cr.execute(query)
+            #self.env.cr.commit()
             mensajeCuerpo = mensajeCuerpo + str(ticket) + ', '
 
         mensajeCuerpo = mensajeCuerpo + '\n\nLos siguientes tickets ya contaban con Solicitudes creadas por lo cual no fueron validados. \n\n'

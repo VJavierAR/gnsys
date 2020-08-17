@@ -2641,8 +2641,9 @@ class helpdesk_update(models.Model):
                     _logger.info("record.stage_id.id = " + str(record.stage_id.id))
                     _logger.info("record.x_studio_field_nO7Xg = " + str(record.x_studio_field_nO7Xg))
                     #self.stage_id.id = 93
-                    query = "update helpdesk_ticket set stage_id = 93 where id = " + str(self.x_studio_id_ticket) + ";"
-                    ss = self.env.cr.execute(query)
+                    
+                    #query = "update helpdesk_ticket set stage_id = 93 where id = " + str(self.x_studio_id_ticket) + ";"
+                    #ss = self.env.cr.execute(query)
                     break
                 if record.team_id.id == 8 or record.team_id.id == 13:
                     x = 1 ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
@@ -2844,10 +2845,10 @@ class helpdesk_update(models.Model):
                     if self.x_studio_id_ticket:
                         estadoAntes = str(self.stage_id.name)
                         if self.estadoSolicitudDeToner == False:    
-                            query = "update helpdesk_ticket set stage_id = 93 where id = " + str(self.x_studio_id_ticket) + ";"
-                            ss = self.env.cr.execute(query)
+                            #query = "update helpdesk_ticket set stage_id = 93 where id = " + str(self.x_studio_id_ticket) + ";"
+                            #ss = self.env.cr.execute(query)
                             
-                            message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: En almacén' + ". " + "\n\nSolicitud " + str(saleTemp.name) + " generada" + "\n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
+                            message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes +  ". " + "\n\nSolicitud " + str(saleTemp.name) + " generada" + "\n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
                             mess= {
                                     'title': _('Estado de ticket actualizado!!!'),
                                     'message' : message
@@ -3116,8 +3117,8 @@ class helpdesk_update(models.Model):
                 if self.x_studio_id_ticket:
                     estadoAntes = str(self.stage_id.name)
                     if self.estadoSolicitudDeToner == False:    
-                        query = "update helpdesk_ticket set stage_id = 93 where id = " + str(self.x_studio_id_ticket) + ";"
-                        ss = self.env.cr.execute(query)
+                        #query = "update helpdesk_ticket set stage_id = 93 where id = " + str(self.x_studio_id_ticket) + ";"
+                        #ss = self.env.cr.execute(query)
                         
                         message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: En almacén' + ". " + "\n\nSolicitud " + str(saleTemp.name) + " generada" + "\n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
                         mess= {
