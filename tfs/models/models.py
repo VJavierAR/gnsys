@@ -234,8 +234,8 @@ class tfs(models.Model):
                     des['location_id']=17
                     des['picking_id']=pick_dest.id
                     m=self.env['stock.move'].create(des)
-                    #des['move_id']=m.id
-                    #self.env['stock.move.line'].create(des)
+                    des['move_id']=m.id
+                    self.env['stock.move.line'].create(des)
                 sale.action_confirm()
                 ww=self.env['stock.picking'].search([['sale_id','=',sale.id],['picking_type_id.code','=','outgoing']])
                 ww.write({'location_dest_id':17})
