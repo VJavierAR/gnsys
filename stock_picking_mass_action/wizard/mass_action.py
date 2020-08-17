@@ -1363,6 +1363,6 @@ class agregarConcentrado(TransientModel):
 
     def concentrar(self):
         CON=str(self.env['ir.sequence'].next_by_code('concentrado'))
-        for pic in picking_ids:
+        for pic in self.picking_ids:
             self.env['stock.picking'].search([['sale_id','=',pic.sale_id.id]]).write({'concentrado':CON})
         return self.env.ref('stock_picking_mass_action.report_custom').report_action(self.picking_ids)
