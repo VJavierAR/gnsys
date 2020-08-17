@@ -135,7 +135,7 @@ class helpdesk_update(models.Model):
                     objTicket.diagnosticos[i].create_date = fecha
                     i = i + 1
 
-
+    
     #priority = fields.Selection([('all','Todas'),('baja','Baja'),('media','Media'),('alta','Alta'),('critica','Critica')])
     x_studio_field_6furK = fields.Selection([('CHIHUAHUA','CHIHUAHUA'), ('SUR','SUR'),('NORTE','NORTE'),('PONIENTE','PONIENTE'),('ORIENTE','ORIENTE'),('CENTRO','CENTRO'),('DISTRIBUIDOR','DISTRIBUIDOR'),('MONTERREY','MONTERREY'),('CUERNAVACA','CUERNAVACA'),('GUADALAJARA','GUADALAJARA'),('QUERETARO','QUERETARO'),('CANCUN','CANCUN'),('VERACRUZ','VERACRUZ'),('PUEBLA','PUEBLA'),('TOLUCA','TOLUCA'),('LEON','LEON'),('COMODIN','COMODIN'),('VILLAHERMOSA','VILLAHERMOSA'),('MERIDA','MERIDA'),('ALTAMIRA','ALTAMIRA'),('COMODIN','COMODIN'),('DF00','DF00'),('SAN LP','SAN LP'),('ESTADO DE MÉXICO','ESTADO DE MÉXICO'),('Foraneo Norte','Foraneo Norte'),('Foraneo Sur','Foraneo Sur')], string = 'Zona localidad', store = True, track_visibility='onchange')
     x_studio_zona = fields.Selection([('SUR','SUR'),('NORTE','NORTE'),('PONIENTE','PONIENTE'),('ORIENTE','ORIENTE'),('CENTRO','CENTRO'),('DISTRIBUIDOR','DISTRIBUIDOR'),('MONTERREY','MONTERREY'),('CUERNAVACA','CUERNAVACA'),('GUADALAJARA','GUADALAJARA'),('QUERETARO','QUERETARO'),('CANCUN','CANCUN'),('VERACRUZ','VERACRUZ'),('PUEBLA','PUEBLA'),('TOLUCA','TOLUCA'),('LEON','LEON'),('COMODIN','COMODIN'),('VILLAHERMOSA','VILLAHERMOSA'),('MERIDA','MERIDA'),('ALTAMIRA','ALTAMIRA'),('COMODIN','COMODIN'),('DF00','DF00'),('SAN LP','SAN LP'),('ESTADO DE MÉXICO','ESTADO DE MÉXICO'),('Foraneo Norte','Foraneo Norte'),('Foraneo Sur','Foraneo Sur'),('CHIHUAHUA','CHIHUAHUA')], string = 'Zona', store = True, track_visibility='onchange')
@@ -4306,6 +4306,18 @@ class helpdesk_update(models.Model):
     def helpdesk_confirmar_validar_refacciones_wizard(self):
         wiz = self.env['helpdesk.confirmar.validar.refacciones'].create({'ticket_id':self.id})
         wiz.productos = [(6, 0, self.x_studio_productos.ids)]
+        """
+        EN DESAROLLO
+        listaProductos = [(5, 0, 0)]
+        _logger.info('3312: self.x_studio_tickett: ' + str(self.x_studio_id_ticket))
+        for producto in self.x_studio_productos:
+            listaProductos.append((0, 0,{
+                                            'productos': producto.product_variant_id.id,
+                                            'cantidadPedida': producto.x_studio_cantidad_pedida,
+                                            'ticketRelacion': int(self.x_studio_id_ticket)
+                                        }))
+        wiz.productosDos = listaProductos
+        """
         wiz.contadoresAnterioresText = self.contadores_anteriores
         view = self.env.ref('helpdesk_update.view_helpdesk_crear_y_validar_refacciones')
         return {
@@ -4418,7 +4430,55 @@ class helpdesk_update(models.Model):
     #                 _logger.info('Hola-----1')
     #         self.requisicion=True
     #     return res
-        
+
+#EN DESAROLLO
+#class helpdes_refacciones(models.Model):
+#    _name = 'helpdesk.refacciones'
+#    _description = 'Refacciones modelo temporal'
+#
+#    ticketRelacion = fields.Many2one(
+#                                        'helpdesk.ticket', 
+#                                        string = 'Ticket realcionado a diagnostico'
+#                                    )
+#    productos = fields.Many2one(
+#                                    'product.product',
+#                                    string = 'Refacciones y accesorios'
+#                                )
+#    detalleDeProducto = fields.Text(
+#                                        string = 'Información de refacción o accesorio',
+#                                        compute = '_compute_detalle'
+#                                    )
+#    cantidadPedida = fields.Integer( 
+#                                        string = 'Cantidad a pedir'
+#                                    )
+#    @api.depends('productos')
+#    def _compute_detalle(self):
+#        if self.productos:
+#            self.detalleDeProducto = """
+#                                        <table class='table table-bordered table-dark text-white'>
+#                                            <thead >
+#                                                <tr>
+#                                                    <th scope='col'>Categoría del producto</th>
+#                                                    <th scope='col'>Referencia interna</th>
+#                                                    <th scope='col'>Nombre</th>
+#                                                    <th scope='col'>Descripción</th>
+#                                                    <th scope='col'>Cantidad a mano</th>
+#                                                    <th scope='col'>Cantidad prevista</th>
+#                                                </tr>
+#                                            </thead>
+#                                            <tbody>
+#                                                <tr>
+#                                                    <td>""" + str(self.productos.categ_id.name) + """</td>
+#                                                    <td>""" + str(self.productos.default_code) + """</td>
+#                                                    <td>""" + str(self.productos.name) + """</td>
+#                                                    <td>""" + str(self.productos.description) + """</td>
+#                                                    <td>""" + str(self.productos.qty_available) + """</td>
+#                                                    <td>""" + str(self.productos.virtual_available) + """</td>
+#                                                </tr>
+#                                            </tbody>
+#                                        </table>
+#                                    """
+
 class helpdes_diagnostico(models.Model):
     _name = "helpdesk.diagnostico"
     _description = "Historial de diagnostico"

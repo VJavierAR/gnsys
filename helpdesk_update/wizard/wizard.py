@@ -346,6 +346,8 @@ class HelpDeskCancelarConComentario(TransientModel):
 
     def cancelarTicketConComentario(self):
       #if self.ticket_id.stage_id.name == 'Resuelto' or self.ticket_id.stage_id.name == 'Abierto' or self.ticket_id.stage_id.name == 'Asignado' or self.ticket_id.stage_id.name == 'Atención' and self.ticket_id.estadoCerrado == False:
+      if self.ticket_id.x_studio_field_nO7Xg:
+        self.ticket_id.x_studio_field_nO7Xg.action_cancel()
       self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.ticket_id.id
                                               ,'comentario': self.comentario
                                               ,'estadoTicket': self.ticket_id.stage_id.name
@@ -2815,34 +2817,38 @@ class helpdesk_crearToner(TransientModel):
             textoHtml.append("</h3>")
             self.textoTicketExistente =  ''.join(textoHtml)
             
+            cliente = self.dca[0].serie.x_studio_cliente
+            localidad = self.dca[0].serie.x_studio_localidad_2
 
-            if self.dca[0].serie.x_studio_move_line and self.dca[0].serie.x_studio_move_line.sorted(key='date', reverse=True)[0].location_dest_id.x_studio_field_JoD2k:
+            if cliente and localidad:
                 moveLineOrdenado = self.dca[0].serie.x_studio_move_line.sorted(key="date", reverse=True)
-                self.cliente = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
-                self.tipoCliente = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.x_studio_nivel_del_cliente
-                self.localidad = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
-                self.zonaLocalidad = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.x_studio_field_SqU5B
-                self.estadoLocalidad = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.state_id.name
+                
+
+                self.cliente = cliente.id
+                self.tipoCliente = cliente.x_studio_nivel_del_cliente
+                self.localidad = localidad.id
+                self.zonaLocalidad = localidad.x_studio_field_SqU5B
+                self.estadoLocalidad = localidad.state_id.name
 
                 textoHtmlDireccion = []
 
-                textoHtmlDireccion.append('<p>Calle: ' + moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.street_name + '</p>')
-                textoHtmlDireccion.append('<p>Número exterior: ' + moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.street_number + '</p>')
-                textoHtmlDireccion.append('<p>Número interior: ' + moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.street_number2 + '</p>')
-                textoHtmlDireccion.append('<p>Colonia: ' + moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.l10n_mx_edi_colony + '</p>')
-                textoHtmlDireccion.append('<p>Alcaldía: ' + moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.city + '</p>')
-                textoHtmlDireccion.append('<p>Estado: ' + moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.state_id.name + '</p>')
-                textoHtmlDireccion.append('<p>Código postal: ' + moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.zip + '</p>')
+                textoHtmlDireccion.append('<p>Calle: ' + localidad.street_name + '</p>')
+                textoHtmlDireccion.append('<p>Número exterior: ' + localidad.street_number + '</p>')
+                textoHtmlDireccion.append('<p>Número interior: ' + localidad.street_number2 + '</p>')
+                textoHtmlDireccion.append('<p>Colonia: ' + localidad.l10n_mx_edi_colony + '</p>')
+                textoHtmlDireccion.append('<p>Alcaldía: ' + localidad.city + '</p>')
+                textoHtmlDireccion.append('<p>Estado: ' + localidad.state_id.name + '</p>')
+                textoHtmlDireccion.append('<p>Código postal: ' + localidad.zip + '</p>')
 
                 self.direccionLocalidad = ''.join(textoHtmlDireccion)
                 
                 #_my_object.write({'idCliente' : moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
                 #                ,'idLocaliidad': moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
                 #                })
-                loc = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
+                #loc = localidad.id
                 
                 
-                idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_ultimo_contacto', '=', True]], order='create_date desc', limit=1)
+                idLoc = self.env['res.partner'].search([['parent_id', '=', localidad.id],['x_studio_ultimo_contacto', '=', True]], order='create_date desc', limit=1)
                 
                 if idLoc:
                     self.localidadContacto = idLoc[0].id
@@ -2941,8 +2947,47 @@ class helpdesk_crearToner(TransientModel):
                                                             'ponerTicketEnEspera': self.ponerTicketEnEspera
                                                         })
             self.env.cr.commit()
-            listaDca = []
+            objTicket = self.env['helpdesk.ticket'].search([['id', '=', ticket.id]], order='create_date desc', limit=1)
+            listaDca = [(5, 0, 0)]
             for nuevoDca in self.dca:
+                query = """
+                            insert into dcas_dcas (\"serie\", \"colorEquipo\", \"ultimaUbicacion\",
+                                                    \"equipo\", \"contadorMono\", \"contadorAnteriorNegro\", 
+                                                    \"contadorColor\", \"contadorAnteriorColor\", \"x_studio_cartuchonefro\", 
+                                                    \"x_studio_rendimiento_negro\", \"porcentajeNegro\", \"x_studio_cartucho_amarillo\", 
+                                                    \"x_studio_rendimientoa\", \"porcentajeAmarillo\", \"x_studio_cartucho_cian_1\", 
+                                                    \"x_studio_rendimientoc\", \"porcentajeCian\", \"x_studio_cartucho_magenta\", 
+                                                    \"x_studio_rendimientom\", \"porcentajeMagenta\", \"tablahtml\", \"x_studio_tiquete\") 
+                                                    values (
+                                                    """ + str(nuevoDca.serie.id) + """,
+                                                    """ + str(nuevoDca.colorEquipo) + """,
+                                                    """ + str(nuevoDca.ultimaUbicacion) + """,
+                                                    """ + str(nuevoDca.equipo) + """,
+                                                    """ + str(nuevoDca.contadorMono) + """,
+                                                    """ + str(nuevoDca.contadorAnteriorNegro) + """,
+                                                    """ + str(nuevoDca.contadorColor) + """,
+                                                    """ + str(nuevoDca.contadorAnteriorColor) + """,
+                                                    """ + str(nuevoDca.x_studio_cartuchonefro.id) + """,
+                                                    """ + str(nuevoDca.x_studio_rendimiento_negro) + """,
+                                                    """ + str(nuevoDca.porcentajeNegro) + """,
+                                                    """ + str(nuevoDca.x_studio_cartucho_amarillo.id) + """,
+                                                    """ + str(nuevoDca.x_studio_rendimientoa) + """,
+                                                    """ + str(nuevoDca.porcentajeAmarillo) + """,
+                                                    """ + str(nuevoDca.x_studio_cartucho_cian_1.id) + """,
+                                                    """ + str(nuevoDca.x_studio_rendimientoc) + """,
+                                                    """ + str(nuevoDca.porcentajeCian) + """,
+                                                    """ + str(nuevoDca.x_studio_cartucho_magenta.id) + """,
+                                                    """ + str(nuevoDca.x_studio_rendimientom) + """,
+                                                    """ + str(nuevoDca.porcentajeMagenta) + """,
+                                                    """ + str(nuevoDca.tablahtml) + """,
+                                                    """ + str(objTicket.id) + """
+                                                    );
+                        """
+                self.env.cr.execute(query)
+                self.env.cr.commit()
+                informacion = self.env.cr.fetchall()
+                _logger.info('3312: informacion: ' + str(informacion))
+                """
                 listaDca.append([
                                     0, 
                                     0, 
@@ -2969,8 +3014,12 @@ class helpdesk_crearToner(TransientModel):
                                         'porcentajeMagenta': nuevoDca.porcentajeMagenta,
                                         'tablahtml': nuevoDca.tablahtml
                                     }
-                                ])
-            ticket.write({
+                               ])
+                """
+            #objTicket.write({
+            #                    'x_studio_equipo_por_nmero_de_serie_1': listaDca
+            #                })
+            objTicket.write({
                             'partner_id': self.cliente.id,
                             'x_studio_empresas_relacionadas': self.localidad.id,
                             'team_id': 8,
@@ -2978,54 +3027,54 @@ class helpdesk_crearToner(TransientModel):
                             #'x_studio_equipo_por_nmero_de_serie_1': listaDca
                             #'x_studio_equipo_por_nmero_de_serie_1': [(6,0,self.dca.ids)]
                         })
-            ticket.x_studio_equipo_por_nmero_de_serie_1 = listaDca
+            #ticket.x_studio_equipo_por_nmero_de_serie_1 = listaDca
             self.env.cr.commit()
-            ticket._compute_datosCliente()
+            objTicket._compute_datosCliente()
 
             #CASOS
             #CASO EN EL QUE SE PASA DIRECTO A ALMACEN
             if self.validarHastaAlmacenTicket and not self.validarTicket and not self.ponerTicketEnEspera:
-                ticket.crearYValidarSolicitudDeToner()
+                objTicket.crearYValidarSolicitudDeToner()
             #CASO EN EL QUE PASA A SER VALIDADO POR EL RESPONSABLE
             elif self.validarTicket and not self.validarHastaAlmacenTicket and not self.ponerTicketEnEspera:
-                query = "update helpdesk_ticket set stage_id = 91 where id = " + str(ticket.id) + ";"
+                query = "update helpdesk_ticket set stage_id = 91 where id = " + str(objTicket.id) + ";"
                 ss = self.env.cr.execute(query)
                 self.env.cr.commit()
             #CASO EN EL QUE EL TICKET PASA A ESTAR EN ESPERA 'PRETICKET'
             elif self.ponerTicketEnEspera and not self.validarHastaAlmacenTicket and not self.validarTicket:
-                query = "update helpdesk_ticket set stage_id = 1 where id = " + str(ticket.id) + ";"
+                query = "update helpdesk_ticket set stage_id = 1 where id = " + str(objTicket.id) + ";"
                 ss = self.env.cr.execute(query)
                 self.env.cr.commit()
             #CASO EN EL QUE PASA A DECICION DEL SISTEMA
             elif not self.validarHastaAlmacenTicket and not self.validarTicket and not self.ponerTicketEnEspera:
                 #CASO COLOR
-                if ticket.x_studio_equipo_por_nmero_de_serie_1[0].colorEquipo == 'Color':
+                if objTicket.x_studio_equipo_por_nmero_de_serie_1[0].colorEquipo == 'Color':
                     #dcaInfo = self.dca[0]
-                    dcaInfo = ticket.x_studio_equipo_por_nmero_de_serie_1[0]
+                    dcaInfo = objTicket.x_studio_equipo_por_nmero_de_serie_1[0]
                     #SI LOS PORCENTAJES SON MAYORES A 60%
                     if dcaInfo.porcentajeNegro >= 60 and dcaInfo.porcentajeAmarillo >= 60 and dcaInfo.porcentajeCian >= 60 and dcaInfo.porcentajeMagenta >= 60:
-                        ticket.crearYValidarSolicitudDeToner()
+                        objTicket.crearYValidarSolicitudDeToner()
                     else:
                         # PASA A RESPONSABLE
-                        query = "update helpdesk_ticket set stage_id = 91 where id = " + str(ticket.id) + ";"
+                        query = "update helpdesk_ticket set stage_id = 91 where id = " + str(objTicket.id) + ";"
                         ss = self.env.cr.execute(query)
                         self.env.cr.commit()
                 else:
                     #CASO EN QUE ES BLANCO NEGRO
-                    dcaInfo = ticket.x_studio_equipo_por_nmero_de_serie_1[0]
+                    dcaInfo = objTicket.x_studio_equipo_por_nmero_de_serie_1[0]
                     if dcaInfo.porcentajeNegro >= 60:
-                        ticket.crearYValidarSolicitudDeToner()
+                        objTicket.crearYValidarSolicitudDeToner()
                     else:
                         # PASA A RESPONSABLE
-                        query = "update helpdesk_ticket set stage_id = 91 where id = " + str(ticket.id) + ";"
+                        query = "update helpdesk_ticket set stage_id = 91 where id = " + str(objTicket.id) + ";"
                         ss = self.env.cr.execute(query)
                         self.env.cr.commit()
 
             wiz = ''
             mensajeTitulo = "Ticket generado!!!"
             #mensajeCuerpo = "Se creo el ticket '" + str(ticket.id) + "' sin número de serie para cliente " + self.cliente + " con localidad " + self.localidad + "\n\n"
-            mensajeCuerpo = "Se creo el ticket '" + str(ticket.id) + "' con el número de serie " + self.dca[0].serie.name + ".\n\n"
-            wiz = self.env['helpdesk.alerta.series'].create({'ticket_id': ticket.id, 'mensaje': mensajeCuerpo})
+            mensajeCuerpo = "Se creo el ticket '" + str(objTicket.id) + "' con el número de serie " + self.dca[0].serie.name + ".\n\n"
+            wiz = self.env['helpdesk.alerta.series'].create({'ticket_id': objTicket.id, 'mensaje': mensajeCuerpo})
             view = self.env.ref('helpdesk_update.view_helpdesk_alerta_series')
             return {
                       'name': _(mensajeTitulo),
@@ -5085,6 +5134,14 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                                     'product.product', 
                                     string = "Productos"
                                 )
+    """
+    EN DESARROLLO
+    productosDos = fields.One2many(
+                                    'helpdesk.refacciones',
+                                    'ticketRelacion',
+                                    string = "Refacciones y accesorios"
+                                )
+    """
     activar_compatibilidad = fields.Boolean(
                                                 string = 'Activar compatibilidad',
                                                 default = False

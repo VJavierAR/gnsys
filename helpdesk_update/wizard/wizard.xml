@@ -1548,7 +1548,7 @@
                                     <field name='activar_compatibilidad' />
                                 </group>
                                 <group>
-                                    <field name="productos" string="Refacciones y accesorios " domain="['|', '|', '|', ('categ_id', '=', 7), ('categ_id', '=', 9), ('categ_id', '=', 10), ('categ_id', '=', 11) ]" options="{'no_create_edit': True, 'no_create': True}" readonly='0' >
+                                    <field name="productos" string="Refacciones y accesorios " domain="['|', '|', '|', ('categ_id', '=', 7), ('categ_id', '=', 9), ('categ_id', '=', 10), ('categ_id', '=', 11) ]" options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" readonly='0' >
                                         <tree string="Productos" editable="bottom" >
                                             <field name='categ_id' string='Categoría del producto' readonly='1'/>
                                             <field name='product_variant_id' string='Producto' />
@@ -1562,6 +1562,26 @@
                                     </field>
                                 </group>
                             </group>
+                            <!--
+                            <field name='productosDos' string=''>
+                                <tree string="Productos" editable="bottom" >
+                                    <field name='productos' domain="['|', '|', '|', ('categ_id', '=', 7), ('categ_id', '=', 9), ('categ_id', '=', 10), ('categ_id', '=', 11) ]" options="{'no_create_edit': True, 'no_create': True}" >
+                                        <tree string="Refacciones y accesorios" >
+                                            <field name='categ_id' string='Categoría del producto' readonly='1'/>
+                                            <field name='product_variant_id' string='Producto' />
+                                            <field name='default_code' string='Referencia interna' readonly='1'/>
+                                            <field name='name' string='Nombre' readonly='1'/>
+                                            <field name='description' string='Descripción' readonly='1'/>
+                                            <field name='qty_available' string='Cantidad a mano' />
+                                            <field name='virtual_available' string='Cantidad prevista' />
+                                            <field name='x_studio_cantidad_pedida' string='Cantidad a pedir' />
+                                        </tree>
+                                    </field>
+                                    <field name='cantidadPedida' />
+                                    <field name='detalleDeProducto' readonly='1' widget='html' />
+                                </tree>
+                            </field>
+                            -->
                         </page>
                         <page string = 'Diagnostico antes de validar'>
                             <group>
