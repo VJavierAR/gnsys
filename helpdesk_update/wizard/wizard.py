@@ -1881,15 +1881,15 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                                     requisicion[0].product_rel=[{'cliente':sale.partner_shipping_id.id,'ticket':sale.x_studio_field_bxHgp.id,'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
                         sale.action_confirm()
                         _logger.info('3312: existe picking? ' + str(sale.picking_ids))
-                        estadoActual = ''
+                        estadoActual = self.ticket_id.stage_id.name
                         estadoActualId = 0
                         if sale.picking_ids:
-                            listaPickingsOrdenada = sale.picking_ids.sorted(key = 'id')
+                            listaPickingsOrdenada = self.env['stock.picking'].sudo().search([('id', 'in', sale.mapped( 'picking_ids.id'))], order='id asc')
                             _logger.info('3312: picking ordenados ' + str(listaPickingsOrdenada))
                             if listaPickingsOrdenada[0].state == 'assigned':
                                 estadoActual = 'En almacén'
                                 estadoActualId = 93
-                            elif listaPickingsOrdenada[0].state == 'waiting':
+                            elif 'waiting' in listaPickingsOrdenada[0].state:
                                 estadoActual = 'Sin stock'
                                 estadoActualId = 114
                         if estadoActual != 0:
