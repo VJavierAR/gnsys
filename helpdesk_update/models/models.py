@@ -2848,7 +2848,22 @@ class helpdesk_update(models.Model):
                             #query = "update helpdesk_ticket set stage_id = 93 where id = " + str(self.x_studio_id_ticket) + ";"
                             #ss = self.env.cr.execute(query)
                             
-                            message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes +  ". " + "\n\nSolicitud " + str(saleTemp.name) + " generada" + "\n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
+                            _logger.info('3312: existe picking? ' + str(saleTemp.picking_ids))
+                            estadoActual = ''
+                            estadoActualId = 0
+                            if saleTemp.picking_ids:
+                                listaPickingsOrdenada = saleTemp.picking_ids.sorted(key = 'id')
+                                _logger.info('3312: picking ordenados ' + str(listaPickingsOrdenada))
+                                if listaPickingsOrdenada[0].state == 'assigned':
+                                    estadoActual = 'En almacén'
+                                    estadoActualId = 93
+                                elif listaPickingsOrdenada[0].state == 'waiting':
+                                    estadoActual = 'Sin stock'
+                                    estadoActualId = 114
+                            
+                            query = "update helpdesk_ticket set stage_id = " + str(estadoActualId) + " where id = " + str(self.x_studio_id_ticket) + ";"
+                            ss = self.env.cr.execute(query)
+                            message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes +  ", Estado actual: " + estadoActual + ". " + "\n\nSolicitud " + str(saleTemp.name) + " generada" + "\n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
                             mess= {
                                     'title': _('Estado de ticket actualizado!!!'),
                                     'message' : message
