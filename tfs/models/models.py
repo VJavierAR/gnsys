@@ -233,6 +233,7 @@ class tfs(models.Model):
                 for des in pickDestino:
                     des['location_id']=17
                     des['picking_id']=pick_dest.id
+                    des['product_uom_id']=1
                     m=self.env['stock.move'].create(des)
                     des['move_id']=m.id
                     self.env['stock.move.line'].create(des)
