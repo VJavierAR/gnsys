@@ -94,6 +94,7 @@ class sale_update(models.Model):
 		    if(record.serieRetiro2.x_studio_localidad_2.id):
 		      record['partner_id']=record.serieRetiro2.x_studio_localidad_2.parent_id.id
 		      record['partner_shipping_id']=record.serieRetiro2.x_studio_localidad_2.id
+		      record['x_studio_direccin_de_entrega']=record.serieRetiro2.x_studio_localidad_2.id			
 		      record['compatiblesLineas']=[{'serie':record.serieRetiro2.id,'cantidad':1,'tipo':record.x_studio_tipo_de_solicitud,'equipos':record.serieRetiro2.product_id.id}]
 
 	@api.multi
