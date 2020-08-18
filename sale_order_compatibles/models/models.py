@@ -97,7 +97,7 @@ class sale_update(models.Model):
 				nietos=self.env['res.partner'].search([['parent_id','in',hijosarr],['type','=','contact']]).mapped('id')
 				hijosF=hijos.filtered(lambda x:x.type=='contact').mapped('id')
 				final=nietos+hijosF
-				red['domain']={'x_studio_field_RnhKr':[('id','in',final)]}
+				res['domain']={'x_studio_field_RnhKr':[('id','in',final)]}
 		return res
 
 
