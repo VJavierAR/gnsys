@@ -4271,6 +4271,33 @@ class helpdesk_update(models.Model):
         }
 
     @api.multi
+    def detalle_mesa_wizard(self):
+        wiz = self.env['helpdesk.datos.mesa'].create({
+                                                        'ticket_id': self.id
+                                                    })
+        if self.x_studio_equipo_por_nmero_de_serie:
+            wiz.series = [(6, 0, self.x_studio_equipo_por_nmero_de_serie.ids)]
+        if self.x_studio_productos:
+            wiz.refacciones [(6, 0, self.x_studio_productos.ids)]
+        idExternoToner = 'studio_customization.tiquete_del_servicio_e501a40f-0bd7-4726-b219-50085c31c177'
+        pdf = self.env.ref(idExternoToner).sudo().render_qweb_pdf([self.id])[0]
+        wiz.pdfToner = base64.encodestring(pdf)
+        view = self.env.ref('helpdesk_update.view_helpdesk_detalle_mesa')
+        return {
+            'name': _('Datos tóner'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'helpdesk.datos.mesa',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            'context': self.env.context,
+        }
+
+
+    @api.multi
     def detalle_serie_toner_wizard(self):
         ids = []
         for dca in self.x_studio_equipo_por_nmero_de_serie_1:
