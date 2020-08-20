@@ -345,11 +345,11 @@ class fac_order(models.Model):
                                 if k.x_studio_color_bn=='Color':
                                    procesadasColorTotal=colorp+procesadasColorTotal
                                    procesadasColorBN=bnp+procesadasColorBN       
-                            if procesadasColorBN< j.bolsaBN:
+                            if procesadasColorBN< j.bolsaBN or j.bolsaBN==0:
                                self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':j.id,'product_id':pbn,'product_uom_qty':0.0,'price_unit':j.clickExcedenteBN,'x_studio_bolsa':j.bolsaBN,'name':'(82121500) PAGINAS IMPRESAS NEGRO : '+str(procesadasColorBN)+' INCLUYE:'+str(j.bolsaBN)})
                             if procesadasColorBN > j.bolsaBN:
                                self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':j.id,'product_id':pbn,'product_uom_qty':abs(j.bolsaBN-procesadasColorBN),'price_unit':j.clickExcedenteBN,'x_studio_bolsa':j.bolsaBN,'x_studio_excedente':'si','name':'(82121500) PAGINAS IMPRESAS NEGRO: '+str(procesadasColorBN)+' INCLUYE:'+str(j.bolsaBN)})
-                            if procesadasColorTotal<j.bolsaColor:            
+                            if procesadasColorTotal<j.bolsaColor or j.bolsaColor==0:            
                                self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':j.id,'product_id':pcolor,'product_uom_qty':0.0,'price_unit':j.clickExcedenteColor,'x_studio_bolsa':j.bolsaColor,'name':'(82121500) PAGINAS IMPRESAS COLOR : '+str(procesadasColorTotal)+' INCLUYE: '+str(j.bolsaColor)})
                             if procesadasColorTotal > j.bolsaColor:
                                self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':j.id,'product_id':pcolor,'product_uom_qty':abs(j.bolsaColor-procesadasColorTotal),'price_unit':j.clickExcedenteColor,'x_studio_bolsa':j.bolsaColor,'x_studio_excedente':'si','name':'(82121500) PAGINAS IMPRESAS COLOR : '+str(abs(bolsacolor-procesadasColorTotal))+' INCLUYE: '+str(j.bolsaColor)})                   
