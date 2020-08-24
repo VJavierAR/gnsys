@@ -279,7 +279,7 @@ class fac_order(models.Model):
                                  
                               if m.nombreAnte=='Renta base + costo de página procesada BN o color':
                                  if k.x_studio_color_bn=='B/N':
-                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':pbn,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN,'name':' PAGINAS IMPRESAS NEGRO :'+str(bnp)+' NEGRO INCLUYE ('+str(m.bolsaBN)+')  : SERIE:'+k.name })                                                    
+                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':pbn,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN,'name':'(82121500) PAGINAS IMPRESAS NEGRO :'+str(bnp)+' NEGRO INCLUYE ('+str(m.bolsaBN)+')  : SERIE:'+k.name })                                                    
                                  if k.x_studio_color_bn=='Color':
                                     self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':pcolor,'product_uom_qty':colorp,'price_unit':m.clickExcedenteColor,'name':'(82121500) PAGINAS IMPRESAS COLOR: '+str(colorp)+'  INCLUYE ('+str(m.bolsaColor)+') SERIE : '+k.name })
                                     self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':pbn,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN,'name':'(82121500) PAGINAS IMPRESAS: '+str(bnp)+' NEGRO INCLUYE ('+str(m.bolsaBN)+')  SERIE:'+k.name })                                                     
