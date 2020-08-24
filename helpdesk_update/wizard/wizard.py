@@ -1737,6 +1737,7 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                         
                         #Toner BN
                         if c.x_studio_cartuchonefro:
+                            _logger.info('3312: entrando caso cartucho negro: localidad: ' + str(ticket.x_studio_empresas_relacionadas))
                             car=car+1                        
                             if c.serie.x_studio_color_bn=="B/N":
                              c.write({'porcentajeNegro':c.porcentajeNegro})
@@ -1745,8 +1746,11 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                              c.write({'porcentajeNegro':c.porcentajeNegro})    
                              c.write({'x_studio_toner_negro':1})
                             pro = self.env['product.product'].search([['name','=',c.x_studio_cartuchonefro.name],['categ_id','=',5]])
+                            _logger.info('3312: pro: ' + str(pro))
                             gen = pro.sorted(key='qty_available',reverse=True)[0]
-                            weirtihgone=c.serie.x_studio_toner_compatible.id if(len(gen)==0) else gen.id
+                            _logger.info('3312: gen: ' + str(gen))
+                            weirtihgone = c.serie.x_studio_toner_compatible.id if(len(gen)==0) else gen.id
+                            _logger.info('3312: weirtihgone: ' + str(weirtihgone))
                             datos={'name': ' '
                                    ,'order_id' : sale.id
                                    , 'product_id' : weirtihgone
@@ -1755,18 +1759,21 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                                    , 'x_studio_field_9nQhR': c.serie.id 
                                    , 'price_unit': 0 
                                    , 'customer_lead' : 0
-                                   , 'partner_shipping_id' : ticket.x_studio_empresas_relacionadas.id}
-                            if(gen['qty_available']<=0):
-                                datos['route_id']=1
+                                   #, 'partner_shipping_id' : ticket.x_studio_empresas_relacionadas.id
+                                   }
+                            if(gen['qty_available']<=0) and not weirtihgone:
+                                #datos['route_id']=1
                                 datos['product_id']=c.serie.x_studio_toner_compatible.id
                                 weirtihgone=c.serie.x_studio_toner_compatible.id
                                 weirtihgtwo=1
                             #insert='insert into sale_order_line values (order_id,product_id,product_uom_qty,x_studio_field_9nQhR,route_id,price_unit, customer_lead,x_studio_toner_negro,porcentajeNegro)values('+str(sale.id)+','+  str(weirtihgone)+','+1+','+str(c.serie.id)+','+str(weirtihgtwo)+',0,0,'+str(c.x_studio_toner_negro)+',1)'
                             #raise exceptions.ValidationError("Error al capturar."+str(insert))
+                            _logger.info('3312: saliendo caso cartucho negro: localidad: ' + str(ticket.x_studio_empresas_relacionadas) + ' datos: ' + str(datos))
                             self.env['sale.order.line'].create(datos)
                             bn=str(c.serie.x_studio_reftoner)+', '
                         #Toner Ama
                         if c.x_studio_cartucho_amarillo:
+                            _logger.info('3312: entrando caso cartucho amarillo: localidad: ' + str(ticket.x_studio_empresas_relacionadas))
                             car=car+1
                             c.write({'x_studio_toner_amarillo':1})
                             pro = self.env['product.product'].search([['name','=',c.x_studio_cartucho_amarillo.name],['categ_id','=',5]])
@@ -1779,15 +1786,17 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                                    , 'x_studio_field_9nQhR': c.serie.id
                                    , 'price_unit': 0 
                                    , 'customer_lead' : 0
-                                   , 'partner_shipping_id' : ticket.x_studio_empresas_relacionadas.id}
-                            if(gen['qty_available']<=0):
-                                datos['route_id']=1
+                                   #, 'partner_shipping_id' : ticket.x_studio_empresas_relacionadas.id
+                                   }
+                            if(gen['qty_available']<=0) and not weirtihgone:
+                                #datos['route_id']=1
                                 datos['product_id']=c.x_studio_cartucho_amarillo.id
-                            
+                            _logger.info('3312: saliendo caso cartucho amarillo: localidad: ' + str(ticket.x_studio_empresas_relacionadas))
                             self.env['sale.order.line'].create(datos)
                             amar=str(c.x_studio_cartucho_amarillo.name)+', '
                         #Toner cian
                         if c.x_studio_cartucho_cian_1:
+                            _logger.info('3312: entrando caso cartucho cian: localidad: ' + str(ticket.x_studio_empresas_relacionadas))
                             car=car+1
                             c.write({'x_studio_toner_cian':1})
                             pro = self.env['product.product'].search([['name','=',c.x_studio_cartucho_cian_1.name],['categ_id','=',5]])
@@ -1800,15 +1809,17 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                                    , 'x_studio_field_9nQhR': c.serie.id 
                                    , 'price_unit': 0 
                                    , 'customer_lead' : 0
-                                   , 'partner_shipping_id' : ticket.x_studio_empresas_relacionadas.id}
-                            if(gen['qty_available']<=0):
-                                datos['route_id']=1
+                                   #, 'partner_shipping_id' : ticket.x_studio_empresas_relacionadas.id
+                                   }
+                            if(gen['qty_available']<=0) and not weirtihgone:
+                                #datos['route_id']=1
                                 datos['product_id']=c.x_studio_cartucho_cian_1.id
-                            
+                            _logger.info('3312: saliendo caso cartucho cian: localidad: ' + str(ticket.x_studio_empresas_relacionadas))
                             self.env['sale.order.line'].create(datos)
                             cian=str(c.x_studio_cartucho_cian_1.name)+', '
                         #Toner mage
                         if c.x_studio_cartucho_magenta:
+                            _logger.info('3312: entrando caso cartucho magenta: localidad: ' + str(ticket.x_studio_empresas_relacionadas))
                             car=car+1
                             c.write({'x_studio_toner_magenta':1})
                             pro = self.env['product.product'].search([['name','=',c.x_studio_cartucho_magenta.name],['categ_id','=',5]])
@@ -1821,11 +1832,12 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                                    , 'x_studio_field_9nQhR': c.serie.id 
                                    , 'price_unit': 0 
                                    , 'customer_lead' : 0
-                                   , 'partner_shipping_id' : ticket.x_studio_empresas_relacionadas.id}
-                            if(gen['qty_available']<=0):
-                                datos['route_id']=1
+                                   #, 'partner_shipping_id' : ticket.x_studio_empresas_relacionadas.id
+                                   }
+                            if(gen['qty_available']<=0) and not weirtihgone:
+                                #datos['route_id']=1
                                 datos['product_id']=c.x_studio_cartucho_magenta.id
-                                                    
+                            _logger.info('3312: saliendo caso cartucho magenta: localidad: ' + str(ticket.x_studio_empresas_relacionadas))
                             self.env['sale.order.line'].create(datos)
                             magen=str(c.x_studio_cartucho_magenta.name)
                             
