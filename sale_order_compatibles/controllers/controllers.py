@@ -21,7 +21,7 @@ class SaleOrderCompatibles(http.Controller):
             p.retiro()
         if(u.id==False):
             return "No tiene permisos para realizar esta acción"    
-        return "Orden  "+str(p.name)+" Autorizada"
+        #return "Orden  "+str(p.name)+" Autorizada"
 
 
 class SaleOrderCompatiblesCancel(http.Controller):
@@ -29,7 +29,7 @@ class SaleOrderCompatiblesCancel(http.Controller):
     def index(self, sale_id,**kw):
         p=request.env['sale.order'].search([['id','=',sale_id]])
         p.action_cancel()
-        return "Orden  "+str(p.name)+" Cancelada"
+        #return "Orden  "+str(p.name)+" Cancelada"
         #return "HOLA"
 # class SaleOrderCompatibles(http.Controller):
 #     @http.route('/sale/order/<int:sale_id>', auth='public')
