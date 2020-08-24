@@ -22,6 +22,7 @@ class HelpDeskComentario(TransientModel):
     editarZona = fields.Boolean(string = 'Editar zona', store=True, default=False)
     zona = fields.Selection([('SUR','SUR'),('NORTE','NORTE'),('PONIENTE','PONIENTE'),('ORIENTE','ORIENTE'),('CENTRO','CENTRO'),('DISTRIBUIDOR','DISTRIBUIDOR'),('MONTERREY','MONTERREY'),('CUERNAVACA','CUERNAVACA'),('GUADALAJARA','GUADALAJARA'),('QUERETARO','QUERETARO'),('CANCUN','CANCUN'),('VERACRUZ','VERACRUZ'),('PUEBLA','PUEBLA'),('TOLUCA','TOLUCA'),('LEON','LEON'),('COMODIN','COMODIN'),('VILLAHERMOSA','VILLAHERMOSA'),('MERIDA','MERIDA'),('ALTAMIRA','ALTAMIRA'),('COMODIN','COMODIN'),('DF00','DF00'),('SAN LP','SAN LP'),('ESTADO DE MÉXICO','ESTADO DE MÉXICO'),('Foraneo Norte','Foraneo Norte'),('Foraneo Sur','Foraneo Sur')], string = 'Zona', store = True)
 
+
     def creaComentario(self):
       if self.ultimaEvidencia:
           if self.evidencia:
@@ -1736,6 +1737,7 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                         
                         #Toner BN
                         if c.x_studio_cartuchonefro:
+                            _logger.info('3312: entrando caso cartucho negro: localidad: ' + str(ticket.x_studio_empresas_relacionadas))
                             car=car+1                        
                             if c.serie.x_studio_color_bn=="B/N":
                              c.write({'porcentajeNegro':c.porcentajeNegro})
@@ -1744,8 +1746,11 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                              c.write({'porcentajeNegro':c.porcentajeNegro})    
                              c.write({'x_studio_toner_negro':1})
                             pro = self.env['product.product'].search([['name','=',c.x_studio_cartuchonefro.name],['categ_id','=',5]])
+                            _logger.info('3312: pro: ' + str(pro))
                             gen = pro.sorted(key='qty_available',reverse=True)[0]
-                            weirtihgone=c.serie.x_studio_toner_compatible.id if(len(gen)==0) else gen.id
+                            _logger.info('3312: gen: ' + str(gen))
+                            weirtihgone = c.serie.x_studio_toner_compatible.id if(len(gen)==0) else gen.id
+                            _logger.info('3312: weirtihgone: ' + str(weirtihgone))
                             datos={'name': ' '
                                    ,'order_id' : sale.id
                                    , 'product_id' : weirtihgone
@@ -1754,18 +1759,21 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                                    , 'x_studio_field_9nQhR': c.serie.id 
                                    , 'price_unit': 0 
                                    , 'customer_lead' : 0
-                                   , 'partner_shipping_id' : ticket.x_studio_empresas_relacionadas.id}
-                            if(gen['qty_available']<=0):
-                                datos['route_id']=1
+                                   #, 'partner_shipping_id' : ticket.x_studio_empresas_relacionadas.id
+                                   }
+                            if(gen['qty_available']<=0) and not weirtihgone:
+                                #datos['route_id']=1
                                 datos['product_id']=c.serie.x_studio_toner_compatible.id
                                 weirtihgone=c.serie.x_studio_toner_compatible.id
                                 weirtihgtwo=1
                             #insert='insert into sale_order_line values (order_id,product_id,product_uom_qty,x_studio_field_9nQhR,route_id,price_unit, customer_lead,x_studio_toner_negro,porcentajeNegro)values('+str(sale.id)+','+  str(weirtihgone)+','+1+','+str(c.serie.id)+','+str(weirtihgtwo)+',0,0,'+str(c.x_studio_toner_negro)+',1)'
                             #raise exceptions.ValidationError("Error al capturar."+str(insert))
+                            _logger.info('3312: saliendo caso cartucho negro: localidad: ' + str(ticket.x_studio_empresas_relacionadas) + ' datos: ' + str(datos))
                             self.env['sale.order.line'].create(datos)
                             bn=str(c.serie.x_studio_reftoner)+', '
                         #Toner Ama
                         if c.x_studio_cartucho_amarillo:
+                            _logger.info('3312: entrando caso cartucho amarillo: localidad: ' + str(ticket.x_studio_empresas_relacionadas))
                             car=car+1
                             c.write({'x_studio_toner_amarillo':1})
                             pro = self.env['product.product'].search([['name','=',c.x_studio_cartucho_amarillo.name],['categ_id','=',5]])
@@ -1778,15 +1786,17 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                                    , 'x_studio_field_9nQhR': c.serie.id
                                    , 'price_unit': 0 
                                    , 'customer_lead' : 0
-                                   , 'partner_shipping_id' : ticket.x_studio_empresas_relacionadas.id}
-                            if(gen['qty_available']<=0):
-                                datos['route_id']=1
+                                   #, 'partner_shipping_id' : ticket.x_studio_empresas_relacionadas.id
+                                   }
+                            if(gen['qty_available']<=0) and not weirtihgone:
+                                #datos['route_id']=1
                                 datos['product_id']=c.x_studio_cartucho_amarillo.id
-                            
+                            _logger.info('3312: saliendo caso cartucho amarillo: localidad: ' + str(ticket.x_studio_empresas_relacionadas))
                             self.env['sale.order.line'].create(datos)
                             amar=str(c.x_studio_cartucho_amarillo.name)+', '
                         #Toner cian
                         if c.x_studio_cartucho_cian_1:
+                            _logger.info('3312: entrando caso cartucho cian: localidad: ' + str(ticket.x_studio_empresas_relacionadas))
                             car=car+1
                             c.write({'x_studio_toner_cian':1})
                             pro = self.env['product.product'].search([['name','=',c.x_studio_cartucho_cian_1.name],['categ_id','=',5]])
@@ -1799,15 +1809,17 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                                    , 'x_studio_field_9nQhR': c.serie.id 
                                    , 'price_unit': 0 
                                    , 'customer_lead' : 0
-                                   , 'partner_shipping_id' : ticket.x_studio_empresas_relacionadas.id}
-                            if(gen['qty_available']<=0):
-                                datos['route_id']=1
+                                   #, 'partner_shipping_id' : ticket.x_studio_empresas_relacionadas.id
+                                   }
+                            if(gen['qty_available']<=0) and not weirtihgone:
+                                #datos['route_id']=1
                                 datos['product_id']=c.x_studio_cartucho_cian_1.id
-                            
+                            _logger.info('3312: saliendo caso cartucho cian: localidad: ' + str(ticket.x_studio_empresas_relacionadas))
                             self.env['sale.order.line'].create(datos)
                             cian=str(c.x_studio_cartucho_cian_1.name)+', '
                         #Toner mage
                         if c.x_studio_cartucho_magenta:
+                            _logger.info('3312: entrando caso cartucho magenta: localidad: ' + str(ticket.x_studio_empresas_relacionadas))
                             car=car+1
                             c.write({'x_studio_toner_magenta':1})
                             pro = self.env['product.product'].search([['name','=',c.x_studio_cartucho_magenta.name],['categ_id','=',5]])
@@ -1820,11 +1832,12 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                                    , 'x_studio_field_9nQhR': c.serie.id 
                                    , 'price_unit': 0 
                                    , 'customer_lead' : 0
-                                   , 'partner_shipping_id' : ticket.x_studio_empresas_relacionadas.id}
-                            if(gen['qty_available']<=0):
-                                datos['route_id']=1
+                                   #, 'partner_shipping_id' : ticket.x_studio_empresas_relacionadas.id
+                                   }
+                            if(gen['qty_available']<=0) and not weirtihgone:
+                                #datos['route_id']=1
                                 datos['product_id']=c.x_studio_cartucho_magenta.id
-                                                    
+                            _logger.info('3312: saliendo caso cartucho magenta: localidad: ' + str(ticket.x_studio_empresas_relacionadas))
                             self.env['sale.order.line'].create(datos)
                             magen=str(c.x_studio_cartucho_magenta.name)
                             
@@ -1889,7 +1902,7 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                             if listaPickingsOrdenada[0].state == 'assigned':
                                 estadoActual = 'En almacén'
                                 estadoActualId = 93
-                            elif 'waiting' in listaPickingsOrdenada[0].state:
+                            elif 'waiting' in listaPickingsOrdenada[0].state or 'confirmed' in listaPickingsOrdenada[0].state:
                                 estadoActual = 'Sin stock'
                                 estadoActualId = 114
                         if estadoActualId != 0:
@@ -2022,6 +2035,11 @@ class HelpDeskDatosToner(TransientModel):
     _description = 'HelpDesk informacion de toner'
 
     ticket_id = fields.Many2one("helpdesk.ticket")
+    diagnostico_id = fields.One2many(
+                                        'helpdesk.diagnostico',
+                                        'ticketRelacion',
+                                        compute = '_compute_diagnosticos' 
+                                    )
     serie = fields.Text(string = "Serie", compute = '_compute_serie_nombre')
     series = fields.One2many(
                                 'dcas.dcas',
@@ -2040,6 +2058,12 @@ class HelpDeskDatosToner(TransientModel):
                                     string = 'Solicitud',
                                     compute = '_compute_solicitud'
                                 )
+    #backorder = fields.One2many(
+    #                                'stock.picking',
+    #                                'backorder_id',
+    #                                string = 'Backorder',
+    #                                compute = '_compute_backorder'
+    #                            )
     cliente = fields.Many2one(  
                                 'res.partner',
                                 string = 'Cliente',
@@ -2172,6 +2196,9 @@ class HelpDeskDatosToner(TransientModel):
             record.pdfToner = base64.encodestring(pdf)
 
 
+    def _compute_diagnosticos(self):
+        self.diagnostico_id = self.ticket_id.diagnosticos.ids
+
     def _compute_serie_nombre(self):
         if self.ticket_id.x_studio_equipo_por_nmero_de_serie_1:
             for serie in self.ticket_id.x_studio_equipo_por_nmero_de_serie_1:
@@ -2192,6 +2219,10 @@ class HelpDeskDatosToner(TransientModel):
     def _compute_solicitud(self):
         if self.ticket_id.x_studio_field_nO7Xg:
             self.solicitud = self.ticket_id.x_studio_field_nO7Xg.id
+
+    #def _compute_backorder(self):
+    #    if self.ticket_id.x_studio_backorder:
+    #        self.backorder = self.ticket_id.x_studio_backorder.ids
 
     def _compute_cliente(self):
         if self.ticket_id.partner_id:
@@ -5525,7 +5556,27 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
 
 
 
-
+listaTipoDeVale = [
+                        ('Falla','Falla'),
+                        ('Incidencia','Incidencia'),
+                        ('Reeincidencia','Reeincidencia'),
+                        ('Pregunta','Pregunta'),
+                        ('Requerimiento','Requerimiento'),
+                        ('Solicitud de refacción','Solicitud de refacción'),
+                        ('Conectividad','Conectividad'),
+                        ('Reincidencias','Reincidencias'),
+                        ('Instalación','Instalación'),
+                        ('Mantenimiento Preventivo','Mantenimiento Preventivo'),
+                        ('IMAC','IMAC'),
+                        ('Proyecto','Proyecto'),
+                        ('Retiro de equipo','Retiro de equipo'),
+                        ('Cambio','Cambio'),
+                        ('Servicio de Software','Servicio de Software'),
+                        ('Resurtido de Almacen','Resurtido de Almacen'),
+                        ('Supervisión','Supervisión'),
+                        ('Demostración','Demostración'),
+                        ('Toma de lectura','Toma de lectura')
+                    ]
 
 
 class HelpDeskDatosMesa(TransientModel):
@@ -5533,77 +5584,117 @@ class HelpDeskDatosMesa(TransientModel):
     _description = 'HelpDesk informacion de mesa'
 
     ticket_id = fields.Many2one("helpdesk.ticket")
-    serie = fields.Text(
-                            string = "Serie", 
-                            compute = '_compute_serie_nombre'
+    etapa = fields.Text(
+                            string = 'Etapa'
                         )
-    series = fields.Many2many(
-                                'stock.production.lot',
-                                string = 'Series'
-                            )
-    refacciones = fields.Many2many(
-                                        'product.product',
-                                        string = 'Refacciones y accesorios'
+    tipoDeReporte = fields.Selection(
+                                        listaTipoDeVale, 
+                                        string = 'Tipo de reporte',
+                                        store = True
                                     )
-    corte = fields.Selection(
-                                [('1ero','1ero'),('2do','2do'),('3ro','3ro'),('4to','4to')], 
-                                string = 'Corte', 
-                                compute = '_compute_corte'
-                            )
+
+    diagnostico_id = fields.One2many(
+                                        'helpdesk.diagnostico',
+                                        'ticketRelacion',
+                                        compute = '_compute_diagnosticos' 
+                                    )
+
+    serie = fields.Text(
+                            string = "Serie",
+                            store = True 
+                            #compute = '_compute_serie_nombre'
+                        )
+    #series = fields.Many2many(
+    #                            'stock.production.lot',
+    #                            string = 'Series'
+    #                        )
+    seriesText = fields.Text(
+                                    string = 'Series',
+                                    store = True
+                                )
+    refaccionesText = fields.Text(
+                                    string = 'Refacciones y accesorios',
+                                    store = True
+                                )
+    #refacciones = fields.Many2many(
+    #                                    'product.product',
+    #                                    string = 'Refacciones y accesorios'
+    #                                )
     solicitud = fields.Many2one(
                                     'sale.order', 
                                     string = 'Solicitud',
                                     compute = '_compute_solicitud'
                                 )
-    cliente = fields.Many2one(  
-                                'res.partner',
-                                string = 'Cliente',
-                                compute = '_compute_cliente'
-                            )
+    cliente = fields.Text(
+                            string = 'Cliente',
+                            store = True
+
+                        )
+    #cliente = fields.Many2one(  
+    #                            'res.partner',
+    #                            string = 'Cliente',
+    #                            compute = '_compute_cliente'
+    #                        )
     tipoCliente = fields.Selection(
                                         [('A','A'),('B','B'),('C','C'),('OTRO','D'),('VIP','VIP')], 
-                                        string = 'Tipo de cliente', 
-                                        compute = '_compute_tipo_cliente'
+                                        string = 'Tipo de cliente',
+                                        store = True
+                                        #compute = '_compute_tipo_cliente'
                                     )
-    localidad = fields.Many2one(  
-                                    'res.partner',
-                                    string = 'Localidad',
-                                    compute = '_compute_localidad'
-                                )
+    localidad = fields.Text(
+                                string = 'Localidad',
+                                store = True
+                            )
+    #localidad = fields.Many2one(
+    #                                'res.partner',
+    #                                string = 'Localidad',
+    #                                compute = '_compute_localidad'
+    #                            )
     zonaLocalidad = fields.Selection(
-                                        [('SUR','SUR'),('NORTE','NORTE'),('PONIENTE','PONIENTE'),('ORIENTE','ORIENTE'),('CENTRO','CENTRO'),('DISTRIBUIDOR','DISTRIBUIDOR'),('MONTERREY','MONTERREY'),('CUERNAVACA','CUERNAVACA'),('GUADALAJARA','GUADALAJARA'),('QUERETARO','QUERETARO'),('CANCUN','CANCUN'),('VERACRUZ','VERACRUZ'),('PUEBLA','PUEBLA'),('TOLUCA','TOLUCA'),('LEON','LEON'),('COMODIN','COMODIN'),('VILLAHERMOSA','VILLAHERMOSA'),('MERIDA','MERIDA'),('ALTAMIRA','ALTAMIRA'),('COMODIN','COMODIN'),('DF00','DF00'),('SAN LP','SAN LP'),('ESTADO DE MÉXICO','ESTADO DE MÉXICO'),('Foraneo Norte','Foraneo Norte'),('Foraneo Sur','Foraneo Sur')], 
+                                        [('CHIHUAHUA','CHIHUAHUA'),('SUR','SUR'),('NORTE','NORTE'),('PONIENTE','PONIENTE'),('ORIENTE','ORIENTE'),('CENTRO','CENTRO'),('DISTRIBUIDOR','DISTRIBUIDOR'),('MONTERREY','MONTERREY'),('CUERNAVACA','CUERNAVACA'),('GUADALAJARA','GUADALAJARA'),('QUERETARO','QUERETARO'),('CANCUN','CANCUN'),('VERACRUZ','VERACRUZ'),('PUEBLA','PUEBLA'),('TOLUCA','TOLUCA'),('LEON','LEON'),('COMODIN','COMODIN'),('VILLAHERMOSA','VILLAHERMOSA'),('MERIDA','MERIDA'),('ALTAMIRA','ALTAMIRA'),('COMODIN','COMODIN'),('DF00','DF00'),('SAN LP','SAN LP'),('ESTADO DE MÉXICO','ESTADO DE MÉXICO'),('Foraneo Norte','Foraneo Norte'),('Foraneo Sur','Foraneo Sur')], 
                                         string = 'Zona localidad',
-                                        compute = '_compute_zona_localidad'
+                                        store = True
+                                        #compute = '_compute_zona_localidad'
                                     )
-    localidadContacto = fields.Many2one(  
-                                    'res.partner',
-                                    string = 'Localidad contacto',
-                                    compute = '_compute_localidad_contacto'
-                                )
+    localidadContacto = fields.Text(
+                                        string = 'Localidad contacto',
+                                        store = True
+                                    )
+    #localidadContacto = fields.Many2one(  
+    #                                'res.partner',
+    #                                string = 'Localidad contacto',
+    #                                compute = '_compute_localidad_contacto'
+    #                            )
     estadoLocalidad = fields.Text(
                                     string = 'Estado de localidad',
-                                    compute = '_compute_estado_localidad'
+                                    store = True
+                                    #compute = '_compute_estado_localidad'
                                 )
     telefonoContactoLocalidad = fields.Text(
-                                    string = 'Télefgono localidad contacto',
-                                    compute = '_compute_telefono_localidad'
-                                )
+                                                string = 'Télefgono localidad contacto',
+                                                store = True
+                                                #compute = '_compute_telefono_localidad'
+                                            )
     movilContactoLocalidad = fields.Text(
-                                    string = 'Movil localidad contacto',
-                                    compute = '_compute_movil_localidad'
-                                )
+                                            string = 'Movil localidad contacto',
+                                            store = True
+                                            #compute = '_compute_movil_localidad'
+                                        )
     correoContactoLocalidad = fields.Text(
-                                    string = 'Correo electrónico localidad contacto',
-                                    compute = '_compute_correo_localidad'
-                                )
+                                            string = 'Correo electrónico localidad contacto',
+                                            store = True
+                                            #compute = '_compute_correo_localidad'
+                                        )
     direccionLocalidad = fields.Text(
-                                    string = 'Dirección localidad',
-                                    compute = '_compute_direccion_localidad'
-                                )
+                                        string = 'Dirección localidad',
+                                        store = True
+                                        #compute = '_compute_direccion_localidad'
+                                    )
     creadoEl = fields.Text(
-                            string = 'Creado el',
-                            compute = '_compute_creado_el'
-                        )
+                                string = 'Creado el',
+                                store = True
+                                #compute = '_compute_creado_el'
+                            )
     areaAtencion = fields.Many2one(  
                                     'helpdesk.team',
                                     string = 'Área de atención',
@@ -5620,51 +5711,62 @@ class HelpDeskDatosMesa(TransientModel):
                                     compute = '_compute_encargado_area'
                                 )
     diasAtraso = fields.Integer(
-                            string = 'Días de atraso',
-                            compute = '_compute_dias_atraso'
-                        )
+                                    string = 'Días de atraso',
+                                    store = True
+                                    #compute = '_compute_dias_atraso'
+                                )
     prioridad = fields.Selection(
                                     [('0','Todas'),('1','Baja'),('2','Media'),('3','Alta'),('4','Critica')], 
-                                    string = 'Prioridad', 
-                                    compute = '_compute_prioridad'
+                                    string = 'Prioridad',
+                                    store = True
+                                    #compute = '_compute_prioridad'
                                 )
     zona = fields.Selection(
-                                        [('SUR','SUR'),('NORTE','NORTE'),('PONIENTE','PONIENTE'),('ORIENTE','ORIENTE'),('CENTRO','CENTRO'),('DISTRIBUIDOR','DISTRIBUIDOR'),('MONTERREY','MONTERREY'),('CUERNAVACA','CUERNAVACA'),('GUADALAJARA','GUADALAJARA'),('QUERETARO','QUERETARO'),('CANCUN','CANCUN'),('VERACRUZ','VERACRUZ'),('PUEBLA','PUEBLA'),('TOLUCA','TOLUCA'),('LEON','LEON'),('COMODIN','COMODIN'),('VILLAHERMOSA','VILLAHERMOSA'),('MERIDA','MERIDA'),('ALTAMIRA','ALTAMIRA'),('COMODIN','COMODIN'),('DF00','DF00'),('SAN LP','SAN LP'),('ESTADO DE MÉXICO','ESTADO DE MÉXICO'),('Foraneo Norte','Foraneo Norte'),('Foraneo Sur','Foraneo Sur')],
+                                        [('CHIHUAHUA','CHIHUAHUA'),('SUR','SUR'),('NORTE','NORTE'),('PONIENTE','PONIENTE'),('ORIENTE','ORIENTE'),('CENTRO','CENTRO'),('DISTRIBUIDOR','DISTRIBUIDOR'),('MONTERREY','MONTERREY'),('CUERNAVACA','CUERNAVACA'),('GUADALAJARA','GUADALAJARA'),('QUERETARO','QUERETARO'),('CANCUN','CANCUN'),('VERACRUZ','VERACRUZ'),('PUEBLA','PUEBLA'),('TOLUCA','TOLUCA'),('LEON','LEON'),('COMODIN','COMODIN'),('VILLAHERMOSA','VILLAHERMOSA'),('MERIDA','MERIDA'),('ALTAMIRA','ALTAMIRA'),('COMODIN','COMODIN'),('DF00','DF00'),('SAN LP','SAN LP'),('ESTADO DE MÉXICO','ESTADO DE MÉXICO'),('Foraneo Norte','Foraneo Norte'),('Foraneo Sur','Foraneo Sur')],
                                         string = 'Zona',
-                                        compute = '_compute_zona'
+                                        store = True
+                                        #compute = '_compute_zona'
                                     )
     zonaEstados = fields.Selection(
-                                        [('Estado de México','Estado de México'), ('Campeche','Campeche'), ('Ciudad de México','Ciudad de México'), ('Yucatán','Yucatán'), ('Guanajuato','Guanajuato'), ('Puebla','Puebla'), ('Coahuila','Coahuila'), ('Sonora','Sonora'), ('Tamaulipas','Tamaulipas'), ('Oaxaca','Oaxaca'), ('Tlaxcala','Tlaxcala'), ('Morelos','Morelos'), ('Jalisco','Jalisco'), ('Sinaloa','Sinaloa'), ('Nuevo León','Nuevo León'), ('Baja California','Baja California'), ('Nayarit','Nayarit'), ('Querétaro','Querétaro'), ('Tabasco','Tabasco'), ('Hidalgo','Hidalgo'), ('Chihuahua','Chihuahua'), ('Quintana Roo','Quintana Roo'), ('Chiapas','Chiapas'), ('Veracruz','Veracruz'), ('Michoacán','Michoacán'), ('Aguascalientes','Aguascalientes'), ('Guerrero','Guerrero'), ('San Luis Potosí', 'San Luis Potosí'), ('Colima','Colima'), ('Durango','Durango'), ('Baja California Sur','Baja California Sur'), ('Zacatecas','Zacatecas')],
+                                        [('CHIHUAHUA','CHIHUAHUA'),('Estado de México','Estado de México'), ('Campeche','Campeche'), ('Ciudad de México','Ciudad de México'), ('Yucatán','Yucatán'), ('Guanajuato','Guanajuato'), ('Puebla','Puebla'), ('Coahuila','Coahuila'), ('Sonora','Sonora'), ('Tamaulipas','Tamaulipas'), ('Oaxaca','Oaxaca'), ('Tlaxcala','Tlaxcala'), ('Morelos','Morelos'), ('Jalisco','Jalisco'), ('Sinaloa','Sinaloa'), ('Nuevo León','Nuevo León'), ('Baja California','Baja California'), ('Nayarit','Nayarit'), ('Querétaro','Querétaro'), ('Tabasco','Tabasco'), ('Hidalgo','Hidalgo'), ('Chihuahua','Chihuahua'), ('Quintana Roo','Quintana Roo'), ('Chiapas','Chiapas'), ('Veracruz','Veracruz'), ('Michoacán','Michoacán'), ('Aguascalientes','Aguascalientes'), ('Guerrero','Guerrero'), ('San Luis Potosí', 'San Luis Potosí'), ('Colima','Colima'), ('Durango','Durango'), ('Baja California Sur','Baja California Sur'), ('Zacatecas','Zacatecas')],
                                         string = 'Zona Estados',
-                                        compute = '_compute_zona_estados'
+                                        store = True
+                                        #compute = '_compute_zona_estados'
                                     )
     numeroTicketCliente = fields.Text(
                                         string = 'Número de ticket cliente',
-                                        compute = '_compute_numero_ticket_cliente'
+                                        store = True
+                                        #compute = '_compute_numero_ticket_cliente'
                                     )
     numeroTicketDistribuidor = fields.Text(
                                             string = 'Número de ticket distribuidor',
-                                            compute = '_compute_numero_ticket_distribuidor'
+                                            store = True
+                                            #compute = '_compute_numero_ticket_distribuidor'
                                         )
     numeroTicketGuia = fields.Text(
-                                    string = 'Número de ticket guía',
-                                    compute = '_compute_numero_ticket_guia'
+                                    string = 'Número de guía',
+                                    store = True
+                                    #compute = '_compute_numero_ticket_guia'
                                 )
     comentarioLocalidad = fields.Text(
                                         string = 'Comentario de localidad',
-                                        compute = '_compute_comentario_localidad'
+                                        store = True
+                                        #compute = '_compute_comentario_localidad'
                                     )
     tiempoAtrasoTicket = fields.Text(
                                         string = 'Tiempo de atraso ticket',
-                                        compute = '_compute_tiempo_ticket'
+                                        store = True
+                                        #compute = '_compute_tiempo_ticket'
                                     )
     tiempoAtrasoAlmacen = fields.Text(
                                         string = 'Tiempo de atraso almacén',
-                                        compute = '_compute_tiempo_almacen'
+                                        store = True
+                                        #compute = '_compute_tiempo_almacen'
                                     )
     tiempoAtrasoDistribucion = fields.Text(
                                             string = 'Tiempo de atraso distribución',
-                                            compute = '_compute_tiempo_distribucion'
+                                            store = True
+                                            #compute = '_compute_tiempo_distribucion'
                                         )
     reportes = fields.Many2one(
                                     'ir.actions.report',
@@ -5677,6 +5779,7 @@ class HelpDeskDatosMesa(TransientModel):
                                 store = True
                             )
 
+
     @api.depends('reportes')
     def obtenerReportePdf(self):
         for record in self:
@@ -5686,65 +5789,12 @@ class HelpDeskDatosMesa(TransientModel):
             record.pdfToner = False
             record.pdfToner = base64.encodestring(pdf)
 
-    def _compute_serie_nombre(self):
-        if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
-            for serie in self.ticket_id.x_studio_equipo_por_nmero_de_serie:
-                if self.serie:
-                    self.serie = str(self.serie) + ', ' + str(serie.name)
-                else:
-                    self.serie = str(serie.name) + ', '
-
-    def _compute_corte(self):
-        if self.ticket_id.x_studio_corte:
-            self.corte = self.ticket_id.x_studio_corte
+    def _compute_diagnosticos(self):
+        self.diagnostico_id = self.ticket_id.diagnosticos.ids
 
     def _compute_solicitud(self):
         if self.ticket_id.x_studio_field_nO7Xg:
             self.solicitud = self.ticket_id.x_studio_field_nO7Xg.id
-
-    def _compute_cliente(self):
-        if self.ticket_id.partner_id:
-            self.cliente = self.ticket_id.partner_id.id
-    
-    def _compute_tipo_cliente(self):
-        if self.ticket_id.x_studio_nivel_del_cliente:
-            self.tipoCliente = self.ticket_id.x_studio_nivel_del_cliente
-
-    def _compute_localidad(self):
-        if self.ticket_id.x_studio_empresas_relacionadas:
-            self.localidad = self.ticket_id.x_studio_empresas_relacionadas.id
-
-    def _compute_zona_localidad(self):
-        if self.ticket_id.x_studio_field_6furK:
-            self.zonaLocalidad = self.ticket_id.x_studio_field_6furK
-
-    def _compute_localidad_contacto(self):
-        if self.ticket_id.localidadContacto:
-            self.localidadContacto = self.ticket_id.localidadContacto.id
-
-    def _compute_estado_localidad(self):
-        if self.ticket_id.x_studio_estado_de_localidad:
-            self.estadoLocalidad = self.ticket_id.x_studio_estado_de_localidad
-
-    def _compute_telefono_localidad(self):
-        if self.ticket_id.telefonoLocalidadContacto:
-            self.telefonoContactoLocalidad = self.ticket_id.telefonoLocalidadContacto
-
-    def _compute_movil_localidad(self):
-        if self.ticket_id.movilLocalidadContacto:
-            self.movilContactoLocalidad = self.ticket_id.movilLocalidadContacto
-
-    def _compute_correo_localidad(self):
-        if self.ticket_id.correoLocalidadContacto:
-            self.correoContactoLocalidad = self.ticket_id.correoLocalidadContacto
-
-    def _compute_direccion_localidad(self):
-        if self.ticket_id.direccionLocalidadText:
-            self.direccionLocalidad = self.ticket_id.direccionLocalidadText
-
-    def _compute_creado_el(self):
-        if self.ticket_id.create_date:
-            self.creadoEl = str(self.ticket_id.create_date)
 
     def _compute_area_atencion(self):
         if self.ticket_id.team_id:
@@ -5758,46 +5808,4 @@ class HelpDeskDatosMesa(TransientModel):
         if self.ticket_id.x_studio_responsable_de_equipo:
             self.encargadoArea = self.ticket_id.x_studio_responsable_de_equipo.id
 
-    def _compute_dias_atraso(self):
-        if self.ticket_id.days_difference:
-            self.diasAtraso = self.ticket_id.days_difference
-
-    def _compute_prioridad(self):
-        if self.ticket_id.priority:
-            self.prioridad = self.ticket_id.priority
-
-    def _compute_zona(self):
-        if self.ticket_id.x_studio_zona:
-            self.zona = self.ticket_id.x_studio_zona
-
-    def _compute_zona_estados(self):
-        if self.ticket_id.zona_estados:
-            self.zonaEstados = self.ticket_id.zona_estados
-
-    def _compute_numero_ticket_cliente(self):
-        if self.ticket_id.x_studio_nmero_de_ticket_cliente:
-            self.numeroTicketCliente = self.ticket_id.x_studio_nmero_de_ticket_cliente
-
-    def _compute_numero_ticket_distribuidor(self):
-        if self.ticket_id.x_studio_nmero_ticket_distribuidor_1:
-            self.numeroTicketDistribuidor = self.ticket_id.x_studio_nmero_ticket_distribuidor_1
     
-    def _compute_numero_ticket_guia(self):
-        if self.ticket_id.x_studio_nmero_de_guia_1:
-            self.numeroTicketGuia = self.ticket_id.x_studio_nmero_de_guia_1
-
-    def _compute_comentario_localidad(self):
-        if self.ticket_id.x_studio_comentarios_de_localidad:
-            self.comentarioLocalidad = self.ticket_id.x_studio_comentarios_de_localidad
-    
-    def _compute_tiempo_ticket(self):
-        if self.ticket_id.tiempoDeAtrasoTicket:
-            self.tiempoAtrasoTicket = self.ticket_id.tiempoDeAtrasoTicket
-
-    def _compute_tiempo_almacen(self):
-        if self.ticket_id.tiempoDeAtrasoAlmacen:
-            self.tiempoAtrasoAlmacen = self.ticket_id.tiempoDeAtrasoAlmacen
-
-    def _compute_tiempo_distribucion(self):
-        if self.ticket_id.tiempoDeAtrasoDistribucion:
-            self.tiempoAtrasoDistribucion = self.ticket_id.tiempoDeAtrasoDistribucion
