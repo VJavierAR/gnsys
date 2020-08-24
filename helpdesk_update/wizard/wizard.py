@@ -1902,7 +1902,7 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                             if listaPickingsOrdenada[0].state == 'assigned':
                                 estadoActual = 'En almacén'
                                 estadoActualId = 93
-                            elif 'waiting' in listaPickingsOrdenada[0].state:
+                            elif 'waiting' in listaPickingsOrdenada[0].state or 'confirmed' in listaPickingsOrdenada[0].state:
                                 estadoActual = 'Sin stock'
                                 estadoActualId = 114
                         if estadoActualId != 0:
