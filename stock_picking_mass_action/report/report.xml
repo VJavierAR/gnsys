@@ -50,5 +50,13 @@
     name="compras.report"
     file="Reporte de compras"
     attachment_use="False"/>
+<report
+    id="ruta_xlsx"
+    model="creacion.ruta"
+    string="Reporte de expedición"
+    report_type="xlsx"
+    name="ruta.report"
+    file="Reporte de expedición"
+    attachment_use="False"/>
 </data>
 </odoo>

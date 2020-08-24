@@ -85,6 +85,32 @@ class sale_update(models.Model):
 	_inherit = 'sale.order'
 	compatiblesLineas = fields.One2many('sale_order_compatibles', 'saleOrder', string = 'nombre temp',copy=True)
 
+	serieRetiro2=fields.Many2one('stock.production.lot','Serie retiro')
+
+	@api.onchange('partner_id')
+	def dominioContactos(self):
+		res={}
+		for record in self:
+			if(record.partner_id.id):
+				hijos=self.env['res.partner'].search([['parent_id','=',record.partner_id.id]])
+				hijosarr=hijos.mapped('id')
+				nietos=self.env['res.partner'].search([['parent_id','in',hijosarr],['type','=','contact']]).mapped('id')
+				hijosF=hijos.filtered(lambda x:x.type=='contact').mapped('id')
+				final=nietos+hijosF
+				res['domain']={'x_studio_field_RnhKr':[('id','in',final)]}
+		return res
+
+
+
+	@api.onchange('serieRetiro2')
+	def serieRetiro(self):
+		for record in self:
+		  if(record.serieRetiro2.id):
+		    if(record.serieRetiro2.x_studio_localidad_2.id):
+		      record['partner_id']=record.serieRetiro2.x_studio_localidad_2.parent_id.id
+		      record['partner_shipping_id']=record.serieRetiro2.x_studio_localidad_2.id
+		      record['x_studio_direccin_de_entrega']=record.serieRetiro2.x_studio_localidad_2.id			
+		      record['compatiblesLineas']=[{'serie':record.serieRetiro2.id,'cantidad':1,'tipo':record.x_studio_tipo_de_solicitud,'equipos':record.serieRetiro2.product_id.id}]
 
 	@api.multi
 	def mail_action_quotation_send(self):
@@ -198,7 +224,7 @@ class sale_update(models.Model):
 			i=0
 			for pi in p.move_ids_without_package.sorted(key='id'):
 				pi.write({'sale_line_id':sal[i]})
-				if(p.picking_type_id.code=='outgoing'):
+				if(p.picking_type_id.code=='outgoing' and 'REFACCIONES' not in p.sale_id.warehouse_id.name):
 					almacen=self.env['stock.warehouse'].search([['x_studio_field_E0H1Z','=',cliente.id]])
 					if(almacen.id!=False):
 						pi.write({'location_dest_id':almacen.lot_stock_id.id})

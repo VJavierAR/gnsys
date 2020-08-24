@@ -530,8 +530,10 @@
                                 <field name='tipoReporte' force_save='1' />
                                 <field name='corte' force_save='1' />
                                 <!--<field name='almacen' force_save='1' />-->
+                                <!--
                                 <field name='almacenes' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain="['&amp;', ('x_studio_cliente', '=', False), '|', ('id', '=', 1), ('id', '=', 18) ]" />
-
+                                -->
+                                <field name='almacenes' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain="[('x_studio_cliente', '=', False)]" />
                             </group>
                             <group>
                                 <field name='validarHastaAlmacenTicket' force_save='1' />
@@ -924,7 +926,10 @@
 
                 <group>
                     <group>
+                        <!--
                         <field name='almacenes' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain="['&amp;', ('x_studio_cliente', '=', False), '|', ('id', '=', 1), ('id', '=', 18) ]" />
+                        -->
+                        <field name='almacenes' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain="[('x_studio_cliente', '=', False)]" />
                     </group>
                 </group>
 
@@ -1438,12 +1443,13 @@
                 
                 <group>
                     <group>
-                        <field name="productos" string="Productos " domain="[]" options="{'no_create_edit': True, 'no_create': True}" readonly='0' >
+                        <field name="productos" string="Refacciones y accesorios " domain="['|', '|', '|', ('categ_id', '=', 7), ('categ_id', '=', 9), ('categ_id', '=', 10), ('categ_id', '=', 11) ]" options="{'no_create_edit': True, 'no_create': True}" readonly='0' >
                             <tree string="Productos" editable="bottom" >
-                                <field name='product_variant_id' string='Producto' />
                                 <field name='categ_id' string='Categoría del producto' readonly='1'/>
+                                <field name='product_variant_id' string='Producto' />
                                 <field name='default_code' string='Referencia interna' readonly='1'/>
                                 <field name='name' string='Nombre' readonly='1'/>
+                                <field name='description' string='Descripción' readonly='1'/>
                                 <field name='qty_available' string='Cantidad a mano' />
                                 <field name='virtual_available' string='Cantidad prevista' />
                                 <field name='x_studio_cantidad_pedida' string='Cantidad a pedir' />
@@ -1480,6 +1486,13 @@
                     <group>
                         <field name='ticket_id' readonly='1' options="{'no_create_edit': True, 'no_create': True}" />
                     </group>
+                    <group>
+                        <field name='estadoSolicitud' readonly='1' />
+                        <field name='solicitud' readonly='1' options="{'no_create_edit': True, 'no_create': True}" />
+                    </group>
+                </group>
+                <group>
+                    <field name='serie' readonly='1' widget='html' />
                 </group>
                 
                 <group>
@@ -1540,12 +1553,13 @@
                                     <field name='activar_compatibilidad' />
                                 </group>
                                 <group>
-                                    <field name="productos" string="Refacciones y accesorios " domain="[]" options="{'no_create_edit': True, 'no_create': True}" readonly='0' >
+                                    <field name="productos" string="Refacciones y accesorios " domain="['|', '|', '|', ('categ_id', '=', 7), ('categ_id', '=', 9), ('categ_id', '=', 10), ('categ_id', '=', 11) ]" options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" readonly='0' >
                                         <tree string="Productos" editable="bottom" >
-                                            <field name='product_variant_id' string='Producto' />
                                             <field name='categ_id' string='Categoría del producto' readonly='1'/>
+                                            <field name='product_variant_id' string='Producto' />
                                             <field name='default_code' string='Referencia interna' readonly='1'/>
                                             <field name='name' string='Nombre' readonly='1'/>
+                                            <field name='description' string='Descripción' readonly='1'/>
                                             <field name='qty_available' string='Cantidad a mano' />
                                             <field name='virtual_available' string='Cantidad prevista' />
                                             <field name='x_studio_cantidad_pedida' string='Cantidad a pedir' />
@@ -1553,6 +1567,26 @@
                                     </field>
                                 </group>
                             </group>
+                            <!--
+                            <field name='productosDos' string=''>
+                                <tree string="Productos" editable="bottom" >
+                                    <field name='productos' domain="['|', '|', '|', ('categ_id', '=', 7), ('categ_id', '=', 9), ('categ_id', '=', 10), ('categ_id', '=', 11) ]" options="{'no_create_edit': True, 'no_create': True}" >
+                                        <tree string="Refacciones y accesorios" >
+                                            <field name='categ_id' string='Categoría del producto' readonly='1'/>
+                                            <field name='product_variant_id' string='Producto' />
+                                            <field name='default_code' string='Referencia interna' readonly='1'/>
+                                            <field name='name' string='Nombre' readonly='1'/>
+                                            <field name='description' string='Descripción' readonly='1'/>
+                                            <field name='qty_available' string='Cantidad a mano' />
+                                            <field name='virtual_available' string='Cantidad prevista' />
+                                            <field name='x_studio_cantidad_pedida' string='Cantidad a pedir' />
+                                        </tree>
+                                    </field>
+                                    <field name='cantidadPedida' />
+                                    <field name='detalleDeProducto' readonly='1' widget='html' />
+                                </tree>
+                            </field>
+                            -->
                         </page>
                         <page string = 'Diagnostico antes de validar'>
                             <group>
@@ -1597,7 +1631,7 @@
 
                 <footer>
                     <button name="confirmarYValidarRefacciones" string="Confirmar solicitud" type="object" class="oe_highlight" />
-                    <button name="validar" string="Confirmar solicitud 2" invisible='0' type="object" class="btn btn-warning" />
+                    <button name="validar" string="Confirmar solicitud 2" invisible='1' type="object" class="btn btn-warning" />
                     <button name="validacionSolicitud" invisible='1' string="Validar solicitud con SO existente" help='Valida la solicitud que se genero previamente y no se logro validar' type="object" class="oe_highlight" />
                     <button string="Cerrar ventana" class="oe_link" special="cancel"/>
                 </footer>
@@ -1732,7 +1766,148 @@
 
 
 
+    <record id="view_helpdesk_detalle_mesa" model="ir.ui.view">
+        <field name="model">helpdesk.datos.mesa</field>
+        <field name="arch" type="xml">
+            <form string="Detalle Mesa">
+                <group class='text-center'>
+                    <h2>
+                        <field name="serie" string='' readonly="1"/>
+                    </h2>
+                </group>
+                <group>
+                    <group>
+                        <field name='ticket_id' string='Ticket' readonly='1'/>
+                    </group>
+                    <group>
 
+                    </group>
+                </group>
+                <group>
+                    <notebook>
+                        <page string = 'Pedido'>
+                            <field name='series' readonly='1' >
+                                <tree>
+                                    <field name='name' string='Número de serie' />
+                                    <field name='product_id' string='Producto' />
+                                    <field name='x_studio_ultima_ubicacin' string='Ultima unicación' />
+                                    <field name='x_studio_color_bn' string='Color o B/N' />
+                                    <!--
+                                    <field name='' string='' />
+                                    -->
+                                </tree>
+                                <form>
+                                    <group>
+                                        <group>
+                                            <field name='name'/>
+                                        </group>
+                                    </group>
+                                    <group>
+                                        <group>
+                                            <field name='product_id' string='Producto' />
+                                            <field name='x_studio_ultima_ubicacin' string='Ultima unicación' />
+                                        </group>
+                                        <group>
+                                            <field name='x_studio_color_bn' string='Color o B/N' />
+                                        </group>
+                                    </group>
+                                </form>
+                            </field>
+                            <field name='refacciones' readonly='1'>
+                                <tree>
+                                    <field name='product_variant_id' string='Producto' />
+                                    <field name='categ_id' string='Categoría del producto' />
+                                    <field name='default_code' string='Referencia interna' />
+                                    <field name='name' string='Nombre' />
+                                    <field name='qty_available' string='Cantidad a mano' />
+                                    <field name='virtual_available' string='Cantidad prevista' />
+                                    <field name='x_studio_cantidad_pedida' string='Cantidad a pedir' />
+                                </tree>
+                            </field>
+                            <group>
+                                <group>
+                                    <field name='solicitud' />
+                                </group>
+                                <group>
+                                    <field name='corte' />
+                                </group>
+                            </group>
+                        </page>
+                        <page string = 'Cliente'>
+                            <group string='Datos cliente'>
+                                <group>
+                                    <field name='cliente' />
+                                    <field name='tipoCliente' />
+                                    <field name='localidad' />
+                                </group>
+                                <group>
+                                    <field name='zonaLocalidad' />
+                                    <field name='localidadContacto' />
+                                    <field name='estadoLocalidad' />
+                                </group>
+                                <group>
+                                    <field name='telefonoContactoLocalidad' />
+                                    <field name='movilContactoLocalidad' />
+                                    <field name='correoContactoLocalidad' />
+                                </group>
+                                <group>
+                                    <field name='direccionLocalidad' widget='html'/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string = 'Datos del ticket'>
+                            <group>
+                                <group>
+                                    <field name='creadoEl' />
+                                    <field name='areaAtencion' />
+                                    <field name='ejecutivo' />
+                                    <field name='encargadoArea' />
+                                </group>
+                                <group>
+                                    <field name='diasAtraso' />
+                                    <field name='prioridad' />
+                                    <field name='zona' />
+                                    <field name='zonaEstados' />
+                                </group>
+                                <group>
+                                    <field name='numeroTicketCliente' />
+                                    <field name='numeroTicketDistribuidor' />
+                                    <field name='numeroTicketGuia' />
+                                </group>
+                                <group>
+                                    <field name='comentarioLocalidad' />
+                                </group>
+                            </group>
+                        </page>
+                        <page string = 'Vista previa reporte'>
+                            <group>
+                                <group>
+                                    <field name='reportes' force_save='1' invisible='1' options="{'no_create_edit': True, 'no_create': True, 'no_edit': True}" domain="[['model', '=', 'helpdesk.ticket']]" />
+                                </group>
+                            </group>
+                            <group>
+                                <field name='pdfToner' string=' ' force_save='1' widget='pdf_viewer' />
+                            </group>
+                        </page>
+                        <page string = 'Días de atraso'>
+                            <group>
+                                <group>
+                                    <field name='tiempoAtrasoTicket' readonly='1' widget='html'/>
+                                </group>
+                                <group>
+                                    <field name='tiempoAtrasoAlmacen' readonly='1' widget='html'/>
+                                    <field name='tiempoAtrasoDistribucion' readonly='1' widget='html'/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </group>
+                <footer>
+                    <button special="cancel" string="Cerrar" class="oe_highlight" />
+                </footer>
+            </form>
+        </field>
+    </record>
 
 
 

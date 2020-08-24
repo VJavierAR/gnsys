@@ -12,6 +12,9 @@
 	        	<button t-if="widget.modelName == 'product.product'" class="btn btn-primary oe_action_button_product_product_one" type="button" accesskey="f">Alta de Referencia</button>
 	        	<button t-if="widget.modelName == 'purchase.order'" class="btn btn-primary oe_action_button_purchase_order" type="button" accesskey="f">Reporte de compras</button>
 	        	<button t-if="widget.modelName == 'stock.warehouse.orderpoint'" class="btn btn-primary oe_action_button_stock_rule" type="button" accesskey="f">Importacion o Ajuste</button>
+
+	        <button t-if="widget.modelName == 'helpdesk.ticket'" class="btn btn-primary oe_action_button_helpdesk_detalle" type="button" accesskey="f">Detalle del ticket</button>
+	        <button t-if="widget.modelName == 'creacion.ruta'" class="btn btn-primary oe_action_button_creacion_ruta" type="button" accesskey="f">Reporte de Expediciones</button>
 	        </t>
 	    </t>
 	</template>

@@ -346,6 +346,8 @@ class HelpDeskCancelarConComentario(TransientModel):
 
     def cancelarTicketConComentario(self):
       #if self.ticket_id.stage_id.name == 'Resuelto' or self.ticket_id.stage_id.name == 'Abierto' or self.ticket_id.stage_id.name == 'Asignado' or self.ticket_id.stage_id.name == 'Atención' and self.ticket_id.estadoCerrado == False:
+      if self.ticket_id.x_studio_field_nO7Xg:
+        self.ticket_id.x_studio_field_nO7Xg.action_cancel()
       self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.ticket_id.id
                                               ,'comentario': self.comentario
                                               ,'estadoTicket': self.ticket_id.stage_id.name
@@ -858,7 +860,7 @@ class helpdesk_crearconserie(TransientModel):
     cliente = fields.Text(string = 'Cliente', store = True)
     idCliente = fields.Text(string = 'idCliente', store=True, default=0)
     localidad = fields.Text(string = 'Localidad', store = True)
-    zonaLocalidad = fields.Selection([('SUR','SUR'),('NORTE','NORTE'),('PONIENTE','PONIENTE'),('ORIENTE','ORIENTE'),('CENTRO','CENTRO'),('DISTRIBUIDOR','DISTRIBUIDOR'),('MONTERREY','MONTERREY'),('CUERNAVACA','CUERNAVACA'),('GUADALAJARA','GUADALAJARA'),('QUERETARO','QUERETARO'),('CANCUN','CANCUN'),('VERACRUZ','VERACRUZ'),('PUEBLA','PUEBLA'),('TOLUCA','TOLUCA'),('LEON','LEON'),('COMODIN','COMODIN'),('VILLAHERMOSA','VILLAHERMOSA'),('MERIDA','MERIDA'),('ALTAMIRA','ALTAMIRA'),('COMODIN','COMODIN'),('DF00','DF00'),('SAN LP','SAN LP'),('ESTADO DE MÉXICO','ESTADO DE MÉXICO'),('Foraneo Norte','Foraneo Norte'),('Foraneo Sur','Foraneo Sur')], string = 'Zona', store = True)
+    zonaLocalidad = fields.Selection([('SUR','SUR'),('NORTE','NORTE'),('PONIENTE','PONIENTE'),('ORIENTE','ORIENTE'),('CENTRO','CENTRO'),('DISTRIBUIDOR','DISTRIBUIDOR'),('MONTERREY','MONTERREY'),('CUERNAVACA','CUERNAVACA'),('GUADALAJARA','GUADALAJARA'),('QUERETARO','QUERETARO'),('CANCUN','CANCUN'),('VERACRUZ','VERACRUZ'),('PUEBLA','PUEBLA'),('TOLUCA','TOLUCA'),('LEON','LEON'),('COMODIN','COMODIN'),('VILLAHERMOSA','VILLAHERMOSA'),('MERIDA','MERIDA'),('ALTAMIRA','ALTAMIRA'),('COMODIN','COMODIN'),('DF00','DF00'),('SAN LP','SAN LP'),('ESTADO DE MÉXICO','ESTADO DE MÉXICO'),('Foraneo Norte','Foraneo Norte'),('Foraneo Sur','Foraneo Sur'),('CHIHUAHUA','CHIHUAHUA')], string = 'Zona', store = True)
     idLocaliidad = fields.Text(string = 'idLocaliidad', store=True, default=0)
     nombreContactoLocalidad = fields.Text(string = 'Contacto de localidad', store = True)
     telefonoContactoLocalidad = fields.Text(string = 'Teléfono de contacto', store = True)
@@ -1342,49 +1344,78 @@ class helpdesk_crearconserie(TransientModel):
                     'context': self.env.context,
                     }
         elif self.clienteRelacion.id and self.localidadRelacion.id:
-          messageTemp = ''
-          ticket = self.env['helpdesk.ticket'].create({'stage_id': 89 
-                                              #,'x_studio_equipo_por_nmero_de_serie': [(6,0,self.serie.ids)]
-                                              ,'partner_id': int(self.idCliente)
-                                              ,'x_studio_empresas_relacionadas': int(self.idLocaliidad)
-                                              ,'team_id': equipoDeUsuario
-                                              ,'x_studio_field_6furK': self.zonaLocalidad
-                                              })
-          ticket.write({'partner_id': int(self.idCliente)
-                      ,'x_studio_empresas_relacionadas': int(self.idLocaliidad)
-                      ,'team_id': equipoDeUsuario
-                      ,'x_studio_field_6furK': self.zonaLocalidad
-                      })
-          if self.contactoInterno:
-                query = "update helpdesk_ticket set \"contactoInterno\" = " + str(self.contactoInterno.id) + " where id = " + str(ticket.id) + ";"
-                self.env.cr.execute(query)
-                self.env.cr.commit()
-          #query = "update helpdesk_ticket set \"partner_id\" = " + str(self.idCliente) + ", \"x_studio_empresas_relacionadas\" =" + str(self.idLocaliidad) + " where id = " + str(ticket.id) + ";"
-          #self.env.cr.execute(query)
-          #self.env.cr.commit()
-          ticket._compute_datosCliente()
-          #query = "select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!=" + str(ticket.x_studio_id_ticket) + "  and h.stage_id!=18 and h.team_id!=8 and  h.active='t' and stock_production_lot_id = " +  str(ticket.x_studio_equipo_por_nmero_de_serie[0].id) + " limit 1;"            
-          #self.env.cr.execute(query)                        
-          #informacion = self.env.cr.fetchall()
-          wiz = ''
-          mensajeTitulo = "Ticket generado!!!"
-          #mensajeCuerpo = "Se creo el ticket '" + str(ticket.id) + "' sin número de serie para cliente " + self.cliente + " con localidad " + self.localidad + "\n\n"
-          mensajeCuerpo = "Se creo el ticket '" + str(ticket.id) + "' sin número de serie. \n\n"
-          wiz = self.env['helpdesk.alerta.series'].create({'ticket_id': ticket.id, 'mensaje': mensajeCuerpo})
-          view = self.env.ref('helpdesk_update.view_helpdesk_alerta_series')
-          return {
-                  'name': _(mensajeTitulo),
-                  'type': 'ir.actions.act_window',
-                  'view_type': 'form',
-                  'view_mode': 'form',
-                  'res_model': 'helpdesk.alerta.series',
-                  'views': [(view.id, 'form')],
-                  'view_id': view.id,
-                  'target': 'new',
-                  'res_id': wiz.id,
-                  'context': self.env.context,
-                  }
+          query = "select helpdesk_team_id from helpdesk_team_res_users_rel where res_users_id = " + str(self.env.user.id) + ";"
+          self.env.cr.execute(query)
+          resultadoQuery = self.env.cr.fetchall()
+          puedoCrearSinSerie = False
+          for resultado in resultadoQuery:
+            if resultado[0] == 9:
+                puedoCrearSinSerie = True
+                break
+          if puedoCrearSinSerie:
+              #equiposRelacionados = self.env['helpdesk_team_res_users_rel'].search([['res_users_id', '=', self.env.user.id]]).helpdesk_team_id
+              _logger.info('3312 equiposRelacionados resultadoQuery: ' + str(resultadoQuery) )
 
+              messageTemp = ''
+              ticket = self.env['helpdesk.ticket'].create({'stage_id': 89 
+                                                  #,'x_studio_equipo_por_nmero_de_serie': [(6,0,self.serie.ids)]
+                                                  ,'partner_id': int(self.idCliente)
+                                                  ,'x_studio_empresas_relacionadas': int(self.idLocaliidad)
+                                                  ,'team_id': equipoDeUsuario
+                                                  ,'x_studio_field_6furK': self.zonaLocalidad
+                                                  })
+              ticket.write({'partner_id': int(self.idCliente)
+                          ,'x_studio_empresas_relacionadas': int(self.idLocaliidad)
+                          ,'team_id': equipoDeUsuario
+                          ,'x_studio_field_6furK': self.zonaLocalidad
+                          })
+              if self.contactoInterno:
+                    query = "update helpdesk_ticket set \"contactoInterno\" = " + str(self.contactoInterno.id) + " where id = " + str(ticket.id) + ";"
+                    self.env.cr.execute(query)
+                    self.env.cr.commit()
+              #query = "update helpdesk_ticket set \"partner_id\" = " + str(self.idCliente) + ", \"x_studio_empresas_relacionadas\" =" + str(self.idLocaliidad) + " where id = " + str(ticket.id) + ";"
+              #self.env.cr.execute(query)
+              #self.env.cr.commit()
+              ticket._compute_datosCliente()
+              #query = "select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!=" + str(ticket.x_studio_id_ticket) + "  and h.stage_id!=18 and h.team_id!=8 and  h.active='t' and stock_production_lot_id = " +  str(ticket.x_studio_equipo_por_nmero_de_serie[0].id) + " limit 1;"            
+              #self.env.cr.execute(query)                        
+              #informacion = self.env.cr.fetchall()
+              wiz = ''
+              mensajeTitulo = "Ticket generado!!!"
+              #mensajeCuerpo = "Se creo el ticket '" + str(ticket.id) + "' sin número de serie para cliente " + self.cliente + " con localidad " + self.localidad + "\n\n"
+              mensajeCuerpo = "Se creo el ticket '" + str(ticket.id) + "' sin número de serie. \n\n"
+              wiz = self.env['helpdesk.alerta.series'].create({'ticket_id': ticket.id, 'mensaje': mensajeCuerpo})
+              view = self.env.ref('helpdesk_update.view_helpdesk_alerta_series')
+              return {
+                      'name': _(mensajeTitulo),
+                      'type': 'ir.actions.act_window',
+                      'view_type': 'form',
+                      'view_mode': 'form',
+                      'res_model': 'helpdesk.alerta.series',
+                      'views': [(view.id, 'form')],
+                      'view_id': view.id,
+                      'target': 'new',
+                      'res_id': wiz.id,
+                      'context': self.env.context,
+                      }
+          else:
+            mensajeTitulo = 'No se puede generar ticket sin serie!!!'
+            mensajeCuerpo = 'El usuario no es de mesa de Servicio y no tiene los permisos para crear un ticket sin serie.'
+            #wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
+            wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
+            view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+            return {
+                    'name': _(mensajeTitulo),
+                    'type': 'ir.actions.act_window',
+                    'view_type': 'form',
+                    'view_mode': 'form',
+                    'res_model': 'helpdesk.alerta',
+                    'views': [(view.id, 'form')],
+                    'view_id': view.id,
+                    'target': 'new',
+                    'res_id': wiz.id,
+                    'context': self.env.context,
+                    }
 
 
 
@@ -1638,7 +1669,7 @@ class CrearYValidarSolTonerMassAction(TransientModel):
 
     def confirmar(self):
         _logger.info("CrearYValidarSolTonerMassAction.confirmar()")
-
+        _logger.info('3312: CrearYValidarSolTonerMassAction.confirmar() inicio de proceso: ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
         listaTicketsSale = []
         listaDeTicketsConSolicitud = []
         listaDeTicketsValidados = []
@@ -1652,8 +1683,9 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                     _logger.info("ticket.stage_id.id = " + str(ticket.stage_id.id))
                     _logger.info("ticket.x_studio_field_nO7Xg = " + str(ticket.x_studio_field_nO7Xg))
                     #self.stage_id.id = 93
-                    query = "update helpdesk_ticket set stage_id = 93 where id = " + str(ticket.x_studio_id_ticket) + ";"
-                    ss = self.env.cr.execute(query)
+                    
+                    #query = "update helpdesk_ticket set stage_id = 93 where id = " + str(ticket.x_studio_id_ticket) + ";"
+                    #ss = self.env.cr.execute(query)
                     break
                 if ticket.team_id.id == 8 or ticket.team_id.id == 13:
                     x = 1 ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
@@ -1848,10 +1880,26 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                                 if(len(requisicion)>0):
                                     requisicion[0].product_rel=[{'cliente':sale.partner_shipping_id.id,'ticket':sale.x_studio_field_bxHgp.id,'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
                         sale.action_confirm()
+                        _logger.info('3312: existe picking? ' + str(sale.picking_ids))
+                        estadoActual = ticket.stage_id.name
+                        estadoActualId = 0
+                        if sale.picking_ids:
+                            listaPickingsOrdenada = self.env['stock.picking'].sudo().search([('id', 'in', sale.mapped( 'picking_ids.id'))], order='id asc')
+                            _logger.info('3312: picking ordenados ' + str(listaPickingsOrdenada))
+                            if listaPickingsOrdenada[0].state == 'assigned':
+                                estadoActual = 'En almacén'
+                                estadoActualId = 93
+                            elif 'waiting' in listaPickingsOrdenada[0].state:
+                                estadoActual = 'Sin stock'
+                                estadoActualId = 114
+                        if estadoActualId != 0:
+                            ticket.write({
+                                            'stage_id': estadoActualId
+                                        })
                         listaDeTicketsValidados.append(ticket.id)
                         self.env['helpdesk.diagnostico'].create({
                                                             'ticketRelacion': ticket.id,
-                                                            'estadoTicket': 'A almacén',
+                                                            'estadoTicket': estadoActual,
                                                             #'evidencia': [(6,0,self.evidencia.ids)],
                                                             #'mostrarComentario': self.check,
                                                             'write_uid':  self.env.user.name,
@@ -1932,9 +1980,9 @@ class CrearYValidarSolTonerMassAction(TransientModel):
         mensajeCuerpo = "Se crearon y validaron las solicitudes de los tickets. \n\n"
 
         for ticket in listaDeTicketsValidados:
-            query = "update helpdesk_ticket set stage_id = 93 where id = " + str(ticket) + ";"
-            ss = self.env.cr.execute(query)
-            self.env.cr.commit()
+            #query = "update helpdesk_ticket set stage_id = 93 where id = " + str(ticket) + ";"
+            #ss = self.env.cr.execute(query)
+            #self.env.cr.commit()
             mensajeCuerpo = mensajeCuerpo + str(ticket) + ', '
 
         mensajeCuerpo = mensajeCuerpo + '\n\nLos siguientes tickets ya contaban con Solicitudes creadas por lo cual no fueron validados. \n\n'
@@ -1947,7 +1995,7 @@ class CrearYValidarSolTonerMassAction(TransientModel):
         mensajeCuerpo = mensajeCuerpo + '\n\n Los siguientes tickets no tienen cartuchos en sus solicitudes, favor de revisar las series y sus cartuchos seleccionados. \n\n'
         for ticket in listaDeTicketsSinPoroductos:
             mensajeCuerpo = mensajeCuerpo + str(ticket) + ', '
-
+        _logger.info('3312: CrearYValidarSolTonerMassAction.confirmar() fin de proceso: ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
         wiz = self.env['helpdesk.alerta.series'].create({'mensaje': mensajeCuerpo})
         view = self.env.ref('helpdesk_update.view_helpdesk_alerta_series')
         return {
@@ -2008,7 +2056,7 @@ class HelpDeskDatosToner(TransientModel):
                                     compute = '_compute_localidad'
                                 )
     zonaLocalidad = fields.Selection(
-                                        [('SUR','SUR'),('NORTE','NORTE'),('PONIENTE','PONIENTE'),('ORIENTE','ORIENTE'),('CENTRO','CENTRO'),('DISTRIBUIDOR','DISTRIBUIDOR'),('MONTERREY','MONTERREY'),('CUERNAVACA','CUERNAVACA'),('GUADALAJARA','GUADALAJARA'),('QUERETARO','QUERETARO'),('CANCUN','CANCUN'),('VERACRUZ','VERACRUZ'),('PUEBLA','PUEBLA'),('TOLUCA','TOLUCA'),('LEON','LEON'),('COMODIN','COMODIN'),('VILLAHERMOSA','VILLAHERMOSA'),('MERIDA','MERIDA'),('ALTAMIRA','ALTAMIRA'),('COMODIN','COMODIN'),('DF00','DF00'),('SAN LP','SAN LP'),('ESTADO DE MÉXICO','ESTADO DE MÉXICO'),('Foraneo Norte','Foraneo Norte'),('Foraneo Sur','Foraneo Sur')], 
+                                        [('CHIHUAHUA','CHIHUAHUA'), ('SUR','SUR'),('NORTE','NORTE'),('PONIENTE','PONIENTE'),('ORIENTE','ORIENTE'),('CENTRO','CENTRO'),('DISTRIBUIDOR','DISTRIBUIDOR'),('MONTERREY','MONTERREY'),('CUERNAVACA','CUERNAVACA'),('GUADALAJARA','GUADALAJARA'),('QUERETARO','QUERETARO'),('CANCUN','CANCUN'),('VERACRUZ','VERACRUZ'),('PUEBLA','PUEBLA'),('TOLUCA','TOLUCA'),('LEON','LEON'),('COMODIN','COMODIN'),('VILLAHERMOSA','VILLAHERMOSA'),('MERIDA','MERIDA'),('ALTAMIRA','ALTAMIRA'),('COMODIN','COMODIN'),('DF00','DF00'),('SAN LP','SAN LP'),('ESTADO DE MÉXICO','ESTADO DE MÉXICO'),('Foraneo Norte','Foraneo Norte'),('Foraneo Sur','Foraneo Sur')], 
                                         string = 'Zona localidad',
                                         compute = '_compute_zona_localidad'
                                     )
@@ -2491,7 +2539,7 @@ class helpdesk_crearToner(TransientModel):
                                     store = True
                                 )
     zonaLocalidad = fields.Selection(
-                                        [('SUR','SUR'),('NORTE','NORTE'),('PONIENTE','PONIENTE'),('ORIENTE','ORIENTE'),('CENTRO','CENTRO'),('DISTRIBUIDOR','DISTRIBUIDOR'),('MONTERREY','MONTERREY'),('CUERNAVACA','CUERNAVACA'),('GUADALAJARA','GUADALAJARA'),('QUERETARO','QUERETARO'),('CANCUN','CANCUN'),('VERACRUZ','VERACRUZ'),('PUEBLA','PUEBLA'),('TOLUCA','TOLUCA'),('LEON','LEON'),('COMODIN','COMODIN'),('VILLAHERMOSA','VILLAHERMOSA'),('MERIDA','MERIDA'),('ALTAMIRA','ALTAMIRA'),('COMODIN','COMODIN'),('DF00','DF00'),('SAN LP','SAN LP'),('ESTADO DE MÉXICO','ESTADO DE MÉXICO'),('Foraneo Norte','Foraneo Norte'),('Foraneo Sur','Foraneo Sur')], 
+                                        [('CHIHUAHUA','CHIHUAHUA'),('SUR','SUR'),('NORTE','NORTE'),('PONIENTE','PONIENTE'),('ORIENTE','ORIENTE'),('CENTRO','CENTRO'),('DISTRIBUIDOR','DISTRIBUIDOR'),('MONTERREY','MONTERREY'),('CUERNAVACA','CUERNAVACA'),('GUADALAJARA','GUADALAJARA'),('QUERETARO','QUERETARO'),('CANCUN','CANCUN'),('VERACRUZ','VERACRUZ'),('PUEBLA','PUEBLA'),('TOLUCA','TOLUCA'),('LEON','LEON'),('COMODIN','COMODIN'),('VILLAHERMOSA','VILLAHERMOSA'),('MERIDA','MERIDA'),('ALTAMIRA','ALTAMIRA'),('COMODIN','COMODIN'),('DF00','DF00'),('SAN LP','SAN LP'),('ESTADO DE MÉXICO','ESTADO DE MÉXICO'),('Foraneo Norte','Foraneo Norte'),('Foraneo Sur','Foraneo Sur')], 
                                         string = 'Zona localidad',
                                         store = True
                                     )
@@ -2786,34 +2834,38 @@ class helpdesk_crearToner(TransientModel):
             textoHtml.append("</h3>")
             self.textoTicketExistente =  ''.join(textoHtml)
             
+            cliente = self.dca[0].serie.x_studio_cliente
+            localidad = self.dca[0].serie.x_studio_localidad_2
 
-            if self.dca[0].serie.x_studio_move_line and self.dca[0].serie.x_studio_move_line.sorted(key='date', reverse=True)[0].location_dest_id.x_studio_field_JoD2k:
+            if cliente and localidad:
                 moveLineOrdenado = self.dca[0].serie.x_studio_move_line.sorted(key="date", reverse=True)
-                self.cliente = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
-                self.tipoCliente = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.x_studio_nivel_del_cliente
-                self.localidad = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
-                self.zonaLocalidad = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.x_studio_field_SqU5B
-                self.estadoLocalidad = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.state_id.name
+                
+
+                self.cliente = cliente.id
+                self.tipoCliente = cliente.x_studio_nivel_del_cliente
+                self.localidad = localidad.id
+                self.zonaLocalidad = localidad.x_studio_field_SqU5B
+                self.estadoLocalidad = localidad.state_id.name
 
                 textoHtmlDireccion = []
 
-                textoHtmlDireccion.append('<p>Calle: ' + moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.street_name + '</p>')
-                textoHtmlDireccion.append('<p>Número exterior: ' + moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.street_number + '</p>')
-                textoHtmlDireccion.append('<p>Número interior: ' + moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.street_number2 + '</p>')
-                textoHtmlDireccion.append('<p>Colonia: ' + moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.l10n_mx_edi_colony + '</p>')
-                textoHtmlDireccion.append('<p>Alcaldía: ' + moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.city + '</p>')
-                textoHtmlDireccion.append('<p>Estado: ' + moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.state_id.name + '</p>')
-                textoHtmlDireccion.append('<p>Código postal: ' + moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.zip + '</p>')
+                textoHtmlDireccion.append('<p>Calle: ' + localidad.street_name + '</p>')
+                textoHtmlDireccion.append('<p>Número exterior: ' + localidad.street_number + '</p>')
+                textoHtmlDireccion.append('<p>Número interior: ' + localidad.street_number2 + '</p>')
+                textoHtmlDireccion.append('<p>Colonia: ' + localidad.l10n_mx_edi_colony + '</p>')
+                textoHtmlDireccion.append('<p>Alcaldía: ' + localidad.city + '</p>')
+                textoHtmlDireccion.append('<p>Estado: ' + localidad.state_id.name + '</p>')
+                textoHtmlDireccion.append('<p>Código postal: ' + localidad.zip + '</p>')
 
                 self.direccionLocalidad = ''.join(textoHtmlDireccion)
                 
                 #_my_object.write({'idCliente' : moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
                 #                ,'idLocaliidad': moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
                 #                })
-                loc = moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id
+                #loc = localidad.id
                 
                 
-                idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_ultimo_contacto', '=', True]], order='create_date desc', limit=1)
+                idLoc = self.env['res.partner'].search([['parent_id', '=', localidad.id],['x_studio_ultimo_contacto', '=', True]], order='create_date desc', limit=1)
                 
                 if idLoc:
                     self.localidadContacto = idLoc[0].id
@@ -2912,8 +2964,47 @@ class helpdesk_crearToner(TransientModel):
                                                             'ponerTicketEnEspera': self.ponerTicketEnEspera
                                                         })
             self.env.cr.commit()
-            listaDca = []
+            objTicket = self.env['helpdesk.ticket'].search([['id', '=', ticket.id]], order='create_date desc', limit=1)
+            listaDca = [(5, 0, 0)]
             for nuevoDca in self.dca:
+                query = """
+                            insert into dcas_dcas (\"serie\", \"colorEquipo\", \"ultimaUbicacion\",
+                                                    \"equipo\", \"contadorMono\", \"contadorAnteriorNegro\", 
+                                                    \"contadorColor\", \"contadorAnteriorColor\", \"x_studio_cartuchonefro\", 
+                                                    \"x_studio_rendimiento_negro\", \"porcentajeNegro\", \"x_studio_cartucho_amarillo\", 
+                                                    \"x_studio_rendimientoa\", \"porcentajeAmarillo\", \"x_studio_cartucho_cian_1\", 
+                                                    \"x_studio_rendimientoc\", \"porcentajeCian\", \"x_studio_cartucho_magenta\", 
+                                                    \"x_studio_rendimientom\", \"porcentajeMagenta\", \"tablahtml\", \"x_studio_tiquete\") 
+                                                    values (
+                                                    """ + str(nuevoDca.serie.id) + """,
+                                                    """ + str(nuevoDca.colorEquipo) + """,
+                                                    """ + str(nuevoDca.ultimaUbicacion) + """,
+                                                    """ + str(nuevoDca.equipo) + """,
+                                                    """ + str(nuevoDca.contadorMono) + """,
+                                                    """ + str(nuevoDca.contadorAnteriorNegro) + """,
+                                                    """ + str(nuevoDca.contadorColor) + """,
+                                                    """ + str(nuevoDca.contadorAnteriorColor) + """,
+                                                    """ + str(nuevoDca.x_studio_cartuchonefro.id) + """,
+                                                    """ + str(nuevoDca.x_studio_rendimiento_negro) + """,
+                                                    """ + str(nuevoDca.porcentajeNegro) + """,
+                                                    """ + str(nuevoDca.x_studio_cartucho_amarillo.id) + """,
+                                                    """ + str(nuevoDca.x_studio_rendimientoa) + """,
+                                                    """ + str(nuevoDca.porcentajeAmarillo) + """,
+                                                    """ + str(nuevoDca.x_studio_cartucho_cian_1.id) + """,
+                                                    """ + str(nuevoDca.x_studio_rendimientoc) + """,
+                                                    """ + str(nuevoDca.porcentajeCian) + """,
+                                                    """ + str(nuevoDca.x_studio_cartucho_magenta.id) + """,
+                                                    """ + str(nuevoDca.x_studio_rendimientom) + """,
+                                                    """ + str(nuevoDca.porcentajeMagenta) + """,
+                                                    """ + str(nuevoDca.tablahtml) + """,
+                                                    """ + str(objTicket.id) + """
+                                                    );
+                        """
+                self.env.cr.execute(query)
+                self.env.cr.commit()
+                informacion = self.env.cr.fetchall()
+                _logger.info('3312: informacion: ' + str(informacion))
+                """
                 listaDca.append([
                                     0, 
                                     0, 
@@ -2940,8 +3031,12 @@ class helpdesk_crearToner(TransientModel):
                                         'porcentajeMagenta': nuevoDca.porcentajeMagenta,
                                         'tablahtml': nuevoDca.tablahtml
                                     }
-                                ])
-            ticket.write({
+                               ])
+                """
+            #objTicket.write({
+            #                    'x_studio_equipo_por_nmero_de_serie_1': listaDca
+            #                })
+            objTicket.write({
                             'partner_id': self.cliente.id,
                             'x_studio_empresas_relacionadas': self.localidad.id,
                             'team_id': 8,
@@ -2949,54 +3044,54 @@ class helpdesk_crearToner(TransientModel):
                             #'x_studio_equipo_por_nmero_de_serie_1': listaDca
                             #'x_studio_equipo_por_nmero_de_serie_1': [(6,0,self.dca.ids)]
                         })
-            ticket.x_studio_equipo_por_nmero_de_serie_1 = listaDca
+            #ticket.x_studio_equipo_por_nmero_de_serie_1 = listaDca
             self.env.cr.commit()
-            ticket._compute_datosCliente()
+            objTicket._compute_datosCliente()
 
             #CASOS
             #CASO EN EL QUE SE PASA DIRECTO A ALMACEN
             if self.validarHastaAlmacenTicket and not self.validarTicket and not self.ponerTicketEnEspera:
-                ticket.crearYValidarSolicitudDeToner()
+                objTicket.crearYValidarSolicitudDeToner()
             #CASO EN EL QUE PASA A SER VALIDADO POR EL RESPONSABLE
             elif self.validarTicket and not self.validarHastaAlmacenTicket and not self.ponerTicketEnEspera:
-                query = "update helpdesk_ticket set stage_id = 91 where id = " + str(ticket.id) + ";"
+                query = "update helpdesk_ticket set stage_id = 91 where id = " + str(objTicket.id) + ";"
                 ss = self.env.cr.execute(query)
                 self.env.cr.commit()
             #CASO EN EL QUE EL TICKET PASA A ESTAR EN ESPERA 'PRETICKET'
             elif self.ponerTicketEnEspera and not self.validarHastaAlmacenTicket and not self.validarTicket:
-                query = "update helpdesk_ticket set stage_id = 1 where id = " + str(ticket.id) + ";"
+                query = "update helpdesk_ticket set stage_id = 1 where id = " + str(objTicket.id) + ";"
                 ss = self.env.cr.execute(query)
                 self.env.cr.commit()
             #CASO EN EL QUE PASA A DECICION DEL SISTEMA
             elif not self.validarHastaAlmacenTicket and not self.validarTicket and not self.ponerTicketEnEspera:
                 #CASO COLOR
-                if ticket.x_studio_equipo_por_nmero_de_serie_1[0].colorEquipo == 'Color':
+                if objTicket.x_studio_equipo_por_nmero_de_serie_1[0].colorEquipo == 'Color':
                     #dcaInfo = self.dca[0]
-                    dcaInfo = ticket.x_studio_equipo_por_nmero_de_serie_1[0]
+                    dcaInfo = objTicket.x_studio_equipo_por_nmero_de_serie_1[0]
                     #SI LOS PORCENTAJES SON MAYORES A 60%
                     if dcaInfo.porcentajeNegro >= 60 and dcaInfo.porcentajeAmarillo >= 60 and dcaInfo.porcentajeCian >= 60 and dcaInfo.porcentajeMagenta >= 60:
-                        ticket.crearYValidarSolicitudDeToner()
+                        objTicket.crearYValidarSolicitudDeToner()
                     else:
                         # PASA A RESPONSABLE
-                        query = "update helpdesk_ticket set stage_id = 91 where id = " + str(ticket.id) + ";"
+                        query = "update helpdesk_ticket set stage_id = 91 where id = " + str(objTicket.id) + ";"
                         ss = self.env.cr.execute(query)
                         self.env.cr.commit()
                 else:
                     #CASO EN QUE ES BLANCO NEGRO
-                    dcaInfo = ticket.x_studio_equipo_por_nmero_de_serie_1[0]
+                    dcaInfo = objTicket.x_studio_equipo_por_nmero_de_serie_1[0]
                     if dcaInfo.porcentajeNegro >= 60:
-                        ticket.crearYValidarSolicitudDeToner()
+                        objTicket.crearYValidarSolicitudDeToner()
                     else:
                         # PASA A RESPONSABLE
-                        query = "update helpdesk_ticket set stage_id = 91 where id = " + str(ticket.id) + ";"
+                        query = "update helpdesk_ticket set stage_id = 91 where id = " + str(objTicket.id) + ";"
                         ss = self.env.cr.execute(query)
                         self.env.cr.commit()
 
             wiz = ''
             mensajeTitulo = "Ticket generado!!!"
             #mensajeCuerpo = "Se creo el ticket '" + str(ticket.id) + "' sin número de serie para cliente " + self.cliente + " con localidad " + self.localidad + "\n\n"
-            mensajeCuerpo = "Se creo el ticket '" + str(ticket.id) + "' con el número de serie " + self.dca[0].serie.name + ".\n\n"
-            wiz = self.env['helpdesk.alerta.series'].create({'ticket_id': ticket.id, 'mensaje': mensajeCuerpo})
+            mensajeCuerpo = "Se creo el ticket '" + str(objTicket.id) + "' con el número de serie " + self.dca[0].serie.name + ".\n\n"
+            wiz = self.env['helpdesk.alerta.series'].create({'ticket_id': objTicket.id, 'mensaje': mensajeCuerpo})
             view = self.env.ref('helpdesk_update.view_helpdesk_alerta_series')
             return {
                       'name': _(mensajeTitulo),
@@ -3148,7 +3243,7 @@ class HelpDeskContactoToner(TransientModel):
                                     store = True
                                 )
     zonaLocalidad = fields.Selection(
-                                        [('SUR','SUR'),('NORTE','NORTE'),('PONIENTE','PONIENTE'),('ORIENTE','ORIENTE'),('CENTRO','CENTRO'),('DISTRIBUIDOR','DISTRIBUIDOR'),('MONTERREY','MONTERREY'),('CUERNAVACA','CUERNAVACA'),('GUADALAJARA','GUADALAJARA'),('QUERETARO','QUERETARO'),('CANCUN','CANCUN'),('VERACRUZ','VERACRUZ'),('PUEBLA','PUEBLA'),('TOLUCA','TOLUCA'),('LEON','LEON'),('COMODIN','COMODIN'),('VILLAHERMOSA','VILLAHERMOSA'),('MERIDA','MERIDA'),('ALTAMIRA','ALTAMIRA'),('COMODIN','COMODIN'),('DF00','DF00'),('SAN LP','SAN LP'),('ESTADO DE MÉXICO','ESTADO DE MÉXICO'),('Foraneo Norte','Foraneo Norte'),('Foraneo Sur','Foraneo Sur')], 
+                                        [["SUR","SUR"],["NORTE","NORTE"],["PONIENTE","PONIENTE"],["ORIENTE","ORIENTE"],["CENTRO","CENTRO"],["DISTRIBUIDOR","DISTRIBUIDOR"],["MONTERREY","MONTERREY"],["CUERNAVACA","CUERNAVACA"],["GUADALAJARA","GUADALAJARA"],["QUERETARO","QUERETARO"],["CANCUN","CANCUN"],["VERACRUZ","VERACRUZ"],["PUEBLA","PUEBLA"],["TOLUCA","TOLUCA"],["LEON","LEON"],["COMODIN","COMODIN"],["VILLAHERMOSA","VILLAHERMOSA"],["MERIDA","MERIDA"],["VERACRUZ","VERACRUZ"],["ALTAMIRA","ALTAMIRA"],["DF00","DF00"],["SAN LP","SAN LP"],["ESTADO DE MÉXICO","ESTADO DE MÉXICO"],["Foraneo Norte","Foraneo Norte"],["Foraneo Sur","Foraneo Sur"],["CHIHUAHUA","CHIHUAHUA"]],
                                         string = 'Zona localidad',
                                         store = True
                                     )
@@ -5056,6 +5151,14 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                                     'product.product', 
                                     string = "Productos"
                                 )
+    """
+    EN DESARROLLO
+    productosDos = fields.One2many(
+                                    'helpdesk.refacciones',
+                                    'ticketRelacion',
+                                    string = "Refacciones y accesorios"
+                                )
+    """
     activar_compatibilidad = fields.Boolean(
                                                 string = 'Activar compatibilidad',
                                                 default = False
@@ -5124,6 +5227,28 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                                                 string = 'Contadores anteriores',
                                                 store = True
                                             )
+    estadoSolicitud = fields.Text(
+                                    string = 'Estado de la solicitud',
+                                    compute = '_compute_estado_solicitud'
+                                )
+    solicitud = fields.Many2one(
+                                    'sale.order',
+                                    string = 'Solicitud',
+                                    compute = '_compute_solicitud'
+                                )
+    def _compute_solicitud(self):
+        if self.ticket_id.x_studio_field_nO7Xg:
+            self.solicitud = self.ticket_id.x_studio_field_nO7Xg
+        
+    def _compute_estado_solicitud(self):
+        if self.ticket_id.x_studio_field_nO7Xg:
+            if self.ticket_id.x_studio_field_nO7Xg.state == 'sale':
+                self.estadoSolicitud = 'Solicitud validada'
+            else:
+                self.estadoSolicitud = 'Solicitud no validada'
+        else:
+            self.estadoSolicitud = 'No hay solicitud'
+
 
     def _compute_estadoTicket(self):
         self.estado = self.ticket_id.stage_id.name
@@ -5133,7 +5258,27 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
 
     def _compute_serie_nombre(self):
         if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
-            self.serie = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].name
+            #self.serie = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].name
+            self.serie = """
+
+                            <table class='table table-bordered table-dark text-white'>
+                                <thead >
+                                    <tr>
+                                        <th scope='col'>Número de serie</th>
+                                        <th scope='col'>Modelo</th>
+                                        <th scope='col'>Descripción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>""" + str(self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].name) + """</td>
+                                        <td>""" + str(self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_modelo_equipo) + """</td>
+                                        <td>""" + str(self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].product_id.description) + """</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        """
+
 
     """
     def _compute_historico_tickets(self):
@@ -5219,21 +5364,39 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
 
     def confirmarYValidarRefacciones(self):
         self.ticket_id.x_studio_productos = [(6, 0, self.productos.ids)]
-        comentarioGenerico = 'Solicitud de refacción autorizada por ' + str(self.env.user.name) + '.\nEl día ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S")) + '.\n\n'
-        comentarioGenerico = comentarioGenerico + str(self.comentario)
-        self.env['helpdesk.diagnostico'].create({
-                                                    'ticketRelacion': self.ticket_id.id,
-                                                    'comentario': comentarioGenerico,
-                                                    'estadoTicket': self.ticket_id.stage_id.name,
-                                                    'evidencia': [(6,0,self.evidencia.ids)],
-                                                    'mostrarComentario': self.check,
-                                                    'creadoPorSistema': True
-                                                })
+        
         if self.productos:
             self.ticket_id.x_studio_productos = [(6, 0, self.productos.ids)]
-        self.ticket_id.crear_y_validar_solicitud_refaccion()
-        mensajeTitulo = 'Creación y validación de refacción!!!'
-        mensajeCuerpo = 'Se creo y valido la solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) + ' para el ticket ' + str(self.ticket_id.id) + '.'
+        respuesta = 'sin respuesta.'
+        respuesta = self.ticket_id.crear_y_validar_solicitud_refaccion()
+        _logger.info('3312: respuesta de crear_y_validar_solicitud_refaccion: ' + str(respuesta))
+        if respuesta == 'sin respuesta':
+            mensajeTitulo = 'Error'
+            mensajeCuerpo = 'Algo salio mal'
+        elif respuesta == 'Sin refacciones y/o accesorios':
+            mensajeTitulo = 'Error'
+            mensajeCuerpo = 'El ticket no tiene refacciones y/o accesorios.'
+        elif respuesta == 'Solicitud existente.':
+            mensajeTitulo = 'Error'
+            mensajeCuerpo = 'El ticket no tiene refacciones y/o accesorios.'
+        elif respuesta == 'Solicitud ya generada y validada':
+            mensajeTitulo = 'Error'
+            mensajeCuerpo = 'Existe una solicitud ya generada y validada.'
+        elif respuesta == 'OK':
+            mensajeTitulo = 'Creación y validación de refacción!!!'
+            mensajeCuerpo = 'Se creo y valido la solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) + ' para el ticket ' + str(self.ticket_id.id) + '.'
+            comentarioGenerico = 'Solicitud de refacción autorizada por ' + str(self.env.user.name) + '.\nEl día ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S")) + '.\n\n'
+            comentarioGenerico = comentarioGenerico + str(self.comentario)
+            self.env['helpdesk.diagnostico'].create({
+                                                        'ticketRelacion': self.ticket_id.id,
+                                                        'comentario': comentarioGenerico,
+                                                        'estadoTicket': self.ticket_id.stage_id.name,
+                                                        'evidencia': [(6,0,self.evidencia.ids)],
+                                                        'mostrarComentario': self.check,
+                                                        'creadoPorSistema': True
+                                                    })
+        #mensajeTitulo = 'Creación y validación de refacción!!!'
+        #mensajeCuerpo = 'Se creo y valido la solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) + ' para el ticket ' + str(self.ticket_id.id) + '.'
         wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
         view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
         return {
@@ -5252,6 +5415,7 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
 
     def validar(self):
         _logger.info('3312: validar()')
+        _logger.info('3312: inicio validar(): ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
         self.ticket_id.x_studio_productos = [(6, 0, self.productos.ids)]
         if self.productos:
             self.ticket_id.x_studio_productos = [(6, 0, self.productos.ids)]
@@ -5282,20 +5446,14 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                                                                  , 'x_studio_requiere_instalacin' : True
                                                                  , 'x_studio_field_RnhKr': self.ticket_id.localidadContacto.id
                                                                  , 'partner_shipping_id' : self.ticket_id.x_studio_empresas_relacionadas.id
-                                                                 , 'x_studio_tcnico' : self.ticket_id.x_studio_tcnico.id
+                                                                 #, 'x_studio_tcnico' : self.ticket_id.x_studio_tcnico.id
                                                                  , 'warehouse_id' : 5865   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
                                                                  , 'team_id' : 1
                                                                  , 'x_studio_field_bxHgp': int(self.ticket_id.x_studio_id_ticket) 
                                                                 })
-                    #record['x_studio_field_nO7Xg'] = sale.id
                     self.ticket_id.write({
                                             'x_studio_field_nO7Xg': sale.id
                                         })
-                    """
-                    en produccion
-                    self.env.cr.commit()
-                    self.productos = [[6, 0, (sale.id)]]
-                    """
                     for c in self.ticket_id.x_studio_productos:
                         datosr = {'order_id' : sale.id
                                 , 'product_id' : c.id
@@ -5315,10 +5473,9 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                         if self.ticket_id.x_studio_field_nO7Xg.order_line:
                             self.sudo().env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
                             sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
-                            
-
 
                             #sale.action_confirm()
+                            _logger.info('3312: inicio peticion validar_solicitud_de_refacciones(): ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
                             return { 'type': 'ir.actions.act_url',
                                      'url': '/helpdesk_update/validar_solicitud_de_refacciones/%s' % self.ticket_id.id,
                                      'target': 'self',
@@ -5365,3 +5522,282 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                 'res_id': wiz.id,
                 'context': self.env.context,
                 }
+
+
+
+
+
+
+class HelpDeskDatosMesa(TransientModel):
+    _name = 'helpdesk.datos.mesa'
+    _description = 'HelpDesk informacion de mesa'
+
+    ticket_id = fields.Many2one("helpdesk.ticket")
+    serie = fields.Text(
+                            string = "Serie", 
+                            compute = '_compute_serie_nombre'
+                        )
+    series = fields.Many2many(
+                                'stock.production.lot',
+                                string = 'Series'
+                            )
+    refacciones = fields.Many2many(
+                                        'product.product',
+                                        string = 'Refacciones y accesorios'
+                                    )
+    corte = fields.Selection(
+                                [('1ero','1ero'),('2do','2do'),('3ro','3ro'),('4to','4to')], 
+                                string = 'Corte', 
+                                compute = '_compute_corte'
+                            )
+    solicitud = fields.Many2one(
+                                    'sale.order', 
+                                    string = 'Solicitud',
+                                    compute = '_compute_solicitud'
+                                )
+    cliente = fields.Many2one(  
+                                'res.partner',
+                                string = 'Cliente',
+                                compute = '_compute_cliente'
+                            )
+    tipoCliente = fields.Selection(
+                                        [('A','A'),('B','B'),('C','C'),('OTRO','D'),('VIP','VIP')], 
+                                        string = 'Tipo de cliente', 
+                                        compute = '_compute_tipo_cliente'
+                                    )
+    localidad = fields.Many2one(  
+                                    'res.partner',
+                                    string = 'Localidad',
+                                    compute = '_compute_localidad'
+                                )
+    zonaLocalidad = fields.Selection(
+                                        [('SUR','SUR'),('NORTE','NORTE'),('PONIENTE','PONIENTE'),('ORIENTE','ORIENTE'),('CENTRO','CENTRO'),('DISTRIBUIDOR','DISTRIBUIDOR'),('MONTERREY','MONTERREY'),('CUERNAVACA','CUERNAVACA'),('GUADALAJARA','GUADALAJARA'),('QUERETARO','QUERETARO'),('CANCUN','CANCUN'),('VERACRUZ','VERACRUZ'),('PUEBLA','PUEBLA'),('TOLUCA','TOLUCA'),('LEON','LEON'),('COMODIN','COMODIN'),('VILLAHERMOSA','VILLAHERMOSA'),('MERIDA','MERIDA'),('ALTAMIRA','ALTAMIRA'),('COMODIN','COMODIN'),('DF00','DF00'),('SAN LP','SAN LP'),('ESTADO DE MÉXICO','ESTADO DE MÉXICO'),('Foraneo Norte','Foraneo Norte'),('Foraneo Sur','Foraneo Sur')], 
+                                        string = 'Zona localidad',
+                                        compute = '_compute_zona_localidad'
+                                    )
+    localidadContacto = fields.Many2one(  
+                                    'res.partner',
+                                    string = 'Localidad contacto',
+                                    compute = '_compute_localidad_contacto'
+                                )
+    estadoLocalidad = fields.Text(
+                                    string = 'Estado de localidad',
+                                    compute = '_compute_estado_localidad'
+                                )
+    telefonoContactoLocalidad = fields.Text(
+                                    string = 'Télefgono localidad contacto',
+                                    compute = '_compute_telefono_localidad'
+                                )
+    movilContactoLocalidad = fields.Text(
+                                    string = 'Movil localidad contacto',
+                                    compute = '_compute_movil_localidad'
+                                )
+    correoContactoLocalidad = fields.Text(
+                                    string = 'Correo electrónico localidad contacto',
+                                    compute = '_compute_correo_localidad'
+                                )
+    direccionLocalidad = fields.Text(
+                                    string = 'Dirección localidad',
+                                    compute = '_compute_direccion_localidad'
+                                )
+    creadoEl = fields.Text(
+                            string = 'Creado el',
+                            compute = '_compute_creado_el'
+                        )
+    areaAtencion = fields.Many2one(  
+                                    'helpdesk.team',
+                                    string = 'Área de atención',
+                                    compute = '_compute_area_atencion'
+                                )
+    ejecutivo = fields.Many2one(  
+                                    'res.users',
+                                    string = 'Ejecutivo',
+                                    compute = '_compute_ejecutivo'
+                                )
+    encargadoArea = fields.Many2one(  
+                                    'hr.employee',
+                                    string = 'Encargado de área',
+                                    compute = '_compute_encargado_area'
+                                )
+    diasAtraso = fields.Integer(
+                            string = 'Días de atraso',
+                            compute = '_compute_dias_atraso'
+                        )
+    prioridad = fields.Selection(
+                                    [('0','Todas'),('1','Baja'),('2','Media'),('3','Alta'),('4','Critica')], 
+                                    string = 'Prioridad', 
+                                    compute = '_compute_prioridad'
+                                )
+    zona = fields.Selection(
+                                        [('SUR','SUR'),('NORTE','NORTE'),('PONIENTE','PONIENTE'),('ORIENTE','ORIENTE'),('CENTRO','CENTRO'),('DISTRIBUIDOR','DISTRIBUIDOR'),('MONTERREY','MONTERREY'),('CUERNAVACA','CUERNAVACA'),('GUADALAJARA','GUADALAJARA'),('QUERETARO','QUERETARO'),('CANCUN','CANCUN'),('VERACRUZ','VERACRUZ'),('PUEBLA','PUEBLA'),('TOLUCA','TOLUCA'),('LEON','LEON'),('COMODIN','COMODIN'),('VILLAHERMOSA','VILLAHERMOSA'),('MERIDA','MERIDA'),('ALTAMIRA','ALTAMIRA'),('COMODIN','COMODIN'),('DF00','DF00'),('SAN LP','SAN LP'),('ESTADO DE MÉXICO','ESTADO DE MÉXICO'),('Foraneo Norte','Foraneo Norte'),('Foraneo Sur','Foraneo Sur')],
+                                        string = 'Zona',
+                                        compute = '_compute_zona'
+                                    )
+    zonaEstados = fields.Selection(
+                                        [('Estado de México','Estado de México'), ('Campeche','Campeche'), ('Ciudad de México','Ciudad de México'), ('Yucatán','Yucatán'), ('Guanajuato','Guanajuato'), ('Puebla','Puebla'), ('Coahuila','Coahuila'), ('Sonora','Sonora'), ('Tamaulipas','Tamaulipas'), ('Oaxaca','Oaxaca'), ('Tlaxcala','Tlaxcala'), ('Morelos','Morelos'), ('Jalisco','Jalisco'), ('Sinaloa','Sinaloa'), ('Nuevo León','Nuevo León'), ('Baja California','Baja California'), ('Nayarit','Nayarit'), ('Querétaro','Querétaro'), ('Tabasco','Tabasco'), ('Hidalgo','Hidalgo'), ('Chihuahua','Chihuahua'), ('Quintana Roo','Quintana Roo'), ('Chiapas','Chiapas'), ('Veracruz','Veracruz'), ('Michoacán','Michoacán'), ('Aguascalientes','Aguascalientes'), ('Guerrero','Guerrero'), ('San Luis Potosí', 'San Luis Potosí'), ('Colima','Colima'), ('Durango','Durango'), ('Baja California Sur','Baja California Sur'), ('Zacatecas','Zacatecas')],
+                                        string = 'Zona Estados',
+                                        compute = '_compute_zona_estados'
+                                    )
+    numeroTicketCliente = fields.Text(
+                                        string = 'Número de ticket cliente',
+                                        compute = '_compute_numero_ticket_cliente'
+                                    )
+    numeroTicketDistribuidor = fields.Text(
+                                            string = 'Número de ticket distribuidor',
+                                            compute = '_compute_numero_ticket_distribuidor'
+                                        )
+    numeroTicketGuia = fields.Text(
+                                    string = 'Número de ticket guía',
+                                    compute = '_compute_numero_ticket_guia'
+                                )
+    comentarioLocalidad = fields.Text(
+                                        string = 'Comentario de localidad',
+                                        compute = '_compute_comentario_localidad'
+                                    )
+    tiempoAtrasoTicket = fields.Text(
+                                        string = 'Tiempo de atraso ticket',
+                                        compute = '_compute_tiempo_ticket'
+                                    )
+    tiempoAtrasoAlmacen = fields.Text(
+                                        string = 'Tiempo de atraso almacén',
+                                        compute = '_compute_tiempo_almacen'
+                                    )
+    tiempoAtrasoDistribucion = fields.Text(
+                                            string = 'Tiempo de atraso distribución',
+                                            compute = '_compute_tiempo_distribucion'
+                                        )
+    reportes = fields.Many2one(
+                                    'ir.actions.report',
+                                    string = 'Reportes disponibles',
+                                    store = True
+                                )
+
+    pdfToner = fields.Binary(
+                                string = "PDF",
+                                store = True
+                            )
+
+    @api.depends('reportes')
+    def obtenerReportePdf(self):
+        for record in self:
+            idExterno = record.reportes.xml_id
+            pdf = self.env.ref(idExterno).sudo().render_qweb_pdf([record.ticket_id.id])[0]
+            #pdf = self.env['report'].sudo().get_pdf([self.ticket_id.id], report_name)
+            record.pdfToner = False
+            record.pdfToner = base64.encodestring(pdf)
+
+    def _compute_serie_nombre(self):
+        if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+            for serie in self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+                if self.serie:
+                    self.serie = str(self.serie) + ', ' + str(serie.name)
+                else:
+                    self.serie = str(serie.name) + ', '
+
+    def _compute_corte(self):
+        if self.ticket_id.x_studio_corte:
+            self.corte = self.ticket_id.x_studio_corte
+
+    def _compute_solicitud(self):
+        if self.ticket_id.x_studio_field_nO7Xg:
+            self.solicitud = self.ticket_id.x_studio_field_nO7Xg.id
+
+    def _compute_cliente(self):
+        if self.ticket_id.partner_id:
+            self.cliente = self.ticket_id.partner_id.id
+    
+    def _compute_tipo_cliente(self):
+        if self.ticket_id.x_studio_nivel_del_cliente:
+            self.tipoCliente = self.ticket_id.x_studio_nivel_del_cliente
+
+    def _compute_localidad(self):
+        if self.ticket_id.x_studio_empresas_relacionadas:
+            self.localidad = self.ticket_id.x_studio_empresas_relacionadas.id
+
+    def _compute_zona_localidad(self):
+        if self.ticket_id.x_studio_field_6furK:
+            self.zonaLocalidad = self.ticket_id.x_studio_field_6furK
+
+    def _compute_localidad_contacto(self):
+        if self.ticket_id.localidadContacto:
+            self.localidadContacto = self.ticket_id.localidadContacto.id
+
+    def _compute_estado_localidad(self):
+        if self.ticket_id.x_studio_estado_de_localidad:
+            self.estadoLocalidad = self.ticket_id.x_studio_estado_de_localidad
+
+    def _compute_telefono_localidad(self):
+        if self.ticket_id.telefonoLocalidadContacto:
+            self.telefonoContactoLocalidad = self.ticket_id.telefonoLocalidadContacto
+
+    def _compute_movil_localidad(self):
+        if self.ticket_id.movilLocalidadContacto:
+            self.movilContactoLocalidad = self.ticket_id.movilLocalidadContacto
+
+    def _compute_correo_localidad(self):
+        if self.ticket_id.correoLocalidadContacto:
+            self.correoContactoLocalidad = self.ticket_id.correoLocalidadContacto
+
+    def _compute_direccion_localidad(self):
+        if self.ticket_id.direccionLocalidadText:
+            self.direccionLocalidad = self.ticket_id.direccionLocalidadText
+
+    def _compute_creado_el(self):
+        if self.ticket_id.create_date:
+            self.creadoEl = str(self.ticket_id.create_date)
+
+    def _compute_area_atencion(self):
+        if self.ticket_id.team_id:
+            self.areaAtencion = self.ticket_id.team_id.id
+
+    def _compute_ejecutivo(self):
+        if self.ticket_id.user_id:
+            self.ejecutivo = self.ticket_id.user_id.id
+
+    def _compute_encargado_area(self):
+        if self.ticket_id.x_studio_responsable_de_equipo:
+            self.encargadoArea = self.ticket_id.x_studio_responsable_de_equipo.id
+
+    def _compute_dias_atraso(self):
+        if self.ticket_id.days_difference:
+            self.diasAtraso = self.ticket_id.days_difference
+
+    def _compute_prioridad(self):
+        if self.ticket_id.priority:
+            self.prioridad = self.ticket_id.priority
+
+    def _compute_zona(self):
+        if self.ticket_id.x_studio_zona:
+            self.zona = self.ticket_id.x_studio_zona
+
+    def _compute_zona_estados(self):
+        if self.ticket_id.zona_estados:
+            self.zonaEstados = self.ticket_id.zona_estados
+
+    def _compute_numero_ticket_cliente(self):
+        if self.ticket_id.x_studio_nmero_de_ticket_cliente:
+            self.numeroTicketCliente = self.ticket_id.x_studio_nmero_de_ticket_cliente
+
+    def _compute_numero_ticket_distribuidor(self):
+        if self.ticket_id.x_studio_nmero_ticket_distribuidor_1:
+            self.numeroTicketDistribuidor = self.ticket_id.x_studio_nmero_ticket_distribuidor_1
+    
+    def _compute_numero_ticket_guia(self):
+        if self.ticket_id.x_studio_nmero_de_guia_1:
+            self.numeroTicketGuia = self.ticket_id.x_studio_nmero_de_guia_1
+
+    def _compute_comentario_localidad(self):
+        if self.ticket_id.x_studio_comentarios_de_localidad:
+            self.comentarioLocalidad = self.ticket_id.x_studio_comentarios_de_localidad
+    
+    def _compute_tiempo_ticket(self):
+        if self.ticket_id.tiempoDeAtrasoTicket:
+            self.tiempoAtrasoTicket = self.ticket_id.tiempoDeAtrasoTicket
+
+    def _compute_tiempo_almacen(self):
+        if self.ticket_id.tiempoDeAtrasoAlmacen:
+            self.tiempoAtrasoAlmacen = self.ticket_id.tiempoDeAtrasoAlmacen
+
+    def _compute_tiempo_distribucion(self):
+        if self.ticket_id.tiempoDeAtrasoDistribucion:
+            self.tiempoAtrasoDistribucion = self.ticket_id.tiempoDeAtrasoDistribucion

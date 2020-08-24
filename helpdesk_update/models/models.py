@@ -135,7 +135,7 @@ class helpdesk_update(models.Model):
                     objTicket.diagnosticos[i].create_date = fecha
                     i = i + 1
 
-
+    
     #priority = fields.Selection([('all','Todas'),('baja','Baja'),('media','Media'),('alta','Alta'),('critica','Critica')])
     x_studio_field_6furK = fields.Selection([('CHIHUAHUA','CHIHUAHUA'), ('SUR','SUR'),('NORTE','NORTE'),('PONIENTE','PONIENTE'),('ORIENTE','ORIENTE'),('CENTRO','CENTRO'),('DISTRIBUIDOR','DISTRIBUIDOR'),('MONTERREY','MONTERREY'),('CUERNAVACA','CUERNAVACA'),('GUADALAJARA','GUADALAJARA'),('QUERETARO','QUERETARO'),('CANCUN','CANCUN'),('VERACRUZ','VERACRUZ'),('PUEBLA','PUEBLA'),('TOLUCA','TOLUCA'),('LEON','LEON'),('COMODIN','COMODIN'),('VILLAHERMOSA','VILLAHERMOSA'),('MERIDA','MERIDA'),('ALTAMIRA','ALTAMIRA'),('COMODIN','COMODIN'),('DF00','DF00'),('SAN LP','SAN LP'),('ESTADO DE MÉXICO','ESTADO DE MÉXICO'),('Foraneo Norte','Foraneo Norte'),('Foraneo Sur','Foraneo Sur')], string = 'Zona localidad', store = True, track_visibility='onchange')
     x_studio_zona = fields.Selection([('SUR','SUR'),('NORTE','NORTE'),('PONIENTE','PONIENTE'),('ORIENTE','ORIENTE'),('CENTRO','CENTRO'),('DISTRIBUIDOR','DISTRIBUIDOR'),('MONTERREY','MONTERREY'),('CUERNAVACA','CUERNAVACA'),('GUADALAJARA','GUADALAJARA'),('QUERETARO','QUERETARO'),('CANCUN','CANCUN'),('VERACRUZ','VERACRUZ'),('PUEBLA','PUEBLA'),('TOLUCA','TOLUCA'),('LEON','LEON'),('COMODIN','COMODIN'),('VILLAHERMOSA','VILLAHERMOSA'),('MERIDA','MERIDA'),('ALTAMIRA','ALTAMIRA'),('COMODIN','COMODIN'),('DF00','DF00'),('SAN LP','SAN LP'),('ESTADO DE MÉXICO','ESTADO DE MÉXICO'),('Foraneo Norte','Foraneo Norte'),('Foraneo Sur','Foraneo Sur'),('CHIHUAHUA','CHIHUAHUA')], string = 'Zona', store = True, track_visibility='onchange')
@@ -293,7 +293,7 @@ class helpdesk_update(models.Model):
             ticket.write({'x_studio_field_6furK': ticket.x_studio_empresas_relacionadas.x_studio_field_SqU5B})
         #_logger.info("Informacion 3: " + str(ticket))
         if ticket.x_studio_equipo_por_nmero_de_serie:
-            if (ticket.team_id != 8 and ticket.team_id != 13) and len(ticket.x_studio_equipo_por_nmero_de_serie) == 1:
+            if (ticket.team_id.id != 8 and ticket.team_id.id != 13) and len(ticket.x_studio_equipo_por_nmero_de_serie) == 1:
                 #_logger.info("Informacion 4: " + str(ticket.x_studio_contadores))
                 #ticket.write({'x_studio_contadores': '</br> Equipo BN o Color: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_color_bn) + ' </br></br> Contador BN: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_bn_mesa) + '</br></br> Contador Color: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_color_mesa)})
                 ticket.write({'contadores_anteriores': '</br>Equipo BN o Color: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_color_bn) + ' </br></br> Contador BN: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_bn_mesa) + '</br></br> Contador Color: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_color_mesa)})
@@ -1642,7 +1642,7 @@ class helpdesk_update(models.Model):
                                                             'mostrarComentario': True,
                                                             'write_uid':  self.env.user.id,
                                                             'create_uid':  self.env.user.id,
-                                                            'creadoPorSistema': False
+                                                            'creadoPorSistema': True
                                                         })
 
         mensajeTitulo = 'Estado de ticket actualizado!!!'
@@ -1917,7 +1917,8 @@ class helpdesk_update(models.Model):
                         mess= {'title': _('Solicitud existente validada!!!')
                                 , 'message' : message
                         }
-                        return {'warning': mess}
+                        return 'Solicitud ya generada y validada'
+                        #return {'warning': mess}
                     
                     if self.x_studio_field_nO7Xg.id != False and self.x_studio_field_nO7Xg.state != 'sale':
                         sale = self.x_studio_field_nO7Xg
@@ -1931,6 +1932,7 @@ class helpdesk_update(models.Model):
                             #self.env.cr.commit()
                     
                     else:
+                        _logger.info('3312: Creado pedido de venta ')
                         sale = self.env['sale.order'].sudo().create({'partner_id' : record.partner_id.id
                                                                      , 'origin' : "Ticket de refacción: " + str(record.x_studio_id_ticket)
                                                                      , 'x_studio_tipo_de_solicitud' : 'Venta'
@@ -1943,11 +1945,13 @@ class helpdesk_update(models.Model):
                                                                      , 'x_studio_field_bxHgp': int(record.x_studio_id_ticket) 
                                                                     })
                         record['x_studio_field_nO7Xg'] = sale.id
+                        _logger.info('3312: Creado pedido de venta: ya se creo ' + str(sale.id))
                         """
                         en produccion
                         self.env.cr.commit()
                         self.productos = [[6, 0, (sale.id)]]
                         """
+                        _logger.info('3312: Creado pedido de venta: cargando productos ')
                         for c in record.x_studio_productos:
                             datosr = {'order_id' : sale.id
                                     , 'product_id' : c.id
@@ -1963,9 +1967,7 @@ class helpdesk_update(models.Model):
                             #sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta', 'validity_date' : sale.date_order + datetime.timedelta(days=30)})
                             self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
 
-                            
-
-
+                        _logger.info('3312: Creado pedido de venta: productos cargados ')
 
 
                         sale = record.x_studio_field_nO7Xg
@@ -2005,13 +2007,15 @@ class helpdesk_update(models.Model):
                                         'message' : message
                                       }
                                 self.estadoSolicitudDeRefaccionValidada = True
-                                return {'warning': mess}
+                                return 'OK'
+                                #return {'warning': mess}
                             else:
                                 message = ("No es posible validar una solicitud que no tiene productos.")
                                 mess = {'title': _('Solicitud sin productos!!!')
                                         , 'message' : message
                                         }
-                                return {'warning': mess}
+                                return 'Sin refacciones y/o accesorios'
+                                #return {'warning': mess}
                         else:
                             errorRefaccionNoValidada = "Solicitud de refacción no validada"
                             mensajeSolicitudRefaccionNoValida = "No es posible validar una solicitud de refacción en el estado actual debido a falta de productos o porque no existe la solicitud."
@@ -2025,14 +2029,17 @@ class helpdesk_update(models.Model):
                             'title': _('Ticket sin productos !!!'),
                             'message' : message
                           }
-                    return {'warning': mess}
+                    return 'Sin refacciones y/o accesorios'
+                    #return {'warning': mess}
             else:
                 message = ('Ya existe una solicitud, no es posible generan una solicitud.')
                 mess= {
                         'title': _('Ticket con solicitud existente !!!'),
                         'message' : message
                       }
-                return {'warning': mess}
+                return 'Solicitud existente.'
+                       
+                #return {'warning': mess}
 
 
 
@@ -2040,6 +2047,7 @@ class helpdesk_update(models.Model):
 
     def optimiza_lineas(self):
         _logger.info('3312: optimiza_lineas()')
+        _logger.info('3312: llego a optimiza_lineas(): ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
         sale = self.x_studio_field_nO7Xg
         if sale.id != 0 or self.x_studio_productos != []:
             if self.x_studio_field_nO7Xg.order_line:
@@ -2090,7 +2098,9 @@ class helpdesk_update(models.Model):
                         'message' : message
                       }
                 self.estadoSolicitudDeRefaccionValidada = True
-                return {'warning': mess}
+                _logger.info('3312: saliendo de optimiza_lineas(): ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
+                #return {'warning': mess}
+                return
             else:
                 message = ("No es posible validar una solicitud que no tiene productos.")
                 mess = {'title': _('Solicitud sin productos!!!')
@@ -2104,7 +2114,18 @@ class helpdesk_update(models.Model):
             raise exceptions.except_orm(_(errorRefaccionNoValidada), _(mensajeSolicitudRefaccionNoValida + " Estado: " + estadoActual))
 
 
-
+    def alerta(self):
+        _logger.info('3312: creando mensaje de validación exitosa(): ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
+        mensajeTitulo = 'Creación y validación de refacción!!!'
+        mensajeCuerpo = 'Se creo y valido la solicitud ' + str(self.x_studio_field_nO7Xg.name) + ' para el ticket ' + str(self.id) + '.'
+        wiz = self.env['helpdesk.alerta'].sudo().create({'mensaje': mensajeCuerpo})
+        view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+        _logger.info('3312: wiz.id antes de irme: ' + str(wiz.id))
+        _logger.info('3312: view.id antes de irme: ' + str(view.id))
+        return {
+                    'wizid': wiz.id,
+                    'viewid': view.id
+                    }
 
 
 
@@ -2620,8 +2641,9 @@ class helpdesk_update(models.Model):
                     _logger.info("record.stage_id.id = " + str(record.stage_id.id))
                     _logger.info("record.x_studio_field_nO7Xg = " + str(record.x_studio_field_nO7Xg))
                     #self.stage_id.id = 93
-                    query = "update helpdesk_ticket set stage_id = 93 where id = " + str(self.x_studio_id_ticket) + ";"
-                    ss = self.env.cr.execute(query)
+                    
+                    #query = "update helpdesk_ticket set stage_id = 93 where id = " + str(self.x_studio_id_ticket) + ";"
+                    #ss = self.env.cr.execute(query)
                     break
                 if record.team_id.id == 8 or record.team_id.id == 13:
                     x = 1 ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
@@ -2823,10 +2845,25 @@ class helpdesk_update(models.Model):
                     if self.x_studio_id_ticket:
                         estadoAntes = str(self.stage_id.name)
                         if self.estadoSolicitudDeToner == False:    
-                            query = "update helpdesk_ticket set stage_id = 93 where id = " + str(self.x_studio_id_ticket) + ";"
-                            ss = self.env.cr.execute(query)
+                            #query = "update helpdesk_ticket set stage_id = 93 where id = " + str(self.x_studio_id_ticket) + ";"
+                            #ss = self.env.cr.execute(query)
                             
-                            message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: En almacén' + ". " + "\n\nSolicitud " + str(saleTemp.name) + " generada" + "\n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
+                            _logger.info('3312: existe picking? ' + str(saleTemp.picking_ids))
+                            estadoActual = ''
+                            estadoActualId = 0
+                            if saleTemp.picking_ids:
+                                listaPickingsOrdenada = saleTemp.picking_ids.sorted(key = 'id')
+                                _logger.info('3312: picking ordenados ' + str(listaPickingsOrdenada))
+                                if listaPickingsOrdenada[0].state == 'assigned':
+                                    estadoActual = 'En almacén'
+                                    estadoActualId = 93
+                                elif listaPickingsOrdenada[0].state == 'waiting':
+                                    estadoActual = 'Sin stock'
+                                    estadoActualId = 114
+                            
+                            query = "update helpdesk_ticket set stage_id = " + str(estadoActualId) + " where id = " + str(self.x_studio_id_ticket) + ";"
+                            ss = self.env.cr.execute(query)
+                            message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes +  ", Estado actual: " + estadoActual + ". " + "\n\nSolicitud " + str(saleTemp.name) + " generada" + "\n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
                             mess= {
                                     'title': _('Estado de ticket actualizado!!!'),
                                     'message' : message
@@ -3095,8 +3132,8 @@ class helpdesk_update(models.Model):
                 if self.x_studio_id_ticket:
                     estadoAntes = str(self.stage_id.name)
                     if self.estadoSolicitudDeToner == False:    
-                        query = "update helpdesk_ticket set stage_id = 93 where id = " + str(self.x_studio_id_ticket) + ";"
-                        ss = self.env.cr.execute(query)
+                        #query = "update helpdesk_ticket set stage_id = 93 where id = " + str(self.x_studio_id_ticket) + ";"
+                        #ss = self.env.cr.execute(query)
                         
                         message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: En almacén' + ". " + "\n\nSolicitud " + str(saleTemp.name) + " generada" + "\n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
                         mess= {
@@ -4234,6 +4271,33 @@ class helpdesk_update(models.Model):
         }
 
     @api.multi
+    def detalle_mesa_wizard(self):
+        wiz = self.env['helpdesk.datos.mesa'].create({
+                                                        'ticket_id': self.id
+                                                    })
+        if self.x_studio_equipo_por_nmero_de_serie:
+            wiz.series = [(6, 0, self.x_studio_equipo_por_nmero_de_serie.ids)]
+        if self.x_studio_productos:
+            wiz.refacciones [(6, 0, self.x_studio_productos.ids)]
+        idExternoToner = 'studio_customization.tiquete_del_servicio_e501a40f-0bd7-4726-b219-50085c31c177'
+        pdf = self.env.ref(idExternoToner).sudo().render_qweb_pdf([self.id])[0]
+        wiz.pdfToner = base64.encodestring(pdf)
+        view = self.env.ref('helpdesk_update.view_helpdesk_detalle_mesa')
+        return {
+            'name': _('Datos tóner'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'helpdesk.datos.mesa',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            'context': self.env.context,
+        }
+
+
+    @api.multi
     def detalle_serie_toner_wizard(self):
         ids = []
         for dca in self.x_studio_equipo_por_nmero_de_serie_1:
@@ -4285,6 +4349,18 @@ class helpdesk_update(models.Model):
     def helpdesk_confirmar_validar_refacciones_wizard(self):
         wiz = self.env['helpdesk.confirmar.validar.refacciones'].create({'ticket_id':self.id})
         wiz.productos = [(6, 0, self.x_studio_productos.ids)]
+        """
+        EN DESAROLLO
+        listaProductos = [(5, 0, 0)]
+        _logger.info('3312: self.x_studio_tickett: ' + str(self.x_studio_id_ticket))
+        for producto in self.x_studio_productos:
+            listaProductos.append((0, 0,{
+                                            'productos': producto.product_variant_id.id,
+                                            'cantidadPedida': producto.x_studio_cantidad_pedida,
+                                            'ticketRelacion': int(self.x_studio_id_ticket)
+                                        }))
+        wiz.productosDos = listaProductos
+        """
         wiz.contadoresAnterioresText = self.contadores_anteriores
         view = self.env.ref('helpdesk_update.view_helpdesk_crear_y_validar_refacciones')
         return {
@@ -4397,7 +4473,55 @@ class helpdesk_update(models.Model):
     #                 _logger.info('Hola-----1')
     #         self.requisicion=True
     #     return res
-        
+
+#EN DESAROLLO
+#class helpdes_refacciones(models.Model):
+#    _name = 'helpdesk.refacciones'
+#    _description = 'Refacciones modelo temporal'
+#
+#    ticketRelacion = fields.Many2one(
+#                                        'helpdesk.ticket', 
+#                                        string = 'Ticket realcionado a diagnostico'
+#                                    )
+#    productos = fields.Many2one(
+#                                    'product.product',
+#                                    string = 'Refacciones y accesorios'
+#                                )
+#    detalleDeProducto = fields.Text(
+#                                        string = 'Información de refacción o accesorio',
+#                                        compute = '_compute_detalle'
+#                                    )
+#    cantidadPedida = fields.Integer( 
+#                                        string = 'Cantidad a pedir'
+#                                    )
+#    @api.depends('productos')
+#    def _compute_detalle(self):
+#        if self.productos:
+#            self.detalleDeProducto = """
+#                                        <table class='table table-bordered table-dark text-white'>
+#                                            <thead >
+#                                                <tr>
+#                                                    <th scope='col'>Categoría del producto</th>
+#                                                    <th scope='col'>Referencia interna</th>
+#                                                    <th scope='col'>Nombre</th>
+#                                                    <th scope='col'>Descripción</th>
+#                                                    <th scope='col'>Cantidad a mano</th>
+#                                                    <th scope='col'>Cantidad prevista</th>
+#                                                </tr>
+#                                            </thead>
+#                                            <tbody>
+#                                                <tr>
+#                                                    <td>""" + str(self.productos.categ_id.name) + """</td>
+#                                                    <td>""" + str(self.productos.default_code) + """</td>
+#                                                    <td>""" + str(self.productos.name) + """</td>
+#                                                    <td>""" + str(self.productos.description) + """</td>
+#                                                    <td>""" + str(self.productos.qty_available) + """</td>
+#                                                    <td>""" + str(self.productos.virtual_available) + """</td>
+#                                                </tr>
+#                                            </tbody>
+#                                        </table>
+#                                    """
+
 class helpdes_diagnostico(models.Model):
     _name = "helpdesk.diagnostico"
     _description = "Historial de diagnostico"

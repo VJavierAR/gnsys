@@ -32,6 +32,28 @@ class StockPicking(Model):
     retiro=fields.Boolean()
     mini=fields.Boolean()
 
+
+
+    def validacionZero(self):
+        if(len(self.move_ids_without_package)==1):
+            self.sale_id.action_cancel()
+            self.sale_id.x_studio_field_bxHgp.write({'stage_id':115})
+            self.sale_id.picking_ids.write({'active':False})
+            self.comentario()
+        wiz = self.env['comentario.ticket'].create({'pick':self.id})
+        view = self.env.ref('stock_picking_mass_action.view_comentario_ticket')
+        return {
+            'name': _('Comentario'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'comentario.ticket',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            'context': self.env.context,
+        }
     #documentosDistro = fields.Many2many('ir.attachment', string="Evidencias ")
     #historialTicket = fields.One2many('ir.attachment','res_id',string='Evidencias al ticket',store=True,track_visibility='onchange')
     def _log_activity_get_documents(

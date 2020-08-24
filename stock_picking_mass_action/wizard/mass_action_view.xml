@@ -1,5 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
+
+        <record id="view_agregar_concentrado_action_form" model="ir.ui.view">
+        <field name="model">stock.picking.mass.concentrado</field>
+        <field name="arch" type="xml">
+            <form string="Mass Action for the selected sale order">
+                <h1>Se agregaran las ordenes en un concentrado</h1>
+                <footer>
+                    <button name="concentrar" string="Agregar" type="object" class="oe_highlight"/>
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="action_concentrado" model="ir.actions.act_window">
+        <field name="name">Concentrado</field>
+        <field name="res_model">stock.picking.mass.concentrado</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{}</field>
+        <field name="binding_model_id" ref="stock.model_stock_picking" />
+    </record>
+
+
+
+    <record id="view_reporte_creacion_ruta_action_form" model="ir.ui.view">
+        <field name="model">reporte.creacion.ruta</field>
+        <field name="arch" type="xml">
+            <form string="Mass Action for the selected sale order">
+                <h1>Reporte de Expediciones Abiertas</h1>
+                <footer>
+                    <button name="reporte" string="Reporte" type="object" class="oe_highlight"/>
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+        <record id="view_helpdesk_detalle_ticket_action_form" model="ir.ui.view">
+        <field name="model">helpdesk.detalle.ticket</field>
+        <field name="arch" type="xml">
+            <form string="Detalle del ticket">
+                <field name="idTicket" string="ticket" required="1"/>
+                <field name="ticket" string="ticket" readonly="1" invisible="1"/>
+                <group>
+                    <group>
+                        <field name="cliente" string="Cliente" attrs="{'invisible':[['ticket','=',False]]}"/>
+                        <field name="localidad" string="Localidad"  attrs="{'invisible':[['ticket','=',False]]}"/>
+                        <field name="estado" attrs="{'invisible':[['ticket','=',False]]}"/>
+                        <field name="area" attrs="{'invisible':[['ticket','=',False]]}"/>
+                    </group>
+                    <group>
+                        <field name="ejecutivo" attrs="{'invisible':[['ticket','=',False]]}"/>
+                        <field name="tecnico" attrs="{'invisible':[['ticket','=',False]]}"/>
+                        <field name="zona" attrs="{'invisible':[['ticket','=',False]]}"/>
+                        <field name="dias" attrs="{'invisible':[['ticket','=',False]]}"/>
+                    </group>
+                </group>
+                <notebook >
+                        <page string="Equipos" >
+                            <field name="series" attrs="{'invisible':[['ticket','=',False]]}" readonly="1">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="x_studio_modelo_equipo"/>
+                                    <field name="x_studio_color_bn"/>
+                                    <field name="x_studio_ultimalecturam"/>
+                                    <field name="x_studio_ultimalecturacolor"/>
+                                </tree>
+
+                            </field>
+                        </page>
+                        <page string="Orden">
+                            <field name="solicitud" attrs="{'invisible':[['ticket','=',False]]}"/>        
+                            <field name="pedido" string="Orden detalle" attrs="{'invisible':[['ticket','=',False]]}">
+                                    <tree string="Orden detalle">
+                                    <field name="product_id"/>
+                                    <field name="name"/>
+                                    <field name="product_uom_qty"/>
+                                    </tree>
+                            </field>
+                            <field name="backorders" string="backorders" attrs="{'invisible':[['ticket','=',False]]}">
+                                    <tree string="backorders">
+                                    <field name="origin" string="Orden" readonly="1"/>
+                                    <field name="scheduled_date" readonly="1"/>
+                                    <field name="x_studio_toneres" widget="html" string="productos" readonly="1"/>
+                                    <field name="estado" readonly="1"/>
+                                    </tree>
+                            </field>
+                        </page>
+                        <page string="diagnosticos" attrs="{'invisible':[['ticket','=',False]]}">
+                            <field name="historico" attrs="{'invisible':[['ticket','=',False]]}">
+                                <tree default_order="create_date desc">
+                                    <field name="create_date"/>
+                                    <field name="estadoTicket"/>
+                                    <field name="comentario" />
+                                    <field name="create_uid"/>
+                                    <field name="evidencia" />
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                <footer>
+                    <button string="Cerrar" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
     <record id="view_stock_warehousw_orderpoint_import_action_form" model="ir.ui.view">
         <field name="model">stock.warehouse.orderpoint.import</field>
         <field name="arch" type="xml">

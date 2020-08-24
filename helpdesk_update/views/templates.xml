@@ -7,6 +7,63 @@
             </xpath>
         </template>
         
+
+
+        <template id='confirmacón_refacciones' name='Conirmacion de la creación y validación de una solicitud'>
+            <t t-call='website.layout'>
+                <div class='container p-3'>
+                    <div class='row'> 
+                        <div class='col-sm-12 text-center'>
+                            <h3>Se aprobarón los siguientes tickets</h3>
+                        </div>
+                    </div>
+                    <div class='row'> 
+                        
+                        <table class="table">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th scope="col">First</th>
+                                    <th scope="col">Last</th>
+                                    <th scope="col">Handle</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Mark</td>
+                                    <td>Otto</td>
+                                    <td>@mdo</td>
+                                </tr>
+                                <tr>
+                              
+                                    <td>Jacob</td>
+                                    <td>Thornton</td>
+                                    <td>@fat</td>
+                                </tr>
+                                <tr>
+                                    <td>Larry</td>
+                                    <td>the Bird</td>
+                                    <td>@twitter</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+
+                    </div>
+
+
+                    <div class='row'> 
+                        <div class='col-sm-12'>
+                        </div>
+                    </div>
+                    <div class='row'> 
+                        <div class='col-sm-12'>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+
         <!-- <template id="listing"> -->
         <!--   <ul> -->
         <!--     <li t-foreach="objects" t-as="object"> -->
