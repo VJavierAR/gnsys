@@ -4272,19 +4272,141 @@ class helpdesk_update(models.Model):
 
     @api.multi
     def detalle_mesa_wizard(self):
-        wiz = self.env['helpdesk.datos.mesa'].create({
-                                                        'ticket_id': self.id
-                                                    })
+
+        wiz = self.env['helpdesk.datos.mesa'].search([('ticket_id', '=', self.id)], order = 'create_date desc', limit = 1 )
+        _logger.info('3312: wizar existente? : ' + str(wiz))
+        if not wiz:
+            wiz = self.env['helpdesk.datos.mesa'].create({
+                                                            'ticket_id': self.id
+                                                        })
         if self.x_studio_equipo_por_nmero_de_serie:
-            wiz.series = [(6, 0, self.x_studio_equipo_por_nmero_de_serie.ids)]
+            #wiz.series = [(6, 0, self.x_studio_equipo_por_nmero_de_serie.ids)]
+            seriesDatos = ''
+            #serieTextoInicial = ''
+            #for serie in self.x_studio_equipo_por_nmero_de_serie:
+            seriesDatos = seriesDatos + """
+                                        <tr>
+                                            <td>""" + str(self.x_studio_equipo_por_nmero_de_serie[0].name) + """</td>
+                                            <td>""" + str(self.x_studio_equipo_por_nmero_de_serie[0].product_id.display_name) + """</td>
+                                            <td>""" + str(self.x_studio_equipo_por_nmero_de_serie[0].x_studio_ultima_ubicacin) + """</td>
+                                            <td>""" + str(self.x_studio_equipo_por_nmero_de_serie[0].x_studio_color_bn) + """</td>
+                                        </tr>
+                                    """
+                #if serieTextoInicial:
+                #    serieTextoInicial = str(serieTextoInicial) + ', ' + str(serie.name)
+                #else:
+                #    serieTextoInicial = str(x_studio_equipo_por_nmero_de_serie[0].name) + ', '
+            wiz.seriesText = """
+                                    <table class='table table-bordered table-secondary text-black'>
+                                        <thead>
+                                            <tr>
+                                                <th scope='col'>Número de serie</th>
+                                                <th scope='col'>Producto</th>
+                                                <th scope='col'>Ultima unicación</th>
+                                                <th scope='col'>Color o B/N</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            """ + seriesDatos +"""
+                                        </tbody>
+                                    </table>
+                                """
+            wiz.serie = str(self.x_studio_equipo_por_nmero_de_serie[0].name)
+            
         if self.x_studio_productos:
-            wiz.refacciones [(6, 0, self.x_studio_productos.ids)]
+            #wiz.refacciones = [(6, 0, self.x_studio_productos.ids)]
+            refaccionesDatos = ''
+            for refaccion in self.x_studio_productos:
+                refaccionesDatos = refaccionesDatos + """
+                                        <tr>
+                                            <td>""" + str(refaccion.product_variant_id.display_name) + """</td>
+                                            <td>""" + str(refaccion.categ_id.name) + """</td>
+                                            <td>""" + str(refaccion.default_code) + """</td>
+                                            <td>""" + str(refaccion.name) + """</td>
+                                            <td>""" + str(refaccion.qty_available) + """</td>
+                                            <td>""" + str(refaccion.virtual_available) + """</td>
+                                            <td>""" + str(refaccion.x_studio_cantidad_pedida) + """</td>
+                                        </tr>
+                                    """
+
+            wiz.refaccionesText = """
+                                    <table class='table table-bordered table-secondary text-black'>
+                                        <thead>
+                                            <tr>
+                                                <th scope='col'>Producto</th>
+                                                <th scope='col'>Categoría del producto</th>
+                                                <th scope='col'>Referencia interna</th>
+                                                <th scope='col'>Nombre</th>
+                                                <th scope='col'>Cantidad a mano</th>
+                                                <th scope='col'>Cantidad prevista</th>
+                                                <th scope='col'>Cantidad a pedir</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            """ + refaccionesDatos +"""
+                                        </tbody>
+                                    </table>
+                                """
+        if self.partner_id:
+            wiz.cliente = self.partner_id.name
+        if self.x_studio_nivel_del_cliente:
+            wiz.tipoCliente = self.x_studio_nivel_del_cliente
+        if self.x_studio_empresas_relacionadas:
+            wiz.localidad = self.x_studio_empresas_relacionadas.name
+        if self.x_studio_field_6furK:
+            wiz.zonaLocalidad = self.x_studio_field_6furK
+        if self.localidadContacto:
+            wiz.localidadContacto = self.localidadContacto.name
+        if self.x_studio_estado_de_localidad:
+            wiz.estadoLocalidad = self.x_studio_estado_de_localidad
+        if self.telefonoLocalidadContacto:
+            wiz.telefonoContactoLocalidad = self.telefonoLocalidadContacto
+        if self.movilLocalidadContacto:
+            wiz.movilContactoLocalidad = self.movilLocalidadContacto
+        if self.correoLocalidadContacto:
+            wiz.correoContactoLocalidad = self.correoLocalidadContacto
+        if self.direccionLocalidadText:
+            wiz.direccionLocalidad = self.direccionLocalidadText
+        if self.create_date:
+            wiz.creadoEl = str(self.create_date.strftime("%d/%m/%Y %H:%M:%S"))
+        #str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") )
+        if self.days_difference:
+            wiz.diasAtraso = self.days_difference
+        if self.priority:
+            wiz.prioridad = self.priority
+        if self.x_studio_zona:
+            wiz.zona = self.x_studio_zona
+        if self.zona_estados:
+            wiz.zonaEstados = self.zona_estados
+        if self.x_studio_nmero_de_ticket_cliente:
+            wiz.numeroTicketCliente = self.x_studio_nmero_de_ticket_cliente
+        if self.x_studio_nmero_ticket_distribuidor_1:
+            wiz.numeroTicketDistribuidor = self.x_studio_nmero_ticket_distribuidor_1
+        if self.x_studio_nmero_de_guia_1:
+            wiz.numeroTicketGuia = self.x_studio_nmero_de_guia_1
+        if self.x_studio_comentarios_de_localidad:
+            wiz.comentarioLocalidad = self.x_studio_comentarios_de_localidad
+        if self.tiempoDeAtrasoTicket:
+            wiz.tiempoAtrasoTicket = self.tiempoDeAtrasoTicket
+        if self.tiempoDeAtrasoAlmacen:
+            wiz.tiempoAtrasoAlmacen = self.tiempoDeAtrasoAlmacen
+        if self.tiempoDeAtrasoDistribucion:
+            wiz.tiempoAtrasoDistribucion = self.tiempoDeAtrasoDistribucion
+
+
+        if self.stage_id:
+            wiz.etapa = self.stage_id.name
+        if self.x_studio_tipo_de_vale:
+            wiz.tipoDeReporte = self.x_studio_tipo_de_vale
+        #if self.diagnosticos:
+        #    wiz.diagnostico_id = [(6, 0, self.diagnosticos.ids)]
+
         idExternoToner = 'studio_customization.tiquete_del_servicio_e501a40f-0bd7-4726-b219-50085c31c177'
         pdf = self.env.ref(idExternoToner).sudo().render_qweb_pdf([self.id])[0]
         wiz.pdfToner = base64.encodestring(pdf)
         view = self.env.ref('helpdesk_update.view_helpdesk_detalle_mesa')
         return {
-            'name': _('Datos tóner'),
+            'name': _('Más información'),
             'type': 'ir.actions.act_window',
             'view_type': 'form',
             'view_mode': 'form',
@@ -4533,6 +4655,143 @@ class helpdes_diagnostico(models.Model):
     mostrarComentario = fields.Boolean(string = "Mostrar comentario en documento impreso", default = False)
     creadoPorSistema = fields.Boolean(string = "Creado por sistema", default = False)
 
+    def mostrarComentarioFun(self):
+        self.mostrarComentario = True
+        ticketTemp = self.env['helpdesk.ticket'].search([('id', '=', self.ticketRelacion.id)], limit = 1 )
+        if ticketTemp.x_studio_equipo_por_nmero_de_serie:
+            wiz = self.env['helpdesk.datos.mesa'].search([('ticket_id', '=', self.ticketRelacion.id)], order = 'create_date desc', limit = 1 )
+            seriesDatos = ''
+            if not ticketTemp.x_studio_equipo_por_nmero_de_serie_1:
+                #caso mesa
+                for serie in ticketTemp.x_studio_equipo_por_nmero_de_serie:
+                    seriesDatos = seriesDatos + """
+                                            <tr>
+                                                <td>""" + str(serie.name) + """</td>
+                                                <td>""" + str(serie.product_id.display_name) + """</td>
+                                                <td>""" + str(serie.x_studio_ultima_ubicacin) + """</td>
+                                                <td>""" + str(serie.x_studio_color_bn) + """</td>
+                                            </tr>
+                                        """
+
+                wiz.seriesText = """
+                                        <table class='table table-bordered table-secondary text-black'>
+                                            <thead>
+                                                <tr>
+                                                    <th scope='col'>Número de serie</th>
+                                                    <th scope='col'>Producto</th>
+                                                    <th scope='col'>Ultima unicación</th>
+                                                    <th scope='col'>Color o B/N</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                """ + seriesDatos +"""
+                                            </tbody>
+                                        </table>
+                                    """
+            #idExternoToner = 'studio_customization.tiquete_del_servicio_e501a40f-0bd7-4726-b219-50085c31c177'
+            #pdf = self.env.ref(idExternoToner).sudo().render_qweb_pdf([self.id])[0]
+            #wiz.pdfToner = base64.encodestring(pdf)
+            view = self.env.ref('helpdesk_update.view_helpdesk_detalle_mesa')
+            return {
+                    'name': _('Más información'),
+                    'type': 'ir.actions.act_window',
+                    'view_type': 'form',
+                    'view_mode': 'form',
+                    'res_model': 'helpdesk.datos.mesa',
+                    'views': [(view.id, 'form')],
+                    'view_id': view.id,
+                    'target': 'new',
+                    'res_id': wiz.id,
+                    'context': self.env.context,
+                }
+        else:
+            #caso toner
+            wiz = self.env['helpdesk.datos.toner'].search([('ticket_id', '=', self.ticketRelacion.id)], order = 'create_date desc', limit = 1 )
+            #idExternoToner = 'studio_customization.tiquete_del_servicio_8a770195-f5a2-4b6c-b905-fc0ff46c1258'
+            #pdf = self.env.ref(idExternoToner).sudo().render_qweb_pdf([self.id])[0]
+            #wiz.pdfToner = base64.encodestring(pdf)
+            view = self.env.ref('helpdesk_update.view_helpdesk_detalle_toner')
+            return {
+                        'name': _('Datos tóner'),
+                        'type': 'ir.actions.act_window',
+                        'view_type': 'form',
+                        'view_mode': 'form',
+                        'res_model': 'helpdesk.datos.toner',
+                        'views': [(view.id, 'form')],
+                        'view_id': view.id,
+                        'target': 'new',
+                        'res_id': wiz.id,
+                        'context': self.env.context,
+                    }
+
+    def noMostrarComentario(self):
+        self.mostrarComentario = False
+        ticketTemp = self.env['helpdesk.ticket'].search([('id', '=', self.ticketRelacion.id)], limit = 1 )
+        if ticketTemp.x_studio_equipo_por_nmero_de_serie:
+            wiz = self.env['helpdesk.datos.mesa'].search([('ticket_id', '=', self.ticketRelacion.id)], order = 'create_date desc', limit = 1 )
+            seriesDatos = ''
+            if not ticketTemp.x_studio_equipo_por_nmero_de_serie_1:
+                #caso mesa
+                for serie in ticketTemp.x_studio_equipo_por_nmero_de_serie:
+                    seriesDatos = seriesDatos + """
+                                            <tr>
+                                                <td>""" + str(serie.name) + """</td>
+                                                <td>""" + str(serie.product_id.display_name) + """</td>
+                                                <td>""" + str(serie.x_studio_ultima_ubicacin) + """</td>
+                                                <td>""" + str(serie.x_studio_color_bn) + """</td>
+                                            </tr>
+                                        """
+
+                wiz.seriesText = """
+                                        <table class='table table-bordered table-secondary text-black'>
+                                            <thead>
+                                                <tr>
+                                                    <th scope='col'>Número de serie</th>
+                                                    <th scope='col'>Producto</th>
+                                                    <th scope='col'>Ultima unicación</th>
+                                                    <th scope='col'>Color o B/N</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                """ + seriesDatos +"""
+                                            </tbody>
+                                        </table>
+                                    """
+            #idExternoToner = 'studio_customization.tiquete_del_servicio_e501a40f-0bd7-4726-b219-50085c31c177'
+            #pdf = self.env.ref(idExternoToner).sudo().render_qweb_pdf([self.id])[0]
+            #wiz.pdfToner = base64.encodestring(pdf)
+            view = self.env.ref('helpdesk_update.view_helpdesk_detalle_mesa')
+            return {
+                    'name': _('Más información'),
+                    'type': 'ir.actions.act_window',
+                    'view_type': 'form',
+                    'view_mode': 'form',
+                    'res_model': 'helpdesk.datos.mesa',
+                    'views': [(view.id, 'form')],
+                    'view_id': view.id,
+                    'target': 'new',
+                    'res_id': wiz.id,
+                    'context': self.env.context,
+                }
+        else:
+            #caso toner
+            wiz = self.env['helpdesk.datos.toner'].search([('ticket_id', '=', self.ticketRelacion.id)], order = 'create_date desc', limit = 1 )
+            #idExternoToner = 'studio_customization.tiquete_del_servicio_8a770195-f5a2-4b6c-b905-fc0ff46c1258'
+            #pdf = self.env.ref(idExternoToner).sudo().render_qweb_pdf([self.id])[0]
+            #wiz.pdfToner = base64.encodestring(pdf)
+            view = self.env.ref('helpdesk_update.view_helpdesk_detalle_toner')
+            return {
+                        'name': _('Datos tóner'),
+                        'type': 'ir.actions.act_window',
+                        'view_type': 'form',
+                        'view_mode': 'form',
+                        'res_model': 'helpdesk.datos.toner',
+                        'views': [(view.id, 'form')],
+                        'view_id': view.id,
+                        'target': 'new',
+                        'res_id': wiz.id,
+                        'context': self.env.context,
+                    }
 
 
 
