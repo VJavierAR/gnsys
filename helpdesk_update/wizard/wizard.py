@@ -5419,9 +5419,22 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                             }
                     if ruta:
                         datosr['route_id'] = ruta
-                    line = self.env['sale.order.line'].sudo().create(datosr)
+                    line = self.env['sale.order.line'].create(datosr)
                     _logger.info('line: ' + str(line))
                     mensajeCuerpo = mensajeCuerpo + str(refaccion.product_variant_id.name) + ', '
+            comentarioGenerico = 'Solicitud de refacción autorizada por ' + str(self.env.user.name) + '.\nEl día ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S")) + '.\n\n' + mensajeCuerpo + '.\n\n'
+            if self.comentario:
+                comentarioGenerico = comentarioGenerico + str(self.comentario)
+            else:
+                comentarioGenerico = comentarioGenerico
+            self.env['helpdesk.diagnostico'].create({
+                                                        'ticketRelacion': self.ticket_id.id,
+                                                        'comentario': comentarioGenerico,
+                                                        'estadoTicket': self.ticket_id.stage_id.name,
+                                                        'evidencia': [(6,0,self.evidencia.ids)],
+                                                        'mostrarComentario': self.check,
+                                                        'creadoPorSistema': True
+                                                    })
             _logger.info('3312: fin actualización refacciones sobre la misma so(): ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
         else:
             _logger.info('3312: inicio confirmarYValidarRefacciones(): ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
@@ -5446,7 +5459,7 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                 mensajeCuerpo = 'Se creo y valido la solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) + ' para el ticket ' + str(self.ticket_id.id) + '.'
                 comentarioGenerico = 'Solicitud de refacción autorizada por ' + str(self.env.user.name) + '.\nEl día ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S")) + '.\n\n'
                 comentarioGenerico = comentarioGenerico + str(self.comentario)
-                self.env['helpdesk.diagnostico'].sudo().create({
+                self.env['helpdesk.diagnostico'].create({
                                                             'ticketRelacion': self.ticket_id.id,
                                                             'comentario': comentarioGenerico,
                                                             'estadoTicket': self.ticket_id.stage_id.name,
