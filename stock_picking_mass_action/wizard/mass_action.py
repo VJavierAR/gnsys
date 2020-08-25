@@ -305,7 +305,7 @@ class StockCambio(TransientModel):
             ubicacion=False
             temp=[]
             ruta=orden.mapped('order_line.route_id.id')
-            backorderC=self.backorder_id
+            backorderC=self.pick.backorder_id
             if(lenOrderLine!=len(data)):
                 productos=True
             for d in data:
