@@ -452,7 +452,7 @@ class RutaXlsx(models.AbstractModel):
                 sheet.write(i, 7, orden.x_studio_ticket if(orden.x_studio_ticket) else '', bold)
                 sheet.write(i, 8, orden.origin if(orden.origin) else '', bold)
                 sheet.write(i, 9, len(orden.move_ids_without_package), bold)
-                sheet.write(i, 10, orden.mapped('move_ids_without_package.product_id.name'), bold)
+                sheet.write(i, 10, str(orden.mapped('move_ids_without_package.product_id.name')), bold)
                 sheet.write(i, 11, orden.partner_id.parent_id.name if(orden.partner_id.parent_id.name) else '', bold)
                 sheet.write(i, 12, orden.partner_id.name if(orden.partner_id.name) else '', bold)
                 sheet.write(i, 13, orden.partner_id.street_name if(orden.partner_id.street_name) else '', bold)
