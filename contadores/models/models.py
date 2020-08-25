@@ -493,6 +493,10 @@ class contadores(models.Model):
                         self.env.cr.execute("insert into x_sale_order_servicios_rel (sale_order_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
                     if sg.nombreAnte=='PAGINAS IMPRESAS EN BN':                        
                         self.env.cr.execute("insert into x_sale_order_servicios_rel (sale_order_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
+                    if sg.nombreAnte=='PAPEL 350,000 HOJAS':                        
+                        self.env.cr.execute("insert into x_sale_order_servicios_rel (sale_order_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
+                    if sg.nombreAnte=='LECTORES DE PROXIMIDAD':                        
+                        self.env.cr.execute("insert into x_sale_order_servicios_rel (sale_order_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")        
                     if sg.nombreAnte=='RENTA MENSUAL DE LICENCIA  7 EMBEDED' or sg.nombreAnte=='RENTA MENSUAL DE LICENCIA  14 EMBEDED' or  sg.nombreAnte=='RENTA MENSUAL DE LICENCIA  2 EMBEDED':                        
                         self.env.cr.execute("insert into x_sale_order_servicios_rel (sale_order_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
                                  
@@ -906,7 +910,23 @@ class contadores(models.Model):
                worksheet.write(i, 14, '$'+str(round(float(rd.rentaMensual)*.16,2)+float(rd.rentaMensual)),neg)
                totalsr=float(rd.rentaMensual)+totalsr                 
                ivatt=round(float(rd.rentaMensual)*.16,2)+ivatt 
-               ttotal=(round(float(rd.rentaMensual)*.16,2)+float(rd.rentaMensual))+ttotal  
+               ttotal=(round(float(rd.rentaMensual)*.16,2)+float(rd.rentaMensual))+ttotal
+            if rd.nombreAnte=='LECTORES DE PROXIMIDAD':                        
+               worksheet.write(i, 0, rd.nombreAnte,neg)
+               worksheet.write(i, 12, '$'+rd.rentaMensual,neg)
+               worksheet.write(i, 13, '$'+str(round(float(rd.rentaMensual)*.16,2)),neg)       
+               worksheet.write(i, 14, '$'+str(round(float(rd.rentaMensual)*.16,2)+float(rd.rentaMensual)),neg)
+               totalsr=float(rd.rentaMensual)+totalsr                 
+               ivatt=round(float(rd.rentaMensual)*.16,2)+ivatt 
+               ttotal=(round(float(rd.rentaMensual)*.16,2)+float(rd.rentaMensual))+ttotal            
+            if rd.nombreAnte=='PAPEL 350,000 HOJAS':                        
+               worksheet.write(i, 0, rd.nombreAnte,neg)
+               worksheet.write(i, 12, '$'+rd.rentaMensual,neg)
+               worksheet.write(i, 13, '$'+str(round(float(rd.rentaMensual)*.16,2)),neg)       
+               worksheet.write(i, 14, '$'+str(round(float(rd.rentaMensual)*.16,2)+float(rd.rentaMensual)),neg)
+               totalsr=float(rd.rentaMensual)+totalsr                 
+               ivatt=round(float(rd.rentaMensual)*.16,2)+ivatt 
+               ttotal=(round(float(rd.rentaMensual)*.16,2)+float(rd.rentaMensual))+ttotal
             if rd.nombreAnte=='SOPORTE Y MANTENIMIENTO DE EQUIPOS':
                importe=float(rd.rentaMensual)
                worksheet.write(i, 0, rd.nombreAnte,neg)
