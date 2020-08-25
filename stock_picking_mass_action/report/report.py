@@ -444,7 +444,7 @@ class RutaXlsx(models.AbstractModel):
             for orden in obj.ordenes:
                 sheet.write(i, 0, obj.name if(obj.name) else '', bold)
                 sheet.write(i, 1, obj.create_date.strftime("%Y/%m/%d"), bold)
-                sheet.write(i, 2 obj.chofer.name if(obj.chofer) else '', bold)
+                sheet.write(i, 2, obj.chofer.name if(obj.chofer) else '', bold)
                 sheet.write(i, 3, obj.vehiculo.name if(obj.vehiculo) else '', bold)
                 sheet.write(i, 4, obj.zona if(obj.zona) else '', bold)
                 sheet.write(i, 5, obj.tipo if(obj.tipo) else '', bold)
