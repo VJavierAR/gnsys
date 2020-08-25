@@ -66,9 +66,8 @@ class fac_order(models.Model):
                netMa=12304
                paginasbn=12306
                embeded=12308
-               impre=12550
-               lp=12549
-                
+               impre=12540
+               lp=12539                
           if str(self.partner_id.razonSocial)=='3': #servicios
                pbn=12289
                pcolor=12287
