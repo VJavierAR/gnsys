@@ -1737,7 +1737,6 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                         
                         #Toner BN
                         if c.x_studio_cartuchonefro:
-                            _logger.info('3312: entrando caso cartucho negro: localidad: ' + str(ticket.x_studio_empresas_relacionadas))
                             car=car+1                        
                             if c.serie.x_studio_color_bn=="B/N":
                              c.write({'porcentajeNegro':c.porcentajeNegro})
@@ -1746,11 +1745,8 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                              c.write({'porcentajeNegro':c.porcentajeNegro})    
                              c.write({'x_studio_toner_negro':1})
                             pro = self.env['product.product'].search([['name','=',c.x_studio_cartuchonefro.name],['categ_id','=',5]])
-                            _logger.info('3312: pro: ' + str(pro))
                             gen = pro.sorted(key='qty_available',reverse=True)[0]
-                            _logger.info('3312: gen: ' + str(gen))
-                            weirtihgone = c.serie.x_studio_toner_compatible.id if(len(gen)==0) else gen.id
-                            _logger.info('3312: weirtihgone: ' + str(weirtihgone))
+                            weirtihgone = c.x_studio_cartuchonefro.id if(len(gen)==0) else gen.id
                             datos={'name': ' '
                                    ,'order_id' : sale.id
                                    , 'product_id' : weirtihgone
@@ -1763,17 +1759,16 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                                    }
                             if(gen['qty_available']<=0) and not weirtihgone:
                                 #datos['route_id']=1
-                                datos['product_id']=c.serie.x_studio_toner_compatible.id
+                                datos['product_id']= c.x_studio_cartuchonefro.id
                                 weirtihgone=c.serie.x_studio_toner_compatible.id
                                 weirtihgtwo=1
                             #insert='insert into sale_order_line values (order_id,product_id,product_uom_qty,x_studio_field_9nQhR,route_id,price_unit, customer_lead,x_studio_toner_negro,porcentajeNegro)values('+str(sale.id)+','+  str(weirtihgone)+','+1+','+str(c.serie.id)+','+str(weirtihgtwo)+',0,0,'+str(c.x_studio_toner_negro)+',1)'
                             #raise exceptions.ValidationError("Error al capturar."+str(insert))
-                            _logger.info('3312: saliendo caso cartucho negro: localidad: ' + str(ticket.x_studio_empresas_relacionadas) + ' datos: ' + str(datos))
+                            
                             self.env['sale.order.line'].create(datos)
                             bn=str(c.serie.x_studio_reftoner)+', '
                         #Toner Ama
                         if c.x_studio_cartucho_amarillo:
-                            _logger.info('3312: entrando caso cartucho amarillo: localidad: ' + str(ticket.x_studio_empresas_relacionadas))
                             car=car+1
                             c.write({'x_studio_toner_amarillo':1})
                             pro = self.env['product.product'].search([['name','=',c.x_studio_cartucho_amarillo.name],['categ_id','=',5]])
@@ -1791,12 +1786,10 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                             if(gen['qty_available']<=0) and not weirtihgone:
                                 #datos['route_id']=1
                                 datos['product_id']=c.x_studio_cartucho_amarillo.id
-                            _logger.info('3312: saliendo caso cartucho amarillo: localidad: ' + str(ticket.x_studio_empresas_relacionadas))
                             self.env['sale.order.line'].create(datos)
                             amar=str(c.x_studio_cartucho_amarillo.name)+', '
                         #Toner cian
                         if c.x_studio_cartucho_cian_1:
-                            _logger.info('3312: entrando caso cartucho cian: localidad: ' + str(ticket.x_studio_empresas_relacionadas))
                             car=car+1
                             c.write({'x_studio_toner_cian':1})
                             pro = self.env['product.product'].search([['name','=',c.x_studio_cartucho_cian_1.name],['categ_id','=',5]])
@@ -1814,12 +1807,10 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                             if(gen['qty_available']<=0) and not weirtihgone:
                                 #datos['route_id']=1
                                 datos['product_id']=c.x_studio_cartucho_cian_1.id
-                            _logger.info('3312: saliendo caso cartucho cian: localidad: ' + str(ticket.x_studio_empresas_relacionadas))
                             self.env['sale.order.line'].create(datos)
                             cian=str(c.x_studio_cartucho_cian_1.name)+', '
                         #Toner mage
                         if c.x_studio_cartucho_magenta:
-                            _logger.info('3312: entrando caso cartucho magenta: localidad: ' + str(ticket.x_studio_empresas_relacionadas))
                             car=car+1
                             c.write({'x_studio_toner_magenta':1})
                             pro = self.env['product.product'].search([['name','=',c.x_studio_cartucho_magenta.name],['categ_id','=',5]])
@@ -1837,7 +1828,6 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                             if(gen['qty_available']<=0) and not weirtihgone:
                                 #datos['route_id']=1
                                 datos['product_id']=c.x_studio_cartucho_magenta.id
-                            _logger.info('3312: saliendo caso cartucho magenta: localidad: ' + str(ticket.x_studio_empresas_relacionadas))
                             self.env['sale.order.line'].create(datos)
                             magen=str(c.x_studio_cartucho_magenta.name)
                             
@@ -3649,48 +3639,57 @@ class HelpdeskTicketReporte(TransientModel):
                                 string = 'Etapa'
                             )
     tipo = fields.Selection(
-                                [['Todos', 'Todos'], ["Falla","Falla"], ["Toner","Toner"]],
+                                [['Todos', 'Todos'], ["Falla","Falla"], ["Toner","Toner"], ['Sistemas', 'Sistemas']],
                                 string = 'Tipo de ticket'
                             )
     area = fields.Many2one(
                                 'helpdesk.team',
                                 string = 'Área de atención'
                             )
+    mostrarCerrados = fields.Boolean(
+                                        string = 'Mostrar cerrados',
+                                        default = False
+                                    )
+    mostrarCancelados = fields.Boolean(
+                                        string = 'Mostrar cancelados',
+                                        default = False
+                                    )
     def report(self):
         i = []
         d = []
-        j = []
         if self.fechaInicial:
             m = ['create_date', '>=', self.fechaInicial]
             i.append(m)
         if self.fechaFinal:
             m = ['create_date', '<=', self.fechaFinal]
             i.append(m)
-        j.append('|')
         if self.tipo:
             if self.tipo == "Toner":
-                #m=['x_studio_tipo_de_vale','=','Falla']
-                #i.append(m)
                 m = ['team_id', '=', 8]
                 i.append(m)
-                #j.append('&')
             elif self.tipo == 'Falla':
-                #m=['x_studio_tipo_de_vale','=','Requerimiento']
-                #i.append(m)
                 m = ['team_id', '!=', 8]
                 i.append(m)
-                #j.append('&')
-            #elif self.tipo == 'Todos':
-                #m = ['x_studio_field_nO7Xg', '!=', False]
-                #i.append([])
-        #if self.tipo == False:
-        #    m = ['x_studio_tipo_de_vale','in',['Requerimiento','Falla']]
-        #    i.append(m)
-        #for ii in range(len(i)-2):
-        #    j.append('&')
-        #i.append(['x_studio_field_nO7Xg', '!=', False])
-        #j.extend(i)
-        [ ['create_date', '>=', self.fechaInicial], ['create_date', '<=', self.fechaFinal],  ]
+            elif self.tipo == 'Sistemas':
+                m = ['team_id', '!=', 54]
+                i.append(m)
+        if self.mostrarCerrados:
+            m = ['stage_id', '=', 18]
+            i.append(m)
+            m = ['stage_id', '=', 111]
+            i.append(m)
+        else:
+            m = ['stage_id', '!=', 18]
+            i.append(m)
+            m = ['stage_id', '!=', 111]
+            i.append(m)
+        if self.mostrarCancelados:
+            m = ['stage_id', '=', 4]
+            i.append(m)
+        else:
+            m = ['stage_id', '!=', 4]
+            i.append(m)
+        _logger.info('3312: filtro reporte: ' + str(i))
         d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x: len(x.x_studio_equipo_por_nmero_de_serie_1) > 0 or len(x.x_studio_equipo_por_nmero_de_serie) > 0)
         if len(d) > 0:
             d[0].write({
@@ -5398,6 +5397,7 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
         
         if self.productos:
             self.ticket_id.x_studio_productos = [(6, 0, self.productos.ids)]
+        """
         if len(self.ticket_id.x_studio_productos) > len(self.ticket_id.x_studio_field_nO7Xg.order_line):
             idsRefaccionesSolicitud = []
             ruta = -1
@@ -5423,50 +5423,51 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                     _logger.info('line: ' + str(line))
                     mensajeCuerpo = mensajeCuerpo + str(refaccion.product_variant_id.name) + ', '
         else:
-            respuesta = 'sin respuesta.'
-            respuesta = self.ticket_id.crear_y_validar_solicitud_refaccion()
-            _logger.info('3312: respuesta de crear_y_validar_solicitud_refaccion: ' + str(respuesta))
-            if respuesta == 'sin respuesta':
-                mensajeTitulo = 'Error'
-                mensajeCuerpo = 'Algo salio mal'
-            elif respuesta == 'Sin refacciones y/o accesorios':
-                mensajeTitulo = 'Error'
-                mensajeCuerpo = 'El ticket no tiene refacciones y/o accesorios.'
-            elif respuesta == 'Solicitud existente.':
-                mensajeTitulo = 'Error'
-                mensajeCuerpo = 'El ticket no tiene refacciones y/o accesorios.'
-            elif respuesta == 'Solicitud ya generada y validada':
-                mensajeTitulo = 'Error'
-                mensajeCuerpo = 'Existe una solicitud ya generada y validada.'
-            elif respuesta == 'OK':
-                mensajeTitulo = 'Creación y validación de refacción!!!'
-                mensajeCuerpo = 'Se creo y valido la solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) + ' para el ticket ' + str(self.ticket_id.id) + '.'
-                comentarioGenerico = 'Solicitud de refacción autorizada por ' + str(self.env.user.name) + '.\nEl día ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S")) + '.\n\n'
-                comentarioGenerico = comentarioGenerico + str(self.comentario)
-                self.env['helpdesk.diagnostico'].create({
-                                                            'ticketRelacion': self.ticket_id.id,
-                                                            'comentario': comentarioGenerico,
-                                                            'estadoTicket': self.ticket_id.stage_id.name,
-                                                            'evidencia': [(6,0,self.evidencia.ids)],
-                                                            'mostrarComentario': self.check,
-                                                            'creadoPorSistema': True
-                                                        })
-            #mensajeTitulo = 'Creación y validación de refacción!!!'
-            #mensajeCuerpo = 'Se creo y valido la solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) + ' para el ticket ' + str(self.ticket_id.id) + '.'
-        wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
-        view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
-        return {
-                'name': _(mensajeTitulo),
-                'type': 'ir.actions.act_window',
-                'view_type': 'form',
-                'view_mode': 'form',
-                'res_model': 'helpdesk.alerta',
-                'views': [(view.id, 'form')],
-                'view_id': view.id,
-                'target': 'new',
-                'res_id': wiz.id,
-                'context': self.env.context,
-                }
+        """
+        respuesta = 'sin respuesta.'
+        respuesta = self.ticket_id.crear_y_validar_solicitud_refaccion()
+        _logger.info('3312: respuesta de crear_y_validar_solicitud_refaccion: ' + str(respuesta))
+        if respuesta == 'sin respuesta':
+            mensajeTitulo = 'Error'
+            mensajeCuerpo = 'Algo salio mal'
+        elif respuesta == 'Sin refacciones y/o accesorios':
+            mensajeTitulo = 'Error'
+            mensajeCuerpo = 'El ticket no tiene refacciones y/o accesorios.'
+        elif respuesta == 'Solicitud existente.':
+            mensajeTitulo = 'Error'
+            mensajeCuerpo = 'El ticket no tiene refacciones y/o accesorios.'
+        elif respuesta == 'Solicitud ya generada y validada':
+            mensajeTitulo = 'Error'
+            mensajeCuerpo = 'Existe una solicitud ya generada y validada.'
+        elif respuesta == 'OK':
+            mensajeTitulo = 'Creación y validación de refacción!!!'
+            mensajeCuerpo = 'Se creo y valido la solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) + ' para el ticket ' + str(self.ticket_id.id) + '.'
+            comentarioGenerico = 'Solicitud de refacción autorizada por ' + str(self.env.user.name) + '.\nEl día ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S")) + '.\n\n'
+            comentarioGenerico = comentarioGenerico + str(self.comentario)
+            self.env['helpdesk.diagnostico'].sudo().create({
+                                                        'ticketRelacion': self.ticket_id.id,
+                                                        'comentario': comentarioGenerico,
+                                                        'estadoTicket': self.ticket_id.stage_id.name,
+                                                        'evidencia': [(6,0,self.evidencia.ids)],
+                                                        'mostrarComentario': self.check,
+                                                        'creadoPorSistema': True
+                                                    })
+        #mensajeTitulo = 'Creación y validación de refacción!!!'
+        #mensajeCuerpo = 'Se creo y valido la solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) + ' para el ticket ' + str(self.ticket_id.id) + '.'
+    wiz = self.env['helpdesk.alerta'].sudo().create({'mensaje': mensajeCuerpo})
+    view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+    return {
+            'name': _(mensajeTitulo),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'helpdesk.alerta',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            'context': self.env.context,
+            }
 
 
     def validar(self):

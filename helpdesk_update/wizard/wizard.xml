@@ -1726,7 +1726,9 @@
                         <field name="fechaFinal" required="1"/>
                     </group>
                     <group>
-                        <field name="tipo"/>
+                        <field name="tipo" />
+                        <field name='mostrarCerrados' />
+                        <field name='mostrarCancelados' />
                     </group>
                 </group>
                 <footer>
