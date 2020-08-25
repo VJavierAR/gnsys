@@ -592,16 +592,16 @@ class contadores(models.Model):
                eec=0
                eebn=0  
                for rpt in self.dca :                                
-                   if int(rpt.x_studio_servicio)==rd.id :
-                        if str(rpt.serie.x_studio_estado)!='Back-up':
-                            worksheet.write(i, 0, rpt.x_studio_indice,neg)
-                            worksheet.write(i, 1, rpt.x_studio_locacin,neg)
-                            worksheet.write(i, 2, rpt.x_studio_modelo,neg)
-                            worksheet.write(i, 3, rpt.serie.name,neg)            
-                            worksheet.write(i, 4, rpt.x_studio_lectura_anterior_bn,neg)
-                            worksheet.write(i, 5, rpt.x_studio_lectura_anterior_color,neg)                        
-                            worksheet.write(i, 6, rpt.contadorMono,neg)
-                            worksheet.write(i, 7, rpt.contadorColor,neg)                                        
+                   if int(rpt.x_studio_servicio)==rd.id :                       
+                        worksheet.write(i, 0, rpt.x_studio_indice,neg)
+                        worksheet.write(i, 1, rpt.x_studio_locacin,neg)
+                        worksheet.write(i, 2, rpt.x_studio_modelo,neg)
+                        worksheet.write(i, 3, rpt.serie.name,neg)            
+                        worksheet.write(i, 4, rpt.x_studio_lectura_anterior_bn,neg)
+                        worksheet.write(i, 5, rpt.x_studio_lectura_anterior_color,neg)                        
+                        worksheet.write(i, 6, rpt.contadorMono,neg)
+                        worksheet.write(i, 7, rpt.contadorColor,neg)
+                        if str(rpt.serie.x_studio_estado)!='Back-up':   
                             if rpt.contadorMono==0:
                                ebn=0
                             else:
@@ -639,16 +639,16 @@ class contadores(models.Model):
             if rd.nombreAnte=='Renta global + costo de página procesada BN o color' and len(re)>0:
                rb=0 
                for rpt in self.dca :
-                   if int(rpt.x_studio_servicio)==rd.id :
-                        if str(rpt.serie.x_studio_estado)!='Back-up':
-                            worksheet.write(i, 0, rpt.x_studio_indice,neg)
-                            worksheet.write(i, 1, rpt.x_studio_locacin,neg)
-                            worksheet.write(i, 2, rpt.x_studio_modelo,neg)
-                            worksheet.write(i, 3, rpt.serie.name,neg)           
-                            worksheet.write(i, 4, rpt.x_studio_lectura_anterior_bn,neg)
-                            worksheet.write(i, 5, rpt.x_studio_lectura_anterior_color,neg)                        
-                            worksheet.write(i, 6, rpt.contadorMono,neg)
-                            worksheet.write(i, 7, rpt.contadorColor,neg)                                        
+                   if int(rpt.x_studio_servicio)==rd.id :                        
+                        worksheet.write(i, 0, rpt.x_studio_indice,neg)
+                        worksheet.write(i, 1, rpt.x_studio_locacin,neg)
+                        worksheet.write(i, 2, rpt.x_studio_modelo,neg)
+                        worksheet.write(i, 3, rpt.serie.name,neg)           
+                        worksheet.write(i, 4, rpt.x_studio_lectura_anterior_bn,neg)
+                        worksheet.write(i, 5, rpt.x_studio_lectura_anterior_color,neg)                        
+                        worksheet.write(i, 6, rpt.contadorMono,neg)
+                        worksheet.write(i, 7, rpt.contadorColor,neg)
+                        if str(rpt.serie.x_studio_estado)!='Back-up':   
                             if rpt.contadorMono==0:
                                ebn=0
                             else:
