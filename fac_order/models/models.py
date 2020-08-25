@@ -66,6 +66,9 @@ class fac_order(models.Model):
                netMa=12304
                paginasbn=12306
                embeded=12308
+               impre=12550
+               lp=12549
+                
           if str(self.partner_id.razonSocial)=='3': #servicios
                pbn=12289
                pcolor=12287
@@ -415,9 +418,9 @@ class fac_order(models.Model):
                      if s.nombreAnte=='SERVICIO DE MANTENIMIENTO':                        
                         self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':s.id,'product_id':sm ,'product_uom_qty':1.0,'price_unit':s.rentaMensual})                                                                                                    
                      if s.nombreAnte=='LECTORES DE PROXIMIDAD':                        
-                        self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':s.id,'product_id':sm ,'product_uom_qty':1.0,'price_unit':s.rentaMensual})                                                                                                       
+                        self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':s.id,'product_id':lp ,'product_uom_qty':1.0,'price_unit':s.rentaMensual})                                                                                                       
                      if s.nombreAnte=='PAPEL 350,000 HOJAS':                        
-                        self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':s.id,'product_id':sm ,'product_uom_qty':1.0,'price_unit':s.rentaMensual})                                                                                                          
+                        self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':s.id,'product_id':impre ,'product_uom_qty':1.0,'price_unit':s.rentaMensual})                                                                                                          
                      if s.nombreAnte=='SOPORTE Y MANTENIMIENTO DE EQUIPOS':                        
                         self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':s.id,'product_id':sme ,'product_uom_qty':1.0,'price_unit':s.rentaMensual})                                                                                                       
                      if s.nombreAnte=='SERVICIO DE ADMINISTRADOR KM NET MANAGER':                        
