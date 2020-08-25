@@ -5394,11 +5394,11 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
 
     def confirmarYValidarRefacciones(self):
         self.ticket_id.x_studio_productos = [(6, 0, self.productos.ids)]
-        
         if self.productos:
             self.ticket_id.x_studio_productos = [(6, 0, self.productos.ids)]
-        """
-        if len(self.ticket_id.x_studio_productos) > len(self.ticket_id.x_studio_field_nO7Xg.order_line):
+        
+        if self.ticket_id.x_studio_field_nO7Xg and len(self.ticket_id.x_studio_productos) > len(self.ticket_id.x_studio_field_nO7Xg.order_line):
+            _logger.info('3312: inicio actualización refacciones sobre la misma so(): ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
             idsRefaccionesSolicitud = []
             ruta = -1
             for refaccion in self.ticket_id.x_studio_field_nO7Xg.order_line:
@@ -5422,38 +5422,40 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                     line = self.env['sale.order.line'].sudo().create(datosr)
                     _logger.info('line: ' + str(line))
                     mensajeCuerpo = mensajeCuerpo + str(refaccion.product_variant_id.name) + ', '
+            _logger.info('3312: fin actualización refacciones sobre la misma so(): ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
         else:
-        """
-        respuesta = 'sin respuesta.'
-        respuesta = self.ticket_id.crear_y_validar_solicitud_refaccion()
-        _logger.info('3312: respuesta de crear_y_validar_solicitud_refaccion: ' + str(respuesta))
-        if respuesta == 'sin respuesta':
-            mensajeTitulo = 'Error'
-            mensajeCuerpo = 'Algo salio mal'
-        elif respuesta == 'Sin refacciones y/o accesorios':
-            mensajeTitulo = 'Error'
-            mensajeCuerpo = 'El ticket no tiene refacciones y/o accesorios.'
-        elif respuesta == 'Solicitud existente.':
-            mensajeTitulo = 'Error'
-            mensajeCuerpo = 'El ticket no tiene refacciones y/o accesorios.'
-        elif respuesta == 'Solicitud ya generada y validada':
-            mensajeTitulo = 'Error'
-            mensajeCuerpo = 'Existe una solicitud ya generada y validada.'
-        elif respuesta == 'OK':
-            mensajeTitulo = 'Creación y validación de refacción!!!'
-            mensajeCuerpo = 'Se creo y valido la solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) + ' para el ticket ' + str(self.ticket_id.id) + '.'
-            comentarioGenerico = 'Solicitud de refacción autorizada por ' + str(self.env.user.name) + '.\nEl día ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S")) + '.\n\n'
-            comentarioGenerico = comentarioGenerico + str(self.comentario)
-            self.env['helpdesk.diagnostico'].sudo().create({
-                                                        'ticketRelacion': self.ticket_id.id,
-                                                        'comentario': comentarioGenerico,
-                                                        'estadoTicket': self.ticket_id.stage_id.name,
-                                                        'evidencia': [(6,0,self.evidencia.ids)],
-                                                        'mostrarComentario': self.check,
-                                                        'creadoPorSistema': True
-                                                    })
-        #mensajeTitulo = 'Creación y validación de refacción!!!'
-        #mensajeCuerpo = 'Se creo y valido la solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) + ' para el ticket ' + str(self.ticket_id.id) + '.'
+            _logger.info('3312: inicio confirmarYValidarRefacciones(): ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
+            respuesta = 'sin respuesta.'
+            respuesta = self.ticket_id.crear_y_validar_solicitud_refaccion()
+            _logger.info('3312: fin confirmarYValidarRefacciones(): ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
+            _logger.info('3312: respuesta de crear_y_validar_solicitud_refaccion: ' + str(respuesta))
+            if respuesta == 'sin respuesta':
+                mensajeTitulo = 'Error'
+                mensajeCuerpo = 'Algo salio mal'
+            elif respuesta == 'Sin refacciones y/o accesorios':
+                mensajeTitulo = 'Error'
+                mensajeCuerpo = 'El ticket no tiene refacciones y/o accesorios.'
+            elif respuesta == 'Solicitud existente.':
+                mensajeTitulo = 'Error'
+                mensajeCuerpo = 'El ticket no tiene refacciones y/o accesorios.'
+            elif respuesta == 'Solicitud ya generada y validada':
+                mensajeTitulo = 'Error'
+                mensajeCuerpo = 'Existe una solicitud ya generada y validada.'
+            elif respuesta == 'OK':
+                mensajeTitulo = 'Creación y validación de refacción!!!'
+                mensajeCuerpo = 'Se creo y valido la solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) + ' para el ticket ' + str(self.ticket_id.id) + '.'
+                comentarioGenerico = 'Solicitud de refacción autorizada por ' + str(self.env.user.name) + '.\nEl día ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S")) + '.\n\n'
+                comentarioGenerico = comentarioGenerico + str(self.comentario)
+                self.env['helpdesk.diagnostico'].sudo().create({
+                                                            'ticketRelacion': self.ticket_id.id,
+                                                            'comentario': comentarioGenerico,
+                                                            'estadoTicket': self.ticket_id.stage_id.name,
+                                                            'evidencia': [(6,0,self.evidencia.ids)],
+                                                            'mostrarComentario': self.check,
+                                                            'creadoPorSistema': True
+                                                        })
+            #mensajeTitulo = 'Creación y validación de refacción!!!'
+            #mensajeCuerpo = 'Se creo y valido la solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) + ' para el ticket ' + str(self.ticket_id.id) + '.'
         wiz = self.env['helpdesk.alerta'].sudo().create({'mensaje': mensajeCuerpo})
         view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
         return {
