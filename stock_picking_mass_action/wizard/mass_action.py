@@ -1352,7 +1352,7 @@ class reporteCreacionRuta(TransientModel):
     name=fields.Char()
 
     def reporte(self):
-        d=self.env['creacion.ruta'].search([['ordenes','!=',False]])
+        d=self.env['creacion.ruta'].search([['ordenes','!=',False]],order='create_date desc')
         d[0].write({'arreglo':d.mapped('id')})
         return self.env.ref('stock_picking_mass_action.ruta_xlsx').report_action(d[0])
 

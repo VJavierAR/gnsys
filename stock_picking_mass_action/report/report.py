@@ -464,5 +464,5 @@ class RutaXlsx(models.AbstractModel):
                 sheet.write(i, 19, orden.partner_id.city if(orden.partner_id.city) else '', bold)
                 sheet.write(i, 20, orden.partner_id.zip if(orden.partner_id.zip) else '', bold)
                 i=i+1
-        #sheet.add_table('A2:U'+str(i),{'columns': [{'header': 'Expedición'},{'header': 'Fecha'},{'header': 'chofer'},{'header': 'vehiculo'},{'header': 'Zona'},{'header':'Tipo'},{'header': 'Estado'},{'header': 'Ticket'},{'header': 'Orden'},{'header': 'Cantidad'},{'header': 'Productos'},{'header': 'Cliente'},{'header': 'Localidad'},{'header': 'Calle'},{'header': 'No exterior'},{'header': 'No Interior'},{'header': 'Colonia'},{'header': 'Delegación'},{'header': 'Ciudad'},{'header': 'C.p'}]}) 
+        sheet.add_table('A2:U'+str(i),{'columns': [{'header': 'Expedición'},{'header': 'Fecha'},{'header': 'chofer'},{'header': 'vehiculo'},{'header': 'Zona'},{'header':'Tipo'},{'header': 'Estado'},{'header': 'Ticket'},{'header': 'Orden'},{'header': 'Cantidad'},{'header': 'Productos'},{'header': 'Cliente'},{'header': 'Localidad'},{'header': 'Calle'},{'header': 'No exterior'},{'header': 'No Interior'},{'header': 'Colonia'},{'header': 'Delegación'},{'header': 'Ciudad'},{'header': 'C.p'}]}) 
         workbook.close()  
