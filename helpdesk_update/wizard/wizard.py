@@ -5456,7 +5456,7 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                                                         })
             #mensajeTitulo = 'Creación y validación de refacción!!!'
             #mensajeCuerpo = 'Se creo y valido la solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) + ' para el ticket ' + str(self.ticket_id.id) + '.'
-        wiz = self.env['helpdesk.alerta'].sudo().create({'mensaje': mensajeCuerpo})
+        wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
         view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
         return {
                 'name': _(mensajeTitulo),
