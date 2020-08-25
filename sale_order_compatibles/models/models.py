@@ -87,6 +87,21 @@ class sale_update(models.Model):
 
 	serieRetiro2=fields.Many2one('stock.production.lot','Serie retiro')
 
+	@api.onchange('partner_id')
+	def dominioContactos(self):
+		res={}
+		for record in self:
+			if(record.partner_id.id):
+				hijos=self.env['res.partner'].search([['parent_id','=',record.partner_id.id]])
+				hijosarr=hijos.mapped('id')
+				nietos=self.env['res.partner'].search([['parent_id','in',hijosarr],['type','=','contact']]).mapped('id')
+				hijosF=hijos.filtered(lambda x:x.type=='contact').mapped('id')
+				final=nietos+hijosF
+				res['domain']={'x_studio_field_RnhKr':[('id','in',final)]}
+		return res
+
+
+
 	@api.onchange('serieRetiro2')
 	def serieRetiro(self):
 		for record in self:
@@ -94,6 +109,7 @@ class sale_update(models.Model):
 		    if(record.serieRetiro2.x_studio_localidad_2.id):
 		      record['partner_id']=record.serieRetiro2.x_studio_localidad_2.parent_id.id
 		      record['partner_shipping_id']=record.serieRetiro2.x_studio_localidad_2.id
+		      record['x_studio_direccin_de_entrega']=record.serieRetiro2.x_studio_localidad_2.id			
 		      record['compatiblesLineas']=[{'serie':record.serieRetiro2.id,'cantidad':1,'tipo':record.x_studio_tipo_de_solicitud,'equipos':record.serieRetiro2.product_id.id}]
 
 	@api.multi

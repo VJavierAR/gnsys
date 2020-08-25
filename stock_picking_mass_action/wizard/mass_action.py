@@ -308,11 +308,11 @@ class StockCambio(TransientModel):
             if(lenOrderLine!=len(data)):
                 productos=True
             for d in data:
-                if(data.producto1.id!=data.producto2.id):
+                if(d.producto1.id!=d.producto2.id):
                     productos=True
-                if(data.cantidad!=data.cantidad2):
+                if(d.cantidad!=d.cantidad2):
                     cantidades=True
-                if(data.almacen.id):
+                if(d.almacen.id):
                     ubicacion=True
             if(productos or cantidades):
                 orden.action_cancel()
@@ -330,12 +330,20 @@ class StockCambio(TransientModel):
             orden.saleLinesMove()
             _logger.info(str(ubicacion))
             if(ubicacion and (productos or cantidades)):
-                pic=self.env['stock.picking'].search([['location_id','=',orden.warehouse_id.lot_stock_id.id]])
-                pic.do_unreserve()
+                check=False
+                almacenes=self.env['stock.warehouse'].search([['x_studio_cliente','=',False]])
+                pic=self.env['stock.picking'].search(['&',['location_id','in',almacenes.mapped('lot_stock_id.id')],['sale_id','=',orden.id]],order='id asc',limit=1)
+                _logger.info(len(pic))
+                pic[0].do_unreserve()
                 for t in temp:
-                    dd=pic.move_ids_without_package.search([['sale_line_id','=',t['sale_line_id']],['product_id','=',t['product_id']]])
-                    dd.write({'location_id':t['location_id']})
-                pic.action_assign()
+                    dd=pic[0].move_ids_without_package.search(['&',['sale_line_id','=',t['sale_line_id']],['product_id','=',t['product_id']]],order='id asc',limit=1)
+                    _logger.info(str(len(dd)))
+                    if(dd.location_id.id!=t['location_id']):
+                        dd.write({'location_id':t['location_id']})
+                        check=True
+                _logger.info('2')
+                if(check):
+                    pic[0].action_assign()
             if(ubicacion and not(productos or cantidades)):
                 self.pick.do_unreserve()
                 for d in data:

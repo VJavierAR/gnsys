@@ -330,7 +330,7 @@ class compras(models.Model):
                                     qty=round(h/g)
                                     if(len(arr)==j+1):
                                         arr[j]['product_qty']=qty
-                                        arr[j]['price_unit']=g/1.16
+                                        arr[j]['price_unit']=g
                                         arr[j]['date_planned']=self.date_order if(self.date_order) else fecha
                                     if(len(arr)==j):
                                         product={'product_qty':qty,'price_unit':g/1.16,'date_planned':self.date_order if(self.date_order) else fecha}

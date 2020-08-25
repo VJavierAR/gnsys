@@ -842,26 +842,28 @@ class contadores(models.Model):
                         worksheet.write(i, 15, rpt.x_studio_ubicacin,neg)
                         worksheet.write(i, 16, rpt.comentarioLecturas,neg)                                                            
                     
-                        if rpt.x_studio_color_o_bn=='B/N':
-                           bs= float(rd.rentaMensual)+(ebn*rd.clickExcedenteBN)
-                           eebn=ebn+eebn
-                           worksheet.write(i, 12, bs,neg)
-                           iva=round(bs*.16,2)
-                           ivatt=iva+ivatt
-                           worksheet.write(i, 13,'$ '+str(iva),neg )
-                           worksheet.write(i, 14,'$ '+str(iva +bs) ,neg)
-                           totalsr=bs+totalsr
-                           ttotal=(iva +bs)+ttotal
+                        if rpt.x_studio_color_o_bn=='B/N':              
+                           if str(rpt.serie.x_studio_estado)!='Back-up':
+                               bs= float(rd.rentaMensual)+(ebn*rd.clickExcedenteBN)
+                               eebn=ebn+eebn
+                               worksheet.write(i, 12, bs,neg)
+                               iva=round(bs*.16,2)
+                               ivatt=iva+ivatt
+                               worksheet.write(i, 13,'$ '+str(iva),neg )
+                               worksheet.write(i, 14,'$ '+str(iva +bs) ,neg)
+                               totalsr=bs+totalsr
+                               ttotal=(iva +bs)+ttotal
                         if rpt.x_studio_color_o_bn=='Color':
-                           bsc=float(rd.rentaMensual)+(ec*rd.clickExcedenteColor)+(ebn*rd.clickExcedenteBN)
-                           eec=ec+eec
-                           worksheet.write(i, 12, bsc,neg) 
-                           iva=round(bsc*.16,2)
-                           ivatt=iva+ivatt
-                           worksheet.write(i, 13,'$ '+str(iva) ,neg) 
-                           worksheet.write(i, 14,'$ '+str(iva +bsc) ,neg)
-                           totalsr=bsc+totalsr
-                           ttotal=(iva +bsc)+ttotal                                                                               
+                           if str(rpt.serie.x_studio_estado)!='Back-up': 
+                               bsc=float(rd.rentaMensual)+(ec*rd.clickExcedenteColor)+(ebn*rd.clickExcedenteBN)
+                               eec=ec+eec
+                               worksheet.write(i, 12, bsc,neg) 
+                               iva=round(bsc*.16,2)
+                               ivatt=iva+ivatt
+                               worksheet.write(i, 13,'$ '+str(iva) ,neg) 
+                               worksheet.write(i, 14,'$ '+str(iva +bsc) ,neg)
+                               totalsr=bsc+totalsr
+                               ttotal=(iva +bsc)+ttotal                                                                               
                         i=i+1
                      
         for rd in re:            
