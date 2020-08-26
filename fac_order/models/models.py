@@ -292,7 +292,7 @@ class fac_order(models.Model):
                                      if k.x_studio_color_bn=='B/N':
                                         if m.bolsaBN<bnp:
                                            bnp=bnp-m.bolsaBN
-                                           self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':pbn,'product_uom_qty':0,'price_unit':m.clickExcedenteBN,'x_studio_bolsa':m.bolsaBN,'name':'(82121500) PAGINAS IMPRESAS NEGRO: '+str(bnp)+' INCLUYE ('+str(m.bolsaBN)+') SERIE:'+k.name })                                                     
+                                           self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':pbn,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN,'x_studio_bolsa':m.bolsaBN,'name':'(82121500) PAGINAS IMPRESAS NEGRO: '+str(bnp)+' INCLUYE ('+str(m.bolsaBN)+') SERIE: '+k.name })                                                     
                                         else:    
                                            self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':pbn,'product_uom_qty':0,'price_unit':m.clickExcedenteBN,'x_studio_bolsa':m.bolsaBN,'name':'(82121500) PAGINAS IMPRESAS NEGRO: 0 INCLUYE ('+str(m.bolsaBN)+') SERIE:'+k.name })                                                     
                                      if k.x_studio_color_bn=='Color':
