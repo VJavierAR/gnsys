@@ -99,9 +99,12 @@ class sale_update(models.Model):
 				final=nietos+hijosF
 				res['domain']={'x_studio_field_RnhKr':[('id','in',final)]}
 		return res
-
-
-
+	@api.onchange('x_studio_direccin_de_entrega')
+	def cambioLocalida(self):
+		for record in self:
+			if(record.x_studio_direccin_de_entrega.id):
+				record['partner_shipping_id']=record.x_studio_direccin_de_entrega.id
+	
 	@api.onchange('serieRetiro2')
 	def serieRetiro(self):
 		for record in self:
@@ -112,13 +115,6 @@ class sale_update(models.Model):
 		      record['x_studio_direccin_de_entrega']=record.serieRetiro2.x_studio_localidad_2.id			
 		      record['compatiblesLineas']=[{'serie':record.serieRetiro2.id,'cantidad':1,'tipo':record.x_studio_tipo_de_solicitud,'equipos':record.serieRetiro2.product_id.id}]
 
-
-
-    @api.onchange('x_studio_direccin_de_entrega')
-    def localidadenvio(self):
-    	for record in self:
-    		if(record.x_studio_direccin_de_entrega.id):
-    			record['partner_shipping_id']=record.x_studio_direccin_de_entrega.id
 
 
 	def preparaSolicitud(self):
