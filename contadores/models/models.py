@@ -526,7 +526,7 @@ class contadores(models.Model):
     def genera_excel(self):
         workbook = xlsxwriter.Workbook('Example2.xlsx')                        
         for contrato in self.x_studio_contratos:
-            if contrato.checkLecturas:
+            if contrato.x_studio_cobrar_contrato:
                 worksheet = workbook.add_worksheet(str(contrato.idTechraRef))                
                 neg = workbook.add_format({'border': 2})
 
