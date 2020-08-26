@@ -402,17 +402,9 @@ class fac_order(models.Model):
                for s in self.x_studio_servicios:
                      if s.nombreAnte=='SERVICIO DE PCOUNTER' or s.nombreAnte=='SERVICIO DE PCOUNTER1' or s.nombreAnte=='ADMINISTRACION DE DOCUMENTOS CON PCOUNTER' or s.nombreAnte=='SERVICIO DE MANTENIMIENTO DE PCOUNTER' or s.nombreAnte=='SERVICIO DE MANTENIMIENTO PCOUNTER' or s.nombreAnte=='RENTA DE LICENCIAMIENTO PCOUNTER':                        
                         self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':s.id,'product_id':spc ,'product_uom_qty':1.0,'price_unit':s.rentaMensual})                                                                                                    
-                     if s.nombreAnte=='SERVICIO DE TFS' or s.nombreAnte=='OPERADOR TFS' or s.nombreAnte=='TFS' or s.nombreAnte=='SERVICIO DE TFS ' :                        
-                        _logger.info(" afuera retencion xD "+'Retenciones '+str(int(float(s.retencion))) )  
-                        if str(s.retencion)!='N/A':
-                           rht = float(s.retencion)                           
-                           idtax = self.env['account.tax'].search([('amount','=',rht*(-1)),('name','=','Retenciones '+str(int(float(s.retencion))))],limit=1)
-                           _logger.info("retencion  in xD "+'Retenciones '+str(int(float(s.retencion))) + ' id tax'+ str(idtax))  
-                           acci=self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':s.id,'product_id':tfs ,'product_uom_qty':1.0,'price_unit':s.rentaMensual})                                    
-                           acci.tax_id=idtax.ids
-                           #self.env['account_tax_sale_order_line_rel'].create({'sale_order_line_id': acci.id,'account_tax_id':idtax.id})                                    
-                        else:
-                           self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':s.id,'product_id':tfs ,'product_uom_qty':1.0,'price_unit':s.rentaMensual})                                   
+                     if s.nombreAnte=='SERVICIO DE TFS' or s.nombreAnte=='OPERADOR TFS' or s.nombreAnte=='TFS' or s.nombreAnte=='SERVICIO DE TFS ' :                                                                                                                                                     
+                        self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':s.id,'product_id':tfs ,'product_uom_qty':1.0,'price_unit':s.rentaMensual})                                                            
+                        #self.env['account_tax_sale_order_line_rel'].create({'sale_order_line_id': acci.id,'account_tax_id':idtax.id})                                                                                    
                         #self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':s.id,'product_id':11419 ,'product_uom_qty':1.0,'price_unit':s.rentaMensual,'discount':int(self.x_studio_descuento)})                                                                                                    
                      if s.nombreAnte=='SERVICIO DE MANTENIMIENTO':                        
                         self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':s.id,'product_id':sm ,'product_uom_qty':1.0,'price_unit':s.rentaMensual})                                                                                                    
