@@ -99,9 +99,12 @@ class sale_update(models.Model):
 				final=nietos+hijosF
 				res['domain']={'x_studio_field_RnhKr':[('id','in',final)]}
 		return res
-
-
-
+	@api.onchange('x_studio_direccin_de_entrega')
+	def cambioLocalida(self):
+		for record in self:
+			if(record.x_studio_direccin_de_entrega.id):
+				record['partner_shipping_id']=record.x_studio_direccin_de_entrega.id
+	
 	@api.onchange('serieRetiro2')
 	def serieRetiro(self):
 		for record in self:
