@@ -112,47 +112,14 @@ class sale_update(models.Model):
 		      record['x_studio_direccin_de_entrega']=record.serieRetiro2.x_studio_localidad_2.id			
 		      record['compatiblesLineas']=[{'serie':record.serieRetiro2.id,'cantidad':1,'tipo':record.x_studio_tipo_de_solicitud,'equipos':record.serieRetiro2.product_id.id}]
 
-	@api.multi
-	def mail_action_quotation_send(self):
-		'''
-		This function opens a window to compose an email, with the edi sale template message loaded by default
-		'''
-		self.ensure_one()
-		ir_model_data = self.env['ir.model.data']
-		try:
-			template_id = ir_model_data.get_object_reference('sale', 'email_template_edi_sale')[1]
-		except ValueError:
-			template_id = False
-		try:
-			compose_form_id = ir_model_data.get_object_reference('mail', 'sale_email_compose_message_wizard_form')[1]
-		except ValueError:
-			compose_form_id = False
-		lang = self.env.context.get('lang')
-		template = template_id and self.env['mail.template'].browse(template_id)
-		if template and template.lang:
-			lang = template._render_template(template.lang, 'sale.order', self.ids[0])
-		ctx = {
-			'default_model': 'sale.order',
-			'default_res_id': self.ids[0],
-			#'default_use_template': bool(template_id),
-			#'default_template_id': template_id,
-			'default_composition_mode': 'comment',
-			'mark_so_as_sent': True,
-			'model_description': self.with_context(lang=lang).type_name,
-			'custom_layout': "mail.mail_notification_paynow",
-			'proforma': self.env.context.get('proforma', False),
-			'force_email': True
-		}
-		return {
-			'type': 'ir.actions.act_window',
-			'view_type': 'form',
-			'view_mode': 'form',
-			'res_model': 'mail.compose.message',
-			'views': [(compose_form_id, 'form')],
-			'view_id': compose_form_id,
-			'target': 'new',
-			'context': ctx,
-		}
+
+
+    @api.onchange('x_studio_direccin_de_entrega')
+    def localidadenvio(self):
+    	for record in self:
+    		if(record.x_studio_direccin_de_entrega.id):
+    			record['partner_shipping_id']=record.x_studio_direccin_de_entrega.id
+
 
 	def preparaSolicitud(self):
 		self.order_line.unlink()
