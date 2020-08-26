@@ -11,6 +11,7 @@ _logger = logging.getLogger(__name__)
 
 class sale_order_compatibles(models.Model):
 	_name = 'sale_order_compatibles'
+	_description = 'Detalle modelo temporal'
 	saleOrder = fields.Many2one('sale.order')
 	equipos = fields.Many2one('product.product', string = 'Equipos')
 	cantidad = fields.Selection(selection = [(0, '0'),(1, '1')],string = 'Cantidad',default=1)
@@ -31,6 +32,7 @@ class sale_order_compatibles(models.Model):
 
 class miniModelo(models.Model):
 	_name = 'sale_order_compatibles_mini'
+	_description = 'Detalle modelo temporal lines'
 	idProducto = fields.Char(string = 'id Producto')
 	producto = fields.Many2one('product.product')
 	cantidad = fields.Integer(string = 'Cantidad')
@@ -48,6 +50,7 @@ class miniModelo(models.Model):
 
 class miniModeloToner(models.Model):
 	_name = 'sale_order_compatibles_mini_toner'
+	_description = 'Detalle modelo temporal lines toner'
 	idProducto = fields.Char(string = 'id Producto')
 	producto = fields.Many2one('product.product')
 	cantidad = fields.Integer(string = 'Cantidad')
@@ -66,6 +69,7 @@ class miniModeloToner(models.Model):
 
 class miniModeloAccesorio(models.Model):
 	_name = 'sale_order_compatibles_mini_acesorios'
+	_description = 'Detalle modelo temporal line accesorios'
 	idProducto = fields.Char(string = 'id Producto')
 	producto = fields.Many2one('product.product')
 	cantidad = fields.Integer(string = 'Cantidad')
