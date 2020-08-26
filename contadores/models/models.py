@@ -450,7 +450,7 @@ class contadores(models.Model):
     
     
     @api.onchange('cliente')
-    def getid(self):        
+    def dameclientes(self):        
         if self.cliente:
            self.x_studio_contratos=[(6, 0, [])]
            s=self.env['contrato'].search([['cliente','=',self.cliente.id]])        
