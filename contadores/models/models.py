@@ -468,6 +468,15 @@ class contadores(models.Model):
                 r.x_studio_cobrar_contrato=False      
 
     
+    def selecionaTODOLecturas(self):        
+        if len(self.dca)>0:
+            for r in self.dca:
+                r.x_studio_capturar=True
+                      
+    def desSelecionaTODOLecturas(self):        
+        if len(self.dca)>0:
+            for r in self.dca:
+                r.x_studio_capturar=False      
     
 
     
