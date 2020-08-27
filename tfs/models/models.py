@@ -186,7 +186,7 @@ class tfs(models.Model):
                         if(len(quant)==0):
                             _logger.info('quant')
                             datos1={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':41911,'location_dest_id':re.location_id.id}
-                            datos2={'product_id' : re.product_id.id, 'product_qty' : re.product_max_qty,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':re.location_id.id,'location_dest_id':41911}
+                            datos2={'product_id' : re.product_id.id, 'product_qty' : re.product_max_qty,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'price_unit': 0 }
                             pickOrigen.append(datos1)
                             pickDestino.append(datos2)
                             rule.append(re.id)
@@ -198,7 +198,7 @@ class tfs(models.Model):
                                 _logger.info(str(re.product_max_qty-quant.quantity))
                                 if((re.product_max_qty-quant.quantity)>0):
                                     datos1={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty-quant.quantity,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':41911,'location_dest_id':re.location_id.id}
-                                    datos2={'product_id' : re.product_id.id, 'product_qty' : re.product_max_qty-quant.quantity,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':re.location_id.id,'location_dest_id':41911}
+                                    datos2={'product_id' : re.product_id.id, 'product_qty' : re.product_max_qty-quant.quantity,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'price_unit': 0}
                                     pickOrigen.append(datos1)
                                     pickDestino.append(datos2)
                                     rule.append(re.id)
