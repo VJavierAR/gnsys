@@ -304,10 +304,9 @@ class StockCambio(TransientModel):
             productos=False
             ubicacion=False
             temp=[]
+            almacenes=self.env['stock.warehouse'].search([['x_studio_cliente','=',False]])
             ruta=orden.mapped('order_line.route_id.id')
-            backorderC=self.pick.backorder_id
-            if(lenOrderLine!=len(data)):
-                productos=True
+            pic=self.env['stock.picking'].search(['&',['location_id','in',almacenes.mapped('lot_stock_id.id')],['sale_id','=',orden.id]],order='id asc',limit=1)
             for d in data:
                 if(d.producto1.id!=d.producto2.id):
                     productos=True
@@ -316,41 +315,33 @@ class StockCambio(TransientModel):
                 if(d.almacen.id):
                     ubicacion=True
             if(productos or cantidades):
-                orden.action_cancel()
-                orden.action_draft()
-                self.env['stock.picking'].search([['sale_id','=',orden.id]]).unlink()
-                self.env['sale.order.line'].search([['order_id','=',orden.id]]).unlink()
-                orden.action_confirm()
                 for d in data:
                     datos={'x_studio_field_9nQhR':d.serie.id,'order_id':orden.id,'product_id':d.producto2.id,'product_uom':d.producto2.uom_id.id,'product_uom_qty':d.cantidad2,'name':d.producto2.description if(d.producto2.description) else '/','price_unit':0.00}
                     if(ruta!=[]):
                         datos['route_id']=ruta[0]
                     ss=self.env['sale.order.line'].sudo().create(datos)
+                    moves=self.env['stock.move'].search([['product_id','=',d.producto2.id],['origin','=',orden.name],['sale_line_id','=',False]])
+                    moves.write({'sale_line_id':ss.id})
+                    ssss=self.env['stock.move'].search([['sale_line_id','=',d.move_id.sale_line_id.id]])
+                    ssss._action_cancel()
+                    ssss.unlink()
                     if(ubicacion):
                         temp.append({'sale_line_id':ss.id,'product_id':d.producto2.id,'location_id':d.almacen.lot_stock_id.id})
-            orden.saleLinesMove()
-            _logger.info(str(ubicacion))
             if(ubicacion and (productos or cantidades)):
                 check=False
-                almacenes=self.env['stock.warehouse'].search([['x_studio_cliente','=',False]])
-                pic=self.env['stock.picking'].search(['&',['location_id','in',almacenes.mapped('lot_stock_id.id')],['sale_id','=',orden.id]],order='id asc',limit=1)
-                _logger.info(len(pic))
-                pic[0].do_unreserve()
                 for t in temp:
-                    dd=pic[0].move_ids_without_package.search(['&',['sale_line_id','=',t['sale_line_id']],['product_id','=',t['product_id']]],order='id asc',limit=1)
+                    dd=self.env['stock.move'].search(['&',['sale_line_id','=',t['sale_line_id']],['location_id','in',almacenes.mapped('lot_stock_id.id')]],order='id asc',limit=1)
                     _logger.info(str(len(dd)))
                     if(dd.location_id.id!=t['location_id']):
                         dd.write({'location_id':t['location_id']})
                         check=True
-                _logger.info('2')
-                if(check):
-                    pic[0].action_assign()
             if(ubicacion and not(productos or cantidades)):
                 self.pick.do_unreserve()
                 for d in data:
                     if(d.almacen.id):
                         d.move_id.write({'location_id':d.almacen.lot_stock_id.id})
-                self.pick.action_assign()
+            self.pick.action_assign()
+
 
                 
     def confirmarE(self,equipos):
