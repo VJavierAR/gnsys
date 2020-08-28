@@ -3776,6 +3776,7 @@ class HelpdeskTicketReporte(TransientModel):
     def report(self):
         i = []
         d = []
+        m=[]
         
         #if self.tipo:
         #    if self.tipo == "Toner":
