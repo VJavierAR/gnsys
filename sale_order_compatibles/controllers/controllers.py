@@ -20,8 +20,22 @@ class SaleOrderCompatibles(http.Controller):
         if(p.x_studio_tipo_de_solicitud == "Retiro" and u.id!=False):
             p.retiro()
         if(u.id==False):
-            return "No tiene permisos para realizar esta acción"    
-        #return "Orden  "+str(p.name)+" Autorizada"
+            return "No tiene permisos para realizar esta acción"
+        name = 'Sale'
+        res_model = 'sale.order' 
+        view_name = 'studio_customization.sale_order_form_8690a815-6188-42ab-9845-1c18a02ee045'
+        view = self.env.ref(view_name)
+        return {
+            'name': _('Sale'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'sale.order',
+            'view_id': view.id,
+            'target': 'current',
+            'res_id': sale_id,
+            'nodestroy': True
+        }    
 
 
 class SaleOrderCompatiblesCancel(http.Controller):
@@ -29,6 +43,21 @@ class SaleOrderCompatiblesCancel(http.Controller):
     def index(self, sale_id,**kw):
         p=request.env['sale.order'].search([['id','=',sale_id]])
         p.action_cancel()
+        name = 'Sale'
+        res_model = 'sale.order' 
+        view_name = 'studio_customization.sale_order_form_8690a815-6188-42ab-9845-1c18a02ee045'
+        view = self.env.ref(view_name)
+        return {
+            'name': _('Sale'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'sale.order',
+            'view_id': view.id,
+            'target': 'current',
+            'res_id': sale_id,
+            'nodestroy': True
+        }   
         #return "Orden  "+str(p.name)+" Cancelada"
         #return "HOLA"
 # class SaleOrderCompatibles(http.Controller):
