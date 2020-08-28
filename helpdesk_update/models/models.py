@@ -1258,6 +1258,11 @@ class helpdesk_update(models.Model):
                 if self.team_id.id != False:
                     query = "update helpdesk_ticket set stage_id = 2 where id = " + str(self.x_studio_id_ticket) + ";"
                     ss = self.env.cr.execute(query)
+
+                    comentarioGenerico = 'Cambio de estado al seleccionar ' + self.team_id.name + ' como área de atención. Seleccion realizada por ' + str(self.env.user.name) +'.'
+                    estado = 'Asignado'
+                    self.creaDiagnosticoVistaLista(comentarioGenerico, estado)
+                    
                     ultimaEvidenciaTec = []
                     ultimoComentario = ''
                     if self.diagnosticos:
@@ -1327,9 +1332,9 @@ class helpdesk_update(models.Model):
                         listaUsuarios.append(idUsuario[1])
                     
                     dominio = [('id', 'in', listaUsuarios)]
-                    comentarioGenerico = 'Cambio de estado al seleccionar ' + self.team_id.name + ' como área de atención. Seleccion realizada por ' + str(self.env.user.name) +'.'
-                    estado = 'Asignado'
-                    self.creaDiagnosticoVistaLista(comentarioGenerico, estado)
+                    #comentarioGenerico = 'Cambio de estado al seleccionar ' + self.team_id.name + ' como área de atención. Seleccion realizada por ' + str(self.env.user.name) +'.'
+                    #estado = 'Asignado'
+                    #self.creaDiagnosticoVistaLista(comentarioGenerico, estado)
 
                     """
                     objTicket = self.env['helpdesk.ticket'].search([['id', '=', self.x_studio_id_ticket]], order='create_date desc', limit=1)

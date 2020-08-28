@@ -924,7 +924,7 @@ class helpdesk_crearconserie(TransientModel):
 
             if id_cliente != zero:
               #raise Warning('entro1')
-              dominio = ['&', ('x_studio_categoria_de_producto_3.name','=','Equipo'), ('x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id', '=', id_cliente)]
+              dominio = ['&', ('x_studio_categoria_de_producto_3.name','=','Equipo'), ('x_studio_cliente.id', '=', id_cliente)]
               #dominioT = ['&', ('serie.x_studio_categoria_de_producto_3.name','=','Equipo'), ('serie.x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id', '=', id_cliente)]  
               
             else:
@@ -934,13 +934,13 @@ class helpdesk_crearconserie(TransientModel):
               
             if id_cliente != zero and id_localidad != zero:
               #raise Warning('entro3')
-              dominio = ['&', '&', ('x_studio_categoria_de_producto_3.name','=','Equipo'), ('x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id', '=', id_cliente),('x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id','=',id_localidad)]
+              dominio = ['&', '&', ('x_studio_categoria_de_producto_3.name','=','Equipo'), ('x_studio_cliente.id', '=', id_cliente),('x_studio_localidad_2.id','=',id_localidad)]
               #dominioT = ['&', '&', ('serie.x_studio_categoria_de_producto_3.name','=','Equipo'), ('serie.x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id', '=', id_cliente),('serie.x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id','=',id_localidad)]
 
             if id_localidad == zero and id_cliente != zero:
               #raise Warning('entro4')
-              dominio = ['&', ('x_studio_categoria_de_producto_3.name','=','Equipo'), ('x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id', '=', id_cliente)]
-              #dominioT = ['&', ('serie.x_studio_categoria_de_producto_3.name','=','Equipo'), ('serie.x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id', '=', id_cliente)]
+              dominio = ['&', ('x_studio_categoria_de_producto_3.name','=','Equipo'), ('x_studio_cliente.id', '=', id_cliente)]
+              #dominioT = ['&', ('serie.x_studio_categoria_de_producto_3.name','=','Equipo'), ('serie.x_studio_cliente.id', '=', id_cliente)]
 
             if id_cliente == zero and id_localidad == zero:
               #raise Warning('entro5')
@@ -3824,10 +3824,12 @@ class HelpdeskTicketReporte(TransientModel):
             contador = contador + 1
         if self.tipoReportePregunta:
             i = ['|'] + i
+            m = ['x_studio_tipo_de_vale', '=', 'Pregunta']
             i.append(m)
             contador = contador + 1
         if self.tipoReporteRequerimiento:
             i = ['|'] + i
+            m = ['x_studio_tipo_de_vale', '=', 'Requerimiento']
             i.append(m)
             contador = contador + 1
         if self.tipoReporteSolicitudDeRefaccion:
@@ -3930,10 +3932,10 @@ class HelpdeskTicketReporte(TransientModel):
         if self.area:
             d = d.filtered(lambda x: (x.team_id.id in self.area.ids ))
 
-        _logger.info('fecha inicial: ' + str(self.fechaInicial))
-        _logger.info('datos: d: ' + str(d))
+        #_logger.info('fecha inicial: ' + str(self.fechaInicial))
+        #_logger.info('datos: d: ' + str(d))
         d = d.filtered(lambda x: ( datetime.datetime.strptime(x.create_date.strftime('%Y-%m-%d'), '%Y-%m-%d').date() >= self.fechaInicial and datetime.datetime.strptime(x.create_date.strftime('%Y-%m-%d'), '%Y-%m-%d').date() <= self.fechaFinal ))
-        _logger.info('datos: d final: ' + str(d))
+        #_logger.info('datos: d final: ' + str(d))
         #d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x: len(x.x_studio_equipo_por_nmero_de_serie_1) > 0 or len(x.x_studio_equipo_por_nmero_de_serie) > 0)
         if len(d) > 0:
             d[0].write({
@@ -5699,10 +5701,16 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                 mensajeTitulo = 'Error'
                 mensajeCuerpo = 'Existe una solicitud ya generada y validada.'
             elif respuesta == 'OK':
+                mensjaeValidados = 'Se validaron los productos '
+                for refaccion in self.ticket_id.x_studio_productos:
+                    mensjaeValidados = mensjaeValidados + str(self.ticket_id.x_studio_productos.display_name) + ' cantidad validada: ' + str(self.ticket_id.x_studio_productos.x_studio_cantidad_pedida) + ', '
                 mensajeTitulo = 'Creación y validación de refacción!!!'
                 mensajeCuerpo = 'Se creo y valido la solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) + ' para el ticket ' + str(self.ticket_id.id) + '.'
                 comentarioGenerico = 'Solicitud de refacción autorizada por ' + str(self.env.user.name) + '.\nEl día ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S")) + '.\n\n'
-                comentarioGenerico = comentarioGenerico + str(self.comentario)
+                if self.comentario:
+                    comentarioGenerico = comentarioGenerico + mensjaeValidados + '\n' + str(self.comentario)
+                else:
+                    comentarioGenerico = comentarioGenerico + mensjaeValidados
                 self.env['helpdesk.diagnostico'].create({
                                                             'ticketRelacion': self.ticket_id.id,
                                                             'comentario': comentarioGenerico,
