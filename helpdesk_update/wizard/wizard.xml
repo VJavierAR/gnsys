@@ -1721,14 +1721,43 @@
         <field name="arch" type="xml">
             <form string="Reporte (Backlog)">
                 <group>
-                    <group>
+                    <group string='Periodo de tiempo'>
                         <field name="fechaInicial" required="1"/>
                         <field name="fechaFinal" required="1"/>
                     </group>
-                    <group>
-                        <field name="tipo" />
+                    <group string='Datos'>
+                        <field name='area' widget='many2many_tags' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" />
+                        <!--<field name="tipo" />-->
                         <field name='mostrarCerrados' />
                         <field name='mostrarCancelados' />
+                    </group>
+                </group>
+                <group >
+                    <group string='Selecciona los tipos de reporte'>
+                        <field name='tipoReporteFalla' id='tipoReporteFalla' />
+                        <field name='tipoReporteIncidencia' />
+                        <field name='tipoReporteReeincidencia' />
+                        <field name='tipoReportePregunta' />
+                        <field name='tipoReporteRequerimiento' />
+                        <field name='tipoReporteSolicitudDeRefaccion' />
+                        <field name='tipoReporteConectividad' />
+                        <field name='tipoReporteReincidencias' />
+                        <field name='tipoReporteInstalacion' />
+                        <field name='tipoReporteMantenimientoPreventivo' />
+                        <field name='tipoReporteIMAC' />
+                        <field name='tipoReporteProyecto' />
+                        <field name='tipoReporteCambio' />
+                        <field name='tipoReporteServicioDeSoftware' />
+                        <field name='tipoReporteResurtidoDeAlmacen' />
+                        <field name='tipoReporteSupervision' />
+                        <field name='tipoReporteDemostracion' />
+                        <field name='tipoReporteTomaDeLectura' />
+                    </group>
+                    <group>
+                        <!--
+                        <button id='btnActivaChecks' name='btnActivaChecks' string="Seleccionar todos los tipos" type="object" class="oe_highlight"/>
+                        <button id='btnQuitaChecks' string="Quitar todos los tipos" type="object" class="oe_highlight"/>
+                        -->
                     </group>
                 </group>
                 <footer>

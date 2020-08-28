@@ -3642,7 +3642,7 @@ class HelpdeskTicketReporte(TransientModel):
                                 [['Todos', 'Todos'], ["Falla","Falla"], ["Toner","Toner"], ['Sistemas', 'Sistemas']],
                                 string = 'Tipo de ticket'
                             )
-    area = fields.Many2one(
+    area = fields.Many2many(
                                 'helpdesk.team',
                                 string = 'Área de atención'
                             )
@@ -3654,43 +3654,285 @@ class HelpdeskTicketReporte(TransientModel):
                                         string = 'Mostrar cancelados',
                                         default = False
                                     )
+    tipoReporteFalla = fields.Boolean(
+                                            string = 'Falla',
+                                            default = False
+                                        )
+    tipoReporteIncidencia = fields.Boolean(
+                                            string = 'Incidencia',
+                                            default = False
+                                        )
+    tipoReporteReeincidencia = fields.Boolean(
+                                            string = 'Reeincidencia',
+                                            default = False
+                                        )
+    tipoReportePregunta = fields.Boolean(
+                                            string = 'Pregunta',
+                                            default = False
+                                        )
+    tipoReporteRequerimiento = fields.Boolean(
+                                            string = 'Requerimiento',
+                                            default = False
+                                        )
+    tipoReporteSolicitudDeRefaccion = fields.Boolean(
+                                            string = 'Solicitud de Refacción',
+                                            default = False
+                                        )
+    tipoReporteConectividad = fields.Boolean(
+                                            string = 'Conectividad',
+                                            default = False
+                                        )
+    tipoReporteReincidencias = fields.Boolean(
+                                            string = 'Reincidencias',
+                                            default = False
+                                        )
+    tipoReporteInstalacion = fields.Boolean(
+                                            string = 'Instalación',
+                                            default = False
+                                        )
+    tipoReporteMantenimientoPreventivo = fields.Boolean(
+                                            string = 'Mantenimiento Preventivo',
+                                            default = False
+                                        )
+    tipoReporteIMAC = fields.Boolean(
+                                            string = 'IMAC',
+                                            default = False
+                                        )
+    tipoReporteProyecto = fields.Boolean(
+                                            string = 'Proyecto',
+                                            default = False
+                                        )
+    tipoReporteRetiroDeEquipo = fields.Boolean(
+                                            string = 'Retiro de equipo',
+                                            default = False
+                                        )
+    tipoReporteCambio = fields.Boolean(
+                                            string = 'Cambio',
+                                            default = False
+                                        )
+    tipoReporteServicioDeSoftware = fields.Boolean(
+                                            string = 'Servicio de software',
+                                            default = False
+                                        )
+    tipoReporteResurtidoDeAlmacen = fields.Boolean(
+                                            string = 'Resurtido de almacén',
+                                            default = False
+                                        )
+    tipoReporteSupervision = fields.Boolean(
+                                            string = 'Supervisión',
+                                            default = False
+                                        )
+    tipoReporteDemostracion = fields.Boolean(
+                                            string = 'Demostración',
+                                            default = False
+                                        )
+    tipoReporteTomaDeLectura = fields.Boolean(
+                                            string = 'Toma de lectura',
+                                            default = False
+                                        )
+    def ponerTodos(self):
+        self.tipoReporteFalla = True
+        self.tipoReporteIncidencia = True
+        self.tipoReporteReeincidencia = True
+        self.tipoReportePregunta = True
+        self.tipoReporteRequerimiento = True
+        self.tipoReporteSolicitudDeRefaccion = True
+        self.tipoReporteConectividad = True
+        self.tipoReporteReincidencias = True
+        self.tipoReporteInstalacionv = True
+        self.tipoReporteMantenimientoPreventivo = True
+        self.tipoReporteIMAC = True
+        self.tipoReporteProyecto = True
+        self.tipoReporteRetiroDeEquipo = True
+        self.tipoReporteCambio = True
+        self.tipoReporteServicioDeSoftware = True
+        self.tipoReporteResurtidoDeAlmacen = True
+        self.tipoReporteSupervision = True
+        self.tipoReporteDemostracion = True
+        self.tipoReporteTomaDeLectura = True
+
+
+    def quitarTodos(self):
+        self.tipoReporteFalla = False
+        self.tipoReporteIncidencia = False
+        self.tipoReporteReeincidencia = False
+        self.tipoReportePregunta = False
+        self.tipoReporteRequerimiento = False
+        self.tipoReporteSolicitudDeRefaccion = False
+        self.tipoReporteConectividad = False
+        self.tipoReporteReincidencias = False
+        self.tipoReporteInstalacionv = False
+        self.tipoReporteMantenimientoPreventivo = False
+        self.tipoReporteIMAC = False
+        self.tipoReporteProyecto = False
+        self.tipoReporteRetiroDeEquipo = False
+        self.tipoReporteCambio = False
+        self.tipoReporteServicioDeSoftware = False
+        self.tipoReporteResurtidoDeAlmacen = False
+        self.tipoReporteSupervision = False
+        self.tipoReporteDemostracion = False
+        self.tipoReporteTomaDeLectura = False
+
     def report(self):
         i = []
         d = []
-        if self.fechaInicial:
-            m = ['create_date', '>=', self.fechaInicial]
+        
+        #if self.tipo:
+        #    if self.tipo == "Toner":
+        #        m = ['team_id', '=', 8]
+        #        i.append(m)
+        #    elif self.tipo == 'Falla':
+        #        m = ['team_id', '!=', 8]
+        #        i.append(m)
+        #    elif self.tipo == 'Sistemas':
+        #        m = ['team_id', '!=', 54]
+        #        i.append(m)
+
+        #if self.area:
+        #    _logger.info('area: ' + str(self.area))
+        #    z = 0
+        #    for tam in self.area.ids:
+        #        
+        #        if z == len(self.area.ids) - 1:
+        #            break
+        #        i.append('|')
+        #        z = z + 1
+        #    for idTeam in self.area.ids:
+        #        m = ['team_id', '=', idTeam]
+        #        i.append(m)
+        bandera = False
+        #if self.tipoReporteFalla or self.tipoReporteIncidencia or self.tipoReporteReeincidencia or self.tipoReportePregunta or self.tipoReporteRequerimiento or self.tipoReporteSolicitudDeRefaccion or self.tipoReporteConectividad or self.tipoReporteReincidencias or self.tipoReporteInstalacion or self.tipoReporteMantenimientoPreventivo or self.tipoReporteIMAC or self.tipoReporteProyecto or self.tipoReporteRetiroDeEquipo or self.tipoReporteCambio or self.tipoReporteServicioDeSoftware or self.tipoReporteResurtidoDeAlmacen or self.tipoReporteSupervision or self.tipoReporteDemostracion or self.tipoReporteTomaDeLectura:
+        #    i = ['&'] + i
+        #    bandera = True
+        yaEntre = False
+        contador = 0
+        if self.tipoReporteFalla:
+            i = ['|'] + i
+            m = ['x_studio_tipo_de_vale', '=', 'Falla']
             i.append(m)
-        if self.fechaFinal:
-            m = ['create_date', '<=', self.fechaFinal]
+            contador = contador + 1
+        if self.tipoReporteIncidencia:
+            i = ['|'] + i
+            m = ['x_studio_tipo_de_vale', '=', 'Incidencia']
             i.append(m)
-        if self.tipo:
-            if self.tipo == "Toner":
-                m = ['team_id', '=', 8]
-                i.append(m)
-            elif self.tipo == 'Falla':
-                m = ['team_id', '!=', 8]
-                i.append(m)
-            elif self.tipo == 'Sistemas':
-                m = ['team_id', '!=', 54]
-                i.append(m)
-        if self.mostrarCerrados:
-            m = ['stage_id', '=', 18]
+            contador = contador + 1
+        if self.tipoReporteReeincidencia:
+            i = ['|'] + i
+            m = ['x_studio_tipo_de_vale', '=', 'Reeincidencia']
             i.append(m)
-            m = ['stage_id', '=', 111]
+            contador = contador + 1
+        if self.tipoReportePregunta:
+            i = ['|'] + i
             i.append(m)
-        else:
-            m = ['stage_id', '!=', 18]
+            contador = contador + 1
+        if self.tipoReporteRequerimiento:
+            i = ['|'] + i
             i.append(m)
-            m = ['stage_id', '!=', 111]
+            contador = contador + 1
+        if self.tipoReporteSolicitudDeRefaccion:
+            i = ['|'] + i 
+            m = ['x_studio_tipo_de_vale', '=', 'Solicitud de refacción']
             i.append(m)
-        if self.mostrarCancelados:
-            m = ['stage_id', '=', 4]
+            contador = contador + 1
+        if self.tipoReporteConectividad:
+            i = ['|'] + i
+            m = ['x_studio_tipo_de_vale', '=', 'Conectividad']
             i.append(m)
-        else:
-            m = ['stage_id', '!=', 4]
+            contador = contador + 1
+        if self.tipoReporteReincidencias:
+            i = ['|'] + i
+            m = ['x_studio_tipo_de_vale', '=', 'Reincidencias']
             i.append(m)
+            contador = contador + 1
+        if self.tipoReporteInstalacion:
+            i = ['|'] + i
+            m = ['x_studio_tipo_de_vale', '=', 'Instalación']
+            i.append(m)
+            contador = contador + 1
+        if self.tipoReporteMantenimientoPreventivo:
+            i = ['|'] + i
+            m = ['x_studio_tipo_de_vale', '=', 'Mantenimiento Preventivo']
+            i.append(m)
+            contador = contador + 1
+        if self.tipoReporteIMAC:
+            i = ['|'] + i
+            m = ['x_studio_tipo_de_vale', '=', 'IMAC']
+            i.append(m)
+            contador = contador + 1
+        if self.tipoReporteProyecto:
+            i = ['|'] + i
+            m = ['x_studio_tipo_de_vale', '=', 'Proyecto']
+            i.append(m)
+            contador = contador + 1
+        if self.tipoReporteRetiroDeEquipo:
+            i = ['|'] + i
+            m = ['x_studio_tipo_de_vale', '=', 'Retiro de equipo']
+            i.append(m)
+            contador = contador + 1
+        if self.tipoReporteCambio:
+            i = ['|'] + i
+            m = ['x_studio_tipo_de_vale', '=', 'Cambio']
+            i.append(m)
+            contador = contador + 1
+        if self.tipoReporteServicioDeSoftware:
+            i = ['|'] + i
+            m = ['x_studio_tipo_de_vale', '=', 'Servicio de Software']
+            i.append(m)
+            contador = contador + 1
+        if self.tipoReporteResurtidoDeAlmacen:
+            i = ['|'] + i
+            m = ['x_studio_tipo_de_vale', '=', 'Resurtido de Almacen']
+            i.append(m)
+            contador = contador + 1
+        if self.tipoReporteSupervision:
+            i = ['|'] + i
+            m = ['x_studio_tipo_de_vale', '=', 'Supervisión']
+            i.append(m)
+            contador = contador + 1
+        if self.tipoReporteDemostracion:
+            i = ['|'] + i
+            m = ['x_studio_tipo_de_vale', '=', 'Demostración']
+            i.append(m)
+            contador = contador + 1
+        if self.tipoReporteTomaDeLectura:
+            i = ['|'] + i
+            m = ['x_studio_tipo_de_vale', '=', 'Toma de lectura']
+            i.append(m)
+            contador = contador + 1
+        #if self.fechaInicial:
+        #    i = ['&'] + i
+        #    m = ['create_date', '>=', self.fechaInicial]
+        #    i.append(m)
+        #if self.fechaFinal:
+        #    m = ['create_date', '<=', self.fechaFinal]
+        #    i.append(m)
+
+        if contador > 0:
+            i.pop(0)
+
         _logger.info('3312: filtro reporte: ' + str(i))
-        d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x: len(x.x_studio_equipo_por_nmero_de_serie_1) > 0 or len(x.x_studio_equipo_por_nmero_de_serie) > 0)
+        if self.mostrarCerrados:
+            d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x: (len(x.x_studio_equipo_por_nmero_de_serie_1) > 0 or len(x.x_studio_equipo_por_nmero_de_serie) > 0) and (x.stage_id.id == 18) )
+        else:
+            d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x: (len(x.x_studio_equipo_por_nmero_de_serie_1) > 0 or len(x.x_studio_equipo_por_nmero_de_serie) > 0) and (x.stage_id.id != 18) )
+        if self.mostrarCancelados:
+            d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x: (len(x.x_studio_equipo_por_nmero_de_serie_1) > 0 or len(x.x_studio_equipo_por_nmero_de_serie) > 0) and (x.stage_id.id == 4) )
+        else:
+            d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x: (len(x.x_studio_equipo_por_nmero_de_serie_1) > 0 or len(x.x_studio_equipo_por_nmero_de_serie) > 0) and (x.stage_id.id != 4) )
+        if self.mostrarCerrados and self.mostrarCancelados:
+            d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x: (len(x.x_studio_equipo_por_nmero_de_serie_1) > 0 or len(x.x_studio_equipo_por_nmero_de_serie) > 0) and (x.stage_id.id == 18) and (x.stage_id.id == 4) )
+        else:
+            _logger.info('entre ultimo caso')
+            d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x: (len(x.x_studio_equipo_por_nmero_de_serie_1) > 0 or len(x.x_studio_equipo_por_nmero_de_serie) > 0) and (x.stage_id.id != 18) and (x.stage_id.id != 4) )
+
+        if self.area:
+            d = d.filtered(lambda x: (x.team_id.id in self.area.ids ))
+
+        _logger.info('fecha inicial: ' + str(self.fechaInicial))
+
+        d = d.filtered(lambda x: ( datetime.datetime.strptime(x.create_date.strftime('%Y-%m-%d'), '%Y-%m-%d').date() >= self.fechaInicial and datetime.datetime.strptime(x.create_date.strftime('%Y-%m-%d'), '%Y-%m-%d').date() <= self.fechaFinal )) 
+
+        #d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x: len(x.x_studio_equipo_por_nmero_de_serie_1) > 0 or len(x.x_studio_equipo_por_nmero_de_serie) > 0)
         if len(d) > 0:
             d[0].write({
                             'x_studio_arreglo': str(d.mapped('id'))
