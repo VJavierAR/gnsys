@@ -3913,7 +3913,7 @@ class HelpdeskTicketReporte(TransientModel):
 
         _logger.info('3312: filtro reporte: ' + str(i))
         if self.mostrarCerrados:
-            d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x:  x.stage_id.id == 18)
+            d = self.env['helpdesk.ticket'].search([], order = 'create_date asc').filtered(lambda x:  x.stage_id.id == 18)
         #(len(x.x_studio_equipo_por_nmero_de_serie_1) > 0 or len(x.x_studio_equipo_por_nmero_de_serie) > 0) and
         else:
             d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x:  x.stage_id.id != 18 )
