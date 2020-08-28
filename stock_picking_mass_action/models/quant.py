@@ -31,8 +31,14 @@ class StockQuan(Model):
     def actualizaRegla(self):
         if(self.x_studio_almacn.x_studio_mini==True):
             q=self.env['stock.warehouse.orderpoint'].search([['location_id','=',self.location_id.id],['product_id','=',self.product_id.id]])
-            q.x_studio_existencia=self.quantity
-            q.x_studio_existencia_2=self.quantity
+            if(q.mapped('id')==[]):
+                p=self.env['product.product'].search([['name','like',self.product_id.name]])
+                q=self.env['stock.warehouse.orderpoint'].search([['location_id','=',self.location_id.id],['product_id','in',p.mapped('id')]])
+                q[0].x_studio_existencia=self.quantity
+                q[0].x_studio_existencia_2=self.quantity
+            else:    
+                q.x_studio_existencia=self.quantity
+                q.x_studio_existencia_2=self.quantity
 
 class StockQuantLine(Model):
     _name='stock.quant.line'
