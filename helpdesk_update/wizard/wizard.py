@@ -3913,19 +3913,19 @@ class HelpdeskTicketReporte(TransientModel):
 
         _logger.info('3312: filtro reporte: ' + str(i))
         if self.mostrarCerrados:
-            d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x:  (x.stage_id.id == 18) )
+            d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x:  x.stage_id.id == 18)
         #(len(x.x_studio_equipo_por_nmero_de_serie_1) > 0 or len(x.x_studio_equipo_por_nmero_de_serie) > 0) and
         else:
-            d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x:  (x.stage_id.id != 18) )
+            d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x:  x.stage_id.id != 18 )
         if self.mostrarCancelados:
-            d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x:  (x.stage_id.id == 4) )
+            d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x:  x.stage_id.id == 4 )
         else:
-            d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x:  (x.stage_id.id != 4) )
+            d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x:  x.stage_id.id != 4 )
         if self.mostrarCerrados and self.mostrarCancelados:
-            d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x:  (x.stage_id.id == 18) and (x.stage_id.id == 4) )
+            d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x:  x.stage_id.id == 18 and x.stage_id.id == 4 )
         else:
             _logger.info('entre ultimo caso')
-            d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x:  (x.stage_id.id != 18) and (x.stage_id.id != 4) )
+            d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x:  x.stage_id.id != 18 and x.stage_id.id != 4 )
 
         if self.area:
             d = d.filtered(lambda x: (x.team_id.id in self.area.ids ))
