@@ -483,8 +483,8 @@ class RutaXlsx(models.AbstractModel):
                 sheet.write(i, 17, orden.partner_id.l10n_mx_edi_locality if(orden.partner_id.l10n_mx_edi_locality) else '', bold)
                 sheet.write(i, 18, orden.partner_id.city if(orden.partner_id.city) else '', bold)
                 sheet.write(i, 19, orden.partner_id.zip if(orden.partner_id.zip) else '', bold)
-                sheet.write(i, 20, orden.x_studio_field_RnhKr.name if(orden.x_studio_field_RnhKr.name) else '', bold)
-                sheet.write(i, 21, orden.x_studio_field_RnhKr.phone if(orden.x_studio_field_RnhKr.phone) else '', bold)
+                sheet.write(i, 20, orden.sale_id.x_studio_field_RnhKr.name if(orden.sale_id.x_studio_field_RnhKr.name) else '', bold)
+                sheet.write(i, 21, orden.sale_id.x_studio_field_RnhKr.phone if(orden.sale_id.x_studio_field_RnhKr.phone) else '', bold)
                 i=i+1
         sheet.add_table('A2:V'+str(i),{'columns': [{'header': 'Expedición'},{'header': 'Fecha'},{'header': 'chofer'},{'header': 'vehiculo'},{'header': 'Zona'},{'header':'Tipo'},{'header': 'Estado'},{'header': 'Ticket'},{'header': 'Orden'},{'header': 'Cantidad'},{'header': 'Productos'},{'header': 'Cliente'},{'header': 'Localidad'},{'header': 'Calle'},{'header': 'No exterior'},{'header': 'No Interior'},{'header': 'Colonia'},{'header': 'Delegación'},{'header': 'Ciudad'},{'header': 'C.p'},{'header': 'Contacto'},{'header': 'Telefono'}]}) 
         workbook.close()  
