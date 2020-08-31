@@ -1729,15 +1729,20 @@
                         <field name="fechaInicial" required="1"/>
                         <field name="fechaFinal" required="1"/>
                     </group>
-                    <group string='Datos'>
-                        <button name='areasMesa' string="Todas las áreas de mesa" type="object" class="btn btn-info btn-sm"/>
-                        <button name='areasToner' string="Todas las áreas de tóner" type="object" class="btn btn-info btn-sm"/>
-
-                        <field name='area' widget='many2many_tags' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" required="0" />
-                        <!--<field name="tipo" />-->
+                    <group string='Selección'>
                         <field name='mostrarCerrados' />
                         <field name='mostrarCancelados' />
                     </group>
+                </group>
+                <group string='Área de atención'>
+                    <group>
+                        <button name='areasMesa' string="Todas las áreas de mesa" type="object" class="btn btn-info btn-sm"/>
+                        <button name='areasToner' string="Todas las áreas de tóner" type="object" class="btn btn-info btn-sm"/>
+                    </group>
+                    <group>
+                        <button name='quitarAreas' string="Quitar todas las áreas" type="object" class="btn btn-info btn-sm"/>
+                    </group>
+                    <field name='area' widget='many2many_tags' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" required="0" />
                 </group>
                 <group >
                     <group string='Selecciona los tipos de reporte'>

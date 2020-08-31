@@ -3730,6 +3730,58 @@ class HelpdeskTicketReporte(TransientModel):
                                             string = 'Toma de lectura',
                                             default = False
                                         )
+
+    def areasMesa(self):
+        self.area = [[5, 0, 0],[6, 0, [9,67,76,82,80,81,13,57,50,49,1,77,55,5,54,11,10,61,74,51,60,59,88]]]
+        wiz = self.env['helpdesk.ticket.reporte'].search([('id', '=', self.id)], order = 'create_date desc', limit = 1 )
+        view = self.env.ref('helpdesk_update.view_helpdesk_ticket_reporte')
+        return {
+                'name': _('Más información'),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'helpdesk.ticket.reporte',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'res_id': wiz.id,
+                'context': self.env.context,
+            }
+
+    def areasToner(self):
+        self.area = [[5, 0, 0],[6, 0, [8, 13]]]
+        wiz = self.env['helpdesk.ticket.reporte'].search([('id', '=', self.id)], order = 'create_date desc', limit = 1 )
+        view = self.env.ref('helpdesk_update.view_helpdesk_ticket_reporte')
+        return {
+                'name': _('Más información'),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'helpdesk.ticket.reporte',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'res_id': wiz.id,
+                'context': self.env.context,
+            }
+
+    def quitarAreas(self):
+        self.area = [[5, 0, 0]]
+        wiz = self.env['helpdesk.ticket.reporte'].search([('id', '=', self.id)], order = 'create_date desc', limit = 1 )
+        view = self.env.ref('helpdesk_update.view_helpdesk_ticket_reporte')
+        return {
+                'name': _('Más información'),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'helpdesk.ticket.reporte',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'res_id': wiz.id,
+                'context': self.env.context,
+            }
+
     def ponerTodos(self):
         self.tipoReporteFalla = True
         self.tipoReporteIncidencia = True
@@ -3739,7 +3791,7 @@ class HelpdeskTicketReporte(TransientModel):
         self.tipoReporteSolicitudDeRefaccion = True
         self.tipoReporteConectividad = True
         self.tipoReporteReincidencias = True
-        self.tipoReporteInstalacionv = True
+        self.tipoReporteInstalacion = True
         self.tipoReporteMantenimientoPreventivo = True
         self.tipoReporteIMAC = True
         self.tipoReporteProyecto = True
@@ -3750,6 +3802,20 @@ class HelpdeskTicketReporte(TransientModel):
         self.tipoReporteSupervision = True
         self.tipoReporteDemostracion = True
         self.tipoReporteTomaDeLectura = True
+        wiz = self.env['helpdesk.ticket.reporte'].search([('id', '=', self.id)], order = 'create_date desc', limit = 1 )
+        view = self.env.ref('helpdesk_update.view_helpdesk_ticket_reporte')
+        return {
+                'name': _('Más información'),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'helpdesk.ticket.reporte',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'res_id': wiz.id,
+                'context': self.env.context,
+            }
 
 
     def quitarTodos(self):
@@ -3761,7 +3827,7 @@ class HelpdeskTicketReporte(TransientModel):
         self.tipoReporteSolicitudDeRefaccion = False
         self.tipoReporteConectividad = False
         self.tipoReporteReincidencias = False
-        self.tipoReporteInstalacionv = False
+        self.tipoReporteInstalacion = False
         self.tipoReporteMantenimientoPreventivo = False
         self.tipoReporteIMAC = False
         self.tipoReporteProyecto = False
@@ -3772,6 +3838,20 @@ class HelpdeskTicketReporte(TransientModel):
         self.tipoReporteSupervision = False
         self.tipoReporteDemostracion = False
         self.tipoReporteTomaDeLectura = False
+        wiz = self.env['helpdesk.ticket.reporte'].search([('id', '=', self.id)], order = 'create_date desc', limit = 1 )
+        view = self.env.ref('helpdesk_update.view_helpdesk_ticket_reporte')
+        return {
+                'name': _('Más información'),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'helpdesk.ticket.reporte',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'res_id': wiz.id,
+                'context': self.env.context,
+            }
 
     def report(self):
         i = []
