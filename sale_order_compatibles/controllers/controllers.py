@@ -22,8 +22,9 @@ class SaleOrderCompatibles(http.Controller):
         if(u.id==False):
             return "No tiene permisos para realizar esta acción"
         url='/web#id='+str(sale_id)+'&action=606&model=sale.order&view_type=form&menu_id=406'
+        return http.local_redirect(url)  
         #return {'type': 'ir.actions.act_url','url':url,'target': 'self',}
-        return "Orden  "+str(p.name)+" Autorizada"
+        #return "Orden  "+str(p.name)+" Autorizada"
         #return werkzeug.utils.redirect('/web/details%s' % qcontext)
 
 
