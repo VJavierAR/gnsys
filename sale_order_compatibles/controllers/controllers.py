@@ -21,7 +21,7 @@ class SaleOrderCompatibles(http.Controller):
             p.retiro()
         if(u.id==False):
             return "No tiene permisos para realizar esta acción"
-        return request.redirect('/')   
+        return "Orden  "+str(p.name)+" Autorizada"
 
 
 class SaleOrderCompatiblesCancel(http.Controller):
