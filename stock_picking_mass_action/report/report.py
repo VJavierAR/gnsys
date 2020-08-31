@@ -342,7 +342,7 @@ class PartnerXlsx(models.AbstractModel):
                     sheet.write(i, 17, obj.x_studio_nmero_de_ticket_cliente if(obj.x_studio_nmero_de_ticket_cliente) else '', bold)
                     sheet.write(i, 18, obj.x_studio_nmero_de_guia_1 if(obj.x_studio_nmero_de_guia_1) else '', bold)
                     i=i+1
-            if(len(obj.x_studio_equipo_por_nmero_de_serie_1) == 0 or len(obj.x_studio_equipo_por_nmero_de_serie) == 0):
+            if(len(obj.x_studio_equipo_por_nmero_de_serie_1) == 0 and len(obj.x_studio_equipo_por_nmero_de_serie) == 0):
                 sheet.write(i, 0, obj.x_studio_field_nO7Xg.warehouse_id.name if(obj.x_studio_field_nO7Xg.id) else '', bold)
                 sheet.write(i, 1, obj.id, bold)
                 sheet.write(i, 2, obj.x_studio_tipo_de_vale if(obj.x_studio_tipo_de_vale) else '', bold)
