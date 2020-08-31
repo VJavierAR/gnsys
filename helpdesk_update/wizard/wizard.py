@@ -3730,6 +3730,58 @@ class HelpdeskTicketReporte(TransientModel):
                                             string = 'Toma de lectura',
                                             default = False
                                         )
+
+    def areasMesa(self):
+        self.area = [[5, 0, 0],[6, 0, [9,67,76,82,80,81,13,57,50,49,1,77,55,5,54,11,10,61,74,51,60,59,88]]]
+        wiz = self.env['helpdesk.ticket.reporte'].search([('id', '=', self.id)], order = 'create_date desc', limit = 1 )
+        view = self.env.ref('helpdesk_update.view_helpdesk_ticket_reporte')
+        return {
+                'name': _('Más información'),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'helpdesk.ticket.reporte',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'res_id': wiz.id,
+                'context': self.env.context,
+            }
+
+    def areasToner(self):
+        self.area = [[5, 0, 0],[6, 0, [8, 13]]]
+        wiz = self.env['helpdesk.ticket.reporte'].search([('id', '=', self.id)], order = 'create_date desc', limit = 1 )
+        view = self.env.ref('helpdesk_update.view_helpdesk_ticket_reporte')
+        return {
+                'name': _('Más información'),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'helpdesk.ticket.reporte',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'res_id': wiz.id,
+                'context': self.env.context,
+            }
+
+    def quitarAreas(self):
+        self.area = [[5, 0, 0]]
+        wiz = self.env['helpdesk.ticket.reporte'].search([('id', '=', self.id)], order = 'create_date desc', limit = 1 )
+        view = self.env.ref('helpdesk_update.view_helpdesk_ticket_reporte')
+        return {
+                'name': _('Más información'),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'helpdesk.ticket.reporte',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'res_id': wiz.id,
+                'context': self.env.context,
+            }
+
     def ponerTodos(self):
         self.tipoReporteFalla = True
         self.tipoReporteIncidencia = True
@@ -3739,7 +3791,7 @@ class HelpdeskTicketReporte(TransientModel):
         self.tipoReporteSolicitudDeRefaccion = True
         self.tipoReporteConectividad = True
         self.tipoReporteReincidencias = True
-        self.tipoReporteInstalacionv = True
+        self.tipoReporteInstalacion = True
         self.tipoReporteMantenimientoPreventivo = True
         self.tipoReporteIMAC = True
         self.tipoReporteProyecto = True
@@ -3750,6 +3802,20 @@ class HelpdeskTicketReporte(TransientModel):
         self.tipoReporteSupervision = True
         self.tipoReporteDemostracion = True
         self.tipoReporteTomaDeLectura = True
+        wiz = self.env['helpdesk.ticket.reporte'].search([('id', '=', self.id)], order = 'create_date desc', limit = 1 )
+        view = self.env.ref('helpdesk_update.view_helpdesk_ticket_reporte')
+        return {
+                'name': _('Más información'),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'helpdesk.ticket.reporte',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'res_id': wiz.id,
+                'context': self.env.context,
+            }
 
 
     def quitarTodos(self):
@@ -3761,7 +3827,7 @@ class HelpdeskTicketReporte(TransientModel):
         self.tipoReporteSolicitudDeRefaccion = False
         self.tipoReporteConectividad = False
         self.tipoReporteReincidencias = False
-        self.tipoReporteInstalacionv = False
+        self.tipoReporteInstalacion = False
         self.tipoReporteMantenimientoPreventivo = False
         self.tipoReporteIMAC = False
         self.tipoReporteProyecto = False
@@ -3772,6 +3838,20 @@ class HelpdeskTicketReporte(TransientModel):
         self.tipoReporteSupervision = False
         self.tipoReporteDemostracion = False
         self.tipoReporteTomaDeLectura = False
+        wiz = self.env['helpdesk.ticket.reporte'].search([('id', '=', self.id)], order = 'create_date desc', limit = 1 )
+        view = self.env.ref('helpdesk_update.view_helpdesk_ticket_reporte')
+        return {
+                'name': _('Más información'),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'helpdesk.ticket.reporte',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'res_id': wiz.id,
+                'context': self.env.context,
+            }
 
     def report(self):
         i = []
@@ -5512,6 +5592,48 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                                     string = 'Solicitud',
                                     compute = '_compute_solicitud'
                                 )
+    mensajesAlerta = fields.Text(
+                                    string = 'Mensjae de alerta'
+                                )
+    @api.onchange('productos')
+    def cambiarMensajePorProductos(self):
+        if self.productos:
+            refaccionesEnCero = ''
+            for refaccion in self.productos:
+                if not refaccion.x_studio_cantidad_pedida:
+                    refaccionesEnCero = refaccionesEnCero + """
+                                                                <tr>
+                                                                    <td>""" + str(refaccion.categ_id.name) + """</td>
+                                                                    <td>""" + str(refaccion.product_variant_id.display_name) + """</td>
+                                                                    <td>""" + str(refaccion.x_studio_cantidad_pedida) + """</td>
+                                                                </tr>
+                                                            """
+            if refaccionesEnCero != '':
+                self.mensajesAlerta = """
+                                        <div class='alert alert-info' role='alert'>
+                                            <h4 class="alert-heading">Validación de refaciones y/o accesorios en cero !!!</h4>
+
+                                            <p>Se validaran refacciones y/o accesorios con cantidad en cero. Los equipos son los siguientes: </p>
+                                            <br/>
+                                            <div class='row'>
+                                                <table class='table table-bordered table-warning text-black'>
+                                                    <thead >
+                                                        <tr>
+                                                            <th scope='col'>Categoría del producto</th>
+                                                            <th scope='col'>Refacción y/o accesorio</th>
+                                                            <th scope='col'>Cantidad a pedir</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        """ + refaccionesEnCero + """
+                                                    </tbody>
+                                                </table>
+                                            </div>    
+                                        </div>      
+                                    """
+            else:
+                self.mensajesAlerta = ''
+
     def _compute_solicitud(self):
         if self.ticket_id.x_studio_field_nO7Xg:
             self.solicitud = self.ticket_id.x_studio_field_nO7Xg

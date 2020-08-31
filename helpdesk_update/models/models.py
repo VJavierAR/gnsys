@@ -4521,6 +4521,43 @@ class helpdesk_update(models.Model):
         wiz.productosDos = listaProductos
         """
         wiz.contadoresAnterioresText = self.contadores_anteriores
+        if self.x_studio_productos:
+            refaccionesEnCero = ''
+            for refaccion in self.x_studio_productos:
+                if not refaccion.x_studio_cantidad_pedida:
+                    refaccionesEnCero = refaccionesEnCero + """
+                                                                <tr>
+                                                                    <td>""" + str(refaccion.categ_id.name) + """</td>
+                                                                    <td>""" + str(refaccion.product_variant_id.display_name) + """</td>
+                                                                    <td>""" + str(refaccion.x_studio_cantidad_pedida) + """</td>
+                                                                </tr>
+                                                            """
+            if refaccionesEnCero != '':
+                wiz.mensajesAlerta = """
+                                        <div class='alert alert-info' role='alert'>
+                                            <h4 class="alert-heading">Validación de refaciones y/o accesorios en cero !!!</h4>
+
+                                            <p>Se validaran refacciones y/o accesorios con cantidad en cero. Los equipos son los siguientes: </p>
+                                            <br/>
+                                            <div class='row'>
+                                                <table class='table table-bordered table-warning text-black'>
+                                                    <thead >
+                                                        <tr>
+                                                            <th scope='col'>Categoría del producto</th>
+                                                            <th scope='col'>Refacción y/o accesorio</th>
+                                                            <th scope='col'>Cantidad a pedir</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        """ + refaccionesEnCero + """
+                                                    </tbody>
+                                                </table>
+                                            </div>    
+                                        </div>      
+                                    """
+            else:
+                wiz.mensajesAlerta = ''
+
         view = self.env.ref('helpdesk_update.view_helpdesk_crear_y_validar_refacciones')
         return {
             'name': _('Crear y validar solicitud de refacciones'),

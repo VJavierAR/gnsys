@@ -1568,6 +1568,10 @@
                 <group>
                     <field name='serie' readonly='1' widget='html' />
                 </group>
+
+                <group>
+                    <field name='mensajesAlerta' string='' readonly='1' widget='html' />
+                </group>
                 
                 <group>
                     <notebook>
@@ -1725,15 +1729,26 @@
                         <field name="fechaInicial" required="1"/>
                         <field name="fechaFinal" required="1"/>
                     </group>
-                    <group string='Datos'>
-                        <field name='area' widget='many2many_tags' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" required="1" />
-                        <!--<field name="tipo" />-->
+                    <group string='Selección'>
                         <field name='mostrarCerrados' />
                         <field name='mostrarCancelados' />
                     </group>
                 </group>
+                <group string='Área de atención'>
+                    <group>
+                        <button name='areasMesa' string="Todas las áreas de mesa" type="object" class="btn btn-info btn-sm"/>
+                        <button name='areasToner' string="Todas las áreas de tóner" type="object" class="btn btn-info btn-sm"/>
+                    </group>
+                    <group>
+                        <button name='quitarAreas' string="Quitar todas las áreas" type="object" class="btn btn-info btn-sm"/>
+                    </group>
+                    <field name='area' widget='many2many_tags' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" required="0" />
+                </group>
                 <group >
                     <group string='Selecciona los tipos de reporte'>
+                        <button name='ponerTodos' string="Seleccionar todos los tipos" type="object" class="btn btn-success btn-sm"/>
+                        <button name='quitarTodos' string="Quitar todos los tipos" type="object" class="btn btn-danger btn-sm"/>
+                        
                         <field name='tipoReporteFalla' id='tipoReporteFalla' />
                         <field name='tipoReporteIncidencia' />
                         <field name='tipoReporteReeincidencia' />
@@ -1753,12 +1768,7 @@
                         <field name='tipoReporteDemostracion' />
                         <field name='tipoReporteTomaDeLectura' />
                     </group>
-                    <group>
-                        <!--
-                        <button id='btnActivaChecks' name='btnActivaChecks' string="Seleccionar todos los tipos" type="object" class="oe_highlight"/>
-                        <button id='btnQuitaChecks' string="Quitar todos los tipos" type="object" class="oe_highlight"/>
-                        -->
-                    </group>
+                    
                 </group>
                 <footer>
                     <button name="report" string="Reporte" type="object" class="oe_highlight"/>
