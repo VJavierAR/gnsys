@@ -3730,7 +3730,10 @@ class HelpdeskTicketReporte(TransientModel):
                                             string = 'Toma de lectura',
                                             default = False
                                         )
-
+    clienteRelacion = fields.Many2one(
+                                        'res.partner', 
+                                        string = 'Cliente'
+                                    )
     def areasMesa(self):
         self.area = [[5, 0, 0],[6, 0, [9,67,76,82,80,81,13,57,50,49,1,77,55,5,54,11,10,61,74,51,60,59,88]]]
         wiz = self.env['helpdesk.ticket.reporte'].search([('id', '=', self.id)], order = 'create_date desc', limit = 1 )
@@ -4011,7 +4014,8 @@ class HelpdeskTicketReporte(TransientModel):
 
         if self.area:
             d = d.filtered(lambda x: (x.team_id.id in self.area.ids ))
-
+        if self.clienteRelacion:
+            d = d.filtered(lambda x: (x.partner_id.id == self.clienteRelacion.id) )
         #_logger.info('fecha inicial: ' + str(self.fechaInicial))
         #_logger.info('datos: d: ' + str(d))
         d = d.filtered(lambda x: ( datetime.datetime.strptime(x.create_date.strftime('%Y-%m-%d'), '%Y-%m-%d').date() >= self.fechaInicial and datetime.datetime.strptime(x.create_date.strftime('%Y-%m-%d'), '%Y-%m-%d').date() <= self.fechaFinal ))
@@ -5824,8 +5828,8 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                 mensajeCuerpo = 'Existe una solicitud ya generada y validada.'
             elif respuesta == 'OK':
                 mensjaeValidados = 'Se validaron los productos '
-                for refaccion in self.ticket_id.x_studio_productos:
-                    mensjaeValidados = mensjaeValidados + str(self.ticket_id.x_studio_productos.display_name) + ' cantidad validada: ' + str(self.ticket_id.x_studio_productos.x_studio_cantidad_pedida) + ', '
+                #for refaccion in self.ticket_id.x_studio_productos:
+                #    mensjaeValidados = mensjaeValidados + str(self.ticket_id.x_studio_productos.display_name) + ' cantidad validada: ' + str(self.ticket_id.x_studio_productos.x_studio_cantidad_pedida) + ', '
                 mensajeTitulo = 'Creación y validación de refacción!!!'
                 mensajeCuerpo = 'Se creo y valido la solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) + ' para el ticket ' + str(self.ticket_id.id) + '.'
                 comentarioGenerico = 'Solicitud de refacción autorizada por ' + str(self.env.user.name) + '.\nEl día ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S")) + '.\n\n'
