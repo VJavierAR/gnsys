@@ -255,7 +255,7 @@ class tfs(models.Model):
                 #    self.env['stock.move.line'].search([['move_id','=',w.id]]).write({'location_dest_id':17})
                 compra.write({'active':False})
                 datP.write({'x_studio_ticket':'Ticket de tóner: '+str(ticket.id)})
-                datP.write({'origin':sale.name})
+                datP.write({'origin':sale.name,'mini':True})
                 datP.action_confirm()
                 datP.action_assign()    
         return ticket
