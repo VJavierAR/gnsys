@@ -159,6 +159,10 @@ class helpdesk_update(models.Model):
     numeroDeSerieTechra = fields.Text(
                                         string = 'Número de serie techra'
                                     )
+    areaDeAtencionTechra = fields.Text(
+                                        string = 'Área de atención techra'
+                                    )
+    
 
 
     #priority = fields.Selection([('all','Todas'),('baja','Baja'),('media','Media'),('alta','Alta'),('critica','Critica')])
