@@ -280,7 +280,7 @@ class StockCambio(TransientModel):
 
     def otra(self):
         equipos=self.pro_ids.filtered(lambda x:x.producto1.categ_id.id==13)
-        if(len(equipos)==0):
+        if(len(equipos)==0 or self.pick.picking_type_id.id==29314):
             self.confirmar(self.pro_ids)
             #self.pick.action_assign()
         else:   
