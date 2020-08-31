@@ -21,7 +21,9 @@ class SaleOrderCompatibles(http.Controller):
             p.retiro()
         if(u.id==False):
             return "No tiene permisos para realizar esta acción"
-        return "Orden  "+str(p.name)+" Autorizada"
+        url='/web#id='+str(sale_id)+'&action=606&model=sale.order&view_type=form&menu_id=406'
+        return {'type': 'ir.actions.act_url','url':url,'target': 'self',}
+        #return "Orden  "+str(p.name)+" Autorizada"
 
 
 class SaleOrderCompatiblesCancel(http.Controller):
