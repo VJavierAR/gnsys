@@ -46,7 +46,7 @@ class SaleOrderCompatiblesCancel(http.Controller):
         name = 'Sale'
         res_model = 'sale.order' 
         view_name = 'studio_customization.sale_order_form_8690a815-6188-42ab-9845-1c18a02ee045'
-        view = self.env.ref(view_name)
+        view =request.env.ref(view_name)
         return {
             'name': _('Sale'),
             'type': 'ir.actions.act_window',
