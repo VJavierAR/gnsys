@@ -152,9 +152,12 @@ class helpdesk_update(models.Model):
     obsAdicionalesTechra = fields.Text(
                                         string = 'Observaciones adicionales techra'
                                     )
-    ticketDeTechra = fields.Boolean(
-                                        string = 'Numero de ticket de techra',
+    esTicketDeTechra = fields.Boolean(
+                                        string = 'Es ticket de techra?',
                                         default = False
+                                    )
+    numTicketDeTechra = fields.Text(
+                                        string = 'Número de ticket de techra'
                                     )
     numeroDeSerieTechra = fields.Text(
                                         string = 'Número de serie techra'
