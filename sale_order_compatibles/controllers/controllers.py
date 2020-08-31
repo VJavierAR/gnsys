@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from odoo import http
 from odoo.http import request
-import logging, ast
+import logging, ast,werkzeug
 from odoo.tools import config, DEFAULT_SERVER_DATE_FORMAT, DEFAULT_SERVER_DATETIME_FORMAT, pycompat
 _logger = logging.getLogger(__name__)
 
@@ -22,8 +22,10 @@ class SaleOrderCompatibles(http.Controller):
         if(u.id==False):
             return "No tiene permisos para realizar esta acción"
         url='/web#id='+str(sale_id)+'&action=606&model=sale.order&view_type=form&menu_id=406'
-        return {'type': 'ir.actions.act_url','url':url,'target': 'self',}
+        #return {'type': 'ir.actions.act_url','url':url,'target': 'self',}
         #return "Orden  "+str(p.name)+" Autorizada"
+        return werkzeug.utils.redirect('/web/details%s' % qcontext)
+
 
 
 class SaleOrderCompatiblesCancel(http.Controller):
