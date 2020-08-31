@@ -21,11 +21,21 @@ class SaleOrderCompatibles(http.Controller):
             p.retiro()
         if(u.id==False):
             return "No tiene permisos para realizar esta acción"
-        #name = 'Sale'
-        #res_model = 'sale.order' 
-        #view_name = 'studio_customization.sale_order_form_8690a815-6188-42ab-9845-1c18a02ee045'
-        #view = self.env.ref(view_name)
-        return request.redirect('/web#id='+str(sale_id)+'&action=606&model=sale.order&view_type=form&menu_id=406')  
+        name = 'Sale'
+        res_model = 'sale.order' 
+        view_name = 'studio_customization.sale_order_form_8690a815-6188-42ab-9845-1c18a02ee045'
+        view = request.env.ref(view_name)
+        return {
+            'name': _('Sale'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'sale.order',
+            'view_id': view.id,
+            'target': 'current',
+            'res_id': sale_id,
+            'nodestroy': True
+        }    
 
 
 class SaleOrderCompatiblesCancel(http.Controller):
