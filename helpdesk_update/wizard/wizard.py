@@ -3730,7 +3730,7 @@ class HelpdeskTicketReporte(TransientModel):
                                             string = 'Toma de lectura',
                                             default = False
                                         )
-    clienteRelacion = fields.Many2one(
+    clienteRelacion = fields.Many2many(
                                         'res.partner', 
                                         string = 'Cliente'
                                     )
@@ -3860,34 +3860,7 @@ class HelpdeskTicketReporte(TransientModel):
         i = []
         d = []
         m=[]
-        
-        #if self.tipo:
-        #    if self.tipo == "Toner":
-        #        m = ['team_id', '=', 8]
-        #        i.append(m)
-        #    elif self.tipo == 'Falla':
-        #        m = ['team_id', '!=', 8]
-        #        i.append(m)
-        #    elif self.tipo == 'Sistemas':
-        #        m = ['team_id', '!=', 54]
-        #        i.append(m)
-
-        #if self.area:
-        #    _logger.info('area: ' + str(self.area))
-        #    z = 0
-        #    for tam in self.area.ids:
-        #        
-        #        if z == len(self.area.ids) - 1:
-        #            break
-        #        i.append('|')
-        #        z = z + 1
-        #    for idTeam in self.area.ids:
-        #        m = ['team_id', '=', idTeam]
-        #        i.append(m)
         bandera = False
-        #if self.tipoReporteFalla or self.tipoReporteIncidencia or self.tipoReporteReeincidencia or self.tipoReportePregunta or self.tipoReporteRequerimiento or self.tipoReporteSolicitudDeRefaccion or self.tipoReporteConectividad or self.tipoReporteReincidencias or self.tipoReporteInstalacion or self.tipoReporteMantenimientoPreventivo or self.tipoReporteIMAC or self.tipoReporteProyecto or self.tipoReporteRetiroDeEquipo or self.tipoReporteCambio or self.tipoReporteServicioDeSoftware or self.tipoReporteResurtidoDeAlmacen or self.tipoReporteSupervision or self.tipoReporteDemostracion or self.tipoReporteTomaDeLectura:
-        #    i = ['&'] + i
-        #    bandera = True
         yaEntre = False
         contador = 0
         if self.tipoReporteFalla:
@@ -4015,7 +3988,7 @@ class HelpdeskTicketReporte(TransientModel):
         if self.area:
             d = d.filtered(lambda x: (x.team_id.id in self.area.ids ))
         if self.clienteRelacion:
-            d = d.filtered(lambda x: (x.partner_id.id == self.clienteRelacion.id) )
+            d = d.filtered(lambda x: (x.partner_id.id in self.clienteRelacion.ids) )
         #_logger.info('fecha inicial: ' + str(self.fechaInicial))
         #_logger.info('datos: d: ' + str(d))
         d = d.filtered(lambda x: ( datetime.datetime.strptime(x.create_date.strftime('%Y-%m-%d'), '%Y-%m-%d').date() >= self.fechaInicial and datetime.datetime.strptime(x.create_date.strftime('%Y-%m-%d'), '%Y-%m-%d').date() <= self.fechaFinal ))
@@ -5827,6 +5800,7 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                 mensajeTitulo = 'Error'
                 mensajeCuerpo = 'Existe una solicitud ya generada y validada.'
             elif respuesta == 'OK':
+                #creando x_studio_historico_de_componentes
                 mensjaeValidados = 'Se validaron los productos '
                 #for refaccion in self.ticket_id.x_studio_productos:
                 #    mensjaeValidados = mensjaeValidados + str(self.ticket_id.x_studio_productos.display_name) + ' cantidad validada: ' + str(self.ticket_id.x_studio_productos.x_studio_cantidad_pedida) + ', '
