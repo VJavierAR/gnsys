@@ -4721,22 +4721,22 @@ class helpdesk_update(models.Model):
 class helpdes_diagnostico(models.Model):
     _name = "helpdesk.diagnostico"
     _description = "Historial de diagnostico"
-    ticketRelacion = fields.Many2one('helpdesk.ticket', string = 'Ticket realcionado a diagnostico')
+    ticketRelacion = fields.Many2one('helpdesk.ticket', string = 'Ticket realcionado a diagnostico',copied=True)
 
-    estadoTicket = fields.Char(string='Estado de ticket')
-    comentario = fields.Text(string='Diagnostico / comentario')
-    evidencia = fields.Many2many('ir.attachment', string="Evidencias")
-    mostrarComentario = fields.Boolean(string = "Mostrar comentario en documento impreso", default = False)
-    creadoPorSistema = fields.Boolean(string = "Creado por sistema", default = False)
+    estadoTicket = fields.Char(string='Estado de ticket',copied=True)
+    comentario = fields.Text(string='Diagnostico / comentario',copied=True)
+    evidencia = fields.Many2many('ir.attachment', string="Evidencias",copied=True)
+    mostrarComentario = fields.Boolean(string = "Mostrar comentario en documento impreso", default = False,copied=True)
+    creadoPorSistema = fields.Boolean(string = "Creado por sistema", default = False,copied=True)
     fechaDiagnosticoTechra = fields.Datetime(
                                     string = 'Fecha techra',
-                                    store = True
+                                    store = True,copied=True
                                 )
     tipoSolucionTechra = fields.Text(
-                                    string = 'Tipo de solución'
+                                    string = 'Tipo de solución',copied=True
                                 )
     tecnicoTechra = fields.Text(
-                                    string = 'Creado por techra'
+                                    string = 'Creado por techra',copied=True
                                 )
 
     def mostrarComentarioFun(self):

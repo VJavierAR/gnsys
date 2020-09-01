@@ -515,7 +515,12 @@ class ComemtarioTicket(TransientModel):
         if(self.ruta==False):
             self.pick.x_studio_evidencia_a_ticket=self.evidencia
             self.pick.x_studio_comentario_1=self.comentario
-            self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : self.pick.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id, 'write_uid' : self.env.user.id, 'estadoTicket' : "", 'comentario':self.comentario}) 
+            if(self.pick.sale_id.x_studio_field_bxHgp.stage_id.id==18):
+                ultimo=self.env['helpdesk.diagnostico'].search([['ticketRelacion':self.pick.sale_id.x_studio_field_bxHgp.id]],order='create_date',limit=1)
+                self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : self.pick.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id, 'write_uid' : self.env.user.id, 'estadoTicket' : "", 'comentario':self.comentario})
+                ultimo.copy()
+            else:
+                self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : self.pick.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id, 'write_uid' : self.env.user.id, 'estadoTicket' : "", 'comentario':self.comentario})
         if(self.ruta!=False and self.pick.sale_id.id!=False):
             self.pick.x_studio_evidencia_a_ticket=self.evidencia
             self.pick.x_studio_comentario_1=self.comentario
