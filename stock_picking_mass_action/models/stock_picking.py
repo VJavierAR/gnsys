@@ -41,7 +41,7 @@ class StockPicking(Model):
                 self.sale_id.x_studio_field_bxHgp.write({'stage_id':115})
             self.sale_id.picking_ids.write({'active':False})
             self.comentario()
-        wiz = self.env['comentario.ticket'].create({'pick':self.id,'create_uid':self.env.user.id,'write_uid'::self.env.user.id})
+        wiz = self.env['comentario.ticket'].create({'pick':self.id,'create_uid':self.env.user.id,'write_uid':self.env.user.id})
         view = self.env.ref('stock_picking_mass_action.view_comentario_ticket')
         return {
             'name': _('Comentario'),
