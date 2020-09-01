@@ -172,9 +172,6 @@ class tfs(models.Model):
             pickPosibles=self.env['stock.picking'].search(['&',['state','!=','done'],['location_dest_id','=',al.lot_stock_id.id]])
             if(len(pickPosibles)!=0):
                 _logger.info("entre 1"+str(al.name))
-                #for pix in pickPosibles:
-                    #for rl in pix.reglas:
-                    #    rule2.append(rl.id)
                 tt=pickPosibles.mapped('id')
                 rule2=pickPosibles.mapped('reglas.id')
                 _logger.info(str(tt))
@@ -225,34 +222,20 @@ class tfs(models.Model):
                 ticket=self.env['helpdesk.ticket'].create({'x_studio_tipo_de_vale':'Resurtido de Almacen','partner_id':c.id})
                 sale = self.env['sale.order'].create({'partner_id' : c.id, 'origin' : "Ticket: " + str(ticket.id), 'x_studio_tipo_de_solicitud' : 'Venta', 'partner_shipping_id' : c.id , 'warehouse_id' : 1 , 'team_id' : 1, 'x_studio_field_bxHgp': ticket.id})
                 destino=self.env['stock.picking.type'].search([['name','=','Receipts'],['warehouse_id','=',al.id]])
-                #pick_dest = self.env['stock.picking'].create({'mini':True,'x_studio_ticket':'Ticket de tóner: '+str(ticket.id),'origin':sale.name,'picking_type_id' : destino.id, 'location_id':17,'almacenOrigen':6299,'almacenDestino':al.id,'location_dest_id':al.lot_stock_id.id,'reglas':[(6,0,rule)]})
                 ticket.x_studio_field_nO7Xg=sale.id
                 compra=self.env['purchase.order'].create({'picking_type_id':destino.id,'partner_id' : 1, 'origin' : "Ticket: " + str(ticket.id), 'warehouse_id' : al.id , 'date_planned': datetime.datetime.now(),'name':'MINI'})
                 for ori in pickOrigen:
                     ticket.x_studio_productos=[(4,ori['product_id'])]
                     sl=self.env['sale.order.line'].create({'order_id' : sale.id,'product_id':ori['product_id'],'product_uom_qty':ori['product_uom_qty'], 'price_unit': 0})
                 for des in pickDestino:
-                    #des['product_uom']=1
                     des['date_planned']=datetime.datetime.now()
                     des['order_id']=compra.id
-                    #product={'product_uom':1,'date_planned':self.date_order if(self.date_order) else fecha,'product_qty':cantidad,'price_unit':precio,'taxes_id':[10]}
-                    #des['location_id']=17
-                    #des['picking_id']=pick_dest.id
-                    #des['product_uom_id']=1
-                    #m=self.env['stock.move'].create(des)
-                    #des['move_id']=m.id
                     self.env['purchase.order.line'].create(des)
                 sale.action_confirm()
                 compra.button_confirm()
                 datP=self.env['stock.picking'].search([['purchase_id','=',compra.id]])
                 datP.write({'reglas':[(6,0,rule)]})
                 datP.write({'location_id':8})
-                #datP.action_con
-                #ww=self.env['stock.picking'].search([['sale_id','=',sale.id],['picking_type_id.code','=','outgoing']])
-                #ww.write({'location_dest_id':17})
-                #for w in ww.move_ids_without_package:
-                #    w.write({'location_dest_id':17})
-                #    self.env['stock.move.line'].search([['move_id','=',w.id]]).write({'location_dest_id':17})
                 compra.write({'active':False})
                 datP.write({'x_studio_ticket':'Ticket de tóner: '+str(ticket.id)})
                 datP.write({'origin':sale.name,'mini':True})
@@ -304,7 +287,7 @@ class tfs(models.Model):
         return result
     
     def canc(self):
-        self.write({'estado':'Auditar'})
+        self.write({'estado':'Cancelado'})
 
     
     @api.onchange('actualMonocromatico')
@@ -342,14 +325,12 @@ class tfs(models.Model):
                 if(record.serie.x_studio_mini==False):
                     raise exceptions.UserError("El No. de Serie"+ record.serie.name+"no corresponde a Mini Almacen" )
                 if(len(record.serie.x_studio_move_line)>0):
-                    #moveli=record.serie.x_studio_move_line.sorted(key='id',reverse=True)
                     cliente = record.serie.x_studio_localidad_2.parent_id.id
                     localidad=record.serie.x_studio_localidad_2.id
                     record['cliente'] = cliente
                     record['localidad'] = localidad
                     lo=record.serie.x_studio_localidad_2
                     record['direccion']="<table><tr><td>Calle</td><td>"+str(lo.street)+"</td></tr><tr><td>No.Exterior</td><td>"+str(lo.street_number2)+"</td></tr><tr><td>No. Interior</td><td>"+str(lo.street_number)+"</td></tr><tr><td>Cp</td><td>"+str(lo.zip)+"</td></tr><tr><td>Estado</td><td>"+str(lo.state_id.name)+"</td></tr><tr><td>Delegación</td><td>"+str(lo.city)+"</td></tr></table>"
-                    #_logger.info(str(localidad.name))
                     record['almacen'] =self.env['stock.warehouse'].search([['x_studio_field_E0H1Z','=',localidad]]).lot_stock_id.x_studio_almacn_padre.id
                 if(record.colorBN=="B/N"):
                     data=record.serie.product_id.x_studio_toner_compatible.filtered(lambda x: 'Toner' in x.categ_id.name).mapped('id')
