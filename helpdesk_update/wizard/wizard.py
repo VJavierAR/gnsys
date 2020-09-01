@@ -5753,6 +5753,9 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
             _logger.info('idsRefaccionesSolicitud: ' + str(idsRefaccionesSolicitud))
             mensajeTitulo = 'Se añadieron nuevas refacciones y/o accesorios a la solicitud.'
             mensajeCuerpo = 'Refaccione(s) y/o accesorio(s) agregados a la Solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) +'.\n\nSe agregaron las refacciones y/o accesorios: '
+            refaccionesTextTemp = ''
+            fuenteDca = 'stock.production.lot'
+            dcaObj = self.env['dcas.dcas'].search([('x_studio_tickett', '=', self.ticket_id.id),('fuente', '=', fuenteDca)], order = 'create_date desc', limit = 1)
             for refaccion in self.ticket_id.x_studio_productos:
                 if not refaccion.product_variant_id.id in idsRefaccionesSolicitud:
                     datosr = {
@@ -5767,6 +5770,21 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                     line = self.env['sale.order.line'].create(datosr)
                     _logger.info('line: ' + str(line))
                     mensajeCuerpo = mensajeCuerpo + str(refaccion.product_variant_id.name) + ', '
+                    refaccionesTextTemp = 'Refacción y/o accesorio: ' + str(refaccion.product_variant_id.display_name) + '. Descripción: ' + str(refaccion.description) + '.\n'
+                    if dcaObj:
+                        self.env['x_studio_historico_de_componentes'].create({
+                                                                                'x_studio_cantidad': refaccion.x_studio_cantidad_pedida,
+                                                                                'x_studio_field_MH4DO': self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id,
+                                                                                'x_studio_ticket': str(self.ticket_id.id),
+                                                                                'x_studio_contador_color': dcaObj.contadorColor,
+                                                                                'x_studio_fecha_de_entrega': datetime.datetime.now(),
+                                                                                'x_studio_modelo': refaccionesTextTemp,
+                                                                                'x_studio_contador_bn': dcaObj.contadorMono
+                                                                                #'x_studio_numero_de_parte': refaccion.,
+                                                                                #'x_studio_field_gKQ9k': self.,
+                                                                                #'x_studio_modelo': self.,
+                                                                            })
+
             comentarioGenerico = 'Solicitud de refacción autorizada por ' + str(self.env.user.name) + '.\nEl día ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S")) + '.\n\n' + mensajeCuerpo + '.\n\n'
             if self.comentario:
                 comentarioGenerico = comentarioGenerico + str(self.comentario)
@@ -5801,9 +5819,27 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                 mensajeCuerpo = 'Existe una solicitud ya generada y validada.'
             elif respuesta == 'OK':
                 #creando x_studio_historico_de_componentes
+                fuenteDca = 'stock.production.lot'
+                dcaObj = self.env['dcas.dcas'].search([('x_studio_tickett', '=', self.ticket_id.id),('fuente', '=', fuenteDca)], order = 'create_date desc', limit = 1)
+                if dcaObj:
+                    refaccionesTextTemp = ''
+                    for refaccion in self.productos:
+                        refaccionesTextTemp = 'Refacción y/o accesorio: ' + str(refaccion.product_variant_id.display_name) + '. Descripción: ' + str(refaccion.description) + '.'
+                        self.env['x_studio_historico_de_componentes'].create({
+                                                                                'x_studio_cantidad': refaccion.x_studio_cantidad_pedida,
+                                                                                'x_studio_field_MH4DO': self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id,
+                                                                                'x_studio_ticket': str(self.ticket_id.id),
+                                                                                'x_studio_contador_color': dcaObj.contadorColor,
+                                                                                'x_studio_fecha_de_entrega': datetime.datetime.now(),
+                                                                                'x_studio_modelo': refaccionesTextTemp,
+                                                                                'x_studio_contador_bn': dcaObj.contadorMono
+                                                                                #'x_studio_numero_de_parte': refaccion.,
+                                                                                #'x_studio_field_gKQ9k': self.,
+                                                                                #'x_studio_modelo': self.,
+                                                                            })
                 mensjaeValidados = 'Se validaron los productos '
-                #for refaccion in self.ticket_id.x_studio_productos:
-                #    mensjaeValidados = mensjaeValidados + str(self.ticket_id.x_studio_productos.display_name) + ' cantidad validada: ' + str(self.ticket_id.x_studio_productos.x_studio_cantidad_pedida) + ', '
+                for refaccion in self.productos:
+                    mensjaeValidados = mensjaeValidados + str(refaccion.display_name) + ', cantidad validada: ' + str(refaccion.x_studio_cantidad_pedida) + '; '
                 mensajeTitulo = 'Creación y validación de refacción!!!'
                 mensajeCuerpo = 'Se creo y valido la solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) + ' para el ticket ' + str(self.ticket_id.id) + '.'
                 comentarioGenerico = 'Solicitud de refacción autorizada por ' + str(self.env.user.name) + '.\nEl día ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S")) + '.\n\n'
