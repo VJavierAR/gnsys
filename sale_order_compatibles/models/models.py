@@ -91,7 +91,7 @@ class sale_update(models.Model):
 
 	serieRetiro2=fields.Many2one('stock.production.lot','Serie retiro')
 
-	    state = fields.Selection([
+	state = fields.Selection([
         ('draft', 'Borrador'),
         ('sent', 'Solicitud Enviada'),
         ('sale', 'Autorizada'),
