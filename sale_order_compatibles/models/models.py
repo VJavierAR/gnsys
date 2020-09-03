@@ -97,9 +97,9 @@ class sale_update(models.Model):
         ('sale', 'Autorizada'),
         ('done', 'Locked'),
         ('assign', 'Asignada'),
-        ('distribucion', 'Distribución')
-        ('entregado', 'Entregado')
-        ('cancel', 'Cancelled')
+        ('distribucion', 'Distribución'),
+        ('entregado', 'Entregado'),
+        ('cancel', 'Cancelled'),
         ], string='Status', readonly=True, copy=False, index=True, track_visibility='onchange', track_sequence=3, default='draft')
 	@api.onchange('partner_id')
 	def dominioContactos(self):
