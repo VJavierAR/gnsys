@@ -177,8 +177,8 @@ class gastos_gnsys(models.Model):
     totalPagosSolitantes = fields.Float(string = "Total monto pagado", track_visibility='onchange')
     montoPorCubrir = fields.Float(string = "Monto por cubrir a solicitante", track_visibility='onchange')
 
-    totalMontoDeducible = fields.Float(string = "Total monto deducible", track_visibility='onchange')
-    totalMontoNoDeducible = fields.Float(string = "Total monto no deducible", track_visibility='onchange')
+    # totalMontoDeducible = fields.Float(string = "Total monto deducible", track_visibility='onchange')
+    # totalMontoNoDeducible = fields.Float(string = "Total monto no deducible", track_visibility='onchange')
 
     @api.onchange('devoluciones')
     def calcularTotalPagoDevolucion(self):
@@ -568,8 +568,8 @@ class PagoSolicitante(models.Model):
     banco = fields.Selection((('bajio','BAJIO'), ('banamex','BANAMEX'),('banorte','BANORTE'),('santnder','SANTANDER'),('hsbc','HSBC'),('azteca','AZTECA'),('bancomer','BANCOMER')), string = "Banco a depositar")
     claveInterbancaria = fields.Char(string="Clave interbancaria", track_visibility='onchange')
     # depositoDeducible = fields.Selection((('si','Si'), ('no','No')), string = "Depósito deducible")
-    montodeDucible = fields.Float(string = "Monto deducible")
-    montodeNoDucible = fields.Float(string = "Monto no deducible")
+    # montodeDucible = fields.Float(string = "Monto deducible")
+    # montodeNoDucible = fields.Float(string = "Monto no deducible")
     @api.constrains('montoEntregado')
     def verificaMonto(self):
         if self.montoEntregado == 0.0:
