@@ -24,9 +24,9 @@ class HelpDeskComentario(TransientModel):
 
 
     def creaComentario(self):
-      if self.ultimaEvidencia:
+      if self.ultimaEvidencia and (self.ticket_id.stage_id.id == 2 or self.ticket_id.stage_id.id == 13 or self.ticket_id.stage_id.id == 104):
           if self.evidencia:
-            self.ticket_id.sudo().write({'stage_id': 3 
+            self.ticket_id.sudo().write({'stage_id': 3
                                 , 'team_id': 9
                                 })
             self.env['helpdesk.diagnostico'].sudo().create({'ticketRelacion': self.ticket_id.id
@@ -61,6 +61,9 @@ class HelpDeskComentario(TransientModel):
             raise exceptions.ValidationError('Favor de agregar una o mas evidencias antes de pasar a resuelto el ticket.')
             
       else:
+        mensajeNoCambioAResuelto = ''
+        if self.ultimaEvidencia:
+            mensajeNoCambioAResuelto = '\n\nNota:Se intento cambiar al estado Resuelto al seleccionar la casilla última evidencia, pero no se logro realizar el cambio ya que el ticket debe de estar en el estado Asignado, Atención o Refacción entregada.'
         self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.ticket_id.id
                                                 ,'comentario': self.comentario
                                                 ,'estadoTicket': self.ticket_id.stage_id.name
@@ -74,7 +77,7 @@ class HelpDeskComentario(TransientModel):
                                 })
         #if self.ticket_id.env.user.has_group('studio_customization.grupo_de_tecnicos_fi_6cce8af2-f2d0-4449-b629-906fb2c16636') and self.evidencia:
         #    self.ticket_id.write({'stage_id': 3})
-        mess = 'Diagnostico / Comentario añadido al ticket "' + str(self.ticket_id.id) + '" de forma exitosa. \n\nComentario agregado: ' + str(self.comentario) + '. \n\nGenerado en el estado: ' + self.ticket_id.stage_id.name
+        mess = 'Diagnostico / Comentario añadido al ticket "' + str(self.ticket_id.id) + '" de forma exitosa. \n\nComentario agregado: ' + str(self.comentario) + '. \n\nGenerado en el estado: ' + self.ticket_id.stage_id.name + mensajeNoCambioAResuelto
         wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mess})
         view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
         return {
@@ -924,7 +927,7 @@ class helpdesk_crearconserie(TransientModel):
 
             if id_cliente != zero:
               #raise Warning('entro1')
-              dominio = ['&', ('x_studio_categoria_de_producto_3.name','=','Equipo'), ('x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id', '=', id_cliente)]
+              dominio = ['&', ('x_studio_categoria_de_producto_3.name','=','Equipo'), ('x_studio_cliente.id', '=', id_cliente)]
               #dominioT = ['&', ('serie.x_studio_categoria_de_producto_3.name','=','Equipo'), ('serie.x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id', '=', id_cliente)]  
               
             else:
@@ -934,13 +937,13 @@ class helpdesk_crearconserie(TransientModel):
               
             if id_cliente != zero and id_localidad != zero:
               #raise Warning('entro3')
-              dominio = ['&', '&', ('x_studio_categoria_de_producto_3.name','=','Equipo'), ('x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id', '=', id_cliente),('x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id','=',id_localidad)]
+              dominio = ['&', '&', ('x_studio_categoria_de_producto_3.name','=','Equipo'), ('x_studio_cliente.id', '=', id_cliente),('x_studio_localidad_2.id','=',id_localidad)]
               #dominioT = ['&', '&', ('serie.x_studio_categoria_de_producto_3.name','=','Equipo'), ('serie.x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id', '=', id_cliente),('serie.x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.id','=',id_localidad)]
 
             if id_localidad == zero and id_cliente != zero:
               #raise Warning('entro4')
-              dominio = ['&', ('x_studio_categoria_de_producto_3.name','=','Equipo'), ('x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id', '=', id_cliente)]
-              #dominioT = ['&', ('serie.x_studio_categoria_de_producto_3.name','=','Equipo'), ('serie.x_studio_move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id', '=', id_cliente)]
+              dominio = ['&', ('x_studio_categoria_de_producto_3.name','=','Equipo'), ('x_studio_cliente.id', '=', id_cliente)]
+              #dominioT = ['&', ('serie.x_studio_categoria_de_producto_3.name','=','Equipo'), ('serie.x_studio_cliente.id', '=', id_cliente)]
 
             if id_cliente == zero and id_localidad == zero:
               #raise Warning('entro5')
@@ -3132,7 +3135,7 @@ class helpdesk_crearToner(TransientModel):
 
 
 
-
+"""
 class helpdesk_agregar_productos(TransientModel):
     _name = 'helpdesk.agregar.productos'
     _description = 'helpdesk añade productos a la lista de productos de un ticket.'
@@ -3153,11 +3156,13 @@ class helpdesk_agregar_productos(TransientModel):
     estadoSolicitud = fields.Text(
                                     string = 'Estado de la SO',
                                     store = True,
-                                    help = """
+                                    help = 
                                                 Estado en el que se encuentra la solicitud de refacción y/o accesorios.
                                                 En caso de que no exista se muestra el mensaje 'No existe un SO'.
-                                            """
+                                            
                                 )
+    accesorios = fields.One2many('helpdesk.refacciones', 'wizRela', string = 'Accesorios')
+
 
     @api.onchange('activar_compatibilidad')
     #@api.multi
@@ -3202,7 +3207,7 @@ class helpdesk_agregar_productos(TransientModel):
                 'res_id': wiz.id,
                 'context': self.env.context,
                 }
-        
+"""        
 
 
 
@@ -3730,6 +3735,61 @@ class HelpdeskTicketReporte(TransientModel):
                                             string = 'Toma de lectura',
                                             default = False
                                         )
+    clienteRelacion = fields.Many2many(
+                                        'res.partner', 
+                                        string = 'Cliente'
+                                    )
+    def areasMesa(self):
+        self.area = [[5, 0, 0],[6, 0, [9,67,76,82,80,81,13,57,50,49,1,77,55,5,54,11,10,61,74,51,60,59,88]]]
+        wiz = self.env['helpdesk.ticket.reporte'].search([('id', '=', self.id)], order = 'create_date desc', limit = 1 )
+        view = self.env.ref('helpdesk_update.view_helpdesk_ticket_reporte')
+        return {
+                'name': _('Más información'),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'helpdesk.ticket.reporte',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'res_id': wiz.id,
+                'context': self.env.context,
+            }
+
+    def areasToner(self):
+        self.area = [[5, 0, 0],[6, 0, [8, 13]]]
+        wiz = self.env['helpdesk.ticket.reporte'].search([('id', '=', self.id)], order = 'create_date desc', limit = 1 )
+        view = self.env.ref('helpdesk_update.view_helpdesk_ticket_reporte')
+        return {
+                'name': _('Más información'),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'helpdesk.ticket.reporte',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'res_id': wiz.id,
+                'context': self.env.context,
+            }
+
+    def quitarAreas(self):
+        self.area = [[5, 0, 0]]
+        wiz = self.env['helpdesk.ticket.reporte'].search([('id', '=', self.id)], order = 'create_date desc', limit = 1 )
+        view = self.env.ref('helpdesk_update.view_helpdesk_ticket_reporte')
+        return {
+                'name': _('Más información'),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'helpdesk.ticket.reporte',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'res_id': wiz.id,
+                'context': self.env.context,
+            }
+
     def ponerTodos(self):
         self.tipoReporteFalla = True
         self.tipoReporteIncidencia = True
@@ -3739,7 +3799,7 @@ class HelpdeskTicketReporte(TransientModel):
         self.tipoReporteSolicitudDeRefaccion = True
         self.tipoReporteConectividad = True
         self.tipoReporteReincidencias = True
-        self.tipoReporteInstalacionv = True
+        self.tipoReporteInstalacion = True
         self.tipoReporteMantenimientoPreventivo = True
         self.tipoReporteIMAC = True
         self.tipoReporteProyecto = True
@@ -3750,6 +3810,20 @@ class HelpdeskTicketReporte(TransientModel):
         self.tipoReporteSupervision = True
         self.tipoReporteDemostracion = True
         self.tipoReporteTomaDeLectura = True
+        wiz = self.env['helpdesk.ticket.reporte'].search([('id', '=', self.id)], order = 'create_date desc', limit = 1 )
+        view = self.env.ref('helpdesk_update.view_helpdesk_ticket_reporte')
+        return {
+                'name': _('Más información'),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'helpdesk.ticket.reporte',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'res_id': wiz.id,
+                'context': self.env.context,
+            }
 
 
     def quitarTodos(self):
@@ -3761,7 +3835,7 @@ class HelpdeskTicketReporte(TransientModel):
         self.tipoReporteSolicitudDeRefaccion = False
         self.tipoReporteConectividad = False
         self.tipoReporteReincidencias = False
-        self.tipoReporteInstalacionv = False
+        self.tipoReporteInstalacion = False
         self.tipoReporteMantenimientoPreventivo = False
         self.tipoReporteIMAC = False
         self.tipoReporteProyecto = False
@@ -3772,109 +3846,159 @@ class HelpdeskTicketReporte(TransientModel):
         self.tipoReporteSupervision = False
         self.tipoReporteDemostracion = False
         self.tipoReporteTomaDeLectura = False
+        wiz = self.env['helpdesk.ticket.reporte'].search([('id', '=', self.id)], order = 'create_date desc', limit = 1 )
+        view = self.env.ref('helpdesk_update.view_helpdesk_ticket_reporte')
+        return {
+                'name': _('Más información'),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'helpdesk.ticket.reporte',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'res_id': wiz.id,
+                'context': self.env.context,
+            }
 
     def report(self):
         i = []
         d = []
-        if self.fechaInicial:
-            m = ['create_date', '>=', self.fechaInicial]
-            i.append(m)
-        if self.fechaFinal:
-            m = ['create_date', '<=', self.fechaFinal]
-            i.append(m)
-        if self.tipo:
-            if self.tipo == "Toner":
-                m = ['team_id', '=', 8]
-                i.append(m)
-            elif self.tipo == 'Falla':
-                m = ['team_id', '!=', 8]
-                i.append(m)
-            elif self.tipo == 'Sistemas':
-                m = ['team_id', '!=', 54]
-                i.append(m)
-        if self.area:
-            _logger.info('area: ' + str(self.area))
-            for idTeam in self.area.ids:
-                i.append('|')
-                m = ['team_id', '=', idTeam]
-                i.append(m)
-            
-        if self.mostrarCerrados:
-            m = ['stage_id', '=', 18]
-            i.append(m)
-            m = ['stage_id', '=', 111]
-            i.append(m)
-        else:
-            m = ['stage_id', '!=', 18]
-            i.append(m)
-            m = ['stage_id', '!=', 111]
-            i.append(m)
-        if self.mostrarCancelados:
-            m = ['stage_id', '=', 4]
-            i.append(m)
-        else:
-            m = ['stage_id', '!=', 4]
-            i.append(m)
+        m=[]
+        bandera = False
+        yaEntre = False
+        contador = 0
         if self.tipoReporteFalla:
+            i = ['|'] + i
             m = ['x_studio_tipo_de_vale', '=', 'Falla']
             i.append(m)
+            contador = contador + 1
         if self.tipoReporteIncidencia:
+            i = ['|'] + i
             m = ['x_studio_tipo_de_vale', '=', 'Incidencia']
             i.append(m)
+            contador = contador + 1
         if self.tipoReporteReeincidencia:
+            i = ['|'] + i
             m = ['x_studio_tipo_de_vale', '=', 'Reeincidencia']
             i.append(m)
+            contador = contador + 1
         if self.tipoReportePregunta:
+            i = ['|'] + i
             m = ['x_studio_tipo_de_vale', '=', 'Pregunta']
             i.append(m)
+            contador = contador + 1
         if self.tipoReporteRequerimiento:
+            i = ['|'] + i
             m = ['x_studio_tipo_de_vale', '=', 'Requerimiento']
             i.append(m)
+            contador = contador + 1
         if self.tipoReporteSolicitudDeRefaccion:
+            i = ['|'] + i 
             m = ['x_studio_tipo_de_vale', '=', 'Solicitud de refacción']
             i.append(m)
+            contador = contador + 1
         if self.tipoReporteConectividad:
+            i = ['|'] + i
             m = ['x_studio_tipo_de_vale', '=', 'Conectividad']
             i.append(m)
+            contador = contador + 1
         if self.tipoReporteReincidencias:
+            i = ['|'] + i
             m = ['x_studio_tipo_de_vale', '=', 'Reincidencias']
             i.append(m)
+            contador = contador + 1
         if self.tipoReporteInstalacion:
+            i = ['|'] + i
             m = ['x_studio_tipo_de_vale', '=', 'Instalación']
             i.append(m)
+            contador = contador + 1
         if self.tipoReporteMantenimientoPreventivo:
+            i = ['|'] + i
             m = ['x_studio_tipo_de_vale', '=', 'Mantenimiento Preventivo']
             i.append(m)
+            contador = contador + 1
         if self.tipoReporteIMAC:
+            i = ['|'] + i
             m = ['x_studio_tipo_de_vale', '=', 'IMAC']
             i.append(m)
+            contador = contador + 1
         if self.tipoReporteProyecto:
+            i = ['|'] + i
             m = ['x_studio_tipo_de_vale', '=', 'Proyecto']
             i.append(m)
+            contador = contador + 1
         if self.tipoReporteRetiroDeEquipo:
+            i = ['|'] + i
             m = ['x_studio_tipo_de_vale', '=', 'Retiro de equipo']
             i.append(m)
+            contador = contador + 1
         if self.tipoReporteCambio:
+            i = ['|'] + i
             m = ['x_studio_tipo_de_vale', '=', 'Cambio']
             i.append(m)
+            contador = contador + 1
         if self.tipoReporteServicioDeSoftware:
+            i = ['|'] + i
             m = ['x_studio_tipo_de_vale', '=', 'Servicio de Software']
             i.append(m)
+            contador = contador + 1
         if self.tipoReporteResurtidoDeAlmacen:
+            i = ['|'] + i
             m = ['x_studio_tipo_de_vale', '=', 'Resurtido de Almacen']
             i.append(m)
+            contador = contador + 1
         if self.tipoReporteSupervision:
+            i = ['|'] + i
             m = ['x_studio_tipo_de_vale', '=', 'Supervisión']
             i.append(m)
+            contador = contador + 1
         if self.tipoReporteDemostracion:
+            i = ['|'] + i
             m = ['x_studio_tipo_de_vale', '=', 'Demostración']
             i.append(m)
+            contador = contador + 1
         if self.tipoReporteTomaDeLectura:
+            i = ['|'] + i
             m = ['x_studio_tipo_de_vale', '=', 'Toma de lectura']
             i.append(m)
-        
+            contador = contador + 1
+        #if self.fechaInicial:
+        #    i = ['&'] + i
+        #    m = ['create_date', '>=', self.fechaInicial]
+        #    i.append(m)
+        #if self.fechaFinal:
+        #    m = ['create_date', '<=', self.fechaFinal]
+        #    i.append(m)
+
+        if contador > 0:
+            i.pop(0)
+
         _logger.info('3312: filtro reporte: ' + str(i))
-        d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x: len(x.x_studio_equipo_por_nmero_de_serie_1) > 0 or len(x.x_studio_equipo_por_nmero_de_serie) > 0)
+        if self.mostrarCerrados:
+            d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x:  x.stage_id.id == 18)
+        #(len(x.x_studio_equipo_por_nmero_de_serie_1) > 0 or len(x.x_studio_equipo_por_nmero_de_serie) > 0) and
+        else:
+            d = self.env['helpdesk.ticket'].search([], order = 'create_date asc').filtered(lambda x:  x.stage_id.id != 18 )
+        if self.mostrarCancelados:
+            d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x:  x.stage_id.id == 4 )
+        else:
+            d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x:  x.stage_id.id != 4 )
+        if self.mostrarCerrados and self.mostrarCancelados:
+            d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x:  x.stage_id.id == 18 and x.stage_id.id == 4 )
+        else:
+            _logger.info('entre ultimo caso')
+            d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x:  x.stage_id.id != 18 and x.stage_id.id != 4 )
+
+        if self.area:
+            d = d.filtered(lambda x: (x.team_id.id in self.area.ids ))
+        if self.clienteRelacion:
+            d = d.filtered(lambda x: (x.partner_id.id in self.clienteRelacion.ids) )
+        #_logger.info('fecha inicial: ' + str(self.fechaInicial))
+        #_logger.info('datos: d: ' + str(d))
+        d = d.filtered(lambda x: ( datetime.datetime.strptime(x.create_date.strftime('%Y-%m-%d'), '%Y-%m-%d').date() >= self.fechaInicial and datetime.datetime.strptime(x.create_date.strftime('%Y-%m-%d'), '%Y-%m-%d').date() <= self.fechaFinal ))
+        #_logger.info('datos: d final: ' + str(d))
+        #d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x: len(x.x_studio_equipo_por_nmero_de_serie_1) > 0 or len(x.x_studio_equipo_por_nmero_de_serie) > 0)
         if len(d) > 0:
             d[0].write({
                             'x_studio_arreglo': str(d.mapped('id'))
@@ -5450,6 +5574,48 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                                     string = 'Solicitud',
                                     compute = '_compute_solicitud'
                                 )
+    mensajesAlerta = fields.Text(
+                                    string = 'Mensjae de alerta'
+                                )
+    @api.onchange('productos')
+    def cambiarMensajePorProductos(self):
+        if self.productos:
+            refaccionesEnCero = ''
+            for refaccion in self.productos:
+                if not refaccion.x_studio_cantidad_pedida:
+                    refaccionesEnCero = refaccionesEnCero + """
+                                                                <tr>
+                                                                    <td>""" + str(refaccion.categ_id.name) + """</td>
+                                                                    <td>""" + str(refaccion.product_variant_id.display_name) + """</td>
+                                                                    <td>""" + str(refaccion.x_studio_cantidad_pedida) + """</td>
+                                                                </tr>
+                                                            """
+            if refaccionesEnCero != '':
+                self.mensajesAlerta = """
+                                        <div class='alert alert-info' role='alert'>
+                                            <h4 class="alert-heading">Validación de refaciones y/o accesorios en cero !!!</h4>
+
+                                            <p>Se validaran refacciones y/o accesorios con cantidad en cero. Los equipos son los siguientes: </p>
+                                            <br/>
+                                            <div class='row'>
+                                                <table class='table table-bordered table-warning text-black'>
+                                                    <thead >
+                                                        <tr>
+                                                            <th scope='col'>Categoría del producto</th>
+                                                            <th scope='col'>Refacción y/o accesorio</th>
+                                                            <th scope='col'>Cantidad a pedir</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        """ + refaccionesEnCero + """
+                                                    </tbody>
+                                                </table>
+                                            </div>    
+                                        </div>      
+                                    """
+            else:
+                self.mensajesAlerta = ''
+
     def _compute_solicitud(self):
         if self.ticket_id.x_studio_field_nO7Xg:
             self.solicitud = self.ticket_id.x_studio_field_nO7Xg
@@ -5577,21 +5743,49 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
 
 
     def confirmarYValidarRefacciones(self):
+        if self.ticket_id.stage_id.id == 3 or self.ticket_id.stage_id.id == 18 or self.ticket_id.stage_id.id == 4:
+            mensajeTitulo = 'No se puede validar la solicitud de refacción porque se encuentra en el estado ' + str(self.ticket_id.stage_id.name)
+            wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
+            view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+            return {
+                        'name': _(mensajeTitulo),
+                        'type': 'ir.actions.act_window',
+                        'view_type': 'form',
+                        'view_mode': 'form',
+                        'res_model': 'helpdesk.alerta',
+                        'views': [(view.id, 'form')],
+                        'view_id': view.id,
+                        'target': 'new',
+                        'res_id': wiz.id,
+                        'context': self.env.context,
+                    }
+
         self.ticket_id.x_studio_productos = [(6, 0, self.productos.ids)]
         if self.productos:
             self.ticket_id.x_studio_productos = [(6, 0, self.productos.ids)]
         
-        if self.ticket_id.x_studio_field_nO7Xg and len(self.ticket_id.x_studio_productos) > len(self.ticket_id.x_studio_field_nO7Xg.order_line):
+        if self.ticket_id.x_studio_field_nO7Xg and (self.ticket_id.stage_id.id != 3 or self.ticket_id.stage_id.id != 18 or self.ticket_id.stage_id.id != 4): #and len(self.ticket_id.x_studio_productos) > len(self.ticket_id.x_studio_field_nO7Xg.order_line):
             _logger.info('3312: inicio actualización refacciones sobre la misma so(): ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
             idsRefaccionesSolicitud = []
+            seActualizoUnaCantidad = False
             ruta = -1
+            indiceRefaccionSo = 0
+            mensajeCantidadesEditadas = '\nSe editaron las cantidades de las siguientes refacciones y/o accesorios: '
             for refaccion in self.ticket_id.x_studio_field_nO7Xg.order_line:
+                if int(refaccion.product_uom_qty) != int(self.ticket_id.x_studio_productos[indiceRefaccionSo].x_studio_cantidad_pedida):
+                    refaccion.product_uom_qty = int(self.ticket_id.x_studio_productos[indiceRefaccionSo].x_studio_cantidad_pedida)
+                    mensajeCantidadesEditadas = '\nRefacción y/o accesorio: ' + str(self.ticket_id.x_studio_productos[indiceRefaccionSo].product_variant_id.display_name) + ', cantidad: ' + str(self.ticket_id.x_studio_productos[indiceRefaccionSo].x_studio_cantidad_pedida)
+                    seActualizoUnaCantidad = True
                 if refaccion.route_id and ruta == -1:
                     ruta = refaccion.route_id.id
                 idsRefaccionesSolicitud.append(refaccion.product_id.id)
+            
             _logger.info('idsRefaccionesSolicitud: ' + str(idsRefaccionesSolicitud))
             mensajeTitulo = 'Se añadieron nuevas refacciones y/o accesorios a la solicitud.'
             mensajeCuerpo = 'Refaccione(s) y/o accesorio(s) agregados a la Solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) +'.\n\nSe agregaron las refacciones y/o accesorios: '
+            refaccionesTextTemp = ''
+            fuenteDca = 'stock.production.lot'
+            dcaObj = self.env['dcas.dcas'].search([('x_studio_tickett', '=', self.ticket_id.id),('fuente', '=', fuenteDca)], order = 'create_date desc', limit = 1)
             for refaccion in self.ticket_id.x_studio_productos:
                 if not refaccion.product_variant_id.id in idsRefaccionesSolicitud:
                     datosr = {
@@ -5606,18 +5800,37 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                     line = self.env['sale.order.line'].create(datosr)
                     _logger.info('line: ' + str(line))
                     mensajeCuerpo = mensajeCuerpo + str(refaccion.product_variant_id.name) + ', '
+                    refaccionesTextTemp = 'Refacción y/o accesorio: ' + str(refaccion.product_variant_id.display_name) + '. Descripción: ' + str(refaccion.description) + '.\n'
+                    if dcaObj:
+                        self.env['x_studio_historico_de_componentes'].create({
+                                                                                'x_studio_cantidad': refaccion.x_studio_cantidad_pedida,
+                                                                                'x_studio_field_MH4DO': self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id,
+                                                                                'x_studio_ticket': str(self.ticket_id.id),
+                                                                                'x_studio_contador_color': dcaObj.contadorColor,
+                                                                                'x_studio_fecha_de_entrega': datetime.datetime.now(),
+                                                                                'x_studio_modelo': refaccionesTextTemp,
+                                                                                'x_studio_contador_bn': dcaObj.contadorMono
+                                                                                #'x_studio_numero_de_parte': refaccion.,
+                                                                                #'x_studio_field_gKQ9k': self.,
+                                                                                #'x_studio_modelo': self.,
+                                                                            })
             comentarioGenerico = 'Solicitud de refacción autorizada por ' + str(self.env.user.name) + '.\nEl día ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S")) + '.\n\n' + mensajeCuerpo + '.\n\n'
+            if seActualizoUnaCantidad:
+                comentarioGenerico = comentarioGenerico + mensajeCantidadesEditadas
             if self.comentario:
                 comentarioGenerico = comentarioGenerico + str(self.comentario)
             else:
                 comentarioGenerico = comentarioGenerico
+            #self.ticket_id.write({
+            #                        'stage_id': 102
+            #                    })
             self.env['helpdesk.diagnostico'].create({
                                                         'ticketRelacion': self.ticket_id.id,
                                                         'comentario': comentarioGenerico,
                                                         'estadoTicket': self.ticket_id.stage_id.name,
                                                         'evidencia': [(6,0,self.evidencia.ids)],
                                                         'mostrarComentario': self.check,
-                                                        'creadoPorSistema': True
+                                                        'creadoPorSistema': False
                                                     })
             _logger.info('3312: fin actualización refacciones sobre la misma so(): ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
         else:
@@ -5639,17 +5852,42 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                 mensajeTitulo = 'Error'
                 mensajeCuerpo = 'Existe una solicitud ya generada y validada.'
             elif respuesta == 'OK':
+                #creando x_studio_historico_de_componentes
+                fuenteDca = 'stock.production.lot'
+                dcaObj = self.env['dcas.dcas'].search([('x_studio_tickett', '=', self.ticket_id.id),('fuente', '=', fuenteDca)], order = 'create_date desc', limit = 1)
+                if dcaObj:
+                    refaccionesTextTemp = ''
+                    for refaccion in self.productos:
+                        refaccionesTextTemp = 'Refacción y/o accesorio: ' + str(refaccion.product_variant_id.display_name) + '. Descripción: ' + str(refaccion.description) + '.'
+                        self.env['x_studio_historico_de_componentes'].create({
+                                                                                'x_studio_cantidad': refaccion.x_studio_cantidad_pedida,
+                                                                                'x_studio_field_MH4DO': self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id,
+                                                                                'x_studio_ticket': str(self.ticket_id.id),
+                                                                                'x_studio_contador_color': dcaObj.contadorColor,
+                                                                                'x_studio_fecha_de_entrega': datetime.datetime.now(),
+                                                                                'x_studio_modelo': refaccionesTextTemp,
+                                                                                'x_studio_contador_bn': dcaObj.contadorMono
+                                                                                #'x_studio_numero_de_parte': refaccion.,
+                                                                                #'x_studio_field_gKQ9k': self.,
+                                                                                #'x_studio_modelo': self.,
+                                                                            })
+                mensjaeValidados = 'Se validaron los productos '
+                for refaccion in self.productos:
+                    mensjaeValidados = mensjaeValidados + str(refaccion.display_name) + ', cantidad validada: ' + str(refaccion.x_studio_cantidad_pedida) + '; '
                 mensajeTitulo = 'Creación y validación de refacción!!!'
                 mensajeCuerpo = 'Se creo y valido la solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) + ' para el ticket ' + str(self.ticket_id.id) + '.'
                 comentarioGenerico = 'Solicitud de refacción autorizada por ' + str(self.env.user.name) + '.\nEl día ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S")) + '.\n\n'
-                comentarioGenerico = comentarioGenerico + str(self.comentario)
+                if self.comentario:
+                    comentarioGenerico = comentarioGenerico + mensjaeValidados + '\n' + str(self.comentario)
+                else:
+                    comentarioGenerico = comentarioGenerico + mensjaeValidados
                 self.env['helpdesk.diagnostico'].create({
                                                             'ticketRelacion': self.ticket_id.id,
                                                             'comentario': comentarioGenerico,
                                                             'estadoTicket': self.ticket_id.stage_id.name,
                                                             'evidencia': [(6,0,self.evidencia.ids)],
                                                             'mostrarComentario': self.check,
-                                                            'creadoPorSistema': True
+                                                            'creadoPorSistema': False
                                                         })
             #mensajeTitulo = 'Creación y validación de refacción!!!'
             #mensajeCuerpo = 'Se creo y valido la solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) + ' para el ticket ' + str(self.ticket_id.id) + '.'

@@ -762,7 +762,7 @@
                         <field name='serie' widget='many2many_tags' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" force_save = "1"/>
                     </group>
                     <group string='Buscar por cliente y localidad'>
-                        <field name='clienteRelacion' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" attrs='{"domain": [["clienteRelacion.company_type","=","company"]]}' force_save = "1"/>
+                        <field name='clienteRelacion' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain='[["x_studio_activo_1", "=", True]]' force_save = "1" widget="res_partner_many2one" />
                         <field name='localidadRelacion' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain='[["parent_id.id","=",idCliente],["type","=","delivery"]]' force_save = "1"/>
                         <field name='contactoInterno' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain='[["parent_id.id", "=", idLocaliidad],["type", "=", "contact"]]' attrs='{"invisible": [["localidad","!=","CORPORATIVO"]]}' force_save = '1'/> 
                         <!--<field name='localidadRelacion' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain='[["parent_id.id","=",idCliente],"|",["type","=","delivery"], ["type","=","contact"]]' force_save = "1"/>-->
@@ -1508,16 +1508,26 @@
                 <group>
                     <group>
                         <field name='ticket_id' readonly='1' options="{'no_create_edit': True, 'no_create': True}" />
-                        <field name='activar_compatibilidad' />
+                        <field name='activar_compatibilidad' invisible='1' />
                     </group>
                     <group>
                         <field name='estadoSolicitud' readonly='1' force_save='1' />
                     </group>
                 </group>
                 
-                <group>
+                <group string='Seleccionar refacciones y/o accesorios'>
+                    <field name='accesorios' string='' context="{'default_wizRela': id}" >
+                        <tree editable='bottom'>
+                            <!--<field name='ticketRelacion' readonly='1' />-->
+                            <field name='productos'  options="{'no_create_edit': True, 'no_create': True}" />
+                            <field name='detalleDeProducto' widget='html' readonly='1' />
+                            <field name='cantidadPedida' />
+                            <field name='wizRela' readonly='1' invisible = '1'/>
+                        </tree>
+                    </field>
                     <group>
-                        <field name="productos" string="Refacciones y accesorios " domain="['|', '|', '|', ('categ_id', '=', 7), ('categ_id', '=', 9), ('categ_id', '=', 10), ('categ_id', '=', 11) ]" options="{'no_create_edit': True, 'no_create': True}" readonly='0' >
+                        
+                        <field name="productos" string="Refacciones y accesorios " invisible='1' domain="['|', '|', '|', ('categ_id', '=', 7), ('categ_id', '=', 9), ('categ_id', '=', 10), ('categ_id', '=', 11) ]" options="{'no_create_edit': True, 'no_create': True}" readonly='0' >
                             <tree string="Productos" editable="bottom" >
                                 <field name='categ_id' string='Categoría del producto' readonly='1'/>
                                 <field name='product_variant_id' string='Producto' />
@@ -1567,6 +1577,10 @@
                 </group>
                 <group>
                     <field name='serie' readonly='1' widget='html' />
+                </group>
+
+                <group>
+                    <field name='mensajesAlerta' string='' readonly='1' widget='html' />
                 </group>
                 
                 <group>
@@ -1725,15 +1739,27 @@
                         <field name="fechaInicial" required="1"/>
                         <field name="fechaFinal" required="1"/>
                     </group>
-                    <group string='Datos'>
-                        <field name='area' widget='many2many_tags' />
-                        <field name="tipo" />
+                    <group string='Selección'>
                         <field name='mostrarCerrados' />
                         <field name='mostrarCancelados' />
+                        <field name='clienteRelacion' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain='[["x_studio_activo_1", "=", True]]' widget="many2many_tags" />
                     </group>
+                </group>
+                <group string='Área de atención'>
+                    <group>
+                        <button name='areasMesa' string="Todas las áreas de mesa" type="object" class="btn btn-info btn-sm"/>
+                        <button name='areasToner' string="Todas las áreas de tóner" type="object" class="btn btn-info btn-sm"/>
+                    </group>
+                    <group>
+                        <button name='quitarAreas' string="Quitar todas las áreas" type="object" class="btn btn-info btn-sm"/>
+                    </group>
+                    <field name='area' widget='many2many_tags' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" required="0" />
                 </group>
                 <group >
                     <group string='Selecciona los tipos de reporte'>
+                        <button name='ponerTodos' string="Seleccionar todos los tipos" type="object" class="btn btn-success btn-sm"/>
+                        <button name='quitarTodos' string="Quitar todos los tipos" type="object" class="btn btn-danger btn-sm"/>
+                        
                         <field name='tipoReporteFalla' id='tipoReporteFalla' />
                         <field name='tipoReporteIncidencia' />
                         <field name='tipoReporteReeincidencia' />
@@ -1753,12 +1779,7 @@
                         <field name='tipoReporteDemostracion' />
                         <field name='tipoReporteTomaDeLectura' />
                     </group>
-                    <group>
-                        <!--
-                        <button id='btnActivaChecks' name='btnActivaChecks' string="Seleccionar todos los tipos" type="object" class="oe_highlight"/>
-                        <button id='btnQuitaChecks' string="Quitar todos los tipos" type="object" class="oe_highlight"/>
-                        -->
-                    </group>
+                    
                 </group>
                 <footer>
                     <button name="report" string="Reporte" type="object" class="oe_highlight"/>
