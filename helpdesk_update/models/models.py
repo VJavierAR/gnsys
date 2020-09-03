@@ -1660,46 +1660,64 @@ class helpdesk_update(models.Model):
 
 
     def cambioEstadoSolicitudRefaccion(self):
-        estadoAntes = str(self.stage_id.name)
-        query = "update helpdesk_ticket set stage_id = 91 where id = " + str(self.x_studio_id_ticket) + ";"
-        
-        ss = self.env.cr.execute(query)
-        #message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Solicitud de refacción' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
-        #mess= {
-        #        'title': _('Estado de ticket actualizado!!!'),
-        #        'message' : message
-        #    }
-        self.estadoSolicitudDeRefaccion = True
+        if self.stage_id.id == 89 or self.stage_id.id == 13 or self.stage_id.id == 2:
+            estadoAntes = str(self.stage_id.name)
+            query = "update helpdesk_ticket set stage_id = 91 where id = " + str(self.x_studio_id_ticket) + ";"
+            
+            ss = self.env.cr.execute(query)
+            #message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Solicitud de refacción' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
+            #mess= {
+            #        'title': _('Estado de ticket actualizado!!!'),
+            #        'message' : message
+            #    }
+            self.estadoSolicitudDeRefaccion = True
 
-        comentarioGenerico = 'Cambio de ' + estadoAntes +' a solicitud de refacción. Cambio generado por ' + str(self.env.user.name) + '.\nEl día ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S")) + '.\n\n'
-        self.env['helpdesk.diagnostico'].sudo().create({
-                                                            'ticketRelacion': self.id,
-                                                            'comentario': comentarioGenerico,
-                                                            'estadoTicket': 'Pendiente por autorizar solicitud',
-                                                            'mostrarComentario': True,
-                                                            'write_uid':  self.env.user.id,
-                                                            'create_uid':  self.env.user.id,
-                                                            'creadoPorSistema': True
-                                                        })
+            comentarioGenerico = 'Cambio de ' + estadoAntes +' a solicitud de refacción. Cambio generado por ' + str(self.env.user.name) + '.\nEl día ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S")) + '.\n\n'
+            self.env['helpdesk.diagnostico'].sudo().create({
+                                                                'ticketRelacion': self.id,
+                                                                'comentario': comentarioGenerico,
+                                                                'estadoTicket': 'Pendiente por autorizar solicitud',
+                                                                'mostrarComentario': True,
+                                                                'write_uid':  self.env.user.id,
+                                                                'create_uid':  self.env.user.id,
+                                                                'creadoPorSistema': True
+                                                            })
 
-        mensajeTitulo = 'Estado de ticket actualizado!!!'
-        mensajeCuerpo = 'Se cambio el estado del ticket ' + str(self.x_studio_id_ticket) +'. \nEstado anterior: ' + estadoAntes + ' Estado actual:  Pendiente por autorizar solicitud' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página."
-        #wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
-        wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
-        view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
-        return {
-                'name': _(mensajeTitulo),
-                'type': 'ir.actions.act_window',
-                'view_type': 'form',
-                'view_mode': 'form',
-                'res_model': 'helpdesk.alerta',
-                'views': [(view.id, 'form')],
-                'view_id': view.id,
-                'target': 'new',
-                'res_id': wiz.id,
-                'context': self.env.context,
-                }
-        #return {'warning': mess}
+            mensajeTitulo = 'Estado de ticket actualizado!!!'
+            mensajeCuerpo = 'Se cambio el estado del ticket ' + str(self.x_studio_id_ticket) +'. \nEstado anterior: ' + estadoAntes + ' Estado actual:  Pendiente por autorizar solicitud' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página."
+            #wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
+            wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
+            view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+            return {
+                    'name': _(mensajeTitulo),
+                    'type': 'ir.actions.act_window',
+                    'view_type': 'form',
+                    'view_mode': 'form',
+                    'res_model': 'helpdesk.alerta',
+                    'views': [(view.id, 'form')],
+                    'view_id': view.id,
+                    'target': 'new',
+                    'res_id': wiz.id,
+                    'context': self.env.context,
+                    }
+            #return {'warning': mess}
+        else:
+            mensajeTitulo = 'Estado no valido'
+            mensajeCuerpo = 'No es posible agregar productos al ticket ' + str(self.id) + ' en el estado ' + str(self.stage_id.name) + '\nSolo se permite añadir productos en los estados Abierto, Asignado y Atención.'
+            wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
+            view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+            return {
+                    'name': _(mensajeTitulo),
+                    'type': 'ir.actions.act_window',
+                    'view_type': 'form',
+                    'view_mode': 'form',
+                    'res_model': 'helpdesk.alerta',
+                    'views': [(view.id, 'form')],
+                    'view_id': view.id,
+                    'target': 'new',
+                    'res_id': wiz.id,
+                    'context': self.env.context,
+                    }
 
 
 
@@ -4480,29 +4498,58 @@ class helpdesk_update(models.Model):
         }
 
 
-    @api.multi
+    #@api.multi
     def agregar_productos_wizard(self):
-        wiz = self.env['helpdesk.agregar.productos'].create({'ticket_id':self.id})
-        wiz.productos = [(6, 0, self.x_studio_productos.ids)]
-        if self.x_studio_field_nO7Xg:
-            wiz.estadoSolicitud = str(self.x_studio_field_nO7Xg.state)
+        if self.stage_id.id == 89 or self.stage_id.id == 13 or self.stage_id.id == 2:
+            wiz = self.env['helpdesk.agregar.productos'].create({'ticket_id':self.id})
+            lista = [[5, 0, 0]]
+            if self.x_studio_productos:
+                for refaccion in self.x_studio_productos:
+                    lista.append( [0, 0, {
+                                            'productos': refaccion.product_variant_id.id,
+                                            'cantidadPedida': refaccion.x_studio_cantidad_pedida,
+                                            'wizRela': wiz.id
+                                }])
+                _logger.info('3312: lista: ' + str(lista) )
+                wiz.write({'accesorios': lista})
+            #wiz.accesorios = lista
+            #wiz.productos = [(6, 0, self.x_studio_productos.ids)]
+            if self.x_studio_field_nO7Xg:
+                wiz.estadoSolicitud = str(self.x_studio_field_nO7Xg.state)
+            else:
+                wiz.estadoSolicitud = 'No existe una SO.'
+            view = self.env.ref('helpdesk_update.view_helpdesk_agregar_productos')
+            return {
+                'name': _('Agregar productos'),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'helpdesk.agregar.productos',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'res_id': wiz.id,
+                #'domain': [["series", "=", ids]],
+                #'context': self.env.context,
+                'context': self.env.context,
+            }
         else:
-            wiz.estadoSolicitud = 'No existe una SO.'
-        view = self.env.ref('helpdesk_update.view_helpdesk_agregar_productos')
-        return {
-            'name': _('Agregar productos'),
-            'type': 'ir.actions.act_window',
-            'view_type': 'form',
-            'view_mode': 'form',
-            'res_model': 'helpdesk.agregar.productos',
-            'views': [(view.id, 'form')],
-            'view_id': view.id,
-            'target': 'new',
-            'res_id': wiz.id,
-            #'domain': [["series", "=", ids]],
-            #'context': self.env.context,
-            'context': self.env.context,
-        }
+            mensajeTitulo = 'Estado no valido'
+            mensajeCuerpo = 'No es posible agregar productos al ticket ' + str(self.id) + ' en el estado ' + str(self.stage_id.name) + '\nSolo se permite añadir productos en los estados Abierto, Asignado y Atención.'
+            wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
+            view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+            return {
+                    'name': _(mensajeTitulo),
+                    'type': 'ir.actions.act_window',
+                    'view_type': 'form',
+                    'view_mode': 'form',
+                    'res_model': 'helpdesk.alerta',
+                    'views': [(view.id, 'form')],
+                    'view_id': view.id,
+                    'target': 'new',
+                    'res_id': wiz.id,
+                    'context': self.env.context,
+                    }
 
     @api.multi
     def helpdesk_confirmar_validar_refacciones_wizard(self):
@@ -4671,52 +4718,143 @@ class helpdesk_update(models.Model):
     #     return res
 
 #EN DESAROLLO
-#class helpdes_refacciones(models.Model):
-#    _name = 'helpdesk.refacciones'
-#    _description = 'Refacciones modelo temporal'
-#
-#    ticketRelacion = fields.Many2one(
-#                                        'helpdesk.ticket', 
-#                                        string = 'Ticket realcionado a diagnostico'
-#                                    )
-#    productos = fields.Many2one(
-#                                    'product.product',
-#                                    string = 'Refacciones y accesorios'
-#                                )
-#    detalleDeProducto = fields.Text(
-#                                        string = 'Información de refacción o accesorio',
-#                                        compute = '_compute_detalle'
-#                                    )
-#    cantidadPedida = fields.Integer( 
-#                                        string = 'Cantidad a pedir'
-#                                    )
-#    @api.depends('productos')
-#    def _compute_detalle(self):
-#        if self.productos:
-#            self.detalleDeProducto = """
-#                                        <table class='table table-bordered table-dark text-white'>
-#                                            <thead >
-#                                                <tr>
-#                                                    <th scope='col'>Categoría del producto</th>
-#                                                    <th scope='col'>Referencia interna</th>
-#                                                    <th scope='col'>Nombre</th>
-#                                                    <th scope='col'>Descripción</th>
-#                                                    <th scope='col'>Cantidad a mano</th>
-#                                                    <th scope='col'>Cantidad prevista</th>
-#                                                </tr>
-#                                            </thead>
-#                                            <tbody>
-#                                                <tr>
-#                                                    <td>""" + str(self.productos.categ_id.name) + """</td>
-#                                                    <td>""" + str(self.productos.default_code) + """</td>
-#                                                    <td>""" + str(self.productos.name) + """</td>
-#                                                    <td>""" + str(self.productos.description) + """</td>
-#                                                    <td>""" + str(self.productos.qty_available) + """</td>
-#                                                    <td>""" + str(self.productos.virtual_available) + """</td>
-#                                                </tr>
-#                                            </tbody>
-#                                        </table>
-#                                    """
+class helpdesk_refacciones(models.Model):
+    _name = 'helpdesk.refacciones'
+    _description = 'Refacciones modelo temporal'
+
+    #ticketRelacion = fields.Many2one(
+    #                                    'helpdesk.ticket', 
+    #                                    string = 'Ticket realcionado a diagnostico'
+    #                                )
+    productos = fields.Many2one(
+                                    'product.product',
+                                    string = 'Refacciones y accesorios'
+                                )
+    detalleDeProducto = fields.Text(
+                                        string = 'Información de refacción o accesorio',
+                                        compute = '_compute_detalle'
+                                    )
+    cantidadPedida = fields.Integer( 
+                                        string = 'Cantidad a pedir'
+                                    )
+    wizRela = fields.Many2one(
+                                'helpdesk.agregar.productos'
+    )
+
+    @api.depends('productos')
+    def _compute_detalle(self):
+        for rec in self:
+            if rec.productos:
+                rec.detalleDeProducto = """
+                                            <table class='table table-bordered table-dark text-white'>
+                                                <thead >
+                                                    <tr>
+                                                        <th scope='col'>Categoría del producto</th>
+                                                        <th scope='col'>Referencia interna</th>
+                                                        <th scope='col'>Nombre</th>
+                                                        <th scope='col'>Descripción</th>
+                                                        <th scope='col'>Cantidad a mano</th>
+                                                        <th scope='col'>Cantidad prevista</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>""" + str(rec.productos.categ_id.name) + """</td>
+                                                        <td>""" + str(rec.productos.default_code) + """</td>
+                                                        <td>""" + str(rec.productos.name) + """</td>
+                                                        <td>""" + str(rec.productos.description) + """</td>
+                                                        <td>""" + str(rec.productos.qty_available) + """</td>
+                                                        <td>""" + str(rec.productos.virtual_available) + """</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        """
+
+class helpdesk_agregar_productos(models.Model):
+    _name = 'helpdesk.agregar.productos'
+    _description = 'helpdesk añade productos a la lista de productos de un ticket.'
+    
+    ticket_id = fields.Many2one(
+                                    "helpdesk.ticket",
+                                    string = 'Ticket'
+                                )
+
+    productos = fields.Many2many(
+                                    'product.product', 
+                                    string = "Productos"
+                                )
+    activar_compatibilidad = fields.Boolean(
+                                                string = 'Activar compatibilidad',
+                                                default = False
+                                            )
+    estadoSolicitud = fields.Text(
+                                    string = 'Estado de la SO',
+                                    store = True,
+                                    help = """
+                                                Estado en el que se encuentra la solicitud de refacción y/o accesorios.
+                                                En caso de que no exista se muestra el mensaje 'No existe un SO'.
+                                            """
+                                )
+    accesorios = fields.One2many('helpdesk.refacciones', 'wizRela', string = 'Accesorios')
+
+
+    @api.onchange('activar_compatibilidad')
+    #@api.multi
+    def productos_filtro(self):
+        res = {}             
+        g = str(self.ticket_id.x_studio_nombretmp)
+        
+        if self.activar_compatibilidad and self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+            if g != 'False':
+                list = ast.literal_eval(g)
+                idf = self.ticket_id.team_id.id
+                tam = len(list)
+                if idf == 8 or idf == 13 :  
+                   res['domain']={'productos':[('categ_id', '=', 5),('x_studio_toner_compatible.id','in',list)]}
+                if idf == 9:
+                   res['domain']={'productos':[('categ_id', '=', 7),('x_studio_toner_compatible.id','=',list[0])]}
+                if idf != 9 and idf != 8:
+                   res['domain']={'productos':[('categ_id', '!=', 5),('x_studio_toner_compatible.id','=',list[0])]}
+        else:
+            res['domain']={'productos':[('categ_id', '=', 7)]}
+        return res
+
+    def agregarProductos(self):
+        _logger.info('entro')
+        #self.ticket_id.x_studio_productos = [(6, 0, self.productos.ids)]
+        lista = [[5,0,0]]
+        for refaccion in self.accesorios:
+            lista.append( [0, 0, {
+                                    'product_variant_id': refaccion.productos.id,
+                                    'x_studio_cantidad_pedida': refaccion.cantidadPedida,
+                                    'name': refaccion.productos.name,
+                                    'categ_id': refaccion.productos.categ_id.id,
+                                    'default_code': refaccion.productos.default_code,
+                                    'description': refaccion.productos.description,
+                                    'qty_available': refaccion.productos.qty_available,
+                                    'virtual_available': refaccion.productos.virtual_available
+
+                        }])
+        _logger.info('3312: lista2: ' + str(lista))
+        self.ticket_id.write({'x_studio_productos': lista})
+        mensajeTitulo = 'Productos agregados!!!'
+        mensajeCuerpo = 'Se agregaron los productos y sus cantidades.'
+        #wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
+        wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
+        view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+        return {
+                'name': _(mensajeTitulo),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'helpdesk.alerta',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'res_id': wiz.id,
+                'context': self.env.context,
+                }
+
 
 class helpdes_diagnostico(models.Model):
     _name = "helpdesk.diagnostico"

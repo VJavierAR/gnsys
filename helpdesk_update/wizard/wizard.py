@@ -24,9 +24,9 @@ class HelpDeskComentario(TransientModel):
 
 
     def creaComentario(self):
-      if self.ultimaEvidencia:
+      if self.ultimaEvidencia and (self.ticket_id.stage_id.id == 2 or self.ticket_id.stage_id.id == 13 or self.ticket_id.stage_id.id == 104):
           if self.evidencia:
-            self.ticket_id.sudo().write({'stage_id': 3 
+            self.ticket_id.sudo().write({'stage_id': 3
                                 , 'team_id': 9
                                 })
             self.env['helpdesk.diagnostico'].sudo().create({'ticketRelacion': self.ticket_id.id
@@ -61,6 +61,9 @@ class HelpDeskComentario(TransientModel):
             raise exceptions.ValidationError('Favor de agregar una o mas evidencias antes de pasar a resuelto el ticket.')
             
       else:
+        mensajeNoCambioAResuelto = ''
+        if self.ultimaEvidencia:
+            mensajeNoCambioAResuelto = '\n\nNota:Se intento cambiar al estado Resuelto al seleccionar la casilla última evidencia, pero no se logro realizar el cambio ya que el ticket debe de estar en el estado Asignado, Atención o Refacción entregada.'
         self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.ticket_id.id
                                                 ,'comentario': self.comentario
                                                 ,'estadoTicket': self.ticket_id.stage_id.name
@@ -74,7 +77,7 @@ class HelpDeskComentario(TransientModel):
                                 })
         #if self.ticket_id.env.user.has_group('studio_customization.grupo_de_tecnicos_fi_6cce8af2-f2d0-4449-b629-906fb2c16636') and self.evidencia:
         #    self.ticket_id.write({'stage_id': 3})
-        mess = 'Diagnostico / Comentario añadido al ticket "' + str(self.ticket_id.id) + '" de forma exitosa. \n\nComentario agregado: ' + str(self.comentario) + '. \n\nGenerado en el estado: ' + self.ticket_id.stage_id.name
+        mess = 'Diagnostico / Comentario añadido al ticket "' + str(self.ticket_id.id) + '" de forma exitosa. \n\nComentario agregado: ' + str(self.comentario) + '. \n\nGenerado en el estado: ' + self.ticket_id.stage_id.name + mensajeNoCambioAResuelto
         wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mess})
         view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
         return {
@@ -3132,7 +3135,7 @@ class helpdesk_crearToner(TransientModel):
 
 
 
-
+"""
 class helpdesk_agregar_productos(TransientModel):
     _name = 'helpdesk.agregar.productos'
     _description = 'helpdesk añade productos a la lista de productos de un ticket.'
@@ -3153,11 +3156,13 @@ class helpdesk_agregar_productos(TransientModel):
     estadoSolicitud = fields.Text(
                                     string = 'Estado de la SO',
                                     store = True,
-                                    help = """
+                                    help = 
                                                 Estado en el que se encuentra la solicitud de refacción y/o accesorios.
                                                 En caso de que no exista se muestra el mensaje 'No existe un SO'.
-                                            """
+                                            
                                 )
+    accesorios = fields.One2many('helpdesk.refacciones', 'wizRela', string = 'Accesorios')
+
 
     @api.onchange('activar_compatibilidad')
     #@api.multi
@@ -3202,7 +3207,7 @@ class helpdesk_agregar_productos(TransientModel):
                 'res_id': wiz.id,
                 'context': self.env.context,
                 }
-        
+"""        
 
 
 
@@ -5738,18 +5743,43 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
 
 
     def confirmarYValidarRefacciones(self):
+        if self.ticket_id.stage_id.id == 3 or self.ticket_id.stage_id.id == 18 or self.ticket_id.stage_id.id == 4:
+            mensajeTitulo = 'No se puede validar la solicitud de refacción porque se encuentra en el estado ' + str(self.ticket_id.stage_id.name)
+            wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
+            view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+            return {
+                        'name': _(mensajeTitulo),
+                        'type': 'ir.actions.act_window',
+                        'view_type': 'form',
+                        'view_mode': 'form',
+                        'res_model': 'helpdesk.alerta',
+                        'views': [(view.id, 'form')],
+                        'view_id': view.id,
+                        'target': 'new',
+                        'res_id': wiz.id,
+                        'context': self.env.context,
+                    }
+
         self.ticket_id.x_studio_productos = [(6, 0, self.productos.ids)]
         if self.productos:
             self.ticket_id.x_studio_productos = [(6, 0, self.productos.ids)]
         
-        if self.ticket_id.x_studio_field_nO7Xg and len(self.ticket_id.x_studio_productos) > len(self.ticket_id.x_studio_field_nO7Xg.order_line):
+        if self.ticket_id.x_studio_field_nO7Xg and (self.ticket_id.stage_id.id != 3 or self.ticket_id.stage_id.id != 18 or self.ticket_id.stage_id.id != 4): #and len(self.ticket_id.x_studio_productos) > len(self.ticket_id.x_studio_field_nO7Xg.order_line):
             _logger.info('3312: inicio actualización refacciones sobre la misma so(): ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
             idsRefaccionesSolicitud = []
+            seActualizoUnaCantidad = False
             ruta = -1
+            indiceRefaccionSo = 0
+            mensajeCantidadesEditadas = '\nSe editaron las cantidades de las siguientes refacciones y/o accesorios: '
             for refaccion in self.ticket_id.x_studio_field_nO7Xg.order_line:
+                if int(refaccion.product_uom_qty) != int(self.ticket_id.x_studio_productos[indiceRefaccionSo].x_studio_cantidad_pedida):
+                    refaccion.product_uom_qty = int(self.ticket_id.x_studio_productos[indiceRefaccionSo].x_studio_cantidad_pedida)
+                    mensajeCantidadesEditadas = '\nRefacción y/o accesorio: ' + str(self.ticket_id.x_studio_productos[indiceRefaccionSo].product_variant_id.display_name) + ', cantidad: ' + str(self.ticket_id.x_studio_productos[indiceRefaccionSo].x_studio_cantidad_pedida)
+                    seActualizoUnaCantidad = True
                 if refaccion.route_id and ruta == -1:
                     ruta = refaccion.route_id.id
                 idsRefaccionesSolicitud.append(refaccion.product_id.id)
+            
             _logger.info('idsRefaccionesSolicitud: ' + str(idsRefaccionesSolicitud))
             mensajeTitulo = 'Se añadieron nuevas refacciones y/o accesorios a la solicitud.'
             mensajeCuerpo = 'Refaccione(s) y/o accesorio(s) agregados a la Solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) +'.\n\nSe agregaron las refacciones y/o accesorios: '
@@ -5784,19 +5814,23 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                                                                                 #'x_studio_field_gKQ9k': self.,
                                                                                 #'x_studio_modelo': self.,
                                                                             })
-
             comentarioGenerico = 'Solicitud de refacción autorizada por ' + str(self.env.user.name) + '.\nEl día ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S")) + '.\n\n' + mensajeCuerpo + '.\n\n'
+            if seActualizoUnaCantidad:
+                comentarioGenerico = comentarioGenerico + mensajeCantidadesEditadas
             if self.comentario:
                 comentarioGenerico = comentarioGenerico + str(self.comentario)
             else:
                 comentarioGenerico = comentarioGenerico
+            #self.ticket_id.write({
+            #                        'stage_id': 102
+            #                    })
             self.env['helpdesk.diagnostico'].create({
                                                         'ticketRelacion': self.ticket_id.id,
                                                         'comentario': comentarioGenerico,
                                                         'estadoTicket': self.ticket_id.stage_id.name,
                                                         'evidencia': [(6,0,self.evidencia.ids)],
                                                         'mostrarComentario': self.check,
-                                                        'creadoPorSistema': True
+                                                        'creadoPorSistema': False
                                                     })
             _logger.info('3312: fin actualización refacciones sobre la misma so(): ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
         else:
@@ -5853,7 +5887,7 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                                                             'estadoTicket': self.ticket_id.stage_id.name,
                                                             'evidencia': [(6,0,self.evidencia.ids)],
                                                             'mostrarComentario': self.check,
-                                                            'creadoPorSistema': True
+                                                            'creadoPorSistema': False
                                                         })
             #mensajeTitulo = 'Creación y validación de refacción!!!'
             #mensajeCuerpo = 'Se creo y valido la solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) + ' para el ticket ' + str(self.ticket_id.id) + '.'
