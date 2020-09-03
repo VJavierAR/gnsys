@@ -252,40 +252,7 @@ class compras(models.Model):
                         out.close()
                         os.system(myCmd)
                         f = open("test3.txt","r")
-                        if f2.startswith(b'%PDF-1.7') and "kyocera" in self.partner_id.name.lower():
-                            string = f.read()
-                            f.close()
-                            d = string.split('\n')
-                            n=len(d)
-                            arreglo=[]
-                            product={}
-                            i=0
-                            for x in d:
-                                f=x
-                                serial=''
-                                if ('PIEZA' in f):
-                                    cantidad = f.split('PIEZA')[0]
-                                    l = f.split('PIEZA')[1].split(' -',1)
-                                    id = l[0].replace(' ','')
-                                    casi = l[1].split('.')
-                                    _logger.info(str(casi))
-                                    casii = casi[1].split(' ')[0]
-                                    tam = casi[0].split(' ')
-                                    p = len(tam)
-                                    m = tam[p-1]+'.'+casii
-                                    precio = (float(m.replace(',',''))-(float(m.replace(',',''))*(self.x_studio_descuento/100)))
-                                    template=self.env['product.template'].search([('default_code','=',id)])
-                                    if(template.id==False):
-                                        productid=self.env['product.product'].create({'name':casi[0],'description':casi[0],'categ_id':self.x_studio_tipo_de_producto.id,'default_code':str(id),'type':'product'})                                        
-                                    if(template.id!=False):
-                                        productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
-                                    _logger.info('id'+str(id))
-                                    product={'product_uom':1,'date_planned':self.date_order if(self.date_order) else fecha,'product_id':productid.id,'product_qty':cantidad,'price_unit':precio,'taxes_id':[10],'name':productid.description}
-                                    arreglo.append(product)
-                            if(len(arreglo)>0):
-                                self.order_line=[(5,0,0)]
-                            self.order_line=arreglo
-                        if f2.startswith(b'%PDF-') and "konica" in self.partner_id.name.lower():
+                        if f2.startswith(b'%PDF-1.') and "konica" in self.partner_id.name.lower():
                             myCmd = 'pdftotext -fixed 3 hola.pdf test3.txt'
                             out = open("hola.pdf", "wb")
                             file = PdfFileReader(H)
@@ -323,33 +290,62 @@ class compras(models.Model):
                                         productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
                                     _logger.info(str(productid))
                                     desc=productid.description if(productid.description) else '|'
-                                    #if(len(arr)==i+1):
-                                    #    arr[i]['product_id']=productid.id
-                                    #    desc=productid.description if(productid.description) else '|'
-                                    #    arr[i]['name']=desc
-                                    #    arr[i]['product_uom']=1
-                                    #    arr[i]['date_planned']=self.date_order if(self.date_order) else fecha
-                                    #    arr[i]['taxes_id']=[10]
-                                    #if(len(arr)==i):
-                                    #    product={'product_uom':1,'date_planned':self.date_order if(self.date_order) else fecha,'product_id':productid.id,'taxes_id':[10],'name':productid.description}
-                                 #       desc=productid.description if(productid.description) else '|'
-                                 #       product['name']=desc
-                                 #       arr.append(product)
-                                 #   i=i+1       
-                                #if('Customer' in o or 'SUPPLY' in o or 'PARTS' in o):
-                               # if ('SUPPLY' in o and '$' in o) or ('PARTS' in o and '$' in o):
-                               #     s = o.split("$")
-                               #     _logger.info(str(s))
-                               #     h=float(s[2])
-                               #     g=float(s[1].split(' ')[0])
-                               #     qty=round(h/g)
-                               #     if(len(arr)==j+1):
-                               #         arr[j]['product_qty']=qty
-                               #         arr[j]['price_unit']=g/1.16
-                               #         arr[j]['date_planned']=self.date_order if(self.date_order) else fecha
-                                    #if(len(arr)==j):
                                     product={'product_uom':1,'product_id':productid.id,'product_qty':qty,'price_unit':g,'date_planned':self.date_order if(self.date_order) else fecha,'name':desc,'taxes_id':[10]}
                                     arr.append(product)
+                                    j=j+1
+                            if(len(arr)>0):
+                                self.order_line=[(5,0,0)]
+                            self.order_line=arr
+                        if f2.startswith(b'%PDF-1.4') and "kyocera" in self.partner_id.name.lower():
+                            string = f.read()
+                            f.close()
+                            b = string.split('\n')                    
+                            i = 0
+                            j=0
+                            h=""
+                            g=""
+                            q=""
+                            qty=""
+                            arr=[]
+                            for o in b:
+                                product={}
+                                if('#' in o ):
+                                    r = o.split("Artículo # ")
+                                    q = r[1].split(' ')[0]
+                                    _logger.info(str(q))
+                                    template=self.env['product.template'].search([('default_code','=',q)])
+                                    if(template.id==False):
+                                        productid=self.env['product.product'].create({'name':'/','description':'falta','categ_id':self.x_studio_tipo_de_producto.id,'default_code':str(q),'type':'product'})
+                                    if(template.id!=False):                                  
+                                        productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
+                                    _logger.info(str(productid))
+                                    if(len(arr)==i+1):
+                                        arr[i]['product_id']=productid.id
+                                        desc=productid.description if(productid.description) else '|'
+                                        arr[i]['name']=desc
+                                        arr[i]['product_uom']=1
+                                        arr[i]['date_planned']=self.date_order if(self.date_order) else fecha
+                                        arr[i]['taxes_id']=[10]
+                                    if(len(arr)==i):
+                                        product={'product_uom':1,'date_planned':self.date_order if(self.date_order) else fecha,'product_id':productid.id,'taxes_id':[10],'name':productid.description}
+                                        desc=productid.description if(productid.description) else '|'
+                                        product['name']=desc
+                                        arr.append(product)
+                                    i=i+1       
+                                #if('Customer' in o or 'SUPPLY' in o or 'PARTS' in o):
+                                if ('SUPPLY' in o and '$' in o) or ('PARTS' in o and '$' in o):
+                                    s = o.split("$")
+                                    _logger.info(str(s))
+                                    h=float(s[2])
+                                    g=float(s[1].split(' ')[0])
+                                    qty=round(h/g)
+                                    if(len(arr)==j+1):
+                                        arr[j]['product_qty']=qty
+                                        arr[j]['price_unit']=g/1.16
+                                        arr[j]['date_planned']=self.date_order if(self.date_order) else fecha
+                                    if(len(arr)==j):
+                                        product={'product_qty':qty,'price_unit':g/1.16,'date_planned':self.date_order if(self.date_order) else fecha}
+                                        arr.append(product)
                                     j=j+1
                             if(len(arr)>0):
                                 self.order_line=[(5,0,0)]
