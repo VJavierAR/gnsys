@@ -401,7 +401,8 @@ class fac_order(models.Model):
                                 if k.x_studio_color_bn=='B/N':
                                    totalesNegro=bnp+totalesNegro
                                 if k.x_studio_color_bn=='Color':
-                                   totalesColor=colorp+totalesColor  
+                                   totalesColor=colorp+totalesColor
+                                   totalesNegro=bnp+totalesNegro
                             self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':j.id,'x_studio_field_9nQhR':k.id,'product_id':pcolor,'product_uom_qty':totalesColor,'price_unit':m.clickExcedenteColor,'name':'(82121500) PAGINAS IMPRESAS COLOR : '+str(totalesColor)+' INCLUYE: '+str(m.bolsaColor)})                                                    
                             self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':j.id,'x_studio_field_9nQhR':k.id,'product_id':pbn,'product_uom_qty':totalesNegro,'price_unit':m.clickExcedenteBN,'name':'(82121500) PAGINAS IMPRESAS NEGRO : '+str(totalesNegro)+' INCLUYE: '+str(m.bolsaBN)})                                                                                  
                             self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':j.id,'product_id':rentaG,'product_uom_qty':1.0,'price_unit':j.rentaMensual,'name':'(80161801) RENTA '+ str(len(p))+' EQUIPOS EN GENERAL.'})                                                                                                                         
