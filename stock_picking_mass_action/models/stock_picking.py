@@ -37,7 +37,7 @@ class StockPicking(Model):
     def validacionZero(self):
         if(len(self.move_ids_without_package)==1):
             self.sale_id.action_cancel()
-            if(self.sale_id.x_studio_field_bxHgp.stage_id.id!=18):
+            if(self.sale_id.x_studio_field_bxHgp.stage_id.id!=18 and self.sale_id.x_studio_field_bxHgp.stage_id.id!=3):
                 self.sale_id.x_studio_field_bxHgp.write({'stage_id':115})
             self.sale_id.picking_ids.write({'active':False})
             self.comentario()

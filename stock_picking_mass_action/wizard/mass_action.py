@@ -164,11 +164,20 @@ class StockPickingMassAction(TransientModel):
                 if(self.check==1):
                     comentario=picking.x_studio_comentario_1 if(picking.x_studio_comentario_1) else 'refacion entregada'
                     if(picking.location_dest_id.id!=16):
-                        picking.sale_id.x_studio_field_bxHgp.write({'stage_id':104})
+                        ultimo=self.env['helpdesk.diagnostico'].search([['ticketRelacion','=',self.pick.sale_id.x_studio_field_bxHgp.id]],order='create_date',limit=1)
                         self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id,'write_uid':self.env.user.id, 'estadoTicket' : "Entregado", 'comentario':str(comentario)+' Evidenciado'+' Hecho por'+self.env.user.name})
+                        if(picking.sale_id.x_studio_field_bxHgp.stage_id.id!=18 and picking.sale_id.x_studio_field_bxHgp.stage_id.id!=3):
+                            picking.sale_id.x_studio_field_bxHgp.write({'stage_id':104})
+                        else:
+                            ultimo.copy()
                     else:
-                        picking.sale_id.x_studio_field_bxHgp.write({'stage_id':112})
+                        ultimo=self.env['helpdesk.diagnostico'].search([['ticketRelacion','=',self.pick.sale_id.x_studio_field_bxHgp.id]],order='create_date',limit=1)
                         self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id,'write_uid':self.env.user.id, 'estadoTicket' : "Entregado", 'comentario':str(comentario)+' Evidenciado'+' Hecho por'+self.env.user.name})    
+                        if(picking.sale_id.x_studio_field_bxHgp.stage_id.id!=18 and picking.sale_id.x_studio_field_bxHgp.stage_id.id!=3):
+                            picking.sale_id.x_studio_field_bxHgp.write({'stage_id':112})
+                        else:
+                            ultimo.copy()
+                        
             pick_to_do |= picking
         if pick_to_do:
             pick_to_do.action_done()
