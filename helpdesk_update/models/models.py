@@ -4825,7 +4825,7 @@ class helpdesk_agregar_productos(models.Model):
         lista = [[5,0,0]]
         for refaccion in self.accesorios:
             lista.append( [0, 0, {
-                                    'product_variant_id': refaccion.productos.id,
+                                    'product_tmpl_id': refaccion.productos.product_tmpl_id.id,
                                     'x_studio_cantidad_pedida': refaccion.cantidadPedida,
                                     'name': refaccion.productos.name,
                                     'categ_id': refaccion.productos.categ_id.id,
