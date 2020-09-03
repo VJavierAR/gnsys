@@ -34,7 +34,8 @@ class HelpDeskComentario(TransientModel):
                                                 ,'estadoTicket': self.ticket_id.stage_id.name
                                                 ,'evidencia': [(6,0,self.evidencia.ids)]
                                                 ,'mostrarComentario': self.check,
-                                                'creadoPorSistema': False
+                                                'creadoPorSistema': False,
+                                                'write_uid':  self.env.user.name
                                                 })
             if self.editarZona:
                 self.ticket_id.write({'x_studio_zona': self.zona
@@ -69,7 +70,8 @@ class HelpDeskComentario(TransientModel):
                                                 ,'estadoTicket': self.ticket_id.stage_id.name
                                                 ,'evidencia': [(6,0,self.evidencia.ids)]
                                                 ,'mostrarComentario': self.check,
-                                                'creadoPorSistema': False
+                                                'creadoPorSistema': False,
+                                                'write_uid':  self.env.user.name
                                                 })
         if self.editarZona:
             self.ticket_id.write({'x_studio_zona': self.zona
