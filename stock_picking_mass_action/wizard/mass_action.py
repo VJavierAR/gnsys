@@ -375,7 +375,7 @@ class StockCambio(TransientModel):
             self.pick.sale_id.write({'state':'assign'})
             f=f+"<tr>"
             f=f+"<td>"+str(s.serieOrigen.product_id.name)+"</td>"
-            f=f+"<td>"+str(s.serieOrigen..name)+"</td>"
+            f=f+"<td>"+str(s.serieOrigen.name)+"</td>"
             f=f+"</tr>"
         f=f+"</tbody></table>"
         self.pick.sale_id.write({'x_studio_series_retiro':f})
