@@ -296,6 +296,20 @@ class StockCambio(TransientModel):
             self.confirmar(self.accesorios_ids)
             self.confirmar(self.toner_ids)
             self.confirmarE(equipos)
+            wiz=self.env['stock.picking.mass.action'].create({'picking_ids':[(4,self.pick.id)],'confirm':True,'check_availability':True,'transfer':True})
+            view = self.env.ref('stock_picking_mass_action.view_stock_picking_mass_action_form')
+            return {
+                'name': _('Transferencia'),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'stock.picking.mass.action',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'res_id': wiz.id,
+                'context': self.env.context,
+            }
             #self.confirmar()
         #self.pick.action_confirm()
         #self.pick.action_assign()
@@ -354,9 +368,19 @@ class StockCambio(TransientModel):
 
                 
     def confirmarE(self,equipos):
+        f="<table class='table table-sm'><thead><tr><th>Modelo</th><th>Serie</th></thead><tbody>"
         for s in equipos:
             d=self.env['stock.move.line'].search([['move_id','=',s.move_id.id]])
             d.write({'lot_id':s.serieOrigen.id})
+            self.pick.sale_id.write({'state':'assign'})
+            f=f+"<tr>"
+            f=f+"<td>"+str(s.serieOrigen.product_id.name)+"</td>"
+            f=f+"<td>"+str(s.serieOrigen..name)+"</td>"
+            f=f+"</tr>"
+        f=f+"</tbody></table>"
+        self.pick.sale_id.write({'x_studio_series_retiro':f})
+
+
 
 class StockCambioLine(TransientModel):
     _name = 'cambio.toner.line'
