@@ -35,7 +35,7 @@ class StockPicking(Model):
 
 
     def validacionZero(self):
-        if(len(self.move_ids_without_package)==1):
+        if(self.x_studio_backorder_de==False):
             self.sale_id.action_cancel()
             if(self.sale_id.x_studio_field_bxHgp.stage_id.id!=18 and self.sale_id.x_studio_field_bxHgp.stage_id.id!=3):
                 self.sale_id.x_studio_field_bxHgp.write({'stage_id':115})
