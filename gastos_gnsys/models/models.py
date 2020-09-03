@@ -184,22 +184,22 @@ class gastos_gnsys(models.Model):
     def calcularTotalPagoDevolucion(self):
         listaDevoluciones = self.devoluciones
         montoPagadoTotal = 0.0
-        montoDeducible = 0.0
-        mnotNoDeduclible = 0.0
+        # montoDeducible = 0.0
+        # mnotNoDeduclible = 0.0
         if listaDevoluciones != []:
             for devolucion in listaDevoluciones:
-                if str(devolucion.depositoDeducible) == "si":
-                    montoDeducible += devolucion.montoEntregado
-                else :
-                    mnotNoDeduclible += devolucion.montoEntregado
+                # if str(devolucion.depositoDeducible) == "si":
+                #     montoDeducible += devolucion.montoEntregado
+                # else :
+                #     mnotNoDeduclible += devolucion.montoEntregado
                 montoPagadoTotal += devolucion.montoEntregado
         if montoPagadoTotal != self.totalPagosSolitantes :
             self.montoPorCubrir = (self.montoAprobadoFinal-self.montoAnticipado) - montoPagadoTotal
         else :
             self.montoPorCubrir = (self.montoAprobadoFinal-self.montoAnticipado) - self.totalPagosSolitantes
         self.totalPagosSolitantes = montoPagadoTotal
-        self.totalMontoDeducible = montoDeducible
-        self.totalMontoNoDeducible = mnotNoDeduclible
+        # self.totalMontoDeducible = montoDeducible
+        # self.totalMontoNoDeducible = mnotNoDeduclible
 
 
 
@@ -567,7 +567,7 @@ class PagoSolicitante(models.Model):
 
     banco = fields.Selection((('bajio','BAJIO'), ('banamex','BANAMEX'),('banorte','BANORTE'),('santnder','SANTANDER'),('hsbc','HSBC'),('azteca','AZTECA'),('bancomer','BANCOMER')), string = "Banco a depositar")
     claveInterbancaria = fields.Char(string="Clave interbancaria", track_visibility='onchange')
-    depositoDeducible = fields.Selection((('si','Si'), ('no','No')), string = "Depósito deducible")
+    # depositoDeducible = fields.Selection((('si','Si'), ('no','No')), string = "Depósito deducible")
     montodeDucible = fields.Float(string = "Monto deducible")
     montodeNoDucible = fields.Float(string = "Monto no deducible")
     @api.constrains('montoEntregado')
@@ -575,10 +575,10 @@ class PagoSolicitante(models.Model):
         if self.montoEntregado == 0.0:
             raise exceptions.ValidationError("En PAGOS A SOLICITANTE : El monto no puede ser igual a cero.")
     
-    @api.constrains('depositoDeducible')
-    def verificaDepositoDeducible(self):
-        if not self.depositoDeducible:
-            raise exceptions.ValidationError("Indica si el pago a sera deducible o no.")
+    # @api.constrains('depositoDeducible')
+    # def verificaDepositoDeducible(self):
+    #     if not self.depositoDeducible:
+    #         raise exceptions.ValidationError("Indica si el pago a sera deducible o no.")
     @api.onchange('fecha')
     def computarDiasAtrasoPago(self):
         if self.fecha :
