@@ -296,7 +296,7 @@ class compras(models.Model):
                             if(len(arr)>0):
                                 self.order_line=[(5,0,0)]
                             self.order_line=arr
-                        if f2.startswith(b'%PDF-1.4') and "kyocera" in self.partner_id.name.lower():
+                        if f2.startswith(b'%PDF-1.') and "kyocera" in self.partner_id.name.lower():
                             string = f.read()
                             f.close()
                             b = string.split('\n')                    
