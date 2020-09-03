@@ -1519,7 +1519,7 @@
                     <field name='accesorios' string='' context="{'default_wizRela': id}" >
                         <tree editable='bottom'>
                             <!--<field name='ticketRelacion' readonly='1' />-->
-                            <field name='productos' domain="['|', '|', '|', ('categ_id', '=', 7), ('categ_id', '=', 9), ('categ_id', '=', 10), ('categ_id', '=', 11) ]" options="{'no_create_edit': True, 'no_create': True}" />
+                            <field name='productos'  options="{'no_create_edit': True, 'no_create': True}" />
                             <field name='detalleDeProducto' widget='html' readonly='1' />
                             <field name='cantidadPedida' />
                             <field name='wizRela' readonly='1' invisible = '1'/>
