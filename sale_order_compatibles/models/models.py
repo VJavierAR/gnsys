@@ -91,6 +91,16 @@ class sale_update(models.Model):
 
 	serieRetiro2=fields.Many2one('stock.production.lot','Serie retiro')
 
+	    state = fields.Selection([
+        ('draft', 'Borrador'),
+        ('sent', 'Solicitud Enviada'),
+        ('sale', 'Autorizada'),
+        ('done', 'Locked'),
+        ('assign', 'Asignada'),
+        ('distribucion', 'Distribución')
+        ('entregado', 'Entregado')
+        ('cancel', 'Cancelled')
+        ], string='Status', readonly=True, copy=False, index=True, track_visibility='onchange', track_sequence=3, default='draft')
 	@api.onchange('partner_id')
 	def dominioContactos(self):
 		res={}
