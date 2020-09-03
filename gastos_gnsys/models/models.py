@@ -568,8 +568,8 @@ class PagoSolicitante(models.Model):
     banco = fields.Selection((('bajio','BAJIO'), ('banamex','BANAMEX'),('banorte','BANORTE'),('santnder','SANTANDER'),('hsbc','HSBC'),('azteca','AZTECA'),('bancomer','BANCOMER')), string = "Banco a depositar")
     claveInterbancaria = fields.Char(string="Clave interbancaria", track_visibility='onchange')
     # depositoDeducible = fields.Selection((('si','Si'), ('no','No')), string = "Depósito deducible")
-    # montodeDucible = fields.Float(string = "Monto deducible")
-    # montodeNoDucible = fields.Float(string = "Monto no deducible")
+    montodeDucibleI = fields.Float(string = "Monto deducible")
+    montodeNoDucibleI = fields.Float(string = "Monto no deducible")
     @api.constrains('montoEntregado')
     def verificaMonto(self):
         if self.montoEntregado == 0.0:
