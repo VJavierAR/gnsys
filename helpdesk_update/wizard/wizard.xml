@@ -1520,7 +1520,11 @@
                         <tree editable='bottom'>
                             <!--<field name='ticketRelacion' readonly='1' />-->
                             <field name='productos'  options="{'no_create_edit': True, 'no_create': True}" />
-                            <field name='detalleDeProducto' widget='html' readonly='1' />
+                            <!--<field name='detalleDeProducto' widget='html' readonly='1' />-->
+                            <field name='referenciaInterna' readonly='1' />
+                            <field name='nombreProducto' readonly='1' />
+                            <field name='descripcion' readonly='1' />
+                            <field name='cantidadAMano' readonly='1' />
                             <field name='cantidadPedida' />
                             <field name='wizRela' readonly='1' invisible = '1'/>
                         </tree>
