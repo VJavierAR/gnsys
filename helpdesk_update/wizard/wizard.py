@@ -5846,7 +5846,7 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                     refaccion.product_uom_qty = int(self.ticket_id.x_studio_productos[indiceRefaccionSo].x_studio_cantidad_pedida)
                     mensajeCantidadesEditadas = '\nRefacción y/o accesorio: ' + str(self.ticket_id.x_studio_productos[indiceRefaccionSo].product_variant_id.display_name) + ', cantidad: ' + str(self.ticket_id.x_studio_productos[indiceRefaccionSo].x_studio_cantidad_pedida)
                     seActualizoUnaCantidad = True
-                if refaccion.route_id and ruta == -1:
+                if refaccion.route_id and ruta != -1:
                     ruta = refaccion.route_id.id
                 idsRefaccionesSolicitud.append(refaccion.product_id.id)
             
