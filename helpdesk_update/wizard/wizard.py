@@ -5865,7 +5865,7 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                                 'x_studio_field_9nQhR': self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id,
                                 'price_unit': 0
                             }
-                    if ruta:
+                    if ruta != -1:
                         datosr['route_id'] = ruta
                     line = self.env['sale.order.line'].create(datosr)
                     _logger.info('line: ' + str(line))
