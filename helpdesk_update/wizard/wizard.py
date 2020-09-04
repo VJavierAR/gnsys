@@ -39,6 +39,7 @@ class HelpDeskComentario(TransientModel):
                                                 })
             idDiagnostico.write({
                                 'write_uid': self.env.user.id
+                                'create_uid': self.env.user.id
                             })
             if self.editarZona:
                 self.ticket_id.write({'x_studio_zona': self.zona
@@ -78,6 +79,7 @@ class HelpDeskComentario(TransientModel):
                                                 })
         idDiagnostico.write({
                                 'write_uid': self.env.user.id
+                                'create_uid': self.env.user.id
                             })
         if self.editarZona:
             self.ticket_id.write({'x_studio_zona': self.zona
