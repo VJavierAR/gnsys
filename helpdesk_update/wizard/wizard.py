@@ -29,7 +29,7 @@ class HelpDeskComentario(TransientModel):
             self.ticket_id.sudo().write({'stage_id': 3
                                 , 'team_id': 9
                                 })
-            self.env['helpdesk.diagnostico'].sudo().create({'ticketRelacion': self.ticket_id.id
+            idDiagnostico = self.env['helpdesk.diagnostico'].sudo().create({'ticketRelacion': self.ticket_id.id
                                                 ,'comentario': self.comentario
                                                 ,'estadoTicket': self.ticket_id.stage_id.name
                                                 ,'evidencia': [(6,0,self.evidencia.ids)]
@@ -37,6 +37,9 @@ class HelpDeskComentario(TransientModel):
                                                 'creadoPorSistema': False,
                                                 'write_uid':  self.env.user.name
                                                 })
+            idDiagnostico.write({
+                                'write_uid': self.env.user.id
+                            })
             if self.editarZona:
                 self.ticket_id.write({'x_studio_zona': self.zona
                                     , 'x_studio_field_6furK': self.zona
@@ -65,7 +68,7 @@ class HelpDeskComentario(TransientModel):
         mensajeNoCambioAResuelto = ''
         if self.ultimaEvidencia:
             mensajeNoCambioAResuelto = '\n\nNota:Se intento cambiar al estado Resuelto al seleccionar la casilla última evidencia, pero no se logro realizar el cambio ya que el ticket debe de estar en el estado Asignado, Atención o Refacción entregada.'
-        self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.ticket_id.id
+        idDiagnostico = self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.ticket_id.id
                                                 ,'comentario': self.comentario
                                                 ,'estadoTicket': self.ticket_id.stage_id.name
                                                 ,'evidencia': [(6,0,self.evidencia.ids)]
@@ -73,6 +76,9 @@ class HelpDeskComentario(TransientModel):
                                                 'creadoPorSistema': False,
                                                 'write_uid':  self.env.user.name
                                                 })
+        idDiagnostico.write({
+                                'write_uid': self.env.user.id
+                            })
         if self.editarZona:
             self.ticket_id.write({'x_studio_zona': self.zona
                                 , 'x_studio_field_6furK': self.zona
