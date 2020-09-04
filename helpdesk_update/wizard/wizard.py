@@ -1626,6 +1626,36 @@ class ActivarTicketCanceladoTonerMassAction(TransientModel):
 
 
 
+class CerrarTicketsMassAction(TransientModel):
+    _name = 'helpdesk.cerrar.tickets.mesa'
+    _description = 'Cierra los tickets alv'
+    
+    def _default_ticket_ids(self):
+        return self.env['helpdesk.ticket'].browse(
+            self.env.context.get('active_ids'))
+
+    ticket_ids = fields.Many2many(
+        string = 'Tickets',
+        comodel_name = "helpdesk.ticket",
+        default = lambda self: self._default_ticket_ids(),
+        help = "",
+    )
+
+    def confirmarCerrados(self):
+        _logger.info("CerrarTickets.confirmar()")
+
+        for ticket in self.ticket_ids:
+            ticket.write({'stage_id': 18})
+            self.env['helpdesk.diagnostico'].create({
+                                                        'ticketRelacion': ticket.id,
+                                                        'estadoTicket': ticke.stage_id.name,
+                                                        'write_uid':  self.env.user.name,
+                                                        'comentario': 'Cierre de ticket que esta cerrado en techra.' ,
+                                                        'creadoPorSistema': True
+                                                    })
+
+
+
 
 class CancelarSolTonerMassAction(TransientModel):
     _name = 'helpdesk.cancelar.tickets.toner'
