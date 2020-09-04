@@ -895,6 +895,10 @@ class helpdesk_crearconserie(TransientModel):
     textoClienteMoroso = fields.Text(string = ' ', store = True)
     textoDistribuidor = fields.Text(string = ' ', store = True)
 
+    esProspecto = fields.Boolean(string = '¿Es ticket de cliente prospecto?', default = False)
+    clienteProspectoText = fields.Text(string = 'Nombre del cliente prospecto')
+    comentarioClienteProspecto = fields.Text(string = 'Comentario cliente prospecto')
+
     estatus = fields.Selection([('No disponible','No disponible'),('Moroso','Moroso'),('Al corriente','Al corriente')], string = 'Estatus', store = True, default = 'No disponible')
 
     def abrirTicket(self):
@@ -1282,6 +1286,32 @@ class helpdesk_crearconserie(TransientModel):
         """
         #for equipoRelacionado in equiposRelacionados:
         #    if equipoRelacionado == 
+
+        if self.esProspecto:
+            ticket = self.env['helpdesk.ticket'].create({
+                                                            'stage_id': 89,
+                                                            'team_id': equipoDeUsuario,
+                                                            'esProspecto': True,
+                                                            'clienteProspectoText': self.clienteProspectoText,
+                                                            'comentarioClienteProspecto': self.comentarioClienteProspecto
+                                                })
+            mensajeTitulo = "Ticket generado!!!"
+            #mensajeCuerpo = "Se creo el ticket '" + str(ticket.id) + "' sin número de serie para cliente " + self.cliente + " con localidad " + self.localidad + "\n\n"
+            mensajeCuerpo = "Se creo el ticket '" + str(ticket.id) + "' para " + self.clienteProspectoText + ". \nTicket de cliente prospecto\n\n"
+            wiz = self.env['helpdesk.alerta.series'].create({'ticket_id': ticket.id, 'mensaje': mensajeCuerpo})
+            view = self.env.ref('helpdesk_update.view_helpdesk_alerta_series')
+            return {
+                      'name': _(mensajeTitulo),
+                      'type': 'ir.actions.act_window',
+                      'view_type': 'form',
+                      'view_mode': 'form',
+                      'res_model': 'helpdesk.alerta.series',
+                      'views': [(view.id, 'form')],
+                      'view_id': view.id,
+                      'target': 'new',
+                      'res_id': wiz.id,
+                      'context': self.env.context,
+            }
 
         if self.serie:
 

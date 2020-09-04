@@ -758,14 +758,27 @@
         <field name="arch" type="xml">
             <form string="Crear">
                 <group>
+                    <group>
+                        <field name='esProspecto' />
+                    </group>
+                </group>
+                <group attrs='{"invisible": [["esProspecto", "=", True]] } '>
                     <group string='Buscar por serie'>
                         <field name='serie' widget='many2many_tags' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" force_save = "1"/>
                     </group>
                     <group string='Buscar por cliente y localidad'>
                         <field name='clienteRelacion' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain='[["x_studio_activo_1", "=", True]]' force_save = "1" widget="res_partner_many2one" />
                         <field name='localidadRelacion' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain='[["parent_id.id","=",idCliente],["type","=","delivery"]]' force_save = "1"/>
-                        <field name='contactoInterno' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain='[["parent_id.id", "=", idLocaliidad],["type", "=", "contact"]]' attrs='{"invisible": [["localidad","!=","CORPORATIVO"]]}' force_save = '1'/> 
+                        <field name='contactoInterno' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain='[["parent_id.id", "=", idLocaliidad],["type", "=", "contact"]]' attrs='{"invisible": [["localidad","!=","CORPORATIVO"]]}' force_save = '1'/>
                         <!--<field name='localidadRelacion' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain='[["parent_id.id","=",idCliente],"|",["type","=","delivery"], ["type","=","contact"]]' force_save = "1"/>-->
+                    </group>
+                </group>
+                <group string='Información' attrs='{"invisible": [["esProspecto", "=", False]] } '>
+                    <group >
+                        <field name='clienteProspectoText' />
+                    </group>
+                    <group >
+                        <field name='comentarioClienteProspecto' />
                     </group>
                 </group>
                 
@@ -782,12 +795,12 @@
                     <field name='textoDistribuidor' readonly='1' widget='html' force_save='1' /> 
                 </group>
 
-                <group>
+                <group attrs='{"invisible": [["esProspecto", "=", True]] } '>
                     <group class='text-center' string = 'Datos de busqueda'>
                     </group>
                 </group>
 
-                <group>
+                <group attrs='{"invisible": [["esProspecto", "=", True]] } '>
                     <group string="Cliente y localidad">
                         <field name='cliente' readonly='1' force_save = "1"/>
                         <field name='idCliente' readonly='1' invisible='1' force_save = "1"/>
@@ -804,7 +817,7 @@
                         <field name='correoContactoLocalidad' readonly='1' force_save = "1"/>
                     </group>
                 </group>
-                <group>
+                <group attrs='{"invisible": [["esProspecto", "=", True]] } '>
                     <group string = 'Dirreción'>
                         <field name='direccionCalleNombre' readonly='1' force_save = "1"/>
                         <field name='direccionNumeroExterior' readonly='1' force_save = "1"/>
