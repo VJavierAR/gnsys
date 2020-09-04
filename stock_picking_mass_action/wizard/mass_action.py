@@ -372,6 +372,7 @@ class StockCambio(TransientModel):
         for s in equipos:
             d=self.env['stock.move.line'].search([['move_id','=',s.move_id.id]])
             d.write({'lot_id':s.serieOrigen.id})
+            s.serieOrigen.write({'servicio':self.pick.sale_id.x_studio_field_69Boh.id})
             self.pick.sale_id.write({'state':'assign'})
             f=f+"<tr>"
             f=f+"<td>"+str(s.serieOrigen.product_id.name)+"</td>"
