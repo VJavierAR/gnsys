@@ -1648,7 +1648,7 @@ class CerrarTicketsMassAction(TransientModel):
             ticket.write({'stage_id': 18})
             self.env['helpdesk.diagnostico'].create({
                                                         'ticketRelacion': ticket.id,
-                                                        'estadoTicket': ticke.stage_id.name,
+                                                        'estadoTicket': ticket.stage_id.name,
                                                         'write_uid':  self.env.user.name,
                                                         'comentario': 'Cierre de ticket que esta cerrado en techra.' ,
                                                         'creadoPorSistema': True
