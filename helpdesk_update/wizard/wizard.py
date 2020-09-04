@@ -24,7 +24,7 @@ class HelpDeskComentario(TransientModel):
 
 
     def creaComentario(self):
-      if self.ultimaEvidencia and (self.ticket_id.stage_id.id == 2 or self.ticket_id.stage_id.id == 13 or self.ticket_id.stage_id.id == 104):
+      if self.ultimaEvidencia:
           if self.evidencia:
             self.ticket_id.sudo().write({'stage_id': 3
                                 , 'team_id': 9
