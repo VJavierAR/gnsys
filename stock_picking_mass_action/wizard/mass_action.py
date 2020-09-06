@@ -368,19 +368,29 @@ class StockCambio(TransientModel):
 
                 
     def confirmarE(self,equipos):
+        fecha=datetime.datetime.now()-datetime.timedelta(hours=-5)
         f="<table class='table table-sm'><thead><tr><th>Modelo</th><th>Serie</th></thead><tbody>"
         for s in equipos:
             d=self.env['stock.move.line'].search([['move_id','=',s.move_id.id]])
-            d.write({'lot_id':s.serieOrigen.id})
-            s.serieOrigen.write({'servicio':self.pick.sale_id.x_studio_field_69Boh.id,'x_studio_cliente':self.pick.sale_id.partner_id.id,'x_studio_localidad_2':self.pick.sale_id.partner_shipping_id.id})
-            self.env['cliente.h'].create({'origen':self.pick.sale_id.warehouse_id.name,'destino':self.pick.sale_id.partner_shipping_id.name,'fecha':datetime.datetime.now(),'serie':s.serieOrigen.id})
+            d.write({'lot_id':s.serieOrigen.id})            
+            if(self.pick.sale_id.x_studio_tipo_de_solicitud=='Retiro'):
+                s.serieOrigen.write({'servicio':False,'x_studio_cliente':1,'x_studio_localidad_2':self.pick.sale_id.warehouse_id.x_studio_field_E0H1Z.id})
+                self.env['cliente.h'].create({'origen':self.pick.sale_id.partner_shipping_id.name,'destino':self.pick.sale_id.warehouse_id.name,'fecha':fecha,'serie':s.serieOrigen.id})
+            else:
+                s.serieOrigen.write({'servicio':self.pick.sale_id.x_studio_field_69Boh.id,'x_studio_cliente':self.pick.sale_id.partner_id.id,'x_studio_localidad_2':self.pick.sale_id.partner_shipping_id.id})
+                self.env['cliente.h'].create({'origen':self.pick.sale_id.warehouse_id.name,'destino':self.pick.sale_id.partner_shipping_id.name,'fecha':fecha,'serie':s.serieOrigen.id})
             f=f+"<tr>"
             f=f+"<td>"+str(s.serieOrigen.product_id.name)+"</td>"
             f=f+"<td>"+str(s.serieOrigen.name)+"</td>"
             f=f+"</tr>"
             self.env['dcas.dcas'].create({'porcentajeNegro':s.nivelNegro,'porcentajeAmarillo':s.nivelAmarillo,'porcentajeCian':s.nivelCian,'porcentajeMagenta':s.nivelMagenta,'contadorColor':s.contadorColor,'x_studio_toner_negro':1,'x_studio_toner_amarillo':1,'x_studio_toner_cian':1,'x_studio_toner_magenta':1,'contadorMono':s.contadorMono,'serie':s.serieOrigen.id,'fuente':'stock.production.lot'})
         f=f+"</tbody></table>"
-        self.pick.sale_id.write({'x_studio_series_retiro':f,'state':'assign'})
+        if(self.pick.sale_id.x_studio_tipo_de_solicitud in ['Arrendamiento','Venta','Backup']):
+            self.pick.sale_id.write({'x_studio_series_retiro':f,'state':'assign'})
+        else:
+            self.pick.sale_id.write({'state':'assign'})
+
+
 
 
 
