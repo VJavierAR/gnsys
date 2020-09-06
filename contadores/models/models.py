@@ -1347,14 +1347,12 @@ class contadores_lines(models.Model):
         if(self.destino and (self.tipo=='1' or self.tipo=='3')):
             origen2=self.env['stock.warehouse'].search([('x_studio_field_E0H1Z','=',self.origen.id)])
             destino2=self.env['stock.warehouse'].search([('x_studio_field_E0H1Z','=',self.destino.id)])
-            self.env['stock.move.line'].create({'product_id':self.serie.product_id.id, 'product_uom_id':1,'location_id':origen2.lot_stock_id.id,'product_uom_qty':1,'lot_id':self.serie.id
+            self.env['stock.move.line'].create({'product_id':self.serie.product_id.id, 'product_uom_id':1,'location_id':origen2.lot_stock_id.id if(origen2.lot_stock_id.id) else 12,'product_uom_qty':1,'lot_id':self.serie.id
                                                 ,'date':datetime.datetime.now(),'location_dest_id':destino2.lot_stock_id.id})
             destino2.lot_stock_id.write({'x_studio_field_JoD2k':destino2.id})
             self.serie.write({'x_studio_cliente':self.destino.parent_id.id,'x_studio_localidad_2':self.destino.id})
             self.serie.x_studio_cambio = not self.serie.x_studio_cambio
             self.estado='2'
-            #self.serie.x_studio_ubicacion_id=destino2.lot_stock_id.id
-
 
             
             
