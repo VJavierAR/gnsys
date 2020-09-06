@@ -365,8 +365,6 @@ class StockCambio(TransientModel):
                         d.move_id.write({'location_id':d.almacen.lot_stock_id.id})
             self.pick.action_assign()
 
-
-                
     def confirmarE(self,equipos):
         fecha=datetime.datetime.now()-datetime.timedelta(hours=-5)
         f="<table class='table table-sm'><thead><tr><th>Modelo</th><th>Serie</th></thead><tbody>"
