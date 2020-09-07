@@ -5852,7 +5852,7 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
         if self.productos:
             self.ticket_id.x_studio_productos = [(6, 0, self.productos.ids)]
         
-        if self.ticket_id.x_studio_field_nO7Xg and (self.ticket_id.stage_id.id != 3 or self.ticket_id.stage_id.id != 18 or self.ticket_id.stage_id.id != 4): #and len(self.ticket_id.x_studio_productos) > len(self.ticket_id.x_studio_field_nO7Xg.order_line):
+        if self.ticket_id.x_studio_field_nO7Xg:# and (self.ticket_id.stage_id.id != 3 or self.ticket_id.stage_id.id != 18 or self.ticket_id.stage_id.id != 4): #and len(self.ticket_id.x_studio_productos) > len(self.ticket_id.x_studio_field_nO7Xg.order_line):
             _logger.info('3312: inicio actualización refacciones sobre la misma so(): ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
             idsRefaccionesSolicitud = []
             seActualizoUnaCantidad = False
@@ -5909,9 +5909,9 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                 comentarioGenerico = comentarioGenerico + str(self.comentario)
             else:
                 comentarioGenerico = comentarioGenerico
-            #self.ticket_id.write({
-            #                        'stage_id': 102
-            #                    })
+            self.ticket_id.write({
+                                    'stage_id': 102
+                                })
             self.env['helpdesk.diagnostico'].create({
                                                         'ticketRelacion': self.ticket_id.id,
                                                         'comentario': comentarioGenerico,

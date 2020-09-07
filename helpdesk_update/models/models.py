@@ -1693,7 +1693,7 @@ class helpdesk_update(models.Model):
             ss = self.env.cr.execute(query)
             self.estadoSolicitudDeRefaccion = True
             comentarioGenerico = 'Cambio de ' + estadoAntes +' a solicitud de refacción. Cambio generado por ' + str(self.env.user.name) + '.\nEl día ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S")) + '.\n\n'
-            self.env['helpdesk.diagnostico'].sudo().create({
+            self.env['helpdesk.diagnostico'].sudo().with_env(self.env(user=self.env.user.id)).create({
                                                                 'ticketRelacion': self.id,
                                                                 'comentario': comentarioGenerico,
                                                                 'estadoTicket': 'Pendiente por autorizar solicitud',

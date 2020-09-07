@@ -9,48 +9,45 @@
         
 
 
-        <template id='confirmacón_refacciones' name='Conirmacion de la creación y validación de una solicitud'>
+        <template id='vista_tecnicos' name='Vista técnicos'>
             <t t-call='website.layout'>
                 <div class='container p-3'>
                     <div class='row'> 
                         <div class='col-sm-12 text-center'>
-                            <h3>Se aprobarón los siguientes tickets</h3>
+                            <h3>Tickets de tecnicos</h3>
                         </div>
                     </div>
-                    <div class='row'> 
+                    <div class='row'>
                         
                         <table class="table">
                             <thead class="thead-dark">
                                 <tr>
-                                    <th scope="col">First</th>
-                                    <th scope="col">Last</th>
-                                    <th scope="col">Handle</th>
+                                    <th scope="col">Fecha de creación de ticket</th>
+                                    <th scope="col">Número de ticket</th>
+                                    <th scope="col">Etapa de ticket</th>
+                                    <th scope="col">Tipo de reporte</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Mark</td>
-                                    <td>Otto</td>
-                                    <td>@mdo</td>
-                                </tr>
-                                <tr>
-                              
-                                    <td>Jacob</td>
-                                    <td>Thornton</td>
-                                    <td>@fat</td>
-                                </tr>
-                                <tr>
-                                    <td>Larry</td>
-                                    <td>the Bird</td>
-                                    <td>@twitter</td>
-                                </tr>
+                                <t t-foreach='tickets' t-as='ticket'>
+                                    <tr>
+                                        <td>
+                                            <span t-esc='ticket.create_date' />
+                                        </td>
+                                        <td>
+                                            <span t-esc='ticket.id' />
+                                        </td>
+                                        <td>
+                                            <span t-esc='ticket.stage_id.name' />
+                                        </td>
+                                        <td>
+                                            <span t-esc='ticket.x_studio_tipo_de_vale' />
+                                        </td>
+                                    </tr>
+                                </t>
                             </tbody>
                         </table>
-
-
                     </div>
-
-
                     <div class='row'> 
                         <div class='col-sm-12'>
                         </div>
@@ -62,6 +59,8 @@
                 </div>
             </t>
         </template>
+
+
 
 
         <!-- <template id="listing"> -->
