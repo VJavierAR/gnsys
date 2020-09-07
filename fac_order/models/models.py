@@ -58,7 +58,7 @@ class fac_order(models.Model):
                pbn=12290
                pcolor=12288
                rentaG=12294
-               rentaE=12395
+               rentaE=12292
                spc=12296
                tfs=12298
                sm=12300
