@@ -24,23 +24,41 @@ class HelpDeskComentario(TransientModel):
 
 
     def creaComentario(self):
+      if self.ultimaEvidencia and (self.ticket_id.stage_id.id == 18 or self.ticket_id.stage_id.id == 4):
+            mensajeTitulo = 'No es posible cambiar a resuelto.'
+            mensajeCuerpo = 'Se intento cambiar al estado Resuelto al seleccionar la casilla última evidencia, pero no se logro realizar el cambio ya que el ticket debe de estar en un estado distinto a Cerrado o Cancelado. Estado actual: ' + str(self.ticket_id.stage_id.name)
+            wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
+            view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+            return {
+                        'name': _(mensajeTitulo),
+                        'type': 'ir.actions.act_window',
+                        'view_type': 'form',
+                        'view_mode': 'form',
+                        'res_model': 'helpdesk.alerta',
+                        'views': [(view.id, 'form')],
+                        'view_id': view.id,
+                        'target': 'new',
+                        'res_id': wiz.id,
+                        'context': self.env.context,
+                    }
       if self.ultimaEvidencia:
           if self.evidencia:
             self.ticket_id.sudo().write({'stage_id': 3
-                                , 'team_id': 9
+                                #, 'team_id': 9
                                 })
-            idDiagnostico = self.env['helpdesk.diagnostico'].sudo().create({'ticketRelacion': self.ticket_id.id
+            idDiagnostico = self.env['helpdesk.diagnostico'].sudo().with_env(self.env(user=self.env.user.id)).create({'ticketRelacion': self.ticket_id.id
                                                 ,'comentario': self.comentario
                                                 ,'estadoTicket': self.ticket_id.stage_id.name
                                                 ,'evidencia': [(6,0,self.evidencia.ids)]
                                                 ,'mostrarComentario': self.check,
                                                 'creadoPorSistema': False,
-                                                'write_uid':  self.env.user.name
+                                                'write_uid':  self.env.user.name,
+                                                'create_uid': self.env.user.name
                                                 })
-            idDiagnostico.write({
-                                'write_uid': self.env.user.id,
-                                'create_uid': self.env.user.id
-                            })
+            #idDiagnostico.write({
+            #                    'write_uid': self.env.user.name,
+            #                    'create_uid': self.env.user.id
+            #                })
             if self.editarZona:
                 self.ticket_id.write({'x_studio_zona': self.zona
                                     , 'x_studio_field_6furK': self.zona
@@ -75,12 +93,13 @@ class HelpDeskComentario(TransientModel):
                                                 ,'evidencia': [(6,0,self.evidencia.ids)]
                                                 ,'mostrarComentario': self.check,
                                                 'creadoPorSistema': False,
-                                                'write_uid':  self.env.user.name
+                                                'write_uid':  self.env.user.name,
+                                                'create_uid': self.env.user.name
                                                 })
-        idDiagnostico.write({
-                                'write_uid': self.env.user.id,
-                                'create_uid': self.env.user.id
-                            })
+        #idDiagnostico.write({
+        #                        'write_uid': self.env.user.name,
+        #                        'create_uid': self.env.user.id
+        #                    })
         if self.editarZona:
             self.ticket_id.write({'x_studio_zona': self.zona
                                 , 'x_studio_field_6furK': self.zona
