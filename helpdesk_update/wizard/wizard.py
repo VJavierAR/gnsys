@@ -5873,7 +5873,12 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
             mensajeCuerpo = 'Refaccione(s) y/o accesorio(s) agregados a la Solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) +'.\n\nSe agregaron las refacciones y/o accesorios: '
             refaccionesTextTemp = ''
             fuenteDca = 'stock.production.lot'
+            #forma odoo
             dcaObj = self.env['dcas.dcas'].search([('x_studio_tickett', '=', self.ticket_id.id),('fuente', '=', fuenteDca)], order = 'create_date desc', limit = 1)
+            #forma techra
+            if not dcaObj:
+                dcaObj = self.env['dcas.dcas'].search([('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie_1.name),('fuente', '=', fuenteDca)], order = 'x_studio_fecha desc', limit = 1)
+            _logger.info('aaaaaaaaaaa dcaObj: ' + str(dcaObj))
             for refaccion in self.ticket_id.x_studio_productos:
                 if not refaccion.product_variant_id.id in idsRefaccionesSolicitud:
                     datosr = {
@@ -5890,6 +5895,7 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                     mensajeCuerpo = mensajeCuerpo + str(refaccion.product_variant_id.name) + ', '
                     refaccionesTextTemp = 'Refacción y/o accesorio: ' + str(refaccion.product_variant_id.display_name) + '. Descripción: ' + str(refaccion.description) + '.\n'
                     if dcaObj:
+                        _logger.info('inicio: Se esta creando el historico de componente')
                         self.env['x_studio_historico_de_componentes'].create({
                                                                                 'x_studio_cantidad': refaccion.x_studio_cantidad_pedida,
                                                                                 'x_studio_field_MH4DO': self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id,
@@ -5902,6 +5908,17 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                                                                                 #'x_studio_field_gKQ9k': self.,
                                                                                 #'x_studio_modelo': self.,
                                                                             })
+                        _logger.info('fin: Se esta creando el historico de componente')
+                    else:
+                        _logger.info('inicio: Se esta creando el historico de componente')
+                        self.env['x_studio_historico_de_componentes'].create({
+                                                                                'x_studio_cantidad': refaccion.x_studio_cantidad_pedida,
+                                                                                'x_studio_field_MH4DO': self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id,
+                                                                                'x_studio_ticket': str(self.ticket_id.id),
+                                                                                'x_studio_fecha_de_entrega': datetime.datetime.now(),
+                                                                                'x_studio_modelo': refaccionesTextTemp
+                                                                            })
+                        _logger.info('fin: Se esta creando el historico de componente')
             comentarioGenerico = 'Solicitud de refacción autorizada por ' + str(self.env.user.name) + '.\nEl día ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S")) + '.\n\n' + mensajeCuerpo + '.\n\n'
             if seActualizoUnaCantidad:
                 comentarioGenerico = comentarioGenerico + mensajeCantidadesEditadas
