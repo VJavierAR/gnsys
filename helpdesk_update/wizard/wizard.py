@@ -750,38 +750,54 @@ class helpdesk_contadores(TransientModel):
     @api.depends('ticket_id')
     def _compute_contadorBNMesa(self):
         if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
-            #if self.contadorBNActual == 0:
-            for serie in self.ticket_id.x_studio_equipo_por_nmero_de_serie:
-                self.contadorBNMesa = int(serie.x_studio_contador_bn_mesa)
-                self.contadorColorMesa = int(serie.x_studio_contador_color_mesa)
-                self.bnColor = serie.x_studio_color_bn
-            #else:
-            #    self.contadorBNMesa = self.contadorBNActual
+            fuente = 'stock.production.lot'
+            ultimoDcaStockProductionLot = self.env['dcas.dcas'].search([['fuente', '=', fuente],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+            if ultimoDcaStockProductionLot:
+                self.contadorBNMesa = int(ultimoDcaStockProductionLot.contadorMono)
+                self.contadorColorMesa = int(ultimoDcaStockProductionLot.contadorColor)
+                self.bnColor = ultimoDcaStockProductionLot.x_studio_color_o_bn
+            #for serie in self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+            #    self.contadorBNMesa = int(serie.x_studio_contador_bn_mesa)
+            #    self.contadorColorMesa = int(serie.x_studio_contador_color_mesa)
+            #    self.bnColor = serie.x_studio_color_bn
 
     def _compute_actualizaColor(self):
-      for record in self:
-        for serie in record.ticket_id.x_studio_equipo_por_nmero_de_serie:
-            record.bnColor = str(serie.x_studio_color_bn)
+      if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+            fuente = 'stock.production.lot'
+            ultimoDcaStockProductionLot = self.env['dcas.dcas'].search([['fuente', '=', fuente],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+            if ultimoDcaStockProductionLot:
+                self.bnColor = ultimoDcaStockProductionLot.x_studio_color_o_bn
+      #for record in self:
+      #  for serie in record.ticket_id.x_studio_equipo_por_nmero_de_serie:
+      #      record.bnColor = str(serie.x_studio_color_bn)
 
     def _compute_actualizaContadorColorMesa(self):
-        for serie in self.ticket_id.x_studio_equipo_por_nmero_de_serie:
-            self.contadorColorMesa = int(serie.x_studio_contador_color_mesa)
+        if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+            fuente = 'stock.production.lot'
+            ultimoDcaStockProductionLot = self.env['dcas.dcas'].search([['fuente', '=', fuente],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+            if ultimoDcaStockProductionLot:
+                self.contadorColorMesa = int(ultimoDcaStockProductionLot.contadorColor)
+                self.bnColor = ultimoDcaStockProductionLot.x_studio_color_o_bn
+        #for serie in self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+        #    self.contadorColorMesa = int(serie.x_studio_contador_color_mesa)
     
-    def modificarContadores(self):          
-        for c in self.ticket_id.x_studio_equipo_por_nmero_de_serie:                                       
-            q = 'stock.production.lot'              
-            if str(c.x_studio_color_bn) == 'B/N':
-                if int(self.contadorBNActual) >= int(c.x_studio_contador_bn):
-                    negrot = c.x_studio_contador_bn_mesa
-                    colort = c.x_studio_contador_color_mesa
-                    rr = self.env['dcas.dcas'].create({'serie' : c.id
-                                                    , 'contadorMono' : self.contadorBNActual
-                                                    #, 'x_studio_contador_color_anterior':colort
-                                                    #, 'contadorColor' :self.contadorColorMesa
-                                                    , 'x_studio_tickett':self.ticket_id.id
-                                                    , 'x_studio_contador_mono_anterior_1':negrot  
-                                                    , 'fuente':q
-                                                  })                  
+    def modificarContadores(self):
+        if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+            fuente = 'stock.production.lot'
+            ultimoDcaStockProductionLot = self.env['dcas.dcas'].search([['fuente', '=', fuente],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+        #for c in self.ticket_id.x_studio_equipo_por_nmero_de_serie:                                       
+            q = 'stock.production.lot'
+            if self.bnColor == 'B/N':
+                if int(self.contadorBNActual) >= int(self.contadorBNMesa):
+                    negrot = self.contadorBNMesa
+                    #colort = c.x_studio_contador_color_mesa
+                    rr = self.env['dcas.dcas'].create({
+                                                        'serie' : self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id, 
+                                                        'contadorMono' : self.contadorBNActual,
+                                                        'x_studio_tickett':self.ticket_id.id,
+                                                        'x_studio_contador_mono_anterior_1':negrot,
+                                                        'fuente': fuente
+                                                    })                 
                     self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.ticket_id.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario': 'Contador BN anterior: ' + str(negrot) + '\nContador BN capturado: ' + str(self.contadorBNActual)})
                     self.ticket_id.write({'contadores_anteriores': '</br>Equipo BN o Color: ' + str(self.bnColor) + ' </br></br>Contador BN: ' + str(self.contadorBNActual) + '</br></br>Contador Color: ' + str(self.contadorColorMesa)
                                         , 'x_studio_contador_bn': int(negrot)
@@ -810,24 +826,32 @@ class helpdesk_contadores(TransientModel):
                             }
                 else:
                     raise exceptions.ValidationError("Contador Monocromatico Menor")                                   
-            if str(c.x_studio_color_bn) != 'B/N':
-                if int(self.contadorColorMesa) >= int(c.x_studio_contador_color) and int(self.contadorBNActual) >= int(c.x_studio_contador_bn):                      
-                    if self.ticket_id.team_id.id == 8:
-                        negrot = c.x_studio_contador_bn
-                        colort = c.x_studio_contador_color
-                    else:
-                        negrot = c.x_studio_contador_bn_mesa
-                        colort = c.x_studio_contador_color_mesa
-                    rr=self.env['dcas.dcas'].create({'serie' : c.id
-                                                    , 'contadorMono' : self.contadorBNActual
-                                                    ,'x_studio_contador_color_anterior':colort
-                                                    , 'contadorColor' :self.contadorColorActual
-                                                    ,'x_studio_tickett':self.ticket_id.id
-                                                    ,'x_studio_contador_mono_anterior_1':negrot
-                                                    ,'fuente':q
-                                                  }) 
+            if self.bnColor != 'B/N':
+                if int(self.contadorColorActual) >= int(self.contadorColorMesa) and int(self.contadorBNActual) >= int(self.contadorBNMesa):                      
+                    #if self.ticket_id.team_id.id == 8:
+                    #    negrot = c.x_studio_contador_bn
+                    #    colort = c.x_studio_contador_color
+                    #else:
+                    negrot = self.contadorBNMesa
+                    colort = self.contadorColorMesa
+                    rr=self.env['dcas.dcas'].create({
+                                                        'serie': self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id,
+                                                        'contadorMono': self.contadorBNActual,
+                                                        'x_studio_contador_color_anterior': colort,
+                                                        'contadorColor': self.contadorColorActual,
+                                                        'x_studio_tickett': self.ticket_id.id,
+                                                        'x_studio_contador_mono_anterior_1': negrot,
+                                                        'fuente': fuente
+                                                  })
+                    #query = 'update dcas_dcas set \"x_studio_contador_mono_anterior_1\" = ' + str(negrot) + ', \"x_studio_contador_color_anterior\" = ' str(colort) + ' where id = ' rr.id + ';'
+                    #self.env.cr.execute(query)
+                    #self.env.cr.commit()
+                    #rr.write({
+                    #            'x_studio_contador_color_anterior': colort,
+                    #            'x_studio_contador_mono_anterior_1': negrot,
+                    #        })
                     self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.ticket_id.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario': 'Contador BN anterior: ' + str(negrot) + '\nContador BN capturado: ' + str(self.contadorBNActual) + '\nContador color anterior: ' + str(colort) + '\nContador color capturado: ' + str(self.contadorColorActual)})
-                    self.ticket_id.write({'contadores_anteriores': '</br>Equipo BN o Color: ' + str(self.bnColor) + ' </br></br>Contador BN: ' + str(self.contadorBNActual) + '</br></br>Contador Color: ' + str(self.contadorColorMesa)
+                    self.ticket_id.write({'contadores_anteriores': '</br>Equipo BN o Color: ' + str(self.bnColor) + ' </br></br>Contador BN: ' + str(self.contadorBNActual) + '</br></br>Contador Color: ' + str(self.contadorColorActual)
                                         , 'x_studio_contador_bn': int(negrot)
                                         , 'x_studio_contador_bn_a_capturar': int(self.contadorBNActual)
                                         , 'x_studio_contador_color': int(colort)
@@ -5199,18 +5223,13 @@ class helpdesk_editar_contadores_mesa(TransientModel):
             ultimoDcaStockProductionLot = self.env['dcas.dcas'].search([['fuente', '=', fuente],['serie', '=', record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
             if ultimoDcaStockProductionLot:
                 record.contadorMonoActual = ultimoDcaStockProductionLot.contadorMono
-            #if record.ticket_id.x_studio_equipo_por_nmero_de_serie:
-            #    record.contadorMonoActual = record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_bn_mesa
-            
 
     def _compute_contador_color_actual(self):
         for record in self:
             fuente = 'stock.production.lot'
             ultimoDcaStockProductionLot = self.env['dcas.dcas'].search([['fuente', '=', fuente],['serie', '=', record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
             if ultimoDcaStockProductionLot:
-                record.contadorMonoActual = ultimoDcaStockProductionLot.contadorColor
-            #if record.ticket_id.x_studio_equipo_por_nmero_de_serie:
-            #    record.contadorColorActual = record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_color_mesa
+                record.contadorColorActual = ultimoDcaStockProductionLot.contadorColor
 
     def _compute_textoInformativo(self):
         q = 'stock.production.lot'
@@ -5413,26 +5432,22 @@ class helpdesk_editar_contadores_mesa(TransientModel):
 
 
     def editarContadores(self):
-        for c in self.ticket_id.x_studio_equipo_por_nmero_de_serie:
-            q = 'stock.production.lot'
-            if str(c.x_studio_color_bn) == 'B/N':
-                #if int(self.contadorBNActual) >= int(c.x_studio_contador_bn):
-                negrot = c.x_studio_contador_bn_mesa
-                colort = c.x_studio_contador_color_mesa
-                negroMesa = 0
-                colorMesa = 0
-                comentarioDeReinicio = """ """
+        #for c in self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+        if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+            fuente = 'stock.production.lot'
+            ultimoDcaStockProductionLot = self.env['dcas.dcas'].search([['fuente', '=', fuente],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
 
-                rr = ''
+            q = 'stock.production.lot'
+            if self.tipoEquipo == 'B/N':
+                comentarioDeReinicio = """ """
                 #Creando dca para mesa stock.production.lot
-                ultimoDcaCapturado = self.env['dcas.dcas'].search([['x_studio_tiquete', '=', self.ticket_id.id],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+                ultimoDcaCapturado = self.env['dcas.dcas'].search([['x_studio_tickett', '=', self.ticket_id.id],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
                 if ultimoDcaCapturado:
                     ultimoDcaCapturado.write({
-                                                        'contadorMono': self.contadorMonoActualizado
-                                                    })
-                
-                tipoEquipoTemp = str(c.x_studio_color_bn)
-                nombreSerieTemp = c.name
+                                                'contadorMono': self.contadorMonoActualizado
+                                            })
+                tipoEquipoTemp = str(self.tipoEquipo)
+                nombreSerieTemp = self.serieSeleccionada
                 idTicketTemp = str(self.ticket_id.id)
                 fechaCreacionTemp = str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") )
                 nombreUsuarioTemp = self.env.user.name
@@ -5440,7 +5455,6 @@ class helpdesk_editar_contadores_mesa(TransientModel):
                 contadorAnteriorColorTemp = str(self.contadorColorActual)
                 comentarioDeReinicio = self.comentarioDeReinicio(tipoEquipoTemp, nombreSerieTemp, idTicketTemp, fechaCreacionTemp, nombreUsuarioTemp, contadorAnteriorNegroTemp, contadorAnteriorColorTemp)
                 ultimoDcaCapturado.write({'comentarioDeReinicio': comentarioDeReinicio})
-
                 self.env['helpdesk.diagnostico'].create({
                                                             'ticketRelacion':self.ticket_id.x_studio_id_ticket,
                                                             'estadoTicket': 'Reinicio de contadores en el estado ' + self.estado,
@@ -5457,7 +5471,7 @@ class helpdesk_editar_contadores_mesa(TransientModel):
                                     , 'x_studio_contador_color_a_capturar': 0
                                     })
                 mensajeTitulo = "Contador actualizado!!!"
-                mensajeCuerpo = "Se edito el contador del equipo " + str(c.name) + "."
+                mensajeCuerpo = "Se edito el contador del equipo " + str(self.serieSeleccionada) + "."
                 wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
                 view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
                 return {
@@ -5473,31 +5487,16 @@ class helpdesk_editar_contadores_mesa(TransientModel):
                         'context': self.env.context,
                         }
                 
-            if str(c.x_studio_color_bn) != 'B/N':
-                #if int(self.contadorColorMesa) >= int(c.x_studio_contador_color) and int(self.contadorBNActual) >= int(c.x_studio_contador_bn):                      
-                if self.ticket_id.team_id.id == 8:
-                    negrot = c.x_studio_contador_bn
-                    colort = c.x_studio_contador_color
-                else:
-                    negrot = c.x_studio_contador_bn_mesa
-                    colort = c.x_studio_contador_color_mesa
-
-                negroMesa = 0
-                colorMesa = 0
+            if self.tipoEquipo != 'B/N':
                 comentarioDeReinicio = """ """
-
-                rr = ''
-                dcaFuente = ''
-                mesaFuente = ''
-                tfsFuente = ''
-                ultimoDcaCapturado = self.env['dcas.dcas'].search([['x_studio_tiquete', '=', self.ticket_id.id],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)                
+                ultimoDcaCapturado = self.env['dcas.dcas'].search([['x_studio_tickett', '=', self.ticket_id.id],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)                
                 if ultimoDcaCapturado:
                     ultimoDcaCapturado.write({
                                                 'contadorColor': self.contadorColorActualizado,
                                                 'contadorMono': self.contadorMonoActualizado
                                             })
-                tipoEquipoTemp = str(c.x_studio_color_bn)
-                nombreSerieTemp = c.name
+                tipoEquipoTemp = str(self.tipoEquipo)
+                nombreSerieTemp = self.serieSeleccionada
                 idTicketTemp = str(self.ticket_id.id)
                 fechaCreacionTemp = str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") )
                 nombreUsuarioTemp = self.env.user.name
@@ -5522,7 +5521,7 @@ class helpdesk_editar_contadores_mesa(TransientModel):
                                     , 'x_studio_contador_color_a_capturar': int(self.contadorColorActualizado)
                                     })
                 mensajeTitulo = "Contador actualizado!!!"
-                mensajeCuerpo = "Se edito el contador del equipo " + str(c.name) + "."
+                mensajeCuerpo = "Se edito el contador del equipo " + str(self.serieSeleccionada) + "."
                 wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
                 view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
                 return {
