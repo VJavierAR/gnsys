@@ -5877,7 +5877,7 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
             dcaObj = self.env['dcas.dcas'].search([('x_studio_tickett', '=', self.ticket_id.id),('fuente', '=', fuenteDca)], order = 'create_date desc', limit = 1)
             #forma techra
             if not dcaObj:
-                dcaObj = self.env['dcas.dcas'].search([('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie_1.name),('fuente', '=', fuenteDca)], order = 'x_studio_fecha desc', limit = 1)
+                dcaObj = self.env['dcas.dcas'].search([('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].name),('fuente', '=', fuenteDca)], order = 'x_studio_fecha desc', limit = 1)
             _logger.info('aaaaaaaaaaa dcaObj: ' + str(dcaObj))
             for refaccion in self.ticket_id.x_studio_productos:
                 if not refaccion.product_variant_id.id in idsRefaccionesSolicitud:
@@ -5895,7 +5895,7 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                     mensajeCuerpo = mensajeCuerpo + str(refaccion.product_variant_id.name) + ', '
                     refaccionesTextTemp = 'Refacción y/o accesorio: ' + str(refaccion.product_variant_id.display_name) + '. Descripción: ' + str(refaccion.description) + '.\n'
                     if dcaObj:
-                        _logger.info('inicio: Se esta creando el historico de componente')
+                        _logger.info('inicio: Se esta creando el historico de componente con dcaObj existente')
                         self.env['x_studio_historico_de_componentes'].create({
                                                                                 'x_studio_cantidad': refaccion.x_studio_cantidad_pedida,
                                                                                 'x_studio_field_MH4DO': self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id,
@@ -5908,7 +5908,7 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                                                                                 #'x_studio_field_gKQ9k': self.,
                                                                                 #'x_studio_modelo': self.,
                                                                             })
-                        _logger.info('fin: Se esta creando el historico de componente')
+                        _logger.info('fin: Se esta creando el historico de componente con dcaObj existente')
                     else:
                         _logger.info('inicio: Se esta creando el historico de componente')
                         self.env['x_studio_historico_de_componentes'].create({
