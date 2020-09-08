@@ -4089,19 +4089,19 @@ class HelpdeskTicketReporte(TransientModel):
             i.pop(0)
 
         _logger.info('3312: filtro reporte: ' + str(i))
+        d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc')
         if self.mostrarCerrados and self.mostrarCancelados:
             if self.mostrarCerrados and not self.mostrarCancelados:
-                d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x:  x.stage_id.id != 4)
+                d = d.filtered(lambda x:  x.stage_id.id != 4 )
             if self.mostrarCancelados and not self.mostrarCerrados:
-                d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x:  x.stage_id.id != 18 )
+                d = d.filtered(lambda x:  x.stage_id.id != 18 )
             #if self.mostrarCerrados and self.mostrarCancelados:
-            #    d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x:  x.stage_id.id == 18 and x.stage_id.id == 4 )    
+            #    d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x:  x.stage_id.id == 18 and x.stage_id.id == 4 )
         else:
             _logger.info('entre ultimo caso')
-            d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x:  x.stage_id.id != 18 and x.stage_id.id != 4 )
-
+            d = d.filtered(lambda x:  x.stage_id.id != 18 and x.stage_id.id != 4 )
         if self.area:
-            d = d.filtered(lambda x: (x.team_id.id in self.area.ids ))
+            d = d.filtered(lambda x: (x.team_id.id in self.area.ids) )
         if self.clienteRelacion:
             d = d.filtered(lambda x: (x.partner_id.id in self.clienteRelacion.ids) )
         #_logger.info('fecha inicial: ' + str(self.fechaInicial))
