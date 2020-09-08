@@ -4090,25 +4090,31 @@ class HelpdeskTicketReporte(TransientModel):
 
         _logger.info('3312: filtro reporte: ' + str(i))
         d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc')
+        _logger.info('d: '+ str(len(d)))
         if self.mostrarCerrados or self.mostrarCancelados:
             if self.mostrarCerrados and not self.mostrarCancelados:
                 d = d.filtered(lambda x:  x.stage_id.id != 4 )
             if self.mostrarCancelados and not self.mostrarCerrados:
                 d = d.filtered(lambda x:  x.stage_id.id != 18 )
+            _logger.info('d 2: '+ str(len(d)))
             #if self.mostrarCerrados and self.mostrarCancelados:
             #    d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x:  x.stage_id.id == 18 and x.stage_id.id == 4 )
         else:
             _logger.info('entre ultimo caso')
             d = d.filtered(lambda x:  x.stage_id.id != 18 and x.stage_id.id != 4 )
+        _logger.info('d 3: '+ str(len(d)))
         if self.area:
             d = d.filtered(lambda x: (x.team_id.id in self.area.ids) )
+        _logger.info('d 4: '+ str(len(d)))
         if self.clienteRelacion:
             d = d.filtered(lambda x: (x.partner_id.id in self.clienteRelacion.ids) )
+        _logger.info('d 5: '+ str(len(d)))
         #_logger.info('fecha inicial: ' + str(self.fechaInicial))
         #_logger.info('datos: d: ' + str(d))
         d = d.filtered(lambda x: ( datetime.datetime.strptime(x.create_date.strftime('%Y-%m-%d'), '%Y-%m-%d').date() >= self.fechaInicial and datetime.datetime.strptime(x.create_date.strftime('%Y-%m-%d'), '%Y-%m-%d').date() <= self.fechaFinal ))
         #_logger.info('datos: d final: ' + str(d))
         #d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x: len(x.x_studio_equipo_por_nmero_de_serie_1) > 0 or len(x.x_studio_equipo_por_nmero_de_serie) > 0)
+        _logger.info('d 6: '+ str(len(d)))
         if len(d) > 0:
             d[0].write({
                             'x_studio_arreglo': str(d.mapped('id'))
