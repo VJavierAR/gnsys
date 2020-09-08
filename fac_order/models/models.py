@@ -277,7 +277,7 @@ class fac_order(models.Model):
                               if m.nombreAnte=='Costo por página procesada BN o color':
                                  p=''
                                  if m.contrato.cliente.id==1108:
-                                    p=' Periodo ' + str(self.year) +' de ' +str(dict(self._fields['month'].selection).get(self.month))  
+                                    p=' Periodo ' + str(dict(self._fields['month'].selection).get(self.month)) +' de ' + str(self.year)  
                                  if k.x_studio_color_bn=='B/N':
                                     self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_excedente':'si','x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':pbn,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN})                                                    
                                  if k.x_studio_color_bn=='Color':
@@ -287,7 +287,7 @@ class fac_order(models.Model):
                               if m.nombreAnte=='Renta base + costo de página procesada BN o color':
                                  p=''
                                  if m.contrato.cliente.id==1108:
-                                    p=' MODELO '+str(k.product_id.name)+' Período ' + str(self.year) +' de ' +str(dict(self._fields['month'].selection).get(self.month))
+                                    p=' MODELO '+str(k.product_id.name)+' Período ' + str(dict(self._fields['month'].selection).get(self.month)) +' de ' + str(self.year)
                                  if k.x_studio_color_bn=='B/N':
                                     self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_excedente':'si','x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':pbn,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN,'name':'(82121500) PAGINAS IMPRESAS NEGRO :'+str(bnp)+' NEGRO INCLUYE ('+str(m.bolsaBN)+')  : SERIE:'+k.name+p })                                                    
                                  if k.x_studio_color_bn=='Color':
@@ -299,7 +299,7 @@ class fac_order(models.Model):
                                 if str(k.x_studio_estado)!='Back-up':
                                      p=''
                                      if m.contrato.cliente.id==1108:
-                                        p=' MODELO '+str(k.product_id.name)+' Período ' + str(self.year) +' de ' +str(dict(self._fields['month'].selection).get(self.month))
+                                        p=' MODELO '+str(k.product_id.name)+' Período ' + str(dict(self._fields['month'].selection).get(self.month)) +' de ' +str(self.year)
                                      if k.x_studio_color_bn=='B/N':
                                         if m.bolsaBN<bnp:
                                            bnp=bnp-m.bolsaBN
