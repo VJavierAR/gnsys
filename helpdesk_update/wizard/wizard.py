@@ -4089,17 +4089,13 @@ class HelpdeskTicketReporte(TransientModel):
             i.pop(0)
 
         _logger.info('3312: filtro reporte: ' + str(i))
-        if self.mostrarCerrados:
-            d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x:  x.stage_id.id == 18)
-        #(len(x.x_studio_equipo_por_nmero_de_serie_1) > 0 or len(x.x_studio_equipo_por_nmero_de_serie) > 0) and
-        else:
-            d = self.env['helpdesk.ticket'].search([], order = 'create_date asc').filtered(lambda x:  x.stage_id.id != 18 )
-        if self.mostrarCancelados:
-            d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x:  x.stage_id.id == 4 )
-        else:
-            d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x:  x.stage_id.id != 4 )
         if self.mostrarCerrados and self.mostrarCancelados:
-            d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x:  x.stage_id.id == 18 and x.stage_id.id == 4 )
+            if self.mostrarCerrados and not self.mostrarCancelados:
+                d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x:  x.stage_id.id != 4)
+            if self.mostrarCancelados and not self.mostrarCerrados:
+                d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x:  x.stage_id.id != 18 )
+            #if self.mostrarCerrados and self.mostrarCancelados:
+            #    d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x:  x.stage_id.id == 18 and x.stage_id.id == 4 )    
         else:
             _logger.info('entre ultimo caso')
             d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x:  x.stage_id.id != 18 and x.stage_id.id != 4 )
@@ -5909,9 +5905,6 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                                                                                 'x_studio_fecha_de_entrega': datetime.datetime.now(),
                                                                                 'x_studio_modelo': refaccionesTextTemp,
                                                                                 'x_studio_contador_bn': dcaObj.contadorMono
-                                                                                #'x_studio_numero_de_parte': refaccion.,
-                                                                                #'x_studio_field_gKQ9k': self.,
-                                                                                #'x_studio_modelo': self.,
                                                                             })
                         _logger.info('fin: Se esta creando el historico de componente con dcaObj existente')
                     else:
