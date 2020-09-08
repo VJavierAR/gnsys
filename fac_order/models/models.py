@@ -27,7 +27,21 @@ class fac_order(models.Model):
       excedente=fields.Text(string='Excedentes')
                              
      
-     
+      @api.onchange('month') 
+      def cambiaPeriodo(self):
+        lineas=self.order_line
+        nuevomes= str(dict(self._fields['month'].selection).get(self.month))
+        for l in lineas:
+            s=''
+            s=str(l.name)
+            if 'Período' in s:
+                ar=s.split('Período')
+                arr=ar[1].split(' ')
+                new=s.replace(arr[1],nuevomes)
+                l.write({'name':new})
+
+        
+        
       @api.multi
       def llamado_boton(self):
         for r in self:           
