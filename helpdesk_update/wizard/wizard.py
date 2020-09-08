@@ -5855,15 +5855,18 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
         
         if self.ticket_id.x_studio_field_nO7Xg:# and (self.ticket_id.stage_id.id != 3 or self.ticket_id.stage_id.id != 18 or self.ticket_id.stage_id.id != 4): #and len(self.ticket_id.x_studio_productos) > len(self.ticket_id.x_studio_field_nO7Xg.order_line):
             _logger.info('3312: inicio actualización refacciones sobre la misma so(): ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
+            refaccionesActualizadasCantidad = []
+            refaccionesNuevas = []
             idsRefaccionesSolicitud = []
             seActualizoUnaCantidad = False
             ruta = -1
             indiceRefaccionSo = 0
             mensajeCantidadesEditadas = '\nSe editaron las cantidades de las siguientes refacciones y/o accesorios: '
             for refaccion in self.ticket_id.x_studio_field_nO7Xg.order_line:
-                if int(refaccion.product_uom_qty) != int(self.ticket_id.x_studio_productos[indiceRefaccionSo].x_studio_cantidad_pedida):
+                if int(refaccion.product_uom_qty) != int(self.ticket_id.x_studio_productos[indiceRefaccionSo].x_studio_cantidad_pedida) and int(self.ticket_id.x_studio_productos[indiceRefaccionSo].x_studio_cantidad_pedida) != 0:
                     refaccion.product_uom_qty = int(self.ticket_id.x_studio_productos[indiceRefaccionSo].x_studio_cantidad_pedida)
-                    mensajeCantidadesEditadas = '\nRefacción y/o accesorio: ' + str(self.ticket_id.x_studio_productos[indiceRefaccionSo].product_variant_id.display_name) + ', cantidad: ' + str(self.ticket_id.x_studio_productos[indiceRefaccionSo].x_studio_cantidad_pedida)
+                    mensajeCantidadesEditadas = mensajeCantidadesEditadas + '\nRefacción y/o accesorio: ' + str(self.ticket_id.x_studio_productos[indiceRefaccionSo].product_variant_id.display_name) + ', cantidad: ' + str(self.ticket_id.x_studio_productos[indiceRefaccionSo].x_studio_cantidad_pedida)
+                    refaccionesActualizadasCantidad.append(self.ticket_id.x_studio_productos[indiceRefaccionSo])
                     seActualizoUnaCantidad = True
                 if refaccion.route_id and ruta == -1 and refaccion.route_id.id != -1:
                     ruta = refaccion.route_id.id
@@ -5895,6 +5898,7 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                     _logger.info('line: ' + str(line))
                     mensajeCuerpo = mensajeCuerpo + str(refaccion.product_variant_id.name) + ', '
                     refaccionesTextTemp = 'Refacción y/o accesorio: ' + str(refaccion.product_variant_id.display_name) + '. Descripción: ' + str(refaccion.description) + '.\n'
+                    refaccionesNuevas.append(refaccion)
                     if dcaObj:
                         _logger.info('inicio: Se esta creando el historico de componente con dcaObj existente')
                         self.env['x_studio_historico_de_componentes'].create({
