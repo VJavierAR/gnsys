@@ -5930,6 +5930,12 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
             self.ticket_id.write({
                                     'stage_id': 102
                                 })
+            idValidacion = self.env['helpdesk.validacion.so'].create({
+                                                                  'ticketRelacion': self.ticket_id.id,
+                                                                  'fechaDeValidacionSo': datetime.datetime.now(),
+                                                                  'refaccionesValidadas': comentarioGenerico
+                                                              })
+            self.ticket_id.write({'validacionesRefaccion': [(4, 0, idValidacion)] })
             self.env['helpdesk.diagnostico'].create({
                                                         'ticketRelacion': self.ticket_id.id,
                                                         'comentario': comentarioGenerico,
@@ -5987,6 +5993,13 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                     comentarioGenerico = comentarioGenerico + mensjaeValidados + '\n' + str(self.comentario)
                 else:
                     comentarioGenerico = comentarioGenerico + mensjaeValidados
+
+                idValidacion = self.env['helpdesk.validacion.so'].create({
+                                                                  'ticketRelacion': self.ticket_id.id,
+                                                                  'fechaDeValidacionSo': datetime.datetime.now(),
+                                                                  'refaccionesValidadas': mensjaeValidados
+                                                              })
+                self.ticket_id.write({'validacionesRefaccion': [(4, 0, idValidacion)] })
                 self.env['helpdesk.diagnostico'].create({
                                                             'ticketRelacion': self.ticket_id.id,
                                                             'comentario': comentarioGenerico,
