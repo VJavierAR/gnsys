@@ -209,11 +209,13 @@ class fac_order(models.Model):
                                                                  , 'x_studio_requiere_instalacin' : True                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
                                                                  , 'team_id' : 1
                                                                  , 'x_studio_factura':'si'
+                                                                 ,'month':self.month
+                                                                 ,'year':self.year
                                                                 })
-                      
+               self.env.cr.execute("insert into x_contrato_sale_order_rel (sale_order_id, contrato_id) values (" +str(fac.id) + ", " +  str(r.x_studio_contratosid).replace("[","").replace("]","") + ");")       
                self.excedente="<a href='https://gnsys-corp.odoo.com/web#id="+str(fac.id)+"&action=1167&model=sale.order&view_type=form&menu_id=406' target='_blank'>"+str(fac.name)+"</a>"
                for d in self.order_line:
-                   if d.x_studio_bolsa and d.x_studio_excedente == 'si':
+                   if d.x_studio_excedente == 'si':
                       #checar aqui los colores 
                       d.write({'order_id':fac.id})  
                       #self.env['sale.order.line'].create({'order_id': fac.id,'product_id':11396,'product_uom_qty':d.product_uom_qty,'price_unit':d.price_unit,'x_studio_bolsa':d.x_studio_bolsa})
