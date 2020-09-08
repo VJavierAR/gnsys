@@ -274,10 +274,10 @@ class fac_order(models.Model):
                                                                       })
                               if m.nombreAnte=='Costo por página procesada BN o color':
                                  if k.x_studio_color_bn=='B/N':
-                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':pbn,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN})                                                    
+                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_excedente':'si','x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':pbn,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN})                                                    
                                  if k.x_studio_color_bn=='Color':
-                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':pcolor,'product_uom_qty':colorp,'price_unit':m.clickExcedenteColor})                                                    
-                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':pbn,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN})                                                                                  
+                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_excedente':'si','x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':pcolor,'product_uom_qty':colorp,'price_unit':m.clickExcedenteColor})                                                    
+                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_excedente':'si','x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':pbn,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN})                                                                                  
                                  
                               if m.nombreAnte=='Renta base + costo de página procesada BN o color':
                                  if k.x_studio_color_bn=='B/N':
