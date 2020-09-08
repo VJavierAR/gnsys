@@ -4090,7 +4090,7 @@ class HelpdeskTicketReporte(TransientModel):
 
         _logger.info('3312: filtro reporte: ' + str(i))
         d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc')
-        if self.mostrarCerrados and self.mostrarCancelados:
+        if self.mostrarCerrados or self.mostrarCancelados:
             if self.mostrarCerrados and not self.mostrarCancelados:
                 d = d.filtered(lambda x:  x.stage_id.id != 4 )
             if self.mostrarCancelados and not self.mostrarCerrados:
