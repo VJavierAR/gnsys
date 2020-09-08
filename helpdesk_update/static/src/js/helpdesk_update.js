@@ -88,6 +88,7 @@ odoo.define('invoice.action_button_helpdesk', function (require) {
         action_def_toner: function (e) {
             var self = this
             var user = session.uid;
+            
             self.do_action({
                 name: _t('Crear ticket tóner'),
                 type : 'ir.actions.act_window',
@@ -95,8 +96,9 @@ odoo.define('invoice.action_button_helpdesk', function (require) {
                 view_type: 'form',
                 view_mode: 'form',
                 view_id: 'view_helpdesk_crear_solicitud_toner',
-                views: [[false, 'form']],
+                views: [[3027, 'form']],
                 target: 'new',
+                context: {'form_view_initial_mode': 'edit','force_detailed_view': true}
             }, {
                 on_reverse_breadcrumb: function () {
                     self.update_control_panel({clear: true, hidden: true});

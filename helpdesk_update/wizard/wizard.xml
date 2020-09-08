@@ -1307,7 +1307,7 @@
                     <group string='Buscar'>
                         <!--<field name='serie' widget='many2many_tags' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" force_save = "1"/>-->
 
-                        <field name='dca'>
+                        <field name='dca' readonly='0'>
                             <form>
                                 <!--
                                 <div>
@@ -1421,20 +1421,20 @@
                     <page string = 'Pedido'>
                         <group>
                             <group>
-                                <field name='tipoReporte' force_save='1' />
-                                <field name='corte' force_save='1' />
+                                <field name='tipoReporte' force_save='1' readonly='0' />
+                                <field name='corte' force_save='1' readonly='0' />
                                 <!--<field name='almacen' force_save='1' />-->
                                 <!--
                                 <field name='almacenes' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain="['&amp;', ('x_studio_cliente', '=', False), '|', ('id', '=', 1), ('id', '=', 18) ]" />
                                 -->
 
-                                <field name='almacenes' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain="['|', '|', ('id', '=', 1), ('id', '=', 18), ('id', '=', 17) ]" />
+                                <field name='almacenes' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain="['|', '|', ('id', '=', 1), ('id', '=', 18), ('id', '=', 17) ]" readonly='0' />
 
                             </group>
                             <group>
-                                <field name='validarHastaAlmacenTicket' force_save='1' />
-                                <field name='validarTicket' force_save='1' />
-                                <field name='ponerTicketEnEspera' force_save='1' />
+                                <field name='validarHastaAlmacenTicket' force_save='1' readonly='0' />
+                                <field name='validarTicket' force_save='1' readonly='0' />
+                                <field name='ponerTicketEnEspera' force_save='1' readonly='0' />
                             </group>
                         </group>
                     </page>
@@ -1444,7 +1444,7 @@
                                 <field name='idClienteAyuda' invisible='1' force_save='1' />
                                 <field name='idLocalidadAyuda' invisible='1' force_save='1' />
                                 <field name='estatus' force_save='1' readonly='1' />
-                                <field name='editarCliente' force_save='1' />
+                                <field name='editarCliente' force_save='1' readonly='0' />
                                 <field name='cliente' force_save='1' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" attrs="{'readonly': [['editarCliente', '=', False]]}" />
                                 <field name='tipoCliente' force_save='1' readonly='1' />
                                 <field name='localidad' force_save='1' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" attrs="{'readonly': [['editarCliente', '=', False]]}" domain='["&amp;",["parent_id.id", "=", idClienteAyuda],["type","=","delivery"]]' />    
@@ -1467,16 +1467,16 @@
 
                         <group string='Agregar nuevo contacto a localidad' attrs="{'invisible': [('mostrarAnadirContacto', '=', False)]}">
                             <group>
-                                <field name="tipoDeDireccion" invisible='1' force_save = "1"/>
-                                <field name="subtipo" invisible='1' force_save = "1"/>
-                                <field name="nombreDelContacto" required='1'/>
-                                <field name="titulo" placeholder="Por ejemplo, Sr." options="{'no_create_edit': True, 'no_create': True}" invisible='1'/>
-                                <field name="puestoDeTrabajo" placeholder="Por ejemplo, Director de ventas" invisible='1'/>
-                                <field name="correoElectronico"/>
-                                <field name="telefono"/>
-                                <field name="movil"/>
-                                <field name="notas" placeholder="Notas internas..."/>
-                                <button name="anadirContactoALocalidad" string="Añadir contcto a localidad" icon="fa-user-plus" type="object"  attrs='{"invisible": [["localidad","=", False]]}' groups=""/>
+                                <field name="tipoDeDireccion" invisible='1' force_save = "1" readonly='0'/>
+                                <field name="subtipo" invisible='1' force_save = "1" readonly='0'/>
+                                <field name="nombreDelContacto" required='1' readonly='0'/>
+                                <field name="titulo" placeholder="Por ejemplo, Sr." options="{'no_create_edit': True, 'no_create': True}" invisible='1' readonly='0'/>
+                                <field name="puestoDeTrabajo" placeholder="Por ejemplo, Director de ventas" invisible='1' readonly='0'/>
+                                <field name="correoElectronico" readonly='0'/>
+                                <field name="telefono" readonly='0'/>
+                                <field name="movil" readonly='0'/>
+                                <field name="notas" placeholder="Notas internas..." readonly='0'/>
+                                <button name="anadirContactoALocalidad" string="Añadir contcto a localidad" icon="fa-user-plus" type="object"  attrs='{"invisible": [["localidad","=", False]]}' groups="" readonly='0'/>
                             </group>
                         </group>
 
@@ -1501,18 +1501,18 @@
                     <page string = 'Datos del ticket'>
                         <group>
                             <group>
-                                <field name='comentarioLocalidad' force_save='1'/>
+                                <field name='comentarioLocalidad' force_save='1' readonly='0'/>
                             </group>
                             <group>
-                                <field name='prioridad' force_save='1' widget='priority'/>
+                                <field name='prioridad' force_save='1' widget='priority' readonly='0'/>
                             </group>
                         </group>
                         <group>
                             <group>
-                                <field name='numeroTicketCliente' force_save='1' />
+                                <field name='numeroTicketCliente' force_save='1' readonly='0' />
                             </group>
                             <group>
-                                <field name='numeroTicketDistribuidor' force_save='1' />
+                                <field name='numeroTicketDistribuidor' force_save='1' readonly='0' />
                             </group>
                         </group>
                     </page>

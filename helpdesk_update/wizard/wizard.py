@@ -2572,6 +2572,7 @@ class HelpDeskDetalleSerieToner(TransientModel):
 
 
 
+
 class helpdesk_crearToner(TransientModel):
     _name = 'helpdesk.tonerticket'
     _description = 'helpdesk crear ticket de tóner'
