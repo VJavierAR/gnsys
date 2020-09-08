@@ -27,7 +27,7 @@ class fac_order(models.Model):
       excedente=fields.Text(string='Excedentes')
                              
      
-      @api.onchange('month') 
+      @api.multi 
       def cambiaPeriodo(self):
         lineas=self.order_line
         nuevomes= str(dict(self._fields['month'].selection).get(self.month))
