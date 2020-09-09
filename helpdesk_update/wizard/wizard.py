@@ -5978,6 +5978,7 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                                                                   'listaIdsRefaccionesValidadas': str(list(set(listaIdValidadas)))
                                                               })
             self.ticket_id.write({'validacionesRefaccion': [(4, 0, idValidacion)] })
+            self.ticket_id.write({'ticketValidadoElDia': datetime.datetime.now() })
             self.env['helpdesk.diagnostico'].create({
                                                         'ticketRelacion': self.ticket_id.id,
                                                         'comentario': comentarioGenerico,
@@ -6095,6 +6096,7 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                                                                             'listaIdsRefaccionesValidadas': str(listaIdValidadas)
                                                                           })
                 self.ticket_id.write({'validacionesRefaccion': [(4, 0, idValidacion)] })
+                self.ticket_id.write({'ticketValidadoElDia': datetime.datetime.now() })
                 self.env['helpdesk.diagnostico'].create({
                                                             'ticketRelacion': self.ticket_id.id,
                                                             'comentario': comentarioGenerico,
