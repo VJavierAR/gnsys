@@ -185,6 +185,7 @@ class helpdesk_update(models.Model):
     estatus_techra = fields.Selection([('Cerrado','Cerrado'), ('Cancelado','Cancelado'), ('Cotización','Cotización'), ('Tiempo de espera','Tiempo de espera'), ('COTIZACION POR AUTORIZAR POR CLIENTE','COTIZACION POR AUTORIZAR POR CLIENTE'), ('Facturar','Facturar'), ('Refacción validada','Refacción validada'), ('Instalación','Instalación'), ('Taller','Taller'), ('En proceso de atención','En proceso de atención'), ('En Pedido','En Pedido'), ('Mensaje','Mensaje'), ('Resuelto','Resuelto'), ('Reasignación de área','Reasignación de área'), ('Diagnóstico de Técnico','Diagnóstico de Técnico'), ('Entregado','Entregado'), ('En Ruta','En Ruta'), ('Listo para entregar','Listo para entregar'), ('Espera de Resultados','Espera de Resultados'), ('Solicitud de refacción','Solicitud de refacción'), ('Abierto TFS','Abierto TFS'), ('Reparación en taller','Reparación en taller'), ('Abierto Mesa de Ayuda','Abierto Mesa de Ayuda'), ('Reabierto','Reabierto')], track_visibility='onchange', store=True)
     priority = fields.Selection([('0','Todas'),('1','Baja'),('2','Media'),('3','Alta'),('4','Critica')], track_visibility='onchange')
     x_studio_equipo_por_nmero_de_serie = fields.Many2many('stock.production.lot', store=True, track_visibility='onchange')
+    x_studio_equipo_por_nmero_de_serie_1 = fields.One2many('dcas.dcas', 'x_studio_tiquete', store=True, track_visibility='onchange')
     #x_studio_equipo_por_nmero_de_serieRel = fields.Many2one('stock.production.lot', store=True)
     x_studio_empresas_relacionadas = fields.Many2one('res.partner', store=True, track_visibility='onchange', string='Localidad')
     historialCuatro = fields.One2many('x_historial_helpdesk','x_id_ticket',string='historial de ticket estados',store=True,track_visibility='onchange')
@@ -323,8 +324,14 @@ class helpdesk_update(models.Model):
         vals['name'] = self.env['ir.sequence'].next_by_code('helpdesk_name')
         #vals['team_id'] = 8
         #_logger.info("Informacion 0.0: " + str(vals))
+        
         ticket = super(helpdesk_update, self).create(vals)
-        #_logger.info("Informacion 1: " + str(vals))
+
+        if ticket.x_studio_tipo_de_vale == 'Requerimiento' and not ticket.x_studio_equipo_por_nmero_de_serie_1:
+            raise exceptions.ValidationError('No es posible registrar ticket de requerimiento sin serie.')
+        
+
+        #_logger.info("Informacion 1: " + str(ticket.x_studio_equipo_por_nmero_de_serie_1))
         #_logger.info("Informacion 2: " + str(ticket.x_studio_equipo_por_nmero_de_serie))
         ticket.x_studio_id_ticket = ticket.id
         ticket.abiertoPor = self.env.user.name
@@ -339,6 +346,7 @@ class helpdesk_update(models.Model):
                 #_logger.info("Informacion 4: " + str(ticket.x_studio_contadores))
                 #ticket.write({'x_studio_contadores': '</br> Equipo BN o Color: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_color_bn) + ' </br></br> Contador BN: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_bn_mesa) + '</br></br> Contador Color: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_color_mesa)})
                 ticket.write({'contadores_anteriores': '</br>Equipo BN o Color: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_color_bn) + ' </br></br> Contador BN: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_bn_mesa) + '</br></br> Contador Color: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_color_mesa)})
+
         return ticket
 
     """
