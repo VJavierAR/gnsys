@@ -4077,6 +4077,11 @@ class HelpdeskTicketReporte(TransientModel):
             m = ['x_studio_tipo_de_vale', '=', 'Toma de lectura']
             i.append(m)
             contador = contador + 1
+        
+        i = ['|'] + i
+        m = ['x_studio_tipo_de_vale', '=', False]
+        i.append(m)
+        contador = contador + 1
         #if self.fechaInicial:
         #    i = ['&'] + i
         #    m = ['create_date', '>=', self.fechaInicial]
@@ -4110,8 +4115,8 @@ class HelpdeskTicketReporte(TransientModel):
             d = d.filtered(lambda x: (x.partner_id.id in self.clienteRelacion.ids) )
         _logger.info('d 5: '+ str(len(d)))
         #_logger.info('fecha inicial: ' + str(self.fechaInicial))
-        #_logger.info('datos: d: ' + str(d))
-        d = d.filtered(lambda x: ( datetime.datetime.strptime(x.create_date.strftime('%Y-%m-%d'), '%Y-%m-%d').date() >= self.fechaInicial and datetime.datetime.strptime(x.create_date.strftime('%Y-%m-%d'), '%Y-%m-%d').date() <= self.fechaFinal ))
+        _logger.info('datos: dias final: ' + str(self.fechaFinal + datetime.timedelta(days=2)))
+        d = d.filtered(lambda x: ( datetime.datetime.strptime(x.create_date.strftime('%Y-%m-%d'), '%Y-%m-%d').date() >= self.fechaInicial and datetime.datetime.strptime(x.create_date.strftime('%Y-%m-%d'), '%Y-%m-%d').date() <= self.fechaFinal + datetime.timedelta(days=2) ))
         #_logger.info('datos: d final: ' + str(d))
         #d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x: len(x.x_studio_equipo_por_nmero_de_serie_1) > 0 or len(x.x_studio_equipo_por_nmero_de_serie) > 0)
         _logger.info('d 6: '+ str(len(d)))
