@@ -2131,6 +2131,37 @@
 
 
 
+    <record id="view_helpdesk_validaciones" model="ir.ui.view">
+        <field name="model">helpdesk.validacion.so</field>
+        <field name="arch" type="xml">
+            <form string="Validaciones">
+                <group>
+                    <group>
+                        <field name="ticketRelacion" readonly="1" />
+                    </group>
+                    <group>
+                        <field name="fechaDeValidacionSo" readonly="1" />
+                    </group>
+                </group>
+
+                <field name="refaccionesValidadas" readonly='1' widget='html' string='' />
+
+                <group>
+                    <group>
+                        <field name="listaRefaccionesValidadas" readonly="1" invisible='0' />
+                    </group>
+                    <group>
+                        <field name="listaIdsRefaccionesValidadas" readonly="1" invisible='0' />
+                    </group>
+                </group>
+
+                <footer>
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
 
 
 

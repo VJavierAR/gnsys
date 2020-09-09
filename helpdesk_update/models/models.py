@@ -5516,6 +5516,8 @@ class helpdesk_validacion_de_solicitud(models.Model):
     ticketRelacion = fields.Many2one('helpdesk.ticket', string = 'Ticket realcionado a diagnostico',copied=True)
     fechaDeValidacionSo = fields.Datetime(string = 'Fecha de validación de la solicitud')
     refaccionesValidadas = fields.Text(string = 'Lo que se valido')
+    listaRefaccionesValidadas = fields.Text(string = 'Lista de lo que se valido')
+    listaIdsRefaccionesValidadas = fields.Text(string = 'Lista de ids de productos que se valido')
     
     
 

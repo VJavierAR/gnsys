@@ -5873,7 +5873,7 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                 if refaccion.route_id and ruta == -1 and refaccion.route_id.id != -1:
                     ruta = refaccion.route_id.id
                 idsRefaccionesSolicitud.append(refaccion.product_id.id)
-            
+            refaccionesActualizadasCantidad = list(set(refaccionesActualizadasCantidad))
             _logger.info('idsRefaccionesSolicitud: ' + str(idsRefaccionesSolicitud))
             mensajeTitulo = 'Se añadieron nuevas refacciones y/o accesorios a la solicitud.'
             mensajeCuerpo = 'Refaccione(s) y/o accesorio(s) agregados a la Solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) +'.\n\nSe agregaron las refacciones y/o accesorios: '
@@ -5933,10 +5933,44 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
             self.ticket_id.write({
                                     'stage_id': 102
                                 })
+            listaIdValidadas = []
+            filasRefacciones = """ """
+            filasRefaccionesNuevas = """ """
+            listaUnida = list(set(refaccionesActualizadasCantidad + refaccionesNuevas))
+            if listaUnida:
+                for refaccion in listaUnida:
+                    filasRefacciones = filasRefacciones + """
+                                                                <tr>
+                                                                    <td>""" + str(refaccion.categ_id.name) + """</td>
+                                                                    <td>""" + str(refaccion.default_code) + """</td>
+                                                                    <td>""" + str(refaccion.name) + """</td>
+                                                                    <td>""" + str(refaccion.x_studio_cantidad_pedida) + """</td>
+                                                                </tr>
+                                                            """
+                    listaIdValidadas.append(refaccion.product_variant_id.id)
+            tablaRefacciones = """
+                                    <table class='table table-bordered table-dark text-white'>
+                                        <thead >
+                                            <tr>
+                                                <th scope='col'>Categoría del producto</th>
+                                                <th scope='col'>Referencia interna</th>
+                                                <th scope='col'>Nombre</th>
+                                                <th scope='col'>Cantidad validada</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            """ + filasRefacciones + """
+                                            """ + filasRefaccionesNuevas + """
+                                        </tbody>
+                                    </table>
+                                """
+            _logger.info('refaccionesActualizadasCantidad: ' + str(refaccionesActualizadasCantidad) + ' refaccionesNuevas: ' + str(refaccionesNuevas) )
             idValidacion = self.env['helpdesk.validacion.so'].create({
                                                                   'ticketRelacion': self.ticket_id.id,
                                                                   'fechaDeValidacionSo': datetime.datetime.now(),
-                                                                  'refaccionesValidadas': comentarioGenerico
+                                                                  'refaccionesValidadas': tablaRefacciones,
+                                                                  'listaRefaccionesValidadas': str(refaccionesActualizadasCantidad + refaccionesNuevas),
+                                                                  'listaIdsRefaccionesValidadas': str(list(set(listaIdValidadas)))
                                                               })
             self.ticket_id.write({'validacionesRefaccion': [(4, 0, idValidacion)] })
             self.env['helpdesk.diagnostico'].create({
@@ -5967,9 +6001,17 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                 mensajeTitulo = 'Error'
                 mensajeCuerpo = 'Existe una solicitud ya generada y validada.'
             elif respuesta == 'OK':
+                refaccionesNuevas = []
+                listaIdValidadas = []
+                filasRefacciones = """ """
                 #creando x_studio_historico_de_componentes
                 fuenteDca = 'stock.production.lot'
+                #forma odoo
                 dcaObj = self.env['dcas.dcas'].search([('x_studio_tickett', '=', self.ticket_id.id),('fuente', '=', fuenteDca)], order = 'create_date desc', limit = 1)
+                #forma techra
+                if not dcaObj:
+                    dcaObj = self.env['dcas.dcas'].search([('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].name),('fuente', '=', fuenteDca)], order = 'x_studio_fecha desc', limit = 1)
+                _logger.info('aaaaaaaaaaa dcaObj: ' + str(dcaObj))
                 if dcaObj:
                     refaccionesTextTemp = ''
                     for refaccion in self.productos:
@@ -5982,10 +6024,54 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                                                                                 'x_studio_fecha_de_entrega': datetime.datetime.now(),
                                                                                 'x_studio_modelo': refaccionesTextTemp,
                                                                                 'x_studio_contador_bn': dcaObj.contadorMono
-                                                                                #'x_studio_numero_de_parte': refaccion.,
-                                                                                #'x_studio_field_gKQ9k': self.,
-                                                                                #'x_studio_modelo': self.,
                                                                             })
+                        refaccionesNuevas.append(refaccion)
+                        listaIdValidadas.append(refaccion.product_variant_id.id)
+                        filasRefacciones = filasRefacciones + """
+                                                                <tr>
+                                                                    <td>""" + str(refaccion.categ_id.name) + """</td>
+                                                                    <td>""" + str(refaccion.default_code) + """</td>
+                                                                    <td>""" + str(refaccion.name) + """</td>
+                                                                    <td>""" + str(refaccion.x_studio_cantidad_pedida) + """</td>
+                                                                </tr>
+                                                            """
+                else:
+                    _logger.info('inicio: Se esta creando el historico de componente')
+                    refaccionesTextTemp = ''
+                    for refaccion in self.productos:
+                        refaccionesTextTemp = 'Refacción y/o accesorio: ' + str(refaccion.product_variant_id.display_name) + '. Descripción: ' + str(refaccion.description) + '.'
+                        self.env['x_studio_historico_de_componentes'].create({
+                                                                            'x_studio_cantidad': refaccion.x_studio_cantidad_pedida,
+                                                                            'x_studio_field_MH4DO': self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id,
+                                                                            'x_studio_ticket': str(self.ticket_id.id),
+                                                                            'x_studio_fecha_de_entrega': datetime.datetime.now(),
+                                                                            'x_studio_modelo': refaccionesTextTemp
+                                                                        })
+                        refaccionesNuevas.append(refaccion)
+                        listaIdValidadas.append(refaccion.product_variant_id.id)
+                        filasRefacciones = filasRefacciones + """
+                                                                <tr>
+                                                                    <td>""" + str(refaccion.categ_id.name) + """</td>
+                                                                    <td>""" + str(refaccion.default_code) + """</td>
+                                                                    <td>""" + str(refaccion.name) + """</td>
+                                                                    <td>""" + str(refaccion.x_studio_cantidad_pedida) + """</td>
+                                                                </tr>
+                                                            """
+                tablaRefacciones = """
+                                            <table class='table table-bordered table-dark text-white'>
+                                                <thead >
+                                                    <tr>
+                                                        <th scope='col'>Categoría del producto</th>
+                                                        <th scope='col'>Referencia interna</th>
+                                                        <th scope='col'>Nombre</th>
+                                                        <th scope='col'>Cantidad validada</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    """ + filasRefacciones + """
+                                                </tbody>
+                                            </table>
+                                        """
                 mensjaeValidados = 'Se validaron los productos '
                 for refaccion in self.productos:
                     mensjaeValidados = mensjaeValidados + str(refaccion.display_name) + ', cantidad validada: ' + str(refaccion.x_studio_cantidad_pedida) + '; '
@@ -5996,12 +6082,13 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                     comentarioGenerico = comentarioGenerico + mensjaeValidados + '\n' + str(self.comentario)
                 else:
                     comentarioGenerico = comentarioGenerico + mensjaeValidados
-
                 idValidacion = self.env['helpdesk.validacion.so'].create({
-                                                                  'ticketRelacion': self.ticket_id.id,
-                                                                  'fechaDeValidacionSo': datetime.datetime.now(),
-                                                                  'refaccionesValidadas': mensjaeValidados
-                                                              })
+                                                                            'ticketRelacion': self.ticket_id.id,
+                                                                            'fechaDeValidacionSo': datetime.datetime.now(),
+                                                                            'refaccionesValidadas': tablaRefacciones,
+                                                                            'listaRefaccionesValidadas': str(refaccionesNuevas),
+                                                                            'listaIdsRefaccionesValidadas': str(listaIdValidadas)
+                                                                          })
                 self.ticket_id.write({'validacionesRefaccion': [(4, 0, idValidacion)] })
                 self.env['helpdesk.diagnostico'].create({
                                                             'ticketRelacion': self.ticket_id.id,
