@@ -71,17 +71,17 @@ class fac_order(models.Model):
           if str(self.partner_id.razonSocial)=='2': #Grupo
                pbn=12290
                pcolor=12288
-               rentaG=12294
+               rentaG=12296
                rentaE=12292
-               spc=12296
-               tfs=12298
-               sm=12300
-               sme=12302
-               netMa=12304
-               paginasbn=12306
-               embeded=12308
-               impre=12540
-               lp=12539                
+               spc=12298
+               tfs=12300
+               sm=12302
+               sme=12304
+               netMa=12306
+               paginasbn=12308
+               embeded=12310
+               impre=12550
+               lp=12549                
           if str(self.partner_id.razonSocial)=='3': #servicios
                pbn=12289
                pcolor=12287
