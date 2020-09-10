@@ -5856,6 +5856,21 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                         'context': self.env.context,
                     }
 
+        #procedeAPedirse = False
+        #listaDeRefaccionesValidadas = []
+        #if self.ticket_id.validacionesRefaccion:
+        #    for validacion in self.ticket_id.validacionesRefaccion:
+        #        listaDeRefaccionesValidadas = listaDeRefaccionesValidadas + ast.literal_eval(validacion.listaIdsRefaccionesValidadas)
+        #listaDeRefaccionesValidadas = list(set(listaDeRefaccionesValidadas))
+        #_logger.info('listaDeRefaccionesValidadas: ' + str(listaDeRefaccionesValidadas))
+        #for refaccion in self.ticket_id.x_studio_productos:
+        #    if not refaccion.product_variant_id.id in listaDeRefaccionesValidadas:
+        #        procedeAPedirse = True
+
+        #if not listaDeRefaccionesValidadas:
+        #    procedeAPedirse = True
+
+        #if procedeAPedirse:
         self.ticket_id.x_studio_productos = [(6, 0, self.productos.ids)]
         if self.productos:
             self.ticket_id.x_studio_productos = [(6, 0, self.productos.ids)]
@@ -6107,6 +6122,10 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                                                         })
             #mensajeTitulo = 'Creación y validación de refacción!!!'
             #mensajeCuerpo = 'Se creo y valido la solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) + ' para el ticket ' + str(self.ticket_id.id) + '.'
+        
+        #else:
+        #    mensajeTitulo = 'Error'
+        #    mensajeCuerpo = 'No es posible validar un ticket con la misma refacción y/o accesorio seleccionado anteriormente'
         wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
         view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
         return {
