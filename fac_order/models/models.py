@@ -69,8 +69,8 @@ class fac_order(models.Model):
                paginasbn=11422
                embeded=11423
           if str(self.partner_id.razonSocial)=='2': #Grupo
-               pbn=12290
-               pcolor=12288
+               pbn=12292
+               pcolor=12290
                rentaG=12296
                rentaE=12292
                spc=12298
