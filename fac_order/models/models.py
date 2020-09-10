@@ -454,30 +454,6 @@ class fac_order(models.Model):
                         self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':s.id,'product_id':embeded ,'product_uom_qty':1.0,'price_unit':s.rentaMensual})                                                                                                    
                               
       detalle =  fields.One2many('sale.order.detalle', 'saleOrder', string='Order Lines')
-
-      def retiro(self):
-        self.action_confirm()
-        picks=self.env['stock.picking'].search([['sale_id','=',self.id]])
-        almacen=self.env['stock.warehouse'].search([['x_studio_field_E0H1Z','=',self.partner_shipping_id.id]])
-        for pic in picks:
-          pic.write({'retiro':True})
-          if('PICK' in pic.name or 'SU' in pic.name):
-            pic.write({'location_id':almacen.lot_stock_id.id})
-            pic.write({'location_dest_id':pic.picking_type_id.default_location_dest_id.id})
-            pic.move_ids_without_package.write({'location_id':almacen.lot_stock_id.id})
-            self.env['stock.move.line'].search([['picking_id','=',pic.id]]).write({'location_id':almacen.lot_stock_id.id})
-            pic.move_ids_without_package.write({'location_dest_id':pic.picking_type_id.default_location_dest_id.id})
-          if('PACK' in pic.name or 'TRA' in pic.name):
-            pic.write({'location_id':pic.picking_type_id.default_location_src_id.id})
-            pic.write({'location_dest_id':pic.picking_type_id.default_location_dest_id.id})
-            pic.move_ids_without_package.write({'location_id':pic.picking_type_id.default_location_src_id.id})
-            self.env['stock.move.line'].search([['picking_id','=',pic.id]]).write({'location_id':pic.picking_type_id.default_location_src_id.id})
-            pic.move_ids_without_package.write({'location_dest_id':pic.picking_type_id.default_location_dest_id.id})
-          if('OUT' in pic.name):
-            pic.write({'location_dest_id':pic.picking_type_id.warehouse_id.lot_stock_id.id})
-            pic.move_ids_without_package.write({'location_dest_id':pic.picking_type_id.warehouse_id.lot_stock_id.id})
-            self.env['stock.move.line'].search([['picking_id','=',pic.id]]).write({'location_dest_id':pic.picking_type_id.warehouse_id.lot_stock_id.id})
-            pic.move_ids_without_package.write({'location_id':pic.picking_type_id.default_location_src_id.id})
                  
 class detalle(models.Model):
       _name = 'sale.order.detalle'

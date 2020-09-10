@@ -16,7 +16,7 @@ class HCliente(models.Model):
 	fechaTexto = fields.Text(string = 'Fecha texto')
 	origen = fields.Text(string = 'Origen')
 	destino = fields.Text(string = 'Destino')
-	localidad = fields.Text(string = 'Localidad')
+	localidadT = fields.Text(string = 'Localidad')
 	contadorBNPag = fields.Text(string = 'Contador BN Pag.')
 	contadorColorPag = fields.Text(string = 'Contador Color Pag.')
 	contadorBNML = fields.Text(string = 'Contador BN ML')

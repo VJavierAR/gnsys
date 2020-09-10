@@ -128,6 +128,8 @@ class sale_update(models.Model):
 		      record['partner_shipping_id']=record.serieRetiro2.x_studio_localidad_2.id
 		      record['x_studio_direccin_de_entrega']=record.serieRetiro2.x_studio_localidad_2.id			
 		      record['compatiblesLineas']=[{'serie':record.serieRetiro2.id,'cantidad':1,'tipo':record.x_studio_tipo_de_solicitud,'equipos':record.serieRetiro2.product_id.id}]
+		      record['x_studio_field_69Boh']=record.serieRetiro2.servicio.id
+		      record['x_studio_field_LVAj5']=record.serieRetiro2.servicio.contrato.id
 
 
 
@@ -251,3 +253,29 @@ class sale_update(models.Model):
 					i=i+1
 			#ppp.action_confirm()
 			#ppp.action_assign()
+      def retiro(self):
+        self.action_confirm()
+        seriesR=self.compatiblesLineas.mapped('serie.id')
+        seriesRR=self.env['stock.production.lot'].browse(seriesR)
+        seriesRR.write({'servicio':False})
+        picks=self.env['stock.picking'].search([['sale_id','=',self.id]])
+        almacen=self.env['stock.warehouse'].search([['x_studio_field_E0H1Z','=',self.partner_shipping_id.id]])
+        for pic in picks:
+          pic.write({'retiro':True})
+          if('PICK' in pic.name or 'SU' in pic.name):
+            pic.write({'location_id':almacen.lot_stock_id.id})
+            pic.write({'location_dest_id':pic.picking_type_id.default_location_dest_id.id})
+            pic.move_ids_without_package.write({'location_id':almacen.lot_stock_id.id})
+            self.env['stock.move.line'].search([['picking_id','=',pic.id]]).write({'location_id':almacen.lot_stock_id.id})
+            pic.move_ids_without_package.write({'location_dest_id':pic.picking_type_id.default_location_dest_id.id})
+          if('PACK' in pic.name or 'TRA' in pic.name):
+            pic.write({'location_id':pic.picking_type_id.default_location_src_id.id})
+            pic.write({'location_dest_id':pic.picking_type_id.default_location_dest_id.id})
+            pic.move_ids_without_package.write({'location_id':pic.picking_type_id.default_location_src_id.id})
+            self.env['stock.move.line'].search([['picking_id','=',pic.id]]).write({'location_id':pic.picking_type_id.default_location_src_id.id})
+            pic.move_ids_without_package.write({'location_dest_id':pic.picking_type_id.default_location_dest_id.id})
+          if('OUT' in pic.name):
+            pic.write({'location_dest_id':pic.picking_type_id.warehouse_id.lot_stock_id.id})
+            pic.move_ids_without_package.write({'location_dest_id':pic.picking_type_id.warehouse_id.lot_stock_id.id})
+            self.env['stock.move.line'].search([['picking_id','=',pic.id]]).write({'location_dest_id':pic.picking_type_id.warehouse_id.lot_stock_id.id})
+            pic.move_ids_without_package.write({'location_id':pic.picking_type_id.default_location_src_id.id})
