@@ -324,7 +324,7 @@ class tfs(models.Model):
             if record.serie:
                 if(record.serie.x_studio_mini==False):
                     raise exceptions.UserError("El No. de Serie"+ record.serie.name+"no corresponde a Mini Almacen" )
-                if(len(record.serie.x_studio_move_line)>0):
+                if(record.serie.x_studio_localidad_2.id):
                     cliente = record.serie.x_studio_localidad_2.parent_id.id
                     localidad=record.serie.x_studio_localidad_2.id
                     record['cliente'] = cliente
