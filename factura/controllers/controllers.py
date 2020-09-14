@@ -25,7 +25,7 @@ class Factura(http.Controller):
      
     @http.route('/factura/factura/', auth='public')
     def index(self, **kw):
-        return "Hello, world"
+        return "hahahahah recurción xD "
 
 #     @http.route('/factura/factura/objects/', auth='public')
 #     def list(self, **kw):
