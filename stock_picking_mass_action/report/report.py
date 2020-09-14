@@ -2,6 +2,7 @@ from odoo import models
 import logging, ast
 import datetime, time
 import xlsxwriter
+import pytz
 _logger = logging.getLogger(__name__)
 
 class PartnerXlsx(models.AbstractModel):
@@ -255,7 +256,8 @@ class PartnerXlsx(models.AbstractModel):
                 sheet.write(i, 0, obj.x_studio_field_nO7Xg.warehouse_id.name if(obj.x_studio_field_nO7Xg.id) else '', bold)
                 sheet.write(i, 1, obj.id, bold)
                 sheet.write(i, 2, obj.x_studio_tipo_de_vale if(obj.x_studio_tipo_de_vale) else '', bold)
-                sheet.write(i, 3, obj.create_date.strftime("%Y/%m/%d, %H:%M:%S"), bold)
+                #sheet.write(i, 3, obj.create_date.strftime("%Y/%m/%d, %H:%M:%S"), bold)
+                sheet.write(i, 3, obj.create_date(pytz.timezone('America/Mexico_City')).strftime("%Y/%m/%d %H:%M:%S"), bold)
                 sheet.write(i, 4, obj.days_difference, bold)
                 sheet.write(i, 5, obj.partner_id.name if(obj.partner_id) else '', bold)
                 sheet.write(i, 6, obj.x_studio_empresas_relacionadas.name if(obj.x_studio_empresas_relacionadas) else '', bold)
@@ -305,7 +307,7 @@ class PartnerXlsx(models.AbstractModel):
                     sheet.write(i, 0, obj.x_studio_field_nO7Xg.warehouse_id.name if(obj.x_studio_field_nO7Xg.id) else '', bold)
                     sheet.write(i, 1, obj.id, bold)
                     sheet.write(i, 2, obj.x_studio_tipo_de_vale if(obj.x_studio_tipo_de_vale) else '', bold)
-                    sheet.write(i, 3, obj.create_date.strftime("%Y/%m/%d, %H:%M:%S"), bold)
+                    sheet.write(i, 3, obj.create_date(pytz.timezone('America/Mexico_City')).strftime("%Y/%m/%d %H:%M:%S"), bold)
                     sheet.write(i, 4, obj.days_difference, bold)
                     sheet.write(i, 5, obj.partner_id.name if(obj.partner_id) else '', bold)
                     sheet.write(i, 6, obj.x_studio_empresas_relacionadas.name if(obj.x_studio_empresas_relacionadas) else '', bold)
@@ -325,7 +327,7 @@ class PartnerXlsx(models.AbstractModel):
                     sheet.write(i, 0, obj.x_studio_field_nO7Xg.warehouse_id.name if(obj.x_studio_field_nO7Xg.id) else '', bold)
                     sheet.write(i, 1, obj.id, bold)
                     sheet.write(i, 2, obj.x_studio_tipo_de_vale if(obj.x_studio_tipo_de_vale) else '', bold)
-                    sheet.write(i, 3, obj.create_date.strftime("%Y/%m/%d, %H:%M:%S"), bold)
+                    sheet.write(i, 3, obj.create_date(pytz.timezone('America/Mexico_City')).strftime("%Y/%m/%d %H:%M:%S"), bold)
                     sheet.write(i, 4, obj.days_difference, bold)
                     sheet.write(i, 5, obj.partner_id.name if(obj.partner_id) else '', bold)
                     sheet.write(i, 6, obj.x_studio_empresas_relacionadas.name if(obj.x_studio_empresas_relacionadas) else '', bold)
@@ -346,7 +348,7 @@ class PartnerXlsx(models.AbstractModel):
                 sheet.write(i, 0, obj.x_studio_field_nO7Xg.warehouse_id.name if(obj.x_studio_field_nO7Xg.id) else '', bold)
                 sheet.write(i, 1, obj.id, bold)
                 sheet.write(i, 2, obj.x_studio_tipo_de_vale if(obj.x_studio_tipo_de_vale) else '', bold)
-                sheet.write(i, 3, obj.create_date.strftime("%Y/%m/%d, %H:%M:%S"), bold)
+                sheet.write(i, 3, obj.create_date(pytz.timezone('America/Mexico_City')).strftime("%Y/%m/%d %H:%M:%S"), bold)
                 sheet.write(i, 4, obj.days_difference, bold)
                 sheet.write(i, 5, obj.partner_id.name if(obj.partner_id) else '', bold)
                 sheet.write(i, 6, obj.x_studio_empresas_relacionadas.name if(obj.x_studio_empresas_relacionadas) else '', bold)
