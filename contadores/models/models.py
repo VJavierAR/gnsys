@@ -503,9 +503,19 @@ class contadores(models.Model):
             """                                                
             #ff=self.env['contrato'].search([('cliente', '=',self.cliente.id)])
             prefacturas=''
+            id=0
             for rs in self.x_studio_contratos:
+                rz=str(self.cliente.razonSocial)
+                if rz=='0':                  
+                  id=3                  
+                if rz=='1':                  
+                  id=1                  
+                if rz=='2':                  
+                  id=4                  
+                if rz=='3':                    
+                  id=2
                 if rs.x_studio_cobrar_contrato:
-                    a=self.env['sale.order'].create({'partner_id':self.cliente.id,'x_studio_factura':'si','month':self.mes,'year':self.anio})
+                    a=self.env['sale.order'].create({'partner_id':self.cliente.id,'x_studio_factura':'si','month':self.mes,'year':self.anio,'company_id':id})
                     self.env.cr.execute("insert into x_contrato_sale_order_rel (sale_order_id, contrato_id) values (" +str(a.id) + ", " +  str(rs.id) + ");")    
                     #https://gnsys-corp.odoo.com/web?#id=2477&action=1167&model=sale.order&view_type=form&menu_id=406
                     prefacturas="<a href='https://gnsys-corp.odoo.com/web?#id="+str(a.id)+"&action=1167&model=sale.order&view_type=form&menu_id=406' target='_blank'>"+str(a.name)+"</a>"+' '+prefacturas                
