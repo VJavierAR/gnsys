@@ -42,9 +42,9 @@ class StockQuan(Model):
                 q.x_studio_existencia=self.quantity
                 q.x_studio_existencia_2=self.quantity
     def archivaReporte(self):
-        r=model.search([])
+        r=self.search([])
         r[0].write({'x_studio_arreglo':str(r.mapped('id'))})
-        pdf=env.ref('stock_picking_mass_action.quant_xlsx').sudo().render_xlsx(data=r[0],docids=r[0].id)
+        pdf=self.env.ref('stock_picking_mass_action.quant_xlsx').sudo().render_xlsx(data=r[0],docids=r[0].id)
         reporte = base64.encodestring(pdf)
         self.env['quant.history'].create({'reporte':pdf,'fecha':datetime.datetime.now().date()})
         #log(str(pdf),level='info')
