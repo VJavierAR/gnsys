@@ -181,8 +181,15 @@ class helpdesk_update(models.Model):
 
     primerDiagnosticoUsuario = fields.Text(string = 'Primer diagnósticos', compute='_compute_primer_diagnostico')
 
+
     def _compute_primer_diagnostico(self):
-        pass
+        for rec in self:
+            diagnosticoUsuario = ''
+            for diagnostico in rec.diagnosticos:
+                if not diagnostico.creadoPorSistema:
+                    diagnosticoUsuario = str(diagnostico.comentario)
+                    break
+            rec.primerDiagnosticoUsuario = diagnosticoUsuario
 
 
 
