@@ -65,4 +65,3 @@ class CreacionRuta(Model):
         self.usuarios=[(6,0,u.mapped('x_studio_field_B2WwI.id'))]
         _logger.info(u.mapped('x_studio_field_B2WwI.id'))
         return res
-        

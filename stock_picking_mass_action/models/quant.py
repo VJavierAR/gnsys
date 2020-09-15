@@ -48,3 +48,9 @@ class StockQuantLine(Model):
     cantidadReal=fields.Float()
     quant_id=fields.Many2one('stock.quant')
     usuario=fields.Many2one('res.users')
+
+class HistoricoInventario(Model):
+    _name='quant.history'
+    _description='Historico Inventario'
+    fecha=fields.Date()
+    reporte=fields.Binary()
