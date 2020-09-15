@@ -5,6 +5,8 @@ from odoo.tools.float_utils import float_compare, float_is_zero, float_round
 import logging, ast
 _logger = logging.getLogger(__name__)
 import threading
+import base64
+import datetime
 
 class StockQuan(Model):
     _inherit = 'stock.quant'
@@ -39,6 +41,13 @@ class StockQuan(Model):
             else:    
                 q.x_studio_existencia=self.quantity
                 q.x_studio_existencia_2=self.quantity
+    def archivaReporte(self):
+        r=model.search([])
+        r[0].write({'x_studio_arreglo':str(r.mapped('id'))})
+        pdf=env.ref('stock_picking_mass_action.quant_xlsx').sudo().render_xlsx(data=r[0],docids=r[0].id)
+        reporte = base64.encodestring(pdf)
+        self.env['quant.history'].create({'reporte':pdf,'fecha':datetime.datetime.now().date()})
+        #log(str(pdf),level='info')
 
 class StockQuantLine(Model):
     _name='stock.quant.line'
