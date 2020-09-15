@@ -179,6 +179,11 @@ class helpdesk_update(models.Model):
     
     ticketValidadoElDia = fields.Datetime(string = 'Fecha de validación de la solicitud')
 
+    primerDiagnosticoUsuario = fields.Text(string = 'Primer diagnósticos', compute='_compute_primer_diagnostico')
+
+    def _compute_primer_diagnostico(self):
+        pass
+
 
 
     #priority = fields.Selection([('all','Todas'),('baja','Baja'),('media','Media'),('alta','Alta'),('critica','Critica')])
@@ -4060,6 +4065,8 @@ class helpdesk_update(models.Model):
                         }                                             
                 """
     
+
+
     @api.onchange('x_studio_tipo_de_vale')
     def registrarTipoDeReporte(self):
         if self.x_studio_tipo_de_vale:
