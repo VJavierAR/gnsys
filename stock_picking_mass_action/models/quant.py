@@ -45,7 +45,7 @@ class StockQuan(Model):
         r=self.search([])
         r[0].write({'x_studio_arreglo':str(r.mapped('id'))})
         pdf=self.env.ref('stock_picking_mass_action.quant_xlsx').sudo().render_xlsx(data=r[0],docids=r[0].id)[0]
-        _logger.info(base64.b64encode(pdf.type()))
+        _logger.info(base64.b64encode())
         #reporte = base64.encodestring(pdf)
         #self.env['quant.history'].create({'reporte':pdf,'fecha':datetime.datetime.now().date()})
         #log(str(pdf),level='info')
