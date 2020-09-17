@@ -20,6 +20,7 @@ class tfs(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin', 'portal.mixin']    
     _name = 'tfs.tfs'
     _description='tfs'
+    active=fields.Boolean(default=True)
     name = fields.Char()
     almacen = fields.Many2one('stock.warehouse', "Almacen",store='True')
     tipo = fields.Selection([('Cian', 'Cian'),('Magenta','Magenta'),('Amarillo','Amarillo'),('Negro','Negro')])
@@ -30,7 +31,6 @@ class tfs(models.Model):
     serie=fields.Many2one('stock.production.lot',string='Numero de Serie',store='True')
     domi=fields.Integer()
     modelo=fields.Char(related='serie.product_id.name',string='Modelo')
-
     productoNegro=fields.Many2one('product.product',string='Toner Monocromatico')
     productoCian=fields.Many2one('product.product',string='Toner Cian')
     productoMagenta=fields.Many2one('product.product',string='Toner Magenta')
