@@ -9,6 +9,31 @@ _logger = logging.getLogger(__name__)
 from odoo.exceptions import UserError
 from odoo import exceptions, _
 
+
+listaTipoDeVale = [
+                        ('Falla','Falla'),
+                        ('Incidencia','Incidencia'),
+                        ('Reeincidencia','Reeincidencia'),
+                        ('Pregunta','Pregunta'),
+                        ('Requerimiento','Requerimiento'),
+                        ('Solicitud de refacción','Solicitud de refacción'),
+                        ('Conectividad','Conectividad'),
+                        ('Reincidencias','Reincidencias'),
+                        ('Instalación','Instalación'),
+                        ('Mantenimiento Preventivo','Mantenimiento Preventivo'),
+                        ('IMAC','IMAC'),
+                        ('Proyecto','Proyecto'),
+                        ('Retiro de equipo','Retiro de equipo'),
+                        ('Cambio','Cambio'),
+                        ('Servicio de Software','Servicio de Software'),
+                        ('Resurtido de Almacen','Resurtido de Almacen'),
+                        ('Supervisión','Supervisión'),
+                        ('Demostración','Demostración'),
+                        ('Toma de lectura','Toma de lectura')
+                    ]
+
+
+
 class HelpDeskComentario(TransientModel):
     _name = 'helpdesk.comentario'
     _description = 'HelpDesk Comentario'
@@ -944,6 +969,8 @@ class helpdesk_crearconserie(TransientModel):
 
     estatus = fields.Selection([('No disponible','No disponible'),('Moroso','Moroso'),('Al corriente','Al corriente')], string = 'Estatus', store = True, default = 'No disponible')
 
+    tipoDeReporte = fields.Selection(listaTipoDeVale, string = 'Tipo de reporte', store = True)
+
     def abrirTicket(self):
         return {
                 "type": "ir.actions.act_url",
@@ -963,7 +990,6 @@ class helpdesk_crearconserie(TransientModel):
             self.telefonoContactoLocalidad = self.contactoInterno.phone
             self.movilContactoLocalidad = self.contactoInterno.mobile
             self.correoContactoLocalidad = self.contactoInterno.email
-
 
     @api.onchange('clienteRelacion', 'localidadRelacion')
     def actualiza_dominio_en_numeros_de_serie(self):
@@ -1336,7 +1362,8 @@ class helpdesk_crearconserie(TransientModel):
                                                             'team_id': equipoDeUsuario,
                                                             'esProspecto': True,
                                                             'clienteProspectoText': self.clienteProspectoText,
-                                                            'comentarioClienteProspecto': self.comentarioClienteProspecto
+                                                            'comentarioClienteProspecto': self.comentarioClienteProspecto,
+                                                            'x_studio_tipo_de_vale': self.tipoDeReporte
                                                 })
             mensajeTitulo = "Ticket generado!!!"
             #mensajeCuerpo = "Se creo el ticket '" + str(ticket.id) + "' sin número de serie para cliente " + self.cliente + " con localidad " + self.localidad + "\n\n"
@@ -1364,7 +1391,8 @@ class helpdesk_crearconserie(TransientModel):
                                                 ,'partner_id': int(self.idCliente)
                                                 ,'x_studio_empresas_relacionadas': int(self.idLocaliidad)
                                                 ,'team_id': equipoDeUsuario
-                                                ,'x_studio_field_6furK': self.zonaLocalidad
+                                                ,'x_studio_field_6furK': self.zonaLocalidad,
+                                                'x_studio_tipo_de_vale': self.tipoDeReporte
                                                 })
             if self.zonaLocalidad:
                 ticket.write({'partner_id': int(self.idCliente)
@@ -5856,25 +5884,32 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                         'context': self.env.context,
                     }
 
-        #procedeAPedirse = False
-        #listaDeRefaccionesValidadas = []
-        #if self.ticket_id.validacionesRefaccion:
-        #    for validacion in self.ticket_id.validacionesRefaccion:
-        #        listaDeRefaccionesValidadas = listaDeRefaccionesValidadas + ast.literal_eval(validacion.listaIdsRefaccionesValidadas)
-        #listaDeRefaccionesValidadas = list(set(listaDeRefaccionesValidadas))
-        #_logger.info('listaDeRefaccionesValidadas: ' + str(listaDeRefaccionesValidadas))
-        #for refaccion in self.ticket_id.x_studio_productos:
-        #    if not refaccion.product_variant_id.id in listaDeRefaccionesValidadas:
-        #        procedeAPedirse = True
-
-        #if not listaDeRefaccionesValidadas:
-        #    procedeAPedirse = True
-
-        #if procedeAPedirse:
         self.ticket_id.x_studio_productos = [(6, 0, self.productos.ids)]
         if self.productos:
             self.ticket_id.x_studio_productos = [(6, 0, self.productos.ids)]
-        
+
+        """
+        Funcionalidad que permite no validar las mismas refacciones y/o accesorios. 
+        Funcional pero falta probar con más casos.
+        """
+        """
+        procedeAPedirse = False
+        listaDeRefaccionesValidadas = []
+        if self.ticket_id.validacionesRefaccion:
+            for validacion in self.ticket_id.validacionesRefaccion:
+                listaDeRefaccionesValidadas = listaDeRefaccionesValidadas + ast.literal_eval(validacion.listaIdsRefaccionesValidadas)
+        listaDeRefaccionesValidadas = list(set(listaDeRefaccionesValidadas))
+        _logger.info('listaDeRefaccionesValidadas: ' + str(listaDeRefaccionesValidadas))
+        _logger.info('self.ticket_id.x_studio_productos.ids' + str(self.ticket_id.x_studio_productos.ids) )
+        for refaccion in self.ticket_id.x_studio_productos:
+            if not refaccion.product_variant_id.id in listaDeRefaccionesValidadas:
+                procedeAPedirse = True
+            
+        if not listaDeRefaccionesValidadas:
+            procedeAPedirse = True
+
+        if procedeAPedirse:
+        """ 
         if self.ticket_id.x_studio_field_nO7Xg:# and (self.ticket_id.stage_id.id != 3 or self.ticket_id.stage_id.id != 18 or self.ticket_id.stage_id.id != 4): #and len(self.ticket_id.x_studio_productos) > len(self.ticket_id.x_studio_field_nO7Xg.order_line):
             _logger.info('3312: inicio actualización refacciones sobre la misma so(): ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
             refaccionesActualizadasCantidad = []
@@ -6121,11 +6156,10 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                                                             'creadoPorSistema': False
                                                         })
             #mensajeTitulo = 'Creación y validación de refacción!!!'
-            #mensajeCuerpo = 'Se creo y valido la solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) + ' para el ticket ' + str(self.ticket_id.id) + '.'
-        
+            #mensajeCuerpo = 'Se creo y valido la solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) + ' para el ticket ' + str(self.ticket_id.id) + '.'    
         #else:
-        #    mensajeTitulo = 'Error'
-        #    mensajeCuerpo = 'No es posible validar un ticket con la misma refacción y/o accesorio seleccionado anteriormente'
+            #mensajeTitulo = 'Error'
+            #mensajeCuerpo = 'No es posible validar un ticket con la misma refacción y/o accesorio seleccionado anteriormente'
         wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
         view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
         return {
@@ -6254,27 +6288,6 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
 
 
 
-listaTipoDeVale = [
-                        ('Falla','Falla'),
-                        ('Incidencia','Incidencia'),
-                        ('Reeincidencia','Reeincidencia'),
-                        ('Pregunta','Pregunta'),
-                        ('Requerimiento','Requerimiento'),
-                        ('Solicitud de refacción','Solicitud de refacción'),
-                        ('Conectividad','Conectividad'),
-                        ('Reincidencias','Reincidencias'),
-                        ('Instalación','Instalación'),
-                        ('Mantenimiento Preventivo','Mantenimiento Preventivo'),
-                        ('IMAC','IMAC'),
-                        ('Proyecto','Proyecto'),
-                        ('Retiro de equipo','Retiro de equipo'),
-                        ('Cambio','Cambio'),
-                        ('Servicio de Software','Servicio de Software'),
-                        ('Resurtido de Almacen','Resurtido de Almacen'),
-                        ('Supervisión','Supervisión'),
-                        ('Demostración','Demostración'),
-                        ('Toma de lectura','Toma de lectura')
-                    ]
 
 
 class HelpDeskDatosMesa(TransientModel):
