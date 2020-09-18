@@ -856,6 +856,8 @@ class StockQuantMassAction(TransientModel):
     tipo=fields.Many2one('product.product',string='Modelo')
     equipo =fields.Boolean('Equipos')
     estado=fields.Selection([["Obsoleto","Obsoleto"],["Usado","Usado"],["Hueso","Hueso"],["Para reparación","Para reparación"],["Nuevo","Nuevo"],["Buenas condiciones","Buenas condiciones"],["Excelentes condiciones","Excelentes condiciones"],["Back-up","Back-up"],["Dañado","Dañado"]])
+    anterior=fields.Boolean()
+    fecha=fields.Date()
     #almacenes=fields.Many2many('stock.warehouse')
 
 
@@ -867,45 +869,57 @@ class StockQuantMassAction(TransientModel):
 
 
     def report(self):
-        d=[]
-        # if(self.equipo):
-        #     d.append(['x_studio_almacn.x_studio_cliente','=',False])
-        #     if(self.almacen):
-        #         d.append(['x_studio_almacn','=',self.almacen.id])
-        #     if(self.almacen.id==False):
-        #         d.append(['x_studio_almacn','!=',False])
-        #     #d.append(['lot_id','!=',False])
-        # else:
-        if(len(self.almacen)>0):
-            d.append(['location_id','in',self.almacen.mapped('lot_stock_id.id')])
-        if(self.categoria):
-            d.append(['x_studio_categoria','=',self.categoria.id])
-            if(self.categoria.id==13):
-                d.append(['x_studio_almacn.x_studio_cliente','=',False])
-                if(self.almacen):
-                    d.append(['location_id','in',self.almacen.mapped('lot_stock_id.id')])
-                if(len(self.almacen)==0):
-                    d.append(['x_studio_almacn','!=',False])
-        if(self.tipo):
-            d.append(['product_id','=',self.tipo.id])
-        if(self.estado):
-            d.append(['lot_id.x_studio_estado','=',self.estado])
-            # if(self.almacen.id==False):
-            #     d.append(['x_studio_almacn','!=',False])
-            # if(self.categoria.id==False):
-            #     d.append(['x_studio_categoria','!=',False])
-            # if(self.tipo.id==False):
-            #     d.append(['product_id','!=',False])
-            #d.append(['x_studio_almacn.x_studio_cliente','=',False])
-            #d.append(['lot_id','=',False])
-        _logger.info(str(d))
-        data=self.env['stock.quant'].search(d,order="x_studio_almacn")
-        #_logger.info(str(data.mapped('id')))
-        if(len(data)>0):
-            data[0].write({'x_studio_arreglo':str(data.mapped('id'))})
-            return self.env.ref('stock_picking_mass_action.quant_xlsx').report_action(data[0])        
-        if(len(data)==0):
-            raise UserError(_("No hay registros para la selecion actual"))
+        if(self.anterior):
+            if(self.fecha):
+                registro=self.env['quant.history'].search([['fecha','=',self.fecha]])
+                if(registro.id):
+                    return registro.reporte
+                else:
+                    raise UserError(_("No hay registros para la selecion actual"))
+            else:
+                raise UserError(_("Debe ingresar la fecha deseada"))
+
+        if(self.anterior==False):    
+            d=[]
+            # if(self.equipo):
+            #     d.append(['x_studio_almacn.x_studio_cliente','=',False])
+            #     if(self.almacen):
+            #         d.append(['x_studio_almacn','=',self.almacen.id])
+            #     if(self.almacen.id==False):
+            #         d.append(['x_studio_almacn','!=',False])
+            #     #d.append(['lot_id','!=',False])
+            # else:
+            if(len(self.almacen)>0):
+                d.append(['location_id','in',self.almacen.mapped('lot_stock_id.id')])
+            if(self.categoria):
+                d.append(['x_studio_categoria','=',self.categoria.id])
+                if(self.categoria.id==13):
+                    d.append(['x_studio_almacn.x_studio_cliente','=',False])
+                    if(self.almacen):
+                        d.append(['location_id','in',self.almacen.mapped('lot_stock_id.id')])
+                    if(len(self.almacen)==0):
+                        d.append(['x_studio_almacn','!=',False])
+            if(self.tipo):
+                d.append(['product_id','=',self.tipo.id])
+            if(self.estado):
+                d.append(['lot_id.x_studio_estado','=',self.estado])
+                # if(self.almacen.id==False):
+                #     d.append(['x_studio_almacn','!=',False])
+                # if(self.categoria.id==False):
+                #     d.append(['x_studio_categoria','!=',False])
+                # if(self.tipo.id==False):
+                #     d.append(['product_id','!=',False])
+                #d.append(['x_studio_almacn.x_studio_cliente','=',False])
+                #d.append(['lot_id','=',False])
+            _logger.info(str(d))
+            data=self.env['stock.quant'].search(d,order="x_studio_almacn")
+            #_logger.info(str(data.mapped('id')))
+            if(len(data)>0):
+                data[0].write({'x_studio_arreglo':str(data.mapped('id'))})
+                return self.env.ref('stock_picking_mass_action.quant_xlsx').report_action(data[0])        
+            if(len(data)==0):
+                raise UserError(_("No hay registros para la selecion actual"))
+
 class SaleOrderMassAction(TransientModel):
     _name = 'sale.order.action'
     _description = 'Reporte de Solicitudes'

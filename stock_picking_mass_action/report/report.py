@@ -116,12 +116,12 @@ class ExistenciasXML(models.AbstractModel):
             copia=quants
             quants=self.env['stock.quant'].browse(eval(quants.x_studio_arreglo))
             copia.sudo().write({'x_studio_arreglo':'/'})
-        t=quants[0].lot_id.id
+        t=quants.mapped('lot_id.id')
         i=2
         merge_format = workbook.add_format({'bold': 1,'border': 1,'align': 'center','valign': 'vcenter','fg_color': 'blue'})
         report_name = 'Existencias'
         bold = workbook.add_format({'bold': True})
-        if(t):
+        if(t!=[]):
             sheet = workbook.add_worksheet('Existencias Equipos')
             sheet.merge_range('A1:K1', 'Existencias Equipos', merge_format)   
             for obj in quants:
