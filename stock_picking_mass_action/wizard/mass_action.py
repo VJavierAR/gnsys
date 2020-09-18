@@ -519,6 +519,7 @@ class StockCambioLine(TransientModel):
 
     @api.onchange('almacen','producto2')
     def almac(self):
+        res={}
         _logger.info('entre3')
         for record in self:
             if(record.almacen):
