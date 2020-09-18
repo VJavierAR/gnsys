@@ -858,6 +858,8 @@ class StockQuantMassAction(TransientModel):
     estado=fields.Selection([["Obsoleto","Obsoleto"],["Usado","Usado"],["Hueso","Hueso"],["Para reparación","Para reparación"],["Nuevo","Nuevo"],["Buenas condiciones","Buenas condiciones"],["Excelentes condiciones","Excelentes condiciones"],["Back-up","Back-up"],["Dañado","Dañado"]])
     anterior=fields.Boolean()
     fecha=fields.Date()
+    regi=fields.Integer()
+    archivo=fields.Binary()
     #almacenes=fields.Many2many('stock.warehouse')
 
 
@@ -873,7 +875,8 @@ class StockQuantMassAction(TransientModel):
             if(self.fecha):
                 registro=self.env['quant.history'].search([['fecha','=',self.fecha]])
                 if(registro.id):
-                    return registro.reporte
+                    self['regi']=registro.id
+                    self['archivo']=registro.reporte
                 else:
                     raise UserError(_("No hay registros para la selecion actual"))
             else:
