@@ -48,6 +48,22 @@ class StockQuan(Model):
         pdf=self.env.ref('stock_picking_mass_action.quant_xlsx').sudo().render_xlsx(data=r[0],docids=r[0].id)[0]
         reporte = base64.encodestring(pdf)
         self.env['quant.history'].create({'reporte':reporte,'fecha':datetime.datetime.now().date()})
+    
+    def edit(self):
+        wiz = self.env['quant.action'].create({'quant':self.id,'producto':self.product_id.id,'cantidad':self.quantity,'ubicacion':self.x_studio_field_kUc4x.id,'usuario':self.env.uid})
+        view = self.env.ref('stock_picking_mass_action.view_quant_action_form')
+        return {
+            'name': _('Existencia'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'quant.action',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            'context': self.env.context,
+        }
 
 class StockQuantLine(Model):
     _name='stock.quant.line'
