@@ -758,14 +758,28 @@
         <field name="arch" type="xml">
             <form string="Crear">
                 <group>
+                    <group>
+                        <field name='esProspecto' />
+                        <field name='tipoDeReporte' required='1'/>
+                    </group>
+                </group>
+                <group attrs='{"invisible": [["esProspecto", "=", True]] } '>
                     <group string='Buscar por serie'>
                         <field name='serie' widget='many2many_tags' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" force_save = "1"/>
                     </group>
                     <group string='Buscar por cliente y localidad'>
                         <field name='clienteRelacion' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain='[["x_studio_activo_1", "=", True]]' force_save = "1" widget="res_partner_many2one" />
                         <field name='localidadRelacion' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain='[["parent_id.id","=",idCliente],["type","=","delivery"]]' force_save = "1"/>
-                        <field name='contactoInterno' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain='[["parent_id.id", "=", idLocaliidad],["type", "=", "contact"]]' attrs='{"invisible": [["localidad","!=","CORPORATIVO"]]}' force_save = '1'/> 
+                        <field name='contactoInterno' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain='["&amp;","|",["parent_id.id", "=", idLocaliidad], ["parent_id.id", "=", idCliente],["type", "=", "contact"]]' attrs='{"invisible": [["localidad","!=","Genesis Agrícola"]]}' force_save = '1'/>
                         <!--<field name='localidadRelacion' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain='[["parent_id.id","=",idCliente],"|",["type","=","delivery"], ["type","=","contact"]]' force_save = "1"/>-->
+                    </group>
+                </group>
+                <group string='Información' attrs='{"invisible": [["esProspecto", "=", False]] } '>
+                    <group >
+                        <field name='clienteProspectoText' />
+                    </group>
+                    <group >
+                        <field name='comentarioClienteProspecto' />
                     </group>
                 </group>
                 
@@ -783,11 +797,15 @@
                 </group>
 
                 <group>
+                    <field name='textoSinServicio' readonly='1' widget='html' force_save='1' /> 
+                </group>
+
+                <group attrs='{"invisible": [["esProspecto", "=", True]] } '>
                     <group class='text-center' string = 'Datos de busqueda'>
                     </group>
                 </group>
 
-                <group>
+                <group attrs='{"invisible": [["esProspecto", "=", True]] } '>
                     <group string="Cliente y localidad">
                         <field name='cliente' readonly='1' force_save = "1"/>
                         <field name='idCliente' readonly='1' invisible='1' force_save = "1"/>
@@ -804,7 +822,7 @@
                         <field name='correoContactoLocalidad' readonly='1' force_save = "1"/>
                     </group>
                 </group>
-                <group>
+                <group attrs='{"invisible": [["esProspecto", "=", True]] } '>
                     <group string = 'Dirreción'>
                         <field name='direccionCalleNombre' readonly='1' force_save = "1"/>
                         <field name='direccionNumeroExterior' readonly='1' force_save = "1"/>
@@ -877,6 +895,33 @@
     </record>
 
 
+
+
+
+
+    <record id="action_cerrar_mesa" model="ir.actions.act_window">
+        <field name="name">Cerrar  tickets de mesa</field>
+        <field name="res_model">helpdesk.cerrar.tickets.mesa</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="groups">studio_customization.cerrar_tickets_mesa_41c2145f-10a2-429c-b59d-4cc9ec16d613</field>
+        <field name="binding_model_id" ref="helpdesk.model_helpdesk_ticket" />
+    </record>
+    <record id="view_cerrar_mesa_form" model="ir.ui.view">
+        <field name="model">helpdesk.cerrar.tickets.mesa</field>
+        <field name="arch" type="xml">
+            <form string="Cerrar tickets seleccionados">
+                <h2>
+                    Se Cerrarán los tickets seleccionados
+                </h2>
+                <footer>
+                    <button name="confirmarCerrados" string="Cerrar tickets" type="object" class="oe_highlight"/>
+                    <button string="Cerrar" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
 
 
     <record id="action_cancelar_toner" model="ir.actions.act_window">
@@ -1267,7 +1312,7 @@
                     <group string='Buscar'>
                         <!--<field name='serie' widget='many2many_tags' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" force_save = "1"/>-->
 
-                        <field name='dca'>
+                        <field name='dca' readonly='0'>
                             <form>
                                 <!--
                                 <div>
@@ -1381,20 +1426,20 @@
                     <page string = 'Pedido'>
                         <group>
                             <group>
-                                <field name='tipoReporte' force_save='1' />
-                                <field name='corte' force_save='1' />
+                                <field name='tipoReporte' force_save='1' readonly='0' />
+                                <field name='corte' force_save='1' readonly='0' />
                                 <!--<field name='almacen' force_save='1' />-->
                                 <!--
                                 <field name='almacenes' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain="['&amp;', ('x_studio_cliente', '=', False), '|', ('id', '=', 1), ('id', '=', 18) ]" />
                                 -->
 
-                                <field name='almacenes' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain="['|', '|', ('id', '=', 1), ('id', '=', 18), ('id', '=', 17) ]" />
+                                <field name='almacenes' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain="['|', '|', ('id', '=', 1), ('id', '=', 18), ('id', '=', 17) ]" readonly='0' />
 
                             </group>
                             <group>
-                                <field name='validarHastaAlmacenTicket' force_save='1' />
-                                <field name='validarTicket' force_save='1' />
-                                <field name='ponerTicketEnEspera' force_save='1' />
+                                <field name='validarHastaAlmacenTicket' force_save='1' readonly='0' />
+                                <field name='validarTicket' force_save='1' readonly='0' />
+                                <field name='ponerTicketEnEspera' force_save='1' readonly='0' />
                             </group>
                         </group>
                     </page>
@@ -1404,7 +1449,7 @@
                                 <field name='idClienteAyuda' invisible='1' force_save='1' />
                                 <field name='idLocalidadAyuda' invisible='1' force_save='1' />
                                 <field name='estatus' force_save='1' readonly='1' />
-                                <field name='editarCliente' force_save='1' />
+                                <field name='editarCliente' force_save='1' readonly='0' />
                                 <field name='cliente' force_save='1' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" attrs="{'readonly': [['editarCliente', '=', False]]}" />
                                 <field name='tipoCliente' force_save='1' readonly='1' />
                                 <field name='localidad' force_save='1' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" attrs="{'readonly': [['editarCliente', '=', False]]}" domain='["&amp;",["parent_id.id", "=", idClienteAyuda],["type","=","delivery"]]' />    
@@ -1427,16 +1472,16 @@
 
                         <group string='Agregar nuevo contacto a localidad' attrs="{'invisible': [('mostrarAnadirContacto', '=', False)]}">
                             <group>
-                                <field name="tipoDeDireccion" invisible='1' force_save = "1"/>
-                                <field name="subtipo" invisible='1' force_save = "1"/>
-                                <field name="nombreDelContacto" required='1'/>
-                                <field name="titulo" placeholder="Por ejemplo, Sr." options="{'no_create_edit': True, 'no_create': True}" invisible='1'/>
-                                <field name="puestoDeTrabajo" placeholder="Por ejemplo, Director de ventas" invisible='1'/>
-                                <field name="correoElectronico"/>
-                                <field name="telefono"/>
-                                <field name="movil"/>
-                                <field name="notas" placeholder="Notas internas..."/>
-                                <button name="anadirContactoALocalidad" string="Añadir contcto a localidad" icon="fa-user-plus" type="object"  attrs='{"invisible": [["localidad","=", False]]}' groups=""/>
+                                <field name="tipoDeDireccion" invisible='1' force_save = "1" readonly='0'/>
+                                <field name="subtipo" invisible='1' force_save = "1" readonly='0'/>
+                                <field name="nombreDelContacto" required='1' readonly='0'/>
+                                <field name="titulo" placeholder="Por ejemplo, Sr." options="{'no_create_edit': True, 'no_create': True}" invisible='1' readonly='0'/>
+                                <field name="puestoDeTrabajo" placeholder="Por ejemplo, Director de ventas" invisible='1' readonly='0'/>
+                                <field name="correoElectronico" readonly='0'/>
+                                <field name="telefono" readonly='0'/>
+                                <field name="movil" readonly='0'/>
+                                <field name="notas" placeholder="Notas internas..." readonly='0'/>
+                                <button name="anadirContactoALocalidad" string="Añadir contcto a localidad" icon="fa-user-plus" type="object"  attrs='{"invisible": [["localidad","=", False]]}' groups="" readonly='0'/>
                             </group>
                         </group>
 
@@ -1461,18 +1506,18 @@
                     <page string = 'Datos del ticket'>
                         <group>
                             <group>
-                                <field name='comentarioLocalidad' force_save='1'/>
+                                <field name='comentarioLocalidad' force_save='1' readonly='0'/>
                             </group>
                             <group>
-                                <field name='prioridad' force_save='1' widget='priority'/>
+                                <field name='prioridad' force_save='1' widget='priority' readonly='0'/>
                             </group>
                         </group>
                         <group>
                             <group>
-                                <field name='numeroTicketCliente' force_save='1' />
+                                <field name='numeroTicketCliente' force_save='1' readonly='0' />
                             </group>
                             <group>
-                                <field name='numeroTicketDistribuidor' force_save='1' />
+                                <field name='numeroTicketDistribuidor' force_save='1' readonly='0' />
                             </group>
                         </group>
                     </page>
@@ -1520,7 +1565,11 @@
                         <tree editable='bottom'>
                             <!--<field name='ticketRelacion' readonly='1' />-->
                             <field name='productos'  options="{'no_create_edit': True, 'no_create': True}" />
-                            <field name='detalleDeProducto' widget='html' readonly='1' />
+                            <!--<field name='detalleDeProducto' widget='html' readonly='1' />-->
+                            <field name='referenciaInterna' readonly='1' />
+                            <field name='nombreProducto' readonly='1' />
+                            <field name='descripcion' readonly='1' />
+                            <field name='cantidadAMano' readonly='1' />
                             <field name='cantidadPedida' />
                             <field name='wizRela' readonly='1' invisible = '1'/>
                         </tree>
@@ -2086,6 +2135,37 @@
 
 
 
+
+    <record id="view_helpdesk_validaciones" model="ir.ui.view">
+        <field name="model">helpdesk.validacion.so</field>
+        <field name="arch" type="xml">
+            <form string="Validaciones">
+                <group>
+                    <group>
+                        <field name="ticketRelacion" readonly="1" />
+                    </group>
+                    <group>
+                        <field name="fechaDeValidacionSo" readonly="1" />
+                    </group>
+                </group>
+
+                <field name="refaccionesValidadas" readonly='1' widget='html' string='' />
+
+                <group>
+                    <group>
+                        <field name="listaRefaccionesValidadas" readonly="1" invisible='0' />
+                    </group>
+                    <group>
+                        <field name="listaIdsRefaccionesValidadas" readonly="1" invisible='0' />
+                    </group>
+                </group>
+
+                <footer>
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
 
 
 

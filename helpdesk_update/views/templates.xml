@@ -6,63 +6,119 @@
                 <script type="text/javascript" src="/helpdesk_update/static/src/js/helpdesk_update.js"></script>
             </xpath>
         </template>
+       <!-- 
+        <record id="menu_vista_tecnicos" model="website.menu">
+            <field name="name">vista_tecnicos</field>
+            <field name="url">/mesaDeAyuda/tecnicos/</field>
+            <field name='parent_id' ref='website.main_menu' />
+            <field name='sequence'>55</field>
+            
+        </record>
+    -->
+
         
+<!--
 
+        <record id="vista_tecnicos_record" model="website.page">
+            <field name="name">vista tecnicos</field>
+            <field name="website_published">True</field>
+            <field name="url">/mesaDeAyuda/tecnicos/</field>
+            <field name="view_id" ref="vista_tecnicos_template"/>
 
-        <template id='confirmacón_refacciones' name='Conirmacion de la creación y validación de una solicitud'>
-            <t t-call='website.layout'>
-                <div class='container p-3'>
-                    <div class='row'> 
-                        <div class='col-sm-12 text-center'>
-                            <h3>Se aprobarón los siguientes tickets</h3>
-                        </div>
-                    </div>
-                    <div class='row'> 
-                        
-                        <table class="table">
-                            <thead class="thead-dark">
-                                <tr>
-                                    <th scope="col">First</th>
-                                    <th scope="col">Last</th>
-                                    <th scope="col">Handle</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Mark</td>
-                                    <td>Otto</td>
-                                    <td>@mdo</td>
-                                </tr>
-                                <tr>
-                              
-                                    <td>Jacob</td>
-                                    <td>Thornton</td>
-                                    <td>@fat</td>
-                                </tr>
-                                <tr>
-                                    <td>Larry</td>
-                                    <td>the Bird</td>
-                                    <td>@twitter</td>
-                                </tr>
-                            </tbody>
-                        </table>
+        </record>
 
-
-                    </div>
-
-
-                    <div class='row'> 
-                        <div class='col-sm-12'>
-                        </div>
-                    </div>
-                    <div class='row'> 
-                        <div class='col-sm-12'>
+        <template id='vista_tecnicos_template' >
+            <title>Vista técnicos</title>
+            
+            <t t-call="website.layout">
+                <div class='container'>
+                
+                <div class='row'>
+                    <div class='col-sm-12'>
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg">Agregar diagnostico</button>
+                        <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class='row'>
+                                        <div class='col-sm-12'>
+                                                <div class='row'>
+                                                    <div class='col-sm-8'>
+                                                        <div class="form-group">
+                                                            <label for="diagnosticoTexto">Diagnostico</label>
+                                                            <textarea class="form-control" id="diagnosticoTexto" rows="3"></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class='col-sm-4'>
+                                                        <div class="custom-file">
+                                                            <input type="file" class="custom-file-input" id="achivoDiagnostico" lang="es" />
+                                                            <label class="custom-file-label" for="achivoDiagnostico">Seleccionar Archivo</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
+                <div class='row'> 
+                    <div class='col-sm-12 text-center'>
+                        <h3>Tickets de tecnicos</h3>
+                    </div>
+                </div>
+                <div class='row'>
+                    <div class='col-sm-12'>
+                        <table class="table table-hover table-dark">
+                            <thead >
+                                <tr>
+                                    <th scope="col">Fecha de creación </th>
+                                    <th scope="col">Número de ticket</th>
+                                    <th scope="col">Etapa de ticket</th>
+                                    <th scope="col">Tipo de reporte</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach='tickets' t-as='ticket'>
+                                    <tr>
+                                        <td>
+                                            <span t-esc='ticket.create_date' t-options='{"widget": "datetime"}' />
+                                        </td>
+                                        <td>
+                                            <span t-esc='ticket.id' />
+                                        </td>
+                                        <td>
+                                            <span t-esc='ticket.stage_id.name' />
+                                        </td>
+                                        <td>
+                                            <span t-esc='ticket.x_studio_tipo_de_vale' />
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class='row'> 
+                    <div class='col-sm-12'>
+                    </div>
+                </div>
+                <div class='row'> 
+                    <div class='col-sm-12'>
+                    </div>
+                </div>
+                </div>
+            
             </t>
         </template>
 
+        <record id="menu_vista_tecnicos" model="website.menu">
+          <field name="name">Tecnicos</field>
+          <field name="page_id" ref="vista_tecnicos_record"/>
+          <field name="parent_id" ref="website.main_menu" />
+          <field name="sequence" type="int">85</field>
+        </record>
+-->
 
         <!-- <template id="listing"> -->
         <!--   <ul> -->

@@ -9,6 +9,31 @@ _logger = logging.getLogger(__name__)
 from odoo.exceptions import UserError
 from odoo import exceptions, _
 
+
+listaTipoDeVale = [
+                        ('Falla','Falla'),
+                        ('Incidencia','Incidencia'),
+                        ('Reeincidencia','Reeincidencia'),
+                        ('Pregunta','Pregunta'),
+                        ('Requerimiento','Requerimiento'),
+                        ('Solicitud de refacción','Solicitud de refacción'),
+                        ('Conectividad','Conectividad'),
+                        ('Reincidencias','Reincidencias'),
+                        ('Instalación','Instalación'),
+                        ('Mantenimiento Preventivo','Mantenimiento Preventivo'),
+                        ('IMAC','IMAC'),
+                        ('Proyecto','Proyecto'),
+                        ('Retiro de equipo','Retiro de equipo'),
+                        ('Cambio','Cambio'),
+                        ('Servicio de Software','Servicio de Software'),
+                        ('Resurtido de Almacen','Resurtido de Almacen'),
+                        ('Supervisión','Supervisión'),
+                        ('Demostración','Demostración'),
+                        ('Toma de lectura','Toma de lectura')
+                    ]
+
+
+
 class HelpDeskComentario(TransientModel):
     _name = 'helpdesk.comentario'
     _description = 'HelpDesk Comentario'
@@ -24,18 +49,41 @@ class HelpDeskComentario(TransientModel):
 
 
     def creaComentario(self):
-      if self.ultimaEvidencia and (self.ticket_id.stage_id.id == 2 or self.ticket_id.stage_id.id == 13 or self.ticket_id.stage_id.id == 104):
+      if self.ultimaEvidencia and (self.ticket_id.stage_id.id == 18 or self.ticket_id.stage_id.id == 4):
+            mensajeTitulo = 'No es posible cambiar a resuelto.'
+            mensajeCuerpo = 'Se intento cambiar al estado Resuelto al seleccionar la casilla última evidencia, pero no se logro realizar el cambio ya que el ticket debe de estar en un estado distinto a Cerrado o Cancelado. Estado actual: ' + str(self.ticket_id.stage_id.name)
+            wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
+            view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+            return {
+                        'name': _(mensajeTitulo),
+                        'type': 'ir.actions.act_window',
+                        'view_type': 'form',
+                        'view_mode': 'form',
+                        'res_model': 'helpdesk.alerta',
+                        'views': [(view.id, 'form')],
+                        'view_id': view.id,
+                        'target': 'new',
+                        'res_id': wiz.id,
+                        'context': self.env.context,
+                    }
+      if self.ultimaEvidencia:
           if self.evidencia:
             self.ticket_id.sudo().write({'stage_id': 3
-                                , 'team_id': 9
+                                #, 'team_id': 9
                                 })
-            self.env['helpdesk.diagnostico'].sudo().create({'ticketRelacion': self.ticket_id.id
+            idDiagnostico = self.env['helpdesk.diagnostico'].sudo().with_env(self.env(user=self.env.user.id)).create({'ticketRelacion': self.ticket_id.id
                                                 ,'comentario': self.comentario
                                                 ,'estadoTicket': self.ticket_id.stage_id.name
                                                 ,'evidencia': [(6,0,self.evidencia.ids)]
                                                 ,'mostrarComentario': self.check,
-                                                'creadoPorSistema': False
+                                                'creadoPorSistema': False,
+                                                'write_uid':  self.env.user.name,
+                                                'create_uid': self.env.user.name
                                                 })
+            #idDiagnostico.write({
+            #                    'write_uid': self.env.user.name,
+            #                    'create_uid': self.env.user.id
+            #                })
             if self.editarZona:
                 self.ticket_id.write({'x_studio_zona': self.zona
                                     , 'x_studio_field_6furK': self.zona
@@ -64,13 +112,19 @@ class HelpDeskComentario(TransientModel):
         mensajeNoCambioAResuelto = ''
         if self.ultimaEvidencia:
             mensajeNoCambioAResuelto = '\n\nNota:Se intento cambiar al estado Resuelto al seleccionar la casilla última evidencia, pero no se logro realizar el cambio ya que el ticket debe de estar en el estado Asignado, Atención o Refacción entregada.'
-        self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.ticket_id.id
+        idDiagnostico = self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.ticket_id.id
                                                 ,'comentario': self.comentario
                                                 ,'estadoTicket': self.ticket_id.stage_id.name
                                                 ,'evidencia': [(6,0,self.evidencia.ids)]
                                                 ,'mostrarComentario': self.check,
-                                                'creadoPorSistema': False
+                                                'creadoPorSistema': False,
+                                                'write_uid':  self.env.user.name,
+                                                'create_uid': self.env.user.name
                                                 })
+        #idDiagnostico.write({
+        #                        'write_uid': self.env.user.name,
+        #                        'create_uid': self.env.user.id
+        #                    })
         if self.editarZona:
             self.ticket_id.write({'x_studio_zona': self.zona
                                 , 'x_studio_field_6furK': self.zona
@@ -740,38 +794,54 @@ class helpdesk_contadores(TransientModel):
     @api.depends('ticket_id')
     def _compute_contadorBNMesa(self):
         if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
-            #if self.contadorBNActual == 0:
-            for serie in self.ticket_id.x_studio_equipo_por_nmero_de_serie:
-                self.contadorBNMesa = int(serie.x_studio_contador_bn_mesa)
-                self.contadorColorMesa = int(serie.x_studio_contador_color_mesa)
-                self.bnColor = serie.x_studio_color_bn
-            #else:
-            #    self.contadorBNMesa = self.contadorBNActual
+            fuente = 'stock.production.lot'
+            ultimoDcaStockProductionLot = self.env['dcas.dcas'].search([['fuente', '=', fuente],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+            if ultimoDcaStockProductionLot:
+                self.contadorBNMesa = int(ultimoDcaStockProductionLot.contadorMono)
+                self.contadorColorMesa = int(ultimoDcaStockProductionLot.contadorColor)
+                self.bnColor = ultimoDcaStockProductionLot.x_studio_color_o_bn
+            #for serie in self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+            #    self.contadorBNMesa = int(serie.x_studio_contador_bn_mesa)
+            #    self.contadorColorMesa = int(serie.x_studio_contador_color_mesa)
+            #    self.bnColor = serie.x_studio_color_bn
 
     def _compute_actualizaColor(self):
-      for record in self:
-        for serie in record.ticket_id.x_studio_equipo_por_nmero_de_serie:
-            record.bnColor = str(serie.x_studio_color_bn)
+      if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+            fuente = 'stock.production.lot'
+            ultimoDcaStockProductionLot = self.env['dcas.dcas'].search([['fuente', '=', fuente],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+            if ultimoDcaStockProductionLot:
+                self.bnColor = ultimoDcaStockProductionLot.x_studio_color_o_bn
+      #for record in self:
+      #  for serie in record.ticket_id.x_studio_equipo_por_nmero_de_serie:
+      #      record.bnColor = str(serie.x_studio_color_bn)
 
     def _compute_actualizaContadorColorMesa(self):
-        for serie in self.ticket_id.x_studio_equipo_por_nmero_de_serie:
-            self.contadorColorMesa = int(serie.x_studio_contador_color_mesa)
+        if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+            fuente = 'stock.production.lot'
+            ultimoDcaStockProductionLot = self.env['dcas.dcas'].search([['fuente', '=', fuente],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+            if ultimoDcaStockProductionLot:
+                self.contadorColorMesa = int(ultimoDcaStockProductionLot.contadorColor)
+                self.bnColor = ultimoDcaStockProductionLot.x_studio_color_o_bn
+        #for serie in self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+        #    self.contadorColorMesa = int(serie.x_studio_contador_color_mesa)
     
-    def modificarContadores(self):          
-        for c in self.ticket_id.x_studio_equipo_por_nmero_de_serie:                                       
-            q = 'stock.production.lot'              
-            if str(c.x_studio_color_bn) == 'B/N':
-                if int(self.contadorBNActual) >= int(c.x_studio_contador_bn):
-                    negrot = c.x_studio_contador_bn_mesa
-                    colort = c.x_studio_contador_color_mesa
-                    rr = self.env['dcas.dcas'].create({'serie' : c.id
-                                                    , 'contadorMono' : self.contadorBNActual
-                                                    #, 'x_studio_contador_color_anterior':colort
-                                                    #, 'contadorColor' :self.contadorColorMesa
-                                                    , 'x_studio_tickett':self.ticket_id.id
-                                                    , 'x_studio_contador_mono_anterior_1':negrot  
-                                                    , 'fuente':q
-                                                  })                  
+    def modificarContadores(self):
+        if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+            fuente = 'stock.production.lot'
+            ultimoDcaStockProductionLot = self.env['dcas.dcas'].search([['fuente', '=', fuente],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+        #for c in self.ticket_id.x_studio_equipo_por_nmero_de_serie:                                       
+            q = 'stock.production.lot'
+            if self.bnColor == 'B/N':
+                if int(self.contadorBNActual) >= int(self.contadorBNMesa):
+                    negrot = self.contadorBNMesa
+                    #colort = c.x_studio_contador_color_mesa
+                    rr = self.env['dcas.dcas'].create({
+                                                        'serie' : self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id, 
+                                                        'contadorMono' : self.contadorBNActual,
+                                                        'x_studio_tickett':self.ticket_id.id,
+                                                        'x_studio_contador_mono_anterior_1':negrot,
+                                                        'fuente': fuente
+                                                    })                 
                     self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.ticket_id.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario': 'Contador BN anterior: ' + str(negrot) + '\nContador BN capturado: ' + str(self.contadorBNActual)})
                     self.ticket_id.write({'contadores_anteriores': '</br>Equipo BN o Color: ' + str(self.bnColor) + ' </br></br>Contador BN: ' + str(self.contadorBNActual) + '</br></br>Contador Color: ' + str(self.contadorColorMesa)
                                         , 'x_studio_contador_bn': int(negrot)
@@ -800,24 +870,32 @@ class helpdesk_contadores(TransientModel):
                             }
                 else:
                     raise exceptions.ValidationError("Contador Monocromatico Menor")                                   
-            if str(c.x_studio_color_bn) != 'B/N':
-                if int(self.contadorColorMesa) >= int(c.x_studio_contador_color) and int(self.contadorBNActual) >= int(c.x_studio_contador_bn):                      
-                    if self.ticket_id.team_id.id == 8:
-                        negrot = c.x_studio_contador_bn
-                        colort = c.x_studio_contador_color
-                    else:
-                        negrot = c.x_studio_contador_bn_mesa
-                        colort = c.x_studio_contador_color_mesa
-                    rr=self.env['dcas.dcas'].create({'serie' : c.id
-                                                    , 'contadorMono' : self.contadorBNActual
-                                                    ,'x_studio_contador_color_anterior':colort
-                                                    , 'contadorColor' :self.contadorColorActual
-                                                    ,'x_studio_tickett':self.ticket_id.id
-                                                    ,'x_studio_contador_mono_anterior_1':negrot
-                                                    ,'fuente':q
-                                                  }) 
+            if self.bnColor != 'B/N':
+                if int(self.contadorColorActual) >= int(self.contadorColorMesa) and int(self.contadorBNActual) >= int(self.contadorBNMesa):                      
+                    #if self.ticket_id.team_id.id == 8:
+                    #    negrot = c.x_studio_contador_bn
+                    #    colort = c.x_studio_contador_color
+                    #else:
+                    negrot = self.contadorBNMesa
+                    colort = self.contadorColorMesa
+                    rr=self.env['dcas.dcas'].create({
+                                                        'serie': self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id,
+                                                        'contadorMono': self.contadorBNActual,
+                                                        'x_studio_contador_color_anterior': colort,
+                                                        'contadorColor': self.contadorColorActual,
+                                                        'x_studio_tickett': self.ticket_id.id,
+                                                        'x_studio_contador_mono_anterior_1': negrot,
+                                                        'fuente': fuente
+                                                  })
+                    #query = 'update dcas_dcas set \"x_studio_contador_mono_anterior_1\" = ' + str(negrot) + ', \"x_studio_contador_color_anterior\" = ' str(colort) + ' where id = ' rr.id + ';'
+                    #self.env.cr.execute(query)
+                    #self.env.cr.commit()
+                    #rr.write({
+                    #            'x_studio_contador_color_anterior': colort,
+                    #            'x_studio_contador_mono_anterior_1': negrot,
+                    #        })
                     self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.ticket_id.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario': 'Contador BN anterior: ' + str(negrot) + '\nContador BN capturado: ' + str(self.contadorBNActual) + '\nContador color anterior: ' + str(colort) + '\nContador color capturado: ' + str(self.contadorColorActual)})
-                    self.ticket_id.write({'contadores_anteriores': '</br>Equipo BN o Color: ' + str(self.bnColor) + ' </br></br>Contador BN: ' + str(self.contadorBNActual) + '</br></br>Contador Color: ' + str(self.contadorColorMesa)
+                    self.ticket_id.write({'contadores_anteriores': '</br>Equipo BN o Color: ' + str(self.bnColor) + ' </br></br>Contador BN: ' + str(self.contadorBNActual) + '</br></br>Contador Color: ' + str(self.contadorColorActual)
                                         , 'x_studio_contador_bn': int(negrot)
                                         , 'x_studio_contador_bn_a_capturar': int(self.contadorBNActual)
                                         , 'x_studio_contador_color': int(colort)
@@ -884,8 +962,15 @@ class helpdesk_crearconserie(TransientModel):
     textoTicketExistente = fields.Text(string = ' ', store = True)
     textoClienteMoroso = fields.Text(string = ' ', store = True)
     textoDistribuidor = fields.Text(string = ' ', store = True)
+    textoSinServicio = fields.Text(string = ' ', store = True)
+
+    esProspecto = fields.Boolean(string = '¿Es ticket de cliente prospecto?', default = False)
+    clienteProspectoText = fields.Text(string = 'Nombre del cliente prospecto')
+    comentarioClienteProspecto = fields.Text(string = 'Comentario cliente prospecto')
 
     estatus = fields.Selection([('No disponible','No disponible'),('Moroso','Moroso'),('Al corriente','Al corriente')], string = 'Estatus', store = True, default = 'No disponible')
+
+    tipoDeReporte = fields.Selection(listaTipoDeVale, string = 'Tipo de reporte', store = True)
 
     def abrirTicket(self):
         return {
@@ -906,7 +991,6 @@ class helpdesk_crearconserie(TransientModel):
             self.telefonoContactoLocalidad = self.contactoInterno.phone
             self.movilContactoLocalidad = self.contactoInterno.mobile
             self.correoContactoLocalidad = self.contactoInterno.email
-
 
     @api.onchange('clienteRelacion', 'localidadRelacion')
     def actualiza_dominio_en_numeros_de_serie(self):
@@ -1096,6 +1180,21 @@ class helpdesk_crearconserie(TransientModel):
                 self.env.cr.execute(query)
                 informacion = self.env.cr.fetchall()
                 _logger.info("test informacion: " + str(informacion))
+                
+                textoHtmlSinServico = []
+                noTieneServicio = False
+                mensajeCuerpo = '<br/><h1>Se creara un ticket de un equipo sin servicio.</h1><br/><h1>Los equipos que no tienen servicio son:</h1>'
+                for equipo in self.serie:
+                  if not equipo.servicio:
+                    mensajeCuerpo = mensajeCuerpo + '<br/><h3>Equipo: ' + str(equipo.product_id.name) + ' Serie: ' + str(equipo.name) + '<h3/>'
+                    noTieneServicio = True
+                
+                if noTieneServicio:
+                  textoHtmlSinServico.append(mensajeCuerpo)
+                  self.textoSinServicio = ''.join(textoHtmlSinServico)
+                else:
+                  self.textoSinServicio = ''
+
                 if len(informacion) > 0:
                   textoHtml2 = """ 
                                 <!-- Button trigger modal -->
@@ -1238,6 +1337,7 @@ class helpdesk_crearconserie(TransientModel):
 
             self.ticket_id_existente = 0
             self.textoTicketExistente = ''
+            self.textoSinServicio = ''
 
             self.cliente = ''
             self.localidad = ''
@@ -1273,6 +1373,33 @@ class helpdesk_crearconserie(TransientModel):
         #for equipoRelacionado in equiposRelacionados:
         #    if equipoRelacionado == 
 
+        if self.esProspecto:
+            ticket = self.env['helpdesk.ticket'].create({
+                                                            'stage_id': 89,
+                                                            'team_id': equipoDeUsuario,
+                                                            'esProspecto': True,
+                                                            'clienteProspectoText': self.clienteProspectoText,
+                                                            'comentarioClienteProspecto': self.comentarioClienteProspecto,
+                                                            'x_studio_tipo_de_vale': self.tipoDeReporte
+                                                })
+            mensajeTitulo = "Ticket generado!!!"
+            #mensajeCuerpo = "Se creo el ticket '" + str(ticket.id) + "' sin número de serie para cliente " + self.cliente + " con localidad " + self.localidad + "\n\n"
+            mensajeCuerpo = "Se creo el ticket '" + str(ticket.id) + "' para " + self.clienteProspectoText + ". \nTicket de cliente prospecto\n\n"
+            wiz = self.env['helpdesk.alerta.series'].create({'ticket_id': ticket.id, 'mensaje': mensajeCuerpo})
+            view = self.env.ref('helpdesk_update.view_helpdesk_alerta_series')
+            return {
+                      'name': _(mensajeTitulo),
+                      'type': 'ir.actions.act_window',
+                      'view_type': 'form',
+                      'view_mode': 'form',
+                      'res_model': 'helpdesk.alerta.series',
+                      'views': [(view.id, 'form')],
+                      'view_id': view.id,
+                      'target': 'new',
+                      'res_id': wiz.id,
+                      'context': self.env.context,
+            }
+
         if self.serie:
 
             messageTemp = ''
@@ -1281,7 +1408,8 @@ class helpdesk_crearconserie(TransientModel):
                                                 ,'partner_id': int(self.idCliente)
                                                 ,'x_studio_empresas_relacionadas': int(self.idLocaliidad)
                                                 ,'team_id': equipoDeUsuario
-                                                ,'x_studio_field_6furK': self.zonaLocalidad
+                                                ,'x_studio_field_6furK': self.zonaLocalidad,
+                                                'x_studio_tipo_de_vale': self.tipoDeReporte
                                                 })
             if self.zonaLocalidad:
                 ticket.write({'partner_id': int(self.idCliente)
@@ -1621,6 +1749,36 @@ class ActivarTicketCanceladoTonerMassAction(TransientModel):
                 'res_id': wiz.id,
                 'context': self.env.context,
                 }
+
+
+
+class CerrarTicketsMassAction(TransientModel):
+    _name = 'helpdesk.cerrar.tickets.mesa'
+    _description = 'Cierra los tickets alv'
+    
+    def _default_ticket_ids(self):
+        return self.env['helpdesk.ticket'].browse(
+            self.env.context.get('active_ids'))
+
+    ticket_ids = fields.Many2many(
+        string = 'Tickets',
+        comodel_name = "helpdesk.ticket",
+        default = lambda self: self._default_ticket_ids(),
+        help = "",
+    )
+
+    def confirmarCerrados(self):
+        _logger.info("CerrarTickets.confirmar()")
+
+        for ticket in self.ticket_ids:
+            ticket.write({'stage_id': 18})
+            self.env['helpdesk.diagnostico'].create({
+                                                        'ticketRelacion': ticket.id,
+                                                        'estadoTicket': ticket.stage_id.name,
+                                                        'write_uid':  self.env.user.name,
+                                                        'comentario': 'Cierre de ticket que esta cerrado en techra.' ,
+                                                        'creadoPorSistema': True
+                                                    })
 
 
 
@@ -1984,7 +2142,7 @@ class CrearYValidarSolTonerMassAction(TransientModel):
         wiz = ''
         mensajeTitulo = "Solicitudes de tóner creadas y validadas !!!"
         mensajeCuerpo = "Se crearon y validaron las solicitudes de los tickets. \n\n"
-
+        
         for ticket in listaDeTicketsValidados:
             #query = "update helpdesk_ticket set stage_id = 93 where id = " + str(ticket) + ";"
             #ss = self.env.cr.execute(query)
@@ -2131,7 +2289,7 @@ class HelpDeskDatosToner(TransientModel):
                                     compute = '_compute_prioridad'
                                 )
     zona = fields.Selection(
-                                        [('SUR','SUR'),('NORTE','NORTE'),('PONIENTE','PONIENTE'),('ORIENTE','ORIENTE'),('CENTRO','CENTRO'),('DISTRIBUIDOR','DISTRIBUIDOR'),('MONTERREY','MONTERREY'),('CUERNAVACA','CUERNAVACA'),('GUADALAJARA','GUADALAJARA'),('QUERETARO','QUERETARO'),('CANCUN','CANCUN'),('VERACRUZ','VERACRUZ'),('PUEBLA','PUEBLA'),('TOLUCA','TOLUCA'),('LEON','LEON'),('COMODIN','COMODIN'),('VILLAHERMOSA','VILLAHERMOSA'),('MERIDA','MERIDA'),('ALTAMIRA','ALTAMIRA'),('COMODIN','COMODIN'),('DF00','DF00'),('SAN LP','SAN LP'),('ESTADO DE MÉXICO','ESTADO DE MÉXICO'),('Foraneo Norte','Foraneo Norte'),('Foraneo Sur','Foraneo Sur')],
+                                        [('CHIHUAHUA','CHIHUAHUA'),('SUR','SUR'),('NORTE','NORTE'),('PONIENTE','PONIENTE'),('ORIENTE','ORIENTE'),('CENTRO','CENTRO'),('DISTRIBUIDOR','DISTRIBUIDOR'),('MONTERREY','MONTERREY'),('CUERNAVACA','CUERNAVACA'),('GUADALAJARA','GUADALAJARA'),('QUERETARO','QUERETARO'),('CANCUN','CANCUN'),('VERACRUZ','VERACRUZ'),('PUEBLA','PUEBLA'),('TOLUCA','TOLUCA'),('LEON','LEON'),('COMODIN','COMODIN'),('VILLAHERMOSA','VILLAHERMOSA'),('MERIDA','MERIDA'),('ALTAMIRA','ALTAMIRA'),('COMODIN','COMODIN'),('DF00','DF00'),('SAN LP','SAN LP'),('ESTADO DE MÉXICO','ESTADO DE MÉXICO'),('Foraneo Norte','Foraneo Norte'),('Foraneo Sur','Foraneo Sur')],
                                         string = 'Zona',
                                         compute = '_compute_zona'
                                     )
@@ -2455,6 +2613,7 @@ class HelpDeskDetalleSerieToner(TransientModel):
         if self.series:
             self.movimientos = self.series.x_studio_move_line.ids
     """
+
 
 
 
@@ -3963,6 +4122,11 @@ class HelpdeskTicketReporte(TransientModel):
             m = ['x_studio_tipo_de_vale', '=', 'Toma de lectura']
             i.append(m)
             contador = contador + 1
+        
+        i = ['|'] + i
+        m = ['x_studio_tipo_de_vale', '=', False]
+        i.append(m)
+        contador = contador + 1
         #if self.fechaInicial:
         #    i = ['&'] + i
         #    m = ['create_date', '>=', self.fechaInicial]
@@ -3975,30 +4139,32 @@ class HelpdeskTicketReporte(TransientModel):
             i.pop(0)
 
         _logger.info('3312: filtro reporte: ' + str(i))
-        if self.mostrarCerrados:
-            d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x:  x.stage_id.id == 18)
-        #(len(x.x_studio_equipo_por_nmero_de_serie_1) > 0 or len(x.x_studio_equipo_por_nmero_de_serie) > 0) and
-        else:
-            d = self.env['helpdesk.ticket'].search([], order = 'create_date asc').filtered(lambda x:  x.stage_id.id != 18 )
-        if self.mostrarCancelados:
-            d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x:  x.stage_id.id == 4 )
-        else:
-            d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x:  x.stage_id.id != 4 )
-        if self.mostrarCerrados and self.mostrarCancelados:
-            d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x:  x.stage_id.id == 18 and x.stage_id.id == 4 )
+        d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc')
+        _logger.info('d: '+ str(len(d)))
+        if self.mostrarCerrados or self.mostrarCancelados:
+            if self.mostrarCerrados and not self.mostrarCancelados:
+                d = d.filtered(lambda x:  x.stage_id.id != 4 )
+            if self.mostrarCancelados and not self.mostrarCerrados:
+                d = d.filtered(lambda x:  x.stage_id.id != 18 )
+            _logger.info('d 2: '+ str(len(d)))
+            #if self.mostrarCerrados and self.mostrarCancelados:
+            #    d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x:  x.stage_id.id == 18 and x.stage_id.id == 4 )
         else:
             _logger.info('entre ultimo caso')
-            d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x:  x.stage_id.id != 18 and x.stage_id.id != 4 )
-
+            d = d.filtered(lambda x:  x.stage_id.id != 18 and x.stage_id.id != 4 )
+        _logger.info('d 3: '+ str(len(d)))
         if self.area:
-            d = d.filtered(lambda x: (x.team_id.id in self.area.ids ))
+            d = d.filtered(lambda x: (x.team_id.id in self.area.ids) )
+        _logger.info('d 4: '+ str(len(d)))
         if self.clienteRelacion:
             d = d.filtered(lambda x: (x.partner_id.id in self.clienteRelacion.ids) )
+        _logger.info('d 5: '+ str(len(d)))
         #_logger.info('fecha inicial: ' + str(self.fechaInicial))
-        #_logger.info('datos: d: ' + str(d))
-        d = d.filtered(lambda x: ( datetime.datetime.strptime(x.create_date.strftime('%Y-%m-%d'), '%Y-%m-%d').date() >= self.fechaInicial and datetime.datetime.strptime(x.create_date.strftime('%Y-%m-%d'), '%Y-%m-%d').date() <= self.fechaFinal ))
+        _logger.info('datos: dias final: ' + str(self.fechaFinal + datetime.timedelta(days=2)))
+        d = d.filtered(lambda x: ( datetime.datetime.strptime(x.create_date.strftime('%Y-%m-%d'), '%Y-%m-%d').date() >= self.fechaInicial and datetime.datetime.strptime(x.create_date.strftime('%Y-%m-%d'), '%Y-%m-%d').date() <= self.fechaFinal + datetime.timedelta(days=2) ))
         #_logger.info('datos: d final: ' + str(d))
         #d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x: len(x.x_studio_equipo_por_nmero_de_serie_1) > 0 or len(x.x_studio_equipo_por_nmero_de_serie) > 0)
+        _logger.info('d 6: '+ str(len(d)))
         if len(d) > 0:
             d[0].write({
                             'x_studio_arreglo': str(d.mapped('id'))
@@ -5129,18 +5295,13 @@ class helpdesk_editar_contadores_mesa(TransientModel):
             ultimoDcaStockProductionLot = self.env['dcas.dcas'].search([['fuente', '=', fuente],['serie', '=', record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
             if ultimoDcaStockProductionLot:
                 record.contadorMonoActual = ultimoDcaStockProductionLot.contadorMono
-            #if record.ticket_id.x_studio_equipo_por_nmero_de_serie:
-            #    record.contadorMonoActual = record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_bn_mesa
-            
 
     def _compute_contador_color_actual(self):
         for record in self:
             fuente = 'stock.production.lot'
             ultimoDcaStockProductionLot = self.env['dcas.dcas'].search([['fuente', '=', fuente],['serie', '=', record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
             if ultimoDcaStockProductionLot:
-                record.contadorMonoActual = ultimoDcaStockProductionLot.contadorColor
-            #if record.ticket_id.x_studio_equipo_por_nmero_de_serie:
-            #    record.contadorColorActual = record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_color_mesa
+                record.contadorColorActual = ultimoDcaStockProductionLot.contadorColor
 
     def _compute_textoInformativo(self):
         q = 'stock.production.lot'
@@ -5343,26 +5504,22 @@ class helpdesk_editar_contadores_mesa(TransientModel):
 
 
     def editarContadores(self):
-        for c in self.ticket_id.x_studio_equipo_por_nmero_de_serie:
-            q = 'stock.production.lot'
-            if str(c.x_studio_color_bn) == 'B/N':
-                #if int(self.contadorBNActual) >= int(c.x_studio_contador_bn):
-                negrot = c.x_studio_contador_bn_mesa
-                colort = c.x_studio_contador_color_mesa
-                negroMesa = 0
-                colorMesa = 0
-                comentarioDeReinicio = """ """
+        #for c in self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+        if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+            fuente = 'stock.production.lot'
+            ultimoDcaStockProductionLot = self.env['dcas.dcas'].search([['fuente', '=', fuente],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
 
-                rr = ''
+            q = 'stock.production.lot'
+            if self.tipoEquipo == 'B/N':
+                comentarioDeReinicio = """ """
                 #Creando dca para mesa stock.production.lot
-                ultimoDcaCapturado = self.env['dcas.dcas'].search([['x_studio_tiquete', '=', self.ticket_id.id],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+                ultimoDcaCapturado = self.env['dcas.dcas'].search([['x_studio_tickett', '=', self.ticket_id.id],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
                 if ultimoDcaCapturado:
                     ultimoDcaCapturado.write({
-                                                        'contadorMono': self.contadorMonoActualizado
-                                                    })
-                
-                tipoEquipoTemp = str(c.x_studio_color_bn)
-                nombreSerieTemp = c.name
+                                                'contadorMono': self.contadorMonoActualizado
+                                            })
+                tipoEquipoTemp = str(self.tipoEquipo)
+                nombreSerieTemp = self.serieSeleccionada
                 idTicketTemp = str(self.ticket_id.id)
                 fechaCreacionTemp = str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") )
                 nombreUsuarioTemp = self.env.user.name
@@ -5370,7 +5527,6 @@ class helpdesk_editar_contadores_mesa(TransientModel):
                 contadorAnteriorColorTemp = str(self.contadorColorActual)
                 comentarioDeReinicio = self.comentarioDeReinicio(tipoEquipoTemp, nombreSerieTemp, idTicketTemp, fechaCreacionTemp, nombreUsuarioTemp, contadorAnteriorNegroTemp, contadorAnteriorColorTemp)
                 ultimoDcaCapturado.write({'comentarioDeReinicio': comentarioDeReinicio})
-
                 self.env['helpdesk.diagnostico'].create({
                                                             'ticketRelacion':self.ticket_id.x_studio_id_ticket,
                                                             'estadoTicket': 'Reinicio de contadores en el estado ' + self.estado,
@@ -5387,7 +5543,7 @@ class helpdesk_editar_contadores_mesa(TransientModel):
                                     , 'x_studio_contador_color_a_capturar': 0
                                     })
                 mensajeTitulo = "Contador actualizado!!!"
-                mensajeCuerpo = "Se edito el contador del equipo " + str(c.name) + "."
+                mensajeCuerpo = "Se edito el contador del equipo " + str(self.serieSeleccionada) + "."
                 wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
                 view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
                 return {
@@ -5403,31 +5559,16 @@ class helpdesk_editar_contadores_mesa(TransientModel):
                         'context': self.env.context,
                         }
                 
-            if str(c.x_studio_color_bn) != 'B/N':
-                #if int(self.contadorColorMesa) >= int(c.x_studio_contador_color) and int(self.contadorBNActual) >= int(c.x_studio_contador_bn):                      
-                if self.ticket_id.team_id.id == 8:
-                    negrot = c.x_studio_contador_bn
-                    colort = c.x_studio_contador_color
-                else:
-                    negrot = c.x_studio_contador_bn_mesa
-                    colort = c.x_studio_contador_color_mesa
-
-                negroMesa = 0
-                colorMesa = 0
+            if self.tipoEquipo != 'B/N':
                 comentarioDeReinicio = """ """
-
-                rr = ''
-                dcaFuente = ''
-                mesaFuente = ''
-                tfsFuente = ''
-                ultimoDcaCapturado = self.env['dcas.dcas'].search([['x_studio_tiquete', '=', self.ticket_id.id],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)                
+                ultimoDcaCapturado = self.env['dcas.dcas'].search([['x_studio_tickett', '=', self.ticket_id.id],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)                
                 if ultimoDcaCapturado:
                     ultimoDcaCapturado.write({
                                                 'contadorColor': self.contadorColorActualizado,
                                                 'contadorMono': self.contadorMonoActualizado
                                             })
-                tipoEquipoTemp = str(c.x_studio_color_bn)
-                nombreSerieTemp = c.name
+                tipoEquipoTemp = str(self.tipoEquipo)
+                nombreSerieTemp = self.serieSeleccionada
                 idTicketTemp = str(self.ticket_id.id)
                 fechaCreacionTemp = str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") )
                 nombreUsuarioTemp = self.env.user.name
@@ -5452,7 +5593,7 @@ class helpdesk_editar_contadores_mesa(TransientModel):
                                     , 'x_studio_contador_color_a_capturar': int(self.contadorColorActualizado)
                                     })
                 mensajeTitulo = "Contador actualizado!!!"
-                mensajeCuerpo = "Se edito el contador del equipo " + str(c.name) + "."
+                mensajeCuerpo = "Se edito el contador del equipo " + str(self.serieSeleccionada) + "."
                 wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
                 view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
                 return {
@@ -5763,29 +5904,59 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
         self.ticket_id.x_studio_productos = [(6, 0, self.productos.ids)]
         if self.productos:
             self.ticket_id.x_studio_productos = [(6, 0, self.productos.ids)]
-        
-        if self.ticket_id.x_studio_field_nO7Xg and (self.ticket_id.stage_id.id != 3 or self.ticket_id.stage_id.id != 18 or self.ticket_id.stage_id.id != 4): #and len(self.ticket_id.x_studio_productos) > len(self.ticket_id.x_studio_field_nO7Xg.order_line):
+
+        """
+        Funcionalidad que permite no validar las mismas refacciones y/o accesorios. 
+        Funcional pero falta probar con más casos.
+        """
+        """
+        procedeAPedirse = False
+        listaDeRefaccionesValidadas = []
+        if self.ticket_id.validacionesRefaccion:
+            for validacion in self.ticket_id.validacionesRefaccion:
+                listaDeRefaccionesValidadas = listaDeRefaccionesValidadas + ast.literal_eval(validacion.listaIdsRefaccionesValidadas)
+        listaDeRefaccionesValidadas = list(set(listaDeRefaccionesValidadas))
+        _logger.info('listaDeRefaccionesValidadas: ' + str(listaDeRefaccionesValidadas))
+        _logger.info('self.ticket_id.x_studio_productos.ids' + str(self.ticket_id.x_studio_productos.ids) )
+        for refaccion in self.ticket_id.x_studio_productos:
+            if not refaccion.product_variant_id.id in listaDeRefaccionesValidadas:
+                procedeAPedirse = True
+            
+        if not listaDeRefaccionesValidadas:
+            procedeAPedirse = True
+
+        if procedeAPedirse:
+        """ 
+        if self.ticket_id.x_studio_field_nO7Xg:# and (self.ticket_id.stage_id.id != 3 or self.ticket_id.stage_id.id != 18 or self.ticket_id.stage_id.id != 4): #and len(self.ticket_id.x_studio_productos) > len(self.ticket_id.x_studio_field_nO7Xg.order_line):
             _logger.info('3312: inicio actualización refacciones sobre la misma so(): ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
+            refaccionesActualizadasCantidad = []
+            refaccionesNuevas = []
             idsRefaccionesSolicitud = []
             seActualizoUnaCantidad = False
             ruta = -1
             indiceRefaccionSo = 0
             mensajeCantidadesEditadas = '\nSe editaron las cantidades de las siguientes refacciones y/o accesorios: '
             for refaccion in self.ticket_id.x_studio_field_nO7Xg.order_line:
-                if int(refaccion.product_uom_qty) != int(self.ticket_id.x_studio_productos[indiceRefaccionSo].x_studio_cantidad_pedida):
+                if int(refaccion.product_uom_qty) != int(self.ticket_id.x_studio_productos[indiceRefaccionSo].x_studio_cantidad_pedida) and int(self.ticket_id.x_studio_productos[indiceRefaccionSo].x_studio_cantidad_pedida) != 0:
                     refaccion.product_uom_qty = int(self.ticket_id.x_studio_productos[indiceRefaccionSo].x_studio_cantidad_pedida)
-                    mensajeCantidadesEditadas = '\nRefacción y/o accesorio: ' + str(self.ticket_id.x_studio_productos[indiceRefaccionSo].product_variant_id.display_name) + ', cantidad: ' + str(self.ticket_id.x_studio_productos[indiceRefaccionSo].x_studio_cantidad_pedida)
+                    mensajeCantidadesEditadas = mensajeCantidadesEditadas + '\nRefacción y/o accesorio: ' + str(self.ticket_id.x_studio_productos[indiceRefaccionSo].product_variant_id.display_name) + ', cantidad: ' + str(self.ticket_id.x_studio_productos[indiceRefaccionSo].x_studio_cantidad_pedida)
+                    refaccionesActualizadasCantidad.append(self.ticket_id.x_studio_productos[indiceRefaccionSo])
                     seActualizoUnaCantidad = True
-                if refaccion.route_id and ruta == -1:
+                if refaccion.route_id and ruta == -1 and refaccion.route_id.id != -1:
                     ruta = refaccion.route_id.id
                 idsRefaccionesSolicitud.append(refaccion.product_id.id)
-            
+            refaccionesActualizadasCantidad = list(set(refaccionesActualizadasCantidad))
             _logger.info('idsRefaccionesSolicitud: ' + str(idsRefaccionesSolicitud))
             mensajeTitulo = 'Se añadieron nuevas refacciones y/o accesorios a la solicitud.'
             mensajeCuerpo = 'Refaccione(s) y/o accesorio(s) agregados a la Solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) +'.\n\nSe agregaron las refacciones y/o accesorios: '
             refaccionesTextTemp = ''
             fuenteDca = 'stock.production.lot'
+            #forma odoo
             dcaObj = self.env['dcas.dcas'].search([('x_studio_tickett', '=', self.ticket_id.id),('fuente', '=', fuenteDca)], order = 'create_date desc', limit = 1)
+            #forma techra
+            if not dcaObj:
+                dcaObj = self.env['dcas.dcas'].search([('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].name),('fuente', '=', fuenteDca)], order = 'x_studio_fecha desc', limit = 1)
+            _logger.info('aaaaaaaaaaa dcaObj: ' + str(dcaObj))
             for refaccion in self.ticket_id.x_studio_productos:
                 if not refaccion.product_variant_id.id in idsRefaccionesSolicitud:
                     datosr = {
@@ -5795,13 +5966,15 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                                 'x_studio_field_9nQhR': self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id,
                                 'price_unit': 0
                             }
-                    if ruta:
+                    if ruta != -1:
                         datosr['route_id'] = ruta
                     line = self.env['sale.order.line'].create(datosr)
                     _logger.info('line: ' + str(line))
                     mensajeCuerpo = mensajeCuerpo + str(refaccion.product_variant_id.name) + ', '
                     refaccionesTextTemp = 'Refacción y/o accesorio: ' + str(refaccion.product_variant_id.display_name) + '. Descripción: ' + str(refaccion.description) + '.\n'
+                    refaccionesNuevas.append(refaccion)
                     if dcaObj:
+                        _logger.info('inicio: Se esta creando el historico de componente con dcaObj existente')
                         self.env['x_studio_historico_de_componentes'].create({
                                                                                 'x_studio_cantidad': refaccion.x_studio_cantidad_pedida,
                                                                                 'x_studio_field_MH4DO': self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id,
@@ -5810,10 +5983,18 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                                                                                 'x_studio_fecha_de_entrega': datetime.datetime.now(),
                                                                                 'x_studio_modelo': refaccionesTextTemp,
                                                                                 'x_studio_contador_bn': dcaObj.contadorMono
-                                                                                #'x_studio_numero_de_parte': refaccion.,
-                                                                                #'x_studio_field_gKQ9k': self.,
-                                                                                #'x_studio_modelo': self.,
                                                                             })
+                        _logger.info('fin: Se esta creando el historico de componente con dcaObj existente')
+                    else:
+                        _logger.info('inicio: Se esta creando el historico de componente')
+                        self.env['x_studio_historico_de_componentes'].create({
+                                                                                'x_studio_cantidad': refaccion.x_studio_cantidad_pedida,
+                                                                                'x_studio_field_MH4DO': self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id,
+                                                                                'x_studio_ticket': str(self.ticket_id.id),
+                                                                                'x_studio_fecha_de_entrega': datetime.datetime.now(),
+                                                                                'x_studio_modelo': refaccionesTextTemp
+                                                                            })
+                        _logger.info('fin: Se esta creando el historico de componente')
             comentarioGenerico = 'Solicitud de refacción autorizada por ' + str(self.env.user.name) + '.\nEl día ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S")) + '.\n\n' + mensajeCuerpo + '.\n\n'
             if seActualizoUnaCantidad:
                 comentarioGenerico = comentarioGenerico + mensajeCantidadesEditadas
@@ -5821,9 +6002,50 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                 comentarioGenerico = comentarioGenerico + str(self.comentario)
             else:
                 comentarioGenerico = comentarioGenerico
-            #self.ticket_id.write({
-            #                        'stage_id': 102
-            #                    })
+            self.ticket_id.write({
+                                    'stage_id': 102
+                                })
+            listaIdValidadas = []
+            filasRefacciones = """ """
+            filasRefaccionesNuevas = """ """
+            listaUnida = list(set(refaccionesActualizadasCantidad + refaccionesNuevas))
+            if listaUnida:
+                for refaccion in listaUnida:
+                    filasRefacciones = filasRefacciones + """
+                                                                <tr>
+                                                                    <td>""" + str(refaccion.categ_id.name) + """</td>
+                                                                    <td>""" + str(refaccion.default_code) + """</td>
+                                                                    <td>""" + str(refaccion.name) + """</td>
+                                                                    <td>""" + str(refaccion.x_studio_cantidad_pedida) + """</td>
+                                                                </tr>
+                                                            """
+                    listaIdValidadas.append(refaccion.product_variant_id.id)
+            tablaRefacciones = """
+                                    <table class='table table-bordered table-dark text-white'>
+                                        <thead >
+                                            <tr>
+                                                <th scope='col'>Categoría del producto</th>
+                                                <th scope='col'>Referencia interna</th>
+                                                <th scope='col'>Nombre</th>
+                                                <th scope='col'>Cantidad validada</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            """ + filasRefacciones + """
+                                            """ + filasRefaccionesNuevas + """
+                                        </tbody>
+                                    </table>
+                                """
+            _logger.info('refaccionesActualizadasCantidad: ' + str(refaccionesActualizadasCantidad) + ' refaccionesNuevas: ' + str(refaccionesNuevas) )
+            idValidacion = self.env['helpdesk.validacion.so'].create({
+                                                                  'ticketRelacion': self.ticket_id.id,
+                                                                  'fechaDeValidacionSo': datetime.datetime.now(),
+                                                                  'refaccionesValidadas': tablaRefacciones,
+                                                                  'listaRefaccionesValidadas': str(refaccionesActualizadasCantidad + refaccionesNuevas),
+                                                                  'listaIdsRefaccionesValidadas': str(list(set(listaIdValidadas)))
+                                                              })
+            self.ticket_id.write({'validacionesRefaccion': [(4, 0, idValidacion)] })
+            self.ticket_id.write({'ticketValidadoElDia': datetime.datetime.now() })
             self.env['helpdesk.diagnostico'].create({
                                                         'ticketRelacion': self.ticket_id.id,
                                                         'comentario': comentarioGenerico,
@@ -5852,9 +6074,17 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                 mensajeTitulo = 'Error'
                 mensajeCuerpo = 'Existe una solicitud ya generada y validada.'
             elif respuesta == 'OK':
+                refaccionesNuevas = []
+                listaIdValidadas = []
+                filasRefacciones = """ """
                 #creando x_studio_historico_de_componentes
                 fuenteDca = 'stock.production.lot'
+                #forma odoo
                 dcaObj = self.env['dcas.dcas'].search([('x_studio_tickett', '=', self.ticket_id.id),('fuente', '=', fuenteDca)], order = 'create_date desc', limit = 1)
+                #forma techra
+                if not dcaObj:
+                    dcaObj = self.env['dcas.dcas'].search([('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].name),('fuente', '=', fuenteDca)], order = 'x_studio_fecha desc', limit = 1)
+                _logger.info('aaaaaaaaaaa dcaObj: ' + str(dcaObj))
                 if dcaObj:
                     refaccionesTextTemp = ''
                     for refaccion in self.productos:
@@ -5867,10 +6097,54 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                                                                                 'x_studio_fecha_de_entrega': datetime.datetime.now(),
                                                                                 'x_studio_modelo': refaccionesTextTemp,
                                                                                 'x_studio_contador_bn': dcaObj.contadorMono
-                                                                                #'x_studio_numero_de_parte': refaccion.,
-                                                                                #'x_studio_field_gKQ9k': self.,
-                                                                                #'x_studio_modelo': self.,
                                                                             })
+                        refaccionesNuevas.append(refaccion)
+                        listaIdValidadas.append(refaccion.product_variant_id.id)
+                        filasRefacciones = filasRefacciones + """
+                                                                <tr>
+                                                                    <td>""" + str(refaccion.categ_id.name) + """</td>
+                                                                    <td>""" + str(refaccion.default_code) + """</td>
+                                                                    <td>""" + str(refaccion.name) + """</td>
+                                                                    <td>""" + str(refaccion.x_studio_cantidad_pedida) + """</td>
+                                                                </tr>
+                                                            """
+                else:
+                    _logger.info('inicio: Se esta creando el historico de componente')
+                    refaccionesTextTemp = ''
+                    for refaccion in self.productos:
+                        refaccionesTextTemp = 'Refacción y/o accesorio: ' + str(refaccion.product_variant_id.display_name) + '. Descripción: ' + str(refaccion.description) + '.'
+                        self.env['x_studio_historico_de_componentes'].create({
+                                                                            'x_studio_cantidad': refaccion.x_studio_cantidad_pedida,
+                                                                            'x_studio_field_MH4DO': self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id,
+                                                                            'x_studio_ticket': str(self.ticket_id.id),
+                                                                            'x_studio_fecha_de_entrega': datetime.datetime.now(),
+                                                                            'x_studio_modelo': refaccionesTextTemp
+                                                                        })
+                        refaccionesNuevas.append(refaccion)
+                        listaIdValidadas.append(refaccion.product_variant_id.id)
+                        filasRefacciones = filasRefacciones + """
+                                                                <tr>
+                                                                    <td>""" + str(refaccion.categ_id.name) + """</td>
+                                                                    <td>""" + str(refaccion.default_code) + """</td>
+                                                                    <td>""" + str(refaccion.name) + """</td>
+                                                                    <td>""" + str(refaccion.x_studio_cantidad_pedida) + """</td>
+                                                                </tr>
+                                                            """
+                tablaRefacciones = """
+                                            <table class='table table-bordered table-dark text-white'>
+                                                <thead >
+                                                    <tr>
+                                                        <th scope='col'>Categoría del producto</th>
+                                                        <th scope='col'>Referencia interna</th>
+                                                        <th scope='col'>Nombre</th>
+                                                        <th scope='col'>Cantidad validada</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    """ + filasRefacciones + """
+                                                </tbody>
+                                            </table>
+                                        """
                 mensjaeValidados = 'Se validaron los productos '
                 for refaccion in self.productos:
                     mensjaeValidados = mensjaeValidados + str(refaccion.display_name) + ', cantidad validada: ' + str(refaccion.x_studio_cantidad_pedida) + '; '
@@ -5881,6 +6155,15 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                     comentarioGenerico = comentarioGenerico + mensjaeValidados + '\n' + str(self.comentario)
                 else:
                     comentarioGenerico = comentarioGenerico + mensjaeValidados
+                idValidacion = self.env['helpdesk.validacion.so'].create({
+                                                                            'ticketRelacion': self.ticket_id.id,
+                                                                            'fechaDeValidacionSo': datetime.datetime.now(),
+                                                                            'refaccionesValidadas': tablaRefacciones,
+                                                                            'listaRefaccionesValidadas': str(refaccionesNuevas),
+                                                                            'listaIdsRefaccionesValidadas': str(listaIdValidadas)
+                                                                          })
+                self.ticket_id.write({'validacionesRefaccion': [(4, 0, idValidacion)] })
+                self.ticket_id.write({'ticketValidadoElDia': datetime.datetime.now() })
                 self.env['helpdesk.diagnostico'].create({
                                                             'ticketRelacion': self.ticket_id.id,
                                                             'comentario': comentarioGenerico,
@@ -5890,7 +6173,10 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
                                                             'creadoPorSistema': False
                                                         })
             #mensajeTitulo = 'Creación y validación de refacción!!!'
-            #mensajeCuerpo = 'Se creo y valido la solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) + ' para el ticket ' + str(self.ticket_id.id) + '.'
+            #mensajeCuerpo = 'Se creo y valido la solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) + ' para el ticket ' + str(self.ticket_id.id) + '.'    
+        #else:
+            #mensajeTitulo = 'Error'
+            #mensajeCuerpo = 'No es posible validar un ticket con la misma refacción y/o accesorio seleccionado anteriormente'
         wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
         view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
         return {
@@ -6019,27 +6305,6 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
 
 
 
-listaTipoDeVale = [
-                        ('Falla','Falla'),
-                        ('Incidencia','Incidencia'),
-                        ('Reeincidencia','Reeincidencia'),
-                        ('Pregunta','Pregunta'),
-                        ('Requerimiento','Requerimiento'),
-                        ('Solicitud de refacción','Solicitud de refacción'),
-                        ('Conectividad','Conectividad'),
-                        ('Reincidencias','Reincidencias'),
-                        ('Instalación','Instalación'),
-                        ('Mantenimiento Preventivo','Mantenimiento Preventivo'),
-                        ('IMAC','IMAC'),
-                        ('Proyecto','Proyecto'),
-                        ('Retiro de equipo','Retiro de equipo'),
-                        ('Cambio','Cambio'),
-                        ('Servicio de Software','Servicio de Software'),
-                        ('Resurtido de Almacen','Resurtido de Almacen'),
-                        ('Supervisión','Supervisión'),
-                        ('Demostración','Demostración'),
-                        ('Toma de lectura','Toma de lectura')
-                    ]
 
 
 class HelpDeskDatosMesa(TransientModel):

@@ -29,7 +29,6 @@ class Helpdesk_Controller(http.Controller):
     					</div>
     				</div>
     				"""
-
     	"""
     	view = self.env.ref('studio_customization.helpdesk_ticket_tree_cbc67a2e-f57c-498e-b7db-f39a654cb173')
     	return {
@@ -91,6 +90,13 @@ class Helpdesk_Controller(http.Controller):
 
     	#return respuesta
 
+
+    @http.route('/mesaDeAyuda/tecnicos', auth='public', website=True)
+    def vistaTecnicos(self, **kw):
+        _logger.info('Helpdesk_Controller.vistaTecnicos()')
+        tickets = request.env['helpdesk.ticket'].sudo().search([])
+        #return request.render('')
+        return  request.render('helpdesk_update.vista_tecnicos', {'tickets': tickets})
 
 # class Requisicion(http.Controller):
 # #     @http.route('/requisicion/requisicion/', auth='public')
