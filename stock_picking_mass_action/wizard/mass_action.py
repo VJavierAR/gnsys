@@ -149,13 +149,13 @@ class StockPickingMassAction(TransientModel):
                     picking.sale_id.x_studio_field_bxHgp.write({'stage_id':94})
                     self.env['helpdesk.diagnostico'].sudo().create({ 'write_uid': self.env.user.name,'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id,'write_uid':self.env.user.id, 'estadoTicket' : "A distribución", 'comentario':''}) 
                 if(self.check==3):
-                    if picking._check_backorder():
+                    if picking._check_backorder() and picking.sale_id.x_studio_field_bxHgp.x_studio_tipo_de_vale=='Requerimiento':
                         picking.sale_id.x_studio_field_bxHgp.write({'stage_id':109})
                         self.env['helpdesk.diagnostico'].sudo().create({'write_uid': self.env.user.name, 'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id,'write_uid':self.env.user.id, 'estadoTicket' : "Entregado", 'comentario':picking.x_studio_comentario_1+' Evidenciado'+' Hecho por'+self.env.user.name})                        
-                    if(picking.sale_id.x_studio_field_bxHgp.team_id.id!=8):
+                    if(picking.sale_id.x_studio_field_bxHgp.x_studio_tipo_de_vale!='Requerimiento'):
                         picking.sale_id.x_studio_field_bxHgp.write({'stage_id':13})
                         self.env['helpdesk.diagnostico'].sudo().create({ 'write_uid': self.env.user.name,'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id,'write_uid':self.env.user.id, 'estadoTicket' : "Entregado", 'comentario':picking.x_studio_comentario_1 if(picking.x_studio_comentario_1) else ''+' Evidenciado'+' Hecho por'+self.env.user.name})    
-                    else:
+                    if(picking.sale_id.x_studio_field_bxHgp.x_studio_tipo_de_vale=='Requerimiento' and picking._check_backorder()==False):
                         picking.sale_id.x_studio_field_bxHgp.write({'stage_id':18})
                         self.env['helpdesk.diagnostico'].sudo().create({ 'write_uid': self.env.user.name,'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id,'write_uid':self.env.user.id, 'estadoTicket' : "Entregado", 'comentario':picking.x_studio_comentario_1+' Evidenciado'+' Hecho por'+self.env.user.name})    
                 if(self.check==4):
