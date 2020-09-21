@@ -10,9 +10,9 @@ class SaleOrderCompatibles(http.Controller):
     def index(self, sale_id,**kw):
         p=request.env['sale.order'].search([['id','=',sale_id]])
         uido=request.env.context.get('uid')
-        _logger.info(str(uido))
+        #_logger.info(str(uido))
         u=request.env['res.groups'].search([['name','=','ventas autorizacion']]).users.filtered(lambda x:x.id==uido)
-        _logger.info(str(u.id))
+        #_logger.info(str(u.id))
         if(p.x_studio_tipo_de_solicitud in ["Venta","Venta directa","Arrendamiento","Backup","Demostracion"] and u.id!=False):
             p.action_confirm()
         if(p.x_studio_tipo_de_solicitud == "Cambio" and u.id!=False):
@@ -32,10 +32,15 @@ class SaleOrderCompatibles(http.Controller):
 class SaleOrderCompatiblesCancel(http.Controller):
     @http.route('/sale_order_compatibles/cancel/<int:sale_id>', auth='public')
     def index(self, sale_id,**kw):
+        uido=request.env.context.get('uid')
+        #_logger.info(str(uido))
+        u=request.env['res.groups'].search([['name','=','ventas autorizacion']]).users.filtered(lambda x:x.id==uido)
         p=request.env['sale.order'].search([['id','=',sale_id]])
-        p.action_cancel()
         name = 'Sale'
-        return "Orden  "+str(p.name)+" Cancelada"
+        url='/web#id='+str(sale_id)+'&action=606&model=sale.order&view_type=form&menu_id=406'
+        if(u.id!=False):
+            p.action_cancel()
+        return http.local_redirect(url) 
         #return "HOLA"
 # class SaleOrderCompatibles(http.Controller):
 #     @http.route('/sale/order/<int:sale_id>', auth='public')
