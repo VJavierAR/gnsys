@@ -141,7 +141,7 @@ class sale_update(models.Model):
 		data=[]
 		if(len(self.compatiblesLineas)>0):
 			for e in self.compatiblesLineas:
-				if(e.cantidad!=0 and e.producto.id!=False):
+				if(e.cantidad!=0 and e.equipos.id!=False):
 					d={'x_studio_field_9nQhR':e.serie.id,'x_studio_estado':e.estado,'x_studio_field_mqSKO':e.equipos.id,'product_id':e.equipos.id,'name':e.equipos.name,'product_uom_qty':1,'product_uom':e.equipos.uom_id.id,'price_unit':e.precio,'x_studio_id_relacion':e.id}
 					self.order_line=[d]
 				for e1 in e.componentes:
