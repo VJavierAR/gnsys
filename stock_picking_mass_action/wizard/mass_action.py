@@ -371,6 +371,7 @@ class StockCambio(TransientModel):
         f="<table class='table table-sm'><thead><tr><th>Modelo</th><th>Serie</th></thead><tbody>"
         for s in equipos:
             d=self.env['stock.move.line'].search([['move_id','=',s.move_id.id]])
+            s.move_id.sale_line_id.write({'x_studio_field_9nQhR':s.serieOrigen.id})
             d.write({'lot_id':s.serieOrigen.id})            
             if(self.pick.sale_id.x_studio_tipo_de_solicitud=='Retiro'):
                 s.serieOrigen.write({'servicio':False,'x_studio_cliente':1,'x_studio_localidad_2':self.pick.sale_id.warehouse_id.x_studio_field_E0H1Z.id})
