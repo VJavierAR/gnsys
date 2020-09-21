@@ -141,19 +141,19 @@ class sale_update(models.Model):
 		data=[]
 		if(len(self.compatiblesLineas)>0):
 			for e in self.compatiblesLineas:
-				if(e.cantidad!=0):
+				if(e.cantidad!=0 and e.producto.id!=False):
 					d={'x_studio_field_9nQhR':e.serie.id,'x_studio_estado':e.estado,'x_studio_field_mqSKO':e.equipos.id,'product_id':e.equipos.id,'name':e.equipos.name,'product_uom_qty':1,'product_uom':e.equipos.uom_id.id,'price_unit':e.precio,'x_studio_id_relacion':e.id}
 					self.order_line=[d]
 				for e1 in e.componentes:
-					if(e1.cantidad!=0):
+					if(e1.cantidad!=0 and e1.producto.id!=False):
 						d={'x_studio_field_9nQhR':e1.serie.id,'x_studio_field_mqSKO':e1.producto.id,'product_id':e1.producto.id,'name':e1.producto.name,'product_uom_qty':e1.cantidad,'product_uom':e1.producto.uom_id.id,'price_unit':e1.precio,'x_studio_id_relacion':e.id,'x_studio_modelo':e.equipos.name}
 						self.order_line=[d]
 				for e2 in e.toner:
-					if(e2.cantidad!=0):
+					if(e2.cantidad!=0 and e2.producto.id!=False):
 						d={'x_studio_field_9nQhR':e2.serie.id,'x_studio_field_mqSKO':e2.producto.id,'product_id':e2.producto.id,'name':e2.producto.name,'product_uom_qty':e2.cantidad,'product_uom':e2.producto.uom_id.id,'price_unit':e2.precio,'x_studio_id_relacion':e.id,'x_studio_modelo':e.equipos.name}
 						self.order_line=[d]
 				for e3 in e.accesorios:
-					if(e3.cantidad!=0):
+					if(e3.cantidad!=0 and e3.producto.id!=False):
 						d={'x_studio_field_9nQhR':e3.serie.id,'x_studio_field_mqSKO':e3.producto.id,'product_id':e3.producto.id,'name':e3.producto.name,'product_uom_qty':e3.cantidad,'product_uom':e3.producto.uom_id.id,'price_unit':e3.precio,'x_studio_id_relacion':e.id,'x_studio_modelo':e.equipos.name}
 						self.order_line=[d]
 			self.write({'state':'sent'})
