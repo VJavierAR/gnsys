@@ -313,7 +313,7 @@ class compras(models.Model):
                                     r = o.split("Artículo # ")
                                     q = r[1].split(' ')[0]
                                     #_logger.info(str(q))
-                                    template=self.env['product.template'].search([('default_code','=',q)],order='id asc')
+                                    template=self.env['product.template'].search([('default_code','=',q.replace(' ',''))],order='id asc')
                                     ta=len(template)
                                     if(ta>1):
                                         productid=self.env['product.product'].search([('product_tmpl_id','=',template[0].id)])
