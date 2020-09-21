@@ -147,28 +147,37 @@ class StockPickingMassAction(TransientModel):
             if(picking.sale_id.x_studio_field_bxHgp):
                 if(self.check==2):
                     picking.sale_id.x_studio_field_bxHgp.write({'stage_id':94})
-                    self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id,'write_uid':self.env.user.id, 'estadoTicket' : "A distribución", 'comentario':''}) 
+                    self.env['helpdesk.diagnostico'].sudo().create({ 'write_uid': self.env.user.name,'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id,'write_uid':self.env.user.id, 'estadoTicket' : "A distribución", 'comentario':''}) 
                 if(self.check==3):
                     if picking._check_backorder():
                         picking.sale_id.x_studio_field_bxHgp.write({'stage_id':109})
-                        self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id,'write_uid':self.env.user.id, 'estadoTicket' : "Entregado", 'comentario':picking.x_studio_comentario_1+' Evidenciado'+' Hecho por'+self.env.user.name})                        
+                        self.env['helpdesk.diagnostico'].sudo().create({'write_uid': self.env.user.name, 'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id,'write_uid':self.env.user.id, 'estadoTicket' : "Entregado", 'comentario':picking.x_studio_comentario_1+' Evidenciado'+' Hecho por'+self.env.user.name})                        
                     if(picking.sale_id.x_studio_field_bxHgp.team_id.id!=8):
                         picking.sale_id.x_studio_field_bxHgp.write({'stage_id':13})
-                        self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id,'write_uid':self.env.user.id, 'estadoTicket' : "Entregado", 'comentario':picking.x_studio_comentario_1 if(picking.x_studio_comentario_1) else ''+' Evidenciado'+' Hecho por'+self.env.user.name})    
+                        self.env['helpdesk.diagnostico'].sudo().create({ 'write_uid': self.env.user.name,'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id,'write_uid':self.env.user.id, 'estadoTicket' : "Entregado", 'comentario':picking.x_studio_comentario_1 if(picking.x_studio_comentario_1) else ''+' Evidenciado'+' Hecho por'+self.env.user.name})    
                     else:
                         picking.sale_id.x_studio_field_bxHgp.write({'stage_id':18})
-                        self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id,'write_uid':self.env.user.id, 'estadoTicket' : "Entregado", 'comentario':picking.x_studio_comentario_1+' Evidenciado'+' Hecho por'+self.env.user.name})    
+                        self.env['helpdesk.diagnostico'].sudo().create({ 'write_uid': self.env.user.name,'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id,'write_uid':self.env.user.id, 'estadoTicket' : "Entregado", 'comentario':picking.x_studio_comentario_1+' Evidenciado'+' Hecho por'+self.env.user.name})    
                 if(self.check==4):
                     picking.sale_id.x_studio_field_bxHgp.write({'stage_id':94})
-                    self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id,'write_uid':self.env.user.id, 'estadoTicket' : "Distribución", 'comentario':''+' Hecho por'+self.env.user.name}) 
+                    self.env['helpdesk.diagnostico'].sudo().create({ 'write_uid': self.env.user.name,'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id,'write_uid':self.env.user.id, 'estadoTicket' : "Distribución", 'comentario':''+' Hecho por'+self.env.user.name}) 
                 if(self.check==1):
                     comentario=picking.x_studio_comentario_1 if(picking.x_studio_comentario_1) else 'refacion entregada'
                     if(picking.location_dest_id.id!=16):
-                        picking.sale_id.x_studio_field_bxHgp.write({'stage_id':104})
-                        self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id,'write_uid':self.env.user.id, 'estadoTicket' : "Entregado", 'comentario':str(comentario)+' Evidenciado'+' Hecho por'+self.env.user.name})
+                        ultimo=self.env['helpdesk.diagnostico'].search([['ticketRelacion','=',picking.sale_id.x_studio_field_bxHgp.id]],order='create_date desc',limit=1)
+                        self.env['helpdesk.diagnostico'].sudo().create({ 'write_uid': self.env.user.name,'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id,'write_uid':self.env.user.id, 'estadoTicket' : "Entregado", 'comentario':str(comentario)+' Evidenciado'+' Hecho por'+self.env.user.name})
+                        if(picking.sale_id.x_studio_field_bxHgp.stage_id.id!=18 and picking.sale_id.x_studio_field_bxHgp.stage_id.id!=3):
+                            picking.sale_id.x_studio_field_bxHgp.write({'stage_id':104})
+                        else:
+                            ultimo.copy()
                     else:
-                        picking.sale_id.x_studio_field_bxHgp.write({'stage_id':112})
-                        self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id,'write_uid':self.env.user.id, 'estadoTicket' : "Entregado", 'comentario':str(comentario)+' Evidenciado'+' Hecho por'+self.env.user.name})    
+                        ultimo=self.env['helpdesk.diagnostico'].search([['ticketRelacion','=',picking.sale_id.x_studio_field_bxHgp.id]],order='create_date desc',limit=1)
+                        self.env['helpdesk.diagnostico'].sudo().create({ 'write_uid': self.env.user.name,'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id,'write_uid':self.env.user.id, 'estadoTicket' : "Entregado", 'comentario':str(comentario)+' Evidenciado'+' Hecho por'+self.env.user.name})    
+                        if(picking.sale_id.x_studio_field_bxHgp.stage_id.id!=18 and picking.sale_id.x_studio_field_bxHgp.stage_id.id!=3):
+                            picking.sale_id.x_studio_field_bxHgp.write({'stage_id':112})
+                        else:
+                            ultimo.copy()
+                        
             pick_to_do |= picking
         if pick_to_do:
             pick_to_do.action_done()
@@ -280,13 +289,28 @@ class StockCambio(TransientModel):
 
     def otra(self):
         equipos=self.pro_ids.filtered(lambda x:x.producto1.categ_id.id==13)
-        if(len(equipos)==0):
+        if(len(equipos)==0 or self.pick.picking_type_id.id==29314):
             self.confirmar(self.pro_ids)
             #self.pick.action_assign()
         else:   
             self.confirmar(self.accesorios_ids)
             self.confirmar(self.toner_ids)
             self.confirmarE(equipos)
+            self.confirmar(equipos)
+            wiz=self.env['stock.picking.mass.action'].create({'picking_ids':[(4,self.pick.id)],'confirm':True,'check_availability':True,'transfer':True})
+            view = self.env.ref('stock_picking_mass_action.view_stock_picking_mass_action_form')
+            return {
+                'name': _('Transferencia'),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'stock.picking.mass.action',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'res_id': wiz.id,
+                'context': self.env.context,
+            }
             #self.confirmar()
         #self.pick.action_confirm()
         #self.pick.action_assign()
@@ -304,9 +328,9 @@ class StockCambio(TransientModel):
             productos=False
             ubicacion=False
             temp=[]
+            almacenes=self.env['stock.warehouse'].search([['x_studio_cliente','=',False]])
             ruta=orden.mapped('order_line.route_id.id')
-            if(lenOrderLine!=len(data)):
-                productos=True
+            pic=self.env['stock.picking'].search(['&',['location_id','in',almacenes.mapped('lot_stock_id.id')],['sale_id','=',orden.id]],order='id asc',limit=1)
             for d in data:
                 if(d.producto1.id!=d.producto2.id):
                     productos=True
@@ -315,47 +339,60 @@ class StockCambio(TransientModel):
                 if(d.almacen.id):
                     ubicacion=True
             if(productos or cantidades):
-                orden.action_cancel()
-                orden.action_draft()
-                self.env['stock.picking'].search([['sale_id','=',orden.id]]).unlink()
-                self.env['sale.order.line'].search([['order_id','=',orden.id]]).unlink()
-                orden.action_confirm()
                 for d in data:
                     datos={'x_studio_field_9nQhR':d.serie.id,'order_id':orden.id,'product_id':d.producto2.id,'product_uom':d.producto2.uom_id.id,'product_uom_qty':d.cantidad2,'name':d.producto2.description if(d.producto2.description) else '/','price_unit':0.00}
                     if(ruta!=[]):
                         datos['route_id']=ruta[0]
                     ss=self.env['sale.order.line'].sudo().create(datos)
+                    moves=self.env['stock.move'].search([['product_id','=',d.producto2.id],['origin','=',orden.name],['sale_line_id','=',False]])
+                    moves.write({'sale_line_id':ss.id})
+                    ssss=self.env['stock.move'].search([['sale_line_id','=',d.move_id.sale_line_id.id]])
+                    ssss._action_cancel()
+                    ssss.unlink()
                     if(ubicacion):
                         temp.append({'sale_line_id':ss.id,'product_id':d.producto2.id,'location_id':d.almacen.lot_stock_id.id})
-            orden.saleLinesMove()
-            _logger.info(str(ubicacion))
             if(ubicacion and (productos or cantidades)):
                 check=False
-                almacenes=self.env['stock.warehouse'].search([['x_studio_cliente','=',False]])
-                pic=self.env['stock.picking'].search(['&',['location_id','in',almacenes.mapped('lot_stock_id.id')],['sale_id','=',orden.id]],order='id asc',limit=1)
-                _logger.info(len(pic))
-                pic[0].do_unreserve()
                 for t in temp:
-                    dd=pic[0].move_ids_without_package.search(['&',['sale_line_id','=',t['sale_line_id']],['product_id','=',t['product_id']]],order='id asc',limit=1)
+                    dd=self.env['stock.move'].search(['&',['sale_line_id','=',t['sale_line_id']],['location_id','in',almacenes.mapped('lot_stock_id.id')]],order='id asc',limit=1)
                     _logger.info(str(len(dd)))
                     if(dd.location_id.id!=t['location_id']):
                         dd.write({'location_id':t['location_id']})
                         check=True
-                _logger.info('2')
-                if(check):
-                    pic[0].action_assign()
             if(ubicacion and not(productos or cantidades)):
                 self.pick.do_unreserve()
                 for d in data:
                     if(d.almacen.id):
                         d.move_id.write({'location_id':d.almacen.lot_stock_id.id})
-                self.pick.action_assign()
+            self.pick.action_assign()
 
-                
     def confirmarE(self,equipos):
+        fecha=datetime.datetime.now()-datetime.timedelta(hours=-5)
+        f="<table class='table table-sm'><thead><tr><th>Modelo</th><th>Serie</th></thead><tbody>"
         for s in equipos:
             d=self.env['stock.move.line'].search([['move_id','=',s.move_id.id]])
-            d.write({'lot_id':s.serieOrigen.id})
+            s.move_id.sale_line_id.write({'x_studio_field_9nQhR':s.serieOrigen.id})
+            d.write({'lot_id':s.serieOrigen.id})            
+            if(self.pick.sale_id.x_studio_tipo_de_solicitud=='Retiro'):
+                s.serieOrigen.write({'servicio':False,'x_studio_cliente':1,'x_studio_localidad_2':self.pick.sale_id.warehouse_id.x_studio_field_E0H1Z.id})
+                self.env['cliente.h'].create({'localidad':self.pick.sale_id.partner_shipping_id.id,'solicitud':self.pick.sale_id.id,'contrato':self.pick.sale_id.x_studio_field_LVAj5.id,'servicio':self.pick.sale_id.x_studio_field_69Boh.id,'origen':self.pick.sale_id.partner_shipping_id.name,'destino':self.pick.sale_id.warehouse_id.name,'fecha':fecha,'serie':s.serieOrigen.id})
+            else:
+                s.serieOrigen.write({'servicio':self.pick.sale_id.x_studio_field_69Boh.id,'x_studio_cliente':self.pick.sale_id.partner_id.id,'x_studio_localidad_2':self.pick.sale_id.partner_shipping_id.id})
+                self.env['cliente.h'].create({'localidad':self.pick.sale_id.partner_shipping_id.id,'solicitud':self.pick.sale_id.id,'contrato':self.pick.sale_id.x_studio_field_LVAj5.id,'servicio':self.pick.sale_id.x_studio_field_69Boh.id,'origen':self.pick.sale_id.warehouse_id.name,'destino':self.pick.sale_id.partner_shipping_id.name,'fecha':fecha,'serie':s.serieOrigen.id})
+            f=f+"<tr>"
+            f=f+"<td>"+str(s.serieOrigen.product_id.name)+"</td>"
+            f=f+"<td>"+str(s.serieOrigen.name)+"</td>"
+            f=f+"</tr>"
+            self.env['dcas.dcas'].create({'porcentajeNegro':s.nivelNegro,'porcentajeAmarillo':s.nivelAmarillo,'porcentajeCian':s.nivelCian,'porcentajeMagenta':s.nivelMagenta,'contadorColor':s.contadorColor,'x_studio_toner_negro':1,'x_studio_toner_amarillo':1,'x_studio_toner_cian':1,'x_studio_toner_magenta':1,'contadorMono':s.contadorMono,'serie':s.serieOrigen.id,'fuente':'stock.production.lot'})
+        f=f+"</tbody></table>"
+        if(self.pick.sale_id.x_studio_tipo_de_solicitud in ['Arrendamiento','Venta','Backup']):
+            self.pick.sale_id.write({'x_studio_series_retiro':f,'state':'assign'})
+        else:
+            self.pick.sale_id.write({'state':'assign'})
+
+
+
+
 
 class StockCambioLine(TransientModel):
     _name = 'cambio.toner.line'
@@ -438,6 +475,7 @@ class StockCambioLine(TransientModel):
     producto1=fields.Many2one('product.product')
     producto2=fields.Many2one('product.product')
     cantidad=fields.Float()
+    cantidad2=fields.Float()
     rel_cambio=fields.Many2one('cambio.toner')
     serie=fields.Many2one('stock.production.lot')
     almacen=fields.Many2one('stock.warehouse',string='Almacen')
@@ -469,6 +507,7 @@ class StockCambioLine(TransientModel):
     producto1=fields.Many2one('product.product')
     producto2=fields.Many2one('product.product')
     cantidad=fields.Float()
+    cantidad2=fields.Float()
     rel_cambio=fields.Many2one('cambio.toner')
     serie=fields.Many2one('stock.production.lot')
     almacen=fields.Many2one('stock.warehouse',string='Almacen')
@@ -481,6 +520,7 @@ class StockCambioLine(TransientModel):
 
     @api.onchange('almacen','producto2')
     def almac(self):
+        res={}
         _logger.info('entre3')
         for record in self:
             if(record.almacen):
@@ -505,7 +545,7 @@ class GuiaTicket(TransientModel):
             self.pick.write({'carrier_tracking_ref':self.guia})
             if(self.pick.sale_id.x_studio_field_bxHgp):
                 self.pick.sale_id.x_studio_field_bxHgp.sudo().write({'x_studio_nmero_de_guia_1': self.guia})
-                self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : self.pick.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id, 'estadoTicket' : "Guia Agregada", 'comentario':"Guia: "+self.guia}) 
+                self.env['helpdesk.diagnostico'].sudo().create({ 'write_uid': self.env.user.name,'ticketRelacion' : self.pick.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id, 'estadoTicket' : "Guia Agregada", 'comentario':"Guia: "+self.guia}) 
 
 
 
@@ -523,11 +563,16 @@ class ComemtarioTicket(TransientModel):
         if(self.ruta==False):
             self.pick.x_studio_evidencia_a_ticket=self.evidencia
             self.pick.x_studio_comentario_1=self.comentario
-            self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : self.pick.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id, 'estadoTicket' : "Devuelto a Distribución", 'comentario':self.comentario}) 
+            if(self.pick.sale_id.x_studio_field_bxHgp.stage_id.id==18):
+                ultimo=self.env['helpdesk.diagnostico'].search([['ticketRelacion','=',self.pick.sale_id.x_studio_field_bxHgp.id]],order='create_date desc',limit=1)
+                self.env['helpdesk.diagnostico'].sudo().create({'write_uid': self.env.user.name, 'ticketRelacion' : self.pick.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id, 'write_uid' : self.env.user.id, 'estadoTicket' : "", 'comentario':self.comentario})
+                ultimo.copy()
+            else:
+                self.env['helpdesk.diagnostico'].sudo().create({ 'write_uid': self.env.user.name,'ticketRelacion' : self.pick.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id, 'write_uid' : self.env.user.id, 'estadoTicket' : "", 'comentario':self.comentario})
         if(self.ruta!=False and self.pick.sale_id.id!=False):
             self.pick.x_studio_evidencia_a_ticket=self.evidencia
             self.pick.x_studio_comentario_1=self.comentario
-            self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.pick.sale_id.x_studio_field_bxHgp.id
+            self.env['helpdesk.diagnostico'].create({'write_uid': self.env.user.name,'ticketRelacion': self.pick.sale_id.x_studio_field_bxHgp.id
                                         ,'comentario': self.comentario
                                         ,'estadoTicket': self.pick.sale_id.x_studio_field_bxHgp.stage_id.name
                                         ,'evidencia': [(6,0,self.evidencia.ids)]
@@ -813,6 +858,10 @@ class StockQuantMassAction(TransientModel):
     tipo=fields.Many2one('product.product',string='Modelo')
     equipo =fields.Boolean('Equipos')
     estado=fields.Selection([["Obsoleto","Obsoleto"],["Usado","Usado"],["Hueso","Hueso"],["Para reparación","Para reparación"],["Nuevo","Nuevo"],["Buenas condiciones","Buenas condiciones"],["Excelentes condiciones","Excelentes condiciones"],["Back-up","Back-up"],["Dañado","Dañado"]])
+    anterior=fields.Boolean()
+    fecha=fields.Date()
+    regi=fields.Integer()
+    archivo=fields.Binary()
     #almacenes=fields.Many2many('stock.warehouse')
 
 
@@ -824,45 +873,58 @@ class StockQuantMassAction(TransientModel):
 
 
     def report(self):
-        d=[]
-        # if(self.equipo):
-        #     d.append(['x_studio_almacn.x_studio_cliente','=',False])
-        #     if(self.almacen):
-        #         d.append(['x_studio_almacn','=',self.almacen.id])
-        #     if(self.almacen.id==False):
-        #         d.append(['x_studio_almacn','!=',False])
-        #     #d.append(['lot_id','!=',False])
-        # else:
-        if(len(self.almacen)>0):
-            d.append(['location_id','in',self.almacen.mapped('lot_stock_id.id')])
-        if(self.categoria):
-            d.append(['x_studio_categoria','=',self.categoria.id])
-            if(self.categoria.id==13):
-                d.append(['x_studio_almacn.x_studio_cliente','=',False])
-                if(self.almacen):
-                    d.append(['location_id','in',self.almacen.mapped('lot_stock_id.id')])
-                if(len(self.almacen)==0):
-                    d.append(['x_studio_almacn','!=',False])
-        if(self.tipo):
-            d.append(['product_id','=',self.tipo.id])
-        if(self.estado):
-            d.append(['lot_id.x_studio_estado','=',self.estado])
-            # if(self.almacen.id==False):
-            #     d.append(['x_studio_almacn','!=',False])
-            # if(self.categoria.id==False):
-            #     d.append(['x_studio_categoria','!=',False])
-            # if(self.tipo.id==False):
-            #     d.append(['product_id','!=',False])
-            #d.append(['x_studio_almacn.x_studio_cliente','=',False])
-            #d.append(['lot_id','=',False])
-        _logger.info(str(d))
-        data=self.env['stock.quant'].search(d,order="x_studio_almacn")
-        #_logger.info(str(data.mapped('id')))
-        if(len(data)>0):
-            data[0].write({'x_studio_arreglo':str(data.mapped('id'))})
-            return self.env.ref('stock_picking_mass_action.quant_xlsx').report_action(data[0])        
-        if(len(data)==0):
-            raise UserError(_("No hay registros para la selecion actual"))
+        if(self.anterior):
+            if(self.fecha):
+                registro=self.env['quant.history'].search([['fecha','=',self.fecha]])
+                if(registro.id):
+                    self['regi']=registro.id
+                    self['archivo']=registro.reporte
+                else:
+                    raise UserError(_("No hay registros para la selecion actual"))
+            else:
+                raise UserError(_("Debe ingresar la fecha deseada"))
+
+        if(self.anterior==False):    
+            d=[]
+            # if(self.equipo):
+            #     d.append(['x_studio_almacn.x_studio_cliente','=',False])
+            #     if(self.almacen):
+            #         d.append(['x_studio_almacn','=',self.almacen.id])
+            #     if(self.almacen.id==False):
+            #         d.append(['x_studio_almacn','!=',False])
+            #     #d.append(['lot_id','!=',False])
+            # else:
+            if(len(self.almacen)>0):
+                d.append(['location_id','in',self.almacen.mapped('lot_stock_id.id')])
+            if(self.categoria):
+                d.append(['x_studio_categoria','=',self.categoria.id])
+                if(self.categoria.id==13):
+                    d.append(['x_studio_almacn.x_studio_cliente','=',False])
+                    if(self.almacen):
+                        d.append(['location_id','in',self.almacen.mapped('lot_stock_id.id')])
+                    if(len(self.almacen)==0):
+                        d.append(['x_studio_almacn','!=',False])
+            if(self.tipo):
+                d.append(['product_id','=',self.tipo.id])
+            if(self.estado):
+                d.append(['lot_id.x_studio_estado','=',self.estado])
+                # if(self.almacen.id==False):
+                #     d.append(['x_studio_almacn','!=',False])
+                # if(self.categoria.id==False):
+                #     d.append(['x_studio_categoria','!=',False])
+                # if(self.tipo.id==False):
+                #     d.append(['product_id','!=',False])
+                #d.append(['x_studio_almacn.x_studio_cliente','=',False])
+                #d.append(['lot_id','=',False])
+            _logger.info(str(d))
+            data=self.env['stock.quant'].search(d,order="x_studio_almacn")
+            #_logger.info(str(data.mapped('id')))
+            if(len(data)>0):
+                data[0].write({'x_studio_arreglo':str(data.mapped('id'))})
+                return self.env.ref('stock_picking_mass_action.quant_xlsx').report_action(data[0])        
+            if(len(data)==0):
+                raise UserError(_("No hay registros para la selecion actual"))
+
 class SaleOrderMassAction(TransientModel):
     _name = 'sale.order.action'
     _description = 'Reporte de Solicitudes'
@@ -1050,7 +1112,7 @@ class PickingsAComprasMassAction(TransientModel):
             #pppp=self.env['stock.picking'].browse(pi).write({'estado':'compras'})
             for pp in self.picking_ids:
                 pp.x_studio_ticket_relacionado.write({'stage_id':113})
-                self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : pp.x_studio_ticket_relacionado.id, 'estadoTicket' : "Pendiente de compra", 'comentario':"Pendiente de compra Requisicion:("+requisicion.name+")"}) 
+                self.env['helpdesk.diagnostico'].sudo().create({ 'write_uid': self.env.user.name,'ticketRelacion' : pp.x_studio_ticket_relacionado.id, 'estadoTicket' : "Pendiente de compra", 'comentario':"Pendiente de compra Requisicion:("+requisicion.name+")"}) 
             view = self.env.ref('studio_customization.default_form_view_fo_24cee64e-ad11-4f19-a7f6-fceca5375726')
             return {
                     'name': _('Transferencia'),
@@ -1161,7 +1223,7 @@ class  DevolverPick(TransientModel):
             s.write({'x_studio_fecha_de_entrega':self.fecha,'commitment_date':self.fecha})
             s.action_confirm()
             self.picking.x_studio_ticket_relacionado.write({'x_studio_field_0OAPP':[(4,s.id)]})
-        self.env['helpdesk.diagnostico'].sudo().create({ 'ticketRelacion' : self.picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id, 'estadoTicket' : "Devuelto a Almacen", 'comentario':self.comentario}) 
+        self.env['helpdesk.diagnostico'].sudo().create({ 'write_uid': self.env.user.name,'ticketRelacion' : self.picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id, 'estadoTicket' : "Devuelto a Almacen", 'comentario':self.comentario}) 
         
 class StockQua(TransientModel):
     _name='quant.action'
@@ -1352,7 +1414,7 @@ class reporteCreacionRuta(TransientModel):
     name=fields.Char()
 
     def reporte(self):
-        d=self.env['creacion.ruta'].search([['ordenes','!=',False]])
+        d=self.env['creacion.ruta'].search([['ordenes','!=',False]],order='create_date desc')
         d[0].write({'arreglo':d.mapped('id')})
         return self.env.ref('stock_picking_mass_action.ruta_xlsx').report_action(d[0])
 

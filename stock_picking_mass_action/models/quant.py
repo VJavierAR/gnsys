@@ -5,6 +5,8 @@ from odoo.tools.float_utils import float_compare, float_is_zero, float_round
 import logging, ast
 _logger = logging.getLogger(__name__)
 import threading
+import base64
+import datetime
 
 class StockQuan(Model):
     _inherit = 'stock.quant'
@@ -31,8 +33,37 @@ class StockQuan(Model):
     def actualizaRegla(self):
         if(self.x_studio_almacn.x_studio_mini==True):
             q=self.env['stock.warehouse.orderpoint'].search([['location_id','=',self.location_id.id],['product_id','=',self.product_id.id]])
-            q.x_studio_existencia=self.quantity
-            q.x_studio_existencia_2=self.quantity
+            if(q.mapped('id')==[]):
+                p=self.env['product.product'].search([['name','like',self.product_id.name]])
+                q=self.env['stock.warehouse.orderpoint'].search([['location_id','=',self.location_id.id],['product_id','in',p.mapped('id')]])
+                q[0].x_studio_existencia=self.quantity
+                q[0].x_studio_existencia_2=self.quantity
+            else:    
+                q.x_studio_existencia=self.quantity
+                q.x_studio_existencia_2=self.quantity
+    def archivaReporte(self):
+        almacenes=self.env['stock.warehouse'].search([['x_studio_cliente','=',False]])
+        r=self.search([['location_id','in',almacenes.mapped('lot_stock_id.id')]])
+        r[0].write({'x_studio_arreglo':str(r.mapped('id'))})
+        pdf=self.env.ref('stock_picking_mass_action.quant_xlsx').sudo().render_xlsx(data=r[0],docids=r[0].id)[0]
+        reporte = base64.encodestring(pdf)
+        self.env['quant.history'].create({'reporte':reporte,'fecha':datetime.datetime.now().date()})
+    
+    def edit(self):
+        wiz = self.env['quant.action'].create({'quant':self.id,'producto':self.product_id.id,'cantidad':self.quantity,'ubicacion':self.x_studio_field_kUc4x.id,'usuario':self.env.uid})
+        view = self.env.ref('stock_picking_mass_action.view_quant_action_form')
+        return {
+            'name': _('Existencia'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'quant.action',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            'context': self.env.context,
+        }
 
 class StockQuantLine(Model):
     _name='stock.quant.line'
@@ -42,3 +73,9 @@ class StockQuantLine(Model):
     cantidadReal=fields.Float()
     quant_id=fields.Many2one('stock.quant')
     usuario=fields.Many2one('res.users')
+
+class HistoricoInventario(Model):
+    _name='quant.history'
+    _description='Historico Inventario'
+    fecha=fields.Date()
+    reporte=fields.Binary()

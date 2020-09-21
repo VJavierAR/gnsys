@@ -386,10 +386,14 @@
         <field name="arch" type="xml">
             <form string="Mass Action for the selected stock quant">
                 <group>
-                    <field name="almacen" widget="many2many_tags" domain="[['x_studio_cliente','=',False]]"/>
-                    <field name="categoria"/>
-                    <field name="tipo" domain="[['categ_id','=',13]]" attrs="{'invisible':[['categoria','!=',13]]}"/>
-                    <field name="estado" attrs="{'invisible':[['categoria','!=',13]]}"/>
+                    <field name="regi" invisible="1"/>
+                    <field name="anterior"/>
+                    <field name="fecha" attrs="{'invisible':[['anterior','=',False]]}"/>
+                    <field name="archivo" attrs="{'invisible':[['regi','=',0]]}"/>
+                    <field name="almacen" widget="many2many_tags" domain="[['x_studio_cliente','=',False]]" attrs="{'invisible':[['anterior','!=',False]]}"/>
+                    <field name="categoria" attrs="{'invisible':[['anterior','!=',False]]}"/>
+                    <field name="tipo" domain="[['categ_id','=',13]]" attrs="{'invisible':[['categoria','!=',13],['anterior','!=',False]]}"/>
+                    <field name="estado" attrs="{'invisible':[['categoria','!=',13],['anterior','!=',False]]}"/>
                 </group>
                 <footer>
                     <button name="report" string="Reporte" type="object" class="oe_highlight"/>

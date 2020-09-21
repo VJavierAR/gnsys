@@ -3,7 +3,7 @@ from collections import namedtuple
 import json
 import time
 from datetime import date
-
+import datetime
 from itertools import groupby
 from odoo import api, fields, models, _, SUPERUSER_ID
 from odoo.osv import expression
@@ -20,6 +20,7 @@ class tfs(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin', 'portal.mixin']    
     _name = 'tfs.tfs'
     _description='tfs'
+    active=fields.Boolean(default=True)
     name = fields.Char()
     almacen = fields.Many2one('stock.warehouse', "Almacen",store='True')
     tipo = fields.Selection([('Cian', 'Cian'),('Magenta','Magenta'),('Amarillo','Amarillo'),('Negro','Negro')])
@@ -30,7 +31,6 @@ class tfs(models.Model):
     serie=fields.Many2one('stock.production.lot',string='Numero de Serie',store='True')
     domi=fields.Integer()
     modelo=fields.Char(related='serie.product_id.name',string='Modelo')
-
     productoNegro=fields.Many2one('product.product',string='Toner Monocromatico')
     productoCian=fields.Many2one('product.product',string='Toner Cian')
     productoMagenta=fields.Many2one('product.product',string='Toner Magenta')
@@ -60,7 +60,7 @@ class tfs(models.Model):
     actualporcentajeMagenta=fields.Integer(string='Actual Magenta')
     
     evidencias=fields.One2many('tfs.evidencia',string='Evidencias',inverse_name='tfs_id')
-    estado=fields.Selection([('borrador','Tfs autoriza'),('xValidar','Por Validar'),('Valido','Valido'),('Confirmado','Confirmado'),('Auditar','Auditar'),('Cancelado','Cancelado')],default='borrador')
+    estado=fields.Selection([('borrador','Tfs autoriza'),('xValidar','Por Validar'),('Valido','Valido'),('Confirmado','Confirmado'),('Cancelado','Cancelado')],default='borrador')
     colorBN=fields.Selection(related='serie.x_studio_color_bn')
     arreglo=fields.Char()
     direccion=fields.Char(widget="html")
@@ -172,9 +172,6 @@ class tfs(models.Model):
             pickPosibles=self.env['stock.picking'].search(['&',['state','!=','done'],['location_dest_id','=',al.lot_stock_id.id]])
             if(len(pickPosibles)!=0):
                 _logger.info("entre 1"+str(al.name))
-                #for pix in pickPosibles:
-                    #for rl in pix.reglas:
-                    #    rule2.append(rl.id)
                 tt=pickPosibles.mapped('id')
                 rule2=pickPosibles.mapped('reglas.id')
                 _logger.info(str(tt))
@@ -186,7 +183,7 @@ class tfs(models.Model):
                         if(len(quant)==0):
                             _logger.info('quant')
                             datos1={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':41911,'location_dest_id':re.location_id.id}
-                            datos2={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':re.location_id.id,'location_dest_id':41911}
+                            datos2={'product_id' : re.product_id.id, 'product_qty' : re.product_max_qty,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'price_unit': 0 }
                             pickOrigen.append(datos1)
                             pickDestino.append(datos2)
                             rule.append(re.id)
@@ -198,7 +195,7 @@ class tfs(models.Model):
                                 _logger.info(str(re.product_max_qty-quant.quantity))
                                 if((re.product_max_qty-quant.quantity)>0):
                                     datos1={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty-quant.quantity,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':41911,'location_dest_id':re.location_id.id}
-                                    datos2={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty-quant.quantity,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':re.location_id.id,'location_dest_id':41911}
+                                    datos2={'product_id' : re.product_id.id, 'product_qty' : re.product_max_qty-quant.quantity,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'price_unit': 0}
                                     pickOrigen.append(datos1)
                                     pickDestino.append(datos2)
                                     rule.append(re.id)
@@ -208,7 +205,7 @@ class tfs(models.Model):
                     quant=quants.filtered(lambda x: x.product_id.id == re.product_id.id)
                     if(len(quant)==0):
                         datos1={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':41911,'location_dest_id':re.location_id.id}
-                        datos2={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':re.location_id.id,'location_dest_id':41911}
+                        datos2={'product_id' : re.product_id.id, 'product_qty' : re.product_max_qty,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'price_unit': 0}
                         pickOrigen.append(datos1)
                         pickDestino.append(datos2)
                         rule.append(re.id)
@@ -216,7 +213,7 @@ class tfs(models.Model):
                         if(quant.quantity<re.product_min_qty):
                             if((re.product_max_qty-quant.quantity)>0):
                                 datos1={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty-quant.quantity,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':41911,'location_dest_id':re.location_id.id}
-                                datos2={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty-quant.quantity,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':re.location_id.id,'location_dest_id':41911}
+                                datos2={'product_id' : re.product_id.id, 'product_qty' : re.product_max_qty-quant.quantity,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'price_unit': 0}
                                 pickOrigen.append(datos1)
                                 pickDestino.append(datos2)
                                 rule.append(re.id)
@@ -225,27 +222,25 @@ class tfs(models.Model):
                 ticket=self.env['helpdesk.ticket'].create({'x_studio_tipo_de_vale':'Resurtido de Almacen','partner_id':c.id})
                 sale = self.env['sale.order'].create({'partner_id' : c.id, 'origin' : "Ticket: " + str(ticket.id), 'x_studio_tipo_de_solicitud' : 'Venta', 'partner_shipping_id' : c.id , 'warehouse_id' : 1 , 'team_id' : 1, 'x_studio_field_bxHgp': ticket.id})
                 destino=self.env['stock.picking.type'].search([['name','=','Receipts'],['warehouse_id','=',al.id]])
-                pick_dest = self.env['stock.picking'].create({'mini':True,'x_studio_ticket':'Ticket de tóner: '+str(ticket.id),'origin':sale.name,'picking_type_id' : destino.id, 'location_id':17,'almacenOrigen':6299,'almacenDestino':al.id,'location_dest_id':al.lot_stock_id.id,'reglas':[(6,0,rule)]})
                 ticket.x_studio_field_nO7Xg=sale.id
+                compra=self.env['purchase.order'].create({'picking_type_id':destino.id,'partner_id' : 1, 'origin' : "Ticket: " + str(ticket.id), 'warehouse_id' : al.id , 'date_planned': datetime.datetime.now(),'name':'MINI'})
                 for ori in pickOrigen:
                     ticket.x_studio_productos=[(4,ori['product_id'])]
                     sl=self.env['sale.order.line'].create({'order_id' : sale.id,'product_id':ori['product_id'],'product_uom_qty':ori['product_uom_qty'], 'price_unit': 0})
                 for des in pickDestino:
-                    des['location_id']=17
-                    des['picking_id']=pick_dest.id
-                    des['product_uom_id']=1
-                    m=self.env['stock.move'].create(des)
-                    des['move_id']=m.id
-                    self.env['stock.move.line'].create(des)
+                    des['date_planned']=datetime.datetime.now()
+                    des['order_id']=compra.id
+                    self.env['purchase.order.line'].create(des)
                 sale.action_confirm()
-                ww=self.env['stock.picking'].search([['sale_id','=',sale.id],['picking_type_id.code','=','outgoing']])
-                ww.write({'location_dest_id':17})
-                for w in ww.move_ids_without_package:
-                    w.write({'location_dest_id':17})
-                    self.env['stock.move.line'].search([['move_id','=',w.id]]).write({'location_dest_id':17})
-                pick_dest.write({'x_studio_ticket':'Ticket de tóner: '+str(ticket.id)})
-                pick_dest.action_confirm()
-                pick_dest.action_assign()    
+                compra.button_confirm()
+                datP=self.env['stock.picking'].search([['purchase_id','=',compra.id]])
+                datP.write({'reglas':[(6,0,rule)]})
+                datP.write({'location_id':8})
+                compra.write({'active':False})
+                datP.write({'x_studio_ticket':'Ticket de tóner: '+str(ticket.id)})
+                datP.write({'origin':sale.name,'mini':True})
+                datP.action_confirm()
+                datP.action_assign()    
         return ticket
 
     @api.multi
@@ -255,6 +250,8 @@ class tfs(models.Model):
         if(dat!=[]):
             quants=self.sudo().env['stock.quant'].browse(dat)
         for q in quants:
+            wiz = self.env['quant.action'].create({'quant':q.id,'producto':q.product_id.id,'cantidad':q.quantity,'usuario':self.env.uid,'descripcion':'Cambio mini '+self.name,'cantidadReal':q.quantity-1})
+            wiz.confirmar()
             q.sudo().write({'quantity':q.quantity-1})
             q.actualizaRegla()
         if(self.productoNegro):
@@ -292,7 +289,7 @@ class tfs(models.Model):
         return result
     
     def canc(self):
-        self.write({'estado':'Auditar'})
+        self.write({'estado':'Cancelado'})
 
     
     @api.onchange('actualMonocromatico')
@@ -329,27 +326,27 @@ class tfs(models.Model):
             if record.serie:
                 if(record.serie.x_studio_mini==False):
                     raise exceptions.UserError("El No. de Serie"+ record.serie.name+"no corresponde a Mini Almacen" )
-                if(len(record.serie.x_studio_move_line)>0):
-                    #moveli=record.serie.x_studio_move_line.sorted(key='id',reverse=True)
+                if(record.serie.x_studio_localidad_2.id):
                     cliente = record.serie.x_studio_localidad_2.parent_id.id
                     localidad=record.serie.x_studio_localidad_2.id
                     record['cliente'] = cliente
                     record['localidad'] = localidad
                     lo=record.serie.x_studio_localidad_2
                     record['direccion']="<table><tr><td>Calle</td><td>"+str(lo.street)+"</td></tr><tr><td>No.Exterior</td><td>"+str(lo.street_number2)+"</td></tr><tr><td>No. Interior</td><td>"+str(lo.street_number)+"</td></tr><tr><td>Cp</td><td>"+str(lo.zip)+"</td></tr><tr><td>Estado</td><td>"+str(lo.state_id.name)+"</td></tr><tr><td>Delegación</td><td>"+str(lo.city)+"</td></tr></table>"
-                    #_logger.info(str(localidad.name))
-                    record['almacen'] =self.env['stock.warehouse'].search([['x_studio_field_E0H1Z','=',localidad]]).lot_stock_id.x_studio_almacn_padre.id
+                    alm=self.env['stock.warehouse'].search([['x_studio_field_E0H1Z','=',localidad]]).lot_stock_id.x_studio_almacn_padre
+                    record['almacen'] =alm.id
+                    prod=alm.lot_stock_id.quant_ids.mapped('product_id.id')
                 if(record.colorBN=="B/N"):
-                    data=record.serie.product_id.x_studio_toner_compatible.filtered(lambda x: 'Toner' in x.categ_id.name).mapped('id')
+                    data=record.serie.product_id.x_studio_toner_compatible.filtered(lambda x: 'Toner' in x.categ_id.name and x.id in prod).mapped('id')
                     res['domain'] = {'productoNegro': [('id', 'in', data)]}
                     dc=self.env['dcas.dcas'].search([['serie','=',record.serie.id],['fuente','=','tfs.tfs'],['x_studio_toner_negro','=',1]]).sorted(key='create_date',reverse=True)
                     record['contadorMono'] =dc[0].id if(len(dc)>0) else self.env['dcas.dcas'].search([['serie','=',record.serie.id]]).sorted(key='create_date',reverse=True)[0].id
 
                 if(record.colorBN=="Color"):
-                    negro=record.serie.product_id.x_studio_toner_compatible.filtered(lambda x: 'Toner' in x.categ_id.name and x.x_studio_color=='Negro').mapped('id')
-                    cian=record.serie.product_id.x_studio_toner_compatible.filtered(lambda x: 'Toner' in x.categ_id.name and x.x_studio_color=='Cian').mapped('id')
-                    amarillo=record.serie.product_id.x_studio_toner_compatible.filtered(lambda x: 'Toner' in x.categ_id.name and x.x_studio_color=='Amarillo').mapped('id')
-                    magenta=record.serie.product_id.x_studio_toner_compatible.filtered(lambda x: 'Toner' in x.categ_id.name and x.x_studio_color=='Magenta').mapped('id')                    
+                    negro=record.serie.product_id.x_studio_toner_compatible.filtered(lambda x: 'Toner' in x.categ_id.name and x.x_studio_color=='Negro' and x.id in prod).mapped('id')
+                    cian=record.serie.product_id.x_studio_toner_compatible.filtered(lambda x: 'Toner' in x.categ_id.name and x.x_studio_color=='Cian' and x.id in prod).mapped('id')
+                    amarillo=record.serie.product_id.x_studio_toner_compatible.filtered(lambda x: 'Toner' in x.categ_id.name and x.x_studio_color=='Amarillo' and x.id in prod).mapped('id')
+                    magenta=record.serie.product_id.x_studio_toner_compatible.filtered(lambda x: 'Toner' in x.categ_id.name and x.x_studio_color=='Magenta' and x.id in prod).mapped('id')                    
                     res['domain'] = {'productoNegro': [('id', 'in', negro)],'productoCian': [('id', 'in', cian)],'productoAmarillo': [('id', 'in', amarillo)],'productoMagenta': [('id', 'in', magenta)]}
                     dc=self.env['dcas.dcas'].search([['serie','=',record.serie.id],['fuente','=','tfs.tfs'],['x_studio_toner_negro','=',1]]).sorted(key='create_date',reverse=True)
                     dc1=self.env['dcas.dcas'].search([['serie','=',record.serie.id],['fuente','=','tfs.tfs'],['x_studio_toner_amarillo','=',1]]).sorted(key='create_date',reverse=True)

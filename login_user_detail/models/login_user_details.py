@@ -43,7 +43,7 @@ class LoginUserDetail(models.Model):
 
 class LoginUpdate(models.Model):
     _name = 'login.detail'
-
+    _description = 'Detalles de inicio de sesion'
     name = fields.Char(string="User Name")
     date_time = fields.Datetime(string="Login Date And Time", default=lambda self: fields.datetime.now())
     ip_address = fields.Char(string="IP Address")

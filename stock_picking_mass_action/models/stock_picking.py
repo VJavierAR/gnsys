@@ -35,12 +35,13 @@ class StockPicking(Model):
 
 
     def validacionZero(self):
-        if(len(self.move_ids_without_package)==1):
+        if(self.x_studio_backorder_de==False):
             self.sale_id.action_cancel()
-            self.sale_id.x_studio_field_bxHgp.write({'stage_id':115})
+            if(self.sale_id.x_studio_field_bxHgp.stage_id.id!=18 and self.sale_id.x_studio_field_bxHgp.stage_id.id!=3):
+                self.sale_id.x_studio_field_bxHgp.write({'stage_id':115})
             self.sale_id.picking_ids.write({'active':False})
-            self.comentario()
-        wiz = self.env['comentario.ticket'].create({'pick':self.id})
+            #self.comentario()
+        wiz = self.env['comentario.ticket'].create({'pick':self.id,'create_uid':self.env.user.id,'write_uid':self.env.user.id})
         view = self.env.ref('stock_picking_mass_action.view_comentario_ticket')
         return {
             'name': _('Comentario'),
@@ -111,7 +112,7 @@ class StockPicking(Model):
     def back(self):
         for r in self:
             for rrr in r.move_ids_without_package:
-                if(rrr.product_id.categ_id.id==13 and (r.picking_type_id.id==3 or r.picking_type_id.id==1) and r.state!='done'):
+                if(rrr.product_id.categ_id.id==13 and (r.picking_type_id.id==3 or r.picking_type_id.id==1 or r.picking_type_id.id==89) and r.state!='done'):
                     r.write({'oculta':True})
                 rrrrr=self.env['stock.quant'].search([['product_id','=', rrr.product_id.id],['location_id','=',rrr.location_id.id]]).sorted(key='quantity',reverse=True)
                 if(len(rrrrr)==0):
@@ -419,15 +420,15 @@ class StockPicking(Model):
         d=[]
         wiz = self.env['cambio.toner'].create({'display_name':'h','pick':self.id,'tonerUorden':self.oculta})
         for p in self.move_ids_without_package.filtered(lambda x:x.product_id.categ_id.id==13):
-            data={'estado':p.sale_line_id.x_studio_estado,'move_id':p.id,'almacen':self.location_id.x_studio_field_JoD2k.id,'estado':p.sale_line_id.x_studio_estado,'rel_cambio':wiz.id,'producto1':p.product_id.id,'producto2':p.product_id.id,'cantidad':p.product_uom_qty,'serie':p.x_studio_serie_destino.id,'tipo':self.picking_type_id.id}
+            data={'estado':p.sale_line_id.x_studio_estado,'move_id':p.id,'almacen':self.location_id.x_studio_field_JoD2k.id,'estado':p.sale_line_id.x_studio_estado,'rel_cambio':wiz.id,'producto1':p.product_id.id,'producto2':p.product_id.id,'cantidad':p.product_uom_qty,'cantidad2':p.product_uom_qty,'serie':p.x_studio_serie_destino.id,'tipo':self.picking_type_id.id}
             self.env['cambio.toner.line'].create(data)
 
         for p in self.move_ids_without_package.filtered(lambda x:x.product_id.categ_id.id==5):
-            data={'move_id':p.id,'almacen':self.location_id.x_studio_field_JoD2k.id,'rel_cambio':wiz.id,'producto1':p.product_id.id,'producto2':p.product_id.id,'cantidad':p.product_uom_qty,'serie':p.x_studio_serie_destino.id,'tipo':self.picking_type_id.id}
+            data={'move_id':p.id,'cantidad2':p.product_uom_qty,'almacen':self.location_id.x_studio_field_JoD2k.id,'rel_cambio':wiz.id,'producto1':p.product_id.id,'producto2':p.product_id.id,'cantidad':p.product_uom_qty,'serie':p.x_studio_serie_destino.id,'tipo':self.picking_type_id.id}
             self.env['cambio.toner.line.toner'].create(data)
 
         for p in self.move_ids_without_package.filtered(lambda x:x.product_id.categ_id.id==11 or x.product_id.categ_id.id==7):
-            data={'move_id':p.id,'almacen':self.location_id.x_studio_field_JoD2k.id,'rel_cambio':wiz.id,'producto1':p.product_id.id,'producto2':p.product_id.id,'cantidad':p.product_uom_qty,'serie':p.x_studio_serie_destino.id,'tipo':self.picking_type_id.id}
+            data={'move_id':p.id,'cantidad2':p.product_uom_qty,'almacen':self.location_id.x_studio_field_JoD2k.id,'rel_cambio':wiz.id,'producto1':p.product_id.id,'producto2':p.product_id.id,'cantidad':p.product_uom_qty,'serie':p.x_studio_serie_destino.id,'tipo':self.picking_type_id.id}
             self.env['cambio.toner.line.accesorios'].create(data)
         
         view = self.env.ref('stock_picking_mass_action.view_asignacion_equipo_action_form')

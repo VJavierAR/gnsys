@@ -252,40 +252,51 @@ class compras(models.Model):
                         out.close()
                         os.system(myCmd)
                         f = open("test3.txt","r")
-                        if f2.startswith(b'%PDF-1.7'):
+                        if f2.startswith(b'%PDF-1.') and "konica" in self.partner_id.name.lower():
+                            myCmd = 'pdftotext -fixed 3 hola.pdf test3.txt'
+                            out = open("hola.pdf", "wb")
+                            file = PdfFileReader(H)
+                            t=PdfFileWriter()
+                            for p in range(file.getNumPages()):
+                                t.addPage(file.getPage(p))
+                            t.write(out)
+                            out.close()
+                            os.system(myCmd)
+                            f = open("test3.txt","r")
                             string = f.read()
                             f.close()
-                            d = string.split('\n')
-                            n=len(d)
-                            arreglo=[]
-                            product={}
-                            i=0
-                            for x in d:
-                                f=x
-                                serial=''
-                                if ('PIEZA' in f):
-                                    cantidad = f.split('PIEZA')[0]
-                                    l = f.split('PIEZA')[1].split(' -',1)
-                                    id = l[0].replace(' ','')
-                                    casi = l[1].split('.')
-                                    _logger.info(str(casi))
-                                    casii = casi[1].split(' ')[0]
-                                    tam = casi[0].split(' ')
-                                    p = len(tam)
-                                    m = tam[p-1]+'.'+casii
-                                    precio = (float(m.replace(',',''))-(float(m.replace(',',''))*(self.x_studio_descuento/100)))
-                                    template=self.env['product.template'].search([('default_code','=',id)])
+                            b = string.split('\n')
+                            #_logger.info(str(b))
+                            i = 0
+                            j=0
+                            h=""
+                            g=""
+                            q=""
+                            qty=""
+                            arr=[]
+                            for o in b:
+                                product={}
+                                if('$' in o and 'USD' not in o ):
+                                    productid=False
+                                    r = o.split("              ",1)[1]
+                                    q=str(r.split(' ',1)[0]).replace(' ','')
+                                    g = float(r.split('$')[1].replace(' ',''))
+                                    h=float(r.split('$')[2].replace('',''))
+                                    template=self.env['product.template'].search([('default_code','=',q)])
+                                    qty=round(h/g)
                                     if(template.id==False):
-                                        productid=self.env['product.product'].create({'name':casi[0],'description':casi[0],'categ_id':self.x_studio_tipo_de_producto.id,'default_code':str(id),'type':'product'})                                        
-                                    if(template.id!=False):
+                                        productid=self.env['product.product'].create({'name':'/','description':'falta','categ_id':self.x_studio_tipo_de_producto.id,'default_code':str(q),'type':'product'})
+                                    if(template.id!=False):                                  
                                         productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
-                                    _logger.info('id'+str(id))
-                                    product={'product_uom':1,'date_planned':self.date_order if(self.date_order) else fecha,'product_id':productid.id,'product_qty':cantidad,'price_unit':precio,'taxes_id':[10],'name':productid.description}
-                                    arreglo.append(product)
-                            if(len(arreglo)>0):
+                                    _logger.info(str(productid))
+                                    desc=productid.description if(productid.description) else '|'
+                                    product={'product_uom':1,'product_id':productid.id,'product_qty':qty,'price_unit':g,'date_planned':self.date_order if(self.date_order) else fecha,'name':desc,'taxes_id':[10]}
+                                    arr.append(product)
+                                    j=j+1
+                            if(len(arr)>0):
                                 self.order_line=[(5,0,0)]
-                            self.order_line=arreglo
-                        if f2.startswith(b'%PDF-1.4'):
+                            self.order_line=arr
+                        if f2.startswith(b'%PDF-1.') and "kyocera" in self.partner_id.name.lower():
                             string = f.read()
                             f.close()
                             b = string.split('\n')                    
@@ -301,13 +312,18 @@ class compras(models.Model):
                                 if('#' in o ):
                                     r = o.split("Artículo # ")
                                     q = r[1].split(' ')[0]
-                                    _logger.info(str(q))
-                                    template=self.env['product.template'].search([('default_code','=',q)])
-                                    if(template.id==False):
-                                        productid=self.env['product.product'].create({'name':'/','description':'falta','categ_id':self.x_studio_tipo_de_producto.id,'default_code':str(q),'type':'product'})
-                                    if(template.id!=False):                                  
-                                        productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
-                                    _logger.info(str(productid))
+                                    #_logger.info(str(q))
+                                    template=self.env['product.template'].search([('default_code','=',q.replace(' ',''))],order='id asc')
+                                    ta=len(template)
+                                    if(ta>1):
+                                        productid=self.env['product.product'].search([('product_tmpl_id','=',template[0].id)])
+                                    if(ta<=1):
+                                        if(template.id==False):
+                                            productid=self.env['product.product'].create({'name':'/','description':'falta','categ_id':self.x_studio_tipo_de_producto.id,'default_code':str(q),'type':'product'})
+                                    if(ta==1):
+                                        if(template.id!=False):                                   
+                                            productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
+                                    #_logger.info(str(productid))
                                     if(len(arr)==i+1):
                                         arr[i]['product_id']=productid.id
                                         desc=productid.description if(productid.description) else '|'
@@ -330,7 +346,7 @@ class compras(models.Model):
                                     qty=round(h/g)
                                     if(len(arr)==j+1):
                                         arr[j]['product_qty']=qty
-                                        arr[j]['price_unit']=g/1.16
+                                        arr[j]['price_unit']=g
                                         arr[j]['date_planned']=self.date_order if(self.date_order) else fecha
                                     if(len(arr)==j):
                                         product={'product_qty':qty,'price_unit':g/1.16,'date_planned':self.date_order if(self.date_order) else fecha}

@@ -27,7 +27,21 @@ class fac_order(models.Model):
       excedente=fields.Text(string='Excedentes')
                              
      
-     
+      @api.multi 
+      def cambiaPeriodo(self):
+        lineas=self.order_line
+        nuevomes= str(dict(self._fields['month'].selection).get(self.month))
+        for l in lineas:
+            s=''
+            s=str(l.name)
+            if 'Período' in s:
+                ar=s.split('Período')
+                arr=ar[1].split(' ')
+                new=s.replace(arr[1],nuevomes)
+                l.write({'name':new})
+
+        
+        
       @api.multi
       def llamado_boton(self):
         for r in self:           
@@ -55,17 +69,19 @@ class fac_order(models.Model):
                paginasbn=11422
                embeded=11423
           if str(self.partner_id.razonSocial)=='2': #Grupo
-               pbn=12290
-               pcolor=12288
-               rentaG=12294
-               rentaE=12395
-               spc=12296
-               tfs=12298
-               sm=12300
-               sme=12302
-               netMa=12304
-               paginasbn=12306
-               embeded=12308
+               pbn=12292
+               pcolor=12290
+               rentaG=12296
+               rentaE=12292
+               spc=12298
+               tfs=12300
+               sm=12302
+               sme=12304
+               netMa=12306
+               paginasbn=12308
+               embeded=12310
+               impre=12550
+               lp=12549                
           if str(self.partner_id.razonSocial)=='3': #servicios
                pbn=12289
                pcolor=12287
@@ -162,7 +178,7 @@ class fac_order(models.Model):
                           if asts[rs]==d.x_studio_servicio:  
                              self.env['sale.order.line'].create({'order_id': fac.id,'x_studio_servicio':d.x_studio_servicio,'x_studio_field_9nQhR':d.x_studio_field_9nQhR.id,'product_id':d.product_id.id,'product_uom_qty':d.product_uom_qty,'price_unit':d.price_unit,'x_studio_bolsa':d.x_studio_bolsa})
                       for det in self.detalle:
-                          _logger.info("Informacion entre:"+str(asts[rs])+" "+str(det.servicio))
+                          #_logger.info("Informacion entre:"+str(asts[rs])+" "+str(det.servicio))
                           if int(asts[rs])==int(det.servicio):
                              
                              self.env['sale.order.detalle'].create({'saleOrder': fac.id
@@ -207,11 +223,13 @@ class fac_order(models.Model):
                                                                  , 'x_studio_requiere_instalacin' : True                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
                                                                  , 'team_id' : 1
                                                                  , 'x_studio_factura':'si'
+                                                                 ,'month':self.month
+                                                                 ,'year':self.year
                                                                 })
-                      
+               self.env.cr.execute("insert into x_contrato_sale_order_rel (sale_order_id, contrato_id) values (" +str(fac.id) + ", " +  str(r.x_studio_contratosid).replace("[","").replace("]","") + ");")       
                self.excedente="<a href='https://gnsys-corp.odoo.com/web#id="+str(fac.id)+"&action=1167&model=sale.order&view_type=form&menu_id=406' target='_blank'>"+str(fac.name)+"</a>"
                for d in self.order_line:
-                   if d.x_studio_bolsa and d.x_studio_excedente == 'si':
+                   if d.x_studio_excedente != 'si':
                       #checar aqui los colores 
                       d.write({'order_id':fac.id})  
                       #self.env['sale.order.line'].create({'order_id': fac.id,'product_id':11396,'product_uom_qty':d.product_uom_qty,'price_unit':d.price_unit,'x_studio_bolsa':d.x_studio_bolsa})
@@ -271,41 +289,51 @@ class fac_order(models.Model):
                                                                        , 'ubicacion':k.x_studio_centro_de_costos
                                                                       })
                               if m.nombreAnte=='Costo por página procesada BN o color':
+                                 p=''
+                                 if m.contrato.cliente.id==1108:
+                                    p=' Periodo ' + str(dict(self._fields['month'].selection).get(self.month)) +' de ' + str(self.year)  
                                  if k.x_studio_color_bn=='B/N':
-                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':pbn,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN})                                                    
+                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_excedente':'si','x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':pbn,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN,'x_studio_cantidad':str(bnp)})                                                    
                                  if k.x_studio_color_bn=='Color':
-                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':pcolor,'product_uom_qty':colorp,'price_unit':m.clickExcedenteColor})                                                    
-                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':pbn,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN})                                                                                  
+                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_excedente':'si','x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':pcolor,'product_uom_qty':colorp,'price_unit':m.clickExcedenteColor,'x_studio_cantidad':str(colorp)})                                                    
+                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_excedente':'si','x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':pbn,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN,'x_studio_cantidad':str(bnp)})                                                                                  
                                  
                               if m.nombreAnte=='Renta base + costo de página procesada BN o color':
+                                 p=''
+                                 if m.contrato.cliente.id==1108:
+                                    p=' MODELO '+str(k.product_id.name)+' Período ' + str(dict(self._fields['month'].selection).get(self.month)) +' de ' + str(self.year)
                                  if k.x_studio_color_bn=='B/N':
-                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':pbn,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN,'name':' PAGINAS IMPRESAS NEGRO :'+bnp+' NEGRO INCLUYE ('+str(m.bolsaBN)+')  : SERIE:'+k.name })                                                    
+                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_excedente':'si','x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':pbn,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN,'name':'(82121500) PAGINAS IMPRESAS NEGRO :'+str(bnp)+' NEGRO INCLUYE ('+str(m.bolsaBN)+')  : SERIE:'+k.name+p ,'x_studio_cantidad':str(bnp)})                                                    
                                  if k.x_studio_color_bn=='Color':
-                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':pcolor,'product_uom_qty':colorp,'price_unit':m.clickExcedenteColor,'name':'(82121500) PAGINAS IMPRESAS COLOR: '+colorp+'  INCLUYE ('+str(m.bolsaColor)+') SERIE : '+k.name })
-                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':pbn,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN,'name':'(82121500) PAGINAS IMPRESAS: '+bnp+' NEGRO INCLUYE ('+str(m.bolsaBN)+')  SERIE:'+k.name })                                                     
+                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_excedente':'si','x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':pcolor,'product_uom_qty':colorp,'price_unit':m.clickExcedenteColor,'name':'(82121500) PAGINAS IMPRESAS COLOR: '+str(colorp)+'  INCLUYE ('+str(m.bolsaColor)+') SERIE : '+k.name+p ,'x_studio_cantidad':str(colorp)})
+                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_excedente':'si','x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':pbn,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN,'name':'(82121500) PAGINAS IMPRESAS: '+str(bnp)+' NEGRO INCLUYE ('+str(m.bolsaBN)+')  SERIE:'+k.name +p,'x_studio_cantidad':str(bnp)})                                                     
                                  if str(k.x_studio_estado)!='Back-up':   
-                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':rentaE,'product_uom_qty':1,'price_unit':m.rentaMensual,'name':'(80161801)  RENTA EQUIPO ' +k.x_studio_locacion_recortada+' SERIE: '+k.name +' MODELO: '+ k.product_id.name+" Período "+perido,'discount':int(self.x_studio_descuento)})                                                    
+                                    self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':rentaE,'product_uom_qty':1,'x_studio_cantidad':'1','price_unit':m.rentaMensual,'name':'(80161801)  RENTA EQUIPO ' +k.x_studio_locacion_recortada+' SERIE: '+k.name +p,'discount':int(self.x_studio_descuento)})                                                    
                               if m.nombreAnte=='Renta base con ML incluidas BN o color + ML. excedentes' or m.nombreAnte=='Renta base con páginas incluidas BN o color + pag. excedentes':
                                 if str(k.x_studio_estado)!='Back-up':
+                                     p=''
+                                     if m.contrato.cliente.id==1108:
+                                        p=' MODELO '+str(k.product_id.name)+' Período ' + str(dict(self._fields['month'].selection).get(self.month)) +' de ' +str(self.year)
                                      if k.x_studio_color_bn=='B/N':
                                         if m.bolsaBN<bnp:
                                            bnp=bnp-m.bolsaBN
+                                           self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_excedente':'si','x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':pbn,'product_uom_qty':bnp,'x_studio_cantidad':str(bnp),'price_unit':m.clickExcedenteBN,'x_studio_bolsa':m.bolsaBN,'name':'(82121500) PAGINAS IMPRESAS NEGRO: '+str(bnp)+' INCLUYE ('+str(m.bolsaBN)+') SERIE: '+k.name +p})                                                     
                                         else:    
-                                           self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':pbn,'product_uom_qty':0,'price_unit':m.clickExcedenteBN,'x_studio_bolsa':m.bolsaBN,'name':'(82121500) PAGINAS IMPRESAS NEGRO: 0 INCLUYE ('+str(m.bolsaBN)+') SERIE:'+k.name })                                                     
+                                           self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_excedente':'si','x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':pbn,'product_uom_qty':0,'x_studio_cantidad':'0','price_unit':m.clickExcedenteBN,'x_studio_bolsa':m.bolsaBN,'name':'(82121500) PAGINAS IMPRESAS NEGRO: '+str(abs(int(currentPA.contadorMono)-int(currentP.contadorMono)))+' INCLUYE ('+str(m.bolsaBN)+') SERIE:'+k.name +p})                                                     
                                      if k.x_studio_color_bn=='Color':
                                         if m.bolsaBN<bnp:
                                            bnpt=bnp 
                                            bnp=bnp-m.bolsaBN
-                                           self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':pbn,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN,'x_studio_bolsa':m.bolsaBN,'x_studio_excedente':'si','name':'(82121500) PAGINAS IMPRESAS NEGRO: '+str(bnpt)+' INCLUYE ('+str(m.bolsaBN)+') SERIE:'+k.name })                                                    
+                                           self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':pbn,'product_uom_qty':bnp,'x_studio_cantidad':str(bnp),'price_unit':m.clickExcedenteBN,'x_studio_bolsa':m.bolsaBN,'x_studio_excedente':'si','name':'(82121500) PAGINAS IMPRESAS NEGRO: '+str(bnpt)+' INCLUYE ('+str(m.bolsaBN)+') SERIE:'+k.name +p})                                                    
                                         else:
-                                           self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':pbn,'product_uom_qty':0,'price_unit':m.clickExcedenteBN,'x_studio_bolsa':m.bolsaBN,'name':'(82121500) PAGINAS IMPRESAS NEGRO: 0 INCLUYE ('+str(m.bolsaBN)+') SERIE:'+k.name })                                                     
+                                           self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_excedente':'si','x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':pbn,'product_uom_qty':0,'x_studio_cantidad':'0','price_unit':m.clickExcedenteBN,'x_studio_bolsa':m.bolsaBN,'name':'(82121500) PAGINAS IMPRESAS NEGRO: '+str(abs(int(currentPA.contadorMono)-int(currentP.contadorMono)))+' INCLUYE ('+str(m.bolsaBN)+') SERIE:'+k.name+p })                                                     
                                         if m.bolsaColor<colorp:
                                            clor=colorp 
                                            colorp=colorp-m.bolsaColor                                    
-                                           self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':pcolor,'product_uom_qty':colorp,'price_unit':m.clickExcedenteColor,'x_studio_bolsa':m.bolsaColor,'x_studio_excedente':'si','name':'(82121500) PAGINAS IMPRESAS COLOR: '+str(clor)+' INCLUYE ('+str(m.bolsaColor)+') SERIE:'+k.name })
+                                           self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':pcolor,'product_uom_qty':colorp,'x_studio_cantidad':str(colorp),'price_unit':m.clickExcedenteColor,'x_studio_bolsa':m.bolsaColor,'x_studio_excedente':'si','name':'(82121500) PAGINAS IMPRESAS COLOR: '+str(clor)+' INCLUYE ('+str(m.bolsaColor)+') SERIE:'+k.name +p})
                                         else:
-                                           self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':pcolor,'product_uom_qty':0,'price_unit':m.clickExcedenteColor,'x_studio_bolsa':m.bolsaColor,'name':'(82121500)  PAGINAS IMPRESAS COLOR: 0 INCLUYE ('+str(m.bolsaColor)+') SERIE:'+k.name })                                      
-                                     self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':rentaE,'product_uom_qty':1,'price_unit':m.rentaMensual,'name':'(80161801)  RENTA EQUIPO ' +k.x_studio_locacion_recortada+' SERIE: '+k.name +' MODELO: '+ k.product_id.name+" Período "+perido,'discount':int(self.x_studio_descuento)})                                                                                                                                      
+                                           self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_excedente':'si','x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':pcolor,'product_uom_qty':0,'x_studio_cantidad':'0','price_unit':m.clickExcedenteColor,'x_studio_bolsa':m.bolsaColor,'name':'(82121500)  PAGINAS IMPRESAS COLOR: '+str(abs(int(currentPA.contadorColor)-int(currentP.contadorColor)))+' INCLUYE ('+str(m.bolsaColor)+') SERIE:'+k.name+p })                                      
+                                     self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':m.id,'x_studio_field_9nQhR':k.id,'product_id':rentaE,'product_uom_qty':1,'x_studio_cantidad':'1','price_unit':m.rentaMensual,'name':'(80161801)  RENTA EQUIPO ' +k.x_studio_locacion_recortada+' SERIE: '+k.name +p,'discount':int(self.x_studio_descuento)})                                                                                                                                      
                for j in ff:                      
                      if j.nombreAnte=='Renta global con páginas incluidas BN o color + pag. Excedentes':                                                                        
                         p=self.env['stock.production.lot'].search([('servicio', '=', j.id),'|',('x_studio_estado','!=','Back-up'),('x_studio_estado','=',False)])
@@ -347,15 +375,15 @@ class fac_order(models.Model):
                                 if k.x_studio_color_bn=='Color':
                                    procesadasColorTotal=colorp+procesadasColorTotal
                                    procesadasColorBN=bnp+procesadasColorBN       
-                            if procesadasColorBN< j.bolsaBN or j.bolsaBN==0:
-                               self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':j.id,'product_id':pbn,'product_uom_qty':0.0,'price_unit':j.clickExcedenteBN,'x_studio_bolsa':j.bolsaBN,'name':'(82121500) PAGINAS IMPRESAS NEGRO : '+str(procesadasColorBN)+' INCLUYE:'+str(j.bolsaBN)})
+                            if procesadasColorBN< j.bolsaBN :
+                               self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':j.id,'product_id':pbn,'product_uom_qty':0.0,'x_studio_cantidad':'0','price_unit':j.clickExcedenteBN,'x_studio_bolsa':j.bolsaBN,'name':'(82121500) PAGINAS IMPRESAS NEGRO : '+str(procesadasColorBN)+' INCLUYE:'+str(j.bolsaBN)})
                             if procesadasColorBN > j.bolsaBN:
-                               self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':j.id,'product_id':pbn,'product_uom_qty':abs(j.bolsaBN-procesadasColorBN),'price_unit':j.clickExcedenteBN,'x_studio_bolsa':j.bolsaBN,'x_studio_excedente':'si','name':'(82121500) PAGINAS IMPRESAS NEGRO: '+str(procesadasColorBN)+' INCLUYE:'+str(j.bolsaBN)})
-                            if procesadasColorTotal<j.bolsaColor or j.bolsaColor==0:            
-                               self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':j.id,'product_id':pcolor,'product_uom_qty':0.0,'price_unit':j.clickExcedenteColor,'x_studio_bolsa':j.bolsaColor,'name':'(82121500) PAGINAS IMPRESAS COLOR : '+str(procesadasColorTotal)+' INCLUYE: '+str(j.bolsaColor)})
+                               self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':j.id,'product_id':pbn,'product_uom_qty':abs(j.bolsaBN-procesadasColorBN),'x_studio_cantidad':str(abs(j.bolsaBN-procesadasColorBN)),'price_unit':j.clickExcedenteBN,'x_studio_bolsa':j.bolsaBN,'x_studio_excedente':'si','name':'(82121500) PAGINAS IMPRESAS NEGRO: '+str(procesadasColorBN)+' INCLUYE:'+str(j.bolsaBN)})
+                            if procesadasColorTotal<j.bolsaColor :            
+                               self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':j.id,'product_id':pcolor,'product_uom_qty':0.0,'x_studio_cantidad':'0','price_unit':j.clickExcedenteColor,'x_studio_bolsa':j.bolsaColor,'name':'(82121500) PAGINAS IMPRESAS COLOR : '+str(procesadasColorTotal)+' INCLUYE: '+str(j.bolsaColor)})
                             if procesadasColorTotal > j.bolsaColor:
-                               self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':j.id,'product_id':pcolor,'product_uom_qty':abs(j.bolsaColor-procesadasColorTotal),'price_unit':j.clickExcedenteColor,'x_studio_bolsa':j.bolsaColor,'x_studio_excedente':'si','name':'(82121500) PAGINAS IMPRESAS COLOR : '+str(abs(bolsacolor-procesadasColorTotal))+' INCLUYE: '+str(j.bolsaColor)})                   
-                            self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':j.id,'product_id':rentaG,'product_uom_qty':1.0,'price_unit':j.rentaMensual,'name':'(80161801)  RENTA '+ str(len(p))+' EQUIPOS EN GENERAL.'})
+                               self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':j.id,'product_id':pcolor,'product_uom_qty':abs(j.bolsaColor-procesadasColorTotal),'x_studio_cantidad':str(abs(j.bolsaColor-procesadasColorTotal)),'price_unit':j.clickExcedenteColor,'x_studio_bolsa':j.bolsaColor,'x_studio_excedente':'si','name':'(82121500) PAGINAS IMPRESAS COLOR : '+str(abs(bolsacolor-procesadasColorTotal))+' INCLUYE: '+str(j.bolsaColor)})                   
+                            self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':j.id,'product_id':rentaG,'product_uom_qty':1.0,'x_studio_cantidad':'1','price_unit':j.rentaMensual,'name':'(80161801)  RENTA '+ str(len(p))+' EQUIPOS EN GENERAL.'})
                      if j.nombreAnte=='Renta global + costo de página procesada BN o color':                                                
                         p=self.env['stock.production.lot'].search([('servicio', '=', j.id),'|',('x_studio_estado','!=','Back-up'),('x_studio_estado','=',False)])
                         if len(p)>0:
@@ -377,7 +405,10 @@ class fac_order(models.Model):
                             proColorS=0
                             clickColor=0                  
                             bnp=0
-                            colorp=0                                
+                            colorp=0
+                            totalesNegro=0
+                            totalesColor=0
+                            
                             for k in p:
                                 currentP=self.env['dcas.dcas'].search([('serie','=',k.id),('x_studio_field_no6Rb', '=', perido)],order='x_studio_fecha desc',limit=1)
                                 currentPA=self.env['dcas.dcas'].search([('serie','=',k.id),('x_studio_field_no6Rb', '=', periodoAnterior)],order='x_studio_fecha desc',limit=1)
@@ -390,64 +421,39 @@ class fac_order(models.Model):
                                 if cngc==0:
                                    colorp=0
                                 else:
-                                   colorp=abs(int(currentPA.contadorColor)-int(currentP.contadorColor))                        
+                                   colorp=abs(int(currentPA.contadorColor)-int(currentP.contadorColor))
+                                
                                 if k.x_studio_color_bn=='B/N':
-                                   self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':j.id,'x_studio_field_9nQhR':k.id,'product_id':pbn,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN,'name':'(82121500) PAGINAS IMPRESAS NEGRO :'+str(bnp)+' INCLUYE: '+str(m.bolsaBN)})                                                    
+                                   totalesNegro=bnp+totalesNegro
                                 if k.x_studio_color_bn=='Color':
-                                   self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':j.id,'x_studio_field_9nQhR':k.id,'product_id':pcolor,'product_uom_qty':colorp,'price_unit':m.clickExcedenteColor,'name':'(82121500) PAGINAS IMPRESAS COLOR : '+str(colorp)+' INCLUYE: '+str(m.bolsaColor)})                                                    
-                                   self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':j.id,'x_studio_field_9nQhR':k.id,'product_id':pbn,'product_uom_qty':bnp,'price_unit':m.clickExcedenteBN,'name':'(82121500) PAGINAS IMPRESAS NEGRO : '+str(bnp)+' INCLUYE: '+str(m.bolsaBN)})                                                                                  
-                            self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':j.id,'product_id':rentaG,'product_uom_qty':1.0,'price_unit':j.rentaMensual,'name':'(80161801) RENTA '+ str(len(p))+' EQUIPOS EN GENERAL.'})                                                                                                                         
+                                   totalesColor=colorp+totalesColor
+                                   totalesNegro=bnp+totalesNegro
+                            self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':j.id,'x_studio_field_9nQhR':k.id,'product_id':pcolor,'product_uom_qty':totalesColor,'x_studio_cantidad':str(totalesColor),'price_unit':m.clickExcedenteColor,'name':'(82121500) PAGINAS IMPRESAS COLOR : '+str(totalesColor)+' INCLUYE: '+str(m.bolsaColor)})                                                    
+                            self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':j.id,'x_studio_field_9nQhR':k.id,'product_id':pbn,'product_uom_qty':totalesNegro,'x_studio_cantidad':str(totalesNegro),'price_unit':m.clickExcedenteBN,'name':'(82121500) PAGINAS IMPRESAS NEGRO : '+str(totalesNegro)+' INCLUYE: '+str(m.bolsaBN)})                                                                                  
+                            self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':j.id,'product_id':rentaG,'product_uom_qty':1.0,'x_studio_cantidad':'1','price_unit':j.rentaMensual,'name':'(80161801) RENTA '+ str(len(p))+' EQUIPOS EN GENERAL.'})                                                                                                                         
                for s in self.x_studio_servicios:
                      if s.nombreAnte=='SERVICIO DE PCOUNTER' or s.nombreAnte=='SERVICIO DE PCOUNTER1' or s.nombreAnte=='ADMINISTRACION DE DOCUMENTOS CON PCOUNTER' or s.nombreAnte=='SERVICIO DE MANTENIMIENTO DE PCOUNTER' or s.nombreAnte=='SERVICIO DE MANTENIMIENTO PCOUNTER' or s.nombreAnte=='RENTA DE LICENCIAMIENTO PCOUNTER':                        
-                        self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':s.id,'product_id':spc ,'product_uom_qty':1.0,'price_unit':s.rentaMensual})                                                                                                    
-                     if s.nombreAnte=='SERVICIO DE TFS' or s.nombreAnte=='OPERADOR TFS' or s.nombreAnte=='TFS' or s.nombreAnte=='SERVICIO DE TFS ' :                        
-                        _logger.info(" afuera retencion xD "+'Retenciones '+str(int(float(s.retencion))) )  
-                        if str(s.retencion)!='N/A':
-                           rht = float(s.retencion)                           
-                           idtax = self.env['account.tax'].search([('amount','=',rht*(-1)),('name','=','Retenciones '+str(int(float(s.retencion))))],limit=1)
-                           _logger.info("retencion  in xD "+'Retenciones '+str(int(float(s.retencion))) + ' id tax'+ str(idtax))  
-                           acci=self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':s.id,'product_id':tfs ,'product_uom_qty':1.0,'price_unit':s.rentaMensual})                                    
-                           acci.tax_id=idtax.ids
-                           #self.env['account_tax_sale_order_line_rel'].create({'sale_order_line_id': acci.id,'account_tax_id':idtax.id})                                    
-                        else:
-                           self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':s.id,'product_id':tfs ,'product_uom_qty':1.0,'price_unit':s.rentaMensual})                                   
+                        self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':s.id,'product_id':spc ,'product_uom_qty':1.0,'x_studio_cantidad':'1','price_unit':s.rentaMensual})                                                                                                    
+                     if s.nombreAnte=='SERVICIO DE TFS' or s.nombreAnte=='OPERADOR TFS' or s.nombreAnte=='TFS' or s.nombreAnte=='SERVICIO DE TFS ' :                                                                                                                                                     
+                        self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':s.id,'product_id':tfs ,'product_uom_qty':1.0,'x_studio_cantidad':'1','price_unit':s.rentaMensual})                                                            
+                        #self.env['account_tax_sale_order_line_rel'].create({'sale_order_line_id': acci.id,'account_tax_id':idtax.id})                                                                                    
                         #self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':s.id,'product_id':11419 ,'product_uom_qty':1.0,'price_unit':s.rentaMensual,'discount':int(self.x_studio_descuento)})                                                                                                    
                      if s.nombreAnte=='SERVICIO DE MANTENIMIENTO':                        
-                        self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':s.id,'product_id':sm ,'product_uom_qty':1.0,'price_unit':s.rentaMensual})                                                                                                    
+                        self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':s.id,'product_id':sm ,'product_uom_qty':1.0,'x_studio_cantidad':'1','price_unit':s.rentaMensual})                                                                                                    
+                     if s.nombreAnte=='LECTORES DE PROXIMIDAD':                        
+                        self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':s.id,'product_id':lp ,'product_uom_qty':1.0,'x_studio_cantidad':'1','price_unit':s.rentaMensual})                                                                                                       
+                     if s.nombreAnte=='PAPEL 350,000 HOJAS':                        
+                        self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':s.id,'product_id':impre ,'product_uom_qty':1.0,'x_studio_cantidad':'1','price_unit':s.rentaMensual})                                                                                                          
                      if s.nombreAnte=='SOPORTE Y MANTENIMIENTO DE EQUIPOS':                        
-                        self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':s.id,'product_id':sme ,'product_uom_qty':1.0,'price_unit':s.rentaMensual})                                                                                                       
+                        self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':s.id,'product_id':sme ,'product_uom_qty':1.0,'x_studio_cantidad':'1','price_unit':s.rentaMensual})                                                                                                       
                      if s.nombreAnte=='SERVICIO DE ADMINISTRADOR KM NET MANAGER':                        
-                        self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':s.id,'product_id':netMa ,'product_uom_qty':1.0,'price_unit':s.rentaMensual})                                                                                                    
+                        self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':s.id,'product_id':netMa ,'product_uom_qty':1.0,'x_studio_cantidad':'1','price_unit':s.rentaMensual})                                                                                                    
                      if s.nombreAnte=='PAGINAS IMPRESAS EN BN':                        
-                        self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':s.id,'product_id':paginasbn ,'product_uom_qty':int(s.cantidad),'price_unit':s.rentaMensual})                                                                                                    
+                        self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':s.id,'product_id':paginasbn ,'product_uom_qty':int(s.cantidad),'x_studio_cantidad':str(int(s.cantidad)),'price_unit':s.rentaMensual})                                                                                                    
                      if s.nombreAnte=='RENTA MENSUAL DE LICENCIA  7 EMBEDED' or s.nombreAnte=='RENTA MENSUAL DE LICENCIA  14 EMBEDED' or  s.nombreAnte=='RENTA MENSUAL DE LICENCIA  2 EMBEDED':                        
-                        self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':s.id,'product_id':embeded ,'product_uom_qty':1.0,'price_unit':s.rentaMensual})                                                                                                    
+                        self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':s.id,'product_id':embeded ,'product_uom_qty':1.0,'x_studio_cantidad':'1','price_unit':s.rentaMensual})                                                                                                    
                               
       detalle =  fields.One2many('sale.order.detalle', 'saleOrder', string='Order Lines')
-
-      def retiro(self):
-        self.action_confirm()
-        picks=self.env['stock.picking'].search([['sale_id','=',self.id]])
-        almacen=self.env['stock.warehouse'].search([['x_studio_field_E0H1Z','=',self.partner_shipping_id.id]])
-        for pic in picks:
-          pic.write({'retiro':True})
-          if('PICK' in pic.name or 'SU' in pic.name):
-            pic.write({'location_id':almacen.lot_stock_id.id})
-            pic.write({'location_dest_id':pic.picking_type_id.default_location_dest_id.id})
-            pic.move_ids_without_package.write({'location_id':almacen.lot_stock_id.id})
-            self.env['stock.move.line'].search([['picking_id','=',pic.id]]).write({'location_id':almacen.lot_stock_id.id})
-            pic.move_ids_without_package.write({'location_dest_id':pic.picking_type_id.default_location_dest_id.id})
-          if('PACK' in pic.name or 'TRA' in pic.name):
-            pic.write({'location_id':pic.picking_type_id.default_location_src_id.id})
-            pic.write({'location_dest_id':pic.picking_type_id.default_location_dest_id.id})
-            pic.move_ids_without_package.write({'location_id':pic.picking_type_id.default_location_src_id.id})
-            self.env['stock.move.line'].search([['picking_id','=',pic.id]]).write({'location_id':pic.picking_type_id.default_location_src_id.id})
-            pic.move_ids_without_package.write({'location_dest_id':pic.picking_type_id.default_location_dest_id.id})
-          if('OUT' in pic.name):
-            pic.write({'location_dest_id':pic.picking_type_id.warehouse_id.lot_stock_id.id})
-            pic.move_ids_without_package.write({'location_dest_id':pic.picking_type_id.warehouse_id.lot_stock_id.id})
-            self.env['stock.move.line'].search([['picking_id','=',pic.id]]).write({'location_dest_id':pic.picking_type_id.warehouse_id.lot_stock_id.id})
-            pic.move_ids_without_package.write({'location_id':pic.picking_type_id.default_location_src_id.id})
                  
 class detalle(models.Model):
       _name = 'sale.order.detalle'
