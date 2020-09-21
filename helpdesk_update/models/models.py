@@ -3,6 +3,7 @@
 from odoo import _, models, fields, api, tools
 from email.utils import formataddr
 from odoo.exceptions import UserError,RedirectWarning
+from odoo.addons.helpdesk.models.helpdesk import HelpdeskTeam
 from odoo import exceptions, _
 import logging, ast
 import datetime, time
@@ -243,24 +244,25 @@ class helpdesk_update(models.Model):
                                         , store = True
                                         , track_visibility = 'onchange'
                                         , string = 'Localidad contacto'
-                                        , compute = 'cambiaContactoLocalidad'
+                                        #, compute = 'cambiaContactoLocalidad'
                                         , domain = "['&',('parent_id.id','=',idLocalidadAyuda),('type','=','contact')]")
     
-    @api.depends('x_studio_equipo_por_nmero_de_serie')
+    #@api.depends('x_studio_equipo_por_nmero_de_serie')
+    @api.onchange('x_studio_equipo_por_nmero_de_serie')
     def cambiaContactoLocalidad(self):
-        _logger.info("aaaaaaaaaaaaaaaa cambiaContactoLocalidad()")
-        _logger.info("aaaaaaaaaaaaaaaa self.localidadContacto:" + str(self.localidadContacto))
-        _logger.info("aaaaaaaaaaaaaaaa self.x_studio_tipo_de_vale:" + str(self.x_studio_tipo_de_vale))
+        #_logger.info("aaaaaaaaaaaaaaaa cambiaContactoLocalidad()")
+        #_logger.info("aaaaaaaaaaaaaaaa self.localidadContacto:" + str(self.localidadContacto))
+        #_logger.info("aaaaaaaaaaaaaaaa self.x_studio_tipo_de_vale:" + str(self.x_studio_tipo_de_vale))
         #if self.team_id.id != 8:
         if self.x_studio_tipo_de_vale != 'Requerimiento':
             if self.x_studio_empresas_relacionadas and not self.localidadContacto:
-                _logger.info("Entre por toner: " + str(self.x_studio_empresas_relacionadas))
+                #_logger.info("Entre por toner: " + str(self.x_studio_empresas_relacionadas))
                 loc = self.x_studio_empresas_relacionadas.id
                 #idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_subtipo', '=', 'Contacto de localidad']], order='create_date desc', limit=1).id
                 idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_ultimo_contacto', '=', True]], order='create_date desc', limit=1).id
                 self.localidadContacto = idLoc
                 self.x_studio_field_6furK = self.x_studio_empresas_relacionadas.x_studio_field_SqU5B
-                _logger.info("Entre por toner idLoc: " + str(idLoc))
+                #_logger.info("Entre por toner idLoc: " + str(idLoc))
                 if idLoc:
                     #query = "update helpdesk_ticket set \"localidadContacto\" = " + str(idLoc) + " where id = " + str(self.x_studio_id_ticket) + ";"
                     query = "update helpdesk_ticket set \"localidadContacto\" = " + str(idLoc) + ", \"x_studio_field_6furK\" = '" + str(self.x_studio_empresas_relacionadas.x_studio_field_SqU5B) + "' where id = " + str(self.x_studio_id_ticket) + ";"
@@ -342,12 +344,33 @@ class helpdesk_update(models.Model):
         vals['name'] = self.env['ir.sequence'].next_by_code('helpdesk_name')
         #vals['team_id'] = 8
         #_logger.info("Informacion 0.0: " + str(vals))
-        
+
         ticket = super(helpdesk_update, self).create(vals)
+
+        if ticket.x_studio_tipo_de_vale != 'Requerimiento' and not ticket.x_studio_equipo_por_nmero_de_serie:
+            query = "select helpdesk_team_id from helpdesk_team_res_users_rel where res_users_id = " + str(self.env.user.id) + ";"
+            self.env.cr.execute(query)
+            resultadoQuery = self.env.cr.fetchall()
+            puedoCrearSinSerie = False
+            for resultado in resultadoQuery:
+                if resultado[0] == 9:
+                    puedoCrearSinSerie = True
+                    break
+            if not puedoCrearSinSerie:
+                raise exceptions.ValidationError('El usuario no es de mesa de Servicio y no tiene los permisos para crear un ticket sin serie.')
+
+
 
         if ticket.x_studio_tipo_de_vale == 'Requerimiento' and not ticket.x_studio_equipo_por_nmero_de_serie_1:
             raise exceptions.ValidationError('No es posible registrar ticket de requerimiento sin serie.')
 
+        if ticket.x_studio_tipo_de_vale == 'Requerimiento' and ticket.x_studio_equipo_por_nmero_de_serie_1:
+            ticket.write({'stage_id': 89}) #estado abierto si tiene serie
+
+        if ticket.x_studio_tipo_de_vale != 'Requerimiento' and ticket.x_studio_equipo_por_nmero_de_serie:
+            ticket.write({'stage_id': 89})
+
+        #ticket.sudo().actualiza_datos_cliente()
 
         #_logger.info("Informacion 1: " + str(ticket.x_studio_equipo_por_nmero_de_serie_1))
         #_logger.info("Informacion 2: " + str(ticket.x_studio_equipo_por_nmero_de_serie))
@@ -366,6 +389,40 @@ class helpdesk_update(models.Model):
                 ticket.write({'contadores_anteriores': '</br>Equipo BN o Color: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_color_bn) + ' </br></br> Contador BN: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_bn_mesa) + '</br></br> Contador Color: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_color_mesa)})
 
         return ticket
+
+
+    @api.multi
+    def write(self, vals):
+
+        _logger.info('vals en write: ' + str(vals))
+        _logger.info('self en write:' +str(self) )
+
+        if 'x_studio_tipo_de_vale' in vals:
+            if self.x_studio_tipo_de_vale != 'Requerimiento' and not self.x_studio_equipo_por_nmero_de_serie:
+                query = "select helpdesk_team_id from helpdesk_team_res_users_rel where res_users_id = " + str(self.env.user.id) + ";"
+                self.env.cr.execute(query)
+                resultadoQuery = self.env.cr.fetchall()
+                puedoCrearSinSerie = False
+                for resultado in resultadoQuery:
+                    if resultado[0] == 9:
+                        puedoCrearSinSerie = True
+                        break
+                if not puedoCrearSinSerie:
+                    raise exceptions.ValidationError('El usuario no es de mesa de Servicio y no tiene los permisos para crear un ticket sin serie.')
+        
+        result = super(helpdesk_update, self).write(vals)
+        _logger.info('result en write: ' + str(result))
+        
+
+        #if 'active' in vals:
+        #    self.with_context(active_test=False).mapped('ticket_ids').write({'active': vals['active']})
+        #self.sudo()._check_sla_group()
+        #self.sudo()._check_modules_to_install()
+        # If you plan to add something after this, use a new environment. The one above is no longer valid after the modules install.
+
+
+
+        return result
 
     """
     @api.model
@@ -3763,7 +3820,6 @@ class helpdesk_update(models.Model):
     @api.onchange('x_studio_equipo_por_nmero_de_serie','x_studio_equipo_por_nmero_de_serie_1.serie','x_studio_equipo_por_nmero_de_serie_1')
     #@api.depends('x_studio_equipo_por_nmero_de_serie')
     def actualiza_datos_cliente(self):
-
         if self.team_id.id == 8 or self.x_studio_tipo_de_vale == 'Requerimiento':
             for dca in self.x_studio_equipo_por_nmero_de_serie_1:
                 if dca.colorEquipo == 'Color':
@@ -3808,53 +3864,91 @@ class helpdesk_update(models.Model):
                         
                     #cliente = move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.id
                     cliente = numeros_serie.x_studio_cliente
-                    self._origin.sudo().write({'partner_id' : cliente.id})
-                    self.partner_id = cliente.id
+                    #self._origin.sudo().write({'partner_id' : cliente.id})
+                    #self.partner_id = cliente.id
                     idM = self._origin.id
                     
-                    if cliente:
-                        self.env.cr.execute("update helpdesk_ticket set partner_id = " + str(cliente.id) + "  where  id = " + str(idM) + ";")
-                    v['partner_id'] = cliente.id
-                    cliente_telefono = cliente.phone
-                    self._origin.sudo().write({'x_studio_telefono' : cliente_telefono})
-                    self.x_studio_telefono = cliente_telefono
-                    if cliente_telefono != []:
-                        srtt = "update helpdesk_ticket set x_studio_telefono = '" + str(cliente_telefono) + "' where  id = " + str(idM) + ";"                                
-                    v['x_studio_telefono'] = cliente_telefono
-                    cliente_movil = cliente.mobile
-                    self._origin.sudo().write({'x_studio_movil' : cliente_movil})
-                    self.x_studio_movil = cliente_movil
-                    if cliente_movil == []:
-                        self.env.cr.execute("update helpdesk_ticket set x_studio_movil = '" + str(cliente_movil) + "' where  id = " +idM + ";")
-                    v['x_studio_movil'] = cliente_movil
-                    
-                    cliente_nivel = cliente.x_studio_nivel_del_cliente
-                    self._origin.sudo().write({'x_studio_nivel_del_cliente' : cliente_nivel})
-                    self.x_studio_nivel_del_cliente = cliente_nivel
-                    if cliente_nivel == []:
-                        self.env.cr.execute("update helpdesk_ticket set x_studio_nivel_del_cliente = '" + str(cliente_nivel) + "' where  id = " + idM + ";")
-                    v['x_studio_nivel_del_cliente'] = cliente_nivel
+                    if idM:
+                        if cliente:
+                            self.env.cr.execute("update helpdesk_ticket set partner_id = " + str(cliente.id) + "  where  id = " + str(idM) + ";")
+                        v['partner_id'] = cliente.id
+                        cliente_telefono = cliente.phone
+                        self._origin.sudo().write({'x_studio_telefono' : cliente_telefono})
+                        self.x_studio_telefono = cliente_telefono
+                        if cliente_telefono != []:
+                            srtt = "update helpdesk_ticket set x_studio_telefono = '" + str(cliente_telefono) + "' where  id = " + str(idM) + ";"                                
+                        v['x_studio_telefono'] = cliente_telefono
+                        cliente_movil = cliente.mobile
+                        self._origin.sudo().write({'x_studio_movil' : cliente_movil})
+                        self.x_studio_movil = cliente_movil
+                        if cliente_movil == []:
+                            self.env.cr.execute("update helpdesk_ticket set x_studio_movil = '" + str(cliente_movil) + "' where  id = " +idM + ";")
+                        v['x_studio_movil'] = cliente_movil
+                        
+                        cliente_nivel = cliente.x_studio_nivel_del_cliente
+                        self._origin.sudo().write({'x_studio_nivel_del_cliente' : cliente_nivel})
+                        self.x_studio_nivel_del_cliente = cliente_nivel
+                        if cliente_nivel == []:
+                            self.env.cr.execute("update helpdesk_ticket set x_studio_nivel_del_cliente = '" + str(cliente_nivel) + "' where  id = " + idM + ";")
+                        v['x_studio_nivel_del_cliente'] = cliente_nivel
 
 
-                    localidad = numeros_serie.x_studio_localidad_2
+                        localidad = numeros_serie.x_studio_localidad_2
 
-                    self._origin.sudo().write({'x_studio_empresas_relacionadas' : localidad.id})
-                    self.x_studio_empresas_relacionadas = localidad.id
+                        self._origin.sudo().write({'x_studio_empresas_relacionadas' : localidad.id})
+                        self.x_studio_empresas_relacionadas = localidad.id
 
-                    if self.x_studio_empresas_relacionadas.id != False:
-                        self.env.cr.execute("select * from res_partner where id = " + str(self.x_studio_empresas_relacionadas.id) + ";")
-                        localidad_tempo = self.env.cr.fetchall()
-                        if str(localidad_tempo[0][80]) != 'None':
-                            self.x_studio_field_29UYL = str(localidad_tempo[0][80])
+                        if self.x_studio_empresas_relacionadas.id != False:
+                            self.env.cr.execute("select * from res_partner where id = " + str(self.x_studio_empresas_relacionadas.id) + ";")
+                            localidad_tempo = self.env.cr.fetchall()
+                            if str(localidad_tempo[0][80]) != 'None':
+                                self.x_studio_field_29UYL = str(localidad_tempo[0][80])
 
-                        #self._origin.sudo().write({'x_studio_field_6furK' : self._origin.sudo().write({'x_studio_field_6furK' : move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.x_studio_field_SqU5B})})
-                    lista_ids = []
-                    for id in ids:
-                        lista_ids.append((4,id))
-                    
-                    v['x_studio_equipo_por_nmero_de_serie'] = lista_ids
-                    self._origin.sudo().write({'x_studio_equipo_por_nmero_de_serie' : lista_ids})
-                    self.x_studio_equipo_por_nmero_de_serie = lista_ids
+                            #self._origin.sudo().write({'x_studio_field_6furK' : self._origin.sudo().write({'x_studio_field_6furK' : move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.x_studio_field_SqU5B})})
+                        lista_ids = []
+                        for id in ids:
+                            lista_ids.append((4,id))
+                        
+                        v['x_studio_equipo_por_nmero_de_serie'] = lista_ids
+                        self._origin.sudo().write({'x_studio_equipo_por_nmero_de_serie' : lista_ids})
+                        self.x_studio_equipo_por_nmero_de_serie = lista_ids
+                    else:
+
+                        self.partner_id = cliente.id
+                        self.x_studio_nivel_del_cliente = cliente.x_studio_nivel_del_cliente
+                        #Localidad
+                        localidadTemp = numeros_serie.x_studio_localidad_2
+                        self.x_studio_empresas_relacionadas = localidadTemp.id
+                        self.x_studio_field_6furK = localidadTemp.x_studio_field_SqU5B
+                        self.x_studio_zona = localidadTemp.x_studio_field_SqU5B
+                        self.zona_estados = localidadTemp.state_id.name
+                        #self.localidadContacto = 
+                        self.x_studio_estado_de_localidad = localidadTemp.state_id.name
+                        self.telefonoLocalidadContacto = localidadTemp.phone
+                        self.movilLocalidadContacto = localidadTemp.mobile
+                        self.correoLocalidadContacto = localidadTemp.email
+
+                        v['partner_id'] = cliente.id
+                        v['x_studio_telefono'] = localidadTemp.phone
+                        v['x_studio_movil'] = localidadTemp.mobile
+                        
+                        v['x_studio_nivel_del_cliente'] = cliente.x_studio_nivel_del_cliente
+
+                        if self.x_studio_empresas_relacionadas.id != False:
+                            self.env.cr.execute("select * from res_partner where id = " + str(self.x_studio_empresas_relacionadas.id) + ";")
+                            localidad_tempo = self.env.cr.fetchall()
+                            if str(localidad_tempo[0][80]) != 'None':
+                                self.x_studio_field_29UYL = str(localidad_tempo[0][80])
+
+                            #self._origin.sudo().write({'x_studio_field_6furK' : self._origin.sudo().write({'x_studio_field_6furK' : move_line.location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.x_studio_field_SqU5B})})
+                        lista_ids = []
+                        for id in ids:
+                            lista_ids.append((4,id))
+                        
+                        v['x_studio_equipo_por_nmero_de_serie'] = lista_ids
+                        self._origin.sudo().write({'x_studio_equipo_por_nmero_de_serie' : lista_ids})
+                        self.x_studio_equipo_por_nmero_de_serie = lista_ids
+
             else:
                 raise exceptions.ValidationError("No es posible registrar más de un número de serie")
         #if record.team_id.id == 8 or record.team_id.id == 13:
@@ -4071,6 +4165,19 @@ class helpdesk_update(models.Model):
                         'context': self.env.context,
                         }                                             
                 """
+
+        if self.x_studio_tipo_de_vale == 'Requerimiento' and self.x_studio_equipo_por_nmero_de_serie_1:
+            mensajeCuerpo = 'Se creo un ticket de un equipo sin servicio.\nLos equipos que no tienen servicio son:\n\n'
+            for equipo in self.x_studio_equipo_por_nmero_de_serie_1:
+                if not equipo.serie.servicio:
+                    mensajeCuerpo = mensajeCuerpo + 'Equipo: ' + str(equipo.serie.product_id.name) + ' Serie: ' + str(equipo.serie.name) + '\n'
+            
+            mensajeTitulo = 'Alerta ticket sin servicio creado'
+            warning = {
+                        'title': _(mensajeTitulo), 
+                        'message': _(mensajeCuerpo)
+            }
+            return {'warning': warning}
     
 
 
