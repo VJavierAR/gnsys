@@ -4223,9 +4223,56 @@ class helpdesk_update(models.Model):
         return ticket
    
           
-    
+    def actualizaHistorialComponentes(self):
+        _logger.info('------ Inicio actualizaHistorialComponentes ------ inicio hora: ' + str( datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
+        #tickets = self.env['helpdesk.ticket'].search([('id', '=', 32166)], limit = 1)
+        tickets = self.env['helpdesk.ticket'].search([('create_date', '>=', '2020-07-24'), ('x_studio_tipo_de_vale', '!=', 'Requerimiento'), ('x_studio_tipo_de_vale', '!=', 'Resurtido de Almacen'), ('x_studio_field_nO7Xg', '!=', None)], order = 'create_date desc')
+        _logger.info('tickets: ' + str(len(tickets)) + ' tickets[0]: ' + str(tickets[0]))
+        
 
-    
+        for ticket in tickets:
+            _logger.info('------Inicio creacion de componente ticket ' + str(ticket.id) + ' ------ inicio hora: ' + str( datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
+            fuenteDca = 'stock.production.lot'
+            dcaObj = self.env['dcas.dcas'].search([('serie', '=', ticket.x_studio_equipo_por_nmero_de_serie[0].name),('fuente', '=', fuenteDca), ('x_studio_tickett','=',str(ticket.id))], order = 'create_date desc', limit = 1)
+            if not dcaObj:
+                dcaObj = self.env['dcas.dcas'].search([('serie', '=', ticket.x_studio_equipo_por_nmero_de_serie[0].name),('fuente', '=', fuenteDca)], order = 'x_studio_fecha desc', limit = 1)
+            _logger.info('dcaObj: ' + str(dcaObj))
+            
+            saleOrder = ticket.x_studio_field_nO7Xg
+            _logger.info('saleOrder: ' + str(saleOrder))
+
+            saleOrderLine = saleOrder.order_line
+            _logger.info('saleOrderLine: ' + str(saleOrderLine))
+
+
+
+            for linea in saleOrderLine:
+                _logger.info('linea.: ' + str(linea.product_uom_qty))
+                if linea.product_uom_qty > 0:
+                    crear = True
+                    refaccionesTextTemp = 'Refacción y/o accesorio: ' + str(linea.product_id.display_name) + '. Descripción: ' + str(linea.product_id.description) + '.'
+                    componentesPrevios = self.env['x_studio_historico_de_componentes'].search([('x_studio_ticket', '=', str(saleOrder.x_studio_field_bxHgp.id)) ] )
+                    for componente in componentesPrevios:
+                        if componente.x_studio_modelo == refaccionesTextTemp:
+                            crear = False
+                            break
+                    if crear:
+                        idComponenteCreado = self.env['x_studio_historico_de_componentes'].create({
+                                                                                                    'x_studio_cantidad': linea.product_uom_qty,
+                                                                                                    'x_studio_field_MH4DO': linea.x_studio_field_9nQhR.id,
+                                                                                                    #'x_studio_ticket': str(saleOrder.x_studio_field_bxHgp.id),
+                                                                                                    'x_studio_ticket': str(ticket.id),
+                                                                                                    'x_studio_contador_color': dcaObj.contadorColor if (dcaObj) else 0,
+                                                                                                    'x_studio_fecha_de_entrega': linea.write_date,
+                                                                                                    'x_studio_modelo': refaccionesTextTemp,
+                                                                                                    'x_studio_contador_bn': dcaObj.contadorMono if (dcaObj) else 0,
+                                                                                                    'x_studio_creado_por_script': True
+                                                                                                })
+                        _logger.info('historico de componente creado idComponenteCreado: ' + str(idComponenteCreado.id))
+            _logger.info('------Fin creacion de componente ticket ' + str(ticket.id) + ' ------ fin hora: '+ str( datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
+        _logger.info('------ Fin actualizaHistorialComponentes ------ fin hora: ' + str( datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
+
+
 
     diagnosticos = fields.One2many('helpdesk.diagnostico', 'ticketRelacion', string = 'Diagnostico', track_visibility = 'onchange')
 
