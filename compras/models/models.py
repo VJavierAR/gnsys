@@ -317,7 +317,7 @@ class compras(models.Model):
                                     ta=len(template)
                                     if(ta>1):
                                         productid=self.env['product.product'].search([('product_tmpl_id','=',template[0].id)])
-                                    if(template.id==False):
+                                    if(template.id==False and (ta==1 or ta==0)):
                                         productid=self.env['product.product'].create({'name':'/','description':'falta','categ_id':self.x_studio_tipo_de_producto.id,'default_code':str(q),'type':'product'})
                                     if(template.id!=False and ta==1):                                  
                                         productid=self.env['product.product'].search([('product_tmpl_id','=',template.id)])
