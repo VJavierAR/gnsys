@@ -962,6 +962,7 @@ class helpdesk_crearconserie(TransientModel):
     textoTicketExistente = fields.Text(string = ' ', store = True)
     textoClienteMoroso = fields.Text(string = ' ', store = True)
     textoDistribuidor = fields.Text(string = ' ', store = True)
+    textoSinServicio = fields.Text(string = ' ', store = True)
 
     esProspecto = fields.Boolean(string = '¿Es ticket de cliente prospecto?', default = False)
     clienteProspectoText = fields.Text(string = 'Nombre del cliente prospecto')
@@ -1179,6 +1180,21 @@ class helpdesk_crearconserie(TransientModel):
                 self.env.cr.execute(query)
                 informacion = self.env.cr.fetchall()
                 _logger.info("test informacion: " + str(informacion))
+                
+                textoHtmlSinServico = []
+                noTieneServicio = False
+                mensajeCuerpo = '<br/><h1>Se creara un ticket de un equipo sin servicio.</h1><br/><h1>Los equipos que no tienen servicio son:</h1>'
+                for equipo in self.serie:
+                  if not equipo.servicio:
+                    mensajeCuerpo = mensajeCuerpo + '<br/><h3>Equipo: ' + str(equipo.product_id.name) + ' Serie: ' + str(equipo.name) + '<h3/>'
+                    noTieneServicio = True
+                
+                if noTieneServicio:
+                  textoHtmlSinServico.append(mensajeCuerpo)
+                  self.textoSinServicio = ''.join(textoHtmlSinServico)
+                else:
+                  self.textoSinServicio = ''
+
                 if len(informacion) > 0:
                   textoHtml2 = """ 
                                 <!-- Button trigger modal -->
@@ -1321,6 +1337,7 @@ class helpdesk_crearconserie(TransientModel):
 
             self.ticket_id_existente = 0
             self.textoTicketExistente = ''
+            self.textoSinServicio = ''
 
             self.cliente = ''
             self.localidad = ''
@@ -2125,7 +2142,7 @@ class CrearYValidarSolTonerMassAction(TransientModel):
         wiz = ''
         mensajeTitulo = "Solicitudes de tóner creadas y validadas !!!"
         mensajeCuerpo = "Se crearon y validaron las solicitudes de los tickets. \n\n"
-
+        
         for ticket in listaDeTicketsValidados:
             #query = "update helpdesk_ticket set stage_id = 93 where id = " + str(ticket) + ";"
             #ss = self.env.cr.execute(query)
