@@ -4167,30 +4167,34 @@ class helpdesk_update(models.Model):
                 """
 
         if self.x_studio_tipo_de_vale == 'Requerimiento' and self.x_studio_equipo_por_nmero_de_serie_1:
+            equipoSinServicio = False
             mensajeCuerpo = 'Se creo un ticket de un equipo sin servicio.\nLos equipos que no tienen servicio son:\n\n'
             for equipo in self.x_studio_equipo_por_nmero_de_serie_1:
                 if not equipo.serie.servicio:
                     mensajeCuerpo = mensajeCuerpo + 'Equipo: ' + str(equipo.serie.product_id.name) + ' Serie: ' + str(equipo.serie.name) + '\n'
-            
-            mensajeTitulo = 'Alerta ticket sin servicio creado'
-            warning = {
-                        'title': _(mensajeTitulo), 
-                        'message': _(mensajeCuerpo)
-            }
-            return {'warning': warning}
+                    equipoSinServicio = True
+            if equipoSinServicio:
+                mensajeTitulo = 'Alerta ticket sin servicio creado'
+                warning = {
+                            'title': _(mensajeTitulo), 
+                            'message': _(mensajeCuerpo)
+                }
+                return {'warning': warning}
 
         if self.x_studio_tipo_de_vale != 'Requerimiento' and self.x_studio_equipo_por_nmero_de_serie:
+            equipoSinServicio = False
             mensajeCuerpo = 'Se creo un ticket de un equipo sin servicio.\nLos equipos que no tienen servicio son:\n\n'
             for equipo in self.x_studio_equipo_por_nmero_de_serie:
                 if not equipo.servicio:
                     mensajeCuerpo = mensajeCuerpo + 'Equipo: ' + str(equipo.product_id.name) + ' Serie: ' + str(equipo.name) + '\n'
-            
-            mensajeTitulo = 'Alerta ticket sin servicio creado'
-            warning = {
-                        'title': _(mensajeTitulo), 
-                        'message': _(mensajeCuerpo)
-            }
-            return {'warning': warning}
+                    equipoSinServicio = True
+            if equipoSinServicio:
+                mensajeTitulo = 'Alerta ticket sin servicio creado'
+                warning = {
+                            'title': _(mensajeTitulo), 
+                            'message': _(mensajeCuerpo)
+                }
+                return {'warning': warning}
     
 
 
