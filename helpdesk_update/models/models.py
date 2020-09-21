@@ -4791,6 +4791,21 @@ class helpdesk_update(models.Model):
             #'context': self.env.context,
             'context': self.env.context,
         }
+#AGrego CEsar
+    @api.onchange('parent_id')
+    def cambiosParent_id(self):
+        res={}
+        for record in self:
+            if(record.partner_id.id):
+                hijos=self.env['res.partner'].search([['parent_id','=',record.partner_id.id]])
+                hijosarr=hijos.mapped('id')
+                nietos=self.env['res.partner'].search([['parent_id','in',hijosarr],['type','=','contact']]).mapped('id')
+                hijosF=hijos.filtered(lambda x:x.type=='contact').mapped('id')
+                final=nietos+hijosF
+                res['domain']={'localidadContacto':[('id','in',final)]}
+        return res
+        
+
 
     
 
