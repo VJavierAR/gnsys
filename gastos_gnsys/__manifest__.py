@@ -22,7 +22,8 @@
     #Modelo de dep
     'depends': [
         'mail',
-        'hr'
+        'hr',
+        'helpdesk'
         
     ],
 
@@ -33,7 +34,10 @@
         #'security/gastos_security.xml',
         'views/views.xml',
         'views/templates.xml',
+        'wizard/wizard.xml',
+        'report/report.xml'
     ],
+    'qweb': ['static/src/xml/tree_view_button.xml'],
     # only loaded in demonstration mode
     #'demo': [
      #   'demo/demo.xml',

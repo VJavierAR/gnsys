@@ -1,5 +1,10 @@
 <odoo>
     <data>
+        <template id="assets_backend" inherit_id="web.assets_backend" name="tree view menu">
+            <xpath expr="." positio="inside">
+                <script type="text/javascript" src="/gastos_gnsys/static/src/js/gastos_gnsys.js"></script>
+            </xpath>
+        </template>
         <!-- <template id="listing"> -->
         <!--   <ul> -->
         <!--     <li t-foreach="objects" t-as="object"> -->

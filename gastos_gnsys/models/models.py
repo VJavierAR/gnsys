@@ -491,7 +491,18 @@ class motivos_gastos(models.Model):
     gasto  = fields.Many2one('gastos', string = "Gasto ", track_visibility='onchange')
     #motivoDescripcion = fields.Text()
     #tipoDeMotivo      = fields.Selection((('!','1'), ('2','2')), string = "Tipo de motivo",track_visibility='onchange')
-
+    
+    tiket = fields.Many2one('helpdesk.ticket', string = "Número de tiket",track_visibility='onchange',copied=True)
+    
+    estadoTiket = fields.Text(string = "Estado tiket",track_visibility='onchange', readonly = True )
+    @api.onchange('tiket')
+    def getEstadoTiket(self):
+        if self.tiket :
+            _logger.info("||||-:   "+str(self.tiket.stage_id.name))
+            self.estadoTiket = self.tiket.stage_id.name
+            
+    
+    
     motivoDescripcion = fields.Text(string = "Descripción de gasto",track_visibility='onchange')
     motivoNumeroTicket = fields.Text(string = "Número de ticket",track_visibility='onchange')
     motivoConcepto = fields.Text(string = "Motivo (Concepto)",track_visibility='onchange')
@@ -574,6 +585,14 @@ class PagoSolicitante(models.Model):
     def verificaMonto(self):
         if self.montoEntregado == 0.0:
             raise exceptions.ValidationError("En PAGOS A SOLICITANTE : El monto no puede ser igual a cero.")
+    
+    fechaTransf = fields.Datetime(string = 'Fecha de transferencia', track_visibility = 'onchange', readonly=False )
+    fechaTransfDeducible = fields.Datetime(string = 'Fecha de transferencia deducible', track_visibility = 'onchange', readonly=False )
+    
+    @api.onchange('montodeDucibleI','montodeNoDucibleI')
+    def sumaMontosDeducibles(self):
+        self.montoEntregado = self.montodeDucibleI + self.montodeNoDucibleI
+    
     
     # @api.constrains('depositoDeducible')
     # def verificaDepositoDeducible(self):
