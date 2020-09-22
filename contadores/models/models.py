@@ -93,7 +93,11 @@ class dcas(models.Model):
     hTicketUltimaEtapaTicket = fields.Text(string = 'Última etapa ticket')
     hTicketHojaDeEstado = fields.Text(string = 'Hoja de estado')
     hTicketUltimaNota = fields.Text(string = 'Última nota')
-    hTicketFechaNota = fields.Datetime(string = 'Fecha nota')    
+    hTicketFechaNota = fields.Datetime(string = 'Fecha nota')
+    hTicketFechaNotaText = fields.Datetime(string = 'Fecha nota texto')
+    ultimaCargaContadoresMesa = fields.Boolean(string = 'Ultima carga al día 22/09/2020')
+    esContadorDeTechra = fields.Boolean(string = 'Contador cargado de techra')
+
     archivoCSV = fields.Binary(string="Archivo a cargar csv")    
 
     fechaTemporal = fields.Text(string = 'Fecha temporal', store = True)
