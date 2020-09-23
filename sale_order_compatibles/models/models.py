@@ -14,7 +14,7 @@ class sale_order_compatibles(models.Model):
 	_description = 'Detalle modelo temporal'
 	saleOrder = fields.Many2one('sale.order')
 	equipos = fields.Many2one('product.product', string = 'Equipos')
-	cantidad = fields.Selection(selection = [(0, '0'),(1, '1')],string = 'Cantidad',default=1)
+	cantidad = fields.Selection(selection = [(0, '0'),(1, '1'),(2, '2'),(3, '3'),(4, '4'),(5, '5'),(6, '6'),(7, '7'),(8, '8'),(9, '9'),(10, '10'),(11, '11'),(12, '12'),(13, '13'),(14, '14'),(15, '15')],string = 'Cantidad',default=1)
 	estado = fields.Selection(selection = [('Nuevo', 'Nuevo'),('Usado', 'Usado')], default = 'Nuevo')
 	componentes = fields.One2many('sale_order_compatibles_mini', 'saleOrderMini', string = 'Componentes')
 	toner = fields.One2many('sale_order_compatibles_mini_toner', 'saleOrderMini', string = 'Toner')
@@ -142,7 +142,7 @@ class sale_update(models.Model):
 		if(len(self.compatiblesLineas)>0):
 			for e in self.compatiblesLineas:
 				if(e.cantidad!=0 and e.equipos.id!=False):
-					d={'x_studio_field_9nQhR':e.serie.id,'x_studio_estado':e.estado,'x_studio_field_mqSKO':e.equipos.id,'product_id':e.equipos.id,'name':e.equipos.name,'product_uom_qty':1,'product_uom':e.equipos.uom_id.id,'price_unit':e.precio,'x_studio_id_relacion':e.id}
+					d={'x_studio_field_9nQhR':e.serie.id,'x_studio_estado':e.estado,'x_studio_field_mqSKO':e.equipos.id,'product_id':e.equipos.id,'name':e.equipos.name,'product_uom_qty':e.cantidad,'product_uom':e.equipos.uom_id.id,'price_unit':e.precio,'x_studio_id_relacion':e.id}
 					self.order_line=[d]
 				for e1 in e.componentes:
 					if(e1.cantidad!=0 and e1.producto.id!=False):
