@@ -398,7 +398,7 @@ class helpdesk_update(models.Model):
         _logger.info('self en write:' +str(self) )
 
         if 'x_studio_tipo_de_vale' in vals:
-            if self.x_studio_tipo_de_vale != 'Requerimiento' and not self.x_studio_equipo_por_nmero_de_serie:
+            if (self.x_studio_tipo_de_vale != 'Requerimiento' and vals['x_studio_tipo_de_vale'] != 'Resurtido de Almacen' and vals['x_studio_tipo_de_vale'] != 'Conectividad') and not self.x_studio_equipo_por_nmero_de_serie:
                 query = "select helpdesk_team_id from helpdesk_team_res_users_rel where res_users_id = " + str(self.env.user.id) + ";"
                 self.env.cr.execute(query)
                 resultadoQuery = self.env.cr.fetchall()
