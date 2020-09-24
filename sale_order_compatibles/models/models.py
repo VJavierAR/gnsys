@@ -283,3 +283,11 @@ class sale_update(models.Model):
 		    pic.move_ids_without_package.write({'location_dest_id':pic.picking_type_id.warehouse_id.lot_stock_id.id})
 		    self.env['stock.move.line'].search([['picking_id','=',pic.id]]).write({'location_dest_id':pic.picking_type_id.warehouse_id.lot_stock_id.id})
 		    pic.move_ids_without_package.write({'location_id':pic.picking_type_id.default_location_src_id.id})
+
+	def autoriza(self):
+		if(self.x_studio_tipo_de_solicitud in ["Venta","Venta directa","Arrendamiento","Backup","Demostración"]):
+            self.action_confirm()
+        if(self.x_studio_tipo_de_solicitud == "Cambio"):
+        	self.cambio()
+        if(self.x_studio_tipo_de_solicitud == "Retiro"):
+            self.retiro()
