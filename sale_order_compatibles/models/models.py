@@ -286,7 +286,7 @@ class sale_update(models.Model):
 
 	def autoriza(self):
 		if(self.x_studio_tipo_de_solicitud in ["Venta","Venta directa","Arrendamiento","Backup","Demostración"]):
-            self.action_confirm()
+			self.action_confirm()
         if(self.x_studio_tipo_de_solicitud == "Cambio"):
         	self.cambio()
         if(self.x_studio_tipo_de_solicitud == "Retiro"):
