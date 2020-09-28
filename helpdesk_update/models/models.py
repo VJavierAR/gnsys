@@ -2060,8 +2060,8 @@ class helpdesk_update(models.Model):
                         self.env.cr.execute("delete from sale_order_line where order_id = " + str(sale.id) +";")
                         for c in self.x_studio_productos:
                             datosr={'order_id' : sale.id, 'product_id' : c.id, 'product_uom_qty' : c.x_studio_cantidad_pedida, 'x_studio_field_9nQhR':self.x_studio_equipo_por_nmero_de_serie[0].id}
-                            if(self.team_id.id==10 or self.team_id.id==11):
-                                datosr['route_id']=22548
+                            #if(self.team_id.id==10 or self.team_id.id==11):
+                            #    datosr['route_id']=22548
                             self.env['sale.order.line'].create(datosr)
                             self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
                             #self.env.cr.commit()
