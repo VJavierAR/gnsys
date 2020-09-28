@@ -15,7 +15,8 @@ from odoo.addons.web.controllers.main import ReportController  # Import the clas
 
 class factura(models.Model):
       _inherit = 'account.invoice'
-       date_invoice = fields.Date(string='Fecha factura', default=datetime.today()) 
+      date_invoice = fields.Date(string='Fecha factura', default=datetime.today()) 
+      
       def report_download(self):
         res = super(ReportController, self).report_download()       
         raise exceptions.ValidationError( "no se puede dividir más solo tiene un servicio")    
