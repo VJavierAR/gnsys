@@ -339,18 +339,20 @@ class StockCambio(TransientModel):
                 if(d.almacen.id):
                     ubicacion=True
             if(productos or cantidades):
+                self.pick.do_unreserve()
                 for d in data:
-                    datos={'x_studio_field_9nQhR':d.serie.id,'order_id':orden.id,'product_id':d.producto2.id,'product_uom':d.producto2.uom_id.id,'product_uom_qty':d.cantidad2,'name':d.producto2.description if(d.producto2.description) else '/','price_unit':0.00}
-                    if(ruta!=[]):
-                        datos['route_id']=ruta[0]
-                    ss=self.env['sale.order.line'].sudo().create(datos)
-                    moves=self.env['stock.move'].search([['product_id','=',d.producto2.id],['origin','=',orden.name],['sale_line_id','=',False]])
-                    moves.write({'sale_line_id':ss.id})
+                    #datos={'x_studio_field_9nQhR':d.serie.id,'order_id':orden.id,'product_id':d.producto2.id,'product_uom':d.producto2.uom_id.id,'product_uom_qty':d.cantidad2,'name':d.producto2.description if(d.producto2.description) else '/','price_unit':0.00}
+                    #if(ruta!=[]):
+                    #    datos['route_id']=ruta[0]
+                    #ss=self.env['sale.order.line'].sudo().create(datos)
+                    #moves=self.env['stock.move'].search([['product_id','=',d.producto2.id],['origin','=',orden.name],['sale_line_id','=',False]])
+                    #moves.write({'sale_line_id':ss.id})
                     ssss=self.env['stock.move'].search([['sale_line_id','=',d.move_id.sale_line_id.id]])
-                    ssss._action_cancel()
-                    ssss.unlink()
+                    ssss.write({'product_id':d.producto2.id})
+                    #ssss._action_cancel()
+                    #ssss.unlink()
                     if(ubicacion):
-                        temp.append({'sale_line_id':ss.id,'product_id':d.producto2.id,'location_id':d.almacen.lot_stock_id.id})
+                        temp.append({'sale_line_id':d.move_id.sale_line_id.id,'product_id':d.producto2.id,'location_id':d.almacen.lot_stock_id.id})
             if(ubicacion and (productos or cantidades)):
                 check=False
                 for t in temp:
