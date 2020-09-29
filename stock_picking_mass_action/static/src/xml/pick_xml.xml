@@ -15,7 +15,7 @@
 
 	        <button t-if="widget.modelName == 'helpdesk.ticket'" class="btn btn-primary oe_action_button_helpdesk_detalle" type="button" accesskey="f">Detalle del ticket</button>
 	        <button t-if="widget.modelName == 'creacion.ruta'" class="btn btn-primary oe_action_button_creacion_ruta" type="button" accesskey="f">Reporte de Expediciones</button>
-	           <button t-if="widget.modelName == 'helpdesk.ticket'" class="btn btn-primary oe_action_button_ticket_guia" type="button" accesskey="f">Carga de guias</button>
+	           <button t-if="widget.modelName == 'helpdesk.ticket'" class="btn btn-primary oe_action_button_helpdesk_guia" type="button" accesskey="f">Carga de guias</button>
 
 	        </t>
 	    </t>
