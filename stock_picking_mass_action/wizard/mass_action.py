@@ -1463,10 +1463,12 @@ class cargadeGuias(TransientModel):
                 check=False
                 for row_num, row in enumerate(sheet.get_rows()):
                     if(i>3):
-                        if("EQUIPO  SOL" not in row[3].value):
-                            Tickets=str(row[3].value).replace('REF','').replace(' ','').split('-')
-                            tick=self.env['helpdesk.ticket'].browse(Tickets)
-                            tick.write({'x_studio_nmero_de_guia_1':row[2].value})
+                        if("EQUIPO  SOL" not in str(row[3].value)):
+                            Tickets=str(row[3].value).replace('REF','').replace(' ','').replace('.0','').split('-')
+                            for t in Tickets:
+                                tt=int(t)
+                                tick=self.env['helpdesk.ticket'].browse(tt)
+                                tick.write({'x_studio_nmero_de_guia_1':int(row[2].value)})
                     i=i+1
             else:
                 raise UserError(_("Error en el formato del archivo"))
