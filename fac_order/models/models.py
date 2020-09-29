@@ -73,15 +73,15 @@ class fac_order(models.Model):
                pcolor=12290
                rentaG=12296
                rentaE=12292
-               spc=12298
-               tfs=12300
+               spc=12300
+               tfs=12298
                sm=12302
                sme=12304
                netMa=12306
                paginasbn=12308
                embeded=12310
-               impre=12550
-               lp=12549                
+               impre=12540
+               lp=12539                
           if str(self.partner_id.razonSocial)=='3': #servicios
                pbn=12289
                pcolor=12287
