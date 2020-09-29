@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-
+        <record id="view_helpdesk_guia_form" model="ir.ui.view">
+        <field name="model">ticket.guia.carga</field>
+        <field name="arch" type="xml">
+            <form string="Carga de guias">
+                <h1>Se agregaran las guias al los tickets</h1>
+                    <group>
+                        <field name="archivo" string="Archivo" required="1"/>
+                    </group>
+                <footer>
+                    <button name="carga" string="Cargar" type="object" class="oe_highlight"/>
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
 
         <record id="view_agregar_concentrado_action_form" model="ir.ui.view">
         <field name="model">stock.picking.mass.concentrado</field>

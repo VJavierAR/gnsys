@@ -1438,3 +1438,32 @@ class agregarConcentrado(TransientModel):
         for pic in self.picking_ids:
             self.env['stock.picking'].search([['sale_id','=',pic.sale_id.id]]).write({'concentrado':CON})
         return self.env.ref('stock_picking_mass_action.report_custom').report_action(self.picking_ids)
+
+class cargadeGuias(TransientModel):
+    _name='ticket.guia.carga'
+    _description='Carga de Guias a Ticket'
+    archivo=fields.Binary()
+
+
+    def carga(self):
+        if(self.archivo):
+            f2=base64.b64decode(self.archivo)
+            H=StringIO(f2)
+            mimetype = guess_mimetype(f2 or b'')
+            if(mimetype=='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' or mimetype=='application/vnd.ms-excel'):
+                book = xlrd.open_workbook(file_contents=f2 or b'')
+                sheet = book.sheet_by_index(0)
+                header=[]
+                arr=[]
+                i=0
+                j=0
+                check=False
+                for row_num, row in enumerate(sheet.get_rows()):
+                    if(i>3):
+                        if("EQUIPO  SOL" not in row[3].value):
+                            Tickets=str(row[3].value).replace('REF','').replace(' ','').split('-')
+                            tick=self.env['helpdesk.ticket'].browse(Tickets)
+                            tick.write({'x_studio_nmero_de_guia_1':row[2].value})
+                    i=i+1
+            else:
+                raise UserError(_("Error en el formato del archivo"))
