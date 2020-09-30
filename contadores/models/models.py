@@ -231,14 +231,14 @@ class dcas(models.Model):
     def validaMoonLectura(self):        
         contadorM=self.contadorMono
         cam=int(self.x_studio_lectura_anterior_bn)                                        
-        if cam>contadorM:            
+        if cam>contadorM and self.env.user.id!=113:            
             raise exceptions.ValidationError("Contador Monocromatico Menor")
 
     @api.onchange('contadorColor')
     def validaContadoresLecturas(self):
         contaC=self.contadorColor                       
         cac=int(self.x_studio_lectura_anterior_color)
-        if cac>contaC:            
+        if cac>contaC and self.env.user.id!=113:            
             raise exceptions.ValidationError("Contador Color Menor.")       
 
 
