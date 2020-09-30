@@ -4198,6 +4198,16 @@ class helpdesk_update(models.Model):
     
 
 
+    cambioDespuesDeCierre = fields.Boolean(string = '¿Cambio despues de cierre?', default = False)
+
+    def comprobar_cerrados(self):
+        if self.stage_id.id != 18 or self.stage_id.id != 4:
+            for diagnostico in self.diagnosticos:
+                if diagnostico.estadoTicket == 'Cerrado' and self.diagnosticos[-1].estadoTicket != 'Cerrado':
+                    cambioDespuesDeCierre = True
+                    break
+
+
     @api.onchange('x_studio_tipo_de_vale')
     def registrarTipoDeReporte(self):
         if self.x_studio_tipo_de_vale:
@@ -4939,7 +4949,11 @@ class helpdesk_agregar_productos(models.Model):
         _logger.info('entro')
         #self.ticket_id.x_studio_productos = [(6, 0, self.productos.ids)]
         lista = [[5,0,0]]
+        listaDeCantidades = []
         for refaccion in self.accesorios:
+            lista.append( [4, refaccion.productos.id] )
+            listaDeCantidades.append(refaccion.cantidadPedida)
+            """
             lista.append( [0, 0, {
                                     'product_tmpl_id': refaccion.productos.product_tmpl_id.id,
                                     'x_studio_cantidad_pedida': refaccion.cantidadPedida,
@@ -4951,8 +4965,15 @@ class helpdesk_agregar_productos(models.Model):
                                     'virtual_available': refaccion.productos.virtual_available
 
                         }])
+            """
         _logger.info('3312: lista2: ' + str(lista))
         self.ticket_id.write({'x_studio_productos': lista})
+
+        indice = 0
+        for refaccion in self.ticket_id.x_studio_productos:
+            refaccion.x_studio_cantidad_pedida = listaDeCantidades[indice]
+            indice = indice + 1
+
         mensajeTitulo = 'Productos agregados!!!'
         mensajeCuerpo = 'Se agregaron los productos y sus cantidades.'
         #wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
