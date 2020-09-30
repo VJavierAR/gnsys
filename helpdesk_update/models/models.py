@@ -4792,7 +4792,7 @@ class helpdesk_update(models.Model):
             'context': self.env.context,
         }
 #AGrego CEsar
-    @api.onchange('parent_id')
+    @api.onchange('partner_id')
     def cambiosParent_id(self):
         res={}
         for record in self:
