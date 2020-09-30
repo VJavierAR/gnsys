@@ -350,7 +350,7 @@ class StockCambio(TransientModel):
                     #ss=self.env['sale.order.line'].sudo().create(datos)
                     #moves=self.env['stock.move'].search([['product_id','=',d.producto2.id],['origin','=',orden.name],['sale_line_id','=',False]])
                     #moves.write({'sale_line_id':ss.id})
-                    ssss=self.env['stock.move'].search([['sale_line_id','=',d.move_id.sale_line_id.id]])
+                    ssss=self.env['stock.move'].search([['sale_line_id','=',d.move_id.sale_line_id.id],['state','!=','done'],['picking_id','in',self.pick.sale_id.mapped('picking_ids.id')]])
                     ssss.write({'product_id':d.producto2.id})
                     #ssss._action_cancel()
                     #ssss.unlink()
