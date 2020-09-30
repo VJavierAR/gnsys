@@ -4204,7 +4204,7 @@ class helpdesk_update(models.Model):
         if self.stage_id.id != 18 or self.stage_id.id != 4:
             for diagnostico in self.diagnosticos:
                 if diagnostico.estadoTicket == 'Cerrado' and self.diagnosticos[-1].estadoTicket != 'Cerrado':
-                    cambioDespuesDeCierre = True
+                    self.cambioDespuesDeCierre = True
                     break
 
 
