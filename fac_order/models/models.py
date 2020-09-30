@@ -413,7 +413,8 @@ class fac_order(models.Model):
                                 currentP=self.env['dcas.dcas'].search([('serie','=',k.id),('x_studio_field_no6Rb', '=', perido)],order='x_studio_fecha desc',limit=1)
                                 currentPA=self.env['dcas.dcas'].search([('serie','=',k.id),('x_studio_field_no6Rb', '=', periodoAnterior)],order='x_studio_fecha desc',limit=1)
                                 cng=int(currentP.contadorMono)
-                                cngc=int(currentP.contadorColor)                                 
+                                cngc=int(currentP.contadorColor)
+
                                 if cng==0:
                                    bnp=0
                                 else:
@@ -428,8 +429,9 @@ class fac_order(models.Model):
                                 if k.x_studio_color_bn=='Color':
                                    totalesColor=colorp+totalesColor
                                    totalesNegro=bnp+totalesNegro
-                            self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':j.id,'x_studio_field_9nQhR':k.id,'product_id':pcolor,'product_uom_qty':totalesColor,'x_studio_cantidad':str(totalesColor),'price_unit':m.clickExcedenteColor,'name':'(82121500) PAGINAS IMPRESAS COLOR : '+str(totalesColor)+' INCLUYE: '+str(m.bolsaColor)})                                                    
-                            self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':j.id,'x_studio_field_9nQhR':k.id,'product_id':pbn,'product_uom_qty':totalesNegro,'x_studio_cantidad':str(totalesNegro),'price_unit':m.clickExcedenteBN,'name':'(82121500) PAGINAS IMPRESAS NEGRO : '+str(totalesNegro)+' INCLUYE: '+str(m.bolsaBN)})                                                                                  
+                                _logger.info("Informacion entre:"+str(m.clickExcedenteColor))
+                            self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':j.id,'x_studio_field_9nQhR':k.id,'product_id':pcolor,'product_uom_qty':totalesColor,'x_studio_cantidad':str(totalesColor),'price_unit':j.clickExcedenteColor,'name':'(82121500) PAGINAS IMPRESAS COLOR : '+str(totalesColor)+' INCLUYE: '+str(m.bolsaColor)})                                                    
+                            self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':j.id,'x_studio_field_9nQhR':k.id,'product_id':pbn,'product_uom_qty':totalesNegro,'x_studio_cantidad':str(totalesNegro),'price_unit':j.clickExcedenteBN,'name':'(82121500) PAGINAS IMPRESAS NEGRO : '+str(totalesNegro)+' INCLUYE: '+str(m.bolsaBN)})                                                                                  
                             self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':j.id,'product_id':rentaG,'product_uom_qty':1.0,'x_studio_cantidad':'1','price_unit':j.rentaMensual,'name':'(80161801) RENTA '+ str(len(p))+' EQUIPOS EN GENERAL.'})                                                                                                                         
                for s in self.x_studio_servicios:
                      if s.nombreAnte=='SERVICIO DE PCOUNTER' or s.nombreAnte=='SERVICIO DE PCOUNTER1' or s.nombreAnte=='ADMINISTRACION DE DOCUMENTOS CON PCOUNTER' or s.nombreAnte=='SERVICIO DE MANTENIMIENTO DE PCOUNTER' or s.nombreAnte=='SERVICIO DE MANTENIMIENTO PCOUNTER' or s.nombreAnte=='RENTA DE LICENCIAMIENTO PCOUNTER':                        
