@@ -1494,7 +1494,8 @@ class helpdesk_crearconserie(TransientModel):
                                                   ,'partner_id': int(self.idCliente)
                                                   ,'x_studio_empresas_relacionadas': int(self.idLocaliidad)
                                                   ,'team_id': equipoDeUsuario
-                                                  ,'x_studio_field_6furK': self.zonaLocalidad
+                                                  ,'x_studio_field_6furK': self.zonaLocalidad,
+                                                    'x_studio_tipo_de_vale': self.tipoDeReporte
                                                   })
               ticket.write({'partner_id': int(self.idCliente)
                           ,'x_studio_empresas_relacionadas': int(self.idLocaliidad)

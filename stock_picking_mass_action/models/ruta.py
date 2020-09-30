@@ -37,7 +37,8 @@ class CreacionRuta(Model):
             for o in self.ordenes:
                 o.write({'ruta_id':self.id})
                 if(o.sale_id.id):
-                    o.sale_id.x_studio_field_bxHgp.write({'stage_id':108})
+                    if (o.sale_id.x_studio_field_bxHgp.stage_id.id!=18 and o.sale_id.x_studio_field_bxHgp.stage_id.id!=4):
+                        o.sale_id.x_studio_field_bxHgp.write({'stage_id':108})
                     t=t+str(o.sale_id.x_studio_field_bxHgp.id)+','
                 if(o.sale_id.id==False):
                     t=t+str(o.origin)+','
