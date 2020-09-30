@@ -8,6 +8,23 @@ import logging, ast
 import datetime, time
 _logger = logging.getLogger(__name__)
 
+class crm(models.Model):
+    _inherit='crm.lead'
+    
+    
+    def crearSolicitud(self):
+        view = self.env.ref('studio_customization.sale_order_form_8690a815-6188-42ab-9845-1c18a02ee045')
+        return {
+                'name': _('Orden'),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'sale.order',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'context': self.env.context,
+                }
 
 class sale_order_compatibles(models.Model):
 	_name = 'sale_order_compatibles'
