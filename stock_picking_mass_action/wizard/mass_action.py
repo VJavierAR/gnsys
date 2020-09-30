@@ -152,7 +152,7 @@ class StockPickingMassAction(TransientModel):
                     if picking._check_backorder() and picking.sale_id.x_studio_field_bxHgp.x_studio_tipo_de_vale=='Requerimiento':
                         picking.sale_id.x_studio_field_bxHgp.write({'stage_id':109})
                         self.env['helpdesk.diagnostico'].sudo().create({'write_uid': self.env.user.name, 'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id,'write_uid':self.env.user.id, 'estadoTicket' : "Entregado", 'comentario':picking.x_studio_comentario_1+' Evidenciado'+' Hecho por'+self.env.user.name})                        
-                    if(picking.sale_id.x_studio_field_bxHgp.x_studio_tipo_de_vale!='Requerimiento'):
+                    if(picking.sale_id.x_studio_field_bxHgp.x_studio_tipo_de_vale!='Requerimiento') and (picking.sale_id.x_studio_field_bxHgp.stage_id.id!=18 and picking.sale_id.x_studio_field_bxHgp.stage_id.id!=4):
                         picking.sale_id.x_studio_field_bxHgp.write({'stage_id':13})
                         self.env['helpdesk.diagnostico'].sudo().create({ 'write_uid': self.env.user.name,'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id,'write_uid':self.env.user.id, 'estadoTicket' : "Entregado", 'comentario':picking.x_studio_comentario_1 if(picking.x_studio_comentario_1) else ''+' Evidenciado'+' Hecho por'+self.env.user.name})    
                     if(picking.sale_id.x_studio_field_bxHgp.x_studio_tipo_de_vale=='Requerimiento' and picking._check_backorder()==False):
@@ -166,14 +166,14 @@ class StockPickingMassAction(TransientModel):
                     if(picking.location_dest_id.id!=16):
                         ultimo=self.env['helpdesk.diagnostico'].search([['ticketRelacion','=',picking.sale_id.x_studio_field_bxHgp.id]],order='create_date desc',limit=1)
                         self.env['helpdesk.diagnostico'].sudo().create({ 'write_uid': self.env.user.name,'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id,'write_uid':self.env.user.id, 'estadoTicket' : "Entregado", 'comentario':str(comentario)+' Evidenciado'+' Hecho por'+self.env.user.name})
-                        if(picking.sale_id.x_studio_field_bxHgp.stage_id.id!=18 and picking.sale_id.x_studio_field_bxHgp.stage_id.id!=3):
+                        if(picking.sale_id.x_studio_field_bxHgp.stage_id.id!=18 and picking.sale_id.x_studio_field_bxHgp.stage_id.id!=4):
                             picking.sale_id.x_studio_field_bxHgp.write({'stage_id':104})
                         else:
                             ultimo.copy()
                     else:
                         ultimo=self.env['helpdesk.diagnostico'].search([['ticketRelacion','=',picking.sale_id.x_studio_field_bxHgp.id]],order='create_date desc',limit=1)
                         self.env['helpdesk.diagnostico'].sudo().create({ 'write_uid': self.env.user.name,'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id,'write_uid':self.env.user.id, 'estadoTicket' : "Entregado", 'comentario':str(comentario)+' Evidenciado'+' Hecho por'+self.env.user.name})    
-                        if(picking.sale_id.x_studio_field_bxHgp.stage_id.id!=18 and picking.sale_id.x_studio_field_bxHgp.stage_id.id!=3):
+                        if(picking.sale_id.x_studio_field_bxHgp.stage_id.id!=18 and picking.sale_id.x_studio_field_bxHgp.stage_id.id!=4):
                             picking.sale_id.x_studio_field_bxHgp.write({'stage_id':112})
                         else:
                             ultimo.copy()
