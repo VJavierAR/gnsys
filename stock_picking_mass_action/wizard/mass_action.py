@@ -186,23 +186,23 @@ class StockPickingMassAction(TransientModel):
         self.picking_ids.action_done()
         if(len(assigned_picking_lst2)>0):
             return self.env.ref('stock_picking_mass_action.report_custom').report_action(assigned_picking_lst2)
-        for pp in assigned_picking_lst.filtered(lambda x:x.sale_id.x_studio_tipo_de_solicitud!="Retiro" and x.sale_id.x_studio_field_bxHgp==False):
+        for pp in assigned_picking_lst.filtered(lambda x:x.sale_id.x_studio_tipo_de_solicitud!="Retiro" and x.sale_id.x_studio_field_bxHgp.id==False):
             if('incoming' not in tipo):
                 if('outgoing' in tipo):
                     if(pp.sale_id.x_studio_requiere_instalacin_1==True):
-                        t=self.env['helpdesk.ticket'].create({'x_studio_tipo_de_vale':'Instalación','partner_id':pp.partner_id.parent_id.id,'x_studio_empresas_relaciona  das':pp.partner_id.id,'team_id':9,'diagnosticos':[(0,0,{'estadoTicket':'Abierto','comentario':'Instalacion de Equipo'})],'stage_id':89,'name':'Instalaccion '+'Serie: ','x_studio_equipo_por_nmero_de_serie':[(6,0,pp.sale_id.mapped('order_line.x_studio_field_9nQhR.id'))]})                
-                        x.sale_id.x_studio_field_bxHgp=t.id
+                        t=self.env['helpdesk.ticket'].create({'x_studio_tipo_de_vale':'Instalación','partner_id':pp.partner_id.parent_id.id,'x_studio_empresas_relacionadas':pp.partner_id.id,'team_id':9,'diagnosticos':[(0,0,{'estadoTicket':'Abierto','comentario':'Instalacion de Equipo'})],'stage_id':89,'name':'Instalaccion '+'Serie: ','x_studio_equipo_por_nmero_de_serie':[(6,0,pp.sale_id.mapped('order_line.x_studio_field_9nQhR.id'))]})                
+                        pp.sale_id.x_studio_field_bxHgp=t.id
                 else:
                     move_lines=self.env['stock.move.line'].search([['move_id','in',pp.mapped('move_lines.id')]])
                     tipo2=move_lines.mapped('move_id.picking_type_id.name')
-                    if('Surtir' in tipo2):
-                        move_lines.lot_id.write({'x_studio_etapa':'A Distribución'})
+                    #if('Surtir' in tipo2):
+                    #    move_lines.lot_id.write({'x_studio_etapa':'A Distribución'})
                     if('Distribución' in tipo2):
-                        record.lot_id.write({'x_studio_etapa':'Tránsito'})
-                        x.sale_id.write({'state':'distribucion'})
+                        #record.lot_id.write({'x_studio_etapa':'Tránsito'})
+                        pp.sale_id.write({'state':'distribucion'})
                     if('Tránsito' in tipo2):
-                        record.lot_id.write({'x_studio_etapa':'Ruta'})
-                        x.sale_id.write({'state':'entregado'})
+                        #record.lot_id.write({'x_studio_etapa':'Ruta'})
+                        pp.sale_id.write({'state':'entregado'})
 
     @api.multi
     def vales(self):
