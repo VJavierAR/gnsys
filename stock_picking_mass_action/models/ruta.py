@@ -44,7 +44,8 @@ class CreacionRuta(Model):
                     if(o.sale_id.x_studio_requiere_instalacin_1==True):
                         t=self.env['helpdesk.ticket'].create({'x_studio_tipo_de_vale':'Instalación','partner_id':o.partner_id.parent_id.id,'x_studio_empresas_relacionadas':o.partner_id.id,'team_id':9,'diagnosticos':[(0,0,{'estadoTicket':'Abierto','comentario':'Instalacion de Equipo'})],'stage_id':89,'name':'Instalaccion '+'Serie: ','x_studio_equipo_por_nmero_de_serie':[(6,0,o.sale_id.mapped('order_line.x_studio_field_9nQhR.id'))]})                
                         o.sale_id.x_studio_field_bxHgp=t.id
-                    t=t+str(o.sale_id.x_studio_field_bxHgp.id)+','
+                    if(o.sale_id.x_studio_field_bxHgp.id):
+                        t=t+str(o.sale_id.x_studio_field_bxHgp.id)+','
                 if(o.sale_id.id==False):
                     t=t+str(o.origin)+','
             odometroAnterior=self.env['registro.odometro'].search([['rel_vehiculo','=',self.vehiculo.id]],order='id desc',limit=1)
