@@ -1376,133 +1376,133 @@ class helpdesk_update(models.Model):
 
     @api.onchange('team_id')
     def asignacion(self):
-        for record in self:
-            if self.x_studio_id_ticket:
-                estadoAntes = str(self.stage_id.name)
-                #if self.stage_id.name == 'Abierto' and self.estadoAsignacion == False and self.team_id.id != False:
-                if self.team_id.id != False:
-                    query = "update helpdesk_ticket set stage_id = 2 where id = " + str(self.x_studio_id_ticket) + ";"
-                    ss = self.env.cr.execute(query)
+        #for record in self:
+        if self.x_studio_id_ticket:
+            estadoAntes = str(self.stage_id.name)
+            #if self.stage_id.name == 'Abierto' and self.estadoAsignacion == False and self.team_id.id != False:
+            if self.team_id.id != False:
+                query = "update helpdesk_ticket set stage_id = 2 where id = " + str(self.x_studio_id_ticket) + ";"
+                ss = self.env.cr.execute(query)
 
-                    comentarioGenerico = 'Cambio de estado al seleccionar ' + self.team_id.name + ' como área de atención. Seleccion realizada por ' + str(self.env.user.name) +'.'
-                    estado = 'Asignado'
-                    self.creaDiagnosticoVistaLista(comentarioGenerico, estado)
+                comentarioGenerico = 'Cambio de estado al seleccionar ' + self.team_id.name + ' como área de atención. Seleccion realizada por ' + str(self.env.user.name) +'.'
+                estado = 'Asignado'
+                self.creaDiagnosticoVistaLista(comentarioGenerico, estado)
+                
+                ultimaEvidenciaTec = []
+                ultimoComentario = ''
+                if self.diagnosticos:
+                    if self.diagnosticos[-1].evidencia.ids:
+                        ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
+                    ultimoComentario = self.diagnosticos[-1].comentario
                     
-                    ultimaEvidenciaTec = []
-                    ultimoComentario = ''
-                    if self.diagnosticos:
-                        if self.diagnosticos[-1].evidencia.ids:
-                            ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
-                        ultimoComentario = self.diagnosticos[-1].comentario
-                        
-                    #_logger.info("*********************************Entre: " + str(ultimoComentario))
-                    lineas = [(5, 0, 0)]
-                    if ultimaEvidenciaTec != []:
-                        for linea in self.diagnosticos:
-                            val = {}
-                            if linea.evidencia.ids != []:
-                                val = {
-                                    'ticketRelacion': int(self.x_studio_id_ticket),
-                                    'comentario': linea.comentario,
-                                    'estadoTicket': linea.estadoTicket,
-                                    'evidencia': [(6,0,linea.evidencia.ids)],
-                                    'mostrarComentario': linea.mostrarComentario
-                                }
-                            else:
-                                val = {
-                                    'ticketRelacion': int(self.x_studio_id_ticket),
-                                    'comentario': linea.comentario,
-                                    'estadoTicket': linea.estadoTicket,
-                                    'mostrarComentario': linea.mostrarComentario
-                                }
-                            lineas.append((0, 0, val))
-                        lineas.append((0, 0, {'ticketRelacion': int(self.x_studio_id_ticket), 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'evidencia': [(6,0,ultimaEvidenciaTec)], 'write_uid':  self.env.user.id}))
-                    else:
-                        for linea in self.diagnosticos:
-                            val = {}
-                            if linea.evidencia.ids != []:
-                                val = {
-                                    'ticketRelacion': int(self.x_studio_id_ticket),
-                                    'comentario': linea.comentario,
-                                    'estadoTicket': linea.estadoTicket,
-                                    'evidencia': [(6,0,linea.evidencia.ids)],
-                                    'mostrarComentario': linea.mostrarComentario
-                                }
-                            else:
-                                val = {
-                                    'ticketRelacion': int(self.x_studio_id_ticket),
-                                    'comentario': linea.comentario,
-                                    'estadoTicket': linea.estadoTicket,
-                                    'mostrarComentario': linea.mostrarComentario
-                                }
-                            lineas.append((0, 0, val))
-                        lineas.append((0, 0, {'ticketRelacion': int(self.x_studio_id_ticket), 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.id}))
-                        
+                #_logger.info("*********************************Entre: " + str(ultimoComentario))
+                lineas = [(5, 0, 0)]
+                if ultimaEvidenciaTec != []:
+                    for linea in self.diagnosticos:
+                        val = {}
+                        if linea.evidencia.ids != []:
+                            val = {
+                                'ticketRelacion': int(self.x_studio_id_ticket),
+                                'comentario': linea.comentario,
+                                'estadoTicket': linea.estadoTicket,
+                                'evidencia': [(6,0,linea.evidencia.ids)],
+                                'mostrarComentario': linea.mostrarComentario
+                            }
+                        else:
+                            val = {
+                                'ticketRelacion': int(self.x_studio_id_ticket),
+                                'comentario': linea.comentario,
+                                'estadoTicket': linea.estadoTicket,
+                                'mostrarComentario': linea.mostrarComentario
+                            }
+                        lineas.append((0, 0, val))
+                    lineas.append((0, 0, {'ticketRelacion': int(self.x_studio_id_ticket), 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'evidencia': [(6,0,ultimaEvidenciaTec)], 'write_uid':  self.env.user.id}))
+                else:
+                    for linea in self.diagnosticos:
+                        val = {}
+                        if linea.evidencia.ids != []:
+                            val = {
+                                'ticketRelacion': int(self.x_studio_id_ticket),
+                                'comentario': linea.comentario,
+                                'estadoTicket': linea.estadoTicket,
+                                'evidencia': [(6,0,linea.evidencia.ids)],
+                                'mostrarComentario': linea.mostrarComentario
+                            }
+                        else:
+                            val = {
+                                'ticketRelacion': int(self.x_studio_id_ticket),
+                                'comentario': linea.comentario,
+                                'estadoTicket': linea.estadoTicket,
+                                'mostrarComentario': linea.mostrarComentario
+                            }
+                        lineas.append((0, 0, val))
+                    lineas.append((0, 0, {'ticketRelacion': int(self.x_studio_id_ticket), 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.id}))
                     
-                    #self.estadoAsignacion = True
-                    message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Asignado' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
-                    mess= {
-                            'title': _('Estado de ticket actualizado!!!'),
-                            'message' : message
-                        }
-                    
-                    res = {}
-                    idEquipoDeAsistencia = self.team_id.id
-                    query = "select * from helpdesk_team_res_users_rel where helpdesk_team_id = " + str(idEquipoDeAsistencia) + ";"
+                
+                #self.estadoAsignacion = True
+                message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Asignado' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
+                mess= {
+                        'title': _('Estado de ticket actualizado!!!'),
+                        'message' : message
+                    }
+                
+                res = {}
+                idEquipoDeAsistencia = self.team_id.id
+                query = "select * from helpdesk_team_res_users_rel where helpdesk_team_id = " + str(idEquipoDeAsistencia) + ";"
+                self.env.cr.execute(query)
+                informacion = self.env.cr.fetchall()
+                listaUsuarios = []
+                
+                for idUsuario in informacion:
+                    listaUsuarios.append(idUsuario[1])
+                
+                dominio = [('id', 'in', listaUsuarios)]
+                #comentarioGenerico = 'Cambio de estado al seleccionar ' + self.team_id.name + ' como área de atención. Seleccion realizada por ' + str(self.env.user.name) +'.'
+                #estado = 'Asignado'
+                #self.creaDiagnosticoVistaLista(comentarioGenerico, estado)
+
+                """
+                objTicket = self.env['helpdesk.ticket'].search([['id', '=', self.x_studio_id_ticket]], order='create_date desc', limit=1)
+                listaDiagnosticos = [(5, 0, 0)]
+                listaDeFechas = []
+                if record.diagnosticos:
+                    for diagnostico in record.diagnosticos:
+                        listaDiagnosticos.append((0, 0, {
+                                                            'ticketRelacion': int(diagnostico.ticketRelacion.x_studio_id_ticket),
+                                                            'estadoTicket': diagnostico.estadoTicket,
+                                                            'evidencia': [(6, 0, diagnostico.evidencia.ids)],
+                                                            'mostrarComentario': diagnostico.mostrarComentario,
+                                                            'write_uid':  diagnostico.write_uid.id,
+                                                            'comentario': str(diagnostico.comentario),
+                                                            'create_date': diagnostico.create_date,
+                                                            'create_uid': diagnostico.create_uid.id
+                                                        }))
+                        listaDeFechas.append(diagnostico.create_date)
+                comentarioGenerico = 'Cambio de estado al seleccionar ' + self.team_id.name + ' como área de atención. Seleccion realizada por ' + str(self.env.user.name) +'.'
+                listaDiagnosticos.append((0, 0, {
+                                                    'ticketRelacion': int(self.x_studio_id_ticket),
+                                                    'estadoTicket': 'Asignado',
+                                                    'mostrarComentario': True,
+                                                    'write_uid':  self.env.user.id,
+                                                    'create_uid': self.env.user.id,
+                                                    'comentario': comentarioGenerico
+                                                }))
+                objTicket.write({'diagnosticos': listaDiagnosticos})
+
+                i = 0
+                for fecha in listaDeFechas:
+                    #fechaMX = (fecha - datetime.timedelta(hours=5)).strftime('%Y-%m-%d %H:%M:%S')
+                    #_logger.info('fechaMX: ' + str(fechaMX))
+                    #_logger.info('3312 fecha: ' + str(fecha.strftime('%Y-%m-%d %H:%M:%S')))
+                    query = "update helpdesk_diagnostico set create_date = '" + str(fecha.strftime('%Y-%m-%d %H:%M:%S')) + "' where id = " + str(objTicket.diagnosticos[i].id) + ";"
                     self.env.cr.execute(query)
-                    informacion = self.env.cr.fetchall()
-                    listaUsuarios = []
-                    
-                    for idUsuario in informacion:
-                        listaUsuarios.append(idUsuario[1])
-                    
-                    dominio = [('id', 'in', listaUsuarios)]
-                    #comentarioGenerico = 'Cambio de estado al seleccionar ' + self.team_id.name + ' como área de atención. Seleccion realizada por ' + str(self.env.user.name) +'.'
-                    #estado = 'Asignado'
-                    #self.creaDiagnosticoVistaLista(comentarioGenerico, estado)
-
-                    """
-                    objTicket = self.env['helpdesk.ticket'].search([['id', '=', self.x_studio_id_ticket]], order='create_date desc', limit=1)
-                    listaDiagnosticos = [(5, 0, 0)]
-                    listaDeFechas = []
-                    if record.diagnosticos:
-                        for diagnostico in record.diagnosticos:
-                            listaDiagnosticos.append((0, 0, {
-                                                                'ticketRelacion': int(diagnostico.ticketRelacion.x_studio_id_ticket),
-                                                                'estadoTicket': diagnostico.estadoTicket,
-                                                                'evidencia': [(6, 0, diagnostico.evidencia.ids)],
-                                                                'mostrarComentario': diagnostico.mostrarComentario,
-                                                                'write_uid':  diagnostico.write_uid.id,
-                                                                'comentario': str(diagnostico.comentario),
-                                                                'create_date': diagnostico.create_date,
-                                                                'create_uid': diagnostico.create_uid.id
-                                                            }))
-                            listaDeFechas.append(diagnostico.create_date)
-                    comentarioGenerico = 'Cambio de estado al seleccionar ' + self.team_id.name + ' como área de atención. Seleccion realizada por ' + str(self.env.user.name) +'.'
-                    listaDiagnosticos.append((0, 0, {
-                                                        'ticketRelacion': int(self.x_studio_id_ticket),
-                                                        'estadoTicket': 'Asignado',
-                                                        'mostrarComentario': True,
-                                                        'write_uid':  self.env.user.id,
-                                                        'create_uid': self.env.user.id,
-                                                        'comentario': comentarioGenerico
-                                                    }))
-                    objTicket.write({'diagnosticos': listaDiagnosticos})
-
-                    i = 0
-                    for fecha in listaDeFechas:
-                        #fechaMX = (fecha - datetime.timedelta(hours=5)).strftime('%Y-%m-%d %H:%M:%S')
-                        #_logger.info('fechaMX: ' + str(fechaMX))
-                        #_logger.info('3312 fecha: ' + str(fecha.strftime('%Y-%m-%d %H:%M:%S')))
-                        query = "update helpdesk_diagnostico set create_date = '" + str(fecha.strftime('%Y-%m-%d %H:%M:%S')) + "' where id = " + str(objTicket.diagnosticos[i].id) + ";"
-                        self.env.cr.execute(query)
-                        objTicket.diagnosticos[i].create_date = fecha
-                        i = i + 1
-                    """
-                    return {'warning': mess, 'domain': {'user_id': dominio}}
-                    
-                #else:
-                    #reasingado
+                    objTicket.diagnosticos[i].create_date = fecha
+                    i = i + 1
+                """
+                return {'warning': mess, 'domain': {'user_id': dominio}}
+                
+            #else:
+                #reasingado
                 
                 
         if self.team_id.id != False:
@@ -3815,41 +3815,31 @@ class helpdesk_update(models.Model):
             return action
     
     
+
+    ultimoDiagnosticoFecha = fields.Datetime(string = 'Ultimo diagnostico fecha')
+    @api.onchange('diagnosticos')
+    def obten_ulimo_diagnostico_fecha(self):
+        if self.diagnosticos:
+            self.write({'ultimoDiagnosticoFecha': self.diagnosticos[-1].create_date})
+
+    ultimoDiagnosticoUsuario = fields.Text(string = 'Ultimo diagnostico fecha')
+    @api.onchange('diagnosticos')
+    def obten_ulimo_diagnostico_fecha(self):
+        if self.diagnosticos:
+            self.write({'ultimoDiagnosticoUsuario': self.diagnosticos[-1].create_uid.name})
+
     #@api.model
     #@api.multi
     @api.onchange('x_studio_equipo_por_nmero_de_serie','x_studio_equipo_por_nmero_de_serie_1.serie','x_studio_equipo_por_nmero_de_serie_1')
     #@api.depends('x_studio_equipo_por_nmero_de_serie')
     def actualiza_datos_cliente(self):
-        if self.team_id.id == 8 or self.x_studio_tipo_de_vale == 'Requerimiento':
-            for dca in self.x_studio_equipo_por_nmero_de_serie_1:
-                if dca.colorEquipo == 'Color':
-                    if not dca.x_studio_cartuchonefro and not dca.x_studio_cartucho_amarillo and not dca.x_studio_cartucho_cian_1 and not dca.x_studio_cartucho_magenta:
-                        self.noCrearTicket = True
-                        mensajeTitulo = "Alerta!!!"
-                        mensajeCuerpo = "Crearas un ticket sin cartucho seleccionado. Selecciona al menos uno para la serie " + str(dca.serie.name)
-                        warning = {'title': _(mensajeTitulo)
-                                , 'message': _(mensajeCuerpo),
-                        }
-                        return {'warning': warning}
-                elif dca.colorEquipo == 'B/N':
-                    if not dca.x_studio_cartuchonefro:
-                        self.noCrearTicket = True
-                        mensajeTitulo = "Alerta!!!"
-                        mensajeCuerpo = "Crearas un ticket sin cartucho seleccionado. Selecciona al menos uno para la serie " + str(dca.serie.name)
-                        warning = {'title': _(mensajeTitulo)
-                                , 'message': _(mensajeCuerpo),
-                        }
-                        return {'warning': warning}
-                if dca.serie.x_studio_mini:
-                    self.x_studio_equipo_por_nmero_de_serie_1 = [(5,0,0)]
-                    mensajeTitulo = "Alerta!!!"
-                    mensajeCuerpo = "La serie " + str(dca.serie.name) + " pertenece a un mini almacén, no es posible crear el ticket de un mini almacén."
-                    warning = {'title': _(mensajeTitulo)
-                            , 'message': _(mensajeCuerpo),
-                    }
-                    return {'warning': warning}
+
+        todasLasAlertas = ""
 
 
+        """
+            Cargando la información de cliente
+        """
         v = {}
         ids = []
         localidad = []
@@ -3913,7 +3903,6 @@ class helpdesk_update(models.Model):
                         self._origin.sudo().write({'x_studio_equipo_por_nmero_de_serie' : lista_ids})
                         self.x_studio_equipo_por_nmero_de_serie = lista_ids
                     else:
-
                         self.partner_id = cliente.id
                         self.x_studio_nivel_del_cliente = cliente.x_studio_nivel_del_cliente
                         #Localidad
@@ -3988,6 +3977,73 @@ class helpdesk_update(models.Model):
                 lista_ids = []
                 for id in ids:
                     lista_ids.append((4,id))
+
+
+        """
+            Verificando que no exista un ticket con la misma serie
+        """
+        #_logger.info('len(self.x_studio_equipo_por_nmero_de_serie_1): ' + str(len(self.x_studio_equipo_por_nmero_de_serie_1)))
+        #_logger.info('self.x_studio_tipo_de_vale: ' + str(self.x_studio_tipo_de_vale))
+        if len(self.x_studio_equipo_por_nmero_de_serie_1) > 0 and (self.x_studio_tipo_de_vale == 'Requerimiento'):
+            if len(self.x_studio_equipo_por_nmero_de_serie_1) > 1:
+                for localidades in self.x_studio_equipo_por_nmero_de_serie_1:
+                    if self.x_studio_equipo_por_nmero_de_serie_1[0].ultimaUbicacion != localidades.ultimaUbicacion:
+                       raise exceptions.ValidationError("Error "+str(self.x_studio_equipo_por_nmero_de_serie_1[0].ultimaUbicacion)+' deben ser la misma localidad '+localidades.ultimaUbicacion)
+                #raise exceptions.ValidationError("tamaño "+str(len(self.x_studio_equipo_por_nmero_de_serie_1))+' ids '+ str(self.x_studio_equipo_por_nmero_de_serie_1.ids)+' serie '+str(self.x_studio_equipo_por_nmero_de_serie_1[len(self.x_studio_equipo_por_nmero_de_serie_1)-1].serie.name))
+                se=0
+                for serie in self.x_studio_equipo_por_nmero_de_serie_1:                    
+                    if serie.serie.id == self.x_studio_equipo_por_nmero_de_serie_1[len(self.x_studio_equipo_por_nmero_de_serie_1)-1].serie.id and se != len(self.x_studio_equipo_por_nmero_de_serie_1)-1:
+                       raise exceptions.ValidationError("Error serie ya agregada"+str(serie.serie.name))
+                    se=se+1
+                
+            #queryt="select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!="+str(self.x_studio_id_ticket)+"  and h.stage_id!=18 and h.team_id=8 and  h.active='t' and stock_production_lot_id = "+str(self.x_studio_equipo_por_nmero_de_serie_1[0].serie.id)+" limit 1;"            
+            #self.env.cr.execute(queryt)                        
+            #informaciont = self.env.cr.fetchall()
+            #_logger.info('informaciont: ' + str(informaciont))
+            #Obtengo los
+            serieExistente = False 
+            for equipo in self.x_studio_equipo_por_nmero_de_serie_1:
+                ticketsToner = self.env['helpdesk.ticket'].search([ ('x_studio_tipo_de_vale', '=', 'Requerimiento'), ('stage_id', '!=', 18), ('stage_id', '!=', 4) ])
+                for ticket in ticketsToner:
+                    listaDeSeriesEnTicketActual = []
+                    for dca in ticket.x_studio_equipo_por_nmero_de_serie_1:
+                        if dca.serie.id == equipo.serie.id:
+                            listaDeSeriesEnTicketActual.append(dca.serie.id)
+                            break
+                    if listaDeSeriesEnTicketActual:
+                        todasLasAlertas = todasLasAlertas + 'Estas agregando una serie de un ticket ya en proceso en equipo de toner. Ticket con misma serie: ' + str(ticket.id)
+                        serieExistente = True
+                        break
+                        
+
+
+        """
+            verificando que el dca tenga la información suficiente con respecto a los cartuchos y verificando que no sea de minialmacen.
+        """
+        if self.team_id.id == 8 or self.x_studio_tipo_de_vale == 'Requerimiento':
+            for dca in self.x_studio_equipo_por_nmero_de_serie_1:
+                if dca.colorEquipo == 'Color':
+                    if not dca.x_studio_cartuchonefro and not dca.x_studio_cartucho_amarillo and not dca.x_studio_cartucho_cian_1 and not dca.x_studio_cartucho_magenta:
+                        self.noCrearTicket = True
+                        mensajeTitulo = "Alerta!!!"
+                        mensajeCuerpo = "Crearas un ticket sin cartucho seleccionado. Selecciona al menos uno para la serie " + str(dca.serie.name)
+                        todasLasAlertas = todasLasAlertas + '\n\n' + mensajeCuerpo
+                elif dca.colorEquipo == 'B/N':
+                    if not dca.x_studio_cartuchonefro:
+                        self.noCrearTicket = True
+                        mensajeTitulo = "Alerta!!!"
+                        mensajeCuerpo = "Crearas un ticket sin cartucho seleccionado. Selecciona al menos uno para la serie " + str(dca.serie.name)
+                        
+                        todasLasAlertas = todasLasAlertas + '\n\n' + mensajeCuerpo
+                       
+                if dca.serie.x_studio_mini:
+                    self.x_studio_equipo_por_nmero_de_serie_1 = [(5,0,0)]
+                    mensajeTitulo = "Alerta!!!"
+                    mensajeCuerpo = "La serie " + str(dca.serie.name) + " pertenece a un mini almacén, no es posible crear el ticket de un mini almacén."
+                    
+                    todasLasAlertas = todasLasAlertas + '\n\n' + mensajeCuerpo
+                    
+
 
 
 
@@ -4091,81 +4147,17 @@ class helpdesk_update(models.Model):
             self.env.cr.execute(query)                        
             informacion = self.env.cr.fetchall()
             if len(informacion) > 0:
-                message = ('Estas agregando una serie de un ticket ya en proceso. \n Ticket: ' + str(informacion[0][0]) + '\n ')
+                message = 'Estas agregando una serie de un ticket ya en proceso. Ticket: ' + str(informacion[0][0]) + '\n '
                 
-                mess= {
-                        'title': _('Alerta!!!'),
-                        'message' : message
-                              }
-                return {'warning': mess}
-                """
-                global mensajeCuerpoGlobal
-                mensajeCuerpoGlobal += '\n\nEstas agregando una serie de un ticket ya en proceso. \n Ticket: ' + str(informacion[0][0]) + '\n '
-                mensajeTitulo = 'Alerta !!!'
-                wiz = self.env['helpdesk.alerta.series'].create({'ticket_id': self.id, 'ticket_id_existente': int(informacion[0][0]), 'mensaje': mensajeCuerpoGlobal})
-                view = self.env.ref('helpdesk_update.view_helpdesk_alerta_series')
-                return {
-                        'name': _(mensajeTitulo),
-                        'type': 'ir.actions.act_window',
-                        'view_type': 'form',
-                        'view_mode': 'form',
-                        'res_model': 'helpdesk.alerta.series',
-                        'views': [(view.id, 'form')],
-                        'view_id': view.id,
-                        'target': 'new',
-                        'res_id': wiz.id,
-                        'context': self.env.context,
-                        }
-                """
+                todasLasAlertas = todasLasAlertas + '\n\n' + message
+                
                 #raise exceptions.ValidationError("No es posible registrar número de serie, primero cerrar el ticket con el id  "+str(informacion[0][0]))
         #if len(self.x_studio_equipo_por_nmero_de_serie_1) > 0 and (self.team_id.id == 8 or self.team_id.id == 13):
-        if len(self.x_studio_equipo_por_nmero_de_serie_1) > 0 and (self.x_studio_tipo_de_vale == 'Requerimiento'):
-            if len(self.x_studio_equipo_por_nmero_de_serie_1) > 1:
-                for localidades in self.x_studio_equipo_por_nmero_de_serie_1:
-                    if self.x_studio_equipo_por_nmero_de_serie_1[0].ultimaUbicacion != localidades.ultimaUbicacion:
-                       raise exceptions.ValidationError("Error "+str(self.x_studio_equipo_por_nmero_de_serie_1[0].ultimaUbicacion)+' deben ser la misma localidad '+localidades.ultimaUbicacion)
-                #raise exceptions.ValidationError("tamaño "+str(len(self.x_studio_equipo_por_nmero_de_serie_1))+' ids '+ str(self.x_studio_equipo_por_nmero_de_serie_1.ids)+' serie '+str(self.x_studio_equipo_por_nmero_de_serie_1[len(self.x_studio_equipo_por_nmero_de_serie_1)-1].serie.name))
-                se=0
-                for serie in self.x_studio_equipo_por_nmero_de_serie_1:                    
-                    if serie.serie.id == self.x_studio_equipo_por_nmero_de_serie_1[len(self.x_studio_equipo_por_nmero_de_serie_1)-1].serie.id and se != len(self.x_studio_equipo_por_nmero_de_serie_1)-1:
-                       raise exceptions.ValidationError("Error serie ya agregada"+str(serie.serie.name))
-                    se=se+1
-                
-            
-            queryt="select h.id from helpdesk_ticket_stock_production_lot_rel s, helpdesk_ticket h where h.id=s.helpdesk_ticket_id and h.id!="+str(self.x_studio_id_ticket)+"  and h.stage_id!=18 and h.team_id=8 and  h.active='t' and stock_production_lot_id = "+str(self.x_studio_equipo_por_nmero_de_serie_1[0].serie.id)+" limit 1;"            
-            
-            self.env.cr.execute(queryt)                        
-            informaciont = self.env.cr.fetchall()
-            if len(informaciont) > 0:
-                
-                message = ('Estas agregando una serie de un ticket ya en proceso en equipo de toner. \n Ticket: '+str(informaciont[0][0]))
-                mess= {
-                        'title': _('Alerta!!!'),
-                        'message' : message
-                              }
-                return {'warning': mess}   
-                
+        
 
-                """
-                global mensajeCuerpoGlobal
-                mensajeCuerpoGlobal += '\n\nEstas agregando una serie de un ticket ya en proceso en equipo de toner. \n Ticket: ' + str(informacion[0][0]) + '\n '
-                mensajeTitulo = 'Alerta !!!'
-                wiz = self.env['helpdesk.alerta.series'].create({'ticket_id': self.id, 'ticket_id_existente': int(informacion[0][0]), 'mensaje': mensajeCuerpoGlobal})
-                view = self.env.ref('helpdesk_update.view_helpdesk_alerta_series')
-                return {
-                        'name': _(mensajeTitulo),
-                        'type': 'ir.actions.act_window',
-                        'view_type': 'form',
-                        'view_mode': 'form',
-                        'res_model': 'helpdesk.alerta.series',
-                        'views': [(view.id, 'form')],
-                        'view_id': view.id,
-                        'target': 'new',
-                        'res_id': wiz.id,
-                        'context': self.env.context,
-                        }                                             
-                """
-
+        """
+            Verificando que los equipos tengan servicio
+        """
         if self.x_studio_tipo_de_vale == 'Requerimiento' and self.x_studio_equipo_por_nmero_de_serie_1:
             equipoSinServicio = False
             mensajeCuerpo = 'Se creo un ticket de un equipo sin servicio.\nLos equipos que no tienen servicio son:\n\n'
@@ -4175,11 +4167,7 @@ class helpdesk_update(models.Model):
                     equipoSinServicio = True
             if equipoSinServicio:
                 mensajeTitulo = 'Alerta ticket sin servicio creado'
-                warning = {
-                            'title': _(mensajeTitulo), 
-                            'message': _(mensajeCuerpo)
-                }
-                return {'warning': warning}
+                todasLasAlertas = todasLasAlertas + '\n\n' + mensajeCuerpo
 
         if self.x_studio_tipo_de_vale != 'Requerimiento' and self.x_studio_equipo_por_nmero_de_serie:
             equipoSinServicio = False
@@ -4190,12 +4178,16 @@ class helpdesk_update(models.Model):
                     equipoSinServicio = True
             if equipoSinServicio:
                 mensajeTitulo = 'Alerta ticket sin servicio creado'
-                warning = {
-                            'title': _(mensajeTitulo), 
-                            'message': _(mensajeCuerpo)
-                }
-                return {'warning': warning}
-    
+                todasLasAlertas = todasLasAlertas + '\n\n' + mensajeCuerpo
+
+
+        if todasLasAlertas:
+            mensajeTitulo = 'Alertas generadas durante la asignación del equipo !!!'
+            warning = {
+                                'title': _(mensajeTitulo), 
+                                'message': _(todasLasAlertas)
+                    }
+            return {'warning': warning}
 
 
     cambioDespuesDeCierre = fields.Boolean(string = '¿Cambio despues de cierre?', default = False)
