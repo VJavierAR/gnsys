@@ -25,11 +25,6 @@ class CreacionRuta(Model):
     arreglo=fields.Char()
     active = fields.Boolean('Active', default=True, track_visibility=True)
 
-        for pp in assigned_picking_lst.filtered(lambda x:x.sale_id.x_studio_tipo_de_solicitud!="Retiro" and x.sale_id.x_studio_field_bxHgp.id==False):
-            if('incoming' not in tipo):
-                if('outgoing' in tipo):
-
-
 
     @api.multi
     def confirmar(self):
