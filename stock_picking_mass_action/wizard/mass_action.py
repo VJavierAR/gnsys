@@ -1050,6 +1050,10 @@ class SolicitudestockInventoryMassAction(TransientModel):
                             ubicacion=self.env['x_ubicacion_inventario'].search([('x_name','=',str(row[3].value).replace('.0',''))])
                             if(len(ubicacion)==0):
                                 ubicacion=self.env['x_ubicacion_inventario'].create({'x_name':str(row[3].value).replace('.0','')})
+                        if(row[4].ctype!=0 and row[4].value!=''):
+                            serie=self.env['stock.production.lot'].search([('name','=',str(row[3].value).replace('.0',''))])
+                            inventoty['prod_lot_id']=serie.id
+                            quant['lot_id']=serie.id
                         if(ubicacion!=None):
                             inventoty['x_studio_field_yVDjd']=ubicacion.id
                         _logger.info(str(row[1].value))
