@@ -24,6 +24,13 @@ class CreacionRuta(Model):
     usuarios=fields.Many2many('res.users')
     arreglo=fields.Char()
     active = fields.Boolean('Active', default=True, track_visibility=True)
+
+        for pp in assigned_picking_lst.filtered(lambda x:x.sale_id.x_studio_tipo_de_solicitud!="Retiro" and x.sale_id.x_studio_field_bxHgp.id==False):
+            if('incoming' not in tipo):
+                if('outgoing' in tipo):
+
+
+
     @api.multi
     def confirmar(self):
         t=""
@@ -39,6 +46,9 @@ class CreacionRuta(Model):
                 if(o.sale_id.id):
                     if (o.sale_id.x_studio_field_bxHgp.stage_id.id!=18 and o.sale_id.x_studio_field_bxHgp.stage_id.id!=4):
                         o.sale_id.x_studio_field_bxHgp.write({'stage_id':108})
+                    if(o.sale_id.x_studio_requiere_instalacin_1==True):
+                        t=self.env['helpdesk.ticket'].create({'x_studio_tipo_de_vale':'Instalación','partner_id':o.partner_id.parent_id.id,'x_studio_empresas_relacionadas':o.partner_id.id,'team_id':9,'diagnosticos':[(0,0,{'estadoTicket':'Abierto','comentario':'Instalacion de Equipo'})],'stage_id':89,'name':'Instalaccion '+'Serie: ','x_studio_equipo_por_nmero_de_serie':[(6,0,o.sale_id.mapped('order_line.x_studio_field_9nQhR.id'))]})                
+                        o.sale_id.x_studio_field_bxHgp=t.id
                     t=t+str(o.sale_id.x_studio_field_bxHgp.id)+','
                 if(o.sale_id.id==False):
                     t=t+str(o.origin)+','
