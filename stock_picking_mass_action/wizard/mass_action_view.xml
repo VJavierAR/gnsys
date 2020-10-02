@@ -362,7 +362,7 @@
             <form string="Mass Action for the selected sale order">
                 <group>
                     <field name="fechaInicial" string="Fecha Inicial" required="1"/>
-                    <field name="fechaFinal" string="Fecha Inicial" required="1"/>
+                    <field name="fechaFinal" string="Fecha Final" required="1"/>
                 </group>
                 <footer>
                     <button name="report" string="Reporte" type="object" class="oe_highlight"/>
