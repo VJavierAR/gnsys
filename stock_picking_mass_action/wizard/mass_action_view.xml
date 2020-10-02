@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="view_lot_serial_reporte" model="ir.ui.view">
+        <field name="model">lot.serial.reporte</field>
+        <field name="arch" type="xml">
+            <form string="Carga de guias">
+                <h1>Reporte de Base Instalada</h1>
+                <footer>
+                    <button name="reporte" string="Reporte" type="object" class="oe_highlight"/>
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
         <record id="view_helpdesk_guia_form" model="ir.ui.view">
         <field name="model">ticket.guia.carga</field>
         <field name="arch" type="xml">
