@@ -92,6 +92,7 @@ class helpdesk_update(models.Model):
 
 
     def creaDiagnosticoVistaLista(self, comentario, estado):
+        #_logger.info('SElf de creaDiagnosticoVistaLista: ' + str(self))
         objTicket = self.env['helpdesk.ticket'].search([['id', '=', self.x_studio_id_ticket]], order='create_date desc', limit=1)
         listaDiagnosticos = [(5, 0, 0)]
         listaDeFechas = []
@@ -410,6 +411,11 @@ class helpdesk_update(models.Model):
                 if not puedoCrearSinSerie:
                     raise exceptions.ValidationError('El usuario no es de mesa de Servicio y no tiene los permisos para crear un ticket sin serie.')
         
+        if self and 'NewId' in str(self[0]):
+            result = super(helpdesk_update, self._origin).write(vals)
+            _logger.info('result en write: ' + str(result))
+            return result
+
         result = super(helpdesk_update, self).write(vals)
         _logger.info('result en write: ' + str(result))
         
@@ -1376,18 +1382,80 @@ class helpdesk_update(models.Model):
 
     @api.onchange('team_id')
     def asignacion(self):
+        _logger.info('self al iniciar funcion asignacion: ' + str(self._origin))
         #for record in self:
-        if self.x_studio_id_ticket:
-            estadoAntes = str(self.stage_id.name)
+        if self._origin.x_studio_id_ticket:
+            estadoAntes = str(self._origin.stage_id.name)
             #if self.stage_id.name == 'Abierto' and self.estadoAsignacion == False and self.team_id.id != False:
-            if self.team_id.id != False:
-                query = "update helpdesk_ticket set stage_id = 2 where id = " + str(self.x_studio_id_ticket) + ";"
-                ss = self.env.cr.execute(query)
+            if self._origin.team_id.id != False:
+                #query = "update helpdesk_ticket set stage_id = 2 where id = " + str(self._origin.x_studio_id_ticket) + ";"
+                #ss = self._origin.env.cr.execute(query)
+                self._origin.write({'stage_id': 2})
 
-                comentarioGenerico = 'Cambio de estado al seleccionar ' + self.team_id.name + ' como área de atención. Seleccion realizada por ' + str(self.env.user.name) +'.'
+                comentarioGenerico = 'Cambio de estado al seleccionar ' + self._origin.team_id.name + ' como área de atención. Seleccion realizada por ' + str(self.env.user.name) +'.'
                 estado = 'Asignado'
-                self.creaDiagnosticoVistaLista(comentarioGenerico, estado)
+                _logger.info('self que envio a funcion creaDiagnosticoVistaLista: ' + str(self._origin))
+                #self._origin.creaDiagnosticoVistaLista(comentarioGenerico, estado)
                 
+
+                valoresNuevoDiagnostico = {
+                                            'ticketRelacion': int(self.x_studio_id_ticket),
+                                            'estadoTicket': estado,
+                                            'mostrarComentario': True,
+                                            'write_uid':  self.env.user.id,
+                                            'create_uid': self.env.user.id,
+                                            'comentario': comentarioGenerico,
+                                            'creadoPorSistema': True
+                }
+                ids_diagnosticos = self._origin.sudo().diagnosticos.ids
+                nuevoDiagnostico = self._origin.env['helpdesk.diagnostico'].sudo().with_env(self.env(user=self.env.user.id)).create(valoresNuevoDiagnostico)
+                _logger.info('nuevoDiagnostico: ' + str(nuevoDiagnostico))
+                ids_diagnosticos.append(nuevoDiagnostico)
+                self._origin.sudo().write({'diagnosticos': [(4, 0, nuevoDiagnostico.id)] })
+
+                
+                listaDiagnosticos = [(5, 0, 0)]
+                listaDeFechas = []
+                listaDeUsuariosCreadores = []
+                for diagnostico in self._origin.sudo().diagnosticos:
+                    listaDiagnosticos.append((0, 0, {
+                                                        'ticketRelacion': int(diagnostico.ticketRelacion.x_studio_id_ticket),
+                                                        'estadoTicket': diagnostico.estadoTicket,
+                                                        'evidencia': [(6, 0, diagnostico.evidencia.ids)],
+                                                        'mostrarComentario': diagnostico.mostrarComentario,
+                                                        'write_uid':  diagnostico.write_uid.id,
+                                                        'comentario': str(diagnostico.comentario),
+                                                        'create_date': diagnostico.create_date,
+                                                        'create_uid': diagnostico.create_uid.id,
+                                                        'creadoPorSistema': diagnostico.creadoPorSistema
+                                                    }))
+                    listaDeFechas.append(diagnostico.create_date)
+                    listaDeUsuariosCreadores.append(diagnostico.create_uid.id)
+                self._origin.sudo().write({'diagnosticos': listaDiagnosticos})
+                if listaDeFechas:
+                    i = 0
+                    for fecha in listaDeFechas:
+                        query = "update helpdesk_diagnostico set create_date = '" + str(fecha.strftime('%Y-%m-%d %H:%M:%S')) + "' where id = " + str(self._origin.sudo().diagnosticos[i].id) + ";"
+                        self._origin.env.cr.execute(query)
+                        query = "update helpdesk_diagnostico set create_uid = " + str(listaDeUsuariosCreadores[i]) + " where id = " + str(self._origin.sudo().diagnosticos[i].id) + ";"
+                        self._origin.env.cr.execute(query)
+                        #query = "update helpdesk_diagnostico set \"creadoPorSistema\" = '" + 't' + "' where id = " + str(objTicket.diagnosticos[i].id) + ";"
+                        #self.env.cr.execute(query)
+                        self._origin.sudo().diagnosticos[i].create_date = fecha
+                        i = i + 1
+                
+
+                #for diagnostico in self._origin.sudo().diagnosticos:
+                #_logger.info('self._origin.sudo().diagnosticos[-1].create_date: ' + str(self._origin.sudo().diagnosticos[-1].create_date))
+                #_logger.info('self._origin.sudo().diagnosticos[-2].create_date: ' + str(self._origin.sudo().diagnosticos[-2].create_date))
+                #_logger.info('self._origin.sudo().diagnosticos[-1].comentario: ' + str(self._origin.sudo().diagnosticos[-1].comentario))
+                #_logger.info('not self._origin.sudo().diagnosticos[-1].comentario: ' + str(not self._origin.sudo().diagnosticos[-1].comentario))
+                #if self._origin.sudo().diagnosticos[-1].create_date == self._origin.sudo().diagnosticos[-2].create_date and not self._origin.sudo().diagnosticos[-1].comentario:
+                #    _logger.info('Se creo un diagnostico de mas y lo vohya borrar alv.')
+                #    self._origin.sudo().write({'diagnosticos': [(3, self._origin.sudo().diagnosticos[-1].id)]})
+
+
+                """
                 ultimaEvidenciaTec = []
                 ultimoComentario = ''
                 if self.diagnosticos:
@@ -1437,7 +1505,7 @@ class helpdesk_update(models.Model):
                             }
                         lineas.append((0, 0, val))
                     lineas.append((0, 0, {'ticketRelacion': int(self.x_studio_id_ticket), 'comentario': ultimoComentario, 'estadoTicket': "Asignado", 'write_uid':  self.env.user.id}))
-                    
+                """    
                 
                 #self.estadoAsignacion = True
                 message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Asignado' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
@@ -1447,10 +1515,10 @@ class helpdesk_update(models.Model):
                     }
                 
                 res = {}
-                idEquipoDeAsistencia = self.team_id.id
+                idEquipoDeAsistencia = self._origin.team_id.id
                 query = "select * from helpdesk_team_res_users_rel where helpdesk_team_id = " + str(idEquipoDeAsistencia) + ";"
-                self.env.cr.execute(query)
-                informacion = self.env.cr.fetchall()
+                self._origin.env.cr.execute(query)
+                informacion = self._origin.env.cr.fetchall()
                 listaUsuarios = []
                 
                 for idUsuario in informacion:
@@ -1499,18 +1567,22 @@ class helpdesk_update(models.Model):
                     objTicket.diagnosticos[i].create_date = fecha
                     i = i + 1
                 """
-                return {'warning': mess, 'domain': {'user_id': dominio}}
+                return {
+                        'warning': mess, 
+                        'domain': {'user_id': dominio},
+                        'value': { 'stage_id': 2 }
+                }
                 
             #else:
                 #reasingado
                 
                 
-        if self.team_id.id != False:
+        if self._origin.team_id.id != False:
             res = {}
-            idEquipoDeAsistencia = self.team_id.id
+            idEquipoDeAsistencia = self._origin.team_id.id
             query = "select * from helpdesk_team_res_users_rel where helpdesk_team_id = " + str(idEquipoDeAsistencia) + ";"
-            self.env.cr.execute(query)
-            informacion = self.env.cr.fetchall()
+            self._origin.env.cr.execute(query)
+            informacion = self._origin.env.cr.fetchall()
             listaUsuarios = []
             #res['domain']={'x_studio_productos':[('categ_id', '=', 5),('x_studio_toner_compatible.id','in',list)]}
             for idUsuario in informacion:
@@ -4280,7 +4352,7 @@ class helpdesk_update(models.Model):
 
 
 
-    diagnosticos = fields.One2many('helpdesk.diagnostico', 'ticketRelacion', string = 'Diagnostico', track_visibility = 'onchange')
+    diagnosticos = fields.One2many('helpdesk.diagnostico', 'ticketRelacion', string = 'Diagnostico', track_visibility = 'onchange', copy=True)
 
     validacionesRefaccion = fields.One2many('helpdesk.validacion.so', 'ticketRelacion', string = 'Validaciones de refacciones', store = True)
 
