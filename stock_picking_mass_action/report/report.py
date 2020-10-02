@@ -189,7 +189,7 @@ class PartnerXlsx(models.AbstractModel):
                     sheet.write(i, 3, obj.x_studio_localidades, bold)
                     sheet.write(i, 4, obj.warehouse_id.name, bold)
                     sheet.write(i, 5, eq.x_studio_estado if eq.x_studio_estado else '', bold)
-                    sheet.write(i, 6, str(eq.product_id.name).split('] ')[1] if(len(eq.product_id.name.split('] '))>1) else '', bold)
+                    sheet.write(i, 6, eq.product_id.name, bold)
                     #m=self.env['stock.move.line'].search([['picking_id.sale_id','=',obj.id],['lot_id','=',eq.x_studio_field_9nQhR.id]]).lot_id.name
                     sheet.write(i, 7, str(eq.x_studio_field_9nQhR.name) if(eq.x_studio_field_9nQhR.name) else '', bold)
                     a=obj.order_line.filtered(lambda x:x.product_id.categ_id.id==11).mapped('product_id.name')
@@ -211,7 +211,7 @@ class PartnerXlsx(models.AbstractModel):
                 sheet.write(i, 3, obj.x_studio_localidades, bold)
                 sheet.write(i, 4, obj.warehouse_id.name, bold)
                 sheet.write(i, 5, equ.x_studio_estado if equ.x_studio_estado else '', bold)
-                sheet.write(i, 6, str(equ.product_id.name).split('] ')[1] if(len(str(equ.product_id.name).split('] '))>1) else '', bold)
+                sheet.write(i, 6, equ.product_id.name, bold)
                 #m=self.env['stock.move.line'].search([['picking_id.sale_id','=',obj.id],['lot_id','=',equ.x_studio_field_9nQhR.id]]).lot_id.name
                 sheet.write(i, 7, str(equ.x_studio_field_9nQhR.name) if(equ.x_studio_field_9nQhR.id) else '', bold)
                 a=obj.order_line.filtered(lambda x:x.product_id.categ_id.id==11).mapped('product_id.name')
