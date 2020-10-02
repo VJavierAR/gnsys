@@ -274,9 +274,12 @@ class sale_update(models.Model):
 			#ppp.action_confirm()
 			#ppp.action_assign()
 	def retiro(self):
+		fecha=datetime.datetime.now()-datetime.timedelta(hours=-5)
 		self.action_confirm()
 		seriesR=self.compatiblesLineas.mapped('serie.id')
 		seriesRR=self.env['stock.production.lot'].browse(seriesR)
+		for s in seriesRR:
+			self.env['cliente.h'].create({'localidad':self.partner_shipping_id.id,'solicitud':self.id,'contrato':self.x_studio_field_LVAj5.id,'servicio':self.x_studio_field_69Boh.id,'origen':self.partner_shipping_id.name,'destino':self.warehouse_id.name,'fecha':fecha,'serie':s.id})
 		seriesRR.write({'servicio':False,'x_studio_cliente':1,'x_studio_localidad_2':26662})
 		picks=self.env['stock.picking'].search([['sale_id','=',self.id]])
 		almacen=self.env['stock.warehouse'].search([['x_studio_field_E0H1Z','=',self.partner_shipping_id.id]])
