@@ -178,7 +178,7 @@ class PartnerXlsx(models.AbstractModel):
         report_name = 'Solicitudes'
         bold = workbook.add_format({'bold': True})
         sheet = workbook.add_worksheet('Solicitudes')
-        sheet.merge_range('A1:Q1', 'Solicitudes', merge_format)
+        sheet.merge_range('A1:P1', 'Solicitudes', merge_format)
         for obj in sale:
             equ=obj.order_line.filtered(lambda x:x.product_id.categ_id.id==13)
             if(len(equ)>1):
