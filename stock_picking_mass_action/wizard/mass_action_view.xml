@@ -5,6 +5,9 @@
         <field name="arch" type="xml">
             <form string="Carga de guias">
                 <h1>Reporte de Base Instalada</h1>
+                    <group>
+                        <field name="name" string="name" invisible="1"/>
+                    </group>
                 <footer>
                     <button name="reporte" string="Reporte" type="object" class="oe_highlight"/>
                     <button string="Cancel" class="oe_link" special="cancel"/>

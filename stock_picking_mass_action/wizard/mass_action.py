@@ -1481,7 +1481,8 @@ class cargadeGuias(TransientModel):
 class reporteBaseInslada(TransientModel):
     _name='lot.serial.reporte'
     _description='reporte de base instala wizard'
-
+    name=fields.Char()
+    
     def reporte(self):
         s=self.env['stock.production.lot'].search([['servicio','!=',False]])
         s[0].write({'x_studio_arreglo':str(s.mapped('id'))})
