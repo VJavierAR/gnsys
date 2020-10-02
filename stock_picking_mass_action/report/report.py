@@ -401,7 +401,7 @@ class PartnerXlsx(models.AbstractModel):
         if(len(lots)==1 and lots.x_studio_arreglo!='/' and lots.x_studio_arreglo!=False):
             copia=lots
             lots=self.env['stock.production.lot'].browse(eval(lots.x_studio_arreglo)).sorted(key='create_date',reverse=True) 
-            _logger(str(len(lots)))
+            _logger.info(str(len(lots)))
             copia.write({'x_studio_arreglo':'/'})
         merge_format = workbook.add_format({'bold': 1,'border': 1,'align': 'center','valign': 'vcenter','fg_color': 'blue'})
         report_name = 'Base Instalada'
