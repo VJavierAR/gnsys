@@ -311,3 +311,10 @@ class sale_update(models.Model):
 			self.cambio()
 		if(self.x_studio_tipo_de_solicitud == "Retiro"):
 			self.retiro()
+
+    @api.multi
+    def print_quotation(self):
+        #self.filtered(lambda s: s.state == 'draft').write({'state': 'sent'})
+
+        return self.env.ref('studio_customization.presupuesto_pedido_6e389c86-9862-4c69-af3d-c7021b680bab')\
+            .with_context(discard_logo_check=True).report_action(self)
