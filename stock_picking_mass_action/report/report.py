@@ -391,7 +391,7 @@ class PartnerXlsx(models.AbstractModel):
         workbook.close()
 
 class PartnerXlsx(models.AbstractModel):
-    _name = 'report.lot_serial.report'
+    _name = 'report.lot.serial.report'
     _inherit = 'report.report_xlsx.abstract'
 
 
