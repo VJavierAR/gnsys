@@ -305,7 +305,7 @@ class sale_update(models.Model):
 		    pic.move_ids_without_package.write({'location_id':pic.picking_type_id.default_location_src_id.id})
 
 	def autoriza(self):
-		if(self.x_studio_tipo_de_solicitud in ["Venta","Venta directa","Arrendamiento","Backup","Demostración"]):
+		if(self.x_studio_tipo_de_solicitud in ["Venta","Venta directa","Arrendamiento","Backup","Demostración","Préstamo"]):
 			self.action_confirm()
 		if(self.x_studio_tipo_de_solicitud == "Cambio"):
 			self.cambio()
