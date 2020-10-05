@@ -1491,7 +1491,7 @@ class reporteBaseInslada(TransientModel):
     _description='reporte de base instala wizard'
 
     def reporte(self):
-        s=self.env['stock.production.lot'].search([['servicio','!=',False]])
+        s=self.env['stock.production.lot'].search([['servicio','!=',False]],limit=1000)
         _logger.info(str(len(s)))
         s[0].write({'x_studio_arreglo':str(s.mapped('id'))})
         return self.env.ref('stock_picking_mass_action.lot_serial_xlsx').report_action(s)
