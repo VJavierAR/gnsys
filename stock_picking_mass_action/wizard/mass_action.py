@@ -377,8 +377,15 @@ class StockCambio(TransientModel):
         f="<table class='table table-sm'><thead><tr><th>Modelo</th><th>Serie</th></thead><tbody>"
         for s in equipos:
             d=self.env['stock.move.line'].search([['move_id','=',s.move_id.id]])
+            qu1=self.env['stock.quant'].search([['location_id','=',s.move_id.location_id.id],['product_id','=',s.move_id.product_id.id],['lot_id','=',s.serieOrigen.id]])
+            qu=self.env['stock.quant'].search([['location_id','=',s.move_id.location_id.id],['product_id','=',s.move_id.product_id.id],['lot_id','=',d.lot_id.id]])
+            if(d.lot_id.id!=s.serieOrigen.id):
+                self.env.cr.execute("update stock_quant set reserved_quantity=1 where id="+str(qu1.id)+";")            
+                #_logger.info(str(qu.id))
+                self.env.cr.execute("update stock_quant set reserved_quantity=0 where id="+str(qu.id)+";")
+                self.env.cr.execute("update stock_move_line set lot_id="+str(s.serieOrigen.id)+"where id="+str(d.id)+";")            
             s.move_id.sale_line_id.write({'x_studio_field_9nQhR':s.serieOrigen.id})
-            d.write({'lot_id':s.serieOrigen.id})            
+            #d.write({'lot_id':s.serieOrigen.id})            
             if(self.pick.sale_id.x_studio_tipo_de_solicitud=='Retiro'):
                 s.serieOrigen.write({'servicio':False,'x_studio_cliente':1,'x_studio_localidad_2':self.pick.sale_id.warehouse_id.x_studio_field_E0H1Z.id})
                 self.env['cliente.h'].create({'localidad':self.pick.sale_id.partner_shipping_id.id,'solicitud':self.pick.sale_id.id,'contrato':self.pick.sale_id.x_studio_field_LVAj5.id,'servicio':self.pick.sale_id.x_studio_field_69Boh.id,'origen':self.pick.sale_id.partner_shipping_id.name,'destino':self.pick.sale_id.warehouse_id.name,'fecha':fecha,'serie':s.serieOrigen.id})
