@@ -170,6 +170,8 @@ class fac_order(models.Model):
                                                                  ,'origin' : "dividir por servicios: " + str(self.name)
                                                                  , 'team_id' : 1
                                                                  , 'x_studio_factura':'si'
+                                                                 ,'month':self.month
+                                                                 ,'year':self.year
                                                                 })
                       self.env.cr.execute("insert into x_contrato_sale_order_rel (sale_order_id, contrato_id) values (" +str(fac.id) + ", " +  str(r.x_studio_contratosid).replace("[","").replace("]","") + ");")                                         
                       servicioshtml="<a href='https://gnsys-corp.odoo.com/web#id="+str(fac.id)+"&action=1167&model=sale.order&view_type=form&menu_id=406' target='_blank'>"+str(fac.name)+"</a>"+'<br> '+servicioshtml
