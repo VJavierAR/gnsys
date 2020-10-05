@@ -13,7 +13,7 @@ class SaleOrderCompatibles(http.Controller):
         #_logger.info(str(uido))
         u=request.env['res.groups'].search([['name','=','ventas autorizacion']]).users.filtered(lambda x:x.id==uido)
         #_logger.info(str(u.id))
-        if(p.x_studio_tipo_de_solicitud in ["Venta","Venta directa","Arrendamiento","Backup","Demostración"] and u.id!=False):
+        if(p.x_studio_tipo_de_solicitud in ["Venta","Venta directa","Arrendamiento","Backup","Demostración","Préstamo"] and u.id!=False):
             p.action_confirm()
         if(p.x_studio_tipo_de_solicitud == "Cambio" and u.id!=False):
             p.cambio()
