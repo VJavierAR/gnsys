@@ -31,8 +31,9 @@ class StockQuan(Model):
 
     #@api.onchange('quantity')
     def actualizaRegla(self):
-        todo=self.search([['x_studio_almacn.x_studio_mini','=',True]])
-        for t in todo:
+        todo=self.search([])
+        tt=todo.filtered(lambda x:x.x_studio_almacn.x_studio_mini==True)
+        for t in tt:
             r=self.env['stock.warehouse.orderpoint'].search([['location_id','=',t.location_id.id],['product_id','=',t.product_id.id]])
             if(r.id):
                 t.sudo().write({'regla':r.id})
