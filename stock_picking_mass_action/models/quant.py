@@ -31,7 +31,7 @@ class StockQuan(Model):
 
     #@api.onchange('quantity')
     def actualizaRegla(self):
-        todo=self.search([])
+        todo=self.search([['x_studio_almacn.x_studio_mini','=',True]])
         for t in todo:
             r=self.env['stock.warehouse.orderpoint'].search([['location_id','=',t.location_id.id],['product_id','=',t.product_id.id]])
             if(r.id):
