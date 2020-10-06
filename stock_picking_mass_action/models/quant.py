@@ -11,7 +11,7 @@ import datetime
 class StockQuan(Model):
     _inherit = 'stock.quant'
     quants_registro=fields.One2many('stock.quant.line','quant_id')
-
+    regla=fields.Many2one('stock.warehouse.orderpoint')
 
     @api.model
     def _unlink_zero_quants(self):
@@ -31,16 +31,24 @@ class StockQuan(Model):
 
     #@api.onchange('quantity')
     def actualizaRegla(self):
-        if(self.x_studio_almacn.x_studio_mini==True):
-            q=self.env['stock.warehouse.orderpoint'].search([['location_id','=',self.location_id.id],['product_id','=',self.product_id.id]])
-            if(q.mapped('id')==[]):
-                p=self.env['product.product'].search([['name','like',self.product_id.name]])
-                q=self.env['stock.warehouse.orderpoint'].search([['location_id','=',self.location_id.id],['product_id','in',p.mapped('id')]])
-                q[0].x_studio_existencia=self.quantity
-                q[0].x_studio_existencia_2=self.quantity
-            else:    
-                q.x_studio_existencia=self.quantity
-                q.x_studio_existencia_2=self.quantity
+        todo=self.search([])
+        for t in todo:
+            r=self.env['stock.warehouse.orderpoint'].search([['location_id','=',t.location_id.id],['product_id','=',t.product_id.id]])
+            if(r.id):
+                t.sudo.write({'regla':r.id})
+        #if(self.x_studio_almacn.x_studio_mini==True):
+        #    q=self.env['stock.warehouse.orderpoint'].search([['location_id','=',self.location_id.id],['product_id','=',self.product_id.id]])
+        #    if(q.mapped('id')==[]):
+        #        p=self.env['product.product'].search([['name','like',self.product_id.name]])
+         #       q=self.env['stock.warehouse.orderpoint'].search([['location_id','=',self.location_id.id],['product_id','in',p.mapped('id')]])
+         #       q[0].x_studio_existencia=self.quantity
+         #       q[0].x_studio_existencia_2=self.quantity
+         #   else:    
+          #      q.x_studio_existencia=self.quantity
+          #      q.x_studio_existencia_2=self.quantity
+
+
+
     def archivaReporte(self):
         almacenes=self.env['stock.warehouse'].search([['x_studio_cliente','=',False]])
         r=self.search([['location_id','in',almacenes.mapped('lot_stock_id.id')]])
