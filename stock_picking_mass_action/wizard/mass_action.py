@@ -266,7 +266,7 @@ class StockIngreso(TransientModel):
                 l.write({'state':'assigned'})
         self.pick.purchase_id.write({'recibido':'recibido'})
         #self.env['stock.picking'].search([['state','=','assigned']]).action_assign()
-        #self.pick.action_done()
+        self.pick.action_done()
         return self.env.ref('stock.action_report_picking').report_action(self.pick)
 
 class StockIngresoLines(TransientModel):
