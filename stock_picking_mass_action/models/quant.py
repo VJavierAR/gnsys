@@ -35,7 +35,7 @@ class StockQuan(Model):
         for t in todo:
             r=self.env['stock.warehouse.orderpoint'].search([['location_id','=',t.location_id.id],['product_id','=',t.product_id.id]])
             if(r.id):
-                t.sudo.write({'regla':r.id})
+                t.sudo().write({'regla':r.id})
         #if(self.x_studio_almacn.x_studio_mini==True):
         #    q=self.env['stock.warehouse.orderpoint'].search([['location_id','=',self.location_id.id],['product_id','=',self.product_id.id]])
         #    if(q.mapped('id')==[]):
