@@ -5687,7 +5687,8 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
     historicoDeComponentes = fields.One2many(
                                                 'x_studio_historico_de_componentes', 
                                                 'x_studio_field_MH4DO', 
-                                                string = 'Historico de Componentes', 
+                                                string = 'Historico de Componentes',
+                                                #domain = "[ '|', ('x_ultimaCargaRefacciones', '=', True), ('x_studio_modelo', 'like', 'Refacción y/o accesorio:') ]",
                                                 compute='_compute_historico_de_componentes'
                                             )
     """
@@ -5817,7 +5818,11 @@ class helpdesk_confirmar_validar_refacciones(TransientModel):
     """
     def _compute_historico_de_componentes(self):
         if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
-            self.historicoDeComponentes = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_histrico_de_componentes.ids
+            componentes = self.env['x_studio_historico_de_componentes'].search([('x_studio_modelo', '!=', False)])
+            #_logger.info('**** componentes: ' + str(componentes))
+            #self.historicoDeComponentes = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_histrico_de_componentes.ids
+            componentes = componentes.filtered(lambda componente:  componente.x_studio_field_MH4DO.name == str(self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].name) and (componente.x_ultimaCargaRefacciones == True or 'Refacción y/o accesorio:' in componente.x_studio_modelo) )
+            self.historicoDeComponentes = componentes.ids
     """
     def _compute_movimientos(self):
         if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
@@ -6538,3 +6543,64 @@ class HelpDeskDatosMesa(TransientModel):
             self.encargadoArea = self.ticket_id.x_studio_responsable_de_equipo.id
 
     
+
+
+
+class HelpDeskResueltoConComentario(TransientModel):
+    _name = 'helpdesk.comentario.resuelto'
+    _description = 'Mover al estado resuelto con un comentario.'
+    check = fields.Boolean(string = 'Mostrar en reporte', default = False,)
+    ticket_id = fields.Many2one("helpdesk.ticket")
+    diagnostico_id = fields.One2many('helpdesk.diagnostico', 'ticketRelacion', string = 'Diagnostico', compute = '_compute_diagnosticos')
+    estado = fields.Char('Estado previo a cerrar el ticket', compute = "_compute_estadoTicket")
+    comentario = fields.Text('Comentario')
+    evidencia = fields.Many2many('ir.attachment', string = "Evidencias")
+
+    def resuletoTicketConComentario(self):
+        estadoAntes = str(self.ticket_id.stage_id.name)
+        ultimaEvidenciaTec = []
+        ultimoComentario = ''
+        if self.ticket_id.diagnosticos:
+            if self.ticket_id.diagnosticos[-1].evidencia.ids:
+                ultimaEvidenciaTec = self.ticket_id.diagnosticos[-1].evidencia.ids
+            ultimoComentario = self.ticket_id.diagnosticos[-1].comentario
+        comentarioGenerico = 'Cambio de estado al seleccionar botón Resuelto. Se cambio al estado Resuelto. Seleccion realizada por ' + str(self.env.user.name) +'.'
+        estado = 'Resuelto'
+        if self.comentario:
+            comentarioGenerico = comentarioGenerico + '\nComentario de ' + self.env.user.name + ': ' + self.comentario
+        self.env['helpdesk.diagnostico'].create({   
+                                                    'ticketRelacion': self.ticket_id.id,
+                                                    'comentario': comentarioGenerico,
+                                                    'estadoTicket': estado,
+                                                    'evidencia': [(6,0,ultimaEvidenciaTec)],
+                                                    'mostrarComentario': self.check,
+                                                    'creadoPorSistema': False if self.comentario else True
+                                                })
+        self.ticket_id.write({
+                                'stage_id': 3,
+                                'estadoResuelto': True,
+                                'estadoAtencion': False
+                            })
+        message = 'Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Resuelto' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página."
+        wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': message})
+        view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+        return {
+            'name': _('Estado de ticket actualizado!!!'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'helpdesk.alerta',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            'context': self.env.context,
+        }
+
+
+    def _compute_estadoTicket(self):
+        self.estado = self.ticket_id.stage_id.name
+
+    def _compute_diagnosticos(self):
+        self.diagnostico_id = self.ticket_id.diagnosticos.ids
+

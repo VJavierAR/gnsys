@@ -411,7 +411,8 @@ class helpdesk_update(models.Model):
                 if not puedoCrearSinSerie:
                     raise exceptions.ValidationError('El usuario no es de mesa de Servicio y no tiene los permisos para crear un ticket sin serie.')
         
-        if self and 'NewId' in str(self[0]):
+        #if self and 'NewId' in str(self[0]):
+        if not self.ids:
             result = super(helpdesk_update, self._origin).write(vals)
             _logger.info('result en write: ' + str(result))
             return result
@@ -1656,17 +1657,13 @@ class helpdesk_update(models.Model):
         estadoAntes = str(self.stage_id.name)
         if self.estadoResuelto == False or self.estadoResuelto == True :
             query = "update helpdesk_ticket set stage_id = 3 where id = " + str(self.x_studio_id_ticket) + ";"
-        
             ss = self.env.cr.execute(query)
-        
-            #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
             ultimaEvidenciaTec = []
             ultimoComentario = ''
             if self.diagnosticos:
                 if self.diagnosticos[-1].evidencia.ids:
                     ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
                 ultimoComentario = self.diagnosticos[-1].comentario
-            
             comentarioGenerico = 'Cambio de estado al seleccionar botón Resuelto. Se cambio al estado Resuelto. Seleccion realizada por ' + str(self.env.user.name) +'.'
             estado = 'Resuelto'
             self.creaDiagnosticoVistaLista(comentarioGenerico, estado)
@@ -4398,6 +4395,22 @@ class helpdesk_update(models.Model):
             'context': self.env.context,
         }
 
+    @api.multi
+    def resuelto_con_comentario_wizard(self):
+        wiz = self.env['helpdesk.comentario.resuelto'].create({'ticket_id':self.id })
+        view = self.env.ref('helpdesk_update.view_helpdesk_resuleto_con_comentario')
+        return {
+            'name': _('Resuelto'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'helpdesk.comentario.resuelto',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            'context': self.env.context,
+        }
 
     @api.multi
     def cerrar_con_comentario_wizard(self):
@@ -5907,6 +5920,67 @@ class helpdes_diagnostico(models.Model):
                         'context': self.env.context,
                     }
 
+
+
+class helpdesk_ticket_techra(models.Model):
+    _name = "helpdesk.ticket.techra"
+    _description = "Historial de tickets de techra"
+    esTicketDeTechra = fields.Boolean(
+                                        string = 'Es ticket de techra?',
+                                        default = False
+                                    )
+    tipoDeReporteTechra = fields.Text(
+                                        string = 'Tipo de reporte techra'
+                                    )
+    estadoTicketTechra = fields.Text(
+                                        string = 'Estado ticket techra'
+                                    )
+    areaDeAtencionTechra = fields.Text(
+                                        string = 'Área de atención techra'
+                                    )
+    partner_id = fields.Many2one( 
+                                    'res.partner',
+                                    string = 'Cliente'
+                                )
+    x_studio_empresas_relacionadas = fields.Many2one( 
+                                                        'res.partner',
+                                                        string = 'Localidad'
+                                                    )
+    nombreTfsTechra = fields.Text(
+                                    string = 'Nombre TFS techra'
+                                )
+    localidadContacto = fields.Many2one(
+                                            'res.partner',
+                                            string = 'Localidad contacto'
+                                        )
+    x_studio_nmero_de_ticket_cliente = fields.Text(
+                                                    string = 'Ticket del cliente',
+                                                    )
+    x_studio_nmero_ticket_distribuidor_1 = fields.Text(
+                                                            string = 'Número de ticket distribuidor',
+                                                        )
+    x_studio_nmero_de_guia_1 = fields.Text(
+                                                string = 'Número de guía'
+                                            )
+    descripcionDelReporteTechra = fields.Text(
+                                                string = 'Descripción del reporte techra'
+                                            )
+    obsAdicionalesTechra = fields.Text(
+                                        string = 'Observaciones adicionales techra'
+                                    )
+    numTicketDeTechra = fields.Text(
+                                        string = 'Número de ticket de techra'
+                                    )
+    numeroDeSerieTechra = fields.Text(
+                                        string = 'Número de serie techra'
+                                    )
+    diagnosticos = fields.One2many(
+                                        'helpdesk.diagnostico', 
+                                        'ticketRelacion', 
+                                        string = 'Diagnostico', 
+                                        track_visibility = 'onchange', 
+                                        copy=True
+                                    )
 
 
 class helpdesk_lines(models.Model):
