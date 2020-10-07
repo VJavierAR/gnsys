@@ -33,6 +33,7 @@ class SeriesUpdate(models.Model):
 	clientes = fields.One2many('cliente.h', 'serie', string = 'Clientes', store = True)	
 	clienteAnterior=fields.Boolean()
 	localidadFacturacion=fields.Many2one('res.partner')
+	active = fields.Boolean('Active', default=True, track_visibility=True)
 
 	@api.onchange('clienteAnterior')
 	def anterior(self):
