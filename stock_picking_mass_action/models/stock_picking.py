@@ -31,7 +31,7 @@ class StockPicking(Model):
     distribucion=fields.Boolean()
     retiro=fields.Boolean()
     mini=fields.Boolean()
-    ticke_id=fields.Integer(related='group_id.sale_id.x_studio_field_bxHgp.id')
+    #ticke_id=fields.Integer(related='group_id.sale_id.x_studio_field_bxHgp.id')
 
 
     def validacionZero(self):
