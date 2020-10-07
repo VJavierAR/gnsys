@@ -299,8 +299,8 @@ class StockCambio(TransientModel):
         else:   
             self.confirmar(self.accesorios_ids)
             self.confirmar(self.toner_ids)
-            self.confirmarE(equipos)
             self.confirmar(equipos)
+            self.confirmarE(equipos)
             wiz=self.env['stock.picking.mass.action'].create({'picking_ids':[(4,self.pick.id)],'confirm':True,'check_availability':True,'transfer':True})
             view = self.env.ref('stock_picking_mass_action.view_stock_picking_mass_action_form')
             return {
