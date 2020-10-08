@@ -411,8 +411,8 @@ class helpdesk_update(models.Model):
                 if not puedoCrearSinSerie:
                     raise exceptions.ValidationError('El usuario no es de mesa de Servicio y no tiene los permisos para crear un ticket sin serie.')
         
-        #if self and 'NewId' in str(self[0]):
-        if not self.ids:
+        if self and 'NewId' in str(self[0]):
+        #if not self.ids:
             result = super(helpdesk_update, self._origin).write(vals)
             _logger.info('result en write: ' + str(result))
             return result
