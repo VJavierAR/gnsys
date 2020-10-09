@@ -5043,13 +5043,36 @@ class helpdesk_agregar_productos(models.Model):
 
                         }])
             """
-        _logger.info('3312: lista2: ' + str(lista))
+        #_logger.info('3312: lista2: ' + str(lista))
         self.ticket_id.write({'x_studio_productos': lista})
 
+        lista = []
+        productos_en_wizard = self.mapped('accesorios')
+        productos_en_wizard_ids = self.mapped('accesorios.productos.id')
+        #_logger.info('productos_en_wizard: ' + str(productos_en_wizard))
+        #_logger.info('productos_en_wizard_ids: ' + str(productos_en_wizard_ids))
+        prodcutos_en_ticket_ids = self.ticket_id.mapped('x_studio_productos.id')
+        #_logger.info('prodcutos_en_ticket_ids: ' + str(prodcutos_en_ticket_ids))
+        prodcutos_en_ticket = self.ticket_id.x_studio_productos #self.ticket_id.mapped('x_studio_productos')
+        #_logger.info('prodcutos_en_ticket: ' + str(prodcutos_en_ticket))
         indice = 0
-        for refaccion in self.ticket_id.x_studio_productos:
-            refaccion.x_studio_cantidad_pedida = listaDeCantidades[indice]
+        for refaccion in self.accesorios:
+            producto_en_wizard = refaccion.productos.id
+            #producto_en_ticket = prodcutos_en_ticket[indice]
+            for producto_en_ticket in prodcutos_en_ticket:
+                if producto_en_wizard == producto_en_ticket.id:
+                    vals = {
+                            'x_studio_cantidad_pedida': refaccion.cantidadPedida
+                    }
+                    lista.append( [1, producto_en_wizard, vals] )
+                    break
             indice = indice + 1
+        #_logger.info('3312: lista actualiza cantidades: ' + str(lista))
+        self.ticket_id.write({'x_studio_productos': lista})
+        #indice = 0
+        #for refaccion in self.ticket_id.x_studio_productos:
+        #    refaccion.x_studio_cantidad_pedida = listaDeCantidades[indice]
+        #    indice = indice + 1
 
         mensajeTitulo = 'Productos agregados!!!'
         mensajeCuerpo = 'Se agregaron los productos y sus cantidades.'
