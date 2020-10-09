@@ -646,28 +646,27 @@ class contadores(models.Model):
                                 worksheet.write(i, 4, rpt.x_studio_lectura_anterior_bn,neg)
                                 worksheet.write(i, 5, rpt.x_studio_lectura_anterior_color,neg)                        
                                 worksheet.write(i, 6, rpt.contadorMono,neg)
-                                worksheet.write(i, 7, rpt.contadorColor,neg)
-                                if str(rpt.serie.x_studio_estado)!='Back-up':   
-                                    if rpt.contadorMono==0:
-                                       ebn=0
-                                    else:
-                                       ebn=rpt.contadorMono-rpt.x_studio_lectura_anterior_bn
-                                    if rpt.contadorColor==0:
-                                       ec=0
-                                    else:                
-                                       ec=rpt.contadorColor-rpt.x_studio_lectura_anterior_color                    
-                                    worksheet.write(i, 15, rpt.x_studio_ubicacin,neg)                                                            
-                                    worksheet.write(i, 16, rpt.comentarioLecturas,neg)                                                            
-                                    worksheet.write(i, 8, ebn,neg)
-                                    worksheet.write(i, 9, ec,neg)
+                                worksheet.write(i, 7, rpt.contadorColor,neg)   
+                                if rpt.contadorMono==0:
+                                   ebn=0
+                                else:
+                                   ebn=rpt.contadorMono-rpt.x_studio_lectura_anterior_bn
+                                if rpt.contadorColor==0:
+                                   ec=0
+                                else:                
+                                   ec=rpt.contadorColor-rpt.x_studio_lectura_anterior_color                    
+                                worksheet.write(i, 15, rpt.x_studio_ubicacin,neg)                                                            
+                                worksheet.write(i, 16, rpt.comentarioLecturas,neg)                                                            
+                                worksheet.write(i, 8, ebn,neg)
+                                worksheet.write(i, 9, ec,neg)
 
-                                    if rpt.x_studio_color_o_bn=='B/N':                                                         
-                                       eebn=ebn+eebn
-                                    if rpt.x_studio_color_o_bn=='Color':                                                         
-                                       eebn=ebn+eebn                                                                                   
-                                       eec=ec+eec
+                                if rpt.x_studio_color_o_bn=='B/N':                                                         
+                                   eebn=ebn+eebn
+                                if rpt.x_studio_color_o_bn=='Color':                                                         
+                                   eebn=ebn+eebn                                                                                   
+                                   eec=ec+eec
 
-                                    i=i+1
+                                i=i+1
                        if eebn>rd.bolsaBN:
                            resto=eebn-rd.bolsaBN
                            totalsr=resto*rd.clickExcedenteBN+totalsr
