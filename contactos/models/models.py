@@ -9,6 +9,13 @@ class contactos(models.Model):
 	razonSocial = fields.Selection([('0','DOCUMENTO INTEGRAL CORPORATIVO, SA DE CV'),('1','GN SYS CORPORATIVO S.A. DE C.V.'),('2','GRUPO GNSYS SOLUCIONES SA DE CV'),('3','SERVICIOS CORPORATIVOS GENESIS, S.A DE C.V.')],track_visibility='onchange')
 	distribuidor=fields.One2many('zona.distribuidor','rel_contact')
 	tipoCliente=fields.Selection([('Arrendamiento','Arrendamiento'),('Digitalización','Digitalización'),('Mixto','Mixto'),('PENDIENTE INACTIVO','PENDIENTE INACTIVO'),('Prospecto','Prospecto'),('Servicio sin tóner','Servicio sin tóner'),('Venta','Venta')],track_visibility='onchange')	
+	
+
+
+
+
+
+
 class zonaDistribuidor(models.Model):
 	_name='zona.distribuidor'
 	_description='Zona x distribuidor'
