@@ -2098,152 +2098,118 @@ class helpdesk_update(models.Model):
 
     @api.multi
     def crear_y_validar_solicitud_refaccion(self):
-        for record in self:
-            
-            """
-            en produccion
-            productos_ids = []
-            if record.x_studio_field_nO7Xg: #existe solicitud
-                if record.x_studio_productos: #existen productos
-                    #Añadiendo productos que no estan en la solicitud anterior 
-                    for productoSolNueva in record.x_studio_productos:
-                        for productoSolAnterior in record.x_studio_field_nO7Xg.order_line:
-                            if productoSolNueva.id != productoSolAnterior.id:
-                                productos_ids.append(productoSolNueva.id)
-            """
-
-
-
-            if not record.x_studio_field_nO7Xg:
-                if len(record.x_studio_productos) > 0:
-                    if self.x_studio_field_nO7Xg.id != False and self.x_studio_field_nO7Xg.state == 'sale':
-                        message = ('Existe una solicitud ya generada y esta fue validada. \n\nNo es posible realizar cambios a una solicitud ya validada.')
-                        mess= {'title': _('Solicitud existente validada!!!')
-                                , 'message' : message
-                        }
+        record_ids = self.ids
+        #_logger.info('record_ids: ' + str(record_ids))
+        #_logger.info('self.env["helpdesk.ticket"].browse(record_ids): ' + str(self.env['helpdesk.ticket'].browse(record_ids)))
+        for record in self.env['helpdesk.ticket'].browse(record_ids):
+            ticket_id = record.mapped('id')
+            estado_inicial_de_ticket_name = record.mapped('stage_id.name')
+            diagnosticos_ticket = record.mapped('diagnosticos')
+            serie_id = record.mapped('x_studio_equipo_por_nmero_de_serie.id')
+            cliente_id = record.mapped('partner_id.id')
+            contacto_de_localidad_id = record.mapped('localidadContacto.id')
+            localidad_id = record.mapped('x_studio_empresas_relacionadas.id')
+            area_de_atencion_id =  record.mapped('team_id.id')
+            pedido_de_venta = record.mapped('x_studio_field_nO7Xg')
+            pedido_de_venta_id = record.mapped('x_studio_field_nO7Xg.id')
+            pedido_de_venta_estado = record.mapped('x_studio_field_nO7Xg.state')
+            productos = record.mapped('x_studio_productos')
+            productos_ids = record.mapped('x_studio_productos.id')
+            #_logger.info('ticket_id: ' + str(ticket_id) + ' estado_inicial_de_ticket_name: ' + str(estado_inicial_de_ticket_name) + 'diagnosticos_ticket: ' + str(diagnosticos_ticket) + 'serie_id: ' + str(serie_id) + 'cliente_id: ' + str(cliente_id) + 'contacto_de_localidad_id: ' + str(contacto_de_localidad_id) + 'localidad_id: ' + str(localidad_id) + 'area_de_atencion_id: ' + str(area_de_atencion_id) + 'pedido_de_venta: ' + str(pedido_de_venta) + 'pedido_de_venta_id: ' + str(pedido_de_venta_id) + 'pedido_de_venta_estado: ' + str(pedido_de_venta_estado) + 'productos: ' + str(productos)  + 'productos_ids: ' + str(productos_ids) )
+            if not pedido_de_venta:
+                if productos:
+                    if pedido_de_venta_id and pedido_de_venta_estado[0] == 'sale':
+                        #message = ('Existe una solicitud ya generada y esta fue validada. \n\nNo es posible realizar cambios a una solicitud ya validada.')
                         return 'Solicitud ya generada y validada'
-                        #return {'warning': mess}
-                    
-                    if self.x_studio_field_nO7Xg.id != False and self.x_studio_field_nO7Xg.state != 'sale':
-                        sale = self.x_studio_field_nO7Xg
-                        self.env.cr.execute("delete from sale_order_line where order_id = " + str(sale.id) +";")
-                        for c in self.x_studio_productos:
-                            datosr={'order_id' : sale.id, 'product_id' : c.id, 'product_uom_qty' : c.x_studio_cantidad_pedida, 'x_studio_field_9nQhR':self.x_studio_equipo_por_nmero_de_serie[0].id}
-                            #if(self.team_id.id==10 or self.team_id.id==11):
-                            #    datosr['route_id']=22548
-                            self.env['sale.order.line'].create(datosr)
-                            self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
-                            #self.env.cr.commit()
-                    
+                    elif pedido_de_venta_id and pedido_de_venta_estado[0] != 'sale':
+                        self.env.cr.execute("delete from sale_order_line where order_id = " + str(pedido_de_venta_id[0]) +";")
+                        for refaccion in productos:
+                            vals = {
+                                'order_id': pedido_de_venta_id[0],
+                                'product_id': refaccion.id,
+                                'product_uom_qty': refaccion.x_studio_cantidad_pedida,
+                                'x_studio_field_9nQhR': serie_id[0]
+                            }
+                            self.env['sale.order.line'].create(vals)
+                            self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(pedido_de_venta_id[0]) + ";")
                     else:
-                        _logger.info('3312: Creado pedido de venta ')
-                        sale = self.env['sale.order'].sudo().create({'partner_id' : record.partner_id.id
-                                                                     , 'origin' : "Ticket de refacción: " + str(record.x_studio_id_ticket)
-                                                                     , 'x_studio_tipo_de_solicitud' : 'Venta'
-                                                                     , 'x_studio_requiere_instalacin' : True
-                                                                     , 'x_studio_field_RnhKr': self.localidadContacto.id
-                                                                     , 'partner_shipping_id' : self.x_studio_empresas_relacionadas.id
-                                                                     #, 'x_studio_tcnico' : record.x_studio_tcnico.id
-                                                                     , 'warehouse_id' : 5865   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
-                                                                     , 'team_id' : 1
-                                                                     , 'x_studio_field_bxHgp': int(record.x_studio_id_ticket) 
-                                                                    })
-                        record['x_studio_field_nO7Xg'] = sale.id
-                        _logger.info('3312: Creado pedido de venta: ya se creo ' + str(sale.id))
-                        """
-                        en produccion
-                        self.env.cr.commit()
-                        self.productos = [[6, 0, (sale.id)]]
-                        """
-                        _logger.info('3312: Creado pedido de venta: cargando productos ')
-                        for c in record.x_studio_productos:
-                            datosr = {'order_id' : sale.id
-                                    , 'product_id' : c.id
-                                    , 'product_uom_qty' : c.x_studio_cantidad_pedida
-                                    ,'x_studio_field_9nQhR':self.x_studio_equipo_por_nmero_de_serie[0].id
-                                    , 'price_unit': 0}
-                            if (self.team_id.id == 10 or self.team_id.id == 11):
-                                datosr['route_id'] = 22548
-                            _logger.info('3312: fecha inicio de sale.roder.line: ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S")) )
-                            self.env['sale.order.line'].sudo().create(datosr)
-                            _logger.info('3312: fecha fin de sale.roder.line: ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S")) )
-                            sale.env['sale.order'].sudo().write({'x_studio_tipo_de_solicitud' : 'Venta'})
-                            #sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta', 'validity_date' : sale.date_order + datetime.timedelta(days=30)})
-                            self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
-
-                        _logger.info('3312: Creado pedido de venta: productos cargados ')
-
-
-                        sale = record.x_studio_field_nO7Xg
-                        if sale.id != 0 or record.x_studio_productos != []:
-                            if self.x_studio_field_nO7Xg.order_line:
-                                self.sudo().env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
-                                sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
-                                sale.action_confirm()
-                                for lineas in sale.order_line:
-                                    st=self.env['stock.quant'].search([['location_id','in',(35204,12)],['product_id','=',lineas.product_id.id]]).sorted(key='quantity',reverse=True)
-                                    requisicion=False
-                                    if(len(st)>0):
-                                        if(st[0].quantity==0):
-                                            requisicion=self.env['requisicion.requisicion'].search([['state','!=','done'],['create_date','<=',datetime.datetime.now()],['origen','=','Refacción']]).sorted(key='create_date',reverse=True)
-                                    else:
-                                        requisicion=self.env['requisicion.requisicion'].search([['state','!=','done'],['create_date','<=',datetime.datetime.now()],['origen','=','Refacción']]).sorted(key='create_date',reverse=True)
-                                    if(requisicion!=False ):
-                                        re=self.env['requisicion.requisicion'].sudo().create({'origen':'Refacción','area':'Almacen','state':'draft'})
-                                        re.product_rel=[{'cliente':sale.partner_shipping_id.id,'ticket':sale.x_studio_field_bxHgp.id,'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
-                                    if(requisicion):                                            
-                                        requisicion[0].product_rel=[{'cliente':sale.partner_shipping_id.id,'ticket':sale.x_studio_field_bxHgp.id,'cantidad':int(lineas.product_uom_qty),'product':lineas.product_id.id,'costo':0.00}]
-                                        
-                                estadoAntes = str(self.stage_id.name)
-                                #if (self.stage_id.name == 'Solicitud de Refacción' or self.stage_id.name == 'Cotización') and self.estadoSolicitudDeRefaccionValidada == False:
-                                query = "update helpdesk_ticket set stage_id = 102 where id = " + str(self.x_studio_id_ticket) + ";"
-                                ss = self.env.cr.execute(query)
+                        #Crear nuevo pedido de venta
+                        if not cliente_id or not contacto_de_localidad_id or not localidad_id:
+                            errorRefaccionNoValidada = "Solicitud de refacción no validada"
+                            mensajeSolicitudRefaccionNoValida = "No es posible validar una solicitud de refacción debido a falta uno de los siguientes campos: \nCliente, localidad o contacto de la localidad."
+                            #estadoActual = str(record.stage_id.name)
+                            raise exceptions.except_orm(
+                                _(errorRefaccionNoValidada), 
+                                _(mensajeSolicitudRefaccionNoValida)
+                            )
+                        _logger.info('***** Inicio de creacion: creando pedido de venta ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ) + ' *****')
+                        nuevo_pedido_de_venta = self.env['sale.order'].sudo().create({
+                                                                                        'partner_id': cliente_id[0],
+                                                                                        'origin': "Ticket de refacción: " + str(record.id),
+                                                                                        'x_studio_tipo_de_solicitud': 'Venta',
+                                                                                        'x_studio_requiere_instalacin': True,
+                                                                                        'x_studio_field_RnhKr': contacto_de_localidad_id[0],
+                                                                                        'partner_shipping_id': localidad_id[0],
+                                                                                        'warehouse_id': 5865,   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
+                                                                                        'team_id': 1,
+                                                                                        'x_studio_field_bxHgp': ticket_id[0]
+                        })
+                        #_logger.info('pase la creacion de la SO: ' + str(nuevo_pedido_de_venta) )
+                        record.write({
+                                        'x_studio_field_nO7Xg': nuevo_pedido_de_venta.id
+                        })
+                        self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(nuevo_pedido_de_venta.id) + ";")
+                        #Se cargan los procustos al pedio de venta
+                        for refaccion in productos:
+                            vals = {
+                                'order_id': nuevo_pedido_de_venta.id,
+                                'product_id': refaccion.id,
+                                'product_uom_qty': refaccion.x_studio_cantidad_pedida,
+                                'x_studio_field_9nQhR': serie_id[0],
+                                'price_unit': 0
+                            }
+                            #Si es foraneo-localidad o foranero-distribuidor
+                            if area_de_atencion_id[0] == 10 or area_de_atencion_id[0] == 11:
+                                vals['route_id'] = 22548
+                            self.env['sale.order.line'].sudo().create(vals)
+                            #self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
+                        if nuevo_pedido_de_venta or productos_ids:
+                            lineas_de_pedido = nuevo_pedido_de_venta.mapped('order_line')
+                            if lineas_de_pedido:
+                                nuevo_pedido_de_venta.action_confirm()
+                                query = "update helpdesk_ticket set stage_id = 102 where id = " + str(ticket_id[0]) + ";"
+                                self.env.cr.execute(query)
                                 ultimaEvidenciaTec = []
                                 ultimoComentario = ''
-                                if self.diagnosticos:
-                                    if self.diagnosticos[-1].evidencia.ids:
-                                        ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
-                                    ultimoComentario = self.diagnosticos[-1].comentario
-
-                                message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Refacción Autorizada' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
-                                mess= {
-                                        'title': _('Estado de ticket actualizado!!!'),
-                                        'message' : message
-                                      }
+                                if diagnosticos_ticket:
+                                    if diagnosticos_ticket[-1].evidencia.ids:
+                                        ultimaEvidenciaTec = diagnosticos_ticket[-1].evidencia.ids
+                                    ultimoComentario = diagnosticos_ticket[-1].comentario
+                                message = ('Se cambio el estado del ticket. \nEstado anterior: ' + str(estado_inicial_de_ticket_name[0]) + ' Estado actual: Refacción Autorizada' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
                                 self.estadoSolicitudDeRefaccionValidada = True
+                                _logger.info('***** Fin de creacion: creando pedido de venta ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ) + ' *****')
                                 return 'OK'
-                                #return {'warning': mess}
                             else:
+                                #No tiene lineas de pedido de venta
                                 message = ("No es posible validar una solicitud que no tiene productos.")
-                                mess = {'title': _('Solicitud sin productos!!!')
-                                        , 'message' : message
-                                        }
                                 return 'Sin refacciones y/o accesorios'
-                                #return {'warning': mess}
                         else:
+                            #No existe un nuevo pedido de venta o no tiene productos en el ticket
                             errorRefaccionNoValidada = "Solicitud de refacción no validada"
                             mensajeSolicitudRefaccionNoValida = "No es posible validar una solicitud de refacción en el estado actual debido a falta de productos o porque no existe la solicitud."
-                            estadoActual = str(record.stage_id.name)
-                            raise exceptions.except_orm(_(errorRefaccionNoValidada), _(mensajeSolicitudRefaccionNoValida + " Estado: " + estadoActual))
-
-
+                            #estadoActual = str(record.stage_id.name)
+                            raise exceptions.except_orm(
+                                _(errorRefaccionNoValidada), 
+                                _(mensajeSolicitudRefaccionNoValida + " Estado: " + estado_inicial_de_ticket_name)
+                            )
                 else:
+                    #No tiene productos
                     message = ('No existen productos para generar y validar la solicitud.')
-                    mess= {
-                            'title': _('Ticket sin productos !!!'),
-                            'message' : message
-                          }
                     return 'Sin refacciones y/o accesorios'
-                    #return {'warning': mess}
             else:
+                #Si ya tiene pedido de venta
                 message = ('Ya existe una solicitud, no es posible generan una solicitud.')
-                mess= {
-                        'title': _('Ticket con solicitud existente !!!'),
-                        'message' : message
-                      }
                 return 'Solicitud existente.'
-                       
-                #return {'warning': mess}
 
 
 
