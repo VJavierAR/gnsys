@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
-
 from odoo import models, fields, api
+from odoo.tools.mimetypes import guess_mimetype
+import logging, ast
+from odoo.tools import config, DEFAULT_SERVER_DATE_FORMAT, DEFAULT_SERVER_DATETIME_FORMAT, pycompat
+_logger = logging.getLogger(__name__)
 
 class contactos(models.Model):
 	_inherit = 'res.partner'
@@ -33,6 +36,9 @@ class contactos(models.Model):
         for partner, vals in pycompat.izip(partners, vals_list):
             partner._fields_sync(vals)
             partner._handle_first_contact_creation()
+            if(partner.type=='delivery'):
+            	_logger.info(str('hola')+str(partner.id))
+            	#self.env['stock.warehouse'].create({})
         return partners
 
 
