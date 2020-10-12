@@ -27,7 +27,7 @@ class contactos(models.Model):
             # cannot be easily performed if default images are in the way
             if not vals.get('image'):
                 vals['image'] = self._get_default_image(vals.get('type'), vals.get('is_company'), vals.get('parent_id'))
-            tools.image_resize_images(vals, sizes={'image': (1024, None)})
+            tools.image_resize_images(vals, sizes={'image': (720, 480)})
         partners = super(Partner, self).create(vals_list)
 
         if self.env.context.get('_partners_skip_fields_sync'):
