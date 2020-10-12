@@ -138,6 +138,8 @@ class fac_order(models.Model):
                     local = self.env['sale.order'].create({'partner_id' : self.partner_id.id
                                                                  , 'origin' : "dividir por localidades: " + str(self.name)
                                                                  , 'x_studio_factura':'si'                                                                                                                             
+                                                                 ,'month':self.month
+                                                                 ,'year':self.year
                                                                 })
                     self.env.cr.execute("insert into x_contrato_sale_order_rel (sale_order_id, contrato_id) values (" +str(local.id) + ", " +  str(r.x_studio_contratosid).replace("[","").replace("]","") + ");")                                        
                     htmlloca="<a href='https://gnsys-corp.odoo.com/web#id="+str(local.id)+"&action=1167&model=sale.order&view_type=form&menu_id=406' target='_blank'>"+str(local.name)+"</a>"+'<br> '+htmlloca
