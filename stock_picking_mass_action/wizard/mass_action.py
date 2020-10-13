@@ -634,32 +634,31 @@ class TransferInter(TransientModel):
                         self.lines=[{'producto':p.id,'cantidad':int(row[2].value)}]
                     i=i+1
                     
-
+                for ori in pickOrigen:
+                    ticket.x_studio_productos=[(4,ori['product_id'])]
+                    sl=self.env['sale.order.line'].create({'order_id' : sale.id,'product_id':ori['product_id'],'product_uom_qty':ori['product_uom_qty'], 'price_unit': 0})
+                for des in pickDestino:
+                    des['date_planned']=datetime.datetime.now()
+                    des['order_id']=compra.id
+                    self.env['purchase.order.line'].create(des)
     def confirmar(self):
         pick_dest=[]
         pick_origin=[]
         pick_origin1=[]
         pick_origin2=[]
         pick_origin3=[]
+        compra=None
+        orden=None
         cliente=self.env['res.partner'].search([['name','=',self.almacenDestino.name],['parent_id','=',1]])
-        oden=self.env['sale.order'].create({'partner_id':cliente.id,'partner_shipping_id':cliente.id})
         if(self.almacenOrigen.id==False):
             self.almacenOrigen=self.almacenPadre.id
 
         if(self.almacenDestino.x_studio_almacn_padre):
             if('Foraneo' in self.almacenDestino.x_studio_almacn_padre.name):
-                origen1=None
-                if(self.almacenOrigen.id==1):
-                    origen1=self.env['stock.picking.type'].search([['name','=','Surtir'],['warehouse_id','=',self.almacenOrigen.id]])
-                if(self.almacenOrigen.id!=1):
-                    origen1=self.env['stock.picking.type'].search([['name','=','Pick'],['warehouse_id','=',self.almacenOrigen.id]])
-                origen2=self.env['stock.picking.type'].search([['name','=','Distribución'],['warehouse_id','=',1]])
-                origen3=self.env['stock.picking.type'].search([['name','=','Tránsito'],['warehouse_id','=',1]])
                 destino=self.env['stock.picking.type'].search([['name','=','Receipts'],['warehouse_id','=',self.almacenDestino.id]])
-                pick_origin1= self.env['stock.picking'].create({'partner_id':cliente.id,'origin':oden.name,'internas':True,'picking_type_id' : origen1.id,'almacenOrigen':self.almacenOrigen.id,'almacenDestino':self.almacenDestino.id,'location_id':origen1.default_location_src_id.id,'location_dest_id':origen2.default_location_src_id.id})
-                pick_origin2= self.env['stock.picking'].create({'partner_id':cliente.id,'origin':oden.name,'internas':True,'picking_type_id' : origen2.id,'almacenOrigen':self.almacenOrigen.id,'almacenDestino':self.almacenDestino.id,'location_id':origen2.default_location_src_id.id,'location_dest_id':origen3.default_location_src_id.id})
-                pick_origin3= self.env['stock.picking'].create({'partner_id':cliente.id,'origin':oden.name,'internas':True,'picking_type_id' : origen3.id,'almacenOrigen':self.almacenOrigen.id,'almacenDestino':self.almacenDestino.id,'location_id':origen3.default_location_src_id.id,'location_dest_id':17})
-                pick_dest = self.env['stock.picking'].create({'partner_id':cliente.id,'origin':oden.name,'internas':True,'picking_type_id' : destino.id, 'location_id':17,'almacenOrigen':self.almacenOrigen.id,'almacenDestino':self.almacenDestino.id,'location_dest_id':self.almacenDestino.lot_stock_id.id})
+                orden=self.env['sale.order'].create({'partner_id':cliente.id,'partner_shipping_id':cliente.id})
+                compra=self.env['purchase.order'].create({'picking_type_id':destino.id,'partner_id' : 1, 'origin' :orden.name, 'warehouse_id' :self.almacenDestino.id , 'date_planned': datetime.datetime.now(),'name':'MINI'})
+                origen1=None
         else:    
             origen=self.env['stock.picking.type'].search([['name','=','Internal Transfers'],['warehouse_id','=',self.almacenOrigen.id]])
             destino=self.env['stock.picking.type'].search([['name','=','Internal Transfers'],['warehouse_id','=',self.almacenDestino.id]])
@@ -673,24 +672,11 @@ class TransferInter(TransientModel):
             datos2={'product_id' : l.producto.id, 'product_uom_qty' : l.cantidad,'name':l.producto.description if(l.producto.description) else '/','product_uom':l.unidad.id,'location_id':17,'location_dest_id':self.almacenDestino.lot_stock_id.id}
             if(self.almacenDestino.x_studio_almacn_padre):
                 if('Foraneo' in self.almacenDestino.x_studio_almacn_padre.name):
-                    datos1['picking_id']=pick_origin1.id
-                    datos1['location_id']=pick_origin1.location_id.id
-                    datos1['location_dest_id']=pick_origin1.location_dest_id.id
-                    self.env['stock.move'].create(datos1)
-                    #2
-                    datos1['picking_id']=pick_origin2.id
-                    datos1['location_id']=pick_origin2.location_id.id
-                    datos1['location_dest_id']=pick_origin2.location_dest_id.id
-                    self.env['stock.move'].create(datos1)
-                    #3
-                    datos1['picking_id']=pick_origin3.id
-                    datos1['location_id']=pick_origin3.location_id.id
-                    datos1['location_dest_id']=pick_origin3.location_dest_id.id
-                    self.env['stock.move'].create(datos1)
-
-                    datos2['picking_id']=pick_dest.id
-                    self.env['stock.move'].create(datos2)
-
+                    sl=self.env['sale.order.line'].create({'order_id' : orden.id,'name':l.producto.description if(l.producto.description) else '/','product_id':l.producto.id,'product_uom_qty':l.cantidad, 'price_unit': 0,'product_uom':l.unidad.id})
+                    datos2={'product_id' : l.producto.id, 'product_qty' : l.cantidad,'name':l.producto.description if(l.producto.description) else '/','product_uom':l.unidad.id,'price_unit': 0}
+                    datos2['date_planned']=datetime.datetime.now()
+                    datos2['order_id']=compra.id
+                    self.env['purchase.order.line'].create(datos2)
             else:
                 datos1['picking_id']= pick_origin.id
                 datos2['picking_id']= pick_dest.id
@@ -708,15 +694,17 @@ class TransferInter(TransientModel):
                 v=1
                 e.append(a.id)
                 e1.append(b.id)
-
-        #if(v==1):
-        #    p=self.lines.filtered(lambda x:x.producto.categ_id.id==13).sorted(key='id')
-        #    e2=self.env['stock.move.line'].search([['move_id','in',e]]).sorted(key='move_id')
-        #    e3=self.env['stock.move.line'].search([['move_id','in',e1]]).sorted(key='move_id')
-        #    for ee in p:
-        #      e2.write({'lot_id':ee.serie.id})
-        #      e3.write({'lot_id':ee.serie.id})  
-  
+        if('Foraneo' in self.almacenDestino.x_studio_almacn_padre.name):
+            orden.action_confirm()
+            compra.button_confirm()
+            compra.write({'active':False})
+            pick_or=orden.picking_ids.sorted(key='id')
+            pick_origin=pick_or[0]
+            datP=self.env['stock.picking'].search([['purchase_id','=',compra.id]])
+            datP.write({'location_id':8})
+            datP.write({'origin':orden.name})
+            datP.action_confirm()
+            datP.action_assign()    
         name = 'Picking'
         res_model = 'stock.picking' 
         view_name = 'stock.view_picking_form'

@@ -116,12 +116,12 @@ class ExistenciasXML(models.AbstractModel):
             copia=quants
             quants=self.env['stock.quant'].browse(eval(quants.x_studio_arreglo))
             copia.sudo().write({'x_studio_arreglo':'/'})
-        t=quants[0].lot_id.id
+        t=quants.mapped('lot_id.id')
         i=2
         merge_format = workbook.add_format({'bold': 1,'border': 1,'align': 'center','valign': 'vcenter','fg_color': 'blue'})
         report_name = 'Existencias'
         bold = workbook.add_format({'bold': True})
-        if(t):
+        if(t!=[]):
             sheet = workbook.add_worksheet('Existencias Equipos')
             sheet.merge_range('A1:K1', 'Existencias Equipos', merge_format)   
             for obj in quants:
@@ -131,15 +131,16 @@ class ExistenciasXML(models.AbstractModel):
                 sheet.write(i, 3, obj.product_id.description if(obj.product_id.description) else '', bold)
                 sheet.write(i, 4, obj.lot_id.name, bold)
                 sheet.write(i, 5, obj.lot_id.x_studio_estado, bold)
-                sheet.write(i, 6, obj.reserved_quantity, bold)
-                sheet.write(i, 7, obj.x_studio_field_kUc4x.x_name if(obj.x_studio_field_kUc4x.x_name) else '', bold)
+                sheet.write(i, 6, obj.quantity, bold)
+                sheet.write(i, 7, obj.reserved_quantity, bold)
+                sheet.write(i, 8, obj.x_studio_field_kUc4x.x_name if(obj.x_studio_field_kUc4x.x_name) else '', bold)
                 precio=self.env['purchase.order.line'].sudo().search([['product_id','=',obj.product_id.id]])
-                sheet.write(i, 8, precio.sorted(key='id',reverse=True)[0].price_unit if(precio) else obj.product_id.lst_price, bold)
+                sheet.write(i, 9, precio.sorted(key='id',reverse=True)[0].price_unit if(precio) else obj.product_id.lst_price, bold)
                 m=self.env['stock.warehouse.orderpoint'].sudo().search([['location_id','=',obj.location_id.id],['product_id','=',obj.product_id.id]])
-                sheet.write(i, 9, m.product_min_qty if(m.id) else 0, bold)
-                sheet.write(i, 10, m.product_max_qty if(m.id) else 0, bold)
+                sheet.write(i, 10, m.product_min_qty if(m.id) else 0, bold)
+                sheet.write(i, 11, m.product_max_qty if(m.id) else 0, bold)
                 i=i+1
-            sheet.add_table('A2:K2',{'columns': [{'header': 'Almacen'},{'header': 'Modelo'},{'header': 'No Parte'},{'header':'Descripción'},{'header':'No Serie'},{'header': 'Estado'},{'header': 'Apartados'},{'header': 'Ubicación'},{'header':'Costo'},{'header': 'Minimo'},{'header':'Maximo'}]}) 
+            sheet.add_table('A2:K2',{'columns': [{'header': 'Almacen'},{'header': 'Modelo'},{'header': 'No Parte'},{'header':'Descripción'},{'header':'No Serie'},{'header': 'Estado'},{'header': 'Existencia'},{'header': 'Apartados'},{'header': 'Ubicación'},{'header':'Costo'},{'header': 'Minimo'},{'header':'Maximo'}]}) 
             #sheet.add_table('A2:I'+str((i)),{'columns': [{'header': 'Almacen'},{'header': 'Modelo'},{'header': 'No Parte'},{'header':'Descripción'},{'header':'No Serie'},{'header': 'Estado'},{'header': 'Apartados'},{'header': 'Ubicación'},{'header':'Costo'}]}) 
         else:
             sheet = workbook.add_worksheet('Existencias Componentes')
