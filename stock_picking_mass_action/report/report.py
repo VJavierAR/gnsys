@@ -116,7 +116,7 @@ class ExistenciasXML(models.AbstractModel):
             copia=quants
             quants=self.env['stock.quant'].browse(eval(quants.x_studio_arreglo))
             copia.sudo().write({'x_studio_arreglo':'/'})
-        t=quant.mapped('lot_id.id')
+        t=quants.mapped('lot_id.id')
         i=2
         merge_format = workbook.add_format({'bold': 1,'border': 1,'align': 'center','valign': 'vcenter','fg_color': 'blue'})
         report_name = 'Existencias'
