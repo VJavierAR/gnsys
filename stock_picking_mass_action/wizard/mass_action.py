@@ -657,7 +657,7 @@ class TransferInter(TransientModel):
             if('Foraneo' in self.almacenDestino.x_studio_almacn_padre.name):
                 destino=self.env['stock.picking.type'].search([['name','=','Receipts'],['warehouse_id','=',self.almacenDestino.id]])
                 orden=self.env['sale.order'].create({'partner_id':cliente.id,'partner_shipping_id':cliente.id})
-                compra=self.env['purchase.order'].create({'picking_type_id':destino.id,'partner_id' : 1, 'origin' :orden.name, 'warehouse_id' : al.id , 'date_planned': datetime.datetime.now(),'name':'MINI'})
+                compra=self.env['purchase.order'].create({'picking_type_id':destino.id,'partner_id' : 1, 'origin' :orden.name, 'warehouse_id' :self.almacenDestino.id , 'date_planned': datetime.datetime.now(),'name':'MINI'})
                 origen1=None
         else:    
             origen=self.env['stock.picking.type'].search([['name','=','Internal Transfers'],['warehouse_id','=',self.almacenOrigen.id]])
@@ -698,8 +698,13 @@ class TransferInter(TransientModel):
             orden.action_confirm()
             compra.button_confirm()
             compra.write({'active':False})
-            pick_or=orden.picking_ids.sorted(key='id asc')
-            pick_origin=pick_or[0]  
+            pick_or=orden.picking_ids.sorted(key='id')
+            pick_origin=pick_or[0]
+            datP=self.env['stock.picking'].search([['purchase_id','=',compra.id]])
+            datP.write({'location_id':8})
+            datP.write({'origin':orden.name})
+            datP.action_confirm()
+            datP.action_assign()    
         name = 'Picking'
         res_model = 'stock.picking' 
         view_name = 'stock.view_picking_form'
