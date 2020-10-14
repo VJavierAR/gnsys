@@ -353,7 +353,7 @@ class HelpDeskCerrarConComentario(TransientModel):
         ultimaEvidenciaTec = self.ticket_id.diagnosticos[-1].evidencia.ids
         if self.evidencia:
           ultimaEvidenciaTec += self.evidencia.ids
-      if self.ticket_id.stage_id.name == 'En Ruta' or self.ticket_id.stage_id.name == 'Resuelto' or self.ticket_id.stage_id.name == 'Abierto' or self.ticket_id.stage_id.name == 'Asignado' or self.ticket_id.stage_id.name == 'Atención' and self.ticket_id.estadoCerrado == False:
+      if self.ticket_id.stage_id.name == 'Distribución' or self.ticket_id.stage_id.name == 'En Ruta' or self.ticket_id.stage_id.name == 'Resuelto' or self.ticket_id.stage_id.name == 'Abierto' or self.ticket_id.stage_id.name == 'Asignado' or self.ticket_id.stage_id.name == 'Atención' and self.ticket_id.estadoCerrado == False:
         self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.ticket_id.id
                                                 ,'comentario': self.comentario
                                                 #,'estadoTicket': self.ticket_id.stage_id.name
@@ -4139,33 +4139,33 @@ class HelpdeskTicketReporte(TransientModel):
         if contador > 0:
             i.pop(0)
 
-        _logger.info('3312: filtro reporte: ' + str(i))
+        #_logger.info('3312: filtro reporte: ' + str(i))
         d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc')
-        _logger.info('d: '+ str(len(d)))
+        #_logger.info('d: '+ str(len(d)))
         if self.mostrarCerrados or self.mostrarCancelados:
             if self.mostrarCerrados and not self.mostrarCancelados:
                 d = d.filtered(lambda x:  x.stage_id.id != 4 )
             if self.mostrarCancelados and not self.mostrarCerrados:
                 d = d.filtered(lambda x:  x.stage_id.id != 18 )
-            _logger.info('d 2: '+ str(len(d)))
+            #_logger.info('d 2: '+ str(len(d)))
             #if self.mostrarCerrados and self.mostrarCancelados:
             #    d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x:  x.stage_id.id == 18 and x.stage_id.id == 4 )
         else:
-            _logger.info('entre ultimo caso')
+            #_logger.info('entre ultimo caso')
             d = d.filtered(lambda x:  x.stage_id.id != 18 and x.stage_id.id != 4 )
-        _logger.info('d 3: '+ str(len(d)))
+        #_logger.info('d 3: '+ str(len(d)))
         if self.area:
             d = d.filtered(lambda x: (x.team_id.id in self.area.ids) )
-        _logger.info('d 4: '+ str(len(d)))
+        #_logger.info('d 4: '+ str(len(d)))
         if self.clienteRelacion:
             d = d.filtered(lambda x: (x.partner_id.id in self.clienteRelacion.ids) )
-        _logger.info('d 5: '+ str(len(d)))
+        #_logger.info('d 5: '+ str(len(d)))
         #_logger.info('fecha inicial: ' + str(self.fechaInicial))
-        _logger.info('datos: dias final: ' + str(self.fechaFinal + datetime.timedelta(days=2)))
+        #_logger.info('datos: dias final: ' + str(self.fechaFinal + datetime.timedelta(days=2)))
         d = d.filtered(lambda x: ( datetime.datetime.strptime(x.create_date.strftime('%Y-%m-%d'), '%Y-%m-%d').date() >= self.fechaInicial and datetime.datetime.strptime(x.create_date.strftime('%Y-%m-%d'), '%Y-%m-%d').date() <= self.fechaFinal + datetime.timedelta(days=2) ))
         #_logger.info('datos: d final: ' + str(d))
         #d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x: len(x.x_studio_equipo_por_nmero_de_serie_1) > 0 or len(x.x_studio_equipo_por_nmero_de_serie) > 0)
-        _logger.info('d 6: '+ str(len(d)))
+        #_logger.info('d 6: '+ str(len(d)))
         if len(d) > 0:
             d[0].write({
                             'x_studio_arreglo': str(d.mapped('id'))
