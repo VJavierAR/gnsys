@@ -6,6 +6,7 @@ import logging, ast
 from odoo.tools import config, DEFAULT_SERVER_DATE_FORMAT, DEFAULT_SERVER_DATETIME_FORMAT, pycompat
 _logger = logging.getLogger(__name__)
 from odoo.tools import pycompat
+import datetime
 class contactos(models.Model):
 	_inherit = 'res.partner'
 	nameGerardo = fields.Char()
@@ -22,6 +23,18 @@ class zonaDistribuidor(models.Model):
 
 class ContactosCes(models.Model):
     _inherit='res.partner'
+    notaPendiente=fields.Char()
+    fechaPendienteInactivo=fields.Date()
+    
+    @api.onchange('tipoCliente')
+    def pendienteInactivo(self):
+    	for record in self:
+    		if(record.tipoCliente=='PENDIENTE INACTIVO'):
+    			record['fechaPendienteInactivo']=datetime.datetime.now().date()
+
+
+
+
     @api.model_create_multi
     def create(self, vals_list):
         if self.env.context.get('import_file'):
