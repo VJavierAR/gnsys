@@ -34,6 +34,9 @@ class CreacionRuta(Model):
             self.ordenes.write({'estado':'ruta'})
             self.ordenes.write({'ajusta':True})
             self.estado="valido"
+            if(self.chofer.id):
+                us=self.env['res.users'].search([['name','like',self.chofer.name]])
+                _logger.info(us.name)
             if(self.odometro==0 and self.tipo.lower()=="local"):
                 raise UserError(_('Tiene que ingresas el Odometro'))
             for o in self.ordenes:

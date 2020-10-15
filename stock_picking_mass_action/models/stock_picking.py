@@ -31,6 +31,7 @@ class StockPicking(Model):
     distribucion=fields.Boolean()
     retiro=fields.Boolean()
     mini=fields.Boolean()
+    chofer=fields.Many2one('res.users')
     #ticke_id=fields.Integer(related='group_id.sale_id.x_studio_field_bxHgp.id')
 
 
