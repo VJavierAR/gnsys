@@ -34,7 +34,6 @@ class StockPicking(Model):
     chofer=fields.Many2one('res.users')
     #ticke_id=fields.Integer(related='group_id.sale_id.x_studio_field_bxHgp.id')
 
-
     def validacionZero(self):
         if(self.x_studio_backorder_de==False):
             self.sale_id.action_cancel()
