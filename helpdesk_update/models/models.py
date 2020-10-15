@@ -5755,6 +5755,10 @@ class helpdes_diagnostico(models.Model):
     _description = "Historial de diagnostico"
     ticketRelacion = fields.Many2one('helpdesk.ticket', string = 'Ticket realcionado a diagnostico',copied=True)
 
+    ticket_techra = fields.Many2one('helpdesk.ticket.techra', string = 'Ticket techra relacionado al diagnostico')
+    ticket_techra_text = fields.Text(string = 'Ticket techra texto')
+
+
     estadoTicket = fields.Char(string='Estado de ticket',copied=True)
     comentario = fields.Text(string='Diagnostico / comentario',copied=True)
     evidencia = fields.Many2many('ir.attachment', string="Evidencias",copied=True)
@@ -5768,8 +5772,15 @@ class helpdes_diagnostico(models.Model):
                                     string = 'Tipo de solución',copied=True
                                 )
     tecnicoTechra = fields.Text(
-                                    string = 'Creado por techra',copied=True
+                                    string = 'Tecnico techra',copied=True
                                 )
+    creado_por_techra = fields.Boolean(string = "Creado por techra", default = False)
+    href_diagnostico_ticket_techra = fields.Text(
+                                                    string = 'href'
+                                    )
+    fecha_diagnostico_techra_text = fields.Text(
+                                                string = 'Fecha techra text'
+                                            )
 
     def mostrarComentarioFun(self):
         self.mostrarComentario = True
@@ -5931,10 +5942,59 @@ class helpdesk_ticket_techra(models.Model):
                                     'res.partner',
                                     string = 'Cliente'
                                 )
+    cliente_text = fields.Text( 
+                                string = 'Cliente texto'
+                            )
+    cliente_clave = fields.Text( 
+                                string = 'Clave de cliente'
+                            )
+    tipo_de_cliente = fields.Text(
+                                    string = 'Tipo de cliente'
+                                    )
+    estatus_de_cobranza = fields.Text(
+                                    string = 'Estatus de cobranza'
+                                    )
     x_studio_empresas_relacionadas = fields.Many2one( 
                                                         'res.partner',
                                                         string = 'Localidad'
                                                     )
+    localidad_text = fields.Text(
+                                    string = 'Localidad texto'
+                                )
+    tipo_de_domicilio = fields.Text(
+                                    string = 'Tipo de domicilio'
+                                    )
+    calle_de_domicilio = fields.Text(
+                                    string = 'Calle'
+                                    )
+    colonia_de_domicilio = fields.Text(
+                                    string = 'Colonia'
+                                    )
+    delegacion_de_domicilio = fields.Text(
+                                    string = 'Delegación'
+                                    )
+    zona_de_domicilio = fields.Text(
+                                    string = 'Zona'
+                                    )
+    no_exterior_de_domicilio = fields.Text(
+                                    string = 'No. exterior'
+                                    )
+    ciudad_de_domicilio = fields.Text(
+                                    string = 'Ciudad'
+                                    )
+    c_p_de_domicilio = fields.Text(
+                                    string = 'C.P'
+                                    )
+    ubicacion_de_domicilio = fields.Text(
+                                    string = 'Ubicación'
+                                    )
+    no_interior_de_domicilio = fields.Text(
+                                    string = 'No. exterior'
+                                    )
+    estado_de_domicilio = fields.Text(
+                                    string = 'Estado'
+                                    )
+
     nombreTfsTechra = fields.Text(
                                     string = 'Nombre TFS techra'
                                 )
@@ -5942,6 +6002,74 @@ class helpdesk_ticket_techra(models.Model):
                                             'res.partner',
                                             string = 'Localidad contacto'
                                         )
+    localidad_contacto_text = fields.Text(
+                                            string = 'Localidad contacto texto'
+                                        )
+    localidad_contacto_telefono = fields.Text(
+                                                string = 'Telefono contacto'
+                                            )
+    localidad_contacto_celular = fields.Text(
+                                                string = 'Celular contacto'
+                                            )
+    localidad_contacto_correo = fields.Text(
+                                                string = 'Correo electronico contacto'
+                                            )
+
+
+
+
+    contacto_responsable_nombre = fields.Text(
+                                                string = 'Nombre contacto responsable'
+                                            )
+    contacto_responsable_telefono_1 = fields.Text(
+                                                string = 'telefono 1 contacto responsable'
+                                            )
+    contacto_responsable_telefono_2 = fields.Text(
+                                                string = 'telefono 2 contacto responsable'
+                                            )
+    contacto_responsable_extencion_1 = fields.Text(
+                                                string = 'extencion 1 contacto responsable'
+                                            )
+    contacto_responsable_extencion_2 = fields.Text(
+                                                string = 'extencion 2 contacto responsable'
+                                            )
+    contacto_responsable_celular = fields.Text(
+                                                string = 'celular contacto responsable'
+                                            )
+    contacto_responsable_correo = fields.Text(
+                                                string = 'Correo electronico contacto responsable'
+                                            )
+
+
+    
+
+
+    contacto_de_atencion_nombre = fields.Text(
+                                                string = 'Nombre contacto de atencion'
+                                            )
+    contacto_de_atencion_telefono_1 = fields.Text(
+                                                string = 'telefono 1 contacto de atencion'
+                                            )
+    contacto_de_atencion_telefono_2 = fields.Text(
+                                                string = 'telefono 2 contacto de atencion'
+                                            )
+    contacto_de_atencion_extencion_1 = fields.Text(
+                                                string = 'extencion 1 contacto de atencion'
+                                            )
+    contacto_de_atencion_extencion_2 = fields.Text(
+                                                string = 'extencion 2 contacto de atencion'
+                                            )
+    contacto_de_atencion_celular = fields.Text(
+                                                string = 'celular contacto de atencion'
+                                            )
+    contacto_de_atencion_correo = fields.Text(
+                                                string = 'Correo electronico contacto de atencion'
+                                            )
+
+
+
+
+
     x_studio_nmero_de_ticket_cliente = fields.Text(
                                                     string = 'Ticket del cliente',
                                                     )
@@ -5965,7 +6093,7 @@ class helpdesk_ticket_techra(models.Model):
                                     )
     diagnosticos = fields.One2many(
                                         'helpdesk.diagnostico', 
-                                        'ticketRelacion', 
+                                        'ticket_techra', 
                                         string = 'Diagnostico', 
                                         track_visibility = 'onchange', 
                                         copy=True
