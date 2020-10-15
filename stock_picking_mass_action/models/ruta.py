@@ -40,7 +40,7 @@ class CreacionRuta(Model):
             if(self.odometro==0 and self.tipo.lower()=="local"):
                 raise UserError(_('Tiene que ingresas el Odometro'))
             for o in self.ordenes:
-                o.write({'ruta_id':self.id})
+                o.write({'ruta_id':self.id,'chofer':us.id})
                 if(o.sale_id.id):
                     if (o.sale_id.x_studio_field_bxHgp.stage_id.id!=18 and o.sale_id.x_studio_field_bxHgp.stage_id.id!=4):
                         o.sale_id.x_studio_field_bxHgp.write({'stage_id':108})
