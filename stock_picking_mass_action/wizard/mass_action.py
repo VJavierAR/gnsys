@@ -208,7 +208,7 @@ class StockPickingMassAction(TransientModel):
     @api.multi
     def vales(self):
         assigned_picking_lst2 = self.picking_ids.\
-        filtered(lambda x: (x.picking_type_id.id == 3 or x.picking_type_id.id == 29314) and x.state == 'done')
+        filtered(lambda x: (x.picking_type_id.id == 3 or x.picking_type_id.id == 29314 or x.picking_type_id.id == 89) and x.state == 'done')
         if(assigned_picking_lst2.mapped('sale_id.id')==[]):
             return self.env.ref('stock.action_report_picking').report_action(assigned_picking_lst2)
         else:
