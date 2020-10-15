@@ -6091,6 +6091,9 @@ class helpdesk_ticket_techra(models.Model):
     numeroDeSerieTechra = fields.Text(
                                         string = 'Número de serie techra'
                                     )
+    robot = fields.Text(
+                                        string = 'Robot'
+                                    )
     diagnosticos = fields.One2many(
                                         'helpdesk.diagnostico', 
                                         'ticket_techra', 
