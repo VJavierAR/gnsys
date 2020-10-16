@@ -1,5 +1,3 @@
-
-"""
 from odoo import fields, api
 from odoo.models import TransientModel
 import logging, ast
@@ -8,7 +6,22 @@ _logger = logging.getLogger(__name__)
 from odoo.exceptions import UserError
 from odoo import exceptions, _
 
-class SaleMailMessage(TransientModel):
-    _name = 'sale.mail.message'
-    _description = 'Sale order Message'
-"""
+
+
+
+class AgregadosOdisminucion(TransientModel):
+    _name = 'sale.agregado'
+    _description = 'Sale order agregado'
+    sale=fields.Many2one('sale.order')
+    servicio=fields.Many2one(related='sale.x_studio_field_69Boh')
+    monto=fields.Float()
+    tipoSolicitud=fields.Selection(related='sale.x_studio_tipo_de_solicitud')
+
+
+    def agregar(self):
+    	if(tipoSolicitud=="Retiro"):
+    		servicio.write({'rentaMensual':str(float(servicio.rentaMensual)-monto)})
+    		sale.preparaSolicitud()
+    	else:
+    		servicio.write({'rentaMensual':str(float(servicio.rentaMensual)-monto)})
+    		sale.preparaSolicitud()

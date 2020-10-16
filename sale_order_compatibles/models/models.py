@@ -150,8 +150,24 @@ class sale_update(models.Model):
 		      record['compatiblesLineas']=[{'serie':record.serieRetiro2.id,'cantidad':1,'tipo':record.x_studio_tipo_de_solicitud,'equipos':record.serieRetiro2.product_id.id}]
 		      record['x_studio_field_69Boh']=record.serieRetiro2.servicio.id
 		      record['x_studio_field_LVAj5']=record.serieRetiro2.servicio.contrato.id
-
-
+	def preparaSolicitudValidacion(self):
+		if('Renta Global' in str(self.x_studio_field_69Boh.serviciosNombre)):
+			wiz = self.env['sale.agregado'].create({'sale':self.id})
+			view = self.env.ref('sale_order_compatibles.view_sale_agregados_form')
+			return {
+				'name': _('Agregado'),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'sale.agregado',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'res_id': wiz.id,
+                'context': self.env.context,
+                	}
+		else:
+			self.preparaSolicitud()
 
 	def preparaSolicitud(self):
 		self.order_line.unlink()
