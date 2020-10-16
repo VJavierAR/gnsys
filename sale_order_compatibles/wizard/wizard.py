@@ -16,6 +16,7 @@ class AgregadosOdisminucion(TransientModel):
     servicio=fields.Many2one(related='sale.x_studio_field_69Boh')
     monto=fields.Float()
     tipoSolicitud=fields.Selection(related='sale.x_studio_tipo_de_solicitud')
+    periodo=fields.Date()
 
 
     def agregar(self):

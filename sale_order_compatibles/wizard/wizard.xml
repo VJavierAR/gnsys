@@ -8,6 +8,7 @@
                 <h1>Se agregara o disminuira el monto dependiendo del tipo de solicitud y servicio</h1>
                     <group>
                         <field name="monto" string="Archivo" required="1"/>
+                        <field name="periodo" string="Archivo" required="1"/>
                     </group>
                 <footer>
                     <button name="agregado" string="Aceptar" type="object" class="oe_highlight"/>
