@@ -184,6 +184,10 @@ class StockPickingMassAction(TransientModel):
         if pick_to_backorder and assigned_picking_lst.mapped('sale_id.id')==[]:
             pick_to_backorder.action_done()
         self.picking_ids.action_done()
+        mini=self.picking_ids.filtered(lambda x:x.mini==True)
+        for m in mini:
+            backorder_pick = self.env['stock.picking'].search([('backorder_id', '=', m.id)])
+            backorder_pick.action_cancel()
         if(len(assigned_picking_lst2)>0):
             return self.env.ref('stock_picking_mass_action.report_custom').report_action(assigned_picking_lst2)
         for pp in assigned_picking_lst.filtered(lambda x:x.sale_id.x_studio_tipo_de_solicitud!="Retiro" and x.sale_id.x_studio_field_bxHgp.id==False):
@@ -245,16 +249,6 @@ class StockIngreso(TransientModel):
     almacen=fields.Many2one('stock.warehouse','Almacen')
 
     def confirmar(self):
-        if(self.pick.mini):
-            p=self.env['stock.picking'].search([['origin','=',self.pick.origin]],order='id desc')
-            for pi in p:
-                if(pi.sale_id.id):
-                    if(pi.state!='done'):
-                        wiz=self.env['stock.picking.mass.action'].create({'picking_ids':[(4,pi.id)],'confirm':True,'check_availability':True,'transfer':True})
-                        wiz.mass_action()
-                else:
-                    pi.action_confirm()
-                    pi.action_assign()
         self.pick.write({'location_dest_id':self.almacen.lot_stock_id.id})
         for m in self.move_line:
             m.write({'location_dest_id':self.almacen.lot_stock_id.id})
@@ -265,8 +259,10 @@ class StockIngreso(TransientModel):
                 l.write({'product_id':m.producto2.id})
                 l.write({'state':'assigned'})
         self.pick.purchase_id.write({'recibido':'recibido'})
-        #self.env['stock.picking'].search([['state','=','assigned']]).action_assign()
         self.pick.action_done()
+        if(self.pick.mini):
+            backorder_pick = self.env['stock.picking'].search([('backorder_id', '=', self.pick.id)])
+            backorder_pick.action_cancel()
         return self.env.ref('stock.action_report_picking').report_action(self.pick)
 
 class StockIngresoLines(TransientModel):
