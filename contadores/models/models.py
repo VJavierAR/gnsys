@@ -105,7 +105,7 @@ class dcas(models.Model):
     comentarioDeReinicio = fields.Text(string = 'Comentario de reinicio de contador')
     reinicioDeContador = fields.Boolean(string = 'Reinicio de contador')
     
-    ticket_techra = fields.Many2one('helpdesk.ticket.techra', string = 'Ticket techra')
+    ticket_techra = fields.Many2one('helpdesk.ticket.techra', string = 'Ticket techra relacion')
     
    
     
