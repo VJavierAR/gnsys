@@ -6098,9 +6098,18 @@ class helpdesk_ticket_techra(models.Model):
                                         'helpdesk.diagnostico', 
                                         'ticket_techra', 
                                         string = 'Diagnostico', 
-                                        track_visibility = 'onchange', 
-                                        copy=True
+                                        track_visibility = 'onchange'
                                     )
+
+    series = fields.One2many(
+                                'dcas.dcas', 
+                                'x_studio_tiquete', 
+                                string = 'Series en dca', 
+                                track_visibility = 'onchange'
+                            )
+    
+
+
 
 
 class helpdesk_lines(models.Model):
