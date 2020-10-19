@@ -55,13 +55,15 @@ class miniModelo(models.Model):
 	cantidad = fields.Integer(string = 'Cantidad')
 	saleOrderMini=fields.Many2one('sale_order_compatibles')
 	serie=fields.Many2one('stock.production.lot')
+	precio=fields.Float(default=0.00)
+	tipo=fields.Char()
 
 
 	@api.onchange('idProducto')
 	def domi(self):
 		res={}
 		if(self.idProducto and self.idProducto!='[]'):
-			da=self.env['product.product'].browse(eval(self.idProducto)).filtered(lambda x:x.categ_id.id==7).mapped('id')
+			da=self.env['product.product'].browse(eval(self.idProducto)).filtered(lambda x:x.categ_id.id=6).mapped('id')
 			res['domain']={'producto':[['id','in',da]]}
 		return res
 
