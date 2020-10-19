@@ -6105,6 +6105,10 @@ class helpdesk_ticket_techra(models.Model):
                                     string = 'Es repetido',
                                     default = False
                                 )
+    active = fields.Boolean(
+                                    string = 'Activo',
+                                    default = True
+                                )
     series = fields.One2many(
                                 'dcas.dcas', 
                                 'ticket_techra', 
@@ -6121,6 +6125,9 @@ class helpdesk_ticket_techra(models.Model):
                     'es_repetido': True
                 }
                 serie_id.write(vals)
+                return True
+        return False
+
 
     def crea_relacion_dca(self):
         series_text = self.numeroDeSerieTechra.replace("[", "")
