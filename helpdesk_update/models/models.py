@@ -6124,7 +6124,7 @@ class helpdesk_ticket_techra(models.Model):
             serie_id = self.env['stock.production.lot'].search(dominio_busqueda_serie)
             vals = {}
             if serie_id:
-                if self.tipoDeReporteTechra = 'Toner'
+                if self.tipoDeReporteTechra = 'Toner':
                     vals['fuente'] = 'helpdesk.ticket'
                 else:
                     vals['fuente'] = 'stock.production.lot'
@@ -6132,7 +6132,7 @@ class helpdesk_ticket_techra(models.Model):
                 vals['ticket_techra'] = self.id
                 vals['ticket_techra_texto'] = self.numTicketDeTechra
             else:
-                if self.tipoDeReporteTechra = 'Toner'
+                if self.tipoDeReporteTechra = 'Toner':
                     vals['fuente'] = 'helpdesk.ticket'
                 else:
                     vals['fuente'] = 'stock.production.lot'
