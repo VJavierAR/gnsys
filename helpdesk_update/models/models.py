@@ -6148,8 +6148,8 @@ class helpdesk_ticket_techra(models.Model):
                     vals['fuente'] = 'helpdesk.ticket'
                 else:
                     vals['fuente'] = 'stock.production.lot'
-                vals['serie'] = str(serie_id)
-                vals['ticket_techra'] = str(self.id)
+                vals['serie'] = serie_id
+                vals['ticket_techra'] = self.id
                 vals['ticket_techra_texto'] = self.numTicketDeTechra
                 vals['creado_por_tickets_techra'] = True
 
@@ -6168,7 +6168,7 @@ class helpdesk_ticket_techra(models.Model):
                 else:
                     vals['fuente'] = 'stock.production.lot'
                 #vals['serie'] = serie_id
-                vals['ticket_techra'] = str(self.id)
+                vals['ticket_techra'] = self.id
                 vals['ticket_techra_texto'] = self.numTicketDeTechra
                 vals['creado_por_tickets_techra'] = True
 
