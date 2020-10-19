@@ -6114,12 +6114,13 @@ class helpdesk_ticket_techra(models.Model):
 
     def identifica_repetidos(self):
         dominio_busqueda_ticket = [('numTicketDeTechra', '=', self.numTicketDeTechra), ('id', '!=', str(self.id)), ('es_repetido', '=', False)]
-        serie_id = self.env['helpdesk.ticket.techra'].search(dominio_busqueda_ticket)
+        serie_id = self.env['helpdesk.ticket.techra'].search(dominio_busqueda_ticket, limit = 1)
         if serie_id:
-            vals = {
-                'es_repetido': True
-            }
-            serie_id.write(vals)
+            if not serie_id.es_repetido:
+                vals = {
+                    'es_repetido': True
+                }
+                serie_id.write(vals)
 
     def crea_relacion_dca(self):
         series_text = self.numeroDeSerieTechra.replace("[", "")
