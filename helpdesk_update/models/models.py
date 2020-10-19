@@ -6148,19 +6148,37 @@ class helpdesk_ticket_techra(models.Model):
                     vals['fuente'] = 'helpdesk.ticket'
                 else:
                     vals['fuente'] = 'stock.production.lot'
-                vals['serie'] = serie_id
-                vals['ticket_techra'] = self.id
+                vals['serie'] = str(serie_id)
+                vals['ticket_techra'] = str(self.id)
                 vals['ticket_techra_texto'] = self.numTicketDeTechra
                 vals['creado_por_tickets_techra'] = True
+
+                vals['esContadorDeTechra'] = False
+                vals['reinicioDeContador'] = False
+                vals['respaldo'] = False
+                vals['usb'] = False
+                vals['ultimaCargaContadoresMesa'] = False
+                vals['x_studio_capturar'] = False
+                vals['x_studio_check_temporal'] = False
+
+
             else:
                 if self.tipoDeReporteTechra == 'Toner':
                     vals['fuente'] = 'helpdesk.ticket'
                 else:
                     vals['fuente'] = 'stock.production.lot'
                 #vals['serie'] = serie_id
-                vals['ticket_techra'] = self.id
+                vals['ticket_techra'] = str(self.id)
                 vals['ticket_techra_texto'] = self.numTicketDeTechra
                 vals['creado_por_tickets_techra'] = True
+
+                vals['esContadorDeTechra'] = False
+                vals['reinicioDeContador'] = False
+                vals['respaldo'] = False
+                vals['usb'] = False
+                vals['ultimaCargaContadoresMesa'] = False
+                vals['x_studio_capturar'] = False
+                vals['x_studio_check_temporal'] = False
             dca = self.env['dcas.dcas'].create(vals)
 
 
