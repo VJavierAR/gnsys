@@ -58,7 +58,6 @@ class miniModelo(models.Model):
 	precio=fields.Float(default=0.00)
 	tipo=fields.Char()
 
-
 	@api.onchange('idProducto')
 	def domi(self):
 		res={}
