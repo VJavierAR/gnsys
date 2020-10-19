@@ -6107,7 +6107,7 @@ class helpdesk_ticket_techra(models.Model):
                                 )
     series = fields.One2many(
                                 'dcas.dcas', 
-                                'x_studio_tiquete', 
+                                'ticket_techra', 
                                 string = 'Series en dca', 
                                 track_visibility = 'onchange'
                             )
