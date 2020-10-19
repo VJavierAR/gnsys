@@ -6148,7 +6148,7 @@ class helpdesk_ticket_techra(models.Model):
                     vals['fuente'] = 'helpdesk.ticket'
                 else:
                     vals['fuente'] = 'stock.production.lot'
-                vals['serie'] = serie_id
+                vals['serie'] = serie_id.id
                 vals['ticket_techra'] = self.id
                 vals['ticket_techra_texto'] = self.numTicketDeTechra
                 vals['creado_por_tickets_techra'] = True
