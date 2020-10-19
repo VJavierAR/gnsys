@@ -74,7 +74,7 @@ class servicios_gnsys(models.Model):
     nombreAnte = fields.Text(string="Nombre otro sistema servicio",track_visibility='onchange')
 
     polizaServicios = fields.Boolean(string="Póliza de servicios",track_visibility='onchange') 
-    fechaAplicacion=fields:Date()
+    fechaAplicacion=fields.Date()
     montoCambio=fields.Float()
     
     @api.onchange('serviciosNombre')
