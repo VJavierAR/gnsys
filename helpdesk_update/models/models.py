@@ -6107,7 +6107,39 @@ class helpdesk_ticket_techra(models.Model):
                                 string = 'Series en dca', 
                                 track_visibility = 'onchange'
                             )
-    
+
+
+    def crea_relacion_dca(self):
+        series_text = self.numeroDeSerieTechra.replace("[", "")
+        series_text = series_text.replace("]", "")
+        lista_series = []
+        if "," in series_text:
+            lista_series = series_text.split(",")
+        else:
+            lista_series.append(series_text)
+
+
+        for serie in lista_series:
+            dominio_busqueda_serie = [('name', '=', serie)]
+            serie_id = self.env['stock.production.lot'].search(dominio_busqueda_serie)
+            vals = {}
+            if serie_id:
+                if self.tipoDeReporteTechra = 'Toner'
+                    vals['fuente'] = 'helpdesk.ticket'
+                else:
+                    vals['fuente'] = 'stock.production.lot'
+                vals['serie'] = serie_id
+                vals['ticket_techra'] = self.id
+                vals['ticket_techra_texto'] = self.numTicketDeTechra
+            else:
+                if self.tipoDeReporteTechra = 'Toner'
+                    vals['fuente'] = 'helpdesk.ticket'
+                else:
+                    vals['fuente'] = 'stock.production.lot'
+                #vals['serie'] = serie_id
+                vals['ticket_techra'] = self.id
+                vals['ticket_techra_texto'] = self.numTicketDeTechra
+            dca = self.env['dcas.dcas'].create(vals)
 
 
 
