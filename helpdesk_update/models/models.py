@@ -6580,8 +6580,9 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
         lista = [[5,0,0]]
         listaDeCantidades = []
         for refaccion in self.accesorios:
-            lista.append( [4, refaccion.productos.id] )
-            listaDeCantidades.append(refaccion.cantidadPedida)
+            if refaccion.productos.id:
+                lista.append( [4, refaccion.productos.id] )
+                listaDeCantidades.append(refaccion.cantidadPedida)
         self.ticket_id.write({'x_studio_productos': lista})
 
         lista = []
