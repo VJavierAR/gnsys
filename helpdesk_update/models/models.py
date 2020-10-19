@@ -6101,6 +6101,10 @@ class helpdesk_ticket_techra(models.Model):
                                         track_visibility = 'onchange'
                                     )
 
+    es_repetido = fields.Boolean(
+                                    string = 'Es repetido',
+                                    default = False
+                                )
     series = fields.One2many(
                                 'dcas.dcas', 
                                 'x_studio_tiquete', 
@@ -6108,6 +6112,14 @@ class helpdesk_ticket_techra(models.Model):
                                 track_visibility = 'onchange'
                             )
 
+    def identifica_repetidos(self):
+        dominio_busqueda_ticket = [('numTicketDeTechra', '=', self.numTicketDeTechra), ('id', '!=', str(self.id))]
+        serie_id = self.env['helpdesk.ticket.techra'].search(dominio_busqueda_ticket)
+        if serie_id:
+            vals = {
+                'es_repetido': True
+            }
+            serie_id.write(vals)
 
     def crea_relacion_dca(self):
         series_text = self.numeroDeSerieTechra.replace("[", "")
