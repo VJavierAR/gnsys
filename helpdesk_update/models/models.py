@@ -6130,8 +6130,7 @@ class helpdesk_ticket_techra(models.Model):
 
 
     def crea_relacion_dca(self):
-        series_text = self.numeroDeSerieTechra.replace("[", "")
-        series_text = series_text.replace("]", "")
+        series_text = self.numeroDeSerieTechra.replace("[", "").replace("]", "").replace(" ", "")
         lista_series = []
         if "," in series_text:
             lista_series = series_text.split(",")
