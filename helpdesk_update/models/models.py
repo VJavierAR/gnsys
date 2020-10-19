@@ -6098,9 +6098,89 @@ class helpdesk_ticket_techra(models.Model):
                                         'helpdesk.diagnostico', 
                                         'ticket_techra', 
                                         string = 'Diagnostico', 
-                                        track_visibility = 'onchange', 
-                                        copy=True
+                                        track_visibility = 'onchange'
                                     )
+
+    es_repetido = fields.Boolean(
+                                    string = 'Es repetido',
+                                    default = False
+                                )
+    active = fields.Boolean(
+                                    string = 'Activo',
+                                    default = True
+                                )
+    series = fields.One2many(
+                                'dcas.dcas', 
+                                'ticket_techra', 
+                                string = 'Series en dca', 
+                                track_visibility = 'onchange'
+                            )
+
+    def identifica_repetidos(self):
+        dominio_busqueda_ticket = [('numTicketDeTechra', '=', self.numTicketDeTechra), ('id', '!=', str(self.id)), ('es_repetido', '=', False)]
+        serie_id = self.env['helpdesk.ticket.techra'].search(dominio_busqueda_ticket, limit = 1)
+        if serie_id:
+            if not serie_id.es_repetido:
+                vals = {
+                    'es_repetido': True
+                }
+                serie_id.write(vals)
+                return True
+        return False
+
+
+    def crea_relacion_dca(self):
+        series_text = self.numeroDeSerieTechra.replace("[", "").replace("]", "").replace(" ", "")
+        lista_series = []
+        if "," in series_text:
+            lista_series = series_text.split(",")
+        else:
+            lista_series.append(series_text)
+
+        #_logger.info('Lista de series: ' + str(lista_series))
+        for serie in lista_series:
+            dominio_busqueda_serie = [('name', '=', serie)]
+            serie_id = self.env['stock.production.lot'].search(dominio_busqueda_serie)
+            vals = {}
+            if serie_id:
+                if self.tipoDeReporteTechra == 'Toner':
+                    vals['fuente'] = 'helpdesk.ticket'
+                else:
+                    vals['fuente'] = 'stock.production.lot'
+                vals['serie'] = serie_id.id
+                vals['ticket_techra'] = self.id
+                vals['ticket_techra_texto'] = self.numTicketDeTechra
+                vals['creado_por_tickets_techra'] = True
+
+                vals['esContadorDeTechra'] = False
+                vals['reinicioDeContador'] = False
+                vals['respaldo'] = False
+                vals['usb'] = False
+                vals['ultimaCargaContadoresMesa'] = False
+                vals['x_studio_capturar'] = False
+                vals['x_studio_check_temporal'] = False
+
+
+            else:
+                if self.tipoDeReporteTechra == 'Toner':
+                    vals['fuente'] = 'helpdesk.ticket'
+                else:
+                    vals['fuente'] = 'stock.production.lot'
+                #vals['serie'] = serie_id
+                vals['ticket_techra'] = self.id
+                vals['ticket_techra_texto'] = self.numTicketDeTechra
+                vals['creado_por_tickets_techra'] = True
+
+                vals['esContadorDeTechra'] = False
+                vals['reinicioDeContador'] = False
+                vals['respaldo'] = False
+                vals['usb'] = False
+                vals['ultimaCargaContadoresMesa'] = False
+                vals['x_studio_capturar'] = False
+                vals['x_studio_check_temporal'] = False
+            dca = self.env['dcas.dcas'].create(vals)
+
+
 
 
 class helpdesk_lines(models.Model):
