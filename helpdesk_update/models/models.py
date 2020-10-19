@@ -4243,6 +4243,23 @@ class helpdesk_update(models.Model):
             self.creaDiagnosticoVistaLista(comentarioGenerico, estado)
 
     
+    @api.onchange('x_studio_field_6furK', 'x_studio_estado_de_localidad', 'x_studio_zona', 'zona_estados')
+    def actualiza_todas_las_zonas(self):
+        lista_zonas = []
+        if self.x_studio_field_6furK:
+            lista_zonas.append(str(self.x_studio_field_6furK))
+        if self.x_studio_zona:
+            lista_zonas.append(str(self.x_studio_zona))
+        if self.zona_estados:
+            lista_zonas.append(str(self.zona_estados))
+        if self.x_studio_zona_cliente:
+            lista_zonas.append(str(self.x_studio_zona_cliente))
+        vals = {
+            'x_todas_las_zonas': str(lista_zonas)
+        }
+        self.write(vals)
+
+
     
     @api.model
     def message_new(self, msg, custom_values=None):
