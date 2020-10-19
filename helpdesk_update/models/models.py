@@ -6138,7 +6138,7 @@ class helpdesk_ticket_techra(models.Model):
         else:
             lista_series.append(series_text)
 
-
+        _logger.info('Lista de series: ' + str(lista_series))
         for serie in lista_series:
             dominio_busqueda_serie = [('name', '=', serie)]
             serie_id = self.env['stock.production.lot'].search(dominio_busqueda_serie)
