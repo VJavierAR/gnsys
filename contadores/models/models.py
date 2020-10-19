@@ -107,6 +107,7 @@ class dcas(models.Model):
     
     ticket_techra = fields.Many2one('helpdesk.ticket.techra', string = 'Ticket techra relacion')
     ticket_techra_texto = fields.Text(string = 'Ticket techra texto')
+    creado_por_tickets_techra = fields.Boolean(string = 'Creado por ppanificador de ticket techra', default = False)
    
     
     @api.onchange('serie')             

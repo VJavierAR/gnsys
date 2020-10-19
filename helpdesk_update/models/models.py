@@ -6151,6 +6151,7 @@ class helpdesk_ticket_techra(models.Model):
                 vals['serie'] = serie_id
                 vals['ticket_techra'] = self.id
                 vals['ticket_techra_texto'] = self.numTicketDeTechra
+                vals['creado_por_tickets_techra'] = True
             else:
                 if self.tipoDeReporteTechra == 'Toner':
                     vals['fuente'] = 'helpdesk.ticket'
@@ -6159,6 +6160,7 @@ class helpdesk_ticket_techra(models.Model):
                 #vals['serie'] = serie_id
                 vals['ticket_techra'] = self.id
                 vals['ticket_techra_texto'] = self.numTicketDeTechra
+                vals['creado_por_tickets_techra'] = True
             dca = self.env['dcas.dcas'].create(vals)
 
 
