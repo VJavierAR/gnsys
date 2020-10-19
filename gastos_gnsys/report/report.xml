@@ -1,0 +1,13 @@
+<odoo>
+	<data>
+
+        <report
+            id="pagos_xlsx"
+            model="gastos.devolucion"
+            string="Reporte de pagos"
+            report_type="xlsx"
+            name="gastos_gnsys.report_pagos_xls"
+            file="gastos_gnsys.report_pagos_xls"/>
+
+    </data>
+</odoo>

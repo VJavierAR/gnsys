@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>    
+    <record id="view_gastos_pagos_reporte" model="ir.ui.view">
+        <field name="model">gasto.pago.reporte</field>
+        <field name="arch" type="xml">
+            <form string="Reporte de pagos">
+                <group>
+                    <group string='Periodo de tiempo'>
+                        <field name="fechaInicial" required="1"/>
+                        <field name="fechaFinal" required="1"/>
+                    </group>
+                </group>
+
+                <footer>
+                    <button name="report" string="Generar reporte" type="object" class="oe_highlight"/>
+                    <button string="Cerrar ventana" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

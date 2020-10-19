@@ -19,6 +19,7 @@ odoo.define('invoice.action_button', function (require) {
                         this.$buttons.find('.o_list_button_add').hide();
                         this.$buttons.find('.oe_action_button_ticket_report').click(this.proxy('action_inter5'));
                         this.$buttons.find('.oe_action_button_helpdesk_detalle').click(this.proxy('action_inter11'));
+                        this.$buttons.find('.oe_action_button_helpdesk_guia').click(this.proxy('action_inter13'));
                         break;
                       case 2941:
                         this.$buttons.find('.o_button_import').hide();
@@ -39,6 +40,7 @@ odoo.define('invoice.action_button', function (require) {
                         this.$buttons.find('.oe_action_button_stock_rule').click(this.proxy('action_inter10')).hide();
                         break;
                       default:
+                        this.$buttons.find('.oe_action_button_lot_serial').click(this.proxy('action_inter14')); 
                         this.$buttons.find('.oe_action_button_helpdesk_detalle').hide();
                         this.$buttons.find('.oe_action_button_purchase_order').click(this.proxy('action_inter8')); 
                         this.$buttons.find('.oe_action_button_sale_report').click(this.proxy('action_inter4')); 
@@ -56,6 +58,38 @@ odoo.define('invoice.action_button', function (require) {
                 
             }
         },
+        action_inter14: function (e) {
+            var self = this
+            var user = session.uid;
+            self.do_action({
+                name: _t('Base Instalada'),
+                type : 'ir.actions.act_window',
+                res_model: 'lot.serial.reporte',
+                view_type: 'form',
+                view_mode: 'form',
+                view_id: 'view_lot_serial_reporte',
+                views: [[false, 'form']],
+                target: 'new',
+            
+            });
+        }
+        ,
+        action_inter13: function (e) {
+            var self = this
+            var user = session.uid;
+            self.do_action({
+                name: _t('Guias a ticket'),
+                type : 'ir.actions.act_window',
+                res_model: 'ticket.guia.carga',
+                view_type: 'form',
+                view_mode: 'form',
+                view_id: 'view_helpdesk_guia_form',
+                views: [[false, 'form']],
+                target: 'new',
+            
+            });
+        }
+        ,
         action_inter12: function (e) {
             var self = this
             var user = session.uid;

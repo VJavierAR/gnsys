@@ -21,11 +21,11 @@ class servicios_gnsys(models.Model):
     rentaMensual = fields.Text(string="Renta mensual")
     tipo = fields.Selection([('1','SERVICIO DE PCOUNTER'),('2','RENTA MENSUAL DE LICENCIA EMBEDED'),('3','Arrendamiento Base'),('4','Arrendamiento Global'),('4','Costo por página procesada')],string="Tipo de servicio")
     bolsaBN = fields.Integer(string="Bolsa B/N")
-    clickExcedenteBN = fields.Float(string="Click")
+    clickExcedenteBN = fields.Float(string="Click",digits=(12,3))
     procesadoBN = fields.Integer(string="Procesado B/N")
 
     bolsaColor = fields.Integer(string="Bolsa color")
-    clickExcedenteColor = fields.Float(string="Click excedente color")
+    clickExcedenteColor = fields.Float(string="Click excedente color",digits=(12,3))
     procesadoColor = fields.Integer(string="Procesado color")
     
     series = fields.One2many('stock.production.lot', 'servicio', string="Series")
@@ -74,7 +74,8 @@ class servicios_gnsys(models.Model):
     nombreAnte = fields.Text(string="Nombre otro sistema servicio",track_visibility='onchange')
 
     polizaServicios = fields.Boolean(string="Póliza de servicios",track_visibility='onchange') 
-    
+    fechaAplicacion=fields.Date()
+    montoCambio=fields.Float()
     
     @api.onchange('serviciosNombre')
     def cambiarNombre(self):

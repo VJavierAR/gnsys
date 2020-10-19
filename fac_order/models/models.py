@@ -69,19 +69,19 @@ class fac_order(models.Model):
                paginasbn=11422
                embeded=11423
           if str(self.partner_id.razonSocial)=='2': #Grupo
-               pbn=12292
-               pcolor=12290
-               rentaG=12296
+               pbn=12290
+               pcolor=12288
+               rentaG=12294
                rentaE=12292
-               spc=12298
-               tfs=12300
-               sm=12302
-               sme=12304
-               netMa=12306
-               paginasbn=12308
-               embeded=12310
-               impre=12550
-               lp=12549                
+               spc=12296
+               tfs=12298
+               sm=12300
+               sme=12302
+               netMa=12304
+               paginasbn=12306
+               embeded=12308
+               impre=12540
+               lp=12539                
           if str(self.partner_id.razonSocial)=='3': #servicios
                pbn=12289
                pcolor=12287
@@ -138,6 +138,8 @@ class fac_order(models.Model):
                     local = self.env['sale.order'].create({'partner_id' : self.partner_id.id
                                                                  , 'origin' : "dividir por localidades: " + str(self.name)
                                                                  , 'x_studio_factura':'si'                                                                                                                             
+                                                                 ,'month':self.month
+                                                                 ,'year':self.year
                                                                 })
                     self.env.cr.execute("insert into x_contrato_sale_order_rel (sale_order_id, contrato_id) values (" +str(local.id) + ", " +  str(r.x_studio_contratosid).replace("[","").replace("]","") + ");")                                        
                     htmlloca="<a href='https://gnsys-corp.odoo.com/web#id="+str(local.id)+"&action=1167&model=sale.order&view_type=form&menu_id=406' target='_blank'>"+str(local.name)+"</a>"+'<br> '+htmlloca
@@ -170,13 +172,15 @@ class fac_order(models.Model):
                                                                  ,'origin' : "dividir por servicios: " + str(self.name)
                                                                  , 'team_id' : 1
                                                                  , 'x_studio_factura':'si'
+                                                                 ,'month':self.month
+                                                                 ,'year':self.year
                                                                 })
                       self.env.cr.execute("insert into x_contrato_sale_order_rel (sale_order_id, contrato_id) values (" +str(fac.id) + ", " +  str(r.x_studio_contratosid).replace("[","").replace("]","") + ");")                                         
                       servicioshtml="<a href='https://gnsys-corp.odoo.com/web#id="+str(fac.id)+"&action=1167&model=sale.order&view_type=form&menu_id=406' target='_blank'>"+str(fac.name)+"</a>"+'<br> '+servicioshtml
                       for d in self.order_line:
                           #_logger.info("Informacion entre:"+str(asts[rs])+" "+str(d.x_studio_servicio))
                           if asts[rs]==d.x_studio_servicio:  
-                             self.env['sale.order.line'].create({'order_id': fac.id,'x_studio_servicio':d.x_studio_servicio,'x_studio_field_9nQhR':d.x_studio_field_9nQhR.id,'product_id':d.product_id.id,'product_uom_qty':d.product_uom_qty,'price_unit':d.price_unit,'x_studio_bolsa':d.x_studio_bolsa})
+                             self.env['sale.order.line'].create({'order_id': fac.id,'x_studio_servicio':d.x_studio_servicio,'x_studio_field_9nQhR':d.x_studio_field_9nQhR.id,'product_id':d.product_id.id,'x_studio_cantidad':d.product_uom_qty,'product_uom_qty':d.product_uom_qty,'price_unit':d.price_unit,'x_studio_bolsa':d.x_studio_bolsa})
                       for det in self.detalle:
                           #_logger.info("Informacion entre:"+str(asts[rs])+" "+str(det.servicio))
                           if int(asts[rs])==int(det.servicio):
@@ -413,7 +417,8 @@ class fac_order(models.Model):
                                 currentP=self.env['dcas.dcas'].search([('serie','=',k.id),('x_studio_field_no6Rb', '=', perido)],order='x_studio_fecha desc',limit=1)
                                 currentPA=self.env['dcas.dcas'].search([('serie','=',k.id),('x_studio_field_no6Rb', '=', periodoAnterior)],order='x_studio_fecha desc',limit=1)
                                 cng=int(currentP.contadorMono)
-                                cngc=int(currentP.contadorColor)                                 
+                                cngc=int(currentP.contadorColor)
+
                                 if cng==0:
                                    bnp=0
                                 else:
@@ -428,8 +433,9 @@ class fac_order(models.Model):
                                 if k.x_studio_color_bn=='Color':
                                    totalesColor=colorp+totalesColor
                                    totalesNegro=bnp+totalesNegro
-                            self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':j.id,'x_studio_field_9nQhR':k.id,'product_id':pcolor,'product_uom_qty':totalesColor,'x_studio_cantidad':str(totalesColor),'price_unit':m.clickExcedenteColor,'name':'(82121500) PAGINAS IMPRESAS COLOR : '+str(totalesColor)+' INCLUYE: '+str(m.bolsaColor)})                                                    
-                            self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':j.id,'x_studio_field_9nQhR':k.id,'product_id':pbn,'product_uom_qty':totalesNegro,'x_studio_cantidad':str(totalesNegro),'price_unit':m.clickExcedenteBN,'name':'(82121500) PAGINAS IMPRESAS NEGRO : '+str(totalesNegro)+' INCLUYE: '+str(m.bolsaBN)})                                                                                  
+                                _logger.info("Informacion entre:"+str(m.clickExcedenteColor))
+                            self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':j.id,'x_studio_field_9nQhR':k.id,'product_id':pcolor,'product_uom_qty':totalesColor,'x_studio_cantidad':str(totalesColor),'price_unit':j.clickExcedenteColor,'name':'(82121500) PAGINAS IMPRESAS COLOR : '+str(totalesColor)+' INCLUYE: '+str(m.bolsaColor)})                                                    
+                            self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':j.id,'x_studio_field_9nQhR':k.id,'product_id':pbn,'product_uom_qty':totalesNegro,'x_studio_cantidad':str(totalesNegro),'price_unit':j.clickExcedenteBN,'name':'(82121500) PAGINAS IMPRESAS NEGRO : '+str(totalesNegro)+' INCLUYE: '+str(m.bolsaBN)})                                                                                  
                             self.env['sale.order.line'].create({'order_id': sale.id,'x_studio_servicio':j.id,'product_id':rentaG,'product_uom_qty':1.0,'x_studio_cantidad':'1','price_unit':j.rentaMensual,'name':'(80161801) RENTA '+ str(len(p))+' EQUIPOS EN GENERAL.'})                                                                                                                         
                for s in self.x_studio_servicios:
                      if s.nombreAnte=='SERVICIO DE PCOUNTER' or s.nombreAnte=='SERVICIO DE PCOUNTER1' or s.nombreAnte=='ADMINISTRACION DE DOCUMENTOS CON PCOUNTER' or s.nombreAnte=='SERVICIO DE MANTENIMIENTO DE PCOUNTER' or s.nombreAnte=='SERVICIO DE MANTENIMIENTO PCOUNTER' or s.nombreAnte=='RENTA DE LICENCIAMIENTO PCOUNTER':                        

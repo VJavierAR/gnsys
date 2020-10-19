@@ -31,8 +31,8 @@ class StockPicking(Model):
     distribucion=fields.Boolean()
     retiro=fields.Boolean()
     mini=fields.Boolean()
-
-
+    chofer=fields.Many2one('res.users')
+    #ticke_id=fields.Integer(related='group_id.sale_id.x_studio_field_bxHgp.id')
 
     def validacionZero(self):
         if(self.x_studio_backorder_de==False):
@@ -112,7 +112,7 @@ class StockPicking(Model):
     def back(self):
         for r in self:
             for rrr in r.move_ids_without_package:
-                if(rrr.product_id.categ_id.id==13 and (r.picking_type_id.id==3 or r.picking_type_id.id==1 or r.picking_type_id.id==89) and r.state!='done'):
+                if(rrr.product_id.categ_id.id==13 and r.state!='done'):
                     r.write({'oculta':True})
                 rrrrr=self.env['stock.quant'].search([['product_id','=', rrr.product_id.id],['location_id','=',rrr.location_id.id]]).sorted(key='quantity',reverse=True)
                 if(len(rrrrr)==0):

@@ -93,7 +93,11 @@ class dcas(models.Model):
     hTicketUltimaEtapaTicket = fields.Text(string = 'Última etapa ticket')
     hTicketHojaDeEstado = fields.Text(string = 'Hoja de estado')
     hTicketUltimaNota = fields.Text(string = 'Última nota')
-    hTicketFechaNota = fields.Datetime(string = 'Fecha nota')    
+    hTicketFechaNota = fields.Datetime(string = 'Fecha nota')
+    hTicketFechaNotaText = fields.Text(string = 'Fecha nota texto')
+    ultimaCargaContadoresMesa = fields.Boolean(string = 'Ultima carga al día 22/09/2020')
+    esContadorDeTechra = fields.Boolean(string = 'Contador cargado de techra')
+
     archivoCSV = fields.Binary(string="Archivo a cargar csv")    
 
     fechaTemporal = fields.Text(string = 'Fecha temporal', store = True)
@@ -101,7 +105,9 @@ class dcas(models.Model):
     comentarioDeReinicio = fields.Text(string = 'Comentario de reinicio de contador')
     reinicioDeContador = fields.Boolean(string = 'Reinicio de contador')
     
-    
+    ticket_techra = fields.Many2one('helpdesk.ticket.techra', string = 'Ticket techra relacion')
+    ticket_techra_texto = fields.Text(string = 'Ticket techra texto')
+    creado_por_tickets_techra = fields.Boolean(string = 'Creado por ppanificador de ticket techra', default = False)
    
     
     @api.onchange('serie')             
@@ -227,14 +233,14 @@ class dcas(models.Model):
     def validaMoonLectura(self):        
         contadorM=self.contadorMono
         cam=int(self.x_studio_lectura_anterior_bn)                                        
-        if cam>contadorM:            
+        if cam>contadorM and self.env.user.id!=113:            
             raise exceptions.ValidationError("Contador Monocromatico Menor")
 
     @api.onchange('contadorColor')
     def validaContadoresLecturas(self):
         contaC=self.contadorColor                       
         cac=int(self.x_studio_lectura_anterior_color)
-        if cac>contaC:            
+        if cac>contaC and self.env.user.id!=113:            
             raise exceptions.ValidationError("Contador Color Menor.")       
 
 
@@ -642,28 +648,27 @@ class contadores(models.Model):
                                 worksheet.write(i, 4, rpt.x_studio_lectura_anterior_bn,neg)
                                 worksheet.write(i, 5, rpt.x_studio_lectura_anterior_color,neg)                        
                                 worksheet.write(i, 6, rpt.contadorMono,neg)
-                                worksheet.write(i, 7, rpt.contadorColor,neg)
-                                if str(rpt.serie.x_studio_estado)!='Back-up':   
-                                    if rpt.contadorMono==0:
-                                       ebn=0
-                                    else:
-                                       ebn=rpt.contadorMono-rpt.x_studio_lectura_anterior_bn
-                                    if rpt.contadorColor==0:
-                                       ec=0
-                                    else:                
-                                       ec=rpt.contadorColor-rpt.x_studio_lectura_anterior_color                    
-                                    worksheet.write(i, 15, rpt.x_studio_ubicacin,neg)                                                            
-                                    worksheet.write(i, 16, rpt.comentarioLecturas,neg)                                                            
-                                    worksheet.write(i, 8, ebn,neg)
-                                    worksheet.write(i, 9, ec,neg)
+                                worksheet.write(i, 7, rpt.contadorColor,neg)   
+                                if rpt.contadorMono==0:
+                                   ebn=0
+                                else:
+                                   ebn=rpt.contadorMono-rpt.x_studio_lectura_anterior_bn
+                                if rpt.contadorColor==0:
+                                   ec=0
+                                else:                
+                                   ec=rpt.contadorColor-rpt.x_studio_lectura_anterior_color                    
+                                worksheet.write(i, 15, rpt.x_studio_ubicacin,neg)                                                            
+                                worksheet.write(i, 16, rpt.comentarioLecturas,neg)                                                            
+                                worksheet.write(i, 8, ebn,neg)
+                                worksheet.write(i, 9, ec,neg)
 
-                                    if rpt.x_studio_color_o_bn=='B/N':                                                         
-                                       eebn=ebn+eebn
-                                    if rpt.x_studio_color_o_bn=='Color':                                                         
-                                       eebn=ebn+eebn                                                                                   
-                                       eec=ec+eec
+                                if rpt.x_studio_color_o_bn=='B/N':                                                         
+                                   eebn=ebn+eebn
+                                if rpt.x_studio_color_o_bn=='Color':                                                         
+                                   eebn=ebn+eebn                                                                                   
+                                   eec=ec+eec
 
-                                    i=i+1
+                                i=i+1
                        if eebn>rd.bolsaBN:
                            resto=eebn-rd.bolsaBN
                            totalsr=resto*rd.clickExcedenteBN+totalsr
@@ -1327,6 +1332,9 @@ class contadores_lines(models.Model):
 class lor(models.Model):
     _inherit = 'stock.production.lot'
     dca=fields.One2many('dcas.dcas',inverse_name='serie')
+    busqueda_datos_ticket = fields.Text(string = 'Busqueda')
+
+    
 
     
     

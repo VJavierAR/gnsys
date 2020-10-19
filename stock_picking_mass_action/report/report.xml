@@ -38,7 +38,7 @@
     model="stock.production.lot"
     string="Base Instalada"
     report_type="xlsx"
-    name="lot_serial.report"
+    name="lots.report"
     file="Base Instalada"
     attachment_use="False"/>
 

@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+        <record id="view_sale_agregados_form" model="ir.ui.view">
+        <field name="model">sale.agregado</field>
+        <field name="arch" type="xml">
+            <form string="Monto a Agregar">
+                <h1>Se agregara o disminuira el monto dependiendo del tipo de solicitud y servicio</h1>
+                    <group>
+                        <field name="monto" string="Archivo" required="1"/>
+                        <field name="periodo" string="Archivo" required="1"/>
+                    </group>
+                <footer>
+                    <button name="agregado" string="Aceptar" type="object" class="oe_highlight"/>
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
         <record model="ir.ui.view" id="sale_email_compose_message_wizard_form">
             <field name="name">mail.compose.message.form</field>
             <field name="model">mail.compose.message</field>

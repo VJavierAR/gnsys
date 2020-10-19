@@ -7,6 +7,19 @@
 	background-color: #007bff;
 }
 
+.mesa_de_ayuda_tree_class [data-id="cambioEstadoAtencion"] {
+	width: 100px;
+}
+
+.mesa_de_ayuda_tree_class [data-id="datosCliente"] {
+	width: 100px;
+}
+
+.mesa_de_ayuda_tree_class [data-id="x_studio_ultima_nota"] {
+	width: 100px;
+}
+
+
 /*
 .o_field_pdfviewer {
 	height: 600px;

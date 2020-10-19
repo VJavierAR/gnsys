@@ -8,13 +8,30 @@ import logging, ast
 import datetime, time
 _logger = logging.getLogger(__name__)
 
+class crm(models.Model):
+    _inherit='crm.lead'
+    
+    
+    def crearSolicitud(self):
+        view = self.env.ref('studio_customization.sale_order_form_8690a815-6188-42ab-9845-1c18a02ee045')
+        return {
+                'name': _('Orden'),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'sale.order',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'context': self.env.context,
+                }
 
 class sale_order_compatibles(models.Model):
 	_name = 'sale_order_compatibles'
 	_description = 'Detalle modelo temporal'
 	saleOrder = fields.Many2one('sale.order')
 	equipos = fields.Many2one('product.product', string = 'Equipos')
-	cantidad = fields.Selection(selection = [(0, '0'),(1, '1')],string = 'Cantidad',default=1)
+	cantidad = fields.Selection(selection = [(0, '0'),(1, '1'),(2, '2'),(3, '3'),(4, '4'),(5, '5'),(6, '6'),(7, '7'),(8, '8'),(9, '9'),(10, '10'),(11, '11'),(12, '12'),(13, '13'),(14, '14'),(15, '15')],string = 'Cantidad',default=1)
 	estado = fields.Selection(selection = [('Nuevo', 'Nuevo'),('Usado', 'Usado')], default = 'Nuevo')
 	componentes = fields.One2many('sale_order_compatibles_mini', 'saleOrderMini', string = 'Componentes')
 	toner = fields.One2many('sale_order_compatibles_mini_toner', 'saleOrderMini', string = 'Toner')
@@ -133,17 +150,34 @@ class sale_update(models.Model):
 		      record['compatiblesLineas']=[{'serie':record.serieRetiro2.id,'cantidad':1,'tipo':record.x_studio_tipo_de_solicitud,'equipos':record.serieRetiro2.product_id.id}]
 		      record['x_studio_field_69Boh']=record.serieRetiro2.servicio.id
 		      record['x_studio_field_LVAj5']=record.serieRetiro2.servicio.contrato.id
-
-
+	def preparaSolicitudValidacion(self):
+		if('Renta Global' in str(self.x_studio_field_69Boh.serviciosNombre)):
+			wiz = self.env['sale.agregado'].create({'sale':self.id})
+			view = self.env.ref('sale_order_compatibles.view_sale_agregados_form')
+			return {
+				'name': _('Agregado'),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'sale.agregado',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'res_id': wiz.id,
+                'context': self.env.context,
+                	}
+		else:
+			self.preparaSolicitud()
 
 	def preparaSolicitud(self):
 		self.order_line.unlink()
 		data=[]
 		if(len(self.compatiblesLineas)>0):
 			for e in self.compatiblesLineas:
-				if(e.cantidad!=0 and e.producto.id!=False):
-					d={'x_studio_field_9nQhR':e.serie.id,'x_studio_estado':e.estado,'x_studio_field_mqSKO':e.equipos.id,'product_id':e.equipos.id,'name':e.equipos.name,'product_uom_qty':1,'product_uom':e.equipos.uom_id.id,'price_unit':e.precio,'x_studio_id_relacion':e.id}
-					self.order_line=[d]
+				for ae in range(e.cantidad):
+					if(e.cantidad!=0 and e.equipos.id!=False):
+						d={'x_studio_field_9nQhR':e.serie.id,'x_studio_estado':e.estado,'x_studio_field_mqSKO':e.equipos.id,'product_id':e.equipos.id,'name':e.equipos.name,'product_uom_qty':1,'product_uom':e.equipos.uom_id.id,'price_unit':(e.precio/e.cantidad),'x_studio_id_relacion':e.id}
+						self.order_line=[d]
 				for e1 in e.componentes:
 					if(e1.cantidad!=0 and e1.producto.id!=False):
 						d={'x_studio_field_9nQhR':e1.serie.id,'x_studio_field_mqSKO':e1.producto.id,'product_id':e1.producto.id,'name':e1.producto.name,'product_uom_qty':e1.cantidad,'product_uom':e1.producto.uom_id.id,'price_unit':e1.precio,'x_studio_id_relacion':e.id,'x_studio_modelo':e.equipos.name}
@@ -257,9 +291,12 @@ class sale_update(models.Model):
 			#ppp.action_confirm()
 			#ppp.action_assign()
 	def retiro(self):
+		fecha=datetime.datetime.now()-datetime.timedelta(hours=-5)
 		self.action_confirm()
 		seriesR=self.compatiblesLineas.mapped('serie.id')
 		seriesRR=self.env['stock.production.lot'].browse(seriesR)
+		for s in seriesRR:
+			self.env['cliente.h'].create({'localidad':self.partner_shipping_id.id,'solicitud':self.id,'contrato':self.x_studio_field_LVAj5.id,'servicio':self.x_studio_field_69Boh.id,'origen':self.partner_shipping_id.name,'destino':self.warehouse_id.name,'fecha':fecha,'serie':s.id})
 		seriesRR.write({'servicio':False,'x_studio_cliente':1,'x_studio_localidad_2':26662})
 		picks=self.env['stock.picking'].search([['sale_id','=',self.id]])
 		almacen=self.env['stock.warehouse'].search([['x_studio_field_E0H1Z','=',self.partner_shipping_id.id]])
@@ -283,3 +320,14 @@ class sale_update(models.Model):
 		    pic.move_ids_without_package.write({'location_dest_id':pic.picking_type_id.warehouse_id.lot_stock_id.id})
 		    self.env['stock.move.line'].search([['picking_id','=',pic.id]]).write({'location_dest_id':pic.picking_type_id.warehouse_id.lot_stock_id.id})
 		    pic.move_ids_without_package.write({'location_id':pic.picking_type_id.default_location_src_id.id})
+
+	def autoriza(self):
+		if(self.x_studio_tipo_de_solicitud in ["Venta","Venta directa","Arrendamiento","Backup","Demostración","Préstamo"]):
+			self.action_confirm()
+		if(self.x_studio_tipo_de_solicitud == "Cambio"):
+			self.cambio()
+		if(self.x_studio_tipo_de_solicitud == "Retiro"):
+			self.retiro()
+	@api.multi
+	def print_quotation(self):
+		return self.env.ref('studio_customization.presupuesto_pedido_6e389c86-9862-4c69-af3d-c7021b680bab').with_context(discard_logo_check=True).report_action(self)

@@ -461,6 +461,10 @@ class compras(models.Model):
                     'view_id': view.id,
                     'target': 'new',
                     'context': {'default_invoice_ids': [(4, self.x_studio_field_H9kGQ[0].id, None)]},}
+    def ingresoDeProductos(self):
+        final=self.picking_ids.filtered(lambda x:x.active==False or x.active==True).mapped('id')
+        pic=self.env['stock.picking'].search(['|',['active','=',True],['active','=',False]]).filtered(lambda x:x.purchase_id.id==self.id and x.state=='done')
+        return self.env.ref('stock.action_report_picking').report_action(pic)
 
 class comprasLine(models.Model):
     _inherit = 'purchase.order.line'

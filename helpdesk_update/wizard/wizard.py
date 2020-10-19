@@ -353,7 +353,7 @@ class HelpDeskCerrarConComentario(TransientModel):
         ultimaEvidenciaTec = self.ticket_id.diagnosticos[-1].evidencia.ids
         if self.evidencia:
           ultimaEvidenciaTec += self.evidencia.ids
-      if self.ticket_id.stage_id.name == 'En Ruta' or self.ticket_id.stage_id.name == 'Resuelto' or self.ticket_id.stage_id.name == 'Abierto' or self.ticket_id.stage_id.name == 'Asignado' or self.ticket_id.stage_id.name == 'Atención' and self.ticket_id.estadoCerrado == False:
+      if self.ticket_id.stage_id.name == 'Distribución' or self.ticket_id.stage_id.name == 'En Ruta' or self.ticket_id.stage_id.name == 'Resuelto' or self.ticket_id.stage_id.name == 'Abierto' or self.ticket_id.stage_id.name == 'Asignado' or self.ticket_id.stage_id.name == 'Atención' and self.ticket_id.estadoCerrado == False:
         self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.ticket_id.id
                                                 ,'comentario': self.comentario
                                                 #,'estadoTicket': self.ticket_id.stage_id.name
@@ -1494,7 +1494,8 @@ class helpdesk_crearconserie(TransientModel):
                                                   ,'partner_id': int(self.idCliente)
                                                   ,'x_studio_empresas_relacionadas': int(self.idLocaliidad)
                                                   ,'team_id': equipoDeUsuario
-                                                  ,'x_studio_field_6furK': self.zonaLocalidad
+                                                  ,'x_studio_field_6furK': self.zonaLocalidad,
+                                                    'x_studio_tipo_de_vale': self.tipoDeReporte
                                                   })
               ticket.write({'partner_id': int(self.idCliente)
                           ,'x_studio_empresas_relacionadas': int(self.idLocaliidad)
@@ -4138,33 +4139,33 @@ class HelpdeskTicketReporte(TransientModel):
         if contador > 0:
             i.pop(0)
 
-        _logger.info('3312: filtro reporte: ' + str(i))
+        #_logger.info('3312: filtro reporte: ' + str(i))
         d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc')
-        _logger.info('d: '+ str(len(d)))
+        #_logger.info('d: '+ str(len(d)))
         if self.mostrarCerrados or self.mostrarCancelados:
             if self.mostrarCerrados and not self.mostrarCancelados:
                 d = d.filtered(lambda x:  x.stage_id.id != 4 )
             if self.mostrarCancelados and not self.mostrarCerrados:
                 d = d.filtered(lambda x:  x.stage_id.id != 18 )
-            _logger.info('d 2: '+ str(len(d)))
+            #_logger.info('d 2: '+ str(len(d)))
             #if self.mostrarCerrados and self.mostrarCancelados:
             #    d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x:  x.stage_id.id == 18 and x.stage_id.id == 4 )
         else:
-            _logger.info('entre ultimo caso')
+            #_logger.info('entre ultimo caso')
             d = d.filtered(lambda x:  x.stage_id.id != 18 and x.stage_id.id != 4 )
-        _logger.info('d 3: '+ str(len(d)))
+        #_logger.info('d 3: '+ str(len(d)))
         if self.area:
             d = d.filtered(lambda x: (x.team_id.id in self.area.ids) )
-        _logger.info('d 4: '+ str(len(d)))
+        #_logger.info('d 4: '+ str(len(d)))
         if self.clienteRelacion:
             d = d.filtered(lambda x: (x.partner_id.id in self.clienteRelacion.ids) )
-        _logger.info('d 5: '+ str(len(d)))
+        #_logger.info('d 5: '+ str(len(d)))
         #_logger.info('fecha inicial: ' + str(self.fechaInicial))
-        _logger.info('datos: dias final: ' + str(self.fechaFinal + datetime.timedelta(days=2)))
+        #_logger.info('datos: dias final: ' + str(self.fechaFinal + datetime.timedelta(days=2)))
         d = d.filtered(lambda x: ( datetime.datetime.strptime(x.create_date.strftime('%Y-%m-%d'), '%Y-%m-%d').date() >= self.fechaInicial and datetime.datetime.strptime(x.create_date.strftime('%Y-%m-%d'), '%Y-%m-%d').date() <= self.fechaFinal + datetime.timedelta(days=2) ))
         #_logger.info('datos: d final: ' + str(d))
         #d = self.env['helpdesk.ticket'].search(i, order = 'create_date asc').filtered(lambda x: len(x.x_studio_equipo_por_nmero_de_serie_1) > 0 or len(x.x_studio_equipo_por_nmero_de_serie) > 0)
-        _logger.info('d 6: '+ str(len(d)))
+        #_logger.info('d 6: '+ str(len(d)))
         if len(d) > 0:
             d[0].write({
                             'x_studio_arreglo': str(d.mapped('id'))
@@ -5617,694 +5618,6 @@ class helpdesk_editar_contadores_mesa(TransientModel):
 
 
 
-class helpdesk_confirmar_validar_refacciones(TransientModel):
-    _name = 'helpdesk.confirmar.validar.refacciones'
-    _description = 'helpdesk valida y confirma proceso de refacciones.'
-    
-    ticket_id = fields.Many2one(
-                                    "helpdesk.ticket",
-                                    string = 'Ticket'
-                                )
-
-    productos = fields.Many2many(
-                                    'product.product', 
-                                    string = "Productos"
-                                )
-    """
-    EN DESARROLLO
-    productosDos = fields.One2many(
-                                    'helpdesk.refacciones',
-                                    'ticketRelacion',
-                                    string = "Refacciones y accesorios"
-                                )
-    """
-    activar_compatibilidad = fields.Boolean(
-                                                string = 'Activar compatibilidad',
-                                                default = False
-                                            )
-    check = fields.Boolean(
-                                string = 'Mostrar en reporte',
-                                default = False
-                            )
-    diagnostico_id = fields.One2many(
-                                        'helpdesk.diagnostico',
-                                        'ticketRelacion',
-                                        string = 'Diagnostico',
-                                        compute = '_compute_diagnosticos'
-                                    )
-    estado = fields.Char(
-                            'Estado previo a cerrar el ticket',
-                            compute = "_compute_estadoTicket"
-                        )
-    comentario = fields.Text(
-                                string = 'Comentario'
-                            )
-    evidencia = fields.Many2many(
-                                    'ir.attachment',
-                                    string = "Evidencias"
-                                )
-    """
-    historicoTickets = fields.One2many(
-                                        'dcas.dcas', 
-                                        'serie', 
-                                        string = 'Historico de tickets', 
-                                        compute='_compute_historico_tickets'
-                                        )
-    lecturas = fields.One2many(
-                                'dcas.dcas', 
-                                'serie', 
-                                string = 'Lecturas', 
-                                compute='_compute_lecturas'
-                                )
-    toner = fields.One2many(
-                                'dcas.dcas', 
-                                'serie', 
-                                string = 'Tóner', 
-                                compute='_compute_toner'
-                            )
-    """
-    historicoDeComponentes = fields.One2many(
-                                                'x_studio_historico_de_componentes', 
-                                                'x_studio_field_MH4DO', 
-                                                string = 'Historico de Componentes', 
-                                                compute='_compute_historico_de_componentes'
-                                            )
-    """
-    movimientos = fields.One2many( 
-                                    'stock.move.line', 
-                                    'lot_id', 
-                                    string = 'Movimientos', 
-                                    compute='_compute_movimientos'
-                                )
-    """
-    serie = fields.Text(
-                            string = "Serie", 
-                            compute = '_compute_serie_nombre'
-                        )
-
-    contadoresAnterioresText = fields.Text(
-                                                string = 'Contadores anteriores',
-                                                store = True
-                                            )
-    estadoSolicitud = fields.Text(
-                                    string = 'Estado de la solicitud',
-                                    compute = '_compute_estado_solicitud'
-                                )
-    solicitud = fields.Many2one(
-                                    'sale.order',
-                                    string = 'Solicitud',
-                                    compute = '_compute_solicitud'
-                                )
-    mensajesAlerta = fields.Text(
-                                    string = 'Mensjae de alerta'
-                                )
-    @api.onchange('productos')
-    def cambiarMensajePorProductos(self):
-        if self.productos:
-            refaccionesEnCero = ''
-            for refaccion in self.productos:
-                if not refaccion.x_studio_cantidad_pedida:
-                    refaccionesEnCero = refaccionesEnCero + """
-                                                                <tr>
-                                                                    <td>""" + str(refaccion.categ_id.name) + """</td>
-                                                                    <td>""" + str(refaccion.product_variant_id.display_name) + """</td>
-                                                                    <td>""" + str(refaccion.x_studio_cantidad_pedida) + """</td>
-                                                                </tr>
-                                                            """
-            if refaccionesEnCero != '':
-                self.mensajesAlerta = """
-                                        <div class='alert alert-info' role='alert'>
-                                            <h4 class="alert-heading">Validación de refaciones y/o accesorios en cero !!!</h4>
-
-                                            <p>Se validaran refacciones y/o accesorios con cantidad en cero. Los equipos son los siguientes: </p>
-                                            <br/>
-                                            <div class='row'>
-                                                <table class='table table-bordered table-warning text-black'>
-                                                    <thead >
-                                                        <tr>
-                                                            <th scope='col'>Categoría del producto</th>
-                                                            <th scope='col'>Refacción y/o accesorio</th>
-                                                            <th scope='col'>Cantidad a pedir</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        """ + refaccionesEnCero + """
-                                                    </tbody>
-                                                </table>
-                                            </div>    
-                                        </div>      
-                                    """
-            else:
-                self.mensajesAlerta = ''
-
-    def _compute_solicitud(self):
-        if self.ticket_id.x_studio_field_nO7Xg:
-            self.solicitud = self.ticket_id.x_studio_field_nO7Xg
-        
-    def _compute_estado_solicitud(self):
-        if self.ticket_id.x_studio_field_nO7Xg:
-            if self.ticket_id.x_studio_field_nO7Xg.state == 'sale':
-                self.estadoSolicitud = 'Solicitud validada'
-            else:
-                self.estadoSolicitud = 'Solicitud no validada'
-        else:
-            self.estadoSolicitud = 'No hay solicitud'
-
-
-    def _compute_estadoTicket(self):
-        self.estado = self.ticket_id.stage_id.name
-
-    def _compute_diagnosticos(self):
-        self.diagnostico_id = self.ticket_id.diagnosticos.ids
-
-    def _compute_serie_nombre(self):
-        if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
-            #self.serie = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].name
-            self.serie = """
-
-                            <table class='table table-bordered table-dark text-white'>
-                                <thead >
-                                    <tr>
-                                        <th scope='col'>Número de serie</th>
-                                        <th scope='col'>Modelo</th>
-                                        <th scope='col'>Descripción</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>""" + str(self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].name) + """</td>
-                                        <td>""" + str(self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_modelo_equipo) + """</td>
-                                        <td>""" + str(self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].product_id.description) + """</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        """
-
-
-    """
-    def _compute_historico_tickets(self):
-        if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
-            self.historicoTickets = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_field_Yxv2m.ids
-
-    def _compute_lecturas(self):
-        if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
-            self.lecturas = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_field_PYss4.ids
-
-    def _compute_toner(self):
-        if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
-            self.toner = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_toner_1.ids
-    """
-    def _compute_historico_de_componentes(self):
-        if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
-            self.historicoDeComponentes = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_histrico_de_componentes.ids
-    """
-    def _compute_movimientos(self):
-        if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
-            self.movimientos = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_move_line.ids
-    """
-    @api.onchange('activar_compatibilidad')
-    def productos_filtro(self):
-        res = {}             
-        g = str(self.ticket_id.x_studio_nombretmp)
-        
-        if self.activar_compatibilidad and self.ticket_id.x_studio_equipo_por_nmero_de_serie:
-            if g != 'False':
-                list = ast.literal_eval(g)
-                idf = self.ticket_id.team_id.id
-                tam = len(list)
-                if idf == 8 or idf == 13 :  
-                   res['domain']={'productos':[('categ_id', '=', 5),('x_studio_toner_compatible.id','in',list)]}
-                if idf == 9:
-                   res['domain']={'productos':[('categ_id', '=', 7),('x_studio_toner_compatible.id','=',list[0])]}
-                if idf != 9 and idf != 8:
-                   res['domain']={'productos':[('categ_id', '!=', 5),('x_studio_toner_compatible.id','=',list[0])]}
-        else:
-            res['domain']={'productos':[('categ_id', '=', 7)]}
-        return res
-
-    def validacionSolicitud(self):
-        if self.productos:
-            if self.ticket_id.x_studio_field_nO7Xg and self.ticket_id.x_studio_field_nO7Xg.state != 'sale':
-                self.ticket_id.x_studio_field_nO7Xg.action_confirm()
-            
-            if self.ticket_id.x_studio_field_nO7Xg.state == 'sale':
-                mensajeTitulo = 'Validación de refacción!!!'
-                mensajeCuerpo = 'Se valido la solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) + ' para el ticket ' + str(self.ticket_id.id) + '.'
-                wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
-                view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
-                return {
-                        'name': _(mensajeTitulo),
-                        'type': 'ir.actions.act_window',
-                        'view_type': 'form',
-                        'view_mode': 'form',
-                        'res_model': 'helpdesk.alerta',
-                        'views': [(view.id, 'form')],
-                        'view_id': view.id,
-                        'target': 'new',
-                        'res_id': wiz.id,
-                        'context': self.env.context,
-                        }
-            else:
-                mensajeTitulo = 'No se valido!!!'
-                mensajeCuerpo = 'No se valido la solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) + ' para el ticket ' + str(self.ticket_id.id) + '.'
-                wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
-                view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
-                return {
-                        'name': _(mensajeTitulo),
-                        'type': 'ir.actions.act_window',
-                        'view_type': 'form',
-                        'view_mode': 'form',
-                        'res_model': 'helpdesk.alerta',
-                        'views': [(view.id, 'form')],
-                        'view_id': view.id,
-                        'target': 'new',
-                        'res_id': wiz.id,
-                        'context': self.env.context,
-                        }
-
-
-    def confirmarYValidarRefacciones(self):
-        if self.ticket_id.stage_id.id == 3 or self.ticket_id.stage_id.id == 18 or self.ticket_id.stage_id.id == 4:
-            mensajeTitulo = 'No se puede validar la solicitud de refacción porque se encuentra en el estado ' + str(self.ticket_id.stage_id.name)
-            wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
-            view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
-            return {
-                        'name': _(mensajeTitulo),
-                        'type': 'ir.actions.act_window',
-                        'view_type': 'form',
-                        'view_mode': 'form',
-                        'res_model': 'helpdesk.alerta',
-                        'views': [(view.id, 'form')],
-                        'view_id': view.id,
-                        'target': 'new',
-                        'res_id': wiz.id,
-                        'context': self.env.context,
-                    }
-
-        self.ticket_id.x_studio_productos = [(6, 0, self.productos.ids)]
-        if self.productos:
-            self.ticket_id.x_studio_productos = [(6, 0, self.productos.ids)]
-
-        """
-        Funcionalidad que permite no validar las mismas refacciones y/o accesorios. 
-        Funcional pero falta probar con más casos.
-        """
-        """
-        procedeAPedirse = False
-        listaDeRefaccionesValidadas = []
-        if self.ticket_id.validacionesRefaccion:
-            for validacion in self.ticket_id.validacionesRefaccion:
-                listaDeRefaccionesValidadas = listaDeRefaccionesValidadas + ast.literal_eval(validacion.listaIdsRefaccionesValidadas)
-        listaDeRefaccionesValidadas = list(set(listaDeRefaccionesValidadas))
-        _logger.info('listaDeRefaccionesValidadas: ' + str(listaDeRefaccionesValidadas))
-        _logger.info('self.ticket_id.x_studio_productos.ids' + str(self.ticket_id.x_studio_productos.ids) )
-        for refaccion in self.ticket_id.x_studio_productos:
-            if not refaccion.product_variant_id.id in listaDeRefaccionesValidadas:
-                procedeAPedirse = True
-            
-        if not listaDeRefaccionesValidadas:
-            procedeAPedirse = True
-
-        if procedeAPedirse:
-        """ 
-        if self.ticket_id.x_studio_field_nO7Xg:# and (self.ticket_id.stage_id.id != 3 or self.ticket_id.stage_id.id != 18 or self.ticket_id.stage_id.id != 4): #and len(self.ticket_id.x_studio_productos) > len(self.ticket_id.x_studio_field_nO7Xg.order_line):
-            _logger.info('3312: inicio actualización refacciones sobre la misma so(): ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
-            refaccionesActualizadasCantidad = []
-            refaccionesNuevas = []
-            idsRefaccionesSolicitud = []
-            seActualizoUnaCantidad = False
-            ruta = -1
-            indiceRefaccionSo = 0
-            mensajeCantidadesEditadas = '\nSe editaron las cantidades de las siguientes refacciones y/o accesorios: '
-            for refaccion in self.ticket_id.x_studio_field_nO7Xg.order_line:
-                if int(refaccion.product_uom_qty) != int(self.ticket_id.x_studio_productos[indiceRefaccionSo].x_studio_cantidad_pedida) and int(self.ticket_id.x_studio_productos[indiceRefaccionSo].x_studio_cantidad_pedida) != 0:
-                    refaccion.product_uom_qty = int(self.ticket_id.x_studio_productos[indiceRefaccionSo].x_studio_cantidad_pedida)
-                    mensajeCantidadesEditadas = mensajeCantidadesEditadas + '\nRefacción y/o accesorio: ' + str(self.ticket_id.x_studio_productos[indiceRefaccionSo].product_variant_id.display_name) + ', cantidad: ' + str(self.ticket_id.x_studio_productos[indiceRefaccionSo].x_studio_cantidad_pedida)
-                    refaccionesActualizadasCantidad.append(self.ticket_id.x_studio_productos[indiceRefaccionSo])
-                    seActualizoUnaCantidad = True
-                if refaccion.route_id and ruta == -1 and refaccion.route_id.id != -1:
-                    ruta = refaccion.route_id.id
-                idsRefaccionesSolicitud.append(refaccion.product_id.id)
-            refaccionesActualizadasCantidad = list(set(refaccionesActualizadasCantidad))
-            _logger.info('idsRefaccionesSolicitud: ' + str(idsRefaccionesSolicitud))
-            mensajeTitulo = 'Se añadieron nuevas refacciones y/o accesorios a la solicitud.'
-            mensajeCuerpo = 'Refaccione(s) y/o accesorio(s) agregados a la Solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) +'.\n\nSe agregaron las refacciones y/o accesorios: '
-            refaccionesTextTemp = ''
-            fuenteDca = 'stock.production.lot'
-            #forma odoo
-            dcaObj = self.env['dcas.dcas'].search([('x_studio_tickett', '=', self.ticket_id.id),('fuente', '=', fuenteDca)], order = 'create_date desc', limit = 1)
-            #forma techra
-            if not dcaObj:
-                dcaObj = self.env['dcas.dcas'].search([('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].name),('fuente', '=', fuenteDca)], order = 'x_studio_fecha desc', limit = 1)
-            _logger.info('aaaaaaaaaaa dcaObj: ' + str(dcaObj))
-            for refaccion in self.ticket_id.x_studio_productos:
-                if not refaccion.product_variant_id.id in idsRefaccionesSolicitud:
-                    datosr = {
-                                'order_id': self.ticket_id.x_studio_field_nO7Xg.id,
-                                'product_id': refaccion.product_variant_id.id,
-                                'product_uom_qty': refaccion.x_studio_cantidad_pedida,
-                                'x_studio_field_9nQhR': self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id,
-                                'price_unit': 0
-                            }
-                    if ruta != -1:
-                        datosr['route_id'] = ruta
-                    line = self.env['sale.order.line'].create(datosr)
-                    _logger.info('line: ' + str(line))
-                    mensajeCuerpo = mensajeCuerpo + str(refaccion.product_variant_id.name) + ', '
-                    refaccionesTextTemp = 'Refacción y/o accesorio: ' + str(refaccion.product_variant_id.display_name) + '. Descripción: ' + str(refaccion.description) + '.\n'
-                    refaccionesNuevas.append(refaccion)
-                    if dcaObj:
-                        _logger.info('inicio: Se esta creando el historico de componente con dcaObj existente')
-                        self.env['x_studio_historico_de_componentes'].create({
-                                                                                'x_studio_cantidad': refaccion.x_studio_cantidad_pedida,
-                                                                                'x_studio_field_MH4DO': self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id,
-                                                                                'x_studio_ticket': str(self.ticket_id.id),
-                                                                                'x_studio_contador_color': dcaObj.contadorColor,
-                                                                                'x_studio_fecha_de_entrega': datetime.datetime.now(),
-                                                                                'x_studio_modelo': refaccionesTextTemp,
-                                                                                'x_studio_contador_bn': dcaObj.contadorMono
-                                                                            })
-                        _logger.info('fin: Se esta creando el historico de componente con dcaObj existente')
-                    else:
-                        _logger.info('inicio: Se esta creando el historico de componente')
-                        self.env['x_studio_historico_de_componentes'].create({
-                                                                                'x_studio_cantidad': refaccion.x_studio_cantidad_pedida,
-                                                                                'x_studio_field_MH4DO': self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id,
-                                                                                'x_studio_ticket': str(self.ticket_id.id),
-                                                                                'x_studio_fecha_de_entrega': datetime.datetime.now(),
-                                                                                'x_studio_modelo': refaccionesTextTemp
-                                                                            })
-                        _logger.info('fin: Se esta creando el historico de componente')
-            comentarioGenerico = 'Solicitud de refacción autorizada por ' + str(self.env.user.name) + '.\nEl día ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S")) + '.\n\n' + mensajeCuerpo + '.\n\n'
-            if seActualizoUnaCantidad:
-                comentarioGenerico = comentarioGenerico + mensajeCantidadesEditadas
-            if self.comentario:
-                comentarioGenerico = comentarioGenerico + str(self.comentario)
-            else:
-                comentarioGenerico = comentarioGenerico
-            self.ticket_id.write({
-                                    'stage_id': 102
-                                })
-            listaIdValidadas = []
-            filasRefacciones = """ """
-            filasRefaccionesNuevas = """ """
-            listaUnida = list(set(refaccionesActualizadasCantidad + refaccionesNuevas))
-            if listaUnida:
-                for refaccion in listaUnida:
-                    filasRefacciones = filasRefacciones + """
-                                                                <tr>
-                                                                    <td>""" + str(refaccion.categ_id.name) + """</td>
-                                                                    <td>""" + str(refaccion.default_code) + """</td>
-                                                                    <td>""" + str(refaccion.name) + """</td>
-                                                                    <td>""" + str(refaccion.x_studio_cantidad_pedida) + """</td>
-                                                                </tr>
-                                                            """
-                    listaIdValidadas.append(refaccion.product_variant_id.id)
-            tablaRefacciones = """
-                                    <table class='table table-bordered table-dark text-white'>
-                                        <thead >
-                                            <tr>
-                                                <th scope='col'>Categoría del producto</th>
-                                                <th scope='col'>Referencia interna</th>
-                                                <th scope='col'>Nombre</th>
-                                                <th scope='col'>Cantidad validada</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            """ + filasRefacciones + """
-                                            """ + filasRefaccionesNuevas + """
-                                        </tbody>
-                                    </table>
-                                """
-            _logger.info('refaccionesActualizadasCantidad: ' + str(refaccionesActualizadasCantidad) + ' refaccionesNuevas: ' + str(refaccionesNuevas) )
-            idValidacion = self.env['helpdesk.validacion.so'].create({
-                                                                  'ticketRelacion': self.ticket_id.id,
-                                                                  'fechaDeValidacionSo': datetime.datetime.now(),
-                                                                  'refaccionesValidadas': tablaRefacciones,
-                                                                  'listaRefaccionesValidadas': str(refaccionesActualizadasCantidad + refaccionesNuevas),
-                                                                  'listaIdsRefaccionesValidadas': str(list(set(listaIdValidadas)))
-                                                              })
-            self.ticket_id.write({'validacionesRefaccion': [(4, 0, idValidacion)] })
-            self.ticket_id.write({'ticketValidadoElDia': datetime.datetime.now() })
-            self.env['helpdesk.diagnostico'].create({
-                                                        'ticketRelacion': self.ticket_id.id,
-                                                        'comentario': comentarioGenerico,
-                                                        'estadoTicket': self.ticket_id.stage_id.name,
-                                                        'evidencia': [(6,0,self.evidencia.ids)],
-                                                        'mostrarComentario': self.check,
-                                                        'creadoPorSistema': False
-                                                    })
-            _logger.info('3312: fin actualización refacciones sobre la misma so(): ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
-        else:
-            _logger.info('3312: inicio confirmarYValidarRefacciones(): ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
-            respuesta = 'sin respuesta.'
-            respuesta = self.ticket_id.crear_y_validar_solicitud_refaccion()
-            _logger.info('3312: fin confirmarYValidarRefacciones(): ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
-            _logger.info('3312: respuesta de crear_y_validar_solicitud_refaccion: ' + str(respuesta))
-            if respuesta == 'sin respuesta':
-                mensajeTitulo = 'Error'
-                mensajeCuerpo = 'Algo salio mal'
-            elif respuesta == 'Sin refacciones y/o accesorios':
-                mensajeTitulo = 'Error'
-                mensajeCuerpo = 'El ticket no tiene refacciones y/o accesorios.'
-            elif respuesta == 'Solicitud existente.':
-                mensajeTitulo = 'Error'
-                mensajeCuerpo = 'El ticket no tiene refacciones y/o accesorios.'
-            elif respuesta == 'Solicitud ya generada y validada':
-                mensajeTitulo = 'Error'
-                mensajeCuerpo = 'Existe una solicitud ya generada y validada.'
-            elif respuesta == 'OK':
-                refaccionesNuevas = []
-                listaIdValidadas = []
-                filasRefacciones = """ """
-                #creando x_studio_historico_de_componentes
-                fuenteDca = 'stock.production.lot'
-                #forma odoo
-                dcaObj = self.env['dcas.dcas'].search([('x_studio_tickett', '=', self.ticket_id.id),('fuente', '=', fuenteDca)], order = 'create_date desc', limit = 1)
-                #forma techra
-                if not dcaObj:
-                    dcaObj = self.env['dcas.dcas'].search([('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].name),('fuente', '=', fuenteDca)], order = 'x_studio_fecha desc', limit = 1)
-                _logger.info('aaaaaaaaaaa dcaObj: ' + str(dcaObj))
-                if dcaObj:
-                    refaccionesTextTemp = ''
-                    for refaccion in self.productos:
-                        refaccionesTextTemp = 'Refacción y/o accesorio: ' + str(refaccion.product_variant_id.display_name) + '. Descripción: ' + str(refaccion.description) + '.'
-                        self.env['x_studio_historico_de_componentes'].create({
-                                                                                'x_studio_cantidad': refaccion.x_studio_cantidad_pedida,
-                                                                                'x_studio_field_MH4DO': self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id,
-                                                                                'x_studio_ticket': str(self.ticket_id.id),
-                                                                                'x_studio_contador_color': dcaObj.contadorColor,
-                                                                                'x_studio_fecha_de_entrega': datetime.datetime.now(),
-                                                                                'x_studio_modelo': refaccionesTextTemp,
-                                                                                'x_studio_contador_bn': dcaObj.contadorMono
-                                                                            })
-                        refaccionesNuevas.append(refaccion)
-                        listaIdValidadas.append(refaccion.product_variant_id.id)
-                        filasRefacciones = filasRefacciones + """
-                                                                <tr>
-                                                                    <td>""" + str(refaccion.categ_id.name) + """</td>
-                                                                    <td>""" + str(refaccion.default_code) + """</td>
-                                                                    <td>""" + str(refaccion.name) + """</td>
-                                                                    <td>""" + str(refaccion.x_studio_cantidad_pedida) + """</td>
-                                                                </tr>
-                                                            """
-                else:
-                    _logger.info('inicio: Se esta creando el historico de componente')
-                    refaccionesTextTemp = ''
-                    for refaccion in self.productos:
-                        refaccionesTextTemp = 'Refacción y/o accesorio: ' + str(refaccion.product_variant_id.display_name) + '. Descripción: ' + str(refaccion.description) + '.'
-                        self.env['x_studio_historico_de_componentes'].create({
-                                                                            'x_studio_cantidad': refaccion.x_studio_cantidad_pedida,
-                                                                            'x_studio_field_MH4DO': self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id,
-                                                                            'x_studio_ticket': str(self.ticket_id.id),
-                                                                            'x_studio_fecha_de_entrega': datetime.datetime.now(),
-                                                                            'x_studio_modelo': refaccionesTextTemp
-                                                                        })
-                        refaccionesNuevas.append(refaccion)
-                        listaIdValidadas.append(refaccion.product_variant_id.id)
-                        filasRefacciones = filasRefacciones + """
-                                                                <tr>
-                                                                    <td>""" + str(refaccion.categ_id.name) + """</td>
-                                                                    <td>""" + str(refaccion.default_code) + """</td>
-                                                                    <td>""" + str(refaccion.name) + """</td>
-                                                                    <td>""" + str(refaccion.x_studio_cantidad_pedida) + """</td>
-                                                                </tr>
-                                                            """
-                tablaRefacciones = """
-                                            <table class='table table-bordered table-dark text-white'>
-                                                <thead >
-                                                    <tr>
-                                                        <th scope='col'>Categoría del producto</th>
-                                                        <th scope='col'>Referencia interna</th>
-                                                        <th scope='col'>Nombre</th>
-                                                        <th scope='col'>Cantidad validada</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    """ + filasRefacciones + """
-                                                </tbody>
-                                            </table>
-                                        """
-                mensjaeValidados = 'Se validaron los productos '
-                for refaccion in self.productos:
-                    mensjaeValidados = mensjaeValidados + str(refaccion.display_name) + ', cantidad validada: ' + str(refaccion.x_studio_cantidad_pedida) + '; '
-                mensajeTitulo = 'Creación y validación de refacción!!!'
-                mensajeCuerpo = 'Se creo y valido la solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) + ' para el ticket ' + str(self.ticket_id.id) + '.'
-                comentarioGenerico = 'Solicitud de refacción autorizada por ' + str(self.env.user.name) + '.\nEl día ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S")) + '.\n\n'
-                if self.comentario:
-                    comentarioGenerico = comentarioGenerico + mensjaeValidados + '\n' + str(self.comentario)
-                else:
-                    comentarioGenerico = comentarioGenerico + mensjaeValidados
-                idValidacion = self.env['helpdesk.validacion.so'].create({
-                                                                            'ticketRelacion': self.ticket_id.id,
-                                                                            'fechaDeValidacionSo': datetime.datetime.now(),
-                                                                            'refaccionesValidadas': tablaRefacciones,
-                                                                            'listaRefaccionesValidadas': str(refaccionesNuevas),
-                                                                            'listaIdsRefaccionesValidadas': str(listaIdValidadas)
-                                                                          })
-                self.ticket_id.write({'validacionesRefaccion': [(4, 0, idValidacion)] })
-                self.ticket_id.write({'ticketValidadoElDia': datetime.datetime.now() })
-                self.env['helpdesk.diagnostico'].create({
-                                                            'ticketRelacion': self.ticket_id.id,
-                                                            'comentario': comentarioGenerico,
-                                                            'estadoTicket': self.ticket_id.stage_id.name,
-                                                            'evidencia': [(6,0,self.evidencia.ids)],
-                                                            'mostrarComentario': self.check,
-                                                            'creadoPorSistema': False
-                                                        })
-            #mensajeTitulo = 'Creación y validación de refacción!!!'
-            #mensajeCuerpo = 'Se creo y valido la solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) + ' para el ticket ' + str(self.ticket_id.id) + '.'    
-        #else:
-            #mensajeTitulo = 'Error'
-            #mensajeCuerpo = 'No es posible validar un ticket con la misma refacción y/o accesorio seleccionado anteriormente'
-        wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
-        view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
-        return {
-                'name': _(mensajeTitulo),
-                'type': 'ir.actions.act_window',
-                'view_type': 'form',
-                'view_mode': 'form',
-                'res_model': 'helpdesk.alerta',
-                'views': [(view.id, 'form')],
-                'view_id': view.id,
-                'target': 'new',
-                'res_id': wiz.id,
-                'context': self.env.context,
-                }
-
-
-    def validar(self):
-        _logger.info('3312: validar()')
-        _logger.info('3312: inicio validar(): ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
-        self.ticket_id.x_studio_productos = [(6, 0, self.productos.ids)]
-        if self.productos:
-            self.ticket_id.x_studio_productos = [(6, 0, self.productos.ids)]
-        
-        if not self.ticket_id.x_studio_field_nO7Xg:
-            if len(self.ticket_id.x_studio_productos) > 0:
-                if self.ticket_id.x_studio_field_nO7Xg.id != False and self.ticket_id.x_studio_field_nO7Xg.state == 'sale':
-                    message = ('Existe una solicitud ya generada y esta fue validada. \n\nNo es posible realizar cambios a una solicitud ya validada.')
-                    mess= {'title': _('Solicitud existente validada!!!')
-                            , 'message' : message
-                    }
-                    return {'warning': mess}
-                
-                if self.ticket_id.x_studio_field_nO7Xg.id != False and self.ticket_id.x_studio_field_nO7Xg.state != 'sale':
-                    sale = self.ticket_id.x_studio_field_nO7Xg
-                    self.env.cr.execute("delete from sale_order_line where order_id = " + str(sale.id) +";")
-                    for c in self.ticket_id.x_studio_productos:
-                        datosr={'order_id' : sale.id, 'product_id' : c.id, 'product_uom_qty' : c.x_studio_cantidad_pedida, 'x_studio_field_9nQhR':self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id}
-                        if(self.ticket_id.team_id.id == 10 or self.ticket_id.team_id.id==11):
-                            datosr['route_id']=22548
-                        self.env['sale.order.line'].sudo().create(datosr)
-                        self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
-                        #self.env.cr.commit()
-                else:
-                    sale = self.env['sale.order'].sudo().create({'partner_id' : self.ticket_id.partner_id.id
-                                                                 , 'origin' : "Ticket de refacción: " + str(self.ticket_id.x_studio_id_ticket)
-                                                                 , 'x_studio_tipo_de_solicitud' : 'Venta'
-                                                                 , 'x_studio_requiere_instalacin' : True
-                                                                 , 'x_studio_field_RnhKr': self.ticket_id.localidadContacto.id
-                                                                 , 'partner_shipping_id' : self.ticket_id.x_studio_empresas_relacionadas.id
-                                                                 #, 'x_studio_tcnico' : self.ticket_id.x_studio_tcnico.id
-                                                                 , 'warehouse_id' : 5865   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
-                                                                 , 'team_id' : 1
-                                                                 , 'x_studio_field_bxHgp': int(self.ticket_id.x_studio_id_ticket) 
-                                                                })
-                    self.ticket_id.write({
-                                            'x_studio_field_nO7Xg': sale.id
-                                        })
-                    for c in self.ticket_id.x_studio_productos:
-                        datosr = {'order_id' : sale.id
-                                , 'product_id' : c.id
-                                , 'product_uom_qty' : c.x_studio_cantidad_pedida
-                                ,'x_studio_field_9nQhR': self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id
-                                , 'price_unit': 0}
-                        if (self.ticket_id.team_id.id == 10 or self.ticket_id.team_id.id == 11):
-                            datosr['route_id'] = 22548
-                        self.env['sale.order.line'].sudo().create(datosr)
-                        sale.env['sale.order'].sudo().write({'x_studio_tipo_de_solicitud' : 'Venta'})
-                        #sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta', 'validity_date' : sale.date_order + datetime.timedelta(days=30)})
-                        self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
-
-
-                    sale = self.ticket_id.x_studio_field_nO7Xg
-                    if sale.id != 0 or self.ticket_id.x_studio_productos != []:
-                        if self.ticket_id.x_studio_field_nO7Xg.order_line:
-                            self.sudo().env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
-                            sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
-
-                            #sale.action_confirm()
-                            _logger.info('3312: inicio peticion validar_solicitud_de_refacciones(): ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
-                            return { 'type': 'ir.actions.act_url',
-                                     'url': '/helpdesk_update/validar_solicitud_de_refacciones/%s' % self.ticket_id.id,
-                                     'target': 'self',
-                                     'res_id': self.id,
-                                     }
-            else:
-                message = ('No existen productos para generar y validar la solicitud.')
-                mess= {
-                        'title': _('Ticket sin productos !!!'),
-                        'message' : message
-                      }
-                return {'warning': mess}
-        else:
-            message = ('Ya existe una solicitud, no es posible generan una solicitud.')
-            mess= {
-                    'title': _('Ticket con solicitud existente !!!'),
-                    'message' : message
-                  }
-            return {'warning': mess}
-
-
-
-
-
-    def agregarProductos(self):
-        #for producto in self.productos:
-            #ticket_id.write({})
-
-        self.ticket_id.x_studio_productos = [(6, 0, self.productos.ids)]
-        mensajeTitulo = 'Productos agregados!!!'
-        mensajeCuerpo = 'Se agregaron los productos y sus cantidades.'
-        #wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
-        wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
-        view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
-        return {
-                'name': _(mensajeTitulo),
-                'type': 'ir.actions.act_window',
-                'view_type': 'form',
-                'view_mode': 'form',
-                'res_model': 'helpdesk.alerta',
-                'views': [(view.id, 'form')],
-                'view_id': view.id,
-                'target': 'new',
-                'res_id': wiz.id,
-                'context': self.env.context,
-                }
-
-
-
 
 
 class HelpDeskDatosMesa(TransientModel):
@@ -6537,3 +5850,64 @@ class HelpDeskDatosMesa(TransientModel):
             self.encargadoArea = self.ticket_id.x_studio_responsable_de_equipo.id
 
     
+
+
+
+class HelpDeskResueltoConComentario(TransientModel):
+    _name = 'helpdesk.comentario.resuelto'
+    _description = 'Mover al estado resuelto con un comentario.'
+    check = fields.Boolean(string = 'Mostrar en reporte', default = False,)
+    ticket_id = fields.Many2one("helpdesk.ticket")
+    diagnostico_id = fields.One2many('helpdesk.diagnostico', 'ticketRelacion', string = 'Diagnostico', compute = '_compute_diagnosticos')
+    estado = fields.Char('Estado previo a cerrar el ticket', compute = "_compute_estadoTicket")
+    comentario = fields.Text('Comentario')
+    evidencia = fields.Many2many('ir.attachment', string = "Evidencias")
+
+    def resuletoTicketConComentario(self):
+        estadoAntes = str(self.ticket_id.stage_id.name)
+        ultimaEvidenciaTec = []
+        ultimoComentario = ''
+        if self.ticket_id.diagnosticos:
+            if self.ticket_id.diagnosticos[-1].evidencia.ids:
+                ultimaEvidenciaTec = self.ticket_id.diagnosticos[-1].evidencia.ids
+            ultimoComentario = self.ticket_id.diagnosticos[-1].comentario
+        comentarioGenerico = 'Cambio de estado al seleccionar botón Resuelto. Se cambio al estado Resuelto. Seleccion realizada por ' + str(self.env.user.name) +'.'
+        estado = 'Resuelto'
+        if self.comentario:
+            comentarioGenerico = comentarioGenerico + '\nComentario de ' + self.env.user.name + ': ' + self.comentario
+        self.env['helpdesk.diagnostico'].create({   
+                                                    'ticketRelacion': self.ticket_id.id,
+                                                    'comentario': comentarioGenerico,
+                                                    'estadoTicket': estado,
+                                                    'evidencia': [(6,0,ultimaEvidenciaTec)],
+                                                    'mostrarComentario': self.check,
+                                                    'creadoPorSistema': False if self.comentario else True
+                                                })
+        self.ticket_id.write({
+                                'stage_id': 3,
+                                'estadoResuelto': True,
+                                'estadoAtencion': False
+                            })
+        message = 'Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Resuelto' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página."
+        wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': message})
+        view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+        return {
+            'name': _('Estado de ticket actualizado!!!'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'helpdesk.alerta',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            'context': self.env.context,
+        }
+
+
+    def _compute_estadoTicket(self):
+        self.estado = self.ticket_id.stage_id.name
+
+    def _compute_diagnosticos(self):
+        self.diagnostico_id = self.ticket_id.diagnosticos.ids
+
