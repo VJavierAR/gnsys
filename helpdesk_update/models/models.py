@@ -395,8 +395,8 @@ class helpdesk_update(models.Model):
     @api.multi
     def write(self, vals):
 
-        _logger.info('vals en write: ' + str(vals))
-        _logger.info('self en write:' +str(self) )
+        #_logger.info('vals en write: ' + str(vals))
+        #_logger.info('self en write:' +str(self) )
 
         if 'x_studio_tipo_de_vale' in vals:
             if (self.x_studio_tipo_de_vale != 'Requerimiento' and vals['x_studio_tipo_de_vale'] != 'Resurtido de Almacen' and vals['x_studio_tipo_de_vale'] != 'Conectividad') and not self.x_studio_equipo_por_nmero_de_serie:
@@ -414,11 +414,11 @@ class helpdesk_update(models.Model):
         if self and 'NewId' in str(self[0]):
         #if not self.ids:
             result = super(helpdesk_update, self._origin).write(vals)
-            _logger.info('result en write: ' + str(result))
+            #_logger.info('result en write: ' + str(result))
             return result
 
         result = super(helpdesk_update, self).write(vals)
-        _logger.info('result en write: ' + str(result))
+        #_logger.info('result en write: ' + str(result))
         
 
         #if 'active' in vals:
