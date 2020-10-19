@@ -1773,11 +1773,21 @@
                             </group>
                         </page>
                         <page string = 'Productos'>
-                            <group>
-                                <group>
-                                    <field name='activar_compatibilidad' />
-                                </group>
-                                <group>
+                            
+                                <field name='accesorios' string='' context="{'default_wizRela': id}" >
+                                    <tree editable='bottom'>
+                                        <!--<field name='ticketRelacion' readonly='1' />-->
+                                        <field name='productos'  options="{'no_create_edit': True, 'no_create': True}" />
+                                        <!--<field name='detalleDeProducto' widget='html' readonly='1' />-->
+                                        <field name='referenciaInterna' readonly='1' />
+                                        <field name='nombreProducto' readonly='1' />
+                                        <field name='descripcion' readonly='1' />
+                                        <field name='cantidadAMano' readonly='1' />
+                                        <field name='cantidadPedida' />
+                                        <field name='wizRela' readonly='1' invisible = '1'/>
+                                    </tree>
+                                </field>
+                                    <!--
                                     <field name="productos" string="Refacciones y accesorios " options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" readonly='0' >
                                         <tree string="Productos" editable="bottom" >
                                             <field name='categ_id' string='Categoría del producto' readonly='1'/>
@@ -1790,8 +1800,9 @@
                                             <field name='x_studio_cantidad_pedida' string='Cantidad a pedir' />
                                         </tree>
                                     </field>
-                                </group>
-                            </group>
+                                    -->
+                                
+                            
                             <!--
                             <field name='productosDos' string=''>
                                 <tree string="Productos" editable="bottom" >
