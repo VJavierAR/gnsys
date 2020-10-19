@@ -13,10 +13,10 @@ class AgregadosOdisminucion(TransientModel):
     _name = 'sale.agregado'
     _description = 'Sale order agregado'
     sale=fields.Many2one('sale.order')
-    servicio=fields.Many2one(related='sale.x_studio_field_69Boh')
     monto=fields.Float()
     tipoSolicitud=fields.Selection(related='sale.x_studio_tipo_de_solicitud')
     periodo=fields.Date()
+    servicio=fields.Many2one(related='sale.x_studio_field_69Boh')
 
 
     def agregar(self):
