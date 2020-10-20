@@ -1269,7 +1269,7 @@ class helpdesk_update(models.Model):
     def abierto(self):
         #que pasa si hay mas de 1 ticket xD .i ->search([['name', '=', self.name]]).id
         #self.x_studio_id_ticket = self.env['helpdesk.ticket'].search([['name', '=', self.name]]).id
-        _logger.info("id ticket search: " + str(self.x_studio_id_ticket))
+        #_logger.info("id ticket search: " + str(self.x_studio_id_ticket))
         
         #ticketActualiza = self.env['helpdesk.ticket'].search([('id', '=', self.id)])
         if (self.team_id.id == 8 or self.team_id.id == 13) and self.x_studio_tipo_de_vale == 'Requerimiento':
