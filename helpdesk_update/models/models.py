@@ -269,7 +269,12 @@ class helpdesk_update(models.Model):
                     query = "update helpdesk_ticket set \"localidadContacto\" = " + str(idLoc) + ", \"x_studio_field_6furK\" = '" + str(self.x_studio_empresas_relacionadas.x_studio_field_SqU5B) + "' where id = " + str(self.x_studio_id_ticket) + ";"
                     self.env.cr.execute(query)
                     self.env.cr.commit()
-
+                else:
+                    idLoc = self.env['res.partner'].search([['parent_id', '=', loc]], order='create_date desc', limit = 1).id
+                    self.localidadContacto = idLoc
+                    query = "update helpdesk_ticket set \"localidadContacto\" = " + str(idLoc) + ", \"x_studio_field_6furK\" = '" + str(self.x_studio_empresas_relacionadas.x_studio_field_SqU5B) + "' where id = " + str(self.x_studio_id_ticket) + ";"
+                    self.env.cr.execute(query)
+                    self.env.cr.commit()
                     
 
     @api.model
@@ -5028,8 +5033,9 @@ class helpdesk_agregar_productos(models.Model):
         lista = [[5,0,0]]
         listaDeCantidades = []
         for refaccion in self.accesorios:
-            lista.append( [4, refaccion.productos.id] )
-            listaDeCantidades.append(refaccion.cantidadPedida)
+            if refaccion.productos.id:
+                lista.append( [4, refaccion.productos.id] )
+                listaDeCantidades.append(refaccion.cantidadPedida)
             """
             lista.append( [0, 0, {
                                     'product_tmpl_id': refaccion.productos.product_tmpl_id.id,
