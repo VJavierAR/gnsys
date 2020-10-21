@@ -4769,6 +4769,9 @@ class helpdesk_update(models.Model):
         productos = self.mapped('x_studio_productos')
         pedido_de_venta_id = self.mapped('x_studio_field_nO7Xg.id')
         pedido_de_venta_estado = self.mapped('x_studio_field_nO7Xg.state')
+        pedido_de_venta_lineas_pedido = self.mapped('x_studio_field_nO7Xg.order_line.product_id.id')
+        pedido_de_venta_lineas_pedido_default_code = self.mapped('x_studio_field_nO7Xg.order_line.product_id.default_code')
+        _logger.info('pedido_de_venta_lineas_pedido_default_code: '+ str(pedido_de_venta_lineas_pedido_default_code))
         estado_ticket_name = self.mapped('stage_id.name')
         diagnosticos = self.mapped('diagnosticos')
 
@@ -4797,16 +4800,16 @@ class helpdesk_update(models.Model):
             lista = [[5, 0, 0]]
             for refaccion in productos:
                 cantidad_pedidad = refaccion.mapped('x_studio_cantidad_pedida')
-                lista.append( [0, 0, {
-                                        'productos': refaccion.product_variant_id.id,
-                                        'cantidadPedida': cantidad_pedidad[0],
-                                        'wizRelaVal': wiz_id[0],
-                                        'referenciaInterna': refaccion.default_code,
-                                        'nombreProducto': refaccion.name,
-                                        'descripcion': refaccion.description,
-                                        'cantidadAMano': refaccion.qty_available
-                            }])
-
+                if not refaccion.product_variant_id.id in pedido_de_venta_lineas_pedido: #and not refaccion.default_code in pedido_de_venta_lineas_pedido_default_code:
+                    lista.append( [0, 0, {
+                                            'productos': refaccion.product_variant_id.id,
+                                            'cantidadPedida': cantidad_pedidad[0],
+                                            'wizRelaVal': wiz_id[0],
+                                            'referenciaInterna': refaccion.default_code,
+                                            'nombreProducto': refaccion.name,
+                                            'descripcion': refaccion.description,
+                                            'cantidadAMano': refaccion.qty_available
+                                }])
                 if not cantidad_pedidad[0]:
                     refaccionesEnCero = refaccionesEnCero + """
                                                                 <tr>
@@ -4913,7 +4916,9 @@ class helpdesk_update(models.Model):
                         """
         #if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
             
-            componentes = self.env['x_studio_historico_de_componentes'].search([('x_studio_modelo', '!=', False)])
+            componentes = self.env['x_studio_historico_de_componentes'].search_read([ '&', '|', ('x_ultimaCargaRefacciones', '=', True), ('x_studio_modelo', 'ilike', 'Refacción y/o accesorio:'), ('x_studio_field_MH4DO', '=', equipos[0].id) ], ['id', 'x_studio_field_MH4DO', 'x_ultimaCargaRefacciones', 'x_studio_modelo'])
+            #_logger.info('len:    ' + str(componentes))
+           # query = """ selec id from x_studio_historico_de_componentes where "x_studio_modelo" = 'f' and  "x_ultimaCargaRefacciones" = 't' or """ 
             #_logger.info('**** componentes: ' + str(componentes))
             #self.historicoDeComponentes = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_histrico_de_componentes.ids
             componentes = componentes.filtered(lambda componente:  componente.x_studio_field_MH4DO.name == str(equipos[0].name) and (componente.x_ultimaCargaRefacciones == True or 'Refacción y/o accesorio:' in componente.x_studio_modelo) )
