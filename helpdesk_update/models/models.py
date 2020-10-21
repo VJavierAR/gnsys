@@ -4846,7 +4846,7 @@ class helpdesk_update(models.Model):
 
         
         if pedido_de_venta_id:
-            vals_wiz['solicitud'] = pedido_de_venta_id
+            vals_wiz['solicitud'] = pedido_de_venta_id[0]
             if pedido_de_venta_estado[0] == 'sale':
                 vals_wiz['estadoSolicitud'] = 'Solicitud validada'
             else:
