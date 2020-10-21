@@ -1719,7 +1719,7 @@
                                 </page>
                                 -->
                                 <page string = 'Historico de componentes'>
-                                    <field name='historicoDeComponentes'>
+                                    <field name='historicoDeComponentes' options="{'no_create': True}" readonly="1">
                                         <tree>
                                             <field name="create_date" groups="studio_customization.solo_ve_administrado_cdc8f213-5aa2-4d44-bfab-99a7efd7f7ea"/>
                                             <field name="write_uid" groups="studio_customization.solo_ve_administrado_cdc8f213-5aa2-4d44-bfab-99a7efd7f7ea" attrs="{}"/>

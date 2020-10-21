@@ -4760,10 +4760,20 @@ class helpdesk_update(models.Model):
     #@api.multi
     def helpdesk_confirmar_validar_refacciones_wizard(self):
         wiz = self.env['helpdesk.confirmar.validar.refacciones'].create({'ticket_id':self.id})
+        wiz_id = wiz.mapped('id')
         #wiz.productos = [(6, 0, self.x_studio_productos.ids)]
-        lista = [[5, 0, 0]]
-        if self.x_studio_productos:
-            for refaccion in self.x_studio_productos:
+        productos = self.mapped('x_studio_productos')
+        pedido_de_venta_id = self.mapped('x_studio_field_nO7Xg.id')
+        pedido_de_venta_estado = self.mapped('x_studio_field_nO7Xg.state')
+        estado_ticket_name = self.mapped('stage_id.name')
+        diagnosticos = self.mapped('diagnosticos')
+
+        equipos = self.mapped('x_studio_equipo_por_nmero_de_serie')
+
+        vals_wiz = {}
+        """
+        if productos:
+            for refaccion in productos:
                 lista.append( [0, 0, {
                                         'productos': refaccion.product_variant_id.id,
                                         'cantidadPedida': refaccion.x_studio_cantidad_pedida,
@@ -4776,31 +4786,38 @@ class helpdesk_update(models.Model):
             _logger.info('3312: lista: ' + str(lista) )
             wiz.write({'accesorios': lista})
         """
-        EN DESAROLLO
-        listaProductos = [(5, 0, 0)]
-        _logger.info('3312: self.x_studio_tickett: ' + str(self.x_studio_id_ticket))
-        for producto in self.x_studio_productos:
-            listaProductos.append((0, 0,{
-                                            'productos': producto.product_variant_id.id,
-                                            'cantidadPedida': producto.x_studio_cantidad_pedida,
-                                            'ticketRelacion': int(self.x_studio_id_ticket)
-                                        }))
-        wiz.productosDos = listaProductos
-        """
-        wiz.contadoresAnterioresText = self.contadores_anteriores
-        if self.x_studio_productos:
+
+        vals_wiz['contadoresAnterioresText'] = self.contadores_anteriores
+        if productos:
             refaccionesEnCero = ''
-            for refaccion in self.x_studio_productos:
-                if not refaccion.x_studio_cantidad_pedida:
+            lista = [[5, 0, 0]]
+            for refaccion in productos:
+                cantidad_pedidad = refaccion.mapped('x_studio_cantidad_pedida')
+                lista.append( [0, 0, {
+                                        'productos': refaccion.product_variant_id.id,
+                                        'cantidadPedida': cantidad_pedidad[0],
+                                        'wizRelaVal': wiz_id[0],
+                                        'referenciaInterna': refaccion.default_code,
+                                        'nombreProducto': refaccion.name,
+                                        'descripcion': refaccion.description,
+                                        'cantidadAMano': refaccion.qty_available
+                            }])
+
+                if not cantidad_pedidad[0]:
                     refaccionesEnCero = refaccionesEnCero + """
                                                                 <tr>
                                                                     <td>""" + str(refaccion.categ_id.name) + """</td>
                                                                     <td>""" + str(refaccion.product_variant_id.display_name) + """</td>
-                                                                    <td>""" + str(refaccion.x_studio_cantidad_pedida) + """</td>
+                                                                    <td>""" + str(cantidad_pedidad) + """</td>
                                                                 </tr>
                                                             """
+            _logger.info('3312: lista: ' + str(lista) )
+            
+            #wiz.write({'accesorios': lista})
+            vals_wiz['accesorios'] = lista
+            mensajesAlerta = ''
             if refaccionesEnCero != '':
-                wiz.mensajesAlerta = """
+                mensajesAlerta = """
                                         <div class='alert alert-info' role='alert'>
                                             <h4 class="alert-heading">Validación de refaciones y/o accesorios en cero !!!</h4>
 
@@ -4823,19 +4840,123 @@ class helpdesk_update(models.Model):
                                         </div>      
                                     """
             else:
-                wiz.mensajesAlerta = ''
+                mensajesAlerta = ''
+            vals_wiz['mensajesAlerta'] = mensajesAlerta
+
+        
+        if pedido_de_venta_id:
+            vals_wiz['solicitud'] = pedido_de_venta_id
+            if pedido_de_venta_estado[0] == 'sale':
+                vals_wiz['estadoSolicitud'] = 'Solicitud validada'
+            else:
+                vals_wiz['estadoSolicitud'] = 'Solicitud no validada'
+
+        else:
+            vals_wiz['estadoSolicitud'] = 'No hay solicitud'
+
+        vals_wiz['estado'] = estado_ticket_name
+
+        lista_diagnosticos = [[5, 0, 0]]
+        for diagnostico in diagnosticos:
+            #evidencias = diagnostico.mapped('evidencia.ids')
+            """
+            vals_diagnostico = {
+                #'ticketRelacion': diagnostico.ticketRelacion.id,
+                #'ticket_techra': diagnostico.ticket_techra.id,
+                'create_date': diagnostico.create_date,
+                'ticket_techra_text': diagnostico.ticket_techra_text,
+                'estadoTicket': diagnostico.estadoTicket,
+                'comentario': diagnostico.comentario,
+                'evidencia': [(6, 0, diagnostico.evidencia.ids)],
+                'mostrarComentario': diagnostico.mostrarComentario,
+                'creadoPorSistema': diagnostico.creadoPorSistema,
+                'fechaDiagnosticoTechra': diagnostico.fechaDiagnosticoTechra,
+                'tipoSolucionTechra': diagnostico.tipoSolucionTechra,
+                'tecnicoTechra': diagnostico.tecnicoTechra,
+                'creado_por_techra': diagnostico.creado_por_techra,
+                'href_diagnostico_ticket_techra': diagnostico.href_diagnostico_ticket_techra,
+                'fecha_diagnostico_techra_text': diagnostico.fecha_diagnostico_techra_text
+            }
+            
+            lista_diagnosticos.append([0, 0, vals_diagnostico])
+            """
+            lista_diagnosticos.append([4, diagnostico.id])
+
+        vals_wiz['diagnostico_id'] = lista_diagnosticos
+
+
+
+
+        if equipos:
+            #self.serie = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].name
+            vals_wiz['serie'] = """
+                            <table class='table table-bordered table-dark text-white'>
+                                <thead >
+                                    <tr>
+                                        <th scope='col'>Número de serie</th>
+                                        <th scope='col'>Modelo</th>
+                                        <th scope='col'>Descripción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>""" + str(equipos[0].name) + """</td>
+                                        <td>""" + str(equipos[0].x_studio_modelo_equipo) + """</td>
+                                        <td>""" + str(equipos[0].product_id.description) + """</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        """
+        #if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+            
+            componentes = self.env['x_studio_historico_de_componentes'].search([('x_studio_modelo', '!=', False)])
+            #_logger.info('**** componentes: ' + str(componentes))
+            #self.historicoDeComponentes = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_histrico_de_componentes.ids
+            componentes = componentes.filtered(lambda componente:  componente.x_studio_field_MH4DO.name == str(equipos[0].name) and (componente.x_ultimaCargaRefacciones == True or 'Refacción y/o accesorio:' in componente.x_studio_modelo) )
+            #lista_componentes = [(5, 0, 0)]
+            lista_componentes = []
+            if componentes:
+                for componente in componentes:
+                    """
+                    vals_componente = {
+                        'create_date': componente.create_date,
+                        'write_uid': componente.write_uid,
+                        'write_date': componente.write_date,
+                        'create_uid': componente.create_uid,
+                        'x_studio_creado_por_script': componente.x_studio_creado_por_script,
+                        'x_ultimaCargaRefacciones': componente.x_ultimaCargaRefacciones,
+                        'x_studio_field_MH4DO': componente.x_studio_field_MH4DO.id,
+                        'x_tipo': componente.x_tipo,
+                        'x_studio_modelo': componente.x_studio_modelo,
+                        'x_studio_cantidad': componente.x_studio_cantidad,
+                        'x_studio_fecha_de_entrega': componente.x_studio_fecha_de_entrega,
+                        'x_studio_ticket': componente.x_studio_ticket,
+                        'x_studio_contador_bn': componente.x_studio_contador_bn,
+                        'x_studio_color': componente.x_studio_color
+                    }
+                    """
+
+                    lista_componentes.append([4, componente.id])
+
+                vals_wiz['historicoDeComponentes'] = lista_componentes
+
+
+
+        _logger.info(vals_wiz)
+        wiz.write(vals_wiz)
 
         view = self.env.ref('helpdesk_update.view_helpdesk_crear_y_validar_refacciones')
+        view_id = view.mapped('id')
         return {
             'name': _('Crear y validar solicitud de refacciones'),
             'type': 'ir.actions.act_window',
             'view_type': 'form',
             'view_mode': 'form',
             'res_model': 'helpdesk.confirmar.validar.refacciones',
-            'views': [(view.id, 'form')],
-            'view_id': view.id,
+            'views': [(view_id[0], 'form')],
+            'view_id': view_id[0],
             'target': 'new',
-            'res_id': wiz.id,
+            'res_id': wiz_id[0],
             #'domain': [["series", "=", ids]],
             #'context': self.env.context,
             'context': self.env.context,
@@ -5795,6 +5916,8 @@ class helpdes_diagnostico(models.Model):
     _description = "Historial de diagnostico"
     ticketRelacion = fields.Many2one('helpdesk.ticket', string = 'Ticket realcionado a diagnostico',copied=True)
 
+    ticketRelacion_refacciones = fields.Many2one('helpdesk.confirmar.validar.refacciones', string = 'Ticket realcionado a diagnostico',copied=True)
+
     ticket_techra = fields.Many2one('helpdesk.ticket.techra', string = 'Ticket techra relacionado al diagnostico')
     ticket_techra_text = fields.Text(string = 'Ticket techra texto')
 
@@ -6285,6 +6408,13 @@ class helpdesk_lines(models.Model):
 
 
 
+#class helpdesk_historico_componentes(models.Model):
+    #_name = 'helpdesk.historico.componentes'
+#    _inherit = 'x.studio.historico.de.componentes'
+
+
+#    ticket_relacion_refacciones = fields.Many2one('helpdesk.confirmar.validar.refacciones', string = 'Ticket realcionado a refaccion')
+
 
 
 class helpdesk_confirmar_validar_refacciones(models.Model):
@@ -6296,10 +6426,10 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
                                     string = 'Ticket'
                                 )
 
-    productos = fields.Many2many(
-                                    'product.product', 
-                                    string = "Productos"
-                                )
+    #productos = fields.Many2many(
+    #                                'product.product', 
+    #                                string = "Productos"
+    #                            )
     accesorios = fields.One2many('helpdesk.refacciones', 'wizRelaVal', string = 'Accesorios')
 
     """
@@ -6320,13 +6450,13 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
                             )
     diagnostico_id = fields.One2many(
                                         'helpdesk.diagnostico',
-                                        'ticketRelacion',
+                                        'ticketRelacion_refacciones',
                                         string = 'Diagnostico',
-                                        compute = '_compute_diagnosticos'
+                                        #compute = '_compute_diagnosticos'
                                     )
     estado = fields.Char(
                             'Estado previo a cerrar el ticket',
-                            compute = "_compute_estadoTicket"
+                            #compute = "_compute_estadoTicket"
                         )
     comentario = fields.Text(
                                 string = 'Comentario'
@@ -6356,11 +6486,11 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
                             )
     """
     historicoDeComponentes = fields.One2many(
-                                                'x_studio_historico_de_componentes', 
-                                                'x_studio_field_MH4DO', 
+                                                'x_studio_historico_de_componentes',
+                                                'x_relacion_refacciones', 
                                                 string = 'Historico de Componentes',
                                                 #domain = "[ '|', ('x_ultimaCargaRefacciones', '=', True), ('x_studio_modelo', 'like', 'Refacción y/o accesorio:') ]",
-                                                compute='_compute_historico_de_componentes'
+                                                #compute='_compute_historico_de_componentes'
                                             )
     """
     movimientos = fields.One2many( 
@@ -6372,7 +6502,7 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
     """
     serie = fields.Text(
                             string = "Serie", 
-                            compute = '_compute_serie_nombre'
+                            #compute = '_compute_serie_nombre'
                         )
 
     contadoresAnterioresText = fields.Text(
@@ -6381,12 +6511,12 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
                                             )
     estadoSolicitud = fields.Text(
                                     string = 'Estado de la solicitud',
-                                    compute = '_compute_estado_solicitud'
+                                    #compute = '_compute_estado_solicitud'
                                 )
     solicitud = fields.Many2one(
                                     'sale.order',
                                     string = 'Solicitud',
-                                    compute = '_compute_solicitud'
+                                    #compute = '_compute_solicitud'
                                 )
     mensajesAlerta = fields.Text(
                                     string = 'Mensjae de alerta'
@@ -6430,6 +6560,7 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
             else:
                 self.mensajesAlerta = ''
 
+    """
     def _compute_solicitud(self):
         if self.ticket_id.x_studio_field_nO7Xg:
             self.solicitud = self.ticket_id.x_studio_field_nO7Xg
@@ -6442,37 +6573,18 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
                 self.estadoSolicitud = 'Solicitud no validada'
         else:
             self.estadoSolicitud = 'No hay solicitud'
-
+    
 
     def _compute_estadoTicket(self):
         self.estado = self.ticket_id.stage_id.name
-
+    
     def _compute_diagnosticos(self):
         self.diagnostico_id = self.ticket_id.diagnosticos.ids
+    
 
-    def _compute_serie_nombre(self):
-        if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
-            #self.serie = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].name
-            self.serie = """
-
-                            <table class='table table-bordered table-dark text-white'>
-                                <thead >
-                                    <tr>
-                                        <th scope='col'>Número de serie</th>
-                                        <th scope='col'>Modelo</th>
-                                        <th scope='col'>Descripción</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>""" + str(self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].name) + """</td>
-                                        <td>""" + str(self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_modelo_equipo) + """</td>
-                                        <td>""" + str(self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].product_id.description) + """</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        """
-
+    
+    
+    """
 
     """
     def _compute_historico_tickets(self):
@@ -6486,7 +6598,8 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
     def _compute_toner(self):
         if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
             self.toner = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_toner_1.ids
-    """
+    
+
     def _compute_historico_de_componentes(self):
         if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
             componentes = self.env['x_studio_historico_de_componentes'].search([('x_studio_modelo', '!=', False)])
@@ -6494,6 +6607,8 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
             #self.historicoDeComponentes = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_histrico_de_componentes.ids
             componentes = componentes.filtered(lambda componente:  componente.x_studio_field_MH4DO.name == str(self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].name) and (componente.x_ultimaCargaRefacciones == True or 'Refacción y/o accesorio:' in componente.x_studio_modelo) )
             self.historicoDeComponentes = componentes.ids
+    """
+
     """
     def _compute_movimientos(self):
         if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
