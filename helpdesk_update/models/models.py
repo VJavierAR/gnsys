@@ -4759,6 +4759,7 @@ class helpdesk_update(models.Model):
 
     #@api.multi
     def helpdesk_confirmar_validar_refacciones_wizard(self):
+        _logger.info('***** Inicio de helpdesk_confirmar_validar_refacciones_wizard: ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ) + ' *****')
         wiz = self.env['helpdesk.confirmar.validar.refacciones'].create({'ticket_id':self.id})
         wiz_id = wiz.mapped('id')
         #wiz.productos = [(6, 0, self.x_studio_productos.ids)]
@@ -4942,8 +4943,10 @@ class helpdesk_update(models.Model):
 
 
 
-        _logger.info(vals_wiz)
+        #_logger.info(vals_wiz)
         wiz.write(vals_wiz)
+
+        _logger.info('***** Fin de helpdesk_confirmar_validar_refacciones_wizard: ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ) + ' *****')
 
         view = self.env.ref('helpdesk_update.view_helpdesk_crear_y_validar_refacciones')
         view_id = view.mapped('id')
