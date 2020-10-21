@@ -4916,7 +4916,7 @@ class helpdesk_update(models.Model):
                         """
         #if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
             
-            componentes = self.env['x_studio_historico_de_componentes'].search_read([ '&', '|', ('x_ultimaCargaRefacciones', '=', True), ('x_studio_modelo', 'ilike', 'Refacción y/o accesorio:'), ('x_studio_field_MH4DO', '=', equipos[0].id) ], ['id', 'x_studio_field_MH4DO', 'x_ultimaCargaRefacciones', 'x_studio_modelo'])
+            componentes = self.env['x_studio_historico_de_componentes'].search([ '&', '|', ('x_ultimaCargaRefacciones', '=', True), ('x_studio_modelo', 'ilike', 'Refacción y/o accesorio:'), ('x_studio_field_MH4DO', '=', equipos[0].id) ])
             #_logger.info('len:    ' + str(componentes))
            # query = """ selec id from x_studio_historico_de_componentes where "x_studio_modelo" = 'f' and  "x_ultimaCargaRefacciones" = 't' or """ 
             #_logger.info('**** componentes: ' + str(componentes))
