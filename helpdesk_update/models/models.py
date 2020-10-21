@@ -4944,7 +4944,7 @@ class helpdesk_update(models.Model):
 
 
         #_logger.info(vals_wiz)
-        wiz.sudo().write(vals_wiz)
+        wiz.write(vals_wiz)
 
         _logger.info('***** Fin de helpdesk_confirmar_validar_refacciones_wizard: ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ) + ' *****')
 
