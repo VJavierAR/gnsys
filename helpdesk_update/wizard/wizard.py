@@ -90,6 +90,7 @@ class HelpDeskComentario(TransientModel):
                                     })
             #if self.ticket_id.env.user.has_group('studio_customization.grupo_de_tecnicos_fi_6cce8af2-f2d0-4449-b629-906fb2c16636') and self.evidencia:
             #    self.ticket_id.write({'stage_id': 3})
+            self.ticket_id.obten_ulimo_diagnostico_fecha_usuario()
             mess = 'Diagnostico / Comentario añadido al ticket "' + str(self.ticket_id.id) + '" de forma exitosa. \n\nComentario agregado: ' + str(self.comentario) + '. \n\nGenerado en el estado: ' + self.ticket_id.stage_id.name
             wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mess})
             view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
@@ -131,6 +132,7 @@ class HelpDeskComentario(TransientModel):
                                 })
         #if self.ticket_id.env.user.has_group('studio_customization.grupo_de_tecnicos_fi_6cce8af2-f2d0-4449-b629-906fb2c16636') and self.evidencia:
         #    self.ticket_id.write({'stage_id': 3})
+        self.ticket_id.obten_ulimo_diagnostico_fecha_usuario()
         mess = 'Diagnostico / Comentario añadido al ticket "' + str(self.ticket_id.id) + '" de forma exitosa. \n\nComentario agregado: ' + str(self.comentario) + '. \n\nGenerado en el estado: ' + self.ticket_id.stage_id.name + mensajeNoCambioAResuelto
         wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mess})
         view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
@@ -311,7 +313,7 @@ class HelpDeskNoValidarConComentario(TransientModel):
                                                 ,'mostrarComentario': self.check,
                                                 'creadoPorSistema': False
                                                 })
-        
+        self.ticket_id.obten_ulimo_diagnostico_fecha_usuario()
         mess = 'Ticket "' + str(self.ticket_id.id) + '" no validado y Diagnostico / Comentario añadido al ticket "' + str(self.ticket_id.id) + '" de forma exitosa. \n\nComentario agregado: ' + str(self.comentario) + '.'
         wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mess})
         view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
@@ -366,6 +368,7 @@ class HelpDeskCerrarConComentario(TransientModel):
                             , 'estadoResueltoPorDocTecnico': True
                             , 'estadoAtencion': True
                             })
+        self.ticket_id.obten_ulimo_diagnostico_fecha_usuario()
         mess = 'Ticket "' + str(self.ticket_id.id) + '" cerrado y último Diagnostico / Comentario añadido al ticket "' + str(self.ticket_id.id) + '" de forma exitosa. \n\nComentario agregado: ' + str(self.comentario) + '.'
         wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mess})
         view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
@@ -417,6 +420,7 @@ class HelpDeskCancelarConComentario(TransientModel):
                           , 'estadoResueltoPorDocTecnico': True
                           , 'estadoAtencion': True
                           })
+      self.ticket_id.obten_ulimo_diagnostico_fecha_usuario()
       mess = 'Ticket "' + str(self.ticket_id.id) + '" cancelado y último Diagnostico / Comentario añadido al ticket "' + str(self.ticket_id.id) + '" de forma exitosa. \n\nComentario agregado: ' + str(self.comentario) + '.'
       wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mess})
       view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
@@ -852,6 +856,7 @@ class helpdesk_contadores(TransientModel):
                                         })
                     #self.ticket_id.write({'contadorBNWizard': self.contadorBNActual
                     #                    })
+                    self.ticket_id.obten_ulimo_diagnostico_fecha_usuario()
                     mensajeTitulo = "Contador capturado!!!"
                     mensajeCuerpo = "Se capturo el contador."
                     wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
@@ -905,6 +910,7 @@ class helpdesk_contadores(TransientModel):
                     #self.ticket_id.write({'contadorBNWizard': self.contadorBNActual
                     #                    , 'contadorColorWizard': self.contadorColorActual
                     #                    })
+                    self.ticket_id.obten_ulimo_diagnostico_fecha_usuario()
                     mensajeTitulo = "Contador capturado!!!"
                     mensajeCuerpo = "Se capturo el contador."
                     wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
@@ -1596,7 +1602,7 @@ class HelpDeskReincidencia(TransientModel):
                                                   'creadoPorSistema': True
                                                   })
 
-
+          ticket.obten_ulimo_diagnostico_fecha_usuario()
           mensajeTitulo = "Ticket generado!!!"
           mensajeCuerpo = 'Ticket ' + str(ticket.id) + ' generado por reinsidencia'
           wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
@@ -1647,7 +1653,7 @@ class HelpDeskReincidencia(TransientModel):
                                                   ,'mostrarComentario': True,
                                                   'creadoPorSistema': True
                                                   })
-
+          ticket.obten_ulimo_diagnostico_fecha_usuario()
 
           mensajeTitulo = "Ticket generado!!!"
           mensajeCuerpo = 'Ticket ' + str(ticket.id) + ' generado por reinsidencia'
@@ -1780,6 +1786,7 @@ class CerrarTicketsMassAction(TransientModel):
                                                         'comentario': 'Cierre de ticket que esta cerrado en techra.' ,
                                                         'creadoPorSistema': True
                                                     })
+            ticket.obten_ulimo_diagnostico_fecha_usuario()
 
 
 
@@ -2071,6 +2078,7 @@ class CrearYValidarSolTonerMassAction(TransientModel):
                                                             'comentario': 'Ticket validado por ' + str(self.env.user.name) +'. Pasa al proceso de almacén.' ,
                                                             'creadoPorSistema': True
                                                         })
+                        ticket.obten_ulimo_diagnostico_fecha_usuario()
                     else:
                         listaDeTicketsSinPoroductos.append(ticket.id)
                         
@@ -4826,6 +4834,7 @@ class helpdesk_reiniciar_contadores_mesa(TransientModel):
                                     , 'x_studio_contador_color': 0
                                     , 'x_studio_contador_color_a_capturar': 0
                                     })
+                self.ticket_id.obten_ulimo_diagnostico_fecha_usuario()
                 mensajeTitulo = "Contador reiniciado!!!"
                 mensajeCuerpo = "Se reinicio el contador del equipo " + str(c.name) + "."
                 wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
@@ -5189,6 +5198,7 @@ class helpdesk_reiniciar_contadores_mesa(TransientModel):
                                     , 'x_studio_contador_color': int(colorMesa)
                                     , 'x_studio_contador_color_a_capturar': int(self.contadorColorActualizado)
                                     })
+                self.ticket_id.obten_ulimo_diagnostico_fecha_usuario()
                 mensajeTitulo = "Contador reiniciado!!!"
                 mensajeCuerpo = "Se reinicio el contador del equipo " + str(c.name) + "."
                 wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
@@ -5543,6 +5553,7 @@ class helpdesk_editar_contadores_mesa(TransientModel):
                                     , 'x_studio_contador_color': 0
                                     , 'x_studio_contador_color_a_capturar': 0
                                     })
+                self.ticket_id.obten_ulimo_diagnostico_fecha_usuario()
                 mensajeTitulo = "Contador actualizado!!!"
                 mensajeCuerpo = "Se edito el contador del equipo " + str(self.serieSeleccionada) + "."
                 wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
@@ -5593,6 +5604,7 @@ class helpdesk_editar_contadores_mesa(TransientModel):
                                     , 'x_studio_contador_color': int(self.contadorColorActual)
                                     , 'x_studio_contador_color_a_capturar': int(self.contadorColorActualizado)
                                     })
+                self.ticket_id.obten_ulimo_diagnostico_fecha_usuario()
                 mensajeTitulo = "Contador actualizado!!!"
                 mensajeCuerpo = "Se edito el contador del equipo " + str(self.serieSeleccionada) + "."
                 wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
@@ -5888,6 +5900,7 @@ class HelpDeskResueltoConComentario(TransientModel):
                                 'estadoResuelto': True,
                                 'estadoAtencion': False
                             })
+        self.ticket_id.obten_ulimo_diagnostico_fecha_usuario()
         message = 'Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Resuelto' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página."
         wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': message})
         view = self.env.ref('helpdesk_update.view_helpdesk_alerta')

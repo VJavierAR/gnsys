@@ -136,6 +136,7 @@ class helpdesk_update(models.Model):
                     #self.env.cr.execute(query)
                     objTicket.diagnosticos[i].create_date = fecha
                     i = i + 1
+        objTicket.obten_ulimo_diagnostico_fecha_usuario()
 
     
 
@@ -1453,7 +1454,7 @@ class helpdesk_update(models.Model):
                         self._origin.sudo().diagnosticos[i].create_date = fecha
                         i = i + 1
                 
-
+                self._origin.obten_ulimo_diagnostico_fecha_usuario()
                 #for diagnostico in self._origin.sudo().diagnosticos:
                 #_logger.info('self._origin.sudo().diagnosticos[-1].create_date: ' + str(self._origin.sudo().diagnosticos[-1].create_date))
                 #_logger.info('self._origin.sudo().diagnosticos[-2].create_date: ' + str(self._origin.sudo().diagnosticos[-2].create_date))
@@ -1862,6 +1863,7 @@ class helpdesk_update(models.Model):
                                                                 'create_uid':  self.env.user.id,
                                                                 'creadoPorSistema': True
                                                             })
+            self.obten_ulimo_diagnostico_fecha_usuario()
             mensajeTitulo = 'Estado de ticket actualizado!!!'
             mensajeCuerpo = 'Se cambio el estado del ticket ' + str(self.x_studio_id_ticket) +'. \nEstado anterior: ' + estadoAntes + ' Estado actual:  Pendiente por autorizar solicitud' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página."
             #wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
@@ -2269,6 +2271,7 @@ class helpdesk_update(models.Model):
                                                                     'mostrarComentario': True,
                                                                     'creadoPorSistema': True
                                                                 })
+                self.obten_ulimo_diagnostico_fecha_usuario()
 
                 message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Refacción Autorizada' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
                 mess= {
@@ -3388,9 +3391,10 @@ class helpdesk_update(models.Model):
     
     
     
-    @api.onchange('stage_id')
-    def actualiza_datos_estado(self):
-        self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': self.stage_id.name, 'write_uid':  self.env.user.name})        
+    #@api.onchange('stage_id')
+    #def actualiza_datos_estado(self):
+    #    self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': self.stage_id.name, 'write_uid':  self.env.user.name})
+    #    objTicket.obten_ulimo_diagnostico_fecha_usuario()
     
     
     
@@ -6918,6 +6922,7 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
                                                         'mostrarComentario': self.check,
                                                         'creadoPorSistema': False
                                                     })
+            self.ticket_id.obten_ulimo_diagnostico_fecha_usuario()
             _logger.info('3312: fin actualización refacciones sobre la misma so(): ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
         else:
             _logger.info('3312: inicio confirmarYValidarRefacciones(): ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
@@ -7036,6 +7041,7 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
                                                             'mostrarComentario': self.check,
                                                             'creadoPorSistema': False
                                                         })
+                self.ticket_id.obten_ulimo_diagnostico_fecha_usuario()
             #mensajeTitulo = 'Creación y validación de refacción!!!'
             #mensajeCuerpo = 'Se creo y valido la solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) + ' para el ticket ' + str(self.ticket_id.id) + '.'    
         #else:
