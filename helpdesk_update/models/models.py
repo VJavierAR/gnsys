@@ -3860,16 +3860,17 @@ class helpdesk_update(models.Model):
     
 
     ultimoDiagnosticoFecha = fields.Datetime(string = 'Ultimo diagnostico fecha')
+    ultimoDiagnosticoUsuario = fields.Text(string = 'Ultimo diagnostico usuario')
     @api.onchange('diagnosticos')
-    def obten_ulimo_diagnostico_fecha(self):
+    def obten_ulimo_diagnostico_fecha_usuario(self):
         if self.diagnosticos:
             self.write({'ultimoDiagnosticoFecha': self.diagnosticos[-1].create_date})
-
-    ultimoDiagnosticoUsuario = fields.Text(string = 'Ultimo diagnostico fecha')
-    @api.onchange('diagnosticos')
-    def obten_ulimo_diagnostico_fecha(self):
-        if self.diagnosticos:
             self.write({'ultimoDiagnosticoUsuario': self.diagnosticos[-1].create_uid.name})
+            return self.id
+        else:
+            return -1
+    
+            
 
     #@api.model
     #@api.multi
