@@ -6307,7 +6307,7 @@ class helpdesk_ticket_techra(models.Model):
 
         dcas_existentes = []
 
-        dominio_busqueda_dca = [('x_studio_tickett', '=', self.numTicketDeTechra), ('ultimaCargaContadoresMesa', '=' True) ]
+        dominio_busqueda_dca = [('x_studio_tickett', '=', self.numTicketDeTechra), ('ultimaCargaContadoresMesa', '=', True) ]
         dcas_existentes = self.env['dcas.dcas'].search(dominio_busqueda_dca)
 
         if not dcas_existentes:
