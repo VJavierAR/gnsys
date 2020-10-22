@@ -6304,6 +6304,26 @@ class helpdesk_ticket_techra(models.Model):
 
 
     def crea_relacion_dca(self):
+
+        dcas_existentes = []
+
+        dominio_busqueda_dca = [('x_studio_tickett', '=', self.numTicketDeTechra), ('ultimaCargaContadoresMesa', '=' True) ]
+        dcas_existentes = self.env['dcas.dcas'].search(dominio_busqueda_dca)
+
+        if not dcas_existentes:
+            dominio_busqueda_dca = [('x_studio_tickett', '=', self.numTicketDeTechra)]
+            dcas_existentes = self.env['dcas.dcas'].search(dominio_busqueda_dca)
+
+        if dcas_existentes:
+            for dca in dcas_existentes:
+                if not dca.ticket_techra:
+                    vals = {
+                        'ticket_techra': self.id,
+                        'ticket_techra_texto': self.numTicketDeTechra
+                    }
+                    dca.write(vals)
+            return
+
         series_text = self.numeroDeSerieTechra.replace("[", "").replace("]", "").replace(" ", "")
         lista_series = []
         if "," in series_text:
