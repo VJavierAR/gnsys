@@ -246,6 +246,15 @@ class contratos(models.Model):
 
     pago    = fields.Selection([("ANTICIPADO","Anticipado"),("VENCIDO","Vencido"),("MIXOT","Mixto")],string="Pago",track_visibility='onchange')
 
+
+    @api.model
+    def create(self,vals):
+        contrato = super(contratos, self).create(vals)
+        if contrato.metodPago=='6' and contrato.diasCredito<30:
+            raise exceptions.ValidationError("debes de poner un rango mayor a 29 si el método de pago es ppd "+str(contrato.diasCredito))
+        return contrato            
+
+
     @api.onchange('cliente')
     def cambiarRazonSocial(self):
         valores = [('0', 'DOCUMENTO INTEGRAL CORPORATIVO, SA DE CV'), ('1', 'GN SYS CORPORATIVO S.A. DE C.V.'),
