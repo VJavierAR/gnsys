@@ -1617,20 +1617,20 @@
                             <!--<field name='ticketRelacion' readonly='1' />-->
                             <field name='productos'  options="{'no_create_edit': True, 'no_create': True}" />
                             <!--<field name='detalleDeProducto' widget='html' readonly='1' />-->
-                            <field name='referenciaInterna' readonly='1' />
-                            <field name='nombreProducto' readonly='1' />
-                            <field name='descripcion' readonly='1' />
-                            <field name='cantidadAMano' readonly='1' />
+                            <!--<field name='referenciaInterna' readonly='1' />-->
+                            <!--<field name='nombreProducto' readonly='1' />-->
+                            <!--<field name='descripcion' readonly='1' />-->
+                            <!--<field name='cantidadAMano' readonly='1' />-->
                             <field name='cantidadPedida' />
                             <field name='wizRela' readonly='1' invisible = '1'/>
                         </tree>
                     </field>
                     <group>
-                        
-                        <field name="productos" string="Refacciones y accesorios " invisible='1' domain="['|', '|', '|', ('categ_id', '=', 7), ('categ_id', '=', 9), ('categ_id', '=', 10), ('categ_id', '=', 11) ]" options="{'no_create_edit': True, 'no_create': True}" readonly='0' >
+                      <!--  
+                        <field name="productos" string="Refacciones y accesorios " invisible='1' domain="['|', '|', '|', ('categ_id', '=', 7), ('categ_id', '=', 9), ('categ_id', '=', 10), ('categ_id', '=', 11) ]" options="{'no_create_edit': True, 'no_create': True}" readonly='0' on_change="0" >
                             <tree string="Productos" editable="bottom" >
                                 <field name='categ_id' string='Categoría del producto' readonly='1'/>
-                                <field name='product_variant_id' string='Producto' />
+                                <field name='product_variant_id' string='Producto' on_change="0" />
                                 <field name='default_code' string='Referencia interna' readonly='1'/>
                                 <field name='name' string='Nombre' readonly='1'/>
                                 <field name='description' string='Descripción' readonly='1'/>
@@ -1639,6 +1639,7 @@
                                 <field name='x_studio_cantidad_pedida' string='Cantidad a pedir' />
                             </tree>
                         </field>
+                    -->
                     </group>
                 </group>
                 
@@ -1779,10 +1780,10 @@
                                         <!--<field name='ticketRelacion' readonly='1' />-->
                                         <field name='productos'  options="{'no_create_edit': True, 'no_create': True}" />
                                         <!--<field name='detalleDeProducto' widget='html' readonly='1' />-->
-                                        <field name='referenciaInterna' readonly='1' />
-                                        <field name='nombreProducto' readonly='1' />
-                                        <field name='descripcion' readonly='1' />
-                                        <field name='cantidadAMano' readonly='1' />
+                                        <!--<field name='referenciaInterna' readonly='1' />-->
+                                        <!--<field name='nombreProducto' readonly='1' />-->
+                                        <!--<field name='descripcion' readonly='1' />-->
+                                        <!--<field name='cantidadAMano' readonly='1' /> -->
                                         <field name='cantidadPedida' />
                                         <field name='wizRela' readonly='1' invisible = '1'/>
                                     </tree>
