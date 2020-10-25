@@ -19,6 +19,9 @@
 	width: 100px;
 }
 
+.mesa_de_ayuda_tree_class [data-id="datosCliente"] {
+	width: 1000px;
+}
 
 /*
 .o_field_pdfviewer {

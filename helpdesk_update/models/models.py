@@ -398,6 +398,8 @@ class helpdesk_update(models.Model):
         if ticket.x_studio_tipo_de_vale == 'Requerimiento' and ticket.team_id.id != 8 and ticket.team_id.id != 13:
             ticket.write({'team_id': 8})
 
+        ticket.actualiza_serie_texto()
+
         return ticket
 
 
@@ -3863,8 +3865,107 @@ class helpdesk_update(models.Model):
     
     
 
-    ultimoDiagnosticoFecha = fields.Datetime(string = 'Ultimo diagnostico fecha')
-    ultimoDiagnosticoUsuario = fields.Text(string = 'Ultimo diagnostico usuario')
+
+
+    serie_y_modelo = fields.Text(string = 'Serie(s)')
+    @api.onchange('x_studio_equipo_por_nmero_de_serie, x_studio_equipo_por_nmero_de_serie_1')
+    def actualiza_serie_texto(self):
+        dominio_busqueda_ticket = [('id', '=', self.id)]
+        obj_ticket = self.env['helpdesk.ticket'].search(dominio_busqueda_ticket)
+        series_toner = obj_ticket.mapped('x_studio_equipo_por_nmero_de_serie_1.serie.name')
+        serie_mesa = obj_ticket.mapped('x_studio_equipo_por_nmero_de_serie.name')
+
+        tipo_de_vale = obj_ticket.mapped('x_studio_tipo_de_vale')
+
+        series_modelo_toner = []
+        series_modelo_toner_mapped = obj_ticket.mapped('x_studio_equipo_por_nmero_de_serie_1.serie')
+        for modelo in series_modelo_toner_mapped:
+            series_modelo_toner.append(modelo.product_id.name)
+        serie_modelo_mesa = obj_ticket.mapped('x_studio_equipo_por_nmero_de_serie.product_id.name')
+
+        _logger.info('tipo_de_vale' + str(tipo_de_vale) +'series_toner: ' + str(series_toner) + ' serie_mesa: ' + str(serie_mesa))
+        _logger.info('series_modelo_toner:  ' + str(series_modelo_toner) + ' serie_modelo_mesa: ' + str(serie_modelo_mesa))
+
+        serie_modelo = ''
+        if tipo_de_vale and tipo_de_vale[0] == 'Requerimiento':
+            if series_toner:
+                i = 0
+                for serie in series_toner:
+                    serie_modelo = serie_modelo + '[' + str(serie) + '] ' + str(series_modelo_toner[i]) + ', '
+                    i = i + 1
+            else:
+                serie_modelo = 'Sin serie'
+        elif tipo_de_vale and tipo_de_vale[0] != 'Requerimiento':
+            if serie_mesa:
+                i = 0
+                for serie in serie_mesa:
+                    serie_modelo = serie_modelo + '[' + str(serie) + '] ' + str(serie_modelo_mesa[i]) + ', '
+                    i = i + 1
+            else:
+                serie_modelo = 'Sin serie'
+        
+        texto = """
+                    <div class='row' >
+                        <div class='col-sm-12'>
+                            <p>""" + serie_modelo + """</p>
+                        </div>
+                    </div>
+                """
+        obj_ticket.write({'serie_y_modelo': texto})
+
+
+    def actualiza_serie_texto_2(self):
+        dominio_busqueda_ticket = [('id', '=', self.id)]
+        obj_ticket = self.env['helpdesk.ticket'].search(dominio_busqueda_ticket)
+        series_toner = obj_ticket.mapped('x_studio_equipo_por_nmero_de_serie_1.serie.name')
+        serie_mesa = obj_ticket.mapped('x_studio_equipo_por_nmero_de_serie.name')
+
+        tipo_de_vale = obj_ticket.mapped('x_studio_tipo_de_vale')
+
+        series_modelo_toner = []
+        series_modelo_toner_mapped = obj_ticket.mapped('x_studio_equipo_por_nmero_de_serie_1.serie')
+        for modelo in series_modelo_toner_mapped:
+            series_modelo_toner.append(modelo.product_id.name)
+        serie_modelo_mesa = obj_ticket.mapped('x_studio_equipo_por_nmero_de_serie.product_id.name')
+
+        _logger.info('tipo_de_vale' + str(tipo_de_vale) +'series_toner: ' + str(series_toner) + ' serie_mesa: ' + str(serie_mesa))
+        _logger.info('series_modelo_toner:  ' + str(series_modelo_toner) + ' serie_modelo_mesa: ' + str(serie_modelo_mesa))
+
+        serie_modelo = ''
+        if tipo_de_vale and tipo_de_vale[0] == 'Requerimiento':
+            if series_toner:
+                i = 0
+                for serie in series_toner:
+                    serie_modelo = serie_modelo + '[' + str(serie) + '] ' + str(series_modelo_toner[i]) + ', '
+                    i = i + 1
+            else:
+                serie_modelo = 'Sin serie'
+        elif tipo_de_vale and tipo_de_vale[0] != 'Requerimiento':
+            if serie_mesa:
+                i = 0
+                for serie in serie_mesa:
+                    serie_modelo = serie_modelo + '[' + str(serie) + '] ' + str(serie_modelo_mesa[i]) + ', '
+                    i = i + 1
+            else:
+                serie_modelo = 'Sin serie'
+        
+        texto = """
+                    <div class='row' >
+                        <div class='col-sm-12'>
+                            <p>""" + serie_modelo + """</p>
+                        </div>
+                    </div>
+                """
+        obj_ticket.write({'serie_y_modelo': texto})
+
+        if obj_ticket.serie_y_modelo:
+            return True
+        else:
+            return False
+
+
+    ultimoDiagnosticoFecha = fields.Datetime(string = 'Fecha último cambio')
+    ultimoDiagnosticoUsuario = fields.Text(string = 'Ultima escritura')
     @api.onchange('diagnosticos')
     def obten_ulimo_diagnostico_fecha_usuario(self):
         if self.diagnosticos:
@@ -4803,7 +4904,6 @@ class helpdesk_update(models.Model):
             _logger.info('3312: lista: ' + str(lista) )
             wiz.write({'accesorios': lista})
         """
-
         vals_wiz['contadoresAnterioresText'] = self.contadores_anteriores
         if productos:
             refaccionesEnCero = ''
@@ -4912,14 +5012,13 @@ class helpdesk_update(models.Model):
                                     <tr>
                                         <th scope='col'>Número de serie</th>
                                         <th scope='col'>Modelo</th>
-                                        <th scope='col'>Descripción</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
                                         <td>""" + str(equipos[0].name) + """</td>
                                         <td>""" + str(equipos[0].x_studio_modelo_equipo) + """</td>
-                                        <td>""" + str(equipos[0].product_id.description) + """</td>
+                                        
                                     </tr>
                                 </tbody>
                             </table>
