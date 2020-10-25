@@ -3881,7 +3881,10 @@ class helpdesk_update(models.Model):
         series_modelo_toner_mapped = obj_ticket.mapped('x_studio_equipo_por_nmero_de_serie_1.serie')
         for modelo in series_modelo_toner_mapped:
             series_modelo_toner.append(modelo.product_id.name)
-        serie_modelo_mesa = obj_ticket.mapped('x_studio_equipo_por_nmero_de_serie.product_id.name')
+        serie_modelo_mesa = []
+        serie_modelo_mesa_mapped = obj_ticket.mapped('x_studio_equipo_por_nmero_de_serie')
+        for modelo in serie_modelo_mesa_mapped:
+            serie_modelo_mesa.append(modelo.product_id.name)
 
         _logger.info('tipo_de_vale' + str(tipo_de_vale) +'series_toner: ' + str(series_toner) + ' serie_mesa: ' + str(serie_mesa))
         _logger.info('series_modelo_toner:  ' + str(series_modelo_toner) + ' serie_modelo_mesa: ' + str(serie_modelo_mesa))
@@ -3926,7 +3929,10 @@ class helpdesk_update(models.Model):
         series_modelo_toner_mapped = obj_ticket.mapped('x_studio_equipo_por_nmero_de_serie_1.serie')
         for modelo in series_modelo_toner_mapped:
             series_modelo_toner.append(modelo.product_id.name)
-        serie_modelo_mesa = obj_ticket.mapped('x_studio_equipo_por_nmero_de_serie.product_id.name')
+        serie_modelo_mesa = []
+        serie_modelo_mesa_mapped = obj_ticket.mapped('x_studio_equipo_por_nmero_de_serie')
+        for modelo in serie_modelo_mesa_mapped:
+            serie_modelo_mesa.append(modelo.product_id.name)
 
         _logger.info('tipo_de_vale' + str(tipo_de_vale) +'series_toner: ' + str(series_toner) + ' serie_mesa: ' + str(serie_mesa))
         _logger.info('series_modelo_toner:  ' + str(series_modelo_toner) + ' serie_modelo_mesa: ' + str(serie_modelo_mesa))
