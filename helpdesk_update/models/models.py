@@ -6414,8 +6414,8 @@ class helpdesk_ticket_techra(models.Model):
                     'es_repetido': True
                 }
                 serie_id.write(vals)
-                return True
-        return False
+                return serie_id.id
+        return -1
 
 
     def crea_relacion_dca(self):
