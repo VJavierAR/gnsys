@@ -6419,7 +6419,7 @@ class helpdesk_ticket_techra(models.Model):
 
 
     def crea_relacion_dca(self):
-
+        regreso = {}
         dcas_existentes = []
 
         dominio_busqueda_dca = [('x_studio_tickett', '=', self.numTicketDeTechra), ('ultimaCargaContadoresMesa', '=', True) ]
@@ -6437,7 +6437,9 @@ class helpdesk_ticket_techra(models.Model):
                         'ticket_techra_texto': self.numTicketDeTechra
                     }
                     dca.write(vals)
-            return
+                    regreso['mensaje'] = 'dca existe'
+                    regreso['dca_id'] = dca.id
+            return regreso
 
         series_text = self.numeroDeSerieTechra.replace("[", "").replace("]", "").replace(" ", "")
         lista_series = []
@@ -6488,6 +6490,9 @@ class helpdesk_ticket_techra(models.Model):
                 vals['x_studio_capturar'] = False
                 vals['x_studio_check_temporal'] = False
             dca = self.env['dcas.dcas'].create(vals)
+            regreso['mensaje'] = 'dca creado'
+            regreso['dca_id'] = dca.id
+        return regreso
 
 
 
