@@ -1096,7 +1096,7 @@
                                     </group>
                                     <group>
                                         <group>
-                                            <button name="editar_contadores_wizard" string="Editar contadores" type="object" class="oe_highlight" />
+                                            <button name="editar_contadores_wizard" string="Editar contadores" type="object" class="oe_highlight" groups="studio_customization.reinicia contadores en toner" />
                                         </group>
                                         <group>
                                             <!--<button name="reiniciar_contadores_wizard" string="Reiniciar contadores" type="object" class="oe_highlight" />-->
