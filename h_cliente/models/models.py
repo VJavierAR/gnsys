@@ -12,6 +12,7 @@ _logger = logging.getLogger(__name__)
 class HCliente(models.Model):
 	_name = 'cliente.h'
 	_description = 'Clientes de almacen'
+	active = fields.Boolean('Active', default=True, track_visibility=True)
 	fecha = fields.Datetime(string = 'Fecha')
 	fechaTexto = fields.Text(string = 'Fecha texto')
 	origen = fields.Text(string = 'Origen')
