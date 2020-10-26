@@ -110,7 +110,6 @@ class StockPickingMassAction(TransientModel):
     #    if(self.check==1):
     #        for picki in self.picking_ids:
     #            self.env['mass.tecnico'].create({'mass_id':self.id,'pick_id':picki.id})
-
     def mass_action(self):
         self.ensure_one()
         locations=self.env['stock.warehouse'].search([['x_studio_cliente','=',False]]).mapped('lot_stock_id.id')
