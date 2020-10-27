@@ -111,9 +111,10 @@ class StockPickingMassAction(TransientModel):
     #        for picki in self.picking_ids:
     #            self.env['mass.tecnico'].create({'mass_id':self.id,'pick_id':picki.id})
     def mass_action(self):
+        self.picking_ids.write({'surtir':True})
         self.ensure_one()
-        locations=self.env['stock.warehouse'].search([['x_studio_cliente','=',False]]).mapped('lot_stock_id.id')
-        unresrved=self.env['stock.picking'].search(['&','&',['id','not in',self.picking_ids.mapped('id')],['location_id','in',locations],['state','=','assigned']])
+        #locations=self.env['stock.warehouse'].search([['x_studio_cliente','=',False]]).mapped('lot_stock_id.id')
+        unresrved=self.env['stock.picking'].search(['&','&','&',['id','not in',self.picking_ids.mapped('id')],['location_id','in',self.picking_ids.mapped('location_id.id')],['state','=','assigned'],['surtir','=',False]])
         unresrved.do_unreserve()
         draft_picking_lst = self.picking_ids.filtered(lambda x: x.state == 'draft').sorted(key=lambda r: r.scheduled_date)
         draft_picking_lst.sudo().action_confirm()
