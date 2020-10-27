@@ -75,9 +75,9 @@ class PartnerXlsx(models.AbstractModel):
                 sheet.write(i, 0, obj.x_studio_field_aVMhn.name, bold)
                 sheet.write(i, 1, obj.date.strftime("%Y/%m/%d"), bold)
                 sheet.write(i, 2, obj.x_studio_field_3lDS0.name, bold)
-                if(obj.location_dest_id.id==obj.x_studio_field_3lDS0.lot_stock_id.id or obj.x_studio_field_3lDS0.id==False):
+                if(obj.picking_id.picking_type_id.code =='incoming'):
                     sheet.write(i, 3, "Entrada", bold)
-                if(obj.location_dest_id.id!=obj.x_studio_field_3lDS0.lot_stock_id.id):
+                if(obj.picking_id.picking_type_id.code !='incoming'):
                     sheet.write(i, 3, "Salida", bold)
                 sheet.write(i, 4, obj.product_id.name, bold)
                 sheet.write(i, 5, obj.product_id.default_code, bold)
@@ -392,53 +392,6 @@ class PartnerXlsx(models.AbstractModel):
         workbook.close()
 
 class PartnerXlsx(models.AbstractModel):
-    _name = 'report.lots.report'
-    _inherit = 'report.report_xlsx.abstract'
-
-
-    def generate_xlsx_report(self, workbook, data, lots):
-        i=2
-        d=[]
-        if(len(lots)==1 and lots.x_studio_arreglo!='/' and lots.x_studio_arreglo!=False):
-            copia=lots
-            lots=self.env['stock.production.lot'].browse(eval(lots.x_studio_arreglo))
-            copia.write({'x_studio_arreglo':'/'})
-        merge_format = workbook.add_format({'bold': 1,'border': 1,'align': 'center','valign': 'vcenter','fg_color': 'blue'})
-        report_name = 'Base Instalada'
-        bold = workbook.add_format({'bold': True})
-        sheet = workbook.add_worksheet('Base Instalada')
-        sheet.merge_range('A1:X1', 'Base Instalada', merge_format)
-        for obj in lots:
-            sheet.write(i, 0, obj.servicio.contrato.cliente.name if(obj.servicio) else '', bold)
-            sheet.write(i, 1, obj.servicio.contrato.x_studio_grupo if(obj.servicio) else '', bold)
-            sheet.write(i, 2, '', bold)
-            sheet.write(i, 3, obj.x_studio_localidad_2.name if(obj.servicio) else '', bold)            
-            sheet.write(i, 4, obj.name, bold)
-            sheet.write(i, 5, obj.product_id.name, bold)
-            sheet.write(i, 6, '', bold)
-            sheet.write(i, 7, 'Arrendamiento' if(obj.servicio) else '', bold)
-            sheet.write(i, 8, obj.servicio.contrato.fechaDeInicioDeContrato.strftime("%Y/%m/%d %H:%M:%S") if(obj.servicio) else '', bold)
-            sheet.write(i, 9, obj.servicio.contrato.fechaDeFinDeContrato.strftime("%Y/%m/%d %H:%M:%S") if(obj.servicio) else '', bold)
-            sheet.write(i, 10, obj.servicio.contrato.idTechraRef if(obj.servicio) else '', bold)
-            sheet.write(i, 11, obj.servicio.idtec if(obj.servicio) else '', bold)
-            sheet.write(i, 12, obj.servicio.contrato.cliente.x_studio_vendedor.name if(obj.servicio) else '', bold)
-            sheet.write(i, 13, obj.servicio.contrato.cliente.x_studio_ejecutivo.name if(obj.servicio) else '', bold)
-            sheet.write(i, 14, obj.x_studio_localidad_2.street_name if(obj.servicio) else '', bold)
-            sheet.write(i, 15, obj.x_studio_localidad_2.street_number2 if(obj.servicio) else '', bold)
-            sheet.write(i, 16, obj.x_studio_localidad_2.street_number if(obj.servicio) else '', bold)
-            sheet.write(i, 17, obj.x_studio_localidad_2.l10n_mx_edi_colony if(obj.servicio) else '', bold)
-            sheet.write(i, 18, obj.x_studio_localidad_2.city if(obj.servicio) else '', bold)
-            sheet.write(i, 19, obj.x_studio_localidad_2.state_id.name if(obj.servicio) else '', bold)
-            sheet.write(i, 20, obj.x_studio_localidad_2.state_id.name if(obj.servicio) else '', bold)
-            sheet.write(i, 21, obj.x_studio_localidad_2.x_studio_field_SqU5B if(obj.servicio) else '', bold)
-            sheet.write(i, 22, 'México' if(obj.servicio) else '', bold)
-            sheet.write(i, 23, obj.x_studio_localidad_2.zip if(obj.servicio) else '', bold)
-            i=i+1
-        sheet.add_table('A2:X'+str(i),{'columns': [{'header': 'NombreCliente'},{'header': 'NombreGrupo'},{'header': 'RFCEmisor'},{'header':'Localidad'},{'header': 'NoSerie'},{'header': 'Modelo'},{'header': 'FechaIngresoCliente'},{'header': 'Tipo'},{'header': 'FechaInicioContrato'},{'header': 'FechaTerminoContrato'},{'header': 'Contrato'},{'header': 'Servicio'},{'header': 'EjecutivoCuenta'},{'header': 'EjecutivoAtencionCliente'},{'header': 'Calle'},{'header': 'No Int'},{'header': 'No Ext'},{'header': 'Colonia'},{'header': 'Delegación'},{'header': 'Ciudad'},{'header': 'Estado'},{'header': 'Zona'},{'header': 'Pais'},{'header': 'Codigo Postal'}]}) 
-        #sheet.add_table('A2:X'+str(i),{'columns': [{'header': 'NombreCliente'},{'header': 'NombreGrupo'},{'header': 'RFCEmisor'},{'header':'Localidad'},{'header': 'NoSerie'},{'header': 'Modelo'},{'header': 'FechaIngresoCliente'},{'header': 'Tipo'},{'header': 'FechaInicioContrato'},{'header': 'FechaTerminoContrato'},{'header': 'Contrato'},{'header': 'Servicio'},{'header': 'EjecutivoCuenta'},{'header': 'EjecutivoAtencionCliente'},{'header': 'Calle'},{'header': 'No Int'},{'header': 'No Ext'},{'header': 'Colonia'},{'header': 'Delegación'},{'header': 'Ciudad'},{'header': 'Estado'},{'header': 'Zona'},{'header': 'Pais'},{'header': 'Codigo Postal'}]}) 
-        workbook.close()
-
-class PartnerXlsx(models.AbstractModel):
     _name = 'report.compras.report'
     _inherit = 'report.report_xlsx.abstract'
 
@@ -516,4 +469,87 @@ class RutaXlsx(models.AbstractModel):
                 sheet.write(i, 21, orden.sale_id.x_studio_field_RnhKr.phone if(orden.sale_id.x_studio_field_RnhKr.phone) else '', bold)
                 i=i+1
         sheet.add_table('A2:V'+str(i),{'columns': [{'header': 'Expedición'},{'header': 'Fecha'},{'header': 'chofer'},{'header': 'vehiculo'},{'header': 'Zona'},{'header':'Tipo'},{'header': 'Estado'},{'header': 'Ticket'},{'header': 'Orden'},{'header': 'Cantidad'},{'header': 'Productos'},{'header': 'Cliente'},{'header': 'Localidad'},{'header': 'Calle'},{'header': 'No exterior'},{'header': 'No Interior'},{'header': 'Colonia'},{'header': 'Delegación'},{'header': 'Ciudad'},{'header': 'C.p'},{'header': 'Contacto'},{'header': 'Telefono'}]}) 
-        workbook.close()  
+        workbook.close()
+
+class RutaXlsx(models.AbstractModel):
+    _name = 'report.contacto.report'
+    _inherit = 'report.report_xlsx.abstract'
+
+    def generate_xlsx_report(self, workbook, data, contacto):
+        i=2
+        d=[]
+        if(len(contacto)==1 and contacto.arreglo!='/' and contacto.arreglo!=False):
+            copia=contacto
+            ruta=self.env['res.partner'].browse(eval(contacto.arreglo))
+            copia.write({'arreglo':'/'})
+        merge_format = workbook.add_format({'bold': 1,'border': 1,'align': 'center','valign': 'vcenter','fg_color': 'blue'})
+        report_name = 'Clientes'
+        bold = workbook.add_format({'bold': True})
+        sheet = workbook.add_worksheet('Clientes')
+        sheet.merge_range('A1:H1', 'Reporte Clientes', merge_format)
+        for obj in contacto:
+            sheet.write(i, 0, obj.name if(obj.name) else '', bold)
+            sheet.write(i, 1, obj.email if(obj.email) else '', bold)
+            sheet.write(i, 2, obj.phone if(obj.phone) else '', bold)
+            sheet.write(i, 3, obj.tipoCliente if(obj.tipoCliente) else '', bold)
+            sheet.write(i, 4, obj.x_studio_nivel_del_cliente if(obj.x_studio_nivel_del_cliente) else '', bold)
+            sheet.write(i, 5, obj.x_x_studio_cliente__stock_production_lot_count if(obj.x_x_studio_cliente__stock_production_lot_count) else '', bold)
+            sheet.write(i, 6, obj.x_studio_vendedor.name if(obj.x_studio_vendedor) else '', bold)
+            sheet.write(i, 7, obj.x_studio_ejecutivo.name if(obj.x_studio_ejecutivo) else '', bold)
+            i=i+1
+        sheet.add_table('A2:H'+str(i),{'columns': [{'header': 'Nombre'},{'header': 'Email'},{'header': 'Telefono'},{'header': 'Tipo de Cliente'},{'header': 'Nivel'},{'header':'No Equipos'},{'header': 'Vendedor'},{'header': 'Ejecutivo Cuenta'}]}) 
+        workbook.close()
+            
+
+
+
+
+
+
+# class PartnerXlsx(models.AbstractModel):
+#     _name = 'report.lots.report'
+#     _inherit = 'report.report_xlsx.abstract'
+
+
+#     def generate_xlsx_report(self, workbook, data, lots):
+#         i=2
+#         d=[]
+#         if(len(lots)==1 and lots.x_studio_arreglo!='/' and lots.x_studio_arreglo!=False):
+#             copia=lots
+#             lots=self.env['stock.production.lot'].browse(eval(lots.x_studio_arreglo))
+#             copia.write({'x_studio_arreglo':'/'})
+#         merge_format = workbook.add_format({'bold': 1,'border': 1,'align': 'center','valign': 'vcenter','fg_color': 'blue'})
+#         report_name = 'Base Instalada'
+#         bold = workbook.add_format({'bold': True})
+#         sheet = workbook.add_worksheet('Base Instalada')
+#         sheet.merge_range('A1:X1', 'Base Instalada', merge_format)
+#         for obj in lots:
+#             sheet.write(i, 0, obj.servicio.contrato.cliente.name if(obj.servicio) else '', bold)
+#             sheet.write(i, 1, obj.servicio.contrato.x_studio_grupo if(obj.servicio) else '', bold)
+#             sheet.write(i, 2, '', bold)
+#             sheet.write(i, 3, obj.x_studio_localidad_2.name if(obj.servicio) else '', bold)            
+#             sheet.write(i, 4, obj.name, bold)
+#             sheet.write(i, 5, obj.product_id.name, bold)
+#             sheet.write(i, 6, '', bold)
+#             sheet.write(i, 7, 'Arrendamiento' if(obj.servicio) else '', bold)
+#             sheet.write(i, 8, obj.servicio.contrato.fechaDeInicioDeContrato.strftime("%Y/%m/%d %H:%M:%S") if(obj.servicio) else '', bold)
+#             sheet.write(i, 9, obj.servicio.contrato.fechaDeFinDeContrato.strftime("%Y/%m/%d %H:%M:%S") if(obj.servicio) else '', bold)
+#             sheet.write(i, 10, obj.servicio.contrato.idTechraRef if(obj.servicio) else '', bold)
+#             sheet.write(i, 11, obj.servicio.idtec if(obj.servicio) else '', bold)
+#             sheet.write(i, 12, obj.servicio.contrato.cliente.x_studio_vendedor.name if(obj.servicio) else '', bold)
+#             sheet.write(i, 13, obj.servicio.contrato.cliente.x_studio_ejecutivo.name if(obj.servicio) else '', bold)
+#             sheet.write(i, 14, obj.x_studio_localidad_2.street_name if(obj.servicio) else '', bold)
+#             sheet.write(i, 15, obj.x_studio_localidad_2.street_number2 if(obj.servicio) else '', bold)
+#             sheet.write(i, 16, obj.x_studio_localidad_2.street_number if(obj.servicio) else '', bold)
+#             sheet.write(i, 17, obj.x_studio_localidad_2.l10n_mx_edi_colony if(obj.servicio) else '', bold)
+#             sheet.write(i, 18, obj.x_studio_localidad_2.city if(obj.servicio) else '', bold)
+#             sheet.write(i, 19, obj.x_studio_localidad_2.state_id.name if(obj.servicio) else '', bold)
+#             sheet.write(i, 20, obj.x_studio_localidad_2.state_id.name if(obj.servicio) else '', bold)
+#             sheet.write(i, 21, obj.x_studio_localidad_2.x_studio_field_SqU5B if(obj.servicio) else '', bold)
+#             sheet.write(i, 22, 'México' if(obj.servicio) else '', bold)
+#             sheet.write(i, 23, obj.x_studio_localidad_2.zip if(obj.servicio) else '', bold)
+#             i=i+1
+#         sheet.add_table('A2:X'+str(i),{'columns': [{'header': 'NombreCliente'},{'header': 'NombreGrupo'},{'header': 'RFCEmisor'},{'header':'Localidad'},{'header': 'NoSerie'},{'header': 'Modelo'},{'header': 'FechaIngresoCliente'},{'header': 'Tipo'},{'header': 'FechaInicioContrato'},{'header': 'FechaTerminoContrato'},{'header': 'Contrato'},{'header': 'Servicio'},{'header': 'EjecutivoCuenta'},{'header': 'EjecutivoAtencionCliente'},{'header': 'Calle'},{'header': 'No Int'},{'header': 'No Ext'},{'header': 'Colonia'},{'header': 'Delegación'},{'header': 'Ciudad'},{'header': 'Estado'},{'header': 'Zona'},{'header': 'Pais'},{'header': 'Codigo Postal'}]}) 
+#         #sheet.add_table('A2:X'+str(i),{'columns': [{'header': 'NombreCliente'},{'header': 'NombreGrupo'},{'header': 'RFCEmisor'},{'header':'Localidad'},{'header': 'NoSerie'},{'header': 'Modelo'},{'header': 'FechaIngresoCliente'},{'header': 'Tipo'},{'header': 'FechaInicioContrato'},{'header': 'FechaTerminoContrato'},{'header': 'Contrato'},{'header': 'Servicio'},{'header': 'EjecutivoCuenta'},{'header': 'EjecutivoAtencionCliente'},{'header': 'Calle'},{'header': 'No Int'},{'header': 'No Ext'},{'header': 'Colonia'},{'header': 'Delegación'},{'header': 'Ciudad'},{'header': 'Estado'},{'header': 'Zona'},{'header': 'Pais'},{'header': 'Codigo Postal'}]}) 
+#         workbook.close()
+#   

@@ -929,7 +929,7 @@ class SaleOrderMassAction(TransientModel):
     _description = 'Reporte de Solicitudes'
     fechaInicial=fields.Datetime()
     fechaFinal=fields.Datetime()
-
+    tipo=fields.Selection([["Cambio","Cambio"],["Arrendamiento","Arrendamiento"],["Venta","Venta"],["Backup","Backup"],["Demostración","Demostración"],["Retiro","Retiro"],["Préstamo","Préstamo"]])
     def report(self):
         i=[]
         d=[]
@@ -938,6 +938,9 @@ class SaleOrderMassAction(TransientModel):
             i.append(m)
         if(self.fechaFinal):
             m=['confirmation_date','<=',self.fechaFinal]
+            i.append(m)
+        if(self.tipo):
+            m=['x_studio_tipo_de_solicitud','=',self.tipo]
             i.append(m)
         i.append(['x_studio_field_bxHgp','=',False])
         d=self.env['sale.order'].search(i,order='confirmation_date asc').filtered(lambda x:x.origin==False and x.x_studio_factura==False)

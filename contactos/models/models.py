@@ -25,7 +25,7 @@ class ContactosCes(models.Model):
     _inherit='res.partner'
     notaPendiente=fields.Char()
     fechaPendienteInactivo=fields.Date()
-    
+    arreglo=fields.Char()
     @api.onchange('tipoCliente')
     def pendienteInactivo(self):
     	for record in self:
