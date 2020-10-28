@@ -1248,7 +1248,7 @@ class StockQua(TransientModel):
     def confirmar(self):
         self.env['stock.quant.line'].sudo().create({'quant_id':self.quant.id,'descripcion':self.comentario,'cantidadAnterior':self.quant.quantity,'cantidadReal':self.cantidad,'usuario':self.usuario.id})
         self.quant.sudo().write({'quantity':self.cantidad,'x_studio_field_kUc4x':self.ubicacion.id})
-        self.env['stock.picking'].search([['state','=','confirmed']]).action_assign()
+        #self.env['stock.picking'].search([['state','=','confirmed']]).action_assign()
 
 class SerieIngreso(TransientModel):
     _name='serie.ingreso'
