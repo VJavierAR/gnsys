@@ -115,8 +115,11 @@ class StockPickingMassAction(TransientModel):
         self.ensure_one()
         #locations=self.env['stock.warehouse'].search([['x_studio_cliente','=',False]]).mapped('lot_stock_id.id')
         locations=self.picking_ids.mapped('picking_type_id.warehouse_id.lot_stock_id.id')
+        #if(locations!=[]):
+        tipo=assigned_picking_lst.mapped('picking_type_id.code')
         unresrved=self.env['stock.picking'].search(['&','&','&',['id','not in',self.picking_ids.mapped('id')],['location_id','in',locations],['state','=','assigned'],['surtir','=',False]])
-        unresrved.do_unreserve()
+        if(len(unresrved)>0 and 'outgoing' not in tipo):
+            unresrved.do_unreserve()
         draft_picking_lst = self.picking_ids.filtered(lambda x: x.state == 'draft').sorted(key=lambda r: r.scheduled_date)
         draft_picking_lst.sudo().action_confirm()
         pickings_to_check = self.picking_ids.filtered(lambda x: x.state not in ['draft','cancel','done',]).sorted(key=lambda r: r.scheduled_date)
@@ -127,7 +130,6 @@ class StockPickingMassAction(TransientModel):
         assigned_picking_lst2 = self.picking_ids.filtered(lambda x:x.state == 'assigned' and (self.check==1 or self.check==2) )
         quantities_done = sum(move_line.qty_done for move_line in assigned_picking_lst.mapped('move_line_ids').filtered(lambda m: m.state not in ('done', 'cancel')))
         validacion=assigned_picking_lst.mapped('picking_type_id.id')
-        tipo=assigned_picking_lst.mapped('picking_type_id.code')
         _logger.info(str(tipo))
         #if(self.check==1):
         #    for t in self.tecnicos:
