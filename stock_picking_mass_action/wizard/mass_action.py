@@ -116,6 +116,7 @@ class StockPickingMassAction(TransientModel):
         #locations=self.env['stock.warehouse'].search([['x_studio_cliente','=',False]]).mapped('lot_stock_id.id')
         locations=self.picking_ids.mapped('picking_type_id.warehouse_id.lot_stock_id.id')
         #if(locations!=[]):
+        assigned_picking_lst = self.picking_ids.filtered(lambda x: x.state == 'assigned').sorted(key=lambda r: r.scheduled_date)
         tipo=assigned_picking_lst.mapped('picking_type_id.code')
         unresrved=self.env['stock.picking'].search(['&','&','&',['id','not in',self.picking_ids.mapped('id')],['location_id','in',locations],['state','=','assigned'],['surtir','=',False]])
         if(len(unresrved)>0 and 'outgoing' not in tipo):
@@ -126,7 +127,6 @@ class StockPickingMassAction(TransientModel):
         pickings_to_check.sudo().action_assign()
         cantidad=self.picking_ids.mapped('sale_id.delivery_count')
         loca=self.picking_ids.mapped('sale_id.warehouse_id.lot_stock_id.id')
-        assigned_picking_lst = self.picking_ids.filtered(lambda x: x.state == 'assigned').sorted(key=lambda r: r.scheduled_date)
         assigned_picking_lst2 = self.picking_ids.filtered(lambda x:x.state == 'assigned' and (self.check==1 or self.check==2) )
         quantities_done = sum(move_line.qty_done for move_line in assigned_picking_lst.mapped('move_line_ids').filtered(lambda m: m.state not in ('done', 'cancel')))
         validacion=assigned_picking_lst.mapped('picking_type_id.id')
