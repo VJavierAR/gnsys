@@ -96,7 +96,6 @@ class StockPickingMassAction(TransientModel):
             #refacion
             if(s.picking_type_id.id==29314):
                 self.tecnicos=[{'pick_id':s.id}]
-                #self.env['mass.tecnico'].create({'mass_id':self.id,'pick_id':s.id})
                 self.check=1
             #ruta
             if(s.picking_type_id.id==2):
@@ -104,18 +103,28 @@ class StockPickingMassAction(TransientModel):
             #distribucion
             if(s.picking_type_id.id==29302):
                 self.check=4
+                
+    def retiro_mass_action(self):
+        tipo=self.picking_ids.mapped('sale_id.x_studio_tipo_de_solicitud')
+        if('Retiro' in tipo):
+            for pickis in self.picking_ids:
+                for move in pickid.move_ids_without_package:
+                    serie=move.sale_line_id.x_studio_field_9nQhR.id
+                    if(serie):
+                        d=self.env['stock.move.line'].search([['move_id','=',move.id]])
+                        qu1=self.env['stock.quant'].search([['location_id','=',move.location_id.id],['product_id','=',move.product_id.id],['lot_id','=',serie]])
+                        qu=self.env['stock.quant'].search([['location_id','=',move.location_id.id],['product_id','=',move.product_id.id],['lot_id','=',d.lot_id.id]])
+                        self.env.cr.execute("update stock_quant set reserved_quantity=1 where id="+str(qu1.id)+";")            
+                        self.env.cr.execute("update stock_quant set reserved_quantity=0 where id="+str(qu.id)+";")
+                        self.env.cr.execute("update stock_move_line set lot_id="+str(serie)+"where id="+str(d.id)+";")
+            return True
+        else:
+            return True
 
-    #@api.onchange('check')
-    #def massTecnicoSSSS(self):
-    #    if(self.check==1):
-    #        for picki in self.picking_ids:
-    #            self.env['mass.tecnico'].create({'mass_id':self.id,'pick_id':picki.id})
     def mass_action(self):
         self.picking_ids.write({'surtir':True})
         self.ensure_one()
-        #locations=self.env['stock.warehouse'].search([['x_studio_cliente','=',False]]).mapped('lot_stock_id.id')
         locations=self.picking_ids.mapped('picking_type_id.warehouse_id.lot_stock_id.id')
-        #if(locations!=[]):
         assigned_picking_lst = self.picking_ids.filtered(lambda x: x.state == 'assigned').sorted(key=lambda r: r.scheduled_date)
         tipo=assigned_picking_lst.mapped('picking_type_id.code')
         unresrved=self.env['stock.picking'].search(['&','&','&',['id','not in',self.picking_ids.mapped('id')],['location_id','in',locations],['state','=','assigned'],['surtir','=',False]])
@@ -130,11 +139,7 @@ class StockPickingMassAction(TransientModel):
         assigned_picking_lst2 = self.picking_ids.filtered(lambda x:x.state == 'assigned' and (self.check==1 or self.check==2) )
         quantities_done = sum(move_line.qty_done for move_line in assigned_picking_lst.mapped('move_line_ids').filtered(lambda m: m.state not in ('done', 'cancel')))
         validacion=assigned_picking_lst.mapped('picking_type_id.id')
-        _logger.info(str(tipo))
-        #if(self.check==1):
-        #    for t in self.tecnicos:
-        #        _logger.info('tecnico'+str(t.tecnico.id)+'pic'+str(t.pick_id.id))
-        #        t.pick_id.write({'x_studio_field_SJeHG':t.tecnico.id})
+        self.retiro_mass_action()
         if(self.check ==2 or self.check ==1):
             CON=str(self.env['ir.sequence'].next_by_code('concentrado'))
             self.env['stock.picking'].search([['sale_id','in',assigned_picking_lst.mapped('sale_id.id')]]).write({'concentrado':CON})
@@ -199,21 +204,13 @@ class StockPickingMassAction(TransientModel):
         for pp in assigned_picking_lst.filtered(lambda x:x.sale_id.x_studio_tipo_de_solicitud!="Retiro" and x.sale_id.x_studio_field_bxHgp.id==False):
             if('incoming' not in tipo):
                 if('outgoing' in tipo):
-                    #if(pp.sale_id.x_studio_requiere_instalacin_1==True):
-                     #   t=self.env['helpdesk.ticket'].create({'x_studio_tipo_de_vale':'Instalación','partner_id':pp.partner_id.parent_id.id,'x_studio_empresas_relacionadas':pp.partner_id.id,'team_id':9,'diagnosticos':[(0,0,{'estadoTicket':'Abierto','comentario':'Instalacion de Equipo'})],'stage_id':89,'name':'Instalaccion '+'Serie: ','x_studio_equipo_por_nmero_de_serie':[(6,0,pp.sale_id.mapped('order_line.x_studio_field_9nQhR.id'))]})                
-                     #   pp.sale_id.x_studio_field_bxHgp=t.id
                      pp.sale_id.write({'state':'entregado'})
                 else:
                     move_lines=self.env['stock.move.line'].search([['move_id','in',pp.mapped('move_lines.id')]])
                     tipo2=move_lines.mapped('move_id.picking_type_id.name')
-                    #if('Surtir' in tipo2):
-                    #    move_lines.lot_id.write({'x_studio_etapa':'A Distribución'})
                     if('Distribución' in tipo2):
-                        #record.lot_id.write({'x_studio_etapa':'Tránsito'})
                         pp.sale_id.write({'state':'distribucion'})
-                    #if('Tránsito' in tipo2):
-                        #record.lot_id.write({'x_studio_etapa':'Ruta'})
-                    #    pp.sale_id.write({'state':'entregado'})
+
 
     @api.multi
     def vales(self):
@@ -297,7 +294,6 @@ class StockCambio(TransientModel):
         equipos=self.pro_ids.filtered(lambda x:x.producto1.categ_id.id==13)
         if(len(equipos)==0 or self.pick.picking_type_id.id==29314):
             self.confirmar(self.pro_ids)
-            #self.pick.action_assign()
         else:   
             self.confirmar(self.accesorios_ids)
             self.confirmar(self.toner_ids)
@@ -317,9 +313,6 @@ class StockCambio(TransientModel):
                 'res_id': wiz.id,
                 'context': self.env.context,
             }
-            #self.confirmar()
-        #self.pick.action_confirm()
-        #self.pick.action_assign()
 
 
     def confirmar(self,data):
@@ -347,23 +340,14 @@ class StockCambio(TransientModel):
             if(productos or cantidades):
                 self.pick.do_unreserve()
                 for d in data:
-                    #datos={'x_studio_field_9nQhR':d.serie.id,'order_id':orden.id,'product_id':d.producto2.id,'product_uom':d.producto2.uom_id.id,'product_uom_qty':d.cantidad2,'name':d.producto2.description if(d.producto2.description) else '/','price_unit':0.00}
-                    #if(ruta!=[]):
-                    #    datos['route_id']=ruta[0]
-                    #ss=self.env['sale.order.line'].sudo().create(datos)
-                    #moves=self.env['stock.move'].search([['product_id','=',d.producto2.id],['origin','=',orden.name],['sale_line_id','=',False]])
-                    #moves.write({'sale_line_id':ss.id})
                     ssss=self.env['stock.move'].search([['sale_line_id','=',d.move_id.sale_line_id.id],['state','!=','done'],['picking_id','in',self.pick.sale_id.mapped('picking_ids.id')]])
                     ssss.write({'product_id':d.producto2.id})
-                    #ssss._action_cancel()
-                    #ssss.unlink()
                     if(ubicacion):
                         temp.append({'sale_line_id':d.move_id.sale_line_id.id,'product_id':d.producto2.id,'location_id':d.almacen.lot_stock_id.id})
             if(ubicacion and (productos or cantidades)):
                 check=False
                 for t in temp:
                     dd=self.env['stock.move'].search(['&',['sale_line_id','=',t['sale_line_id']],['location_id','in',almacenes.mapped('lot_stock_id.id')]],order='id asc',limit=1)
-                    _logger.info(str(len(dd)))
                     if(dd.location_id.id!=t['location_id']):
                         dd.write({'location_id':t['location_id']})
                         check=True
@@ -383,11 +367,9 @@ class StockCambio(TransientModel):
             qu=self.env['stock.quant'].search([['location_id','=',s.move_id.location_id.id],['product_id','=',s.move_id.product_id.id],['lot_id','=',d.lot_id.id]])
             if(d.lot_id.id!=s.serieOrigen.id):
                 self.env.cr.execute("update stock_quant set reserved_quantity=1 where id="+str(qu1.id)+";")            
-                #_logger.info(str(qu.id))
                 self.env.cr.execute("update stock_quant set reserved_quantity=0 where id="+str(qu.id)+";")
                 self.env.cr.execute("update stock_move_line set lot_id="+str(s.serieOrigen.id)+"where id="+str(d.id)+";")            
             s.move_id.sale_line_id.write({'x_studio_field_9nQhR':s.serieOrigen.id})
-            #d.write({'lot_id':s.serieOrigen.id})            
             if(self.pick.sale_id.x_studio_tipo_de_solicitud=='Retiro'):
                 s.serieOrigen.write({'servicio':False,'x_studio_cliente':1,'x_studio_localidad_2':self.pick.sale_id.warehouse_id.x_studio_field_E0H1Z.id})
                 self.env['cliente.h'].create({'localidad':self.pick.sale_id.partner_shipping_id.id,'solicitud':self.pick.sale_id.id,'contrato':self.pick.sale_id.x_studio_field_LVAj5.id,'servicio':self.pick.sale_id.x_studio_field_69Boh.id,'origen':self.pick.sale_id.partner_shipping_id.name,'destino':self.pick.sale_id.warehouse_id.name,'fecha':fecha,'serie':s.serieOrigen.id})
@@ -424,7 +406,6 @@ class StockCambioLine(TransientModel):
     tipo=fields.Integer()
     serieOrigen=fields.Many2one('stock.production.lot',domain="['&',('product_id.id','=',producto1),('x_studio_estado','=',estado)]")
     estado=fields.Selection([["Obsoleto","Obsoleto"],["Usado","Usado"],["Hueso","Hueso"],["Para reparación","Para reparación"],["Nuevo","Nuevo"],["Buenas condiciones","Buenas condiciones"],["Excelentes condiciones","Excelentes condiciones"],["Back-up","Back-up"],["Dañado","Dañado"]])
-    #modelo=fields.Many2one(related='serieOrigen.product_id')
     color=fields.Selection(related='producto1.x_studio_color_bn')
     contadorMono=fields.Integer('Contador Monocromatico')
     contadorColor=fields.Integer('Contador Color')
@@ -435,17 +416,10 @@ class StockCambioLine(TransientModel):
     nivelAmarillo=fields.Float()
     nivelMagenta=fields.Float()
     compatibilidad=fields.Boolean()
-    #@api.onchange('producto1')
-    #def nuevo(self):
-    #    for record in self:
-    #        ex=self.env['stock.quant'].search([['location_id','=',12],['product_id','=',record.producto1.id]]).sorted(key='quantity',reverse=True)
-    #        record.existencia1=int(ex[0].quantity) if(len(ex)>0) else 0
-    #        ex2=self.env['stock.quant'].search([['location_id','=',41917],['product_id','=',record.producto1.id]]).sorted(key='quantity',reverse=True)
-    #        record.existencia2=int(ex2[0].quantity) if(len(ex2)>0) else 0
+
     
     @api.depends('almacen','producto2')
     def almac(self):
-        #_logger.info('entre1')
         res={}
         for record in self:
             if(record.almacen):
@@ -457,32 +431,12 @@ class StockCambioLine(TransientModel):
     def te(self):
         res={}
         for record in self:
-            _logger.info(str(record.producto1.name))
             if(record.producto1.categ_id.id!=5):
                 res['domain']={'producto2':[['categ_id','=',record.producto1.categ_id.id]]}
             if(record.producto1.categ_id.id==5):
                 p=self.env['product.product'].search([['categ_id','=',5],['name','ilike',record.producto1.name]])
                 res['domain']={'producto2':[['id','in',p.mapped('id')]]}
         return res
-    # @api.onchange('almacen','estado')
-    # def filtroEqui(self):
-    #     res={}
-    #     ubicacion=0
-    #     if(self.producto1.categ_id.id==13):
-    #         series=[]
-    #         ubicacion=self.move_id.location_id.id
-    #         if(self.almacen):
-    #             ubicacion=self.almacen.lot_stock_id.id
-    #         existencias=self.env['stock.quant'].search([['location_id','=',ubicacion],['product_id','=',self.producto1.id]]).mapped('lot_id.id')
-    #         if(len(existencias)>1):
-    #             series=self.env['stock.production.lot'].search([['id','in',existencias]])
-    #         if(self.estado):
-    #             if(series!=[]):
-    #                 series=series.filtered(lambda x:x.x_studio_estado==self.estado)
-    #             else:
-    #                 series=self.env['stock.production.lot'].search([['x_studio_estado','=',self.estado],['product_id','=',self.producto1.id],['id','in',existencias]])
-    #         res['domain']={'serieOrigen':[['id','in',series.mapped('id')]]}
-    #     return res
 
 class StockCambioLine(TransientModel):
     _name = 'cambio.toner.line.toner'
@@ -499,11 +453,9 @@ class StockCambioLine(TransientModel):
     existeciaAlmacen=fields.Integer(string='Existencia de Almacen seleccionado')
     tipo=fields.Integer()
     move_id=fields.Many2one('stock.move')
-    #modelo=fields.Char(related='move_id.x_studio_modelo')
     
     @api.onchange('almacen','producto2')
     def almac(self):
-        _logger.info('entre2')
         res={}
         for record in self:
             if(record.almacen):
@@ -531,12 +483,10 @@ class StockCambioLine(TransientModel):
     existeciaAlmacen=fields.Integer(string='Existencia de Almacen seleccionado')
     tipo=fields.Integer()
     move_id=fields.Many2one('stock.move')
-    #modelo=fields.Char(related='move_id.x_studio_modelo')
 
     @api.onchange('almacen','producto2')
     def almac(self):
         res={}
-        _logger.info('entre3')
         for record in self:
             if(record.almacen):
                 ex=self.env['stock.quant'].search([['location_id','=',record.almacen.lot_stock_id.id],['product_id','=',record.producto1.id]]).sorted(key='quantity',reverse=True)
@@ -744,8 +694,6 @@ class TransferInterMoveTemp(TransientModel):
     categoria=fields.Many2one('product.category')
     serie=fields.Many2one('stock.production.lot',store=True)
 
-    #lock=fields.Boolean('lock')
-    #serieDestino=fields.Many2one('stock.production.lot')
 
     @api.onchange('producto')
     def quant(self):
@@ -814,7 +762,6 @@ class StockPickingMassAction(TransientModel):
         move=mov
         origenes=[]
         destinos=[]
-        _logger.info('info'+str(len(move)))
         if(self.almacen.id==False):
             almacenes=self.env['stock.warehouse'].search([['x_studio_cliente','=',False]])
             for alm in almacenes:
@@ -839,13 +786,10 @@ class StockPickingMassAction(TransientModel):
                 origenes.append(b)
         if(self.categoria):
             mov=mov.filtered(lambda x: x.x_studio_field_aVMhn.id==self.categoria.id)
-        _logger.info('info'+str(len(mov)))
         if(self.categoria==False):
             categorias=self.env['product.category'].search([['id','!=',13]]).mapped('id')
             mov=mov.filtered(lambda x: x.x_studio_field_aVMhn.id in categorias)
-        _logger.info('info'+str(len(mov)))
         mov=mov.filtered(lambda x: x.location_id.id in origenes or x.location_dest_id.id in destinos)
-        _logger.info('info'+str(len(mov)))
         if(len(mov)>1):
             mov[0].write({'x_studio_arreglo':mov.mapped('id')})
             return self.env.ref('stock_picking_mass_action.partner_xlsx').report_action(mov[0])
@@ -865,13 +809,7 @@ class StockQuantMassAction(TransientModel):
     fecha=fields.Date()
     regi=fields.Integer()
     archivo=fields.Binary()
-    #almacenes=fields.Many2many('stock.warehouse')
 
-
-    #@api.onchange('almacen')
-    #def cambio(self):
-    #    if(self.almacen):
-    #        self.almacenes=[(4,self.almacen.id)]
 
 
 
@@ -889,14 +827,6 @@ class StockQuantMassAction(TransientModel):
 
         if(self.anterior==False):    
             d=[]
-            # if(self.equipo):
-            #     d.append(['x_studio_almacn.x_studio_cliente','=',False])
-            #     if(self.almacen):
-            #         d.append(['x_studio_almacn','=',self.almacen.id])
-            #     if(self.almacen.id==False):
-            #         d.append(['x_studio_almacn','!=',False])
-            #     #d.append(['lot_id','!=',False])
-            # else:
             if(len(self.almacen)>0):
                 d.append(['location_id','in',self.almacen.mapped('lot_stock_id.id')])
             if(self.categoria):
@@ -911,17 +841,7 @@ class StockQuantMassAction(TransientModel):
                 d.append(['product_id','=',self.tipo.id])
             if(self.estado):
                 d.append(['lot_id.x_studio_estado','=',self.estado])
-                # if(self.almacen.id==False):
-                #     d.append(['x_studio_almacn','!=',False])
-                # if(self.categoria.id==False):
-                #     d.append(['x_studio_categoria','!=',False])
-                # if(self.tipo.id==False):
-                #     d.append(['product_id','!=',False])
-                #d.append(['x_studio_almacn.x_studio_cliente','=',False])
-                #d.append(['lot_id','=',False])
-            _logger.info(str(d))
             data=self.env['stock.quant'].search(d,order="x_studio_almacn")
-            #_logger.info(str(data.mapped('id')))
             if(len(data)>0):
                 data[0].write({'x_studio_arreglo':str(data.mapped('id'))})
                 return self.env.ref('stock_picking_mass_action.quant_xlsx').report_action(data[0])        
@@ -948,7 +868,6 @@ class SaleOrderMassAction(TransientModel):
             i.append(m)
         i.append(['x_studio_field_bxHgp','=',False])
         d=self.env['sale.order'].search(i,order='confirmation_date asc').filtered(lambda x:x.origin==False and x.x_studio_factura==False)
-        _logger.info(str(len(d)))
         if(len(d)>0):
             d[0].write({'x_studio_arreglo':str(d.mapped('id'))})
             return self.env.ref('stock_picking_mass_action.sale_xlsx').report_action(d[0])
@@ -988,25 +907,12 @@ class HelpdeskTicketMassAction(TransientModel):
         j.append('|')
         if(self.tipo):
             if(self.tipo=="Toner"):
-                #m=['x_studio_tipo_de_vale','=','Falla']
-                #i.append(m)
                 m=['team_id.id','=',8]
                 i.append(m)
-                #j.append('&')
             else:
-                #m=['x_studio_tipo_de_vale','=','Requerimiento']
-                #i.append(m)
                 m=['team_id.id','!=',8]
                 i.append(m)
-                #j.append('&')
-        #if(self.tipo==False):
-        #    m=['x_studio_tipo_de_vale','in',['Requerimiento','Falla']]
-        #    i.append(m)
-        #for ii in range(len(i)-2):
-        #    j.append('&')
         i.append(['x_studio_field_nO7Xg','!=',False])
-        #j.extend(i)
-
         d=self.env['helpdesk.ticket'].search(i,order='create_date asc').filtered(lambda x:len(x.x_studio_equipo_por_nmero_de_serie_1)>0 or len(x.x_studio_equipo_por_nmero_de_serie)>0)
         if(len(d)>0):
             d[0].write({'x_studio_arreglo':str(d.mapped('id'))})
@@ -1028,7 +934,6 @@ class SolicitudestockInventoryMassAction(TransientModel):
             f2=base64.b64decode(self.archivo)
             H=StringIO(f2)
             mimetype = guess_mimetype(f2 or b'')
-            _logger.info(str(mimetype))
             if(mimetype=='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' or mimetype=='application/vnd.ms-excel'):
                 book = xlrd.open_workbook(file_contents=f2 or b'')
                 sheet = book.sheet_by_index(0)
@@ -1056,10 +961,8 @@ class SolicitudestockInventoryMassAction(TransientModel):
                             quant['lot_id']=serie.id
                         if(ubicacion!=None):
                             inventoty['x_studio_field_yVDjd']=ubicacion.id
-                        _logger.info(str(row[1].value))
                         self.env['stock.inventory.line'].create(inventoty)
                         busqueda=self.env['stock.quant'].search([['product_id','=',productid.id],['location_id','=',self.almacen.lot_stock_id.id]])
-                        _logger.info(str(busqueda))
                         if(len(busqueda)>0):
                             jj=0
                             if(len(busqueda)>1):
@@ -1096,12 +999,10 @@ class PickingsAComprasMassAction(TransientModel):
     )
 
     def confirmar(self):
-        _logger.info("Test")
         requLin=[]
         pi=[]
         requisiociones=self.env['requisicion.requisicion'].search([])
         test=requisiociones.mapped('picking_ids.id')
-        _logger.info(str(test))
         for pick in self.picking_ids:
             e=[]
             if(pick.id not in test):
@@ -1109,7 +1010,6 @@ class PickingsAComprasMassAction(TransientModel):
                     d=self.env['stock.quant'].search([['location_id','=',move.location_id.id],['product_id','=',move.product_id.id]]).sorted(key='quantity',reverse=True)
                     if(d.quantity==0):
                         requisicionline={'cliente':move.picking_id.partner_id.id,'ticket':move.picking_id.x_studio_ticket_relacionado.id,'product':move.product_id.id,'cantidad':move.product_uom_qty,'costo':0}
-                        #i=self.env['product.rel.requisicion'].create(requisicionline)
                         requLin.append(requisicionline)
                         e.append(move.picking_id.id)
                 if(e!=[]):
@@ -1119,7 +1019,6 @@ class PickingsAComprasMassAction(TransientModel):
             for r in requLin:
                 r['req_rel']=requisicion.id
                 self.env['product.rel.requisicion'].create(r)
-            #pppp=self.env['stock.picking'].browse(pi).write({'estado':'compras'})
             for pp in self.picking_ids:
                 pp.x_studio_ticket_relacionado.write({'stage_id':113})
                 self.env['helpdesk.diagnostico'].sudo().create({ 'write_uid': self.env.user.name,'ticketRelacion' : pp.x_studio_ticket_relacionado.id, 'estadoTicket' : "Pendiente de compra", 'comentario':"Pendiente de compra Requisicion:("+requisicion.name+")"}) 
@@ -1152,7 +1051,6 @@ class ProductAltaAction(TransientModel):
             f2=base64.b64decode(self.archivo)
             H=StringIO(f2)
             mimetype = guess_mimetype(f2 or b'')
-            #_logger.info(str(mimetype))
             if(mimetype=='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' or mimetype=='application/vnd.ms-excel'):
                 book = xlrd.open_workbook(file_contents=f2 or b'')
                 sheet = book.sheet_by_index(0)
@@ -1181,7 +1079,6 @@ class ProductAltaAction(TransientModel):
                         producto=self.env['product.product'].search([['default_code','=',str(row[1].value).replace('.0','')]])
                         inventario=self.env['stock.quant'].search([['product_id','=',producto.id],['location_id','=',self.almacen.lot_stock_id.id]])
                         categoria=self.env['product.category'].search([['name','=',row[5].value]])
-                        _logger.info(str(categoria.name))
                         if(producto.id==False):
                             producto=self.env['product.product'].create({'default_code':str(row[1].value).replace('.0',''),'categ_id':categoria.id,'x_studio_field_ry7nQ':productid.id,'description':row[4].value,'name':row[0].value,'uom_id':unidad.id if(unidad.id) else False})
                         if(check):
@@ -1248,7 +1145,6 @@ class StockQua(TransientModel):
     def confirmar(self):
         self.env['stock.quant.line'].sudo().create({'quant_id':self.quant.id,'descripcion':self.comentario,'cantidadAnterior':self.quant.quantity,'cantidadReal':self.cantidad,'usuario':self.usuario.id})
         self.quant.sudo().write({'quantity':self.cantidad,'x_studio_field_kUc4x':self.ubicacion.id})
-        #self.env['stock.picking'].search([['state','=','confirmed']]).action_assign()
 
 class SerieIngreso(TransientModel):
     _name='serie.ingreso'
@@ -1262,8 +1158,6 @@ class SerieIngreso(TransientModel):
         for mv in self.lineas:
             mv.write({'location_dest_id':self.almacen.lot_stock_id.id})
             mv.move_line.write({'location_dest_id':self.almacen.lot_stock_id.id,'lot_id':mv.serie.id,'qty_done':mv.cantidad})
-        #if(len(self.lineas.mapped('serie.id'))!=len(self.lineas)):
-        #    raise UserError(_("Faltan serie por ingresar"))   
         if(len(self.lineas.mapped('serie.id'))==len(self.lineas)):
             self.picking.action_done()
         self.picking.purchase_id.write({'recibido':'recibido'})
@@ -1362,7 +1256,6 @@ class AltaProductoOne(TransientModel):
             f2=base64.b64decode(self.archivo)
             H=StringIO(f2)
             mimetype = guess_mimetype(f2 or b'')
-            #_logger.info(str(mimetype))
             if(mimetype=='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' or mimetype=='application/vnd.ms-excel'):
                 book = xlrd.open_workbook(file_contents=f2 or b'')
                 sheet = book.sheet_by_index(0)
@@ -1473,8 +1366,6 @@ class cargadeGuias(TransientModel):
                             for t in Tickets:
                                 tt=int(t)
                                 self.env.cr.execute("update helpdesk_ticket set x_studio_nmero_de_guia_1="+str(int(row[2].value))+"1 where id="+str(tt)+";")            
-                                #tick=self.env['helpdesk.ticket'].browse(tt)
-                                #tick.write({'x_studio_nmero_de_guia_1':int(row[2].value)})
                     i=i+1
             else:
                 raise UserError(_("Error en el formato del archivo"))
@@ -1485,6 +1376,5 @@ class reporteBaseInslada(TransientModel):
 
     def reporte(self):
         s=self.env['stock.production.lot'].search([['servicio','!=',False]],limit=1000)
-        _logger.info(str(len(s)))
         s[0].write({'x_studio_arreglo':str(s.mapped('id'))})
         return self.env.ref('stock_picking_mass_action.lot_serial_xlsx').report_action(s)
