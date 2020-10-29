@@ -122,6 +122,12 @@ class StockPickingMassAction(TransientModel):
             return True
 
     def mass_action(self):
+        #asignacion
+        draft_picking_lst = self.picking_ids.filtered(lambda x: x.state == 'draft').sorted(key=lambda r: r.scheduled_date)
+        pickings_to_check = self.picking_ids.filtered(lambda x: x.state not in ['draft','cancel','done',]).sorted(key=lambda r: r.scheduled_date)
+        draft_picking_lst.action_confirm()
+        pickings_to_check.action_assign()
+        assigned_picking_lst = self.picking_ids.filtered(lambda x: x.state == 'assigned').sorted(key=lambda r: r.scheduled_date)
         # un reserved
         self.picking_ids.write({'surtir':True})
         locations=self.picking_ids.mapped('picking_type_id.warehouse_id.lot_stock_id.id')
@@ -129,12 +135,6 @@ class StockPickingMassAction(TransientModel):
         unresrved=self.env['stock.picking'].search(['&','&','&',['id','not in',self.picking_ids.mapped('id')],['location_id','in',locations],['state','=','assigned'],['surtir','=',False]])
         if(len(unresrved)>0 and 'outgoing' not in tipo):
             unresrved.do_unreserve()
-        #asignacion
-        draft_picking_lst = self.picking_ids.filtered(lambda x: x.state == 'draft').sorted(key=lambda r: r.scheduled_date)
-        pickings_to_check = self.picking_ids.filtered(lambda x: x.state not in ['draft','cancel','done',]).sorted(key=lambda r: r.scheduled_date)
-        draft_picking_lst.action_confirm()
-        pickings_to_check.action_assign()
-        assigned_picking_lst = self.picking_ids.filtered(lambda x: x.state == 'assigned').sorted(key=lambda r: r.scheduled_date)
         #reporte
         assigned_picking_lst2 = self.picking_ids.filtered(lambda x:x.state == 'assigned' and (self.check==1 or self.check==2) )
         quantities_done = sum(move_line.qty_done for move_line in assigned_picking_lst.mapped('move_line_ids').filtered(lambda m: m.state not in ('done', 'cancel')))
