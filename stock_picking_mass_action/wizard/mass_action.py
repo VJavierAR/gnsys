@@ -108,7 +108,7 @@ class StockPickingMassAction(TransientModel):
         tipo=self.picking_ids.mapped('sale_id.x_studio_tipo_de_solicitud')
         if('Retiro' in tipo):
             for pickis in self.picking_ids:
-                for move in pickid.move_ids_without_package:
+                for move in pickis.move_ids_without_package:
                     serie=move.sale_line_id.x_studio_field_9nQhR.id
                     if(serie):
                         d=self.env['stock.move.line'].search([['move_id','=',move.id]])
