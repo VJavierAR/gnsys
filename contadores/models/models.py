@@ -564,8 +564,12 @@ class contadores(models.Model):
                 column = 0
                 perido=str(self.anio)+'-'+str(self.mes)
                 periodoAnterior=''
-                mesA=''
+                mesaA=''
+                mesaAA=''
                 anioA=''
+                mes=''
+                #mesA=''
+                #anioA=''
                 i=0
                 for f in valores:                
                     if f[0]==str(self.mes):                
@@ -577,8 +581,62 @@ class contadores(models.Model):
                    anioA=str(int(self.anio)-1)
                 else:    
                    anioA=str(self.anio)              
-                periodoAnterior= anioA+'-'+mesaA                  
-                content = ["No.", "Localidad", "Modelo", "No. Serie","B/N ["+str(valores[int(mesaA)-1][1])+"]", "Color ["+str(valores[int(mesaA)-1][1])+"]","B/N ["+str(valores[int(self.mes[1])-1][1])+"]", "Color ["+str(valores[int(self.mes[1])-1][1])+"]", "Impresiones B/N", "Impresiones Color","Excedentes B&N","Excedentes Color","Subtotal","IVA","Total","Ubicación","Comentario"]        
+                periodoAnterior= anioA+'-'+mesaA 
+
+
+                if mesaA =='01':
+                   masaAA="ENERO"
+                if mesaA =='02':
+                   masaAA="FEBRERO"
+                if mesaA =='03':
+                   masaAA="MARZO"
+                if mesaA =='04':
+                   masaAA="ABRIL"
+                if mesaA =='05':
+                   masaAA="MAYO"
+                if mesaA =='06':
+                   masaAA="JUNIO"
+                if mesaA =='07':
+                   masaAA="JULIO"
+                if mesaA =='08':
+                   masaAA="AGOSTO"
+                if mesaA =='09':
+                   masaAA="SEPTIEMBRE"
+                   #raise exceptions.ValidationError("Contador Color Menor. "+masaAA+" dentro "+mesaA)
+                if mesaA =='10':
+                   masaAA="OCTUBRE"
+                if mesaA =='11':
+                   masaAA="NOVIEMBRE"
+                if mesaA =='12':
+                   masaAA="DICIEMBRE"
+
+                
+                if str(self.mes)=='01':
+                   mes="ENERO"
+                if str(self.mes)=='02':
+                   mes="FEBRERO"
+                if str(self.mes)=='03':
+                   mes="MARZO"
+                if str(self.mes)=='04':
+                   mes="ABRIL"
+                if str(self.mes)=='05':
+                   mes="MAYO"
+                if str(self.mes)=='06':
+                   mes="JUNIO"
+                if str(self.mes)=='07':
+                   mes="JULIO"
+                if str(self.mes)=='08':
+                   mes="AGOSTO"
+                if str(self.mes)=='09':
+                   mes="SEPTIEMBRE"
+                if str(self.mes)=='10':
+                   mes="OCTUBRE"
+                if str(self.mes)=='11':
+                   mes="NOVIEMBRE"
+                if str(self.mes)=='12':
+                   mes="DICIEMBRE"
+                content = ["No.", "Localidad", "Modelo", "No. Serie","B/N ["+masaAA+"]", "Color ["+masaAA+"]","B/N ["+mes+"]", "Color ["+mes+"]", "Impresiones B/N", "Impresiones Color","Excedentes B&N","Excedentes Color","Subtotal","IVA","Total","Ubicación","Comentario"]                         
+                #content = ["No.", "Localidad", "Modelo", "No. Serie","B/N ["+str(valores[int(mesaA)-1][1])+"]", "Color ["+str(valores[int(mesaA)-1][1])+"]","B/N ["+str(valores[int(self.mes[1])-1][1])+"]", "Color ["+str(valores[int(self.mes[1])-1][1])+"]", "Impresiones B/N", "Impresiones Color","Excedentes B&N","Excedentes Color","Subtotal","IVA","Total","Ubicación","Comentario"]        
                 #abajo 0 derecha 0
                 bold = workbook.add_format({'bold': True})
                 if self.cliente:
