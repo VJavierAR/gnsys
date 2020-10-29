@@ -122,24 +122,25 @@ class StockPickingMassAction(TransientModel):
             return True
 
     def mass_action(self):
+        # un reserved
         self.picking_ids.write({'surtir':True})
-        self.ensure_one()
         locations=self.picking_ids.mapped('picking_type_id.warehouse_id.lot_stock_id.id')
-        assigned_picking_lst = self.picking_ids.filtered(lambda x: x.state == 'assigned').sorted(key=lambda r: r.scheduled_date)
         tipo=assigned_picking_lst.mapped('picking_type_id.code')
         unresrved=self.env['stock.picking'].search(['&','&','&',['id','not in',self.picking_ids.mapped('id')],['location_id','in',locations],['state','=','assigned'],['surtir','=',False]])
         if(len(unresrved)>0 and 'outgoing' not in tipo):
             unresrved.do_unreserve()
+        #asignacion
         draft_picking_lst = self.picking_ids.filtered(lambda x: x.state == 'draft').sorted(key=lambda r: r.scheduled_date)
-        draft_picking_lst.sudo().action_confirm()
         pickings_to_check = self.picking_ids.filtered(lambda x: x.state not in ['draft','cancel','done',]).sorted(key=lambda r: r.scheduled_date)
-        pickings_to_check.sudo().action_assign()
-        cantidad=self.picking_ids.mapped('sale_id.delivery_count')
-        loca=self.picking_ids.mapped('sale_id.warehouse_id.lot_stock_id.id')
+        draft_picking_lst.action_confirm()
+        pickings_to_check.action_assign()
+        assigned_picking_lst = self.picking_ids.filtered(lambda x: x.state == 'assigned').sorted(key=lambda r: r.scheduled_date)
+        #reporte
         assigned_picking_lst2 = self.picking_ids.filtered(lambda x:x.state == 'assigned' and (self.check==1 or self.check==2) )
         quantities_done = sum(move_line.qty_done for move_line in assigned_picking_lst.mapped('move_line_ids').filtered(lambda m: m.state not in ('done', 'cancel')))
-        validacion=assigned_picking_lst.mapped('picking_type_id.id')
+        #retiro
         self.retiro_mass_action()
+        #concentrado
         if(self.check ==2 or self.check ==1):
             CON=str(self.env['ir.sequence'].next_by_code('concentrado'))
             self.env['stock.picking'].search([['sale_id','in',assigned_picking_lst.mapped('sale_id.id')]]).write({'concentrado':CON})
@@ -187,8 +188,7 @@ class StockPickingMassAction(TransientModel):
                         if(picking.sale_id.x_studio_field_bxHgp.stage_id.id!=18 and picking.sale_id.x_studio_field_bxHgp.stage_id.id!=4):
                             picking.sale_id.x_studio_field_bxHgp.write({'stage_id':112})
                         else:
-                            ultimo.copy()
-                        
+                            ultimo.copy()       
             pick_to_do |= picking
         if pick_to_do:
             pick_to_do.action_done()
