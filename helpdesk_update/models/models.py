@@ -66,7 +66,7 @@ def cambiaTipoDeVale(idEquipo):
                                ]
     return listaTipoDeVale
 
-idTeamGlobal = 11
+idTeamGlobal = 11 
 
 
 def convert_timedelta(duration):
