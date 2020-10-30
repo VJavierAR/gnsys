@@ -242,12 +242,60 @@ class helpdesk_update(models.Model):
 
     days_difference = fields.Integer(compute='_compute_difference',string='días de atraso')
 
+
+    
+
+    
+    def _get_dominio_localida_contacto(self):
+        res = [] 
+        vals = {}
+        #for record in self:
+        if self.partner_id.id:
+            hijos = self.env['res.partner'].search([['parent_id', '=', self.partner_id.id]])
+            hijosarr = hijos.mapped('id')
+            nietos = self.env['res.partner'].search([['parent_id', 'in', hijosarr], ['type', '=', 'contact']]).mapped('id')
+            hijosF = hijos.filtered(lambda x: x.type == 'contact').mapped('id')
+            final = nietos + hijosF
+            res = [('id', 'in', final)]
+            vals['dominio_contacto_localidad'] = str(final)
+        if vals:
+            self.write(vals)
+
+    
+    @api.model
+    def _get_dominio_localida_contacto_2(self):
+        res = [] 
+        vals = {}
+        #for record in self:
+        if self.partner_id.id:
+            hijos = self.env['res.partner'].search([['parent_id', '=', self.partner_id.id]])
+            hijosarr = hijos.mapped('id')
+            nietos = self.env['res.partner'].search([['parent_id', 'in', hijosarr], ['type', '=', 'contact']]).mapped('id')
+            hijosF = hijos.filtered(lambda x: x.type == 'contact').mapped('id')
+            final = nietos + hijosF
+            res = [('id', 'in', final)]
+            
+            contactos = self.env['res.partner'].search( res ).mapped('id')
+
+            return contactos
+
+    dominio_contacto_localidad = fields.Text(string = 'Dominio de localidad', default = lambda self: self._get_dominio_localida_contacto_2())
+
+
     localidadContacto = fields.Many2one('res.partner'
                                         , store = True
                                         , track_visibility = 'onchange'
                                         , string = 'Localidad contacto'
+                                        #default = _get_dominio_localida_contacto_2
+                                        #default = lambda self: self._get_dominio_localida_contacto_2()
                                         #, compute = 'cambiaContactoLocalidad'
-                                        , domain = "['&',('parent_id.id','=',idLocalidadAyuda),('type','=','contact')]")
+                                        #, domain = "[('id', 'in', dominio_contacto_localidad )]"
+                                        , domain = "['&',('parent_id.id','=',idLocalidadAyuda),('type','=','contact')]"
+
+                                        )
+
+    
+            
     
     #@api.depends('x_studio_equipo_por_nmero_de_serie')
     @api.onchange('x_studio_equipo_por_nmero_de_serie')
@@ -346,6 +394,170 @@ class helpdesk_update(models.Model):
                 return '</br> Equipo BN o Color: ' + str(self.x_studio_equipo_por_nmero_de_serie[0].x_studio_color_bn) + ' </br></br> Contador BN: ' + str(self.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_bn_mesa)
 
 
+
+    datos_ticket_info = fields.Text(string = 'Datos ticket')
+
+    @api.onchange('create_date', 'abiertoPor', 'ultimoDiagnosticoFecha', 'ultimoDiagnosticoUsuario', 'days_difference', 'x_studio_nmero_de_ticket_cliente', 'x_studio_tipo_de_vale', 'priority', 'serie_y_modelo', 'contadores_anteriores', 'datosCliente', 'x_studio_ultima_nota', 'x_studio_ultima_evidencia', 'team_id', 'stage_id', 'localidadContacto', 'contactoInterno', 'x_studio_nmero_de_guia_1', 'x_studio_tcnico', 'x_studio_field_nO7Xg')
+    def datos_ticket(self):
+        obj_ticket = self.env['helpdesk.ticket'].search([('id', '=', self._origin.id)])
+        lista_datos = []
+        fecha_creacion = self.mapped('create_date')
+        ticket_abierto_por = self.mapped('abiertoPor')
+        fecha_ultimo_cambio = self.mapped('ultimoDiagnosticoFecha')
+        ultima_escritura = self.mapped('ultimoDiagnosticoUsuario')
+        dias_de_atraso = self.mapped('days_difference')
+        numero_ticket_cliente = self.mapped('x_studio_nmero_de_ticket_cliente')
+        tipo_de_vale = self.mapped('x_studio_tipo_de_vale')
+        prioridad = self.mapped('priority')
+        serie_modelo = self.mapped('serie_y_modelo')
+        contadores_anteriores = self.mapped('contadores_anteriores')
+        datos_cliente = self.mapped('datosCliente')
+        ultima_nota = self.mapped('x_studio_ultima_nota')
+        ultima_evidencia = self.mapped('x_studio_ultima_evidencia')
+        area_de_atencion = self.mapped('team_id.name')
+        etapa = self.mapped('stage_id.name')
+        localidad_contacto = self.mapped('localidadContacto.name')
+        contacto_interno = self.mapped('contactoInterno')
+        numero_guia = self.mapped('x_studio_nmero_de_guia_1')
+        tecnico = self.mapped('x_studio_tcnico.name')
+        #productos = self.mapped('x_studio_productos.name')
+        pedido_de_venta = self.mapped('x_studio_field_nO7Xg.name')
+        timezone = pytz.timezone('America/Mexico_City')
+
+        if fecha_creacion:
+            #_logger.info('fecha_creacion_region: ' + str(fecha_creacion[0].astimezone(timezone).strftime("%d/%m/%Y %H:%M:%S")  ))
+            lista_datos.append(str( fecha_creacion[0].astimezone(timezone).strftime("%d/%m/%Y %H:%M:%S") ))  #str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
+        if ticket_abierto_por:
+            lista_datos.append(str(ticket_abierto_por))
+        if fecha_ultimo_cambio[0]:
+            lista_datos.append(str( fecha_ultimo_cambio[0].astimezone(timezone).strftime("%d/%m/%Y %H:%M:%S") ))
+        if ultima_escritura:
+            lista_datos.append(str(ultima_escritura))
+        if dias_de_atraso:
+            lista_datos.append(str(dias_de_atraso))
+        if numero_ticket_cliente:
+            lista_datos.append(str(numero_ticket_cliente))
+        if tipo_de_vale:
+            lista_datos.append(str(tipo_de_vale))
+        if prioridad:
+            lista_datos.append(str(prioridad))
+        if serie_modelo:
+            lista_datos.append(str(serie_modelo))
+        if contadores_anteriores:
+            lista_datos.append(str(contadores_anteriores).split('Equipo BN o Color:')[1].split('</br></br> Contador')[0]  )
+            #lista_datos.append(str(contadores_anteriores.split('Equipo BN o Color:')[1].split('</br></br> Contador')[0]  ))
+        if datos_cliente:
+            lista_datos.append(str(datos_cliente))
+        if ultima_nota:
+            lista_datos.append(str(ultima_nota))
+        if ultima_evidencia:
+            lista_datos.append(str(ultima_evidencia))
+        if area_de_atencion:
+            lista_datos.append(str(area_de_atencion))
+        if etapa:
+            lista_datos.append(str(etapa))
+        if localidad_contacto:
+            lista_datos.append(str(localidad_contacto))
+        if contacto_interno:
+            lista_datos.append(str(contacto_interno))
+        if numero_guia:
+            lista_datos.append(str(numero_guia))
+        if tecnico:
+            lista_datos.append(str(tecnico))
+        #if productos:
+        #    lista_datos.append(str(productos))
+        if pedido_de_venta:
+            lista_datos.append(str(pedido_de_venta))
+
+        if lista_datos:
+            vals = {
+                'datos_ticket_info': str(lista_datos)
+            }
+            obj_ticket.write(vals)
+
+
+
+    def datos_ticket_2(self):
+        obj_ticket = self.env['helpdesk.ticket'].search([('id', '=', self.id)])
+        lista_datos = []
+        fecha_creacion = obj_ticket.mapped('create_date')
+        ticket_abierto_por = obj_ticket.mapped('abiertoPor')
+        fecha_ultimo_cambio = obj_ticket.mapped('ultimoDiagnosticoFecha')
+        ultima_escritura = obj_ticket.mapped('ultimoDiagnosticoUsuario')
+        dias_de_atraso = obj_ticket.mapped('days_difference')
+        numero_ticket_cliente = obj_ticket.mapped('x_studio_nmero_de_ticket_cliente')
+        tipo_de_vale = obj_ticket.mapped('x_studio_tipo_de_vale')
+        prioridad = obj_ticket.mapped('priority')
+        serie_modelo = obj_ticket.mapped('serie_y_modelo')
+        contadores_anteriores = obj_ticket.mapped('contadores_anteriores')
+        datos_cliente = obj_ticket.mapped('datosCliente')
+        ultima_nota = obj_ticket.mapped('x_studio_ultima_nota')
+        ultima_evidencia = obj_ticket.mapped('x_studio_ultima_evidencia')
+        area_de_atencion = obj_ticket.mapped('team_id.name')
+        etapa = obj_ticket.mapped('stage_id.name')
+        localidad_contacto = obj_ticket.mapped('localidadContacto.name')
+        contacto_interno = obj_ticket.mapped('contactoInterno')
+        numero_guia = obj_ticket.mapped('x_studio_nmero_de_guia_1')
+        tecnico = obj_ticket.mapped('x_studio_tcnico.name')
+        #productos = obj_ticket.mapped('x_studio_productos.name')
+        pedido_de_venta = obj_ticket.mapped('x_studio_field_nO7Xg.name')
+        timezone = pytz.timezone('America/Mexico_City')
+
+        if fecha_creacion:
+            #_logger.info('fecha_creacion_region: ' + str(fecha_creacion[0].astimezone(timezone).strftime("%d/%m/%Y %H:%M:%S")  ))
+            lista_datos.append(str( fecha_creacion[0].astimezone(timezone).strftime("%d/%m/%Y %H:%M:%S") ))  #str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
+        if ticket_abierto_por:
+            lista_datos.append(str(ticket_abierto_por))
+        if fecha_ultimo_cambio[0]:
+            lista_datos.append(str( fecha_ultimo_cambio[0].astimezone(timezone).strftime("%d/%m/%Y %H:%M:%S") ))
+        if ultima_escritura:
+            lista_datos.append(str(ultima_escritura))
+        if dias_de_atraso:
+            lista_datos.append(str(dias_de_atraso))
+        if numero_ticket_cliente:
+            lista_datos.append(str(numero_ticket_cliente))
+        if tipo_de_vale:
+            lista_datos.append(str(tipo_de_vale))
+        if prioridad:
+            lista_datos.append(str(prioridad))
+        if serie_modelo:
+            lista_datos.append(str(serie_modelo))
+        if contadores_anteriores:
+            lista_datos.append(str(contadores_anteriores).split('Equipo BN o Color:')[1].split('</br></br> Contador')[0]  )
+            #lista_datos.append(str(contadores_anteriores.split('Equipo BN o Color:')[1].split('</br></br> Contador')[0]  ))
+        if datos_cliente:
+            lista_datos.append(str(datos_cliente))
+        if ultima_nota:
+            lista_datos.append(str(ultima_nota))
+        if ultima_evidencia:
+            lista_datos.append(str(ultima_evidencia))
+        if area_de_atencion:
+            lista_datos.append(str(area_de_atencion))
+        if etapa:
+            lista_datos.append(str(etapa))
+        if localidad_contacto:
+            lista_datos.append(str(localidad_contacto))
+        if contacto_interno:
+            lista_datos.append(str(contacto_interno))
+        if numero_guia:
+            lista_datos.append(str(numero_guia))
+        if tecnico:
+            lista_datos.append(str(tecnico))
+        #if productos:
+        #    lista_datos.append(str(productos))
+        if pedido_de_venta:
+            lista_datos.append(str(pedido_de_venta))
+
+        if lista_datos:
+            vals = {
+                'datos_ticket_info': str(lista_datos)
+            }
+            obj_ticket.write(vals)
+
+
+
+
+
     @api.model
     def create(self, vals):
         vals['name'] = self.env['ir.sequence'].next_by_code('helpdesk_name')
@@ -399,7 +611,10 @@ class helpdesk_update(models.Model):
             ticket.write({'team_id': 8})
 
         ticket.actualiza_serie_texto()
-
+        ticket.actualiza_todas_las_zonas()
+        #ticket.cambiosParent_id()
+        #ticket._get_dominio_localida_contacto()
+        ticket.datos_ticket()
         return ticket
 
 
@@ -421,7 +636,66 @@ class helpdesk_update(models.Model):
                         break
                 if not puedoCrearSinSerie:
                     raise exceptions.ValidationError('El usuario no es de mesa de Servicio y no tiene los permisos para crear un ticket sin serie.')
-        
+        """
+        lista_datos = []
+        if 'create_date' in vals: #fecha_creacion
+            lista_datos.append(str( vals['create_date'].astimezone(timezone).strftime("%d/%m/%Y %H:%M:%S") ))  #str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
+        if 'abiertoPor' in vals: #ticket_abierto_por:
+            lista_datos.append(str(vals['abiertoPor']))
+        if 'ultimoDiagnosticoFecha' in vals: # fecha_ultimo_cambio[0]:
+            lista_datos.append(str( vals['ultimoDiagnosticoFecha'].astimezone(timezone).strftime("%d/%m/%Y %H:%M:%S") ))
+        if 'ultimoDiagnosticoUsuario' in vals: #ultima_escritura:
+            lista_datos.append(str( vals['ultimoDiagnosticoUsuario'] ))
+        if 'days_difference' in vals: #dias_de_atraso:
+            lista_datos.append(str(vals[days_difference]))
+        if 'x_studio_nmero_de_ticket_cliente' in vals: #numero_ticket_cliente:
+            lista_datos.append(str(vals['x_studio_nmero_de_ticket_cliente']))
+        if 'x_studio_tipo_de_vale' in vals: #tipo_de_vale:
+            lista_datos.append(str(vals['x_studio_tipo_de_vale']))
+        if 'priority' in vals: # prioridad:
+            lista_datos.append(str(vals['priority']))
+        if 'serie_y_modelo' in vals: #serie_modelo:
+            lista_datos.append(str(vals['serie_y_modelo']))
+        if 'contadores_anteriores' in vals:# contadores_anteriores:
+            lista_datos.append(str(vals['contadores_anteriores']).split('Equipo BN o Color:')[1].split('</br></br> Contador')[0]  )
+            #lista_datos.append(str(contadores_anteriores.split('Equipo BN o Color:')[1].split('</br></br> Contador')[0]  ))
+        if 'datosCliente' in vals: #datos_cliente:
+            lista_datos.append(str(vals['datosCliente']))
+        if 'x_studio_ultima_nota' in vals: #ultima_nota:
+            lista_datos.append(str(vals['x_studio_ultima_nota']))
+        if 'x_studio_ultima_evidencia' in vals: #ultima_evidencia:
+            lista_datos.append(str(vals['x_studio_ultima_evidencia']))
+        if 'team_id' in vals: #area_de_atencion:
+            lista_datos.append(str(vals['team_id']))
+        if 'stage_id' in vals: #etapa:
+            lista_datos.append(str(vals['stage_id']))
+        if 'localidadContacto' in vals: # localidad_contacto:
+            lista_datos.append(str(vals['localidadContacto']))
+        if 'contactoInterno' in vals:#contacto_interno:
+            lista_datos.append(str(vals['contactoInterno']))
+        if 'x_studio_nmero_de_guia_1' in vals:#numero_guia:
+            lista_datos.append(str(vals['x_studio_nmero_de_guia_1']))
+        if 'x_studio_tcnico' in vals: #tecnico:
+            lista_datos.append(str(vals['x_studio_tcnico']))
+        #if productos:
+        #    lista_datos.append(str(productos))
+        if 'x_studio_field_nO7Xg' in vals: #pedido_de_venta:
+            lista_datos.append(str(vals['x_studio_field_nO7Xg']))
+
+        if lista_datos:
+            vals['datos_ticket_info'] = str(lista_datos)
+        """
+
+
+
+
+
+
+
+
+
+
+
         if self and 'NewId' in str(self[0]):
         #if not self.ids:
             result = super(helpdesk_update, self._origin).write(vals)
@@ -1630,8 +1904,9 @@ class helpdesk_update(models.Model):
         if self.x_studio_id_ticket:
             estadoAntes = str(self.stage_id.name)
             if (self.stage_id.name == 'Asignado' or self.stage_id.name == 'Resuelto' or self.stage_id.name == 'Cerrado'):
-                query = "update helpdesk_ticket set stage_id = 13 where id = " + str(self.x_studio_id_ticket) + ";"
-                ss = self.env.cr.execute(query)
+                #query = "update helpdesk_ticket set stage_id = 13 where id = " + str(self.x_studio_id_ticket) + ";"
+                #ss = self.env.cr.execute(query)
+                self.write({'stage_id': 13})
                 #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
                 ultimaEvidenciaTec = []
                 ultimoComentario = ''
@@ -1649,7 +1924,7 @@ class helpdesk_update(models.Model):
                 
                 estado = 'Atención'
                 self.creaDiagnosticoVistaLista(comentarioGenerico, estado)
-
+                self.datos_ticket_2()
                 message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Atención' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
                 mess= {
                         'title': _('Estado de ticket actualizado!!!'),
@@ -1667,8 +1942,9 @@ class helpdesk_update(models.Model):
     def cambioResuelto(self):
         estadoAntes = str(self.stage_id.name)
         if self.estadoResuelto == False or self.estadoResuelto == True :
-            query = "update helpdesk_ticket set stage_id = 3 where id = " + str(self.x_studio_id_ticket) + ";"
-            ss = self.env.cr.execute(query)
+            #query = "update helpdesk_ticket set stage_id = 3 where id = " + str(self.x_studio_id_ticket) + ";"
+            #ss = self.env.cr.execute(query)
+            self.write({'stage_id': 3})
             ultimaEvidenciaTec = []
             ultimoComentario = ''
             if self.diagnosticos:
@@ -1678,7 +1954,7 @@ class helpdesk_update(models.Model):
             comentarioGenerico = 'Cambio de estado al seleccionar botón Resuelto. Se cambio al estado Resuelto. Seleccion realizada por ' + str(self.env.user.name) +'.'
             estado = 'Resuelto'
             self.creaDiagnosticoVistaLista(comentarioGenerico, estado)
-
+            self.datos_ticket_2()
             message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Resuelto' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
             mess= {
                     'title': _('Estado de ticket actualizado!!!'),
@@ -1696,10 +1972,9 @@ class helpdesk_update(models.Model):
         #if self.stage_id.name == 'Cotización' and str(self.env.user.id) == str(self.x_studio_tcnico.user_id.id) and self.estadoCotizacion == False:
         #if str(self.env.user.id) == str(self.x_studio_tcnico.user_id.id) and self.estadoCotizacion == False:
         if self.estadoCotizacion == False:
-            query = "update helpdesk_ticket set stage_id = 101 where id = " + str(self.x_studio_id_ticket) + ";"
-            
-            ss = self.env.cr.execute(query)
-            
+            #query = "update helpdesk_ticket set stage_id = 101 where id = " + str(self.x_studio_id_ticket) + ";"
+            #ss = self.env.cr.execute(query)
+            self.write({'stage_id': 101})
             #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
             ultimaEvidenciaTec = []
             ultimoComentario = ''
@@ -1711,7 +1986,7 @@ class helpdesk_update(models.Model):
             comentarioGenerico = 'Cambio de estado al seleccionar botón Cotización. Se cambio al estado Cotización. Seleccion realizada por ' + str(self.env.user.name) +'.'
             estado = 'Cotización'
             self.creaDiagnosticoVistaLista(comentarioGenerico, estado)
-
+            self.datos_ticket_2()
             message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Cotización' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
             mess= {
                     'title': _('Estado de ticket actualizado!!!'),
@@ -4382,7 +4657,8 @@ class helpdesk_update(models.Model):
         vals = {
             'x_todas_las_zonas': str(lista_zonas)
         }
-        self.write(vals)
+        if lista_zonas:
+            self.write(vals)
 
 
     
@@ -5141,6 +5417,7 @@ class helpdesk_update(models.Model):
                 res['domain']={'localidadContacto':[('id','in',final)]}
         return res
         
+    
 
 
     
@@ -5326,6 +5603,7 @@ class helpdesk_agregar_productos(models.Model):
         #for refaccion in self.ticket_id.x_studio_productos:
         #    refaccion.x_studio_cantidad_pedida = listaDeCantidades[indice]
         #    indice = indice + 1
+        self.ticket_id.datos_ticket_2()
 
         mensajeTitulo = 'Productos agregados!!!'
         mensajeCuerpo = 'Se agregaron los productos y sus cantidades.'
@@ -7033,6 +7311,7 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
                                                         'creadoPorSistema': False
                                                     })
             self.ticket_id.obten_ulimo_diagnostico_fecha_usuario()
+            self.ticket_id.datos_ticket_2()
             _logger.info('3312: fin actualización refacciones sobre la misma so(): ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
         else:
             _logger.info('3312: inicio confirmarYValidarRefacciones(): ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
@@ -7152,6 +7431,7 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
                                                             'creadoPorSistema': False
                                                         })
                 self.ticket_id.obten_ulimo_diagnostico_fecha_usuario()
+                self.ticket_id.datos_ticket_2()
             #mensajeTitulo = 'Creación y validación de refacción!!!'
             #mensajeCuerpo = 'Se creo y valido la solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) + ' para el ticket ' + str(self.ticket_id.id) + '.'    
         #else:
