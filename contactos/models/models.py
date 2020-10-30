@@ -34,7 +34,7 @@ class ContactosCes(models.Model):
 
 
 
-
+    """            
     @api.model_create_multi
     def create(self, vals_list):
         if self.env.context.get('import_file'):
@@ -58,3 +58,4 @@ class ContactosCes(models.Model):
                 partner._fields_sync(vals)
                 partner._handle_first_contact_creation()
                 return partners
+    """            
