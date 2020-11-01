@@ -285,7 +285,7 @@ class PartnerXlsx(models.AbstractModel):
                 sheet.write(i, 14, str(obj.primerDiagnosticoUsuario) if(obj.primerDiagnosticoUsuario) else '', bold)
 
                 sheet.write(i, 15, obj.x_studio_ultima_nota if(obj.x_studio_ultima_nota) else '', bold)
-                sheet.write(i, 16, obj.write_date.strftime("%Y/%m/%d, %H:%M:%S"), bold)
+                sheet.write(i, 16, pytz.utc.localize(obj.ultimoDiagnosticoFecha, is_dst=None).astimezone(pytz.timezone('America/Mexico_City')).strftime("%Y/%m/%d %H:%M:%S") if (obj.ultimoDiagnosticoFecha) else '', bold)
                 sheet.write(i, 17, obj.x_studio_tecnico if(obj.x_studio_tecnico) else obj.write_uid.name, bold)
                 sheet.write(i, 18, str(str(obj.x_studio_empresas_relacionadas.street_name)+" No. Ext. "+str(obj.x_studio_empresas_relacionadas.street_number)+" No. Int. "+str(obj.x_studio_empresas_relacionadas.street_number2)+" ,COL. "+str(obj.x_studio_empresas_relacionadas.l10n_mx_edi_colony)+" "+str(obj.x_studio_empresas_relacionadas.city)+" México, "+str(obj.x_studio_empresas_relacionadas.state_id.name)+"C.P "+str(obj.x_studio_empresas_relacionadas.zip)), bold)
                 sheet.write(i, 19, obj.x_studio_nmero_de_ticket_cliente if(obj.x_studio_nmero_de_ticket_cliente) else '', bold)
@@ -330,7 +330,7 @@ class PartnerXlsx(models.AbstractModel):
                     sheet.write(i, 14, str(obj.primerDiagnosticoUsuario) if(obj.primerDiagnosticoUsuario) else '', bold)
 
                     sheet.write(i, 15, obj.x_studio_ultima_nota if(obj.x_studio_ultima_nota) else '', bold)
-                    sheet.write(i, 16, obj.write_date.strftime("%Y/%m/%d, %H:%M:%S"), bold)
+                    sheet.write(i, 16, pytz.utc.localize(obj.ultimoDiagnosticoFecha, is_dst=None).astimezone(pytz.timezone('America/Mexico_City')).strftime("%Y/%m/%d %H:%M:%S") if (obj.ultimoDiagnosticoFecha) else '', bold)
                     sheet.write(i, 17, obj.x_studio_tecnico if(obj.x_studio_tecnico) else obj.write_uid.name, bold)
                     sheet.write(i, 18, str(str(obj.x_studio_empresas_relacionadas.street_name)+" No. Ext. "+str(obj.x_studio_empresas_relacionadas.street_number)+" No. Int. "+str(obj.x_studio_empresas_relacionadas.street_number2)+" ,COL. "+str(obj.x_studio_empresas_relacionadas.l10n_mx_edi_colony)+" "+str(obj.x_studio_empresas_relacionadas.city)+" México, "+str(obj.x_studio_empresas_relacionadas.state_id.name)+"C.P "+str(obj.x_studio_empresas_relacionadas.zip)), bold)
                     sheet.write(i, 19, obj.x_studio_nmero_de_ticket_cliente if(obj.x_studio_nmero_de_ticket_cliente) else '', bold)
@@ -356,7 +356,7 @@ class PartnerXlsx(models.AbstractModel):
                     sheet.write(i, 14, str(obj.primerDiagnosticoUsuario) if(obj.primerDiagnosticoUsuario) else '', bold)
 
                     sheet.write(i, 15, obj.x_studio_ultima_nota if(obj.x_studio_ultima_nota) else '', bold)
-                    sheet.write(i, 16, obj.write_date.strftime("%Y/%m/%d, %H:%M:%S"), bold)
+                    sheet.write(i, 16, pytz.utc.localize(obj.ultimoDiagnosticoFecha, is_dst=None).astimezone(pytz.timezone('America/Mexico_City')).strftime("%Y/%m/%d %H:%M:%S") if (obj.ultimoDiagnosticoFecha) else '', bold)
                     sheet.write(i, 17, obj.x_studio_tecnico if(obj.x_studio_tecnico) else obj.write_uid.name, bold)
                     sheet.write(i, 18, str(str(obj.x_studio_empresas_relacionadas.street_name)+" No. Ext. "+str(obj.x_studio_empresas_relacionadas.street_number)+" No. Int. "+str(obj.x_studio_empresas_relacionadas.street_number2)+" ,COL. "+str(obj.x_studio_empresas_relacionadas.l10n_mx_edi_colony)+" "+str(obj.x_studio_empresas_relacionadas.city)+" México, "+str(obj.x_studio_empresas_relacionadas.state_id.name)+"C.P "+str(obj.x_studio_empresas_relacionadas.zip)), bold)
                     sheet.write(i, 19, obj.x_studio_nmero_de_ticket_cliente if(obj.x_studio_nmero_de_ticket_cliente) else '', bold)
@@ -382,7 +382,7 @@ class PartnerXlsx(models.AbstractModel):
                 sheet.write(i, 14, str(obj.primerDiagnosticoUsuario) if(obj.primerDiagnosticoUsuario) else '', bold)
                 
                 sheet.write(i, 15, obj.x_studio_ultima_nota if(obj.x_studio_ultima_nota) else '', bold)
-                sheet.write(i, 16, obj.write_date.strftime("%Y/%m/%d, %H:%M:%S"), bold)
+                sheet.write(i, 16, pytz.utc.localize(obj.ultimoDiagnosticoFecha, is_dst=None).astimezone(pytz.timezone('America/Mexico_City')).strftime("%Y/%m/%d %H:%M:%S") if (obj.ultimoDiagnosticoFecha) else '', bold)
                 sheet.write(i, 17, obj.x_studio_tecnico if(obj.x_studio_tecnico) else obj.write_uid.name, bold)
                 sheet.write(i, 18, str(str(obj.x_studio_empresas_relacionadas.street_name)+" No. Ext. "+str(obj.x_studio_empresas_relacionadas.street_number)+" No. Int. "+str(obj.x_studio_empresas_relacionadas.street_number2)+" ,COL. "+str(obj.x_studio_empresas_relacionadas.l10n_mx_edi_colony)+" "+str(obj.x_studio_empresas_relacionadas.city)+" México, "+str(obj.x_studio_empresas_relacionadas.state_id.name)+"C.P "+str(obj.x_studio_empresas_relacionadas.zip)), bold)
                 sheet.write(i, 19, obj.x_studio_nmero_de_ticket_cliente if(obj.x_studio_nmero_de_ticket_cliente) else '', bold)
