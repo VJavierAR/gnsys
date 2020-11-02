@@ -7351,7 +7351,7 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
                 }
                 lista.append( [0, 0, vals] )
                 listaDeCantidades.append(refaccion.cantidadPedida)
-        self.ticket_id.write({'accesorios': lista})
+        self.ticket_id.write({'accesorios': lista}) 
 
         """
         lista = []
