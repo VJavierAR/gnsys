@@ -4590,9 +4590,10 @@ class helpdesk_update(models.Model):
                 self.correoLocalidadContacto = localidadTemp.email
 
                 
-                idContact = self.env['res.partner'].search([['parent_id', '=', localidadTemp.id],['x_studio_ultimo_contacto', '=', True]], order='create_date desc', limit=1).id
-                self.localidadContacto = idContact
-                _logger.info("Entre por toner idContact: " + str(idContact))
+                if not self.localidadContacto:
+                    idContact = self.env['res.partner'].search([['parent_id', '=', localidadTemp.id],['x_studio_ultimo_contacto', '=', True]], order='create_date desc', limit=1).id
+                    self.localidadContacto = idContact
+                    _logger.info("Entre por toner idContact: " + str(idContact))
                 #if idContact:
                 #    query = "update helpdesk_ticket set \"localidadContacto\" = " + str(idContact) + ", \"x_studio_field_6furK\" = '" + str(self.x_studio_empresas_relacionadas.x_studio_field_SqU5B) + "' where id = " + str(self.x_studio_id_ticket) + ";"
                 #    self.env.cr.execute(query)
