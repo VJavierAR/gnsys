@@ -333,6 +333,7 @@ class helpdesk_update(models.Model):
             return self.env['res.partner'].search([['parent_id', '=', loc],['subtipo' '=', 'Contacto de localidad']], order='create_date desc', limit=1).id
 
 
+    
 
     tipoDeDireccion = fields.Selection([('contact','Contacto'),('invoice','Dirección de facturación'),('delivery','Dirección de envío'),('other','Otra dirección'),('private','Dirección Privada')], default='contact')
     subtipo = fields.Selection([('Contacto comercial','Contacto comercial'),('Contacto sistemas','Contacto sistemas'),('Contacto para pagos','Contacto parra pagos'),('Contacto para compras','Contacto para compras'),('private','Dirección Privada')])
@@ -364,6 +365,24 @@ class helpdesk_update(models.Model):
     cambiarDatosClienteCheck = fields.Boolean(string="Editar cliente", default=False, track_visibility='onchange')
     
     team_id = fields.Many2one('helpdesk.team', store = True, copied = True, index = True, string = 'Área de atención', default = 9)
+
+
+
+    #@api.model
+    #def _tipo_de_reporte_default(self):
+    #    _logger.info('self.team_id.id: ' + str(self.team_id.id))
+    #    if self.team_id.id == 8:
+    #        return 'Requerimiento'
+
+
+
+    x_studio_tipo_de_vale = fields.Selection(
+        [["Falla","Falla"],["Incidencia","Incidencia"],["Reeincidencia","Reeincidencia"],["Prefunta","Pregunta"],["Requerimiento","Requerimiento"],["Solicitud de refacción","Solicitud de refacción"],["Conectividad","Conectividad"],["Reincidencias","Reincidencias"],["Instalación","Instalación"],["Mantenimiento Preventivo","Mantenimiento Preventivo"],["IMAC","IMAC"],["Proyecto","Proyecto"],["Retiro de equipo","Retiro de equipo"],["Cambio","Cambio"],["Servicio de Software","Servicio de Software"],["Resurtido de Almacen","Resurtido de Almacen"],["Supervisión","Supervisión"],["Demostración","Demostración"],["Toma de lectura","Toma de lectura"]],
+        string = 'Tipo de reporte',
+        default = 'Requerimiento',
+        track_visibility = 'onchange',
+        store = True
+        )
 
 
     #name = fields.Text(string = 'Descripción del reporte', default = lambda self: self._compute_descripcion())
