@@ -524,7 +524,13 @@ class helpdesk_update(models.Model):
 
 
     def datos_ticket_2(self):
-        obj_ticket = self.env['helpdesk.ticket'].search([('id', '=', self.id)])
+        id_a_buscar = 0
+        if self and 'NewId' in str(self[0]):
+            id_a_buscar = self._origin.id
+        else:
+            id_a_buscar = self.id
+
+        obj_ticket = self.env['helpdesk.ticket'].search([('id', '=', id_a_buscar)])
         lista_datos = []
         fecha_creacion = obj_ticket.mapped('create_date')
         ticket_abierto_por = obj_ticket.mapped('abiertoPor')
