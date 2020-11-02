@@ -7346,11 +7346,11 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
             if not refaccion.productos.id in refacciones_en_ticket:
             #if refaccion.productos.id:
                 vals = {
-                    'productos': nueva_refaccion.productos.id,
-                    'cantidadPedida': nueva_refaccion.cantidadPedida
+                    'productos': refaccion.productos.id,
+                    'cantidadPedida': refaccion.cantidadPedida
                 }
                 lista.append( [0, 0, vals] )
-                listaDeCantidades.append(nueva_refaccion.cantidadPedida)
+                listaDeCantidades.append(refaccion.cantidadPedida)
         self.ticket_id.write({'accesorios': lista})
 
         """
