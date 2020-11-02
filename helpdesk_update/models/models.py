@@ -5173,12 +5173,8 @@ class helpdesk_update(models.Model):
             for refaccion in self.accesorios:
                 refaccionesDatos = refaccionesDatos + """
                                         <tr>
-                                            <td>""" + str(refaccion.productos.display_name) + """</td>
                                             <td>""" + str(refaccion.productos.categ_id.name) + """</td>
-                                            <td>""" + str(refaccion.productos.default_code) + """</td>
-                                            <td>""" + str(refaccion.productos.name) + """</td>
-                                            <td>""" + str(refaccion.productos.qty_available) + """</td>
-                                            <td>""" + str(refaccion.productos.virtual_available) + """</td>
+                                            <td>""" + str(refaccion.productos.display_name) + """</td>
                                             <td>""" + str(refaccion.cantidadPedida) + """</td>
                                         </tr>
                                     """
@@ -5187,12 +5183,8 @@ class helpdesk_update(models.Model):
                                     <table class='table table-bordered table-secondary text-black'>
                                         <thead>
                                             <tr>
-                                                <th scope='col'>Producto</th>
                                                 <th scope='col'>Categoría del producto</th>
-                                                <th scope='col'>Referencia interna</th>
-                                                <th scope='col'>Nombre</th>
-                                                <th scope='col'>Cantidad a mano</th>
-                                                <th scope='col'>Cantidad prevista</th>
+                                                <th scope='col'>Producto</th>
                                                 <th scope='col'>Cantidad a pedir</th>
                                             </tr>
                                         </thead>
@@ -5222,7 +5214,8 @@ class helpdesk_update(models.Model):
         if self.direccionLocalidadText:
             wiz.direccionLocalidad = self.direccionLocalidadText
         if self.create_date:
-            wiz.creadoEl = str(self.create_date.strftime("%d/%m/%Y %H:%M:%S"))
+            timezone = pytz.timezone('America/Mexico_City')
+            wiz.creadoEl = str(self.create_date.astimezone(timezone).strftime("%d/%m/%Y %H:%M:%S")) #str(pytz.utc.localize(self.create_date, is_dst=None).astimezone(pytz.timezone('America/Mexico_City')).strftime("%Y/%m/%d %H:%M:%S"))  #str(self.create_date.strftime("%d/%m/%Y %H:%M:%S"))
         #str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") )
         if self.days_difference:
             wiz.diasAtraso = self.days_difference

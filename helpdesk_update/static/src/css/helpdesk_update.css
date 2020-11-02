@@ -23,6 +23,10 @@
 	width: 1000px;
 }
 
+.modal-lg {
+    max-width: 90% !important;
+}
+
 /*
 .o_field_pdfviewer {
 	height: 600px;
