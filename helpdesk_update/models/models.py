@@ -730,7 +730,7 @@ class helpdesk_update(models.Model):
 
 
     def agrega_refacciones_en_accesorios(self):
-        if self.x_studio_productos:
+        if self.x_studio_productos and len(self.accesorios) == 0:
             lista = [[5,0,0]]
             #listaDeCantidades = []
             for refaccion in self.x_studio_productos:
