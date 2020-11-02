@@ -602,6 +602,107 @@ class helpdesk_update(models.Model):
             obj_ticket.write(vals)
 
 
+    def datos_ticket_llenar_por_fuera(self):
+        obj_ticket = self.env['helpdesk.ticket'].search([('id', '=', self.id)])
+        lista_datos = []
+        fecha_creacion = obj_ticket.mapped('create_date')
+        ticket_abierto_por = obj_ticket.mapped('abiertoPor')
+        fecha_ultimo_cambio = obj_ticket.mapped('ultimoDiagnosticoFecha')
+        ultima_escritura = obj_ticket.mapped('ultimoDiagnosticoUsuario')
+        dias_de_atraso = obj_ticket.mapped('days_difference')
+        numero_ticket_cliente = obj_ticket.mapped('x_studio_nmero_de_ticket_cliente')
+        tipo_de_vale = obj_ticket.mapped('x_studio_tipo_de_vale')
+        prioridad = obj_ticket.mapped('priority')
+        serie_modelo = obj_ticket.mapped('serie_y_modelo')
+        contadores_anteriores = obj_ticket.mapped('contadores_anteriores')
+        datos_cliente = obj_ticket.mapped('datosCliente')
+        ultima_nota = obj_ticket.mapped('x_studio_ultima_nota')
+        ultima_evidencia = obj_ticket.mapped('x_studio_ultima_evidencia')
+        area_de_atencion = obj_ticket.mapped('team_id.name')
+        etapa = obj_ticket.mapped('stage_id.name')
+        localidad_contacto = obj_ticket.mapped('localidadContacto.name')
+        contacto_interno = obj_ticket.mapped('contactoInterno')
+        numero_guia = obj_ticket.mapped('x_studio_nmero_de_guia_1')
+        tecnico = obj_ticket.mapped('x_studio_tcnico.name')
+        #productos = obj_ticket.mapped('x_studio_productos.name')
+        pedido_de_venta = obj_ticket.mapped('x_studio_field_nO7Xg.name')
+        timezone = pytz.timezone('America/Mexico_City')
+
+        _logger.info('fecha_creacion: ' + str(fecha_creacion) + 
+                    ' ticket_abierto_por: ' + str(ticket_abierto_por) + 
+                    ' ticket_abierto_por: ' + str(ticket_abierto_por) + 
+                    ' fecha_ultimo_cambio: ' + str(fecha_ultimo_cambio) + 
+                    ' ultima_escritura: ' + str(ultima_escritura) + 
+                    ' dias_de_atraso: ' + str(dias_de_atraso) + 
+                    ' numero_ticket_cliente: ' + str(numero_ticket_cliente) + 
+                    ' tipo_de_vale: ' + str(tipo_de_vale) + 
+                    ' prioridad: ' + str(prioridad) + 
+                    ' serie_modelo: ' + str(serie_modelo) + 
+                    ' contadores_anteriores: ' + str(contadores_anteriores) + 
+                    ' datos_cliente: ' + str(datos_cliente) + 
+                    ' ultima_nota: ' + str(ultima_nota) + 
+                    ' ultima_evidencia: ' + str(ultima_evidencia) + 
+                    ' area_de_atencion: ' + str(area_de_atencion) + 
+                    ' etapa: ' + str(etapa) + 
+                    ' localidad_contacto: ' + str(localidad_contacto) + 
+                    ' contacto_interno: ' + str(contacto_interno) + 
+                    ' numero_guia: ' + str(numero_guia) + 
+                    ' tecnico: ' + str(tecnico) + 
+                    ' pedido_de_venta: ' + str(pedido_de_venta))
+
+        if fecha_creacion[0]:
+            #_logger.info('fecha_creacion_region: ' + str(fecha_creacion[0].astimezone(timezone).strftime("%d/%m/%Y %H:%M:%S")  ))
+            lista_datos.append(str( fecha_creacion[0].astimezone(timezone).strftime("%d/%m/%Y %H:%M:%S") ))  #str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
+        if ticket_abierto_por[0]:
+            lista_datos.append(str(ticket_abierto_por))
+        if fecha_ultimo_cambio[0]:
+            lista_datos.append(str( fecha_ultimo_cambio[0].astimezone(timezone).strftime("%d/%m/%Y %H:%M:%S") ))
+        if ultima_escritura[0]:
+            lista_datos.append(str(ultima_escritura))
+        if dias_de_atraso:
+            lista_datos.append(str(dias_de_atraso))
+        if numero_ticket_cliente[0]:
+            lista_datos.append(str(numero_ticket_cliente))
+        if tipo_de_vale[0]:
+            lista_datos.append(str(tipo_de_vale))
+        if prioridad:
+            lista_datos.append(str(prioridad))
+        if serie_modelo[0]:
+            lista_datos.append(str(serie_modelo))
+        if contadores_anteriores[0]:
+            lista_datos.append(str(contadores_anteriores).split('Equipo BN o Color:')[1].split('</br></br> Contador')[0]  )
+            #lista_datos.append(str(contadores_anteriores.split('Equipo BN o Color:')[1].split('</br></br> Contador')[0]  ))
+        if datos_cliente:
+            lista_datos.append(str(datos_cliente))
+        if ultima_nota[0]:
+            lista_datos.append(str(ultima_nota))
+        if ultima_evidencia[0]:
+            lista_datos.append(str(ultima_evidencia))
+        if area_de_atencion:
+            lista_datos.append(str(area_de_atencion))
+        if etapa:
+            lista_datos.append(str(etapa))
+        if localidad_contacto:
+            lista_datos.append(str(localidad_contacto))
+        if contacto_interno:
+            lista_datos.append(str(contacto_interno))
+        if numero_guia[0]:
+            lista_datos.append(str(numero_guia))
+        if tecnico:
+            lista_datos.append(str(tecnico))
+        #if productos:
+        #    lista_datos.append(str(productos))
+        if pedido_de_venta:
+            lista_datos.append(str(pedido_de_venta))
+
+        if lista_datos:
+            vals = {
+                'datos_ticket_info': str(lista_datos)
+            }
+            obj_ticket.write(vals)
+            return 1
+        return -1
+
 
 
 
