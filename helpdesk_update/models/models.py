@@ -423,6 +423,7 @@ class helpdesk_update(models.Model):
         pedido_de_venta = self.mapped('x_studio_field_nO7Xg.name')
         timezone = pytz.timezone('America/Mexico_City')
 
+        """
         _logger.info('fecha_creacion: ' + str(fecha_creacion) + 
                     ' ticket_abierto_por: ' + str(ticket_abierto_por) + 
                     ' ticket_abierto_por: ' + str(ticket_abierto_por) + 
@@ -444,6 +445,7 @@ class helpdesk_update(models.Model):
                     ' numero_guia: ' + str(numero_guia) + 
                     ' tecnico: ' + str(tecnico) + 
                     ' pedido_de_venta: ' + str(pedido_de_venta))
+        """
 
         if fecha_creacion[0]:
             #_logger.info('fecha_creacion_region: ' + str(fecha_creacion[0].astimezone(timezone).strftime("%d/%m/%Y %H:%M:%S")  ))
@@ -528,6 +530,7 @@ class helpdesk_update(models.Model):
         pedido_de_venta = obj_ticket.mapped('x_studio_field_nO7Xg.name')
         timezone = pytz.timezone('America/Mexico_City')
 
+        """
         _logger.info('fecha_creacion: ' + str(fecha_creacion) + 
                     ' ticket_abierto_por: ' + str(ticket_abierto_por) + 
                     ' ticket_abierto_por: ' + str(ticket_abierto_por) + 
@@ -549,6 +552,7 @@ class helpdesk_update(models.Model):
                     ' numero_guia: ' + str(numero_guia) + 
                     ' tecnico: ' + str(tecnico) + 
                     ' pedido_de_venta: ' + str(pedido_de_venta))
+        """
 
         if fecha_creacion[0]:
             #_logger.info('fecha_creacion_region: ' + str(fecha_creacion[0].astimezone(timezone).strftime("%d/%m/%Y %H:%M:%S")  ))
@@ -628,6 +632,7 @@ class helpdesk_update(models.Model):
         pedido_de_venta = obj_ticket.mapped('x_studio_field_nO7Xg.name')
         timezone = pytz.timezone('America/Mexico_City')
 
+        """
         _logger.info('fecha_creacion: ' + str(fecha_creacion) + 
                     ' ticket_abierto_por: ' + str(ticket_abierto_por) + 
                     ' ticket_abierto_por: ' + str(ticket_abierto_por) + 
@@ -649,6 +654,7 @@ class helpdesk_update(models.Model):
                     ' numero_guia: ' + str(numero_guia) + 
                     ' tecnico: ' + str(tecnico) + 
                     ' pedido_de_venta: ' + str(pedido_de_venta))
+        """
 
         if fecha_creacion[0]:
             #_logger.info('fecha_creacion_region: ' + str(fecha_creacion[0].astimezone(timezone).strftime("%d/%m/%Y %H:%M:%S")  ))
@@ -700,6 +706,24 @@ class helpdesk_update(models.Model):
                 'datos_ticket_info': str(lista_datos)
             }
             obj_ticket.write(vals)
+            return 1
+        return -1
+
+
+    def agrega_refacciones_en_accesorios(self):
+        if self.x_studio_productos:
+            lista = [[5,0,0]]
+            #listaDeCantidades = []
+            for refaccion in self.x_studio_productos:
+                if refaccion.product_variant_id.id:
+                    vals = {
+                        'productos': refaccion.product_variant_id.id,
+                        'cantidadPedida': refaccion.x_studio_cantidad_pedida
+                    }
+                    lista.append( [0, 0, vals] )
+                    #listaDeCantidades.append(refaccion.cantidadPedida)
+            #_logger.info('3312: lista2: ' + str(lista))
+            self.write({'accesorios': lista})
             return 1
         return -1
 
