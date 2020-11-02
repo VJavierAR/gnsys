@@ -32,6 +32,7 @@ class StockPicking(Model):
     retiro=fields.Boolean()
     mini=fields.Boolean()
     chofer=fields.Many2one('res.users')
+    surtir=fields.Boolean(default=False)
     #ticke_id=fields.Integer(related='group_id.sale_id.x_studio_field_bxHgp.id')
 
     def validacionZero(self):

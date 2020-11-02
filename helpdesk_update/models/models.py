@@ -66,7 +66,7 @@ def cambiaTipoDeVale(idEquipo):
                                ]
     return listaTipoDeVale
 
-idTeamGlobal = 11 
+idTeamGlobal = 11
 
 
 def convert_timedelta(duration):
@@ -136,6 +136,7 @@ class helpdesk_update(models.Model):
                     #self.env.cr.execute(query)
                     objTicket.diagnosticos[i].create_date = fecha
                     i = i + 1
+        objTicket.obten_ulimo_diagnostico_fecha_usuario()
 
     
 
@@ -241,12 +242,60 @@ class helpdesk_update(models.Model):
 
     days_difference = fields.Integer(compute='_compute_difference',string='días de atraso')
 
+
+    
+
+    
+    def _get_dominio_localida_contacto(self):
+        res = [] 
+        vals = {}
+        #for record in self:
+        if self.partner_id.id:
+            hijos = self.env['res.partner'].search([['parent_id', '=', self.partner_id.id]])
+            hijosarr = hijos.mapped('id')
+            nietos = self.env['res.partner'].search([['parent_id', 'in', hijosarr], ['type', '=', 'contact']]).mapped('id')
+            hijosF = hijos.filtered(lambda x: x.type == 'contact').mapped('id')
+            final = nietos + hijosF
+            res = [('id', 'in', final)]
+            vals['dominio_contacto_localidad'] = str(final)
+        if vals:
+            self.write(vals)
+
+    
+    @api.model
+    def _get_dominio_localida_contacto_2(self):
+        res = [] 
+        vals = {}
+        #for record in self:
+        if self.partner_id.id:
+            hijos = self.env['res.partner'].search([['parent_id', '=', self.partner_id.id]])
+            hijosarr = hijos.mapped('id')
+            nietos = self.env['res.partner'].search([['parent_id', 'in', hijosarr], ['type', '=', 'contact']]).mapped('id')
+            hijosF = hijos.filtered(lambda x: x.type == 'contact').mapped('id')
+            final = nietos + hijosF
+            res = [('id', 'in', final)]
+            
+            contactos = self.env['res.partner'].search( res ).mapped('id')
+
+            return contactos
+
+    dominio_contacto_localidad = fields.Text(string = 'Dominio de localidad', default = lambda self: self._get_dominio_localida_contacto_2())
+
+
     localidadContacto = fields.Many2one('res.partner'
                                         , store = True
                                         , track_visibility = 'onchange'
                                         , string = 'Localidad contacto'
+                                        #default = _get_dominio_localida_contacto_2
+                                        #default = lambda self: self._get_dominio_localida_contacto_2()
                                         #, compute = 'cambiaContactoLocalidad'
-                                        , domain = "['&',('parent_id.id','=',idLocalidadAyuda),('type','=','contact')]")
+                                        #, domain = "[('id', 'in', dominio_contacto_localidad )]"
+                                        , domain = "['&',('parent_id.id','=',idLocalidadAyuda),('type','=','contact')]"
+
+                                        )
+
+    
+            
     
     #@api.depends('x_studio_equipo_por_nmero_de_serie')
     @api.onchange('x_studio_equipo_por_nmero_de_serie')
@@ -269,7 +318,12 @@ class helpdesk_update(models.Model):
                     query = "update helpdesk_ticket set \"localidadContacto\" = " + str(idLoc) + ", \"x_studio_field_6furK\" = '" + str(self.x_studio_empresas_relacionadas.x_studio_field_SqU5B) + "' where id = " + str(self.x_studio_id_ticket) + ";"
                     self.env.cr.execute(query)
                     self.env.cr.commit()
-
+                else:
+                    idLoc = self.env['res.partner'].search([['parent_id', '=', loc]], order='create_date desc', limit = 1).id
+                    self.localidadContacto = idLoc
+                    query = "update helpdesk_ticket set \"localidadContacto\" = " + str(idLoc) + ", \"x_studio_field_6furK\" = '" + str(self.x_studio_empresas_relacionadas.x_studio_field_SqU5B) + "' where id = " + str(self.x_studio_id_ticket) + ";"
+                    self.env.cr.execute(query)
+                    self.env.cr.commit()
                     
 
     @api.model
@@ -279,6 +333,7 @@ class helpdesk_update(models.Model):
             return self.env['res.partner'].search([['parent_id', '=', loc],['subtipo' '=', 'Contacto de localidad']], order='create_date desc', limit=1).id
 
 
+    
 
     tipoDeDireccion = fields.Selection([('contact','Contacto'),('invoice','Dirección de facturación'),('delivery','Dirección de envío'),('other','Otra dirección'),('private','Dirección Privada')], default='contact')
     subtipo = fields.Selection([('Contacto comercial','Contacto comercial'),('Contacto sistemas','Contacto sistemas'),('Contacto para pagos','Contacto parra pagos'),('Contacto para compras','Contacto para compras'),('private','Dirección Privada')])
@@ -312,6 +367,24 @@ class helpdesk_update(models.Model):
     team_id = fields.Many2one('helpdesk.team', store = True, copied = True, index = True, string = 'Área de atención', default = 9)
 
 
+
+    #@api.model
+    #def _tipo_de_reporte_default(self):
+    #    _logger.info('self.team_id.id: ' + str(self.team_id.id))
+    #    if self.team_id.id == 8:
+    #        return 'Requerimiento'
+
+
+
+    x_studio_tipo_de_vale = fields.Selection(
+        [["Falla","Falla"],["Incidencia","Incidencia"],["Reeincidencia","Reeincidencia"],["Prefunta","Pregunta"],["Requerimiento","Requerimiento"],["Solicitud de refacción","Solicitud de refacción"],["Conectividad","Conectividad"],["Reincidencias","Reincidencias"],["Instalación","Instalación"],["Mantenimiento Preventivo","Mantenimiento Preventivo"],["IMAC","IMAC"],["Proyecto","Proyecto"],["Retiro de equipo","Retiro de equipo"],["Cambio","Cambio"],["Servicio de Software","Servicio de Software"],["Resurtido de Almacen","Resurtido de Almacen"],["Supervisión","Supervisión"],["Demostración","Demostración"],["Toma de lectura","Toma de lectura"]],
+        string = 'Tipo de reporte',
+        default = 'Requerimiento',
+        track_visibility = 'onchange',
+        store = True
+        )
+
+
     #name = fields.Text(string = 'Descripción del reporte', default = lambda self: self._compute_descripcion())
     name = fields.Text(string = 'Descripción del reporte')
 
@@ -338,6 +411,348 @@ class helpdesk_update(models.Model):
                 return '</br> Equipo BN o Color: ' + str(self.x_studio_equipo_por_nmero_de_serie[0].x_studio_color_bn) + ' </br></br> Contador BN: ' + str(self.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_bn_mesa) + '</br></br> Contador Color: ' + str(self.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_color_mesa)
             else:
                 return '</br> Equipo BN o Color: ' + str(self.x_studio_equipo_por_nmero_de_serie[0].x_studio_color_bn) + ' </br></br> Contador BN: ' + str(self.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_bn_mesa)
+
+
+
+    datos_ticket_info = fields.Text(string = 'Datos ticket')
+
+    @api.onchange('create_date', 'abiertoPor', 'ultimoDiagnosticoFecha', 'ultimoDiagnosticoUsuario', 'days_difference', 'x_studio_nmero_de_ticket_cliente', 'x_studio_tipo_de_vale', 'priority', 'serie_y_modelo', 'contadores_anteriores', 'datosCliente', 'x_studio_ultima_nota', 'x_studio_ultima_evidencia', 'team_id', 'stage_id', 'localidadContacto', 'contactoInterno', 'x_studio_nmero_de_guia_1', 'x_studio_tcnico', 'x_studio_field_nO7Xg')
+    def datos_ticket(self):
+        lista_datos = []
+        fecha_creacion = self.mapped('create_date')
+        ticket_abierto_por = self.mapped('abiertoPor')
+        fecha_ultimo_cambio = self.mapped('ultimoDiagnosticoFecha')
+        ultima_escritura = self.mapped('ultimoDiagnosticoUsuario')
+        dias_de_atraso = self.mapped('days_difference')
+        numero_ticket_cliente = self.mapped('x_studio_nmero_de_ticket_cliente')
+        tipo_de_vale = self.mapped('x_studio_tipo_de_vale')
+        prioridad = self.mapped('priority')
+        serie_modelo = self.mapped('serie_y_modelo')
+        contadores_anteriores = self.mapped('contadores_anteriores')
+        datos_cliente = self.mapped('datosCliente')
+        ultima_nota = self.mapped('x_studio_ultima_nota')
+        ultima_evidencia = self.mapped('x_studio_ultima_evidencia')
+        area_de_atencion = self.mapped('team_id.name')
+        etapa = self.mapped('stage_id.name')
+        localidad_contacto = self.mapped('localidadContacto.name')
+        contacto_interno = self.mapped('contactoInterno')
+        numero_guia = self.mapped('x_studio_nmero_de_guia_1')
+        tecnico = self.mapped('x_studio_tcnico.name')
+        #productos = self.mapped('x_studio_productos.name')
+        pedido_de_venta = self.mapped('x_studio_field_nO7Xg.name')
+        timezone = pytz.timezone('America/Mexico_City')
+
+        """
+        _logger.info('fecha_creacion: ' + str(fecha_creacion) + 
+                    ' ticket_abierto_por: ' + str(ticket_abierto_por) + 
+                    ' ticket_abierto_por: ' + str(ticket_abierto_por) + 
+                    ' fecha_ultimo_cambio: ' + str(fecha_ultimo_cambio) + 
+                    ' ultima_escritura: ' + str(ultima_escritura) + 
+                    ' dias_de_atraso: ' + str(dias_de_atraso) + 
+                    ' numero_ticket_cliente: ' + str(numero_ticket_cliente) + 
+                    ' tipo_de_vale: ' + str(tipo_de_vale) + 
+                    ' prioridad: ' + str(prioridad) + 
+                    ' serie_modelo: ' + str(serie_modelo) + 
+                    ' contadores_anteriores: ' + str(contadores_anteriores) + 
+                    ' datos_cliente: ' + str(datos_cliente) + 
+                    ' ultima_nota: ' + str(ultima_nota) + 
+                    ' ultima_evidencia: ' + str(ultima_evidencia) + 
+                    ' area_de_atencion: ' + str(area_de_atencion) + 
+                    ' etapa: ' + str(etapa) + 
+                    ' localidad_contacto: ' + str(localidad_contacto) + 
+                    ' contacto_interno: ' + str(contacto_interno) + 
+                    ' numero_guia: ' + str(numero_guia) + 
+                    ' tecnico: ' + str(tecnico) + 
+                    ' pedido_de_venta: ' + str(pedido_de_venta))
+        """
+
+        if fecha_creacion[0]:
+            #_logger.info('fecha_creacion_region: ' + str(fecha_creacion[0].astimezone(timezone).strftime("%d/%m/%Y %H:%M:%S")  ))
+            lista_datos.append(str( fecha_creacion[0].astimezone(timezone).strftime("%d/%m/%Y %H:%M:%S") ))  #str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
+        if ticket_abierto_por[0]:
+            lista_datos.append(str(ticket_abierto_por))
+        if fecha_ultimo_cambio[0]:
+            lista_datos.append(str( fecha_ultimo_cambio[0].astimezone(timezone).strftime("%d/%m/%Y %H:%M:%S") ))
+        if ultima_escritura[0]:
+            lista_datos.append(str(ultima_escritura))
+        if dias_de_atraso:
+            lista_datos.append(str(dias_de_atraso))
+        if numero_ticket_cliente[0]:
+            lista_datos.append(str(numero_ticket_cliente))
+        if tipo_de_vale[0]:
+            lista_datos.append(str(tipo_de_vale))
+        if prioridad:
+            lista_datos.append(str(prioridad))
+        if serie_modelo[0]:
+            lista_datos.append(str(serie_modelo))
+        if contadores_anteriores[0]:
+            lista_datos.append(str(contadores_anteriores).split('Equipo BN o Color:')[1].split('</br></br> Contador')[0]  )
+            #lista_datos.append(str(contadores_anteriores.split('Equipo BN o Color:')[1].split('</br></br> Contador')[0]  ))
+        if datos_cliente:
+            lista_datos.append(str(datos_cliente))
+        if ultima_nota[0]:
+            lista_datos.append(str(ultima_nota))
+        if ultima_evidencia[0]:
+            lista_datos.append(str(ultima_evidencia))
+        if area_de_atencion:
+            lista_datos.append(str(area_de_atencion))
+        if etapa:
+            lista_datos.append(str(etapa))
+        if localidad_contacto:
+            lista_datos.append(str(localidad_contacto))
+        if contacto_interno:
+            lista_datos.append(str(contacto_interno))
+        if numero_guia[0]:
+            lista_datos.append(str(numero_guia))
+        if tecnico:
+            lista_datos.append(str(tecnico))
+        #if productos:
+        #    lista_datos.append(str(productos))
+        if pedido_de_venta:
+            lista_datos.append(str(pedido_de_venta))
+
+        if lista_datos:
+            vals = {
+                'datos_ticket_info': str(lista_datos)
+            }
+            if 'NewId' in str(self[0]):
+                obj_ticket = self.env['helpdesk.ticket'].search([('id', '=', self._origin.id)])
+                obj_ticket.write(vals)
+            else:
+                self.datos_ticket_info = str(lista_datos)
+
+
+
+    def datos_ticket_2(self):
+        id_a_buscar = 0
+        if self and 'NewId' in str(self[0]):
+            id_a_buscar = self._origin.id
+        else:
+            id_a_buscar = self.id
+
+        obj_ticket = self.env['helpdesk.ticket'].search([('id', '=', id_a_buscar)])
+        lista_datos = []
+        fecha_creacion = obj_ticket.mapped('create_date')
+        ticket_abierto_por = obj_ticket.mapped('abiertoPor')
+        fecha_ultimo_cambio = obj_ticket.mapped('ultimoDiagnosticoFecha')
+        ultima_escritura = obj_ticket.mapped('ultimoDiagnosticoUsuario')
+        dias_de_atraso = obj_ticket.mapped('days_difference')
+        numero_ticket_cliente = obj_ticket.mapped('x_studio_nmero_de_ticket_cliente')
+        tipo_de_vale = obj_ticket.mapped('x_studio_tipo_de_vale')
+        prioridad = obj_ticket.mapped('priority')
+        serie_modelo = obj_ticket.mapped('serie_y_modelo')
+        contadores_anteriores = obj_ticket.mapped('contadores_anteriores')
+        datos_cliente = obj_ticket.mapped('datosCliente')
+        ultima_nota = obj_ticket.mapped('x_studio_ultima_nota')
+        ultima_evidencia = obj_ticket.mapped('x_studio_ultima_evidencia')
+        area_de_atencion = obj_ticket.mapped('team_id.name')
+        etapa = obj_ticket.mapped('stage_id.name')
+        localidad_contacto = obj_ticket.mapped('localidadContacto.name')
+        contacto_interno = obj_ticket.mapped('contactoInterno')
+        numero_guia = obj_ticket.mapped('x_studio_nmero_de_guia_1')
+        tecnico = obj_ticket.mapped('x_studio_tcnico.name')
+        #productos = obj_ticket.mapped('x_studio_productos.name')
+        pedido_de_venta = obj_ticket.mapped('x_studio_field_nO7Xg.name')
+        timezone = pytz.timezone('America/Mexico_City')
+
+        """
+        _logger.info('fecha_creacion: ' + str(fecha_creacion) + 
+                    ' ticket_abierto_por: ' + str(ticket_abierto_por) + 
+                    ' ticket_abierto_por: ' + str(ticket_abierto_por) + 
+                    ' fecha_ultimo_cambio: ' + str(fecha_ultimo_cambio) + 
+                    ' ultima_escritura: ' + str(ultima_escritura) + 
+                    ' dias_de_atraso: ' + str(dias_de_atraso) + 
+                    ' numero_ticket_cliente: ' + str(numero_ticket_cliente) + 
+                    ' tipo_de_vale: ' + str(tipo_de_vale) + 
+                    ' prioridad: ' + str(prioridad) + 
+                    ' serie_modelo: ' + str(serie_modelo) + 
+                    ' contadores_anteriores: ' + str(contadores_anteriores) + 
+                    ' datos_cliente: ' + str(datos_cliente) + 
+                    ' ultima_nota: ' + str(ultima_nota) + 
+                    ' ultima_evidencia: ' + str(ultima_evidencia) + 
+                    ' area_de_atencion: ' + str(area_de_atencion) + 
+                    ' etapa: ' + str(etapa) + 
+                    ' localidad_contacto: ' + str(localidad_contacto) + 
+                    ' contacto_interno: ' + str(contacto_interno) + 
+                    ' numero_guia: ' + str(numero_guia) + 
+                    ' tecnico: ' + str(tecnico) + 
+                    ' pedido_de_venta: ' + str(pedido_de_venta))
+        """
+
+        if fecha_creacion[0]:
+            #_logger.info('fecha_creacion_region: ' + str(fecha_creacion[0].astimezone(timezone).strftime("%d/%m/%Y %H:%M:%S")  ))
+            lista_datos.append(str( fecha_creacion[0].astimezone(timezone).strftime("%d/%m/%Y %H:%M:%S") ))  #str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
+        if ticket_abierto_por[0]:
+            lista_datos.append(str(ticket_abierto_por))
+        if fecha_ultimo_cambio[0]:
+            lista_datos.append(str( fecha_ultimo_cambio[0].astimezone(timezone).strftime("%d/%m/%Y %H:%M:%S") ))
+        if ultima_escritura[0]:
+            lista_datos.append(str(ultima_escritura))
+        if dias_de_atraso:
+            lista_datos.append(str(dias_de_atraso))
+        if numero_ticket_cliente[0]:
+            lista_datos.append(str(numero_ticket_cliente))
+        if tipo_de_vale[0]:
+            lista_datos.append(str(tipo_de_vale))
+        if prioridad:
+            lista_datos.append(str(prioridad))
+        if serie_modelo[0]:
+            lista_datos.append(str(serie_modelo))
+        if contadores_anteriores[0]:
+            lista_datos.append(str(contadores_anteriores).split('Equipo BN o Color:')[1].split('</br></br> Contador')[0]  )
+            #lista_datos.append(str(contadores_anteriores.split('Equipo BN o Color:')[1].split('</br></br> Contador')[0]  ))
+        if datos_cliente:
+            lista_datos.append(str(datos_cliente))
+        if ultima_nota[0]:
+            lista_datos.append(str(ultima_nota))
+        if ultima_evidencia[0]:
+            lista_datos.append(str(ultima_evidencia))
+        if area_de_atencion:
+            lista_datos.append(str(area_de_atencion))
+        if etapa:
+            lista_datos.append(str(etapa))
+        if localidad_contacto:
+            lista_datos.append(str(localidad_contacto))
+        if contacto_interno:
+            lista_datos.append(str(contacto_interno))
+        if numero_guia[0]:
+            lista_datos.append(str(numero_guia))
+        if tecnico:
+            lista_datos.append(str(tecnico))
+        #if productos:
+        #    lista_datos.append(str(productos))
+        if pedido_de_venta:
+            lista_datos.append(str(pedido_de_venta))
+
+        if lista_datos:
+            vals = {
+                'datos_ticket_info': str(lista_datos)
+            }
+            obj_ticket.write(vals)
+
+
+    def datos_ticket_llenar_por_fuera(self):
+        obj_ticket = self.env['helpdesk.ticket'].search([('id', '=', self.id)])
+        lista_datos = []
+        fecha_creacion = obj_ticket.mapped('create_date')
+        ticket_abierto_por = obj_ticket.mapped('abiertoPor')
+        fecha_ultimo_cambio = obj_ticket.mapped('ultimoDiagnosticoFecha')
+        ultima_escritura = obj_ticket.mapped('ultimoDiagnosticoUsuario')
+        dias_de_atraso = obj_ticket.mapped('days_difference')
+        numero_ticket_cliente = obj_ticket.mapped('x_studio_nmero_de_ticket_cliente')
+        tipo_de_vale = obj_ticket.mapped('x_studio_tipo_de_vale')
+        prioridad = obj_ticket.mapped('priority')
+        serie_modelo = obj_ticket.mapped('serie_y_modelo')
+        contadores_anteriores = obj_ticket.mapped('contadores_anteriores')
+        datos_cliente = obj_ticket.mapped('datosCliente')
+        ultima_nota = obj_ticket.mapped('x_studio_ultima_nota')
+        ultima_evidencia = obj_ticket.mapped('x_studio_ultima_evidencia')
+        area_de_atencion = obj_ticket.mapped('team_id.name')
+        etapa = obj_ticket.mapped('stage_id.name')
+        localidad_contacto = obj_ticket.mapped('localidadContacto.name')
+        contacto_interno = obj_ticket.mapped('contactoInterno')
+        numero_guia = obj_ticket.mapped('x_studio_nmero_de_guia_1')
+        tecnico = obj_ticket.mapped('x_studio_tcnico.name')
+        #productos = obj_ticket.mapped('x_studio_productos.name')
+        pedido_de_venta = obj_ticket.mapped('x_studio_field_nO7Xg.name')
+        timezone = pytz.timezone('America/Mexico_City')
+
+        """
+        _logger.info('fecha_creacion: ' + str(fecha_creacion) + 
+                    ' ticket_abierto_por: ' + str(ticket_abierto_por) + 
+                    ' ticket_abierto_por: ' + str(ticket_abierto_por) + 
+                    ' fecha_ultimo_cambio: ' + str(fecha_ultimo_cambio) + 
+                    ' ultima_escritura: ' + str(ultima_escritura) + 
+                    ' dias_de_atraso: ' + str(dias_de_atraso) + 
+                    ' numero_ticket_cliente: ' + str(numero_ticket_cliente) + 
+                    ' tipo_de_vale: ' + str(tipo_de_vale) + 
+                    ' prioridad: ' + str(prioridad) + 
+                    ' serie_modelo: ' + str(serie_modelo) + 
+                    ' contadores_anteriores: ' + str(contadores_anteriores) + 
+                    ' datos_cliente: ' + str(datos_cliente) + 
+                    ' ultima_nota: ' + str(ultima_nota) + 
+                    ' ultima_evidencia: ' + str(ultima_evidencia) + 
+                    ' area_de_atencion: ' + str(area_de_atencion) + 
+                    ' etapa: ' + str(etapa) + 
+                    ' localidad_contacto: ' + str(localidad_contacto) + 
+                    ' contacto_interno: ' + str(contacto_interno) + 
+                    ' numero_guia: ' + str(numero_guia) + 
+                    ' tecnico: ' + str(tecnico) + 
+                    ' pedido_de_venta: ' + str(pedido_de_venta))
+        """
+
+        if fecha_creacion[0]:
+            #_logger.info('fecha_creacion_region: ' + str(fecha_creacion[0].astimezone(timezone).strftime("%d/%m/%Y %H:%M:%S")  ))
+            lista_datos.append(str( fecha_creacion[0].astimezone(timezone).strftime("%d/%m/%Y %H:%M:%S") ))  #str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
+        if ticket_abierto_por[0]:
+            lista_datos.append(str(ticket_abierto_por))
+        if fecha_ultimo_cambio[0]:
+            lista_datos.append(str( fecha_ultimo_cambio[0].astimezone(timezone).strftime("%d/%m/%Y %H:%M:%S") ))
+        if ultima_escritura[0]:
+            lista_datos.append(str(ultima_escritura))
+        if dias_de_atraso:
+            lista_datos.append(str(dias_de_atraso))
+        if numero_ticket_cliente[0]:
+            lista_datos.append(str(numero_ticket_cliente))
+        if tipo_de_vale[0]:
+            lista_datos.append(str(tipo_de_vale))
+        if prioridad:
+            lista_datos.append(str(prioridad))
+        if serie_modelo[0]:
+            lista_datos.append(str(serie_modelo))
+        if contadores_anteriores[0]:
+            lista_datos.append(str(contadores_anteriores).split('Equipo BN o Color:')[1].split('</br></br> Contador')[0]  )
+            #lista_datos.append(str(contadores_anteriores.split('Equipo BN o Color:')[1].split('</br></br> Contador')[0]  ))
+        if datos_cliente:
+            lista_datos.append(str(datos_cliente))
+        if ultima_nota[0]:
+            lista_datos.append(str(ultima_nota))
+        if ultima_evidencia[0]:
+            lista_datos.append(str(ultima_evidencia))
+        if area_de_atencion:
+            lista_datos.append(str(area_de_atencion))
+        if etapa:
+            lista_datos.append(str(etapa))
+        if localidad_contacto:
+            lista_datos.append(str(localidad_contacto))
+        if contacto_interno:
+            lista_datos.append(str(contacto_interno))
+        if numero_guia[0]:
+            lista_datos.append(str(numero_guia))
+        if tecnico:
+            lista_datos.append(str(tecnico))
+        #if productos:
+        #    lista_datos.append(str(productos))
+        if pedido_de_venta:
+            lista_datos.append(str(pedido_de_venta))
+
+        if lista_datos:
+            vals = {
+                'datos_ticket_info': str(lista_datos)
+            }
+            obj_ticket.write(vals)
+            return 1
+        return -1
+
+
+    def agrega_refacciones_en_accesorios(self):
+        if self.x_studio_productos and len(self.accesorios) == 0:
+            lista = [[5,0,0]]
+            #listaDeCantidades = []
+            for refaccion in self.x_studio_productos:
+                if refaccion.product_variant_id.id:
+                    vals = {
+                        'productos': refaccion.product_variant_id.id,
+                        'cantidadPedida': refaccion.x_studio_cantidad_pedida
+                    }
+                    lista.append( [0, 0, vals] )
+                    #listaDeCantidades.append(refaccion.cantidadPedida)
+            #_logger.info('3312: lista2: ' + str(lista))
+            self.write({'accesorios': lista})
+            return 1
+        return -1
+
+
 
 
     @api.model
@@ -389,6 +804,14 @@ class helpdesk_update(models.Model):
                 #ticket.write({'x_studio_contadores': '</br> Equipo BN o Color: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_color_bn) + ' </br></br> Contador BN: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_bn_mesa) + '</br></br> Contador Color: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_color_mesa)})
                 ticket.write({'contadores_anteriores': '</br>Equipo BN o Color: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_color_bn) + ' </br></br> Contador BN: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_bn_mesa) + '</br></br> Contador Color: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_color_mesa)})
 
+        if ticket.x_studio_tipo_de_vale == 'Requerimiento' and ticket.team_id.id != 8 and ticket.team_id.id != 13:
+            ticket.write({'team_id': 8})
+
+        ticket.actualiza_serie_texto()
+        ticket.actualiza_todas_las_zonas()
+        #ticket.cambiosParent_id()
+        #ticket._get_dominio_localida_contacto()
+        ticket.datos_ticket()
         return ticket
 
 
@@ -410,7 +833,66 @@ class helpdesk_update(models.Model):
                         break
                 if not puedoCrearSinSerie:
                     raise exceptions.ValidationError('El usuario no es de mesa de Servicio y no tiene los permisos para crear un ticket sin serie.')
-        
+        """
+        lista_datos = []
+        if 'create_date' in vals: #fecha_creacion
+            lista_datos.append(str( vals['create_date'].astimezone(timezone).strftime("%d/%m/%Y %H:%M:%S") ))  #str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
+        if 'abiertoPor' in vals: #ticket_abierto_por:
+            lista_datos.append(str(vals['abiertoPor']))
+        if 'ultimoDiagnosticoFecha' in vals: # fecha_ultimo_cambio[0]:
+            lista_datos.append(str( vals['ultimoDiagnosticoFecha'].astimezone(timezone).strftime("%d/%m/%Y %H:%M:%S") ))
+        if 'ultimoDiagnosticoUsuario' in vals: #ultima_escritura:
+            lista_datos.append(str( vals['ultimoDiagnosticoUsuario'] ))
+        if 'days_difference' in vals: #dias_de_atraso:
+            lista_datos.append(str(vals[days_difference]))
+        if 'x_studio_nmero_de_ticket_cliente' in vals: #numero_ticket_cliente:
+            lista_datos.append(str(vals['x_studio_nmero_de_ticket_cliente']))
+        if 'x_studio_tipo_de_vale' in vals: #tipo_de_vale:
+            lista_datos.append(str(vals['x_studio_tipo_de_vale']))
+        if 'priority' in vals: # prioridad:
+            lista_datos.append(str(vals['priority']))
+        if 'serie_y_modelo' in vals: #serie_modelo:
+            lista_datos.append(str(vals['serie_y_modelo']))
+        if 'contadores_anteriores' in vals:# contadores_anteriores:
+            lista_datos.append(str(vals['contadores_anteriores']).split('Equipo BN o Color:')[1].split('</br></br> Contador')[0]  )
+            #lista_datos.append(str(contadores_anteriores.split('Equipo BN o Color:')[1].split('</br></br> Contador')[0]  ))
+        if 'datosCliente' in vals: #datos_cliente:
+            lista_datos.append(str(vals['datosCliente']))
+        if 'x_studio_ultima_nota' in vals: #ultima_nota:
+            lista_datos.append(str(vals['x_studio_ultima_nota']))
+        if 'x_studio_ultima_evidencia' in vals: #ultima_evidencia:
+            lista_datos.append(str(vals['x_studio_ultima_evidencia']))
+        if 'team_id' in vals: #area_de_atencion:
+            lista_datos.append(str(vals['team_id']))
+        if 'stage_id' in vals: #etapa:
+            lista_datos.append(str(vals['stage_id']))
+        if 'localidadContacto' in vals: # localidad_contacto:
+            lista_datos.append(str(vals['localidadContacto']))
+        if 'contactoInterno' in vals:#contacto_interno:
+            lista_datos.append(str(vals['contactoInterno']))
+        if 'x_studio_nmero_de_guia_1' in vals:#numero_guia:
+            lista_datos.append(str(vals['x_studio_nmero_de_guia_1']))
+        if 'x_studio_tcnico' in vals: #tecnico:
+            lista_datos.append(str(vals['x_studio_tcnico']))
+        #if productos:
+        #    lista_datos.append(str(productos))
+        if 'x_studio_field_nO7Xg' in vals: #pedido_de_venta:
+            lista_datos.append(str(vals['x_studio_field_nO7Xg']))
+
+        if lista_datos:
+            vals['datos_ticket_info'] = str(lista_datos)
+        """
+
+
+
+
+
+
+
+
+
+
+
         if self and 'NewId' in str(self[0]):
         #if not self.ids:
             result = super(helpdesk_update, self._origin).write(vals)
@@ -1269,7 +1751,7 @@ class helpdesk_update(models.Model):
     def abierto(self):
         #que pasa si hay mas de 1 ticket xD .i ->search([['name', '=', self.name]]).id
         #self.x_studio_id_ticket = self.env['helpdesk.ticket'].search([['name', '=', self.name]]).id
-        _logger.info("id ticket search: " + str(self.x_studio_id_ticket))
+        #_logger.info("id ticket search: " + str(self.x_studio_id_ticket))
         
         #ticketActualiza = self.env['helpdesk.ticket'].search([('id', '=', self.id)])
         if (self.team_id.id == 8 or self.team_id.id == 13) and self.x_studio_tipo_de_vale == 'Requerimiento':
@@ -1445,7 +1927,7 @@ class helpdesk_update(models.Model):
                         self._origin.sudo().diagnosticos[i].create_date = fecha
                         i = i + 1
                 
-
+                self._origin.obten_ulimo_diagnostico_fecha_usuario()
                 #for diagnostico in self._origin.sudo().diagnosticos:
                 #_logger.info('self._origin.sudo().diagnosticos[-1].create_date: ' + str(self._origin.sudo().diagnosticos[-1].create_date))
                 #_logger.info('self._origin.sudo().diagnosticos[-2].create_date: ' + str(self._origin.sudo().diagnosticos[-2].create_date))
@@ -1619,8 +2101,9 @@ class helpdesk_update(models.Model):
         if self.x_studio_id_ticket:
             estadoAntes = str(self.stage_id.name)
             if (self.stage_id.name == 'Asignado' or self.stage_id.name == 'Resuelto' or self.stage_id.name == 'Cerrado'):
-                query = "update helpdesk_ticket set stage_id = 13 where id = " + str(self.x_studio_id_ticket) + ";"
-                ss = self.env.cr.execute(query)
+                #query = "update helpdesk_ticket set stage_id = 13 where id = " + str(self.x_studio_id_ticket) + ";"
+                #ss = self.env.cr.execute(query)
+                self.write({'stage_id': 13})
                 #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
                 ultimaEvidenciaTec = []
                 ultimoComentario = ''
@@ -1638,7 +2121,7 @@ class helpdesk_update(models.Model):
                 
                 estado = 'Atención'
                 self.creaDiagnosticoVistaLista(comentarioGenerico, estado)
-
+                self.datos_ticket_2()
                 message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Atención' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
                 mess= {
                         'title': _('Estado de ticket actualizado!!!'),
@@ -1656,8 +2139,9 @@ class helpdesk_update(models.Model):
     def cambioResuelto(self):
         estadoAntes = str(self.stage_id.name)
         if self.estadoResuelto == False or self.estadoResuelto == True :
-            query = "update helpdesk_ticket set stage_id = 3 where id = " + str(self.x_studio_id_ticket) + ";"
-            ss = self.env.cr.execute(query)
+            #query = "update helpdesk_ticket set stage_id = 3 where id = " + str(self.x_studio_id_ticket) + ";"
+            #ss = self.env.cr.execute(query)
+            self.write({'stage_id': 3})
             ultimaEvidenciaTec = []
             ultimoComentario = ''
             if self.diagnosticos:
@@ -1667,7 +2151,7 @@ class helpdesk_update(models.Model):
             comentarioGenerico = 'Cambio de estado al seleccionar botón Resuelto. Se cambio al estado Resuelto. Seleccion realizada por ' + str(self.env.user.name) +'.'
             estado = 'Resuelto'
             self.creaDiagnosticoVistaLista(comentarioGenerico, estado)
-
+            self.datos_ticket_2()
             message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Resuelto' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
             mess= {
                     'title': _('Estado de ticket actualizado!!!'),
@@ -1685,10 +2169,9 @@ class helpdesk_update(models.Model):
         #if self.stage_id.name == 'Cotización' and str(self.env.user.id) == str(self.x_studio_tcnico.user_id.id) and self.estadoCotizacion == False:
         #if str(self.env.user.id) == str(self.x_studio_tcnico.user_id.id) and self.estadoCotizacion == False:
         if self.estadoCotizacion == False:
-            query = "update helpdesk_ticket set stage_id = 101 where id = " + str(self.x_studio_id_ticket) + ";"
-            
-            ss = self.env.cr.execute(query)
-            
+            #query = "update helpdesk_ticket set stage_id = 101 where id = " + str(self.x_studio_id_ticket) + ";"
+            #ss = self.env.cr.execute(query)
+            self.write({'stage_id': 101})
             #self.env['x_historial_helpdesk'].create({'x_id_ticket':self.x_studio_id_ticket ,'x_persona': self.env.user.name,'x_estado': self.stage_id.name})
             ultimaEvidenciaTec = []
             ultimoComentario = ''
@@ -1700,7 +2183,7 @@ class helpdesk_update(models.Model):
             comentarioGenerico = 'Cambio de estado al seleccionar botón Cotización. Se cambio al estado Cotización. Seleccion realizada por ' + str(self.env.user.name) +'.'
             estado = 'Cotización'
             self.creaDiagnosticoVistaLista(comentarioGenerico, estado)
-
+            self.datos_ticket_2()
             message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Cotización' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
             mess= {
                     'title': _('Estado de ticket actualizado!!!'),
@@ -1854,6 +2337,7 @@ class helpdesk_update(models.Model):
                                                                 'create_uid':  self.env.user.id,
                                                                 'creadoPorSistema': True
                                                             })
+            self.obten_ulimo_diagnostico_fecha_usuario()
             mensajeTitulo = 'Estado de ticket actualizado!!!'
             mensajeCuerpo = 'Se cambio el estado del ticket ' + str(self.x_studio_id_ticket) +'. \nEstado anterior: ' + estadoAntes + ' Estado actual:  Pendiente por autorizar solicitud' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página."
             #wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
@@ -2113,9 +2597,9 @@ class helpdesk_update(models.Model):
             pedido_de_venta = record.mapped('x_studio_field_nO7Xg')
             pedido_de_venta_id = record.mapped('x_studio_field_nO7Xg.id')
             pedido_de_venta_estado = record.mapped('x_studio_field_nO7Xg.state')
-            productos = record.mapped('x_studio_productos')
-            productos_ids = record.mapped('x_studio_productos.id')
-            #_logger.info('ticket_id: ' + str(ticket_id) + ' estado_inicial_de_ticket_name: ' + str(estado_inicial_de_ticket_name) + 'diagnosticos_ticket: ' + str(diagnosticos_ticket) + 'serie_id: ' + str(serie_id) + 'cliente_id: ' + str(cliente_id) + 'contacto_de_localidad_id: ' + str(contacto_de_localidad_id) + 'localidad_id: ' + str(localidad_id) + 'area_de_atencion_id: ' + str(area_de_atencion_id) + 'pedido_de_venta: ' + str(pedido_de_venta) + 'pedido_de_venta_id: ' + str(pedido_de_venta_id) + 'pedido_de_venta_estado: ' + str(pedido_de_venta_estado) + 'productos: ' + str(productos)  + 'productos_ids: ' + str(productos_ids) )
+            productos = record.mapped('accesorios')
+            productos_ids = productos.mapped('productos.id')
+            _logger.info('ticket_id: ' + str(ticket_id) + ' estado_inicial_de_ticket_name: ' + str(estado_inicial_de_ticket_name) + 'diagnosticos_ticket: ' + str(diagnosticos_ticket) + 'serie_id: ' + str(serie_id) + 'cliente_id: ' + str(cliente_id) + 'contacto_de_localidad_id: ' + str(contacto_de_localidad_id) + 'localidad_id: ' + str(localidad_id) + 'area_de_atencion_id: ' + str(area_de_atencion_id) + 'pedido_de_venta: ' + str(pedido_de_venta) + 'pedido_de_venta_id: ' + str(pedido_de_venta_id) + 'pedido_de_venta_estado: ' + str(pedido_de_venta_estado) + 'productos: ' + str(productos)  + 'productos_ids: ' + str(productos_ids) )
             if not pedido_de_venta:
                 if productos:
                     if pedido_de_venta_id and pedido_de_venta_estado[0] == 'sale':
@@ -2126,8 +2610,8 @@ class helpdesk_update(models.Model):
                         for refaccion in productos:
                             vals = {
                                 'order_id': pedido_de_venta_id[0],
-                                'product_id': refaccion.id,
-                                'product_uom_qty': refaccion.x_studio_cantidad_pedida,
+                                'product_id': refaccion.productos.id,
+                                'product_uom_qty': refaccion.cantidadPedida,
                                 'x_studio_field_9nQhR': serie_id[0]
                             }
                             self.env['sale.order.line'].create(vals)
@@ -2163,8 +2647,8 @@ class helpdesk_update(models.Model):
                         for refaccion in productos:
                             vals = {
                                 'order_id': nuevo_pedido_de_venta.id,
-                                'product_id': refaccion.id,
-                                'product_uom_qty': refaccion.x_studio_cantidad_pedida,
+                                'product_id': refaccion.productos.id,
+                                'product_uom_qty': refaccion.cantidadPedida,
                                 'x_studio_field_9nQhR': serie_id[0],
                                 'price_unit': 0
                             }
@@ -2261,6 +2745,7 @@ class helpdesk_update(models.Model):
                                                                     'mostrarComentario': True,
                                                                     'creadoPorSistema': True
                                                                 })
+                self.obten_ulimo_diagnostico_fecha_usuario()
 
                 message = ('Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Refacción Autorizada' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página.")
                 mess= {
@@ -3380,9 +3865,10 @@ class helpdesk_update(models.Model):
     
     
     
-    @api.onchange('stage_id')
-    def actualiza_datos_estado(self):
-        self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': self.stage_id.name, 'write_uid':  self.env.user.name})        
+    #@api.onchange('stage_id')
+    #def actualiza_datos_estado(self):
+    #    self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.x_studio_id_ticket, 'estadoTicket': self.stage_id.name, 'write_uid':  self.env.user.name})
+    #    objTicket.obten_ulimo_diagnostico_fecha_usuario()
     
     
     
@@ -3851,17 +4337,128 @@ class helpdesk_update(models.Model):
     
     
 
-    ultimoDiagnosticoFecha = fields.Datetime(string = 'Ultimo diagnostico fecha')
+
+
+    serie_y_modelo = fields.Text(string = 'Serie(s)')
+    @api.onchange('x_studio_equipo_por_nmero_de_serie, x_studio_equipo_por_nmero_de_serie_1')
+    def actualiza_serie_texto(self):
+        dominio_busqueda_ticket = [('id', '=', self.id)]
+        obj_ticket = self.env['helpdesk.ticket'].search(dominio_busqueda_ticket)
+        series_toner = obj_ticket.mapped('x_studio_equipo_por_nmero_de_serie_1.serie.name')
+        serie_mesa = obj_ticket.mapped('x_studio_equipo_por_nmero_de_serie.name')
+
+        tipo_de_vale = obj_ticket.mapped('x_studio_tipo_de_vale')
+
+        series_modelo_toner = []
+        series_modelo_toner_mapped = obj_ticket.mapped('x_studio_equipo_por_nmero_de_serie_1.serie')
+        for modelo in series_modelo_toner_mapped:
+            series_modelo_toner.append(modelo.product_id.name)
+        serie_modelo_mesa = []
+        serie_modelo_mesa_mapped = obj_ticket.mapped('x_studio_equipo_por_nmero_de_serie')
+        for modelo in serie_modelo_mesa_mapped:
+            serie_modelo_mesa.append(modelo.product_id.name)
+
+        _logger.info('tipo_de_vale' + str(tipo_de_vale) +'series_toner: ' + str(series_toner) + ' serie_mesa: ' + str(serie_mesa))
+        _logger.info('series_modelo_toner:  ' + str(series_modelo_toner) + ' serie_modelo_mesa: ' + str(serie_modelo_mesa))
+
+        serie_modelo = ''
+        if tipo_de_vale and tipo_de_vale[0] == 'Requerimiento':
+            if series_toner:
+                i = 0
+                for serie in series_toner:
+                    serie_modelo = serie_modelo + '[' + str(serie) + '] ' + str(series_modelo_toner[i]) + ', '
+                    i = i + 1
+            else:
+                serie_modelo = 'Sin serie'
+        elif tipo_de_vale and tipo_de_vale[0] != 'Requerimiento':
+            if serie_mesa:
+                i = 0
+                for serie in serie_mesa:
+                    serie_modelo = serie_modelo + '[' + str(serie) + '] ' + str(serie_modelo_mesa[i]) + ', '
+                    i = i + 1
+            else:
+                serie_modelo = 'Sin serie'
+        
+        texto = """
+                    <div class='row' >
+                        <div class='col-sm-12'>
+                            <p>""" + serie_modelo + """</p>
+                        </div>
+                    </div>
+                """
+        obj_ticket.write({'serie_y_modelo': texto})
+
+
+    def actualiza_serie_texto_2(self):
+        dominio_busqueda_ticket = [('id', '=', self.id)]
+        obj_ticket = self.env['helpdesk.ticket'].search(dominio_busqueda_ticket)
+        series_toner = obj_ticket.mapped('x_studio_equipo_por_nmero_de_serie_1.serie.name')
+        serie_mesa = obj_ticket.mapped('x_studio_equipo_por_nmero_de_serie.name')
+
+        tipo_de_vale = obj_ticket.mapped('x_studio_tipo_de_vale')
+
+        series_modelo_toner = []
+        series_modelo_toner_mapped = obj_ticket.mapped('x_studio_equipo_por_nmero_de_serie_1.serie')
+        for modelo in series_modelo_toner_mapped:
+            series_modelo_toner.append(modelo.product_id.name)
+        serie_modelo_mesa = []
+        serie_modelo_mesa_mapped = obj_ticket.mapped('x_studio_equipo_por_nmero_de_serie')
+        for modelo in serie_modelo_mesa_mapped:
+            serie_modelo_mesa.append(modelo.product_id.name)
+
+        _logger.info('tipo_de_vale' + str(tipo_de_vale) +'series_toner: ' + str(series_toner) + ' serie_mesa: ' + str(serie_mesa))
+        _logger.info('series_modelo_toner:  ' + str(series_modelo_toner) + ' serie_modelo_mesa: ' + str(serie_modelo_mesa))
+
+        serie_modelo = ''
+        if tipo_de_vale and tipo_de_vale[0] == 'Requerimiento':
+            if series_toner:
+                i = 0
+                for serie in series_toner:
+                    serie_modelo = serie_modelo + '[' + str(serie) + '] ' + str(series_modelo_toner[i]) + ', '
+                    i = i + 1
+            else:
+                serie_modelo = 'Sin serie'
+        elif tipo_de_vale and tipo_de_vale[0] != 'Requerimiento':
+            if serie_mesa:
+                i = 0
+                for serie in serie_mesa:
+                    serie_modelo = serie_modelo + '[' + str(serie) + '] ' + str(serie_modelo_mesa[i]) + ', '
+                    i = i + 1
+            else:
+                serie_modelo = 'Sin serie'
+        
+        texto = """
+                    <div class='row' >
+                        <div class='col-sm-12'>
+                            <p>""" + serie_modelo + """</p>
+                        </div>
+                    </div>
+                """
+        obj_ticket.write({'serie_y_modelo': texto})
+
+        if obj_ticket.serie_y_modelo:
+            return True
+        else:
+            return False
+
+
+    ultimoDiagnosticoFecha = fields.Datetime(string = 'Fecha último cambio')
+    ultimoDiagnosticoUsuario = fields.Text(string = 'Ultima escritura')
     @api.onchange('diagnosticos')
-    def obten_ulimo_diagnostico_fecha(self):
+    def obten_ulimo_diagnostico_fecha_usuario(self):
         if self.diagnosticos:
             self.write({'ultimoDiagnosticoFecha': self.diagnosticos[-1].create_date})
-
-    ultimoDiagnosticoUsuario = fields.Text(string = 'Ultimo diagnostico fecha')
-    @api.onchange('diagnosticos')
-    def obten_ulimo_diagnostico_fecha(self):
-        if self.diagnosticos:
             self.write({'ultimoDiagnosticoUsuario': self.diagnosticos[-1].create_uid.name})
+
+    
+    def obten_ulimo_diagnostico_fecha_usuario_2(self):
+        if self.diagnosticos:
+            self.write({'ultimoDiagnosticoFecha': self.diagnosticos[-1].create_date})
+            self.write({'ultimoDiagnosticoUsuario': self.diagnosticos[-1].create_uid.name})
+            return self.id
+        else:
+            return -1
+            
 
     #@api.model
     #@api.multi
@@ -3999,9 +4596,10 @@ class helpdesk_update(models.Model):
                 self.correoLocalidadContacto = localidadTemp.email
 
                 
-                idContact = self.env['res.partner'].search([['parent_id', '=', localidadTemp.id],['x_studio_ultimo_contacto', '=', True]], order='create_date desc', limit=1).id
-                self.localidadContacto = idContact
-                _logger.info("Entre por toner idContact: " + str(idContact))
+                if not self.localidadContacto:
+                    idContact = self.env['res.partner'].search([['parent_id', '=', localidadTemp.id],['x_studio_ultimo_contacto', '=', True]], order='create_date desc', limit=1).id
+                    self.localidadContacto = idContact
+                    _logger.info("Entre por toner idContact: " + str(idContact))
                 #if idContact:
                 #    query = "update helpdesk_ticket set \"localidadContacto\" = " + str(idContact) + ", \"x_studio_field_6furK\" = '" + str(self.x_studio_empresas_relacionadas.x_studio_field_SqU5B) + "' where id = " + str(self.x_studio_id_ticket) + ";"
                 #    self.env.cr.execute(query)
@@ -4257,7 +4855,8 @@ class helpdesk_update(models.Model):
         vals = {
             'x_todas_las_zonas': str(lista_zonas)
         }
-        self.write(vals)
+        if lista_zonas:
+            self.write(vals)
 
 
     
@@ -4335,6 +4934,10 @@ class helpdesk_update(models.Model):
     diagnosticos = fields.One2many('helpdesk.diagnostico', 'ticketRelacion', string = 'Diagnostico', track_visibility = 'onchange', copy=True)
 
     validacionesRefaccion = fields.One2many('helpdesk.validacion.so', 'ticketRelacion', string = 'Validaciones de refacciones', store = True)
+
+
+    accesorios = fields.One2many('helpdesk.refacciones', 'ticketRela', string = 'Accesorios')
+
 
     """
     en produccion
@@ -4564,19 +5167,19 @@ class helpdesk_update(models.Model):
                                 """
             wiz.serie = str(self.x_studio_equipo_por_nmero_de_serie[0].name)
             
-        if self.x_studio_productos:
+        if self.accesorios:
             #wiz.refacciones = [(6, 0, self.x_studio_productos.ids)]
             refaccionesDatos = ''
-            for refaccion in self.x_studio_productos:
+            for refaccion in self.accesorios:
                 refaccionesDatos = refaccionesDatos + """
                                         <tr>
-                                            <td>""" + str(refaccion.product_variant_id.display_name) + """</td>
-                                            <td>""" + str(refaccion.categ_id.name) + """</td>
-                                            <td>""" + str(refaccion.default_code) + """</td>
-                                            <td>""" + str(refaccion.name) + """</td>
-                                            <td>""" + str(refaccion.qty_available) + """</td>
-                                            <td>""" + str(refaccion.virtual_available) + """</td>
-                                            <td>""" + str(refaccion.x_studio_cantidad_pedida) + """</td>
+                                            <td>""" + str(refaccion.productos.display_name) + """</td>
+                                            <td>""" + str(refaccion.productos.categ_id.name) + """</td>
+                                            <td>""" + str(refaccion.productos.default_code) + """</td>
+                                            <td>""" + str(refaccion.productos.name) + """</td>
+                                            <td>""" + str(refaccion.productos.qty_available) + """</td>
+                                            <td>""" + str(refaccion.productos.virtual_available) + """</td>
+                                            <td>""" + str(refaccion.cantidadPedida) + """</td>
                                         </tr>
                                     """
 
@@ -4716,16 +5319,12 @@ class helpdesk_update(models.Model):
         else:
             wiz = self.env['helpdesk.agregar.productos'].create({'ticket_id':self.id})
             lista = [[5, 0, 0]]
-            if self.x_studio_productos:
-                for refaccion in self.x_studio_productos:
+            if self.accesorios:
+                for refaccion in self.accesorios:
                     lista.append( [0, 0, {
-                                            'productos': refaccion.product_variant_id.id,
-                                            'cantidadPedida': refaccion.x_studio_cantidad_pedida,
-                                            'wizRela': wiz.id,
-                                            'referenciaInterna': refaccion.default_code,
-                                            'nombreProducto': refaccion.name,
-                                            'descripcion': refaccion.description,
-                                            'cantidadAMano': refaccion.qty_available
+                                            'productos': refaccion.productos.product_variant_id.id,
+                                            'cantidadPedida': refaccion.cantidadPedida,
+                                            'wizRela': wiz.id
                                 }])
                 _logger.info('3312: lista: ' + str(lista) )
                 wiz.write({'accesorios': lista})
@@ -4754,11 +5353,29 @@ class helpdesk_update(models.Model):
 
     #@api.multi
     def helpdesk_confirmar_validar_refacciones_wizard(self):
+        _logger.info('***** Inicio de helpdesk_confirmar_validar_refacciones_wizard: ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ) + ' *****')
         wiz = self.env['helpdesk.confirmar.validar.refacciones'].create({'ticket_id':self.id})
+        wiz_id = wiz.mapped('id')
         #wiz.productos = [(6, 0, self.x_studio_productos.ids)]
-        lista = [[5, 0, 0]]
-        if self.x_studio_productos:
-            for refaccion in self.x_studio_productos:
+        productos = self.mapped('accesorios')
+        pedido_de_venta_id = self.mapped('x_studio_field_nO7Xg.id')
+        pedido_de_venta_estado = self.mapped('x_studio_field_nO7Xg.state')
+        pedido_de_venta_lineas_pedido = self.mapped('x_studio_field_nO7Xg.order_line')
+        productos_en_liean_de_pedido = []
+        for linea in pedido_de_venta_lineas_pedido:
+            productos_en_liean_de_pedido.append(linea.product_id.id)
+
+        #pedido_de_venta_lineas_pedido_default_code = self.mapped('x_studio_field_nO7Xg.order_line.product_id.default_code')
+        _logger.info('productos_en_liean_de_pedido: ' + str(productos_en_liean_de_pedido))
+        estado_ticket_name = self.mapped('stage_id.name')
+        diagnosticos = self.mapped('diagnosticos')
+
+        equipos = self.mapped('x_studio_equipo_por_nmero_de_serie')
+
+        vals_wiz = {}
+        """
+        if productos:
+            for refaccion in productos:
                 lista.append( [0, 0, {
                                         'productos': refaccion.product_variant_id.id,
                                         'cantidadPedida': refaccion.x_studio_cantidad_pedida,
@@ -4771,31 +5388,34 @@ class helpdesk_update(models.Model):
             _logger.info('3312: lista: ' + str(lista) )
             wiz.write({'accesorios': lista})
         """
-        EN DESAROLLO
-        listaProductos = [(5, 0, 0)]
-        _logger.info('3312: self.x_studio_tickett: ' + str(self.x_studio_id_ticket))
-        for producto in self.x_studio_productos:
-            listaProductos.append((0, 0,{
-                                            'productos': producto.product_variant_id.id,
-                                            'cantidadPedida': producto.x_studio_cantidad_pedida,
-                                            'ticketRelacion': int(self.x_studio_id_ticket)
-                                        }))
-        wiz.productosDos = listaProductos
-        """
-        wiz.contadoresAnterioresText = self.contadores_anteriores
-        if self.x_studio_productos:
+        vals_wiz['contadoresAnterioresText'] = self.contadores_anteriores
+        if productos:
             refaccionesEnCero = ''
-            for refaccion in self.x_studio_productos:
-                if not refaccion.x_studio_cantidad_pedida:
+            lista = [[5, 0, 0]]
+            for refaccion in productos:
+                cantidad_pedidad = refaccion.mapped('cantidadPedida')
+                _logger.info('refaccion.productos.id: ' + str(refaccion.productos.id))
+                if not refaccion.productos.id in productos_en_liean_de_pedido: #and not refaccion.default_code in pedido_de_venta_lineas_pedido_default_code:
+                    lista.append( [0, 0, {
+                                            'productos': refaccion.productos.id,
+                                            'cantidadPedida': cantidad_pedidad[0],
+                                            'wizRelaVal': wiz_id[0]
+                                }])
+                if not cantidad_pedidad[0]:
                     refaccionesEnCero = refaccionesEnCero + """
                                                                 <tr>
-                                                                    <td>""" + str(refaccion.categ_id.name) + """</td>
-                                                                    <td>""" + str(refaccion.product_variant_id.display_name) + """</td>
-                                                                    <td>""" + str(refaccion.x_studio_cantidad_pedida) + """</td>
+                                                                    <td>""" + str(refaccion.productos.categ_id.name) + """</td>
+                                                                    <td>""" + str(refaccion.productos.product_variant_id.display_name) + """</td>
+                                                                    <td>""" + str(cantidad_pedidad) + """</td>
                                                                 </tr>
                                                             """
+            _logger.info('3312: lista: ' + str(lista) )
+            
+            #wiz.write({'accesorios': lista})
+            vals_wiz['accesorios'] = lista
+            mensajesAlerta = ''
             if refaccionesEnCero != '':
-                wiz.mensajesAlerta = """
+                mensajesAlerta = """
                                         <div class='alert alert-info' role='alert'>
                                             <h4 class="alert-heading">Validación de refaciones y/o accesorios en cero !!!</h4>
 
@@ -4818,19 +5438,126 @@ class helpdesk_update(models.Model):
                                         </div>      
                                     """
             else:
-                wiz.mensajesAlerta = ''
+                mensajesAlerta = ''
+            vals_wiz['mensajesAlerta'] = mensajesAlerta
+
+        
+        if pedido_de_venta_id:
+            vals_wiz['solicitud'] = pedido_de_venta_id[0]
+            if pedido_de_venta_estado[0] == 'sale':
+                vals_wiz['estadoSolicitud'] = 'Solicitud validada'
+            else:
+                vals_wiz['estadoSolicitud'] = 'Solicitud no validada'
+
+        else:
+            vals_wiz['estadoSolicitud'] = 'No hay solicitud'
+
+        vals_wiz['estado'] = estado_ticket_name
+
+        lista_diagnosticos = [[5, 0, 0]]
+        for diagnostico in diagnosticos:
+            #evidencias = diagnostico.mapped('evidencia.ids')
+            """
+            vals_diagnostico = {
+                #'ticketRelacion': diagnostico.ticketRelacion.id,
+                #'ticket_techra': diagnostico.ticket_techra.id,
+                'create_date': diagnostico.create_date,
+                'ticket_techra_text': diagnostico.ticket_techra_text,
+                'estadoTicket': diagnostico.estadoTicket,
+                'comentario': diagnostico.comentario,
+                'evidencia': [(6, 0, diagnostico.evidencia.ids)],
+                'mostrarComentario': diagnostico.mostrarComentario,
+                'creadoPorSistema': diagnostico.creadoPorSistema,
+                'fechaDiagnosticoTechra': diagnostico.fechaDiagnosticoTechra,
+                'tipoSolucionTechra': diagnostico.tipoSolucionTechra,
+                'tecnicoTechra': diagnostico.tecnicoTechra,
+                'creado_por_techra': diagnostico.creado_por_techra,
+                'href_diagnostico_ticket_techra': diagnostico.href_diagnostico_ticket_techra,
+                'fecha_diagnostico_techra_text': diagnostico.fecha_diagnostico_techra_text
+            }
+            
+            lista_diagnosticos.append([0, 0, vals_diagnostico])
+            """
+            lista_diagnosticos.append([4, diagnostico.id])
+
+        vals_wiz['diagnostico_id'] = lista_diagnosticos
+
+
+
+
+        if equipos:
+            #self.serie = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].name
+            vals_wiz['serie'] = """
+                            <table class='table table-bordered table-dark text-white'>
+                                <thead >
+                                    <tr>
+                                        <th scope='col'>Número de serie</th>
+                                        <th scope='col'>Modelo</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>""" + str(equipos[0].name) + """</td>
+                                        <td>""" + str(equipos[0].x_studio_modelo_equipo) + """</td>
+                                        
+                                    </tr>
+                                </tbody>
+                            </table>
+                        """
+        #if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+            
+            componentes = self.env['x_studio_historico_de_componentes'].search([ '&', '|', ('x_ultimaCargaRefacciones', '=', True), ('x_studio_modelo', 'ilike', 'Refacción y/o accesorio:'), ('x_studio_field_MH4DO', '=', equipos[0].id) ])
+            #_logger.info('len:    ' + str(componentes))
+           # query = """ selec id from x_studio_historico_de_componentes where "x_studio_modelo" = 'f' and  "x_ultimaCargaRefacciones" = 't' or """ 
+            #_logger.info('**** componentes: ' + str(componentes))
+            #self.historicoDeComponentes = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_histrico_de_componentes.ids
+            componentes = componentes.filtered(lambda componente:  componente.x_studio_field_MH4DO.name == str(equipos[0].name) and (componente.x_ultimaCargaRefacciones == True or 'Refacción y/o accesorio:' in componente.x_studio_modelo) )
+            #lista_componentes = [(5, 0, 0)]
+            lista_componentes = []
+            if componentes:
+                for componente in componentes:
+                    """
+                    vals_componente = {
+                        'create_date': componente.create_date,
+                        'write_uid': componente.write_uid,
+                        'write_date': componente.write_date,
+                        'create_uid': componente.create_uid,
+                        'x_studio_creado_por_script': componente.x_studio_creado_por_script,
+                        'x_ultimaCargaRefacciones': componente.x_ultimaCargaRefacciones,
+                        'x_studio_field_MH4DO': componente.x_studio_field_MH4DO.id,
+                        'x_tipo': componente.x_tipo,
+                        'x_studio_modelo': componente.x_studio_modelo,
+                        'x_studio_cantidad': componente.x_studio_cantidad,
+                        'x_studio_fecha_de_entrega': componente.x_studio_fecha_de_entrega,
+                        'x_studio_ticket': componente.x_studio_ticket,
+                        'x_studio_contador_bn': componente.x_studio_contador_bn,
+                        'x_studio_color': componente.x_studio_color
+                    }
+                    """
+
+                    lista_componentes.append([4, componente.id])
+
+                vals_wiz['historicoDeComponentes'] = lista_componentes
+
+
+
+        #_logger.info(vals_wiz)
+        wiz.write(vals_wiz)
+
+        _logger.info('***** Fin de helpdesk_confirmar_validar_refacciones_wizard: ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ) + ' *****')
 
         view = self.env.ref('helpdesk_update.view_helpdesk_crear_y_validar_refacciones')
+        view_id = view.mapped('id')
         return {
             'name': _('Crear y validar solicitud de refacciones'),
             'type': 'ir.actions.act_window',
             'view_type': 'form',
             'view_mode': 'form',
             'res_model': 'helpdesk.confirmar.validar.refacciones',
-            'views': [(view.id, 'form')],
-            'view_id': view.id,
+            'views': [(view_id[0], 'form')],
+            'view_id': view_id[0],
             'target': 'new',
-            'res_id': wiz.id,
+            'res_id': wiz_id[0],
             #'domain': [["series", "=", ids]],
             #'context': self.env.context,
             'context': self.env.context,
@@ -4889,6 +5616,7 @@ class helpdesk_update(models.Model):
                 res['domain']={'localidadContacto':[('id','in',final)]}
         return res
         
+    
 
 
     
@@ -4935,6 +5663,10 @@ class helpdesk_refacciones(models.Model):
     wizRelaVal = fields.Many2one(
                                 'helpdesk.confirmar.validar.refacciones'
     )
+    ticketRela = fields.Many2one(
+                                'helpdesk.ticket'
+    )
+
 
     @api.depends('productos')
     def agrgarInfoProducto(self):
@@ -5028,8 +5760,13 @@ class helpdesk_agregar_productos(models.Model):
         lista = [[5,0,0]]
         listaDeCantidades = []
         for refaccion in self.accesorios:
-            lista.append( [4, refaccion.productos.id] )
-            listaDeCantidades.append(refaccion.cantidadPedida)
+            if refaccion.productos.id:
+                vals = {
+                    'productos': refaccion.productos.id,
+                    'cantidadPedida': refaccion.cantidadPedida
+                }
+                lista.append( [0, 0, vals] )
+                listaDeCantidades.append(refaccion.cantidadPedida)
             """
             lista.append( [0, 0, {
                                     'product_tmpl_id': refaccion.productos.product_tmpl_id.id,
@@ -5044,16 +5781,16 @@ class helpdesk_agregar_productos(models.Model):
                         }])
             """
         #_logger.info('3312: lista2: ' + str(lista))
-        self.ticket_id.write({'x_studio_productos': lista})
+        self.ticket_id.write({'accesorios': lista})
 
         lista = []
         productos_en_wizard = self.mapped('accesorios')
         productos_en_wizard_ids = self.mapped('accesorios.productos.id')
         #_logger.info('productos_en_wizard: ' + str(productos_en_wizard))
         #_logger.info('productos_en_wizard_ids: ' + str(productos_en_wizard_ids))
-        prodcutos_en_ticket_ids = self.ticket_id.mapped('x_studio_productos.id')
+        prodcutos_en_ticket_ids = self.ticket_id.mapped('accesorios.productos.id')
         #_logger.info('prodcutos_en_ticket_ids: ' + str(prodcutos_en_ticket_ids))
-        prodcutos_en_ticket = self.ticket_id.x_studio_productos #self.ticket_id.mapped('x_studio_productos')
+        prodcutos_en_ticket = self.ticket_id.accesorios #self.ticket_id.mapped('x_studio_productos')
         #_logger.info('prodcutos_en_ticket: ' + str(prodcutos_en_ticket))
         indice = 0
         for refaccion in self.accesorios:
@@ -5062,17 +5799,18 @@ class helpdesk_agregar_productos(models.Model):
             for producto_en_ticket in prodcutos_en_ticket:
                 if producto_en_wizard == producto_en_ticket.id:
                     vals = {
-                            'x_studio_cantidad_pedida': refaccion.cantidadPedida
+                            'cantidadPedida': refaccion.cantidadPedida
                     }
                     lista.append( [1, producto_en_wizard, vals] )
                     break
             indice = indice + 1
         #_logger.info('3312: lista actualiza cantidades: ' + str(lista))
-        self.ticket_id.write({'x_studio_productos': lista})
+        self.ticket_id.write({'accesorios': lista})
         #indice = 0
         #for refaccion in self.ticket_id.x_studio_productos:
         #    refaccion.x_studio_cantidad_pedida = listaDeCantidades[indice]
         #    indice = indice + 1
+        self.ticket_id.datos_ticket_2()
 
         mensajeTitulo = 'Productos agregados!!!'
         mensajeCuerpo = 'Se agregaron los productos y sus cantidades.'
@@ -5789,6 +6527,8 @@ class helpdes_diagnostico(models.Model):
     _description = "Historial de diagnostico"
     ticketRelacion = fields.Many2one('helpdesk.ticket', string = 'Ticket realcionado a diagnostico',copied=True)
 
+    ticketRelacion_refacciones = fields.Many2one('helpdesk.confirmar.validar.refacciones', string = 'Ticket realcionado a diagnostico',copied=True)
+
     ticket_techra = fields.Many2one('helpdesk.ticket.techra', string = 'Ticket techra relacionado al diagnostico')
     ticket_techra_text = fields.Text(string = 'Ticket techra texto')
 
@@ -6159,11 +6899,33 @@ class helpdesk_ticket_techra(models.Model):
                     'es_repetido': True
                 }
                 serie_id.write(vals)
-                return True
-        return False
+                return serie_id.id
+        return -1
 
 
     def crea_relacion_dca(self):
+        regreso = {}
+        dcas_existentes = []
+
+        dominio_busqueda_dca = [('x_studio_tickett', '=', self.numTicketDeTechra), ('ultimaCargaContadoresMesa', '=', True) ]
+        dcas_existentes = self.env['dcas.dcas'].search(dominio_busqueda_dca)
+
+        if not dcas_existentes:
+            dominio_busqueda_dca = [('x_studio_tickett', '=', self.numTicketDeTechra)]
+            dcas_existentes = self.env['dcas.dcas'].search(dominio_busqueda_dca)
+
+        if dcas_existentes:
+            for dca in dcas_existentes:
+                if not dca.ticket_techra:
+                    vals = {
+                        'ticket_techra': self.id,
+                        'ticket_techra_texto': self.numTicketDeTechra
+                    }
+                    dca.write(vals)
+                    regreso['mensaje'] = 'dca existe'
+                    regreso['dca_id'] = dca.id
+            return regreso
+
         series_text = self.numeroDeSerieTechra.replace("[", "").replace("]", "").replace(" ", "")
         lista_series = []
         if "," in series_text:
@@ -6213,6 +6975,9 @@ class helpdesk_ticket_techra(models.Model):
                 vals['x_studio_capturar'] = False
                 vals['x_studio_check_temporal'] = False
             dca = self.env['dcas.dcas'].create(vals)
+            regreso['mensaje'] = 'dca creado'
+            regreso['dca_id'] = dca.id
+        return regreso
 
 
 
@@ -6279,6 +7044,13 @@ class helpdesk_lines(models.Model):
 
 
 
+#class helpdesk_historico_componentes(models.Model):
+    #_name = 'helpdesk.historico.componentes'
+#    _inherit = 'x.studio.historico.de.componentes'
+
+
+#    ticket_relacion_refacciones = fields.Many2one('helpdesk.confirmar.validar.refacciones', string = 'Ticket realcionado a refaccion')
+
 
 
 class helpdesk_confirmar_validar_refacciones(models.Model):
@@ -6290,10 +7062,10 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
                                     string = 'Ticket'
                                 )
 
-    productos = fields.Many2many(
-                                    'product.product', 
-                                    string = "Productos"
-                                )
+    #productos = fields.Many2many(
+    #                                'product.product', 
+    #                                string = "Productos"
+    #                            )
     accesorios = fields.One2many('helpdesk.refacciones', 'wizRelaVal', string = 'Accesorios')
 
     """
@@ -6314,13 +7086,13 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
                             )
     diagnostico_id = fields.One2many(
                                         'helpdesk.diagnostico',
-                                        'ticketRelacion',
+                                        'ticketRelacion_refacciones',
                                         string = 'Diagnostico',
-                                        compute = '_compute_diagnosticos'
+                                        #compute = '_compute_diagnosticos'
                                     )
     estado = fields.Char(
                             'Estado previo a cerrar el ticket',
-                            compute = "_compute_estadoTicket"
+                            #compute = "_compute_estadoTicket"
                         )
     comentario = fields.Text(
                                 string = 'Comentario'
@@ -6350,11 +7122,11 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
                             )
     """
     historicoDeComponentes = fields.One2many(
-                                                'x_studio_historico_de_componentes', 
-                                                'x_studio_field_MH4DO', 
+                                                'x_studio_historico_de_componentes',
+                                                'x_relacion_refacciones', 
                                                 string = 'Historico de Componentes',
                                                 #domain = "[ '|', ('x_ultimaCargaRefacciones', '=', True), ('x_studio_modelo', 'like', 'Refacción y/o accesorio:') ]",
-                                                compute='_compute_historico_de_componentes'
+                                                #compute='_compute_historico_de_componentes'
                                             )
     """
     movimientos = fields.One2many( 
@@ -6366,7 +7138,7 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
     """
     serie = fields.Text(
                             string = "Serie", 
-                            compute = '_compute_serie_nombre'
+                            #compute = '_compute_serie_nombre'
                         )
 
     contadoresAnterioresText = fields.Text(
@@ -6375,12 +7147,12 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
                                             )
     estadoSolicitud = fields.Text(
                                     string = 'Estado de la solicitud',
-                                    compute = '_compute_estado_solicitud'
+                                    #compute = '_compute_estado_solicitud'
                                 )
     solicitud = fields.Many2one(
                                     'sale.order',
                                     string = 'Solicitud',
-                                    compute = '_compute_solicitud'
+                                    #compute = '_compute_solicitud'
                                 )
     mensajesAlerta = fields.Text(
                                     string = 'Mensjae de alerta'
@@ -6424,6 +7196,7 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
             else:
                 self.mensajesAlerta = ''
 
+    """
     def _compute_solicitud(self):
         if self.ticket_id.x_studio_field_nO7Xg:
             self.solicitud = self.ticket_id.x_studio_field_nO7Xg
@@ -6436,37 +7209,18 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
                 self.estadoSolicitud = 'Solicitud no validada'
         else:
             self.estadoSolicitud = 'No hay solicitud'
-
+    
 
     def _compute_estadoTicket(self):
         self.estado = self.ticket_id.stage_id.name
-
+    
     def _compute_diagnosticos(self):
         self.diagnostico_id = self.ticket_id.diagnosticos.ids
+    
 
-    def _compute_serie_nombre(self):
-        if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
-            #self.serie = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].name
-            self.serie = """
-
-                            <table class='table table-bordered table-dark text-white'>
-                                <thead >
-                                    <tr>
-                                        <th scope='col'>Número de serie</th>
-                                        <th scope='col'>Modelo</th>
-                                        <th scope='col'>Descripción</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>""" + str(self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].name) + """</td>
-                                        <td>""" + str(self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_modelo_equipo) + """</td>
-                                        <td>""" + str(self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].product_id.description) + """</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        """
-
+    
+    
+    """
 
     """
     def _compute_historico_tickets(self):
@@ -6480,7 +7234,8 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
     def _compute_toner(self):
         if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
             self.toner = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_toner_1.ids
-    """
+    
+
     def _compute_historico_de_componentes(self):
         if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
             componentes = self.env['x_studio_historico_de_componentes'].search([('x_studio_modelo', '!=', False)])
@@ -6488,6 +7243,8 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
             #self.historicoDeComponentes = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_histrico_de_componentes.ids
             componentes = componentes.filtered(lambda componente:  componente.x_studio_field_MH4DO.name == str(self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].name) and (componente.x_ultimaCargaRefacciones == True or 'Refacción y/o accesorio:' in componente.x_studio_modelo) )
             self.historicoDeComponentes = componentes.ids
+    """
+
     """
     def _compute_movimientos(self):
         if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
@@ -6577,38 +7334,45 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
         #    self.ticket_id.x_studio_productos = [(6, 0, self.accesorios.ids)]
 
 
-        lista = [[5,0,0]]
+        #lista = [[5,0,0]]
+        lista = []
         listaDeCantidades = []
-        for refaccion in self.accesorios:
-            if refaccion.productos.id:
-                lista.append( [4, refaccion.productos.id] )
-                listaDeCantidades.append(refaccion.cantidadPedida)
-        self.ticket_id.write({'x_studio_productos': lista})
 
+        refacciones_en_ticket = self.ticket_id.mapped('accesorios.productos.id')
+
+        for refaccion in self.accesorios:
+            #nueva_refaccion = self.ticket_id.accesorios.filtered(lambda x: refaccion.productos.id != x.productos.id )
+            #_logger.info('nueva_refaccion: ' + str(nueva_refaccion))
+            if not refaccion.productos.id in refacciones_en_ticket:
+            #if refaccion.productos.id:
+                vals = {
+                    'productos': refaccion.productos.id,
+                    'cantidadPedida': refaccion.cantidadPedida
+                }
+                lista.append( [0, 0, vals] )
+                listaDeCantidades.append(refaccion.cantidadPedida)
+        self.ticket_id.write({'accesorios': lista})
+
+        """
         lista = []
         productos_en_wizard = self.mapped('accesorios')
         productos_en_wizard_ids = self.mapped('accesorios.productos.id')
-        #_logger.info('productos_en_wizard: ' + str(productos_en_wizard))
-        #_logger.info('productos_en_wizard_ids: ' + str(productos_en_wizard_ids))
-        prodcutos_en_ticket_ids = self.ticket_id.mapped('x_studio_productos.id')
-        #_logger.info('prodcutos_en_ticket_ids: ' + str(prodcutos_en_ticket_ids))
-        prodcutos_en_ticket = self.ticket_id.x_studio_productos #self.ticket_id.mapped('x_studio_productos')
-        #_logger.info('prodcutos_en_ticket: ' + str(prodcutos_en_ticket))
+        prodcutos_en_ticket_ids = self.ticket_id.mapped('accesorios.id')
+        prodcutos_en_ticket = self.ticket_id.accesorios #self.ticket_id.mapped('x_studio_productos')
         indice = 0
         for refaccion in self.accesorios:
             producto_en_wizard = refaccion.productos.id
             #producto_en_ticket = prodcutos_en_ticket[indice]
             for producto_en_ticket in prodcutos_en_ticket:
-                if producto_en_wizard == producto_en_ticket.id:
+                if producto_en_wizard == producto_en_ticket.productos.id:
                     vals = {
-                            'x_studio_cantidad_pedida': refaccion.cantidadPedida
+                            'cantidadPedida': refaccion.cantidadPedida
                     }
                     lista.append( [1, producto_en_wizard, vals] )
                     break
             indice = indice + 1
-        #_logger.info('3312: lista actualiza cantidades: ' + str(lista))
-        self.ticket_id.write({'x_studio_productos': lista})
-
+        self.ticket_id.write({'accesorios': lista})
+        """
 
 
         """
@@ -6633,58 +7397,87 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
 
         if procedeAPedirse:
         """ 
-        if self.ticket_id.x_studio_field_nO7Xg:# and (self.ticket_id.stage_id.id != 3 or self.ticket_id.stage_id.id != 18 or self.ticket_id.stage_id.id != 4): #and len(self.ticket_id.x_studio_productos) > len(self.ticket_id.x_studio_field_nO7Xg.order_line):
+
+        mensajeCuerpo = """ """
+
+        sale_order = self.mapped('ticket_id.x_studio_field_nO7Xg')
+
+        if sale_order:
             _logger.info('3312: inicio actualización refacciones sobre la misma so(): ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
+            mensajeCantidadesEditadas = '\nSe editaron las cantidades de las siguientes refacciones y/o accesorios: '
+            mensajeRefaccionesNuevas = '\nSe añadieron las siguientes refacciones y/o accesorios: '
+
+            ticket_id_wizard = self.mapped('ticket_id.id')
+            serie_en_ticket = self.mapped('ticket_id.x_studio_equipo_por_nmero_de_serie')
+            refacciones_en_wizard = self.mapped('accesorios')
+            refacciones_en_solicitud = self.mapped('ticket_id.x_studio_field_nO7Xg.order_line')
+            seActualizoUnaCantidad = False
+            se_agregaron_refacciones = False
+
+            listaIdValidadas = []
+            filasRefacciones = """ """
+
             refaccionesActualizadasCantidad = []
             refaccionesNuevas = []
-            idsRefaccionesSolicitud = []
-            seActualizoUnaCantidad = False
-            ruta = -1
-            indiceRefaccionSo = 0
-            mensajeCantidadesEditadas = '\nSe editaron las cantidades de las siguientes refacciones y/o accesorios: '
-            for refaccion in self.ticket_id.x_studio_field_nO7Xg.order_line:
-                if int(refaccion.product_uom_qty) != int(self.ticket_id.x_studio_productos[indiceRefaccionSo].x_studio_cantidad_pedida) and int(self.ticket_id.x_studio_productos[indiceRefaccionSo].x_studio_cantidad_pedida) != 0:
-                    refaccion.product_uom_qty = int(self.ticket_id.x_studio_productos[indiceRefaccionSo].x_studio_cantidad_pedida)
-                    mensajeCantidadesEditadas = mensajeCantidadesEditadas + '\nRefacción y/o accesorio: ' + str(self.ticket_id.x_studio_productos[indiceRefaccionSo].product_variant_id.display_name) + ', cantidad: ' + str(self.ticket_id.x_studio_productos[indiceRefaccionSo].x_studio_cantidad_pedida)
-                    refaccionesActualizadasCantidad.append(self.ticket_id.x_studio_productos[indiceRefaccionSo])
-                    seActualizoUnaCantidad = True
-                if refaccion.route_id and ruta == -1 and refaccion.route_id.id != -1:
-                    ruta = refaccion.route_id.id
-                idsRefaccionesSolicitud.append(refaccion.product_id.id)
-            refaccionesActualizadasCantidad = list(set(refaccionesActualizadasCantidad))
-            _logger.info('idsRefaccionesSolicitud: ' + str(idsRefaccionesSolicitud))
-            mensajeTitulo = 'Se añadieron nuevas refacciones y/o accesorios a la solicitud.'
-            mensajeCuerpo = 'Refaccione(s) y/o accesorio(s) agregados a la Solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) +'.\n\nSe agregaron las refacciones y/o accesorios: '
-            refaccionesTextTemp = ''
-            fuenteDca = 'stock.production.lot'
-            #forma odoo
-            dcaObj = self.env['dcas.dcas'].search([('x_studio_tickett', '=', self.ticket_id.id),('fuente', '=', fuenteDca)], order = 'create_date desc', limit = 1)
-            #forma techra
-            if not dcaObj:
-                dcaObj = self.env['dcas.dcas'].search([('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].name),('fuente', '=', fuenteDca)], order = 'x_studio_fecha desc', limit = 1)
-            _logger.info('aaaaaaaaaaa dcaObj: ' + str(dcaObj))
-            for refaccion in self.ticket_id.x_studio_productos:
-                if not refaccion.product_variant_id.id in idsRefaccionesSolicitud:
+
+            refaccion_no_presente = []
+            refaccion_presente = []
+
+            lista_productos_en_solicitud = []
+            for refaccion in refacciones_en_solicitud:
+                lista_productos_en_solicitud.append(refaccion.product_id.id)
+
+            for refaccion in refacciones_en_wizard:
+                if not refaccion.productos.id in lista_productos_en_solicitud:
+                    refaccion_no_presente.append(refaccion)
+                else:
+                    vals = {
+                        'refaccion_en_wizard': refaccion,
+                        'refaccion_en_solicitud': refacciones_en_solicitud.filtered(lambda x: x.product_id.id == refaccion.productos.id)
+                    }
+                    refaccion_presente.append(vals)
+
+            _logger.info('refaccion_no_presente: ' + str(refaccion_no_presente) + ' refaccion_presente: ' + str(refaccion_presente))
+
+            #for refaccion in refacciones_en_solicitud:
+            #    refaccion_no_presente = refacciones_en_wizard.filtered(lambda x: x.productos.id != refaccion.product_id.id)
+            #    refaccion_presente = refacciones_en_wizard.filtered(lambda x: x.productos.id == refaccion.product_id.id)
+
+
+            if refaccion_no_presente:
+                mensajeCuerpo = 'Refaccione(s) y/o accesorio(s) agregados a la Solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) +'.\n\nSe agregaron las refacciones y/o accesorios: '
+                for refac in refaccion_no_presente:
+                    refaccion_no_presente_cantidad = refac.mapped('cantidadPedida')
+                    _logger.info('Refaccion no presente en so')
                     datosr = {
-                                'order_id': self.ticket_id.x_studio_field_nO7Xg.id,
-                                'product_id': refaccion.product_variant_id.id,
-                                'product_uom_qty': refaccion.x_studio_cantidad_pedida,
-                                'x_studio_field_9nQhR': self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id,
+                                'order_id': sale_order[0].id,
+                                'product_id': refac.productos.id,
+                                'product_uom_qty': refaccion_no_presente_cantidad[0],
+                                'x_studio_field_9nQhR': serie_en_ticket[0].id,
                                 'price_unit': 0
                             }
-                    #if ruta != -1:
-                    #    datosr['route_id'] = ruta
                     line = self.env['sale.order.line'].create(datosr)
                     _logger.info('line: ' + str(line))
-                    mensajeCuerpo = mensajeCuerpo + str(refaccion.product_variant_id.name) + ', '
-                    refaccionesTextTemp = 'Refacción y/o accesorio: ' + str(refaccion.product_variant_id.display_name) + '. Descripción: ' + str(refaccion.description) + '.\n'
-                    refaccionesNuevas.append(refaccion)
+                    mensajeRefaccionesNuevas = mensajeRefaccionesNuevas + '\nRefacción y/o accesorio: ' + str(refac.productos.display_name) + ', cantidad: ' + str(refaccion_no_presente_cantidad[0])
+                    mensajeCuerpo = mensajeCuerpo + str(refac.productos.name) + ', '
+                    se_agregaron_refacciones = True
+
+                    fuenteDca = 'stock.production.lot'
+                    #forma odoo
+                    dcaObj = self.env['dcas.dcas'].search([('x_studio_tickett', '=', ticket_id_wizard[0]),('fuente', '=', fuenteDca)], order = 'create_date desc', limit = 1)
+                    #forma techra
+                    if not dcaObj:
+                        dcaObj = self.env['dcas.dcas'].search([('serie', '=', serie_en_ticket[0].name),('fuente', '=', fuenteDca)], order = 'x_studio_fecha desc', limit = 1)
+                    _logger.info('aaaaaaaaaaa dcaObj: ' + str(dcaObj))
+
+                    refaccionesTextTemp = 'Refacción y/o accesorio: ' + str(refac.productos.display_name) + '. Descripción: ' + str(refac.productos.description) + '.\n'
+                    refaccionesNuevas.append(refac)
                     if dcaObj:
                         _logger.info('inicio: Se esta creando el historico de componente con dcaObj existente')
                         self.env['x_studio_historico_de_componentes'].create({
-                                                                                'x_studio_cantidad': refaccion.x_studio_cantidad_pedida,
-                                                                                'x_studio_field_MH4DO': self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id,
-                                                                                'x_studio_ticket': str(self.ticket_id.id),
+                                                                                'x_studio_cantidad': refaccion_no_presente_cantidad[0],
+                                                                                'x_studio_field_MH4DO': serie_en_ticket[0].id,
+                                                                                'x_studio_ticket': str(ticket_id_wizard[0]),
                                                                                 'x_studio_contador_color': dcaObj.contadorColor,
                                                                                 'x_studio_fecha_de_entrega': datetime.datetime.now(),
                                                                                 'x_studio_modelo': refaccionesTextTemp,
@@ -6694,38 +7487,48 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
                     else:
                         _logger.info('inicio: Se esta creando el historico de componente')
                         self.env['x_studio_historico_de_componentes'].create({
-                                                                                'x_studio_cantidad': refaccion.x_studio_cantidad_pedida,
-                                                                                'x_studio_field_MH4DO': self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id,
-                                                                                'x_studio_ticket': str(self.ticket_id.id),
+                                                                                'x_studio_cantidad': refaccion_no_presente_cantidad,
+                                                                                'x_studio_field_MH4DO': serie_en_ticket[0].id,
+                                                                                'x_studio_ticket': str(ticket_id_wizard[0]),
                                                                                 'x_studio_fecha_de_entrega': datetime.datetime.now(),
                                                                                 'x_studio_modelo': refaccionesTextTemp
                                                                             })
                         _logger.info('fin: Se esta creando el historico de componente')
-            comentarioGenerico = 'Solicitud de refacción autorizada por ' + str(self.env.user.name) + '.\nEl día ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S")) + '.\n\n' + mensajeCuerpo + '.\n\n'
-            if seActualizoUnaCantidad:
-                comentarioGenerico = comentarioGenerico + mensajeCantidadesEditadas
-            if self.comentario:
-                comentarioGenerico = comentarioGenerico + str(self.comentario)
-            else:
-                comentarioGenerico = comentarioGenerico
-            self.ticket_id.write({
-                                    'stage_id': 102
-                                })
-            listaIdValidadas = []
-            filasRefacciones = """ """
-            filasRefaccionesNuevas = """ """
-            listaUnida = list(set(refaccionesActualizadasCantidad + refaccionesNuevas))
-            if listaUnida:
-                for refaccion in listaUnida:
+
                     filasRefacciones = filasRefacciones + """
                                                                 <tr>
-                                                                    <td>""" + str(refaccion.categ_id.name) + """</td>
-                                                                    <td>""" + str(refaccion.default_code) + """</td>
-                                                                    <td>""" + str(refaccion.name) + """</td>
-                                                                    <td>""" + str(refaccion.x_studio_cantidad_pedida) + """</td>
+                                                                    <td>""" + str(refac.productos.categ_id.name) + """</td>
+                                                                    <td>""" + str(refac.productos.default_code) + """</td>
+                                                                    <td>""" + str(refac.productos.name) + """</td>
+                                                                    <td>""" + str(refaccion_no_presente_cantidad) + """</td>
                                                                 </tr>
                                                             """
-                    listaIdValidadas.append(refaccion.product_variant_id.id)
+                    listaIdValidadas.append(refac.productos.id)
+
+
+            if refaccion_presente:
+                for refac in refaccion_presente:
+                    _logger.info('Refaccion presente en so')
+                    refaccion_presente_cantidad = refac['refaccion_en_wizard'].mapped('cantidadPedida')
+                    if int(refac['refaccion_en_solicitud'].product_uom_qty) != int(refaccion_presente_cantidad[0]) and refaccion_presente_cantidad[0] != 0:
+                        refac['refaccion_en_solicitud'].write({
+                            'product_uom_qty': refaccion_presente_cantidad[0]
+                        })
+                        seActualizoUnaCantidad = True
+                        mensajeCantidadesEditadas = mensajeCantidadesEditadas + '\nRefacción y/o accesorio: ' + str(refac['refaccion_en_wizard'].productos.display_name) + ', cantidad: ' + str(refaccion_presente_cantidad[0])
+
+                        filasRefacciones = filasRefacciones + """
+                                                                <tr>
+                                                                    <td>""" + str(refac['refaccion_en_wizard'].productos.categ_id.name) + """</td>
+                                                                    <td>""" + str(refac['refaccion_en_wizard'].productos.default_code) + """</td>
+                                                                    <td>""" + str(refac['refaccion_en_wizard'].productos.name) + """</td>
+                                                                    <td>""" + str(refaccion_presente_cantidad[0]) + """</td>
+                                                                </tr>
+                                                            """
+                        listaIdValidadas.append(refac['refaccion_en_wizard'].productos.id)
+
+                        refaccionesActualizadasCantidad.append(refac['refaccion_en_wizard'])
+            
             tablaRefacciones = """
                                     <table class='table table-bordered table-dark text-white'>
                                         <thead >
@@ -6738,29 +7541,54 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
                                         </thead>
                                         <tbody>
                                             """ + filasRefacciones + """
-                                            """ + filasRefaccionesNuevas + """
                                         </tbody>
                                     </table>
                                 """
-            _logger.info('refaccionesActualizadasCantidad: ' + str(refaccionesActualizadasCantidad) + ' refaccionesNuevas: ' + str(refaccionesNuevas) )
             idValidacion = self.env['helpdesk.validacion.so'].create({
-                                                                  'ticketRelacion': self.ticket_id.id,
-                                                                  'fechaDeValidacionSo': datetime.datetime.now(),
-                                                                  'refaccionesValidadas': tablaRefacciones,
-                                                                  'listaRefaccionesValidadas': str(refaccionesActualizadasCantidad + refaccionesNuevas),
-                                                                  'listaIdsRefaccionesValidadas': str(list(set(listaIdValidadas)))
-                                                              })
+                'ticketRelacion': ticket_id_wizard[0],
+                'fechaDeValidacionSo': datetime.datetime.now(),
+                'refaccionesValidadas': tablaRefacciones,
+                'listaRefaccionesValidadas': str(refaccionesActualizadasCantidad + refaccionesNuevas),
+                'listaIdsRefaccionesValidadas': str(list(set(listaIdValidadas)))
+            })
             self.ticket_id.write({'validacionesRefaccion': [(4, 0, idValidacion)] })
             self.ticket_id.write({'ticketValidadoElDia': datetime.datetime.now() })
+            
+            comentarioGenerico = 'Solicitud de refacción autorizada por ' + str(self.env.user.name) + '.\nEl día ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S")) + '.\n\n'
+            if seActualizoUnaCantidad:
+                comentarioGenerico = comentarioGenerico + mensajeCantidadesEditadas
+            if se_agregaron_refacciones:
+                comentarioGenerico = comentarioGenerico + mensajeRefaccionesNuevas
+            if self.comentario:
+                comentarioGenerico = comentarioGenerico + str(self.comentario)
+            else:
+                comentarioGenerico = comentarioGenerico
+            self.ticket_id.write({
+                                    'stage_id': 102
+                                })
             self.env['helpdesk.diagnostico'].create({
-                                                        'ticketRelacion': self.ticket_id.id,
+                                                        'ticketRelacion': ticket_id_wizard[0],
                                                         'comentario': comentarioGenerico,
                                                         'estadoTicket': self.ticket_id.stage_id.name,
                                                         'evidencia': [(6,0,self.evidencia.ids)],
                                                         'mostrarComentario': self.check,
                                                         'creadoPorSistema': False
                                                     })
+            self.ticket_id.obten_ulimo_diagnostico_fecha_usuario()
+            self.ticket_id.datos_ticket_2()
             _logger.info('3312: fin actualización refacciones sobre la misma so(): ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
+            
+
+
+
+
+
+
+
+
+
+
+
         else:
             _logger.info('3312: inicio confirmarYValidarRefacciones(): ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
             respuesta = 'sin respuesta.'
@@ -6878,6 +7706,8 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
                                                             'mostrarComentario': self.check,
                                                             'creadoPorSistema': False
                                                         })
+                self.ticket_id.obten_ulimo_diagnostico_fecha_usuario()
+                self.ticket_id.datos_ticket_2()
             #mensajeTitulo = 'Creación y validación de refacción!!!'
             #mensajeCuerpo = 'Se creo y valido la solicitud ' + str(self.ticket_id.x_studio_field_nO7Xg.name) + ' para el ticket ' + str(self.ticket_id.id) + '.'    
         #else:
@@ -6886,7 +7716,7 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
         wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
         view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
         return {
-                'name': _(mensajeTitulo),
+                'name': _('Resultado'),
                 'type': 'ir.actions.act_window',
                 'view_type': 'form',
                 'view_mode': 'form',
@@ -6897,90 +7727,6 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
                 'res_id': wiz.id,
                 'context': self.env.context,
                 }
-
-
-    def validar(self):
-        _logger.info('3312: validar()')
-        _logger.info('3312: inicio validar(): ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
-        self.ticket_id.x_studio_productos = [(6, 0, self.productos.ids)]
-        if self.productos:
-            self.ticket_id.x_studio_productos = [(6, 0, self.productos.ids)]
-        
-        if not self.ticket_id.x_studio_field_nO7Xg:
-            if len(self.ticket_id.x_studio_productos) > 0:
-                if self.ticket_id.x_studio_field_nO7Xg.id != False and self.ticket_id.x_studio_field_nO7Xg.state == 'sale':
-                    message = ('Existe una solicitud ya generada y esta fue validada. \n\nNo es posible realizar cambios a una solicitud ya validada.')
-                    mess= {'title': _('Solicitud existente validada!!!')
-                            , 'message' : message
-                    }
-                    return {'warning': mess}
-                
-                if self.ticket_id.x_studio_field_nO7Xg.id != False and self.ticket_id.x_studio_field_nO7Xg.state != 'sale':
-                    sale = self.ticket_id.x_studio_field_nO7Xg
-                    self.env.cr.execute("delete from sale_order_line where order_id = " + str(sale.id) +";")
-                    for c in self.ticket_id.x_studio_productos:
-                        datosr={'order_id' : sale.id, 'product_id' : c.id, 'product_uom_qty' : c.x_studio_cantidad_pedida, 'x_studio_field_9nQhR':self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id}
-                        if(self.ticket_id.team_id.id == 10 or self.ticket_id.team_id.id==11):
-                            datosr['route_id']=22548
-                        self.env['sale.order.line'].sudo().create(datosr)
-                        self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
-                        #self.env.cr.commit()
-                else:
-                    sale = self.env['sale.order'].sudo().create({'partner_id' : self.ticket_id.partner_id.id
-                                                                 , 'origin' : "Ticket de refacción: " + str(self.ticket_id.x_studio_id_ticket)
-                                                                 , 'x_studio_tipo_de_solicitud' : 'Venta'
-                                                                 , 'x_studio_requiere_instalacin' : True
-                                                                 , 'x_studio_field_RnhKr': self.ticket_id.localidadContacto.id
-                                                                 , 'partner_shipping_id' : self.ticket_id.x_studio_empresas_relacionadas.id
-                                                                 #, 'x_studio_tcnico' : self.ticket_id.x_studio_tcnico.id
-                                                                 , 'warehouse_id' : 5865   ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
-                                                                 , 'team_id' : 1
-                                                                 , 'x_studio_field_bxHgp': int(self.ticket_id.x_studio_id_ticket) 
-                                                                })
-                    self.ticket_id.write({
-                                            'x_studio_field_nO7Xg': sale.id
-                                        })
-                    for c in self.ticket_id.x_studio_productos:
-                        datosr = {'order_id' : sale.id
-                                , 'product_id' : c.id
-                                , 'product_uom_qty' : c.x_studio_cantidad_pedida
-                                ,'x_studio_field_9nQhR': self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id
-                                , 'price_unit': 0}
-                        if (self.ticket_id.team_id.id == 10 or self.ticket_id.team_id.id == 11):
-                            datosr['route_id'] = 22548
-                        self.env['sale.order.line'].sudo().create(datosr)
-                        sale.env['sale.order'].sudo().write({'x_studio_tipo_de_solicitud' : 'Venta'})
-                        #sale.env['sale.order'].write({'x_studio_tipo_de_solicitud' : 'Venta', 'validity_date' : sale.date_order + datetime.timedelta(days=30)})
-                        self.env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
-
-
-                    sale = self.ticket_id.x_studio_field_nO7Xg
-                    if sale.id != 0 or self.ticket_id.x_studio_productos != []:
-                        if self.ticket_id.x_studio_field_nO7Xg.order_line:
-                            self.sudo().env.cr.execute("update sale_order set x_studio_tipo_de_solicitud = 'Venta' where  id = " + str(sale.id) + ";")
-                            sale.write({'x_studio_tipo_de_solicitud' : 'Venta'})
-
-                            #sale.action_confirm()
-                            _logger.info('3312: inicio peticion validar_solicitud_de_refacciones(): ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
-                            return { 'type': 'ir.actions.act_url',
-                                     'url': '/helpdesk_update/validar_solicitud_de_refacciones/%s' % self.ticket_id.id,
-                                     'target': 'self',
-                                     'res_id': self.id,
-                                     }
-            else:
-                message = ('No existen productos para generar y validar la solicitud.')
-                mess= {
-                        'title': _('Ticket sin productos !!!'),
-                        'message' : message
-                      }
-                return {'warning': mess}
-        else:
-            message = ('Ya existe una solicitud, no es posible generan una solicitud.')
-            mess= {
-                    'title': _('Ticket con solicitud existente !!!'),
-                    'message' : message
-                  }
-            return {'warning': mess}
 
 
 

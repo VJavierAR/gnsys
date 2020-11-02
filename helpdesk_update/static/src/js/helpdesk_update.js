@@ -41,7 +41,7 @@ odoo.define('invoice.action_button_helpdesk', function (require) {
 			    	} else if (this.actionViews[0].viewID == 956) {
                         console.log("Entre para vista de toner")
                         this.$buttons.find('.o_button_import').hide();
-                        this.$buttons.find('.o_list_button_add').hide();
+                        //this.$buttons.find('.o_list_button_add').hide();
                         this.$buttons.find('.oe_action_button_ticket_reporte').hide();
                         this.$buttons.find('.oe_action_button_helpdesk').hide();
                         this.$buttons.find('.oe_action_button_helpdesk').click(this.proxy('action_def_toner'));
