@@ -1417,6 +1417,7 @@ class contadores_lines(models.Model):
     def cambio(self):
         if(self.servicio1 and (self.tipo=='2' or self.tipo=='3')):
             self.serie.servicio=self.servicio1.id
+            self.estado='2'
         if(self.destino and (self.tipo=='1' or self.tipo=='3')):
             origen2=self.env['stock.warehouse'].search([('x_studio_field_E0H1Z','=',self.origen.id)])
             destino2=self.env['stock.warehouse'].search([('x_studio_field_E0H1Z','=',self.destino.id)])
