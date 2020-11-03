@@ -5173,7 +5173,6 @@ class helpdesk_update(models.Model):
             for refaccion in self.accesorios:
                 refaccionesDatos = refaccionesDatos + """
                                         <tr>
-                                            <td>""" + str(refaccion.productos.categ_id.name) + """</td>
                                             <td>""" + str(refaccion.productos.display_name) + """</td>
                                             <td>""" + str(refaccion.cantidadPedida) + """</td>
                                         </tr>
@@ -5183,7 +5182,6 @@ class helpdesk_update(models.Model):
                                     <table class='table table-bordered table-secondary text-black'>
                                         <thead>
                                             <tr>
-                                                <th scope='col'>Categoría del producto</th>
                                                 <th scope='col'>Producto</th>
                                                 <th scope='col'>Cantidad a pedir</th>
                                             </tr>
