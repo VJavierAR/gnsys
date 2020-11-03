@@ -55,5 +55,13 @@
             name="ruta.report"
             file="Reporte de expedición"
             attachment_use="False"/>
+        <report
+            id="serie_xlsx"
+            model="stock.production.lot"
+            string="Reporte de base instalada"
+            report_type="xlsx"
+            name="lot.report"
+            file="Reporte de base instalada"
+            attachment_use="False"/>
     </data>
 </odoo>
