@@ -299,22 +299,41 @@ class StockCambio(TransientModel):
         else:   
             self.confirmar(self.accesorios_ids)
             self.confirmar(self.toner_ids)
+            self.valida(equipos)
             self.confirmar(equipos)
             self.confirmarE(equipos)
-            wiz=self.env['stock.picking.mass.action'].create({'picking_ids':[(4,self.pick.id)],'confirm':True,'check_availability':True,'transfer':True})
-            view = self.env.ref('stock_picking_mass_action.view_stock_picking_mass_action_form')
-            return {
-                'name': _('Transferencia'),
-                'type': 'ir.actions.act_window',
-                'view_type': 'form',
-                'view_mode': 'form',
-                'res_model': 'stock.picking.mass.action',
-                'views': [(view.id, 'form')],
-                'view_id': view.id,
-                'target': 'new',
-                'res_id': wiz.id,
-                'context': self.env.context,
-            }
+            wiz=self.env['lot.assign.accesorios'].create({'pick':self.pick.id,'domain':str(self.accesorios_ids.mapped('producto2.id'))})
+            for e in equipos:
+                wizline=self.env['lot.assign.accesorios.lines'].create({'lot_id':e.serieOrigen.id,'rel_id':wiz.id})            
+            view = self.env.ref('stock_picking_mass_action.view_lot_assign_accesorios')
+            if(len(self.accesorios_ids)!=0):
+                return {
+                    'name': _('Accesorios'),
+                    'type': 'ir.actions.act_window',
+                    'view_type': 'form',
+                    'view_mode': 'form',
+                    'res_model': 'lot.assign.accesorios',
+                    'views': [(view.id, 'form')],
+                    'view_id': view.id,
+                    'target': 'new',
+                    'res_id': wiz.id,
+                    'context': self.env.context,
+                }                
+            else:
+                wiz=self.env['stock.picking.mass.action'].create({'picking_ids':[(4,self.pick.id)],'confirm':True,'check_availability':True,'transfer':True})
+                view = self.env.ref('stock_picking_mass_action.view_stock_picking_mass_action_form')
+                return {
+                    'name': _('Transferencia'),
+                    'type': 'ir.actions.act_window',
+                    'view_type': 'form',
+                    'view_mode': 'form',
+                    'res_model': 'stock.picking.mass.action',
+                    'views': [(view.id, 'form')],
+                    'view_id': view.id,
+                    'target': 'new',
+                    'res_id': wiz.id,
+                    'context': self.env.context,
+                }
 
 
     def confirmar(self,data):
@@ -360,6 +379,12 @@ class StockCambio(TransientModel):
                         d.move_id.write({'location_id':d.almacen.lot_stock_id.id})
             self.pick.action_assign()
 
+    def valida(self,equipos):
+        for s in equipos:
+            qu1=self.env['stock.quant'].search([['location_id','=',s.move_id.location_id.id],['product_id','=',s.move_id.product_id.id],['lot_id','=',s.serieOrigen.id]])
+            if(qu1.id==False):
+                qu1=self.env['stock.quant'].create({'location_id':s.almacen.lot_stock_id.id,'product_id':s.serieOrigen.product_id.id,'quantity':1,'lot_id':s.serieOrigen.id})
+
     def confirmarE(self,equipos):
         fecha=datetime.datetime.now()-datetime.timedelta(hours=-5)
         f="<table class='table table-sm'><thead><tr><th>Modelo</th><th>Serie</th></thead><tbody>"
@@ -370,8 +395,9 @@ class StockCambio(TransientModel):
             if(d.lot_id.id!=s.serieOrigen.id):
                 if(qu1.id==False):
                     qu1=self.env['stock.quant'].create({'location_id':s.almacen.lot_stock_id.id,'product_id':s.serieOrigen.product_id.id,'quantity':1,'lot_id':s.serieOrigen.id})
-                self.env.cr.execute("update stock_quant set reserved_quantity=1 where id="+str(qu1.id)+";")            
-                self.env.cr.execute("update stock_quant set reserved_quantity=0 where id="+str(qu.id)+";")
+                self.env.cr.execute("update stock_quant set reserved_quantity=1 where id="+str(qu1.id)+";")
+                if(qu.id):
+                    self.env.cr.execute("update stock_quant set reserved_quantity=0 where id="+str(qu.id)+";")
                 self.env.cr.execute("update stock_move_line set lot_id="+str(s.serieOrigen.id)+"where id="+str(d.id)+";")            
             s.move_id.sale_line_id.write({'x_studio_field_9nQhR':s.serieOrigen.id})
             if(self.pick.sale_id.x_studio_tipo_de_solicitud=='Retiro'):
@@ -1382,3 +1408,44 @@ class reporteBaseInslada(TransientModel):
         s=self.env['stock.production.lot'].search([['servicio','!=',False]])
         s[0].write({'x_studio_arreglo':str(s.mapped('id'))})
         return self.env.ref('stock_picking_mass_action.serie_xlsx').report_action(s[0])
+
+
+class assignacionAccesorios(TransientModel):
+    _name='lot.assign.accesorios'
+    _description='Asignacion de accesorios'
+    lineas=fields.One2many('lot.assign.accesorios.lines','rel_id')
+    pick=fields.Many2one('stock.picking')
+    domain=fields.Char()
+
+    @api.onchange('domain')
+    def limitacion(self):
+        res={}
+        res['domain']={'lineas':[['id','in',eval(self.domain)]]}
+        return res
+
+    def confirmar(self):
+        for line in  self.lineas:
+            if(len(line.accesorios)!=0):
+                line.lot_id.write({'x_studio_field_SOEw0':[(6, 0, line.mapped('accesorios.id'))]})
+        wiz=self.env['stock.picking.mass.action'].create({'picking_ids':[(4,self.pick.id)],'confirm':True,'check_availability':True,'transfer':True})
+        view = self.env.ref('stock_picking_mass_action.view_stock_picking_mass_action_form')
+        return {
+            'name': _('Transferencia'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'stock.picking.mass.action',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            'context': self.env.context,
+            }
+
+
+class assignacionAccesoriosLines(TransientModel):
+    _name='lot.assign.accesorios.lines'
+    _description='Asignacion de accesorios lines'
+    rel_id=fields.Many2one('lot.assign.accesorios')
+    lot_id=fields.Many2one('stock.production.lot')
+    accesorios=fields.Many2many('product.product')
