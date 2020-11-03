@@ -5596,15 +5596,17 @@ class helpdesk_update(models.Model):
 #AGrego CEsar
     @api.onchange('partner_id')
     def cambiosParent_id(self):
-        res={}
+        res = {}
         for record in self:
-            if(record.partner_id.id):
-                hijos=self.env['res.partner'].search([['parent_id','=',record.partner_id.id]])
-                hijosarr=hijos.mapped('id')
-                nietos=self.env['res.partner'].search([['parent_id','in',hijosarr],['type','=','contact']]).mapped('id')
-                hijosF=hijos.filtered(lambda x:x.type=='contact').mapped('id')
-                final=nietos+hijosF
-                res['domain']={'localidadContacto':[('id','in',final)]}
+            if record.partner_id.id:
+                hijos = self.env['res.partner'].search([['parent_id', '=', record.partner_id.id]])
+                hijosarr = hijos.mapped('id')
+                nietos = self.env['res.partner'].search([['parent_id', 'in', hijosarr],['type', '=', 'contact']]).mapped('id')
+                hijosF = hijos.filtered(lambda x: x.type == 'contact').mapped('id')
+                final = nietos + hijosF
+                res['domain'] = {
+                    'localidadContacto': [('id', 'in', final)]
+                }
         return res
         
     
@@ -7342,9 +7344,9 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
                 }
                 lista.append( [0, 0, vals] )
                 listaDeCantidades.append(refaccion.cantidadPedida)
-        self.ticket_id.write({'accesorios': lista}) 
+        self.ticket_id.write({'accesorios': lista})
 
-        """
+        
         lista = []
         productos_en_wizard = self.mapped('accesorios')
         productos_en_wizard_ids = self.mapped('accesorios.productos.id')
@@ -7353,17 +7355,20 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
         indice = 0
         for refaccion in self.accesorios:
             producto_en_wizard = refaccion.productos.id
-            #producto_en_ticket = prodcutos_en_ticket[indice]
             for producto_en_ticket in prodcutos_en_ticket:
                 if producto_en_wizard == producto_en_ticket.productos.id:
+                    id_linea_wizard = producto_en_ticket.id
                     vals = {
                             'cantidadPedida': refaccion.cantidadPedida
                     }
-                    lista.append( [1, producto_en_wizard, vals] )
+                    lista.append( [1, id_linea_wizard, vals] )
                     break
             indice = indice + 1
         self.ticket_id.write({'accesorios': lista})
-        """
+
+        for accesorio in self.ticket_id.accesorios:
+            _logger.info('id: ' + str(accesorio.id) + 'producto: ' + str(accesorio.productos.display_name) + ' cantidad pedida: ' + str(accesorio.cantidadPedida))
+        
 
 
         """
