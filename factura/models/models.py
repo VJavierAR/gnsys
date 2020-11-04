@@ -70,7 +70,7 @@ class factura(models.Model):
              mail_template.write({
                     'email_to': self.x_studio_destinatarios,
                     })
-             mail_template.attachment_ids = [(4, 388981)]
+             mail_template.attachment_ids = [(4,  126616)]
              self.env['mail.template'].browse(mail_template.id).send_mail(self.id,force_send=True)              
             
 """         
