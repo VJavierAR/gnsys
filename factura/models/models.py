@@ -5,6 +5,7 @@ from odoo import exceptions, _
 import logging, ast
 import sys
 import datetime
+import pytz
 """
 from odoo import http
 from odoo.addons.web.controllers.main import ReportController  # Import the class
@@ -15,7 +16,7 @@ from odoo.addons.web.controllers.main import ReportController  # Import the clas
 
 class factura(models.Model):
       _inherit = 'account.invoice'
-      date_invoice = fields.Date(string='Fecha factura', default=datetime.datetime.today().strftime('%Y-%m-%d'))
+      date_invoice = fields.Date(string='Fecha factura', default=datetime.datetime.now(pytz.utc).strftime('%Y-%m-%d'))
       
       def report_download(self):
         res = super(ReportController, self).report_download()       
