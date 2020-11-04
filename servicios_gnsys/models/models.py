@@ -391,7 +391,7 @@ class penalizaciones(models.Model):
                     for fac in self.contrato.cliente.invoice_ids:
                         if fac.state=='paid' or fac.state=='open':
                             total=fac.amount_untaxed_invoice_signed+total                            
-                    if not self.meses==0:
+                    if self.meses!=0:
                         self.total=(total/int(self.contrato.x_studio_meses_contratados))*self.meses
                     else:
                         self.total=0    
