@@ -8,6 +8,12 @@ import logging, ast
 import datetime, time
 _logger = logging.getLogger(__name__)
 
+def get_plazo():
+    year_list = []
+    for i in range(1, 100):
+       year_list.append((i, str(i)))
+    return year_list
+
 class servicios_gnsys(models.Model):
     _name = 'servicios'
     _inherit = 'mail.thread'
@@ -176,6 +182,8 @@ class contratos(models.Model):
     ac = fields.Binary(string="Acta constitutiva")
     cs = fields.Binary(string="constancia del sat")
     idal = fields.Binary(string="id apoderado legal")
+    penalizaciones = fields.One2many('penalizaciones','contrato',string="Penalizaciones")
+
     
     cliente = fields.Many2one('res.partner', string='Cliente')
     idtmpp = fields.Char(string="idTMPp")
@@ -356,3 +364,48 @@ class Valores_Impresion(models.Model):
 
 
 
+class penalizaciones(models.Model):
+    _name = "penalizaciones"
+    _description = 'penalizaciones GNSYS'
+   
+    #name = fields.Char(string="Nombre")
+    contrato = fields.Many2one('contrato', string="Contrato")
+   
+    plazoIni = fields.Selection(get_plazo(), string='Plazo Inicio',default=1)
+    plazoFinal = fields.Selection(get_plazo(), string='Plazo Final',default=12)
+    porcentaje = fields.Float()
+    total=fields.Float(string='Penalización a pagar por concepto de cancelación')
+    totalResidual=fields.Float(string='% Residual a pagar, adicional a la penalización')
+    meses=fields.Integer(string='Meses')
+   
+   
+   
+   
+    @api.onchange('porcentaje')    
+    def calcula(self):
+        total=0.0
+        #raise exceptions.ValidationError("debes de poner un rango mayor a 29 si el método de pago es ppd ")
+        if len(self.contrato.servicio)>0:
+            if self.contrato.cliente:
+                if len(self.contrato.cliente.invoice_ids)>0:
+                    for fac in self.contrato.cliente.invoice_ids:
+                        if fac.state=='paid' or fac.state=='open':
+                            total=fac.amount_untaxed_invoice_signed+total                            
+                    self.total=(total/int(self.contrato.x_studio_meses_contratados))*self.meses
+                    self.totalResidual=(total/(int(self.contrato.x_studio_meses_contratados)))*(self.porcentaje)                                                
+   
+    @api.onchange('plazoFinal')    
+    def calcula_porcentaje(self):                
+        if self.plazoIni and self.plazoFinal :            
+            if self.plazoIni >0 and self.plazoFinal<=12:            
+                self.porcentaje=0.75
+                self.meses=2
+            if self.plazoIni >12 and self.plazoFinal<=24:                
+                self.porcentaje=0.55              
+                self.meses=2
+            if self.plazoIni >24 and self.plazoFinal<=30:
+                self.porcentaje=0.25              
+                self.meses=1
+            if self.plazoIni >30 and self.plazoFinal<=35:                
+                self.porcentaje=0.15
+                self.meses=0
