@@ -65,7 +65,16 @@ class factura(models.Model):
           res          
       """
 
-
+      @api.multi
+      def enviar_factura_timbrada_cancelada(self, vals):                                        
+          mail_template = self.env['mail.template'].search([('id', '=', 82)])
+          if mail_template:
+             mail_template.write({
+                    'email_to': self.x_studio_destinatarios,
+                    })
+             #mail_template.attachment_ids = [(4,  126616)]
+             self.env['mail.template'].browse(mail_template.id).send_mail(self.id,force_send=True)              
+            
 
       @api.multi
       def enviar_factura_timbrada(self, vals):                                        
@@ -74,7 +83,7 @@ class factura(models.Model):
              mail_template.write({
                     'email_to': self.x_studio_destinatarios,
                     })
-             mail_template.attachment_ids = [(4,  126616)]
+             #mail_template.attachment_ids = [(4,  126616)]
              self.env['mail.template'].browse(mail_template.id).send_mail(self.id,force_send=True)              
             
 """         
