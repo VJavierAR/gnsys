@@ -21,6 +21,7 @@ from xml.dom import minidom
 class compras(models.Model):
     _inherit = 'product.product'
 
+
     def agregarCompatible(self):
         wiz = self.env['add.compatible'].create({'productoInicial':self.id})
         view = self.env.ref('stock_picking_mass_action.view_addcompatile_action_form')
