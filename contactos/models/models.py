@@ -26,13 +26,16 @@ class ContactosCes(models.Model):
     notaPendiente=fields.Char()
     fechaPendienteInactivo=fields.Date()
     arreglo=fields.Char()
+    busqueda=fields.Char()
+
     @api.onchange('tipoCliente')
     def pendienteInactivo(self):
     	for record in self:
     		if(record.tipoCliente=='PENDIENTE INACTIVO'):
     			record['fechaPendienteInactivo']=datetime.datetime.now().date()
-
-
+    @api.onchange('busqueda')
+    def busquedaContac(self):
+        return {'domain':{'child_ids': [('name', 'ilike', self.busqueda)]}}
 
     """            
     @api.model_create_multi
