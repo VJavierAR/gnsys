@@ -19,6 +19,18 @@ class GastoPagoReporte(TransientModel):
     otro = fields.Boolean()
     excelD = fields.Binary(string="Documento Excel")
     
+    # quienesReciben   = fields.One2many('res.users', 'gastoRecibe', string = "Quien (es) reciben",track_visibility='onchange')
+    # fecha = fields.Datetime(string = 'Fecha', track_visibility = 'onchange')
+    # formaDePago = fields.Selection((('Efectivo','Efectivo'), ('Cheque','Cheque'),('Deposito','Deposito'),('Transferencia','Transferencia')), string = "Forma de pago")
+    # banco = fields.Selection((('bajio','BAJIO'), ('banamex','BANAMEX'),('banorte','BANORTE'),('santnder','SANTANDER'),('hsbc','HSBC'),('azteca','AZTECA'),('bancomer','BANCOMER')), string = "Banco a depositar")
+    # claveInterbancaria = fields.Char(string="Clave interbancaria", track_visibility='onchange')
+    # montodeDucibleI = fields.Float(string = "Monto deducible", track_visibility='onchange')
+    # montodeNoDucibleI = fields.Float(string = "Monto no deducible", track_visibility='onchange')
+    # evidencia = fields.Many2many('ir.attachment', string="Evidencia")
+    # fechaLimite = fields.Datetime(string = 'Fecha limite de pago', track_visibility='onchange')
+    # montoEntregado = fields.Float(string = "Monto")
+    
+    devoluciones = fields.Many2many('gastos.devolucion')
     
     
     def report(self):
@@ -76,12 +88,4 @@ class GastoPagoReporte(TransientModel):
     
 
     
-    
-    
-    
-    
-        
-        
-    
-
     
