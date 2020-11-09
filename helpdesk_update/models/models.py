@@ -7295,6 +7295,23 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
         #    self.ticket_id.x_studio_productos = [(6, 0, self.accesorios.ids)]
 
 
+        _logger.info('*********************accesorios antes de cambiarlos**************')
+        for accesorio in self.ticket_id.accesorios:
+            _logger.info('id: ' + str(accesorio.id) + 'producto: ' + str(accesorio.productos.display_name) + ' cantidad pedida: ' + str(accesorio.cantidadPedida))
+
+        """
+        lista = [(5, 0, 0)]
+        for refaccion in self.accesorios:
+            vals = {
+                'productos': refaccion.productos.id,
+                'cantidadPedida': refaccion.cantidadPedida
+            }
+            lista.append( [0, 0, vals] )
+        self.ticket_id.write({'accesorios': lista})
+        """
+
+
+        
         #lista = [[5,0,0]]
         lista = []
         listaDeCantidades = []
@@ -7302,10 +7319,7 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
         refacciones_en_ticket = self.ticket_id.mapped('accesorios.productos.id')
 
         for refaccion in self.accesorios:
-            #nueva_refaccion = self.ticket_id.accesorios.filtered(lambda x: refaccion.productos.id != x.productos.id )
-            #_logger.info('nueva_refaccion: ' + str(nueva_refaccion))
             if not refaccion.productos.id in refacciones_en_ticket:
-            #if refaccion.productos.id:
                 vals = {
                     'productos': refaccion.productos.id,
                     'cantidadPedida': refaccion.cantidadPedida
@@ -7313,7 +7327,6 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
                 lista.append( [0, 0, vals] )
                 listaDeCantidades.append(refaccion.cantidadPedida)
         self.ticket_id.write({'accesorios': lista})
-
         
         lista = []
         productos_en_wizard = self.mapped('accesorios')
@@ -7334,9 +7347,23 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
             indice = indice + 1
         self.ticket_id.write({'accesorios': lista})
 
+
+
+        
+        _logger.info('*********************accesorios despues de cambiarlos**************')
         for accesorio in self.ticket_id.accesorios:
             _logger.info('id: ' + str(accesorio.id) + 'producto: ' + str(accesorio.productos.display_name) + ' cantidad pedida: ' + str(accesorio.cantidadPedida))
         
+
+        for refaccion in self.ticket_id.accesorios:
+            if not refaccion.productos:
+                refaccion.unlink()
+
+
+        _logger.info('*********************accesorios despues de cambiarlos**************')
+        for accesorio in self.ticket_id.accesorios:
+            _logger.info('id: ' + str(accesorio.id) + 'producto: ' + str(accesorio.productos.display_name) + ' cantidad pedida: ' + str(accesorio.cantidadPedida))
+
 
 
         """
