@@ -825,7 +825,7 @@ class helpdesk_update(models.Model):
 
         
         #Ultimo contacto para requerimiento
-        _logger.info('ticket.localidadContacto: ' + str(ticket.localidadContacto))
+        #_logger.info('ticket.localidadContacto: ' + str(ticket.localidadContacto))
         if not ticket.localidadContacto:
             _logger.info('entre .aaaaaa')
             if ticket.x_studio_empresas_relacionadas:
