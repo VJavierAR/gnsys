@@ -543,6 +543,8 @@ class HelpDeskAlertaNumeroDeSerie(TransientModel):
         return {
             'type': 'ir.actions.client',
             'tag': 'reload',
+            #'type': 'ir.actions.close_wizard_refresh_view'
+            #'type': 'ir.actions.act_view_reload'
         }
 
 class HelpDeskContacto(TransientModel):
@@ -1412,7 +1414,8 @@ class helpdesk_crearconserie(TransientModel):
             }
 
         if self.serie:
-
+            loc = self.localidadRelacion.id
+            idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_ultimo_contacto', '=', True]], order='create_date desc', limit=1)
             messageTemp = ''
             ticket = self.env['helpdesk.ticket'].create({'stage_id': 89 
                                                 ,'x_studio_equipo_por_nmero_de_serie': [(6,0,self.serie.ids)]
@@ -1420,7 +1423,8 @@ class helpdesk_crearconserie(TransientModel):
                                                 ,'x_studio_empresas_relacionadas': int(self.idLocaliidad)
                                                 ,'team_id': equipoDeUsuario
                                                 ,'x_studio_field_6furK': self.zonaLocalidad,
-                                                'x_studio_tipo_de_vale': self.tipoDeReporte
+                                                'x_studio_tipo_de_vale': self.tipoDeReporte,
+                                                'localidadContacto': idLoc.id if idLoc else False
                                                 })
             if self.zonaLocalidad:
                 ticket.write({'partner_id': int(self.idCliente)
@@ -1496,6 +1500,8 @@ class helpdesk_crearconserie(TransientModel):
             if resultado[0] == 9:
                 puedoCrearSinSerie = True
                 break
+          loc = self.localidadRelacion.id
+          idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_ultimo_contacto', '=', True]], order='create_date desc', limit=1)
           if puedoCrearSinSerie:
               #equiposRelacionados = self.env['helpdesk_team_res_users_rel'].search([['res_users_id', '=', self.env.user.id]]).helpdesk_team_id
               _logger.info('3312 equiposRelacionados resultadoQuery: ' + str(resultadoQuery) )
@@ -1507,7 +1513,8 @@ class helpdesk_crearconserie(TransientModel):
                                                   ,'x_studio_empresas_relacionadas': int(self.idLocaliidad)
                                                   ,'team_id': equipoDeUsuario
                                                   ,'x_studio_field_6furK': self.zonaLocalidad,
-                                                    'x_studio_tipo_de_vale': self.tipoDeReporte
+                                                    'x_studio_tipo_de_vale': self.tipoDeReporte,
+                                                    'localidadContacto': idLoc.id if idLoc else False
                                                   })
               ticket.write({'partner_id': int(self.idCliente)
                           ,'x_studio_empresas_relacionadas': int(self.idLocaliidad)

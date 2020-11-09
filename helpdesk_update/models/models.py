@@ -753,13 +753,29 @@ class helpdesk_update(models.Model):
         return -1
 
 
-
+    def selecciona_contacto_de_localidad(self):
+        localidad = self.mapped('x_studio_empresas_relacionadas')
+        localidad_contacto = self.mapped('localidadContacto')
+        _logger.info('localidad: ' + str(localidad) + ' localidad_contacto: ' + str(localidad_contacto))
+        if localidad and not localidad_contacto:
+            dominio_localidad_contacto = self.cambiosParent_id()
+            _logger.info('dominio_localidad_contacto: ' + str(dominio_localidad_contacto))
+            if dominio_localidad_contacto:
+                loc = localidad[0].id
+                #idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_subtipo', '=', 'Contacto de localidad']], order='create_date desc', limit=1).id
+                idLoc = self.env['res.partner'].search(dominio_localidad_contacto['domain']['localidadContacto'], order = 'create_date desc', limit = 1).id
+                _logger.info('idLoc: ' + str(idLoc))
+                if idLoc:
+                    #query = "update helpdesk_ticket set \"localidadContacto\" = " + str(idLoc) + " where id = " + str(rec.x_studio_id_ticket) + ";"
+                    #self.env.cr.execute(query)
+                    #self.env.cr.commit()
+                    self.write({'localidadContacto': idLoc})
 
     @api.model
     def create(self, vals):
         vals['name'] = self.env['ir.sequence'].next_by_code('helpdesk_name')
         #vals['team_id'] = 8
-        #_logger.info("Informacion 0.0: " + str(vals))
+        _logger.info("Informacion 0.0: " + str(vals))
 
         ticket = super(helpdesk_update, self).create(vals)
 
@@ -807,6 +823,23 @@ class helpdesk_update(models.Model):
         if ticket.x_studio_tipo_de_vale == 'Requerimiento' and ticket.team_id.id != 8 and ticket.team_id.id != 13:
             ticket.write({'team_id': 8})
 
+        
+        #Ultimo contacto para requerimiento
+        _logger.info('ticket.localidadContacto: ' + str(ticket.localidadContacto))
+        if not ticket.localidadContacto:
+            _logger.info('entre .aaaaaa')
+            if ticket.x_studio_empresas_relacionadas:
+                idContact = self.env['res.partner'].search([['parent_id', '=', ticket.x_studio_empresas_relacionadas.id],['x_studio_ultimo_contacto', '=', True]], order='create_date desc', limit=1)
+            _logger.info('idContact: ' + str(idContact))
+            if idContact:
+                vals = {
+                    'localidadContacto': idContact.id
+                }
+                ticket.write(vals)
+            else:
+                ticket.selecciona_contacto_de_localidad()
+
+
         ticket.actualiza_serie_texto()
         ticket.actualiza_todas_las_zonas()
         #ticket.cambiosParent_id()
@@ -833,64 +866,7 @@ class helpdesk_update(models.Model):
                         break
                 if not puedoCrearSinSerie:
                     raise exceptions.ValidationError('El usuario no es de mesa de Servicio y no tiene los permisos para crear un ticket sin serie.')
-        """
-        lista_datos = []
-        if 'create_date' in vals: #fecha_creacion
-            lista_datos.append(str( vals['create_date'].astimezone(timezone).strftime("%d/%m/%Y %H:%M:%S") ))  #str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
-        if 'abiertoPor' in vals: #ticket_abierto_por:
-            lista_datos.append(str(vals['abiertoPor']))
-        if 'ultimoDiagnosticoFecha' in vals: # fecha_ultimo_cambio[0]:
-            lista_datos.append(str( vals['ultimoDiagnosticoFecha'].astimezone(timezone).strftime("%d/%m/%Y %H:%M:%S") ))
-        if 'ultimoDiagnosticoUsuario' in vals: #ultima_escritura:
-            lista_datos.append(str( vals['ultimoDiagnosticoUsuario'] ))
-        if 'days_difference' in vals: #dias_de_atraso:
-            lista_datos.append(str(vals[days_difference]))
-        if 'x_studio_nmero_de_ticket_cliente' in vals: #numero_ticket_cliente:
-            lista_datos.append(str(vals['x_studio_nmero_de_ticket_cliente']))
-        if 'x_studio_tipo_de_vale' in vals: #tipo_de_vale:
-            lista_datos.append(str(vals['x_studio_tipo_de_vale']))
-        if 'priority' in vals: # prioridad:
-            lista_datos.append(str(vals['priority']))
-        if 'serie_y_modelo' in vals: #serie_modelo:
-            lista_datos.append(str(vals['serie_y_modelo']))
-        if 'contadores_anteriores' in vals:# contadores_anteriores:
-            lista_datos.append(str(vals['contadores_anteriores']).split('Equipo BN o Color:')[1].split('</br></br> Contador')[0]  )
-            #lista_datos.append(str(contadores_anteriores.split('Equipo BN o Color:')[1].split('</br></br> Contador')[0]  ))
-        if 'datosCliente' in vals: #datos_cliente:
-            lista_datos.append(str(vals['datosCliente']))
-        if 'x_studio_ultima_nota' in vals: #ultima_nota:
-            lista_datos.append(str(vals['x_studio_ultima_nota']))
-        if 'x_studio_ultima_evidencia' in vals: #ultima_evidencia:
-            lista_datos.append(str(vals['x_studio_ultima_evidencia']))
-        if 'team_id' in vals: #area_de_atencion:
-            lista_datos.append(str(vals['team_id']))
-        if 'stage_id' in vals: #etapa:
-            lista_datos.append(str(vals['stage_id']))
-        if 'localidadContacto' in vals: # localidad_contacto:
-            lista_datos.append(str(vals['localidadContacto']))
-        if 'contactoInterno' in vals:#contacto_interno:
-            lista_datos.append(str(vals['contactoInterno']))
-        if 'x_studio_nmero_de_guia_1' in vals:#numero_guia:
-            lista_datos.append(str(vals['x_studio_nmero_de_guia_1']))
-        if 'x_studio_tcnico' in vals: #tecnico:
-            lista_datos.append(str(vals['x_studio_tcnico']))
-        #if productos:
-        #    lista_datos.append(str(productos))
-        if 'x_studio_field_nO7Xg' in vals: #pedido_de_venta:
-            lista_datos.append(str(vals['x_studio_field_nO7Xg']))
-
-        if lista_datos:
-            vals['datos_ticket_info'] = str(lista_datos)
-        """
-
-
-
-
-
-
-
-
-
+       
 
 
         if self and 'NewId' in str(self[0]):
@@ -1044,15 +1020,7 @@ class helpdesk_update(models.Model):
     @api.depends('x_studio_equipo_por_nmero_de_serie','x_studio_equipo_por_nmero_de_serie_1', 'contactoInterno')
     def _compute_datosCliente(self):
         for rec in self:
-            if rec.x_studio_empresas_relacionadas and not rec.localidadContacto:
-                loc = rec.x_studio_empresas_relacionadas.id
-                idLoc = self.env['res.partner'].search([['parent_id', '=', loc],['x_studio_subtipo', '=', 'Contacto de localidad']], order='create_date desc', limit=1).id
-                rec.localidadContacto = idLoc
-                if idLoc:
-                    query = "update helpdesk_ticket set \"localidadContacto\" = " + str(idLoc) + " where id = " + str(rec.x_studio_id_ticket) + ";"
-                    self.env.cr.execute(query)
-                    self.env.cr.commit()
-
+            
 
             nombreCliente = str(rec.partner_id.name)
             if nombreCliente == 'False':
