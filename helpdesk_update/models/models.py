@@ -830,7 +830,7 @@ class helpdesk_update(models.Model):
             _logger.info('entre .aaaaaa')
             if ticket.x_studio_empresas_relacionadas:
                 idContact = self.env['res.partner'].search([['parent_id', '=', ticket.x_studio_empresas_relacionadas.id],['x_studio_ultimo_contacto', '=', True]], order='create_date desc', limit=1)
-            _logger.info('idContact: ' + str(idContact))
+            #_logger.info('idContact: ' + str(idContact))
             if idContact:
                 vals = {
                     'localidadContacto': idContact.id
