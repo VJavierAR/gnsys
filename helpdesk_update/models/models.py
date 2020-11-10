@@ -179,6 +179,8 @@ class helpdesk_update(models.Model):
 
 
 
+    resuelto_el = fields.Datetime(string = 'Resuelto el')
+    cerrado_el = fields.Datetime(string = 'Cerrado_el')
     
     ticketValidadoElDia = fields.Datetime(string = 'Fecha de validación de la solicitud')
 

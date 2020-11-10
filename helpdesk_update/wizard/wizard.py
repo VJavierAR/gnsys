@@ -68,11 +68,17 @@ class HelpDeskComentario(TransientModel):
                     }
       if self.ultimaEvidencia:
           if self.evidencia:
-            self.ticket_id.sudo().write({'stage_id': 3
-                                #, 'team_id': 9
-                                })
+            comentario_generico = 'Se cambio al estado Resuelto, acción realizada por ' + str(self.env.user.name) + '. \n'
+            if self.comentario:
+                comentario_generico = comentario_generico + 'Comentario: ' + self.comentario
+            self.ticket_id.sudo().write({
+                'stage_id': 3,
+                'resuelto_el': datetime.datetime.now() #pytz.utc.localize(datetime.datetime.now(), is_dst=None).astimezone(pytz.timezone('America/Mexico_City'))
+                #, 'team_id': 9
+            })
+
             idDiagnostico = self.env['helpdesk.diagnostico'].sudo().with_env(self.env(user=self.env.user.id)).create({'ticketRelacion': self.ticket_id.id
-                                                ,'comentario': self.comentario
+                                                ,'comentario': comentario_generico
                                                 ,'estadoTicket': self.ticket_id.stage_id.name
                                                 ,'evidencia': [(6,0,self.evidencia.ids)]
                                                 ,'mostrarComentario': self.check,
@@ -357,18 +363,23 @@ class HelpDeskCerrarConComentario(TransientModel):
         if self.evidencia:
           ultimaEvidenciaTec += self.evidencia.ids
       if self.ticket_id.stage_id.name == 'Distribución' or self.ticket_id.stage_id.name == 'En Ruta' or self.ticket_id.stage_id.name == 'Resuelto' or self.ticket_id.stage_id.name == 'Abierto' or self.ticket_id.stage_id.name == 'Asignado' or self.ticket_id.stage_id.name == 'Atención' and self.ticket_id.estadoCerrado == False:
+        comentario_generico = 'Se cambio al estado Cerrado, acción realizada por ' + str(self.env.user.name) + '. \n'
+        if self.comentario:
+            comentario_generico = comentario_generico + 'Comentario: ' + self.comentario
         self.env['helpdesk.diagnostico'].create({'ticketRelacion': self.ticket_id.id
-                                                ,'comentario': self.comentario
+                                                ,'comentario': comentario_generico
                                                 #,'estadoTicket': self.ticket_id.stage_id.name
                                                 ,'estadoTicket': 'Cerrado'
                                                 ,'evidencia': [(6,0,ultimaEvidenciaTec)]
                                                 ,'mostrarComentario': self.check,
                                                 'creadoPorSistema': False
                                                 })
-        self.ticket_id.write({'stage_id': 18 
-                            , 'estadoResueltoPorDocTecnico': True
-                            , 'estadoAtencion': True
-                            })
+        self.ticket_id.write({
+            'stage_id': 18,
+            'estadoResueltoPorDocTecnico': True,
+            'estadoAtencion': True,
+            'cerrado_el': datetime.datetime.now()
+        })
         self.ticket_id.obten_ulimo_diagnostico_fecha_usuario()
         self.ticket_id.datos_ticket_2()
         mess = 'Ticket "' + str(self.ticket_id.id) + '" cerrado y último Diagnostico / Comentario añadido al ticket "' + str(self.ticket_id.id) + '" de forma exitosa. \n\nComentario agregado: ' + str(self.comentario) + '.'
