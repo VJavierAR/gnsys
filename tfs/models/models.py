@@ -74,6 +74,7 @@ class tfs(models.Model):
     cp=fields.Char(related='localidad.zip')
     delegacion=fields.Char(related='localidad.city')
     estadoCi=fields.Char(related='localidad.state_id.name')
+    contarFinal=fields.Many2one('dcas.dcas',string='Contador Creado')
 
     @api.multi
     def confirm(self):
@@ -246,8 +247,8 @@ class tfs(models.Model):
 
     @api.multi
     def valida(self):
-        self.write({'estado':'Confirmado'})
         dat=eval(self.arreglo)
+        data={'serie':self.serie.id,'contadorMono':self.actualMonocromatico,'contadorColor':self.actualColor,'fuente':'tfs.tfs'}
         if(dat!=[]):
             quants=self.sudo().env['stock.quant'].browse(dat)
         for q in quants:
@@ -256,14 +257,23 @@ class tfs(models.Model):
             q.sudo().write({'quantity':q.quantity-1})
             q.actualizaRegla()
         if(self.productoNegro):
-            self.env['dcas.dcas'].create({'serie':self.serie.id,'contadorMono':self.actualMonocromatico,'contadorColor':self.actualColor,'fuente':'tfs.tfs','x_studio_contador_color_anterior':self.contadorMono.contadorColor,'x_studio_contador_mono_anterior_1':self.contadorAnteriorMono,'x_studio_toner_negro':1})
+            data['x_studio_contador_color_anterior']=self.contadorMono.contadorColor
+            data['x_studio_contador_mono_anterior_1']=self.contadorAnteriorMono
+            data['x_studio_toner_negro']=1
         if(self.productoMagenta):
-            self.env['dcas.dcas'].create({'serie':self.serie.id,'contadorMono':self.actualMonocromatico,'contadorColor':self.actualColor,'fuente':'tfs.tfs','x_studio_contador_color_anterior':self.contadorMagenta.contadorColor,'x_studio_contador_mono_anterior_1':self.contadorMagenta.contadorMono,'x_studio_toner_magenta':1})
+            data['x_studio_contador_color_anterior']=self.contadorMagenta.contadorColor
+            data['x_studio_contador_mono_anterior_1']=self.contadorMagenta.contadorMono
+            data['x_studio_toner_magenta']=1
         if(self.productoAmarillo):
-            self.env['dcas.dcas'].create({'serie':self.serie.id,'contadorMono':self.actualMonocromatico,'contadorColor':self.actualColor,'fuente':'tfs.tfs','x_studio_contador_color_anterior':self.contadorAmarillo.contadorColor,'x_studio_contador_mono_anterior_1':self.contadorAmarillo.contadorMono,'x_studio_toner_amarillo':1})
+            data['x_studio_contador_color_anterior']=self.contadorAmarillo.contadorColor
+            data['x_studio_contador_mono_anterior_1']=self.contadorAmarillo.contadorMono
+            data['x_studio_toner_amarillo']=1
         if(self.productoCian):           
-            self.env['dcas.dcas'].create({'serie':self.serie.id,'contadorMono':self.actualMonocromatico,'contadorColor':self.actualColor,'fuente':'tfs.tfs','x_studio_contador_color_anterior':self.contadorCian.contadorColor,'x_studio_contador_mono_anterior_1':self.contadorCian.contadorMono,'x_studio_toner_cian':1})
-        
+            data['x_studio_contador_color_anterior']=self.contadorCian.contadorColor
+            data['x_studio_contador_mono_anterior_1']=self.contadorCian.contadorMono
+            data['x_studio_toner_cian']=1
+        c=self.env['dcas.dcas'].create(data)
+        self.write({'contarFinal':c.id,'estado':'Confirmado'})
 
 
     @api.multi
