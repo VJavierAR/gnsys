@@ -125,23 +125,23 @@ class StockPickingMassAction(TransientModel):
 
     def mass_action(self):
         # un reserved
-        self.picking_ids.write({'surtir':True})
-        locations=self.picking_ids.mapped('picking_type_id.warehouse_id.lot_stock_id.id')
+        # self.picking_ids.write({'surtir':True})
+        # locations=self.picking_ids.mapped('picking_type_id.warehouse_id.lot_stock_id.id')
         tipo=self.picking_ids.mapped('picking_type_id.code')
-        unresrved=self.env['stock.picking'].search(['&','&','&',['id','not in',self.picking_ids.mapped('id')],['location_id','in',locations],['state','=','assigned'],['surtir','=',False]])
-        if(len(unresrved)>0 and 'outgoing' not in tipo):
-            unresrved.do_unreserve()
+        # unresrved=self.env['stock.picking'].search(['&','&','&',['id','not in',self.picking_ids.mapped('id')],['location_id','in',locations],['state','=','assigned'],['surtir','=',False]])
+        # if(len(unresrved)>0 and 'outgoing' not in tipo):
+        #     unresrved.do_unreserve()
         #asignacion
-        draft_picking_lst = self.picking_ids.filtered(lambda x: x.state == 'draft').sorted(key=lambda r: r.scheduled_date)
-        pickings_to_check = self.picking_ids.filtered(lambda x: x.state not in ['draft','cancel','done',]).sorted(key=lambda r: r.scheduled_date)
-        draft_picking_lst.action_confirm()
-        pickings_to_check.action_assign()
-        assigned_picking_lst = self.picking_ids.filtered(lambda x: x.state == 'assigned').sorted(key=lambda r: r.scheduled_date)
-        #reporte
-        assigned_picking_lst2 = self.picking_ids.filtered(lambda x:x.state == 'assigned' and (self.check==1 or self.check==2) )
-        quantities_done = sum(move_line.qty_done for move_line in assigned_picking_lst.mapped('move_line_ids').filtered(lambda m: m.state not in ('done', 'cancel')))
+        # draft_picking_lst = self.picking_ids.filtered(lambda x: x.state == 'draft').sorted(key=lambda r: r.scheduled_date)
+        # pickings_to_check = self.picking_ids.filtered(lambda x: x.state not in ['draft','cancel','done',]).sorted(key=lambda r: r.scheduled_date)
+        # draft_picking_lst.action_confirm()
+        # pickings_to_check.action_assign()
+        #quantities_done = sum(move_line.qty_done for move_line in assigned_picking_lst.mapped('move_line_ids').filtered(lambda m: m.state not in ('done', 'cancel')))
         #retiro
         self.retiro_mass_action()
+        assigned_picking_lst = self.surtir()
+        #reporte
+        assigned_picking_lst2 = assigned_picking_lst.filtered(lambda x: self.check==1 or self.check==2)
         #concentrado
         if(self.check ==2 or self.check ==1):
             CON=str(self.env['ir.sequence'].next_by_code('concentrado'))
@@ -149,15 +149,15 @@ class StockPickingMassAction(TransientModel):
             resto=assigned_picking_lst.filtered(lambda x:x.sale_id.id==False)
             for r in resto:
                 self.env['stock.picking'].search([['origin','=',r.origin]]).write({'concentrado':CON})        
-        pick_to_backorder = self.env['stock.picking']
-        pick_to_do = self.env['stock.picking']
+        #pick_to_backorder = self.env['stock.picking']
+        #pick_to_do = self.env['stock.picking']
         for picking in assigned_picking_lst:
-            for move in picking.move_lines.filtered(lambda m: m.state not in ['done', 'cancel']):
-                for move_line in move.move_line_ids:
-                    move_line.qty_done = move_line.product_uom_qty
-            if picking._check_backorder():
-                pick_to_backorder |= picking
-                continue
+            #for move in picking.move_lines.filtered(lambda m: m.state not in ['done', 'cancel']):
+            #    for move_line in move.move_line_ids:
+            #        move_line.qty_done = move_line.product_uom_qty
+            #if picking._check_backorder():
+            #    pick_to_backorder |= picking
+            #    continue
             if(picking.sale_id.x_studio_field_bxHgp):
                 if(self.check==2):
                     picking.sale_id.x_studio_field_bxHgp.write({'stage_id':94})
@@ -191,16 +191,16 @@ class StockPickingMassAction(TransientModel):
                             picking.sale_id.x_studio_field_bxHgp.write({'stage_id':112})
                         else:
                             ultimo.copy()       
-            pick_to_do |= picking
-        if pick_to_do:
-            pick_to_do.action_done()
-        if pick_to_backorder and assigned_picking_lst.mapped('sale_id.id')==[]:
-            pick_to_backorder.action_done()
-        self.picking_ids.action_done()
-        mini=self.picking_ids.filtered(lambda x:x.mini==True)
-        for m in mini:
-            backorder_pick = self.env['stock.picking'].search([('backorder_id', '=', m.id)])
-            backorder_pick.action_cancel()
+            #pick_to_do |= picking
+        #if pick_to_do:
+        #    pick_to_do.action_done()
+        #if pick_to_backorder and assigned_picking_lst.mapped('sale_id.id')==[]:
+        #    pick_to_backorder.action_done()
+        #self.picking_ids.action_done()
+        #mini=self.picking_ids.filtered(lambda x:x.mini==True)
+        #for m in mini:
+        #    backorder_pick = self.env['stock.picking'].search([('backorder_id', '=', m.id)])
+        #    backorder_pick.action_cancel()
         if(len(assigned_picking_lst2)>0):
             return self.env.ref('stock_picking_mass_action.report_custom').report_action(assigned_picking_lst2)
         for pp in assigned_picking_lst.filtered(lambda x:x.sale_id.x_studio_tipo_de_solicitud!="Retiro" and x.sale_id.x_studio_field_bxHgp.id==False):
@@ -212,7 +212,37 @@ class StockPickingMassAction(TransientModel):
                     tipo2=move_lines.mapped('move_id.picking_type_id.name')
                     if('Distribución' in tipo2):
                         pp.sale_id.write({'state':'distribucion'})
-
+    @api.multi
+    def surtir(self):
+        self.ensure_one()
+        # un reserved
+        self.picking_ids.write({'surtir':True})
+        almacenes=self.env['stock.warehouse'].search([['x_studio_cliente','=',False]]).mapped('lot_stock_id.id')
+        locations=self.picking_ids.mapped('location_id.id')
+        tipo=self.picking_ids.mapped('picking_type_id.code')
+        if(locations[0] in almacenes):
+            unresrved=self.env['stock.picking'].search(['&','&','&',['id','not in',self.picking_ids.mapped('id')],['location_id','in',locations],['state','=','assigned'],['surtir','=',False]])
+            if(len(unresrved)>0 and 'outgoing' not in tipo):
+                unresrved.do_unreserve()
+        draft_picking_lst = self.picking_ids.filtered(lambda x: x.state == 'draft').sorted(key=lambda r: r.scheduled_date)
+        draft_picking_lst.action_confirm()
+        pickings_to_check = self.picking_ids.filtered(lambda x: x.state not in ['draft','cancel','done',]).sorted(key=lambda r: r.scheduled_date)
+        pickings_to_check.action_assign()
+        assigned_picking_lst = self.picking_ids.filtered(lambda x: x.state == 'assigned').sorted(key=lambda r: r.scheduled_date)
+        quantities_done = sum(move_line.qty_done for move_line in assigned_picking_lst.mapped('move_line_ids').filtered(lambda m: m.state not in ('done', 'cancel')))
+        self.retiro_mass_action()
+        if not quantities_done:
+            q=self.env['stock.immediate.transfer'].create({'pick_ids':[(6,0,assigned_picking_lst.mapped('id'))]})
+            q.process()
+        if any([pick._check_backorder() for pick in assigned_picking_lst]):
+            mini=assigned_picking_lst.filtered(lambda x:x.mini==True)
+            nomini=assigned_picking_lst.filtered(lambda x:x.mini==False)
+            b=self.env['stock.backorder.confirmation'].create({'pick_ids':[(6,0,nomini.mapped('id'))]})
+            b.process()
+            c=self.env['stock.backorder.confirmation'].create({'pick_ids':[(6,0,mini.mapped('id'))]})
+            c.process_cancel_backorder()
+        assigned_picking_lst.action_done()
+        return assigned_picking_lst
 
     @api.multi
     def vales(self):

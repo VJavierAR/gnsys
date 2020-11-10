@@ -16,7 +16,7 @@ class StockPicking(Model):
     est = fields.Text(compute = 'x_historial_ticket_actualiza')
     backorder=fields.Char('Backorder',store=True)
     lineTemp=fields.One2many('stock.pick.temp','picking')
-    estado = fields.Selection([('recepcion','Recepción'),('draft', 'Draft'),('compras', 'Solicitud de Compra'),('waiting', 'Esperando otra operación'),('confirmed', 'Sin Stock'),('assigned', 'Por Validar'),('done', 'Validado'),('distribucion', 'Distribución'),('cancel', 'Cancelled'),('aDistribucion', 'A Distribución'),('Xenrutar', 'Por en Rutar'),('ruta', 'En Ruta'),('entregado', 'Entregado')],store=True)
+    estado = fields.Selection([('recepcion','Recepción'),('draft', 'Draft'),('alamcen', 'Almacen'),('distribucion', 'Distribución'),('compras', 'Solicitud de Compra'),('waiting', 'Esperando otra operación'),('confirmed', 'Sin Stock'),('assigned', 'Por Validar'),('done', 'Validado'),('cancel', 'Cancelled'),('aDistribucion', 'A Distribución'),('Xenrutar', 'Por en Rutar'),('ruta', 'En Ruta'),('entregado', 'Entregado')],store=True,default='almacen')
     value2 = fields.Integer(store=True)
     lineasBack = fields.One2many(related='backorder_ids.move_ids_without_package')
     ruta_id=fields.Many2one('creacion.ruta')
@@ -33,7 +33,6 @@ class StockPicking(Model):
     mini=fields.Boolean()
     chofer=fields.Many2one('res.users')
     surtir=fields.Boolean(default=False)
-    #ticke_id=fields.Integer(related='group_id.sale_id.x_studio_field_bxHgp.id')
 
     def validacionZero(self):
         if(self.x_studio_backorder_de==False):
