@@ -528,7 +528,9 @@ class StockCambioLine(TransientModel):
         res={}
         for record in self:
             if(record.producto1.categ_id.id!=5):
-                res['domain']={'producto2':[['categ_id','=',record.producto1.categ_id.id]]}
+                q=self.env['stock.quant'].search([['product_id.categ_id.id','=',record.producto1.categ_id.id],['location_id','in',(35204,67,12)]])
+                res['domain']={'producto2':[['categ_id','=',record.producto1.categ_id.id],['id','in',q.mapped('product_id.id')]]}
+                #res['domain']={'producto2':[['categ_id','=',record.producto1.categ_id.id]]}
             if(record.producto1.categ_id.id==5):
                 p=self.env['product.product'].search([['categ_id','=',5],['name','ilike',record.producto1.name]])
                 res['domain']={'producto2':[['id','in',p.mapped('id')]]}
