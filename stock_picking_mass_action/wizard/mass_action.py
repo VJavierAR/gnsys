@@ -492,7 +492,7 @@ class StockCambioLine(TransientModel):
         res={}
         for record in self:
             if(record.producto1.categ_id.id!=5):
-                q=self.env['stock.quant'].search([['product_id.categ_id.id','=',record.producto1.categ_id.id],['quantity','>',0],['location_id','in',(35204,67,12)]])
+                q=self.env['stock.quant'].search([['product_id.categ_id.id','=',record.producto1.categ_id.id],['quantity','>',0],['location_id','in',(35204,67,12,41917)]])
                 res['domain']={'producto2':[['categ_id','=',record.producto1.categ_id.id],['id','in',q.mapped('product_id.id')]]}
                 #res['domain']={'producto2':[['categ_id','=',record.producto1.categ_id.id]]}
             if(record.producto1.categ_id.id==5):
@@ -530,7 +530,7 @@ class StockCambioLine(TransientModel):
         res={}
         for record in self:
             if(record.producto1.categ_id.id!=5):
-                q=self.env['stock.quant'].search([['product_id.categ_id.id','=',record.producto1.categ_id.id],['quantity','>',0],['location_id','in',(35204,67,12)]])
+                q=self.env['stock.quant'].search([['product_id.categ_id.id','=',record.producto1.categ_id.id],['quantity','>',0],['location_id','in',(35204,67,12,41917)]])
                 res['domain']={'producto2':[['categ_id','=',record.producto1.categ_id.id],['id','in',q.mapped('product_id.id')]]}
                 #res['domain']={'producto2':[['categ_id','=',record.producto1.categ_id.id]]}
             if(record.producto1.categ_id.id==5):
