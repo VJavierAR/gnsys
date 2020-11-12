@@ -248,7 +248,7 @@ class TicketsXlsx(models.AbstractModel):
         report_name = 'Tickets'
         bold = workbook.add_format({'bold': True})
         sheet = workbook.add_worksheet('Tickets')
-        sheet.merge_range('A1:W1', 'Tickets', merge_format)
+        sheet.merge_range('A1:X1', 'Tickets', merge_format)
         for obj in ticket:
             tipo=''
             if obj.x_studio_equipo_por_nmero_de_serie_1:
