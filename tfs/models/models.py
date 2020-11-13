@@ -28,7 +28,7 @@ class tfs(models.Model):
     inventario = fields.One2many(comodel='stock.quant',related='almacen.lot_stock_id.quant_ids', string="Quants")
     cliente = fields.Many2one('res.partner', store=True,string='Cliente')
     localidad=fields.Many2one('res.partner',store='True',string='Localidad')
-    serie=fields.Many2one('stock.production.lot',string='Numero de Serie',store='True')
+    serie=fields.Many2one('stock.production.lot',string='Numero de Serie',store='True',track_visibility='onchange')
     domi=fields.Integer()
     modelo=fields.Char(related='serie.product_id.name',string='Modelo')
     productoNegro=fields.Many2one('product.product',string='Toner Monocromatico')
