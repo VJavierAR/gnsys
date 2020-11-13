@@ -60,7 +60,7 @@ class tfs(models.Model):
     actualporcentajeMagenta=fields.Integer(string='Actual Magenta')
     
     evidencias=fields.One2many('tfs.evidencia',string='Evidencias',inverse_name='tfs_id')
-    estado=fields.Selection([('borrador','Tfs autoriza'),('xValidar','Por Validar'),('Valido','Valido'),('Confirmado','Confirmado'),('Cancelado','Cancelado')],default='borrador')
+    estado=fields.Selection([('borrador','Tfs autoriza'),('xValidar','Por Validar'),('Valido','Valido'),('Confirmado','Confirmado'),('Cancelado','Cancelado')],default='borrador', track_visibility='onchange')
     colorBN=fields.Selection(related='serie.x_studio_color_bn')
     arreglo=fields.Char()
     direccion=fields.Char(widget="html")
