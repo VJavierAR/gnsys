@@ -807,25 +807,25 @@ class TransferInterMoveTemp(TransientModel):
 
 
 
-    @api.onchange('producto')
-    def quant(self):
-        res={}
-        if(self.producto):
-            self.disponible=0
-            h=self.env['stock.quant'].search([['product_id','=',self.producto.id],['location_id','=',self.ubicacion.id],['quantity','>',0]])
-            if(len(h)>0 and self.producto.categ_id.id!=13):
-                self.stoc=h.id
-            if(len(h)==0 and self.producto.categ_id.id!=13):
-                d=self.env['stock.location'].search([['location_id','=',self.ubicacion.id]])
-                for di in d:
-                    i=self.env['stock.quant'].search([['product_id','=',self.producto.id],['location_id','=',di.id],['quantity','>',0]])
-                    if(len(i)>0):
-                        self.stoc=i.id
-            if(self.producto.categ_id.id==13):
-                self.disponible=len(h)
-                self.cantidad=1
-                res['domain']={'serie':[('id','in',h.mapped('lot_id.id'))]}
-                return res
+    # @api.onchange('producto')
+    # def quant(self):
+    #     res={}
+    #     if(self.producto):
+    #         self.disponible=0
+    #         h=self.env['stock.quant'].search([['product_id','=',self.producto.id],['location_id','=',self.ubicacion.id],['quantity','>',0]])
+    #         if(len(h)>0 and self.producto.categ_id.id!=13):
+    #             self.stoc=h.id
+    #         if(len(h)==0 and self.producto.categ_id.id!=13):
+    #             d=self.env['stock.location'].search([['location_id','=',self.ubicacion.id]])
+    #             for di in d:
+    #                 i=self.env['stock.quant'].search([['product_id','=',self.producto.id],['location_id','=',di.id],['quantity','>',0]])
+    #                 if(len(i)>0):
+    #                     self.stoc=i.id
+    #         if(self.producto.categ_id.id==13):
+    #             self.disponible=len(h)
+    #             self.cantidad=1
+    #             res['domain']={'serie':[('id','in',h.mapped('lot_id.id'))]}
+    #             return res
                 
 
 class PickingSerie(TransientModel):
