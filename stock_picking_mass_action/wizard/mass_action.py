@@ -796,6 +796,16 @@ class TransferInterMoveTemp(TransientModel):
     categoria=fields.Many2one('product.category')
     serie=fields.Many2one('stock.production.lot',store=True)
 
+    @api.depends('almacen','producto')
+    def almac(self):
+        res={}
+        for record in self:
+            if(record.almacen):
+                ex=self.env['stock.quant'].search([['location_id','=',record.almacen.lot_stock_id.id],['product_id','=',record.producto.id]]).sorted(key='quantity',reverse=True)
+                record.disponible=int(ex[0].quantity) if(len(ex)>0) else 0
+
+
+
 
     @api.onchange('producto')
     def quant(self):
