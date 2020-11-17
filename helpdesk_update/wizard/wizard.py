@@ -814,42 +814,129 @@ class helpdesk_contadores(TransientModel):
     @api.depends('ticket_id')
     def _compute_contadorBNMesa(self):
         if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+            dominio_ultimo_contador = [('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '=', False)]
+            ultimo_contador_odoo = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'create_date desc', limit = 1)
+            dominio_ultimo_contador = [('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '!=', False), ('x_studio_fecha', '!=', False)]
+            ultimo_contador_techra = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'x_studio_fecha desc', limit = 1)
+            _logger.info('ultimo_contador_techra: ' + str(ultimo_contador_techra.x_studio_fecha) + ' ultimo_contador_odoo: ' + str(ultimo_contador_odoo.create_date))
+
+            if ultimo_contador_techra and ultimo_contador_odoo:
+                if ultimo_contador_techra.x_studio_fecha > ultimo_contador_odoo.create_date:
+                    self.contadorBNMesa = int(ultimo_contador_techra.contadorMono)
+                    #if str(ultimo_contador_techra.x_studio_color_o_bn) == 'Color':
+                    #    return 'Equipo B/N o Color: ' + str(ultimo_contador_techra.x_studio_color_o_bn) + '</br>Contador B/N: ' + str(ultimo_contador_techra.contadorMono) + '</br>Contador Color: ' + str(ultimo_contador_techra.contadorColor)
+                    #if str(ultimo_contador_techra.x_studio_color_o_bn) == 'B/N':
+                    #    return 'Equipo B/N o Color: ' + str(ultimo_contador_techra.x_studio_color_o_bn) + '</br>Contador B/N: ' + str(ultimo_contador_techra.contadorMono)
+                else:
+                    self.contadorBNMesa = int(ultimo_contador_odoo.contadorMono)
+                    #if str(ultimo_contador_odoo.x_studio_color_o_bn) == 'Color':
+                    #    return 'Equipo B/N o Color: ' + str(ultimo_contador_odoo.x_studio_color_o_bn) + '</br>Contador B/N: ' + str(ultimo_contador_odoo.contadorMono) + '</br>Contador Color: ' + str(ultimo_contador_odoo.contadorColor)
+                    #if str(ultimo_contador_odoo.x_studio_color_o_bn) == 'B/N':
+                    #    return 'Equipo B/N o Color: ' + str(ultimo_contador_odoo.x_studio_color_o_bn) + '</br>Contador B/N: ' + str(ultimo_contador_odoo.contadorMono)
+            elif ultimo_contador_techra and not ultimo_contador_odoo:
+                self.contadorBNMesa = int(ultimo_contador_techra.contadorMono)
+                #if str(ultimo_contador_techra.x_studio_color_o_bn) == 'Color':
+                #        return 'Equipo B/N o Color: ' + str(ultimo_contador_techra.x_studio_color_o_bn) + '</br>Contador B/N: ' + str(ultimo_contador_techra.contadorMono) + '</br>Contador Color: ' + str(ultimo_contador_techra.contadorColor)
+                #if str(ultimo_contador_techra.x_studio_color_o_bn) == 'B/N':
+                #    return 'Equipo B/N o Color: ' + str(ultimo_contador_techra.x_studio_color_o_bn) + '</br>Contador B/N: ' + str(ultimo_contador_techra.contadorMono)
+            elif ultimo_contador_odoo and not ultimo_contador_techra:
+                self.contadorBNMesa = int(ultimo_contador_odoo.contadorMono)
+                #if str(ultimo_contador_odoo.x_studio_color_o_bn) == 'Color':
+                #        return 'Equipo B/N o Color: ' + str(ultimo_contador_odoo.x_studio_color_o_bn) + '</br>Contador B/N: ' + str(ultimo_contador_odoo.contadorMono) + '</br>Contador Color: ' + str(ultimo_contador_odoo.contadorColor)
+                #if str(ultimo_contador_odoo.x_studio_color_o_bn) == 'B/N':
+                #    return 'Equipo B/N o Color: ' + str(ultimo_contador_odoo.x_studio_color_o_bn) + '</br>Contador B/N: ' + str(ultimo_contador_odoo.contadorMono)
+            #else:
+            #    return 'Equipo sin contador'
+
+
+            """
             fuente = 'stock.production.lot'
             ultimoDcaStockProductionLot = self.env['dcas.dcas'].search([['fuente', '=', fuente],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
             if ultimoDcaStockProductionLot:
                 self.contadorBNMesa = int(ultimoDcaStockProductionLot.contadorMono)
                 self.contadorColorMesa = int(ultimoDcaStockProductionLot.contadorColor)
                 self.bnColor = ultimoDcaStockProductionLot.x_studio_color_o_bn
-            #for serie in self.ticket_id.x_studio_equipo_por_nmero_de_serie:
-            #    self.contadorBNMesa = int(serie.x_studio_contador_bn_mesa)
-            #    self.contadorColorMesa = int(serie.x_studio_contador_color_mesa)
-            #    self.bnColor = serie.x_studio_color_bn
+            """
 
     def _compute_actualizaColor(self):
-      if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+        if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+            dominio_ultimo_contador = [('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '=', False)]
+            ultimo_contador_odoo = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'create_date desc', limit = 1)
+            dominio_ultimo_contador = [('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '!=', False), ('x_studio_fecha', '!=', False)]
+            ultimo_contador_techra = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'x_studio_fecha desc', limit = 1)
+            _logger.info('ultimo_contador_techra: ' + str(ultimo_contador_techra.x_studio_fecha) + ' ultimo_contador_odoo: ' + str(ultimo_contador_odoo.create_date))
+
+            if ultimo_contador_techra and ultimo_contador_odoo:
+                if ultimo_contador_techra.x_studio_fecha > ultimo_contador_odoo.create_date:
+                    self.bnColor = ultimo_contador_techra.x_studio_color_o_bn
+                    #if str(ultimo_contador_techra.x_studio_color_o_bn) == 'Color':
+                    #    return 'Equipo B/N o Color: ' + str(ultimo_contador_techra.x_studio_color_o_bn) + '</br>Contador B/N: ' + str(ultimo_contador_techra.contadorMono) + '</br>Contador Color: ' + str(ultimo_contador_techra.contadorColor)
+                    #if str(ultimo_contador_techra.x_studio_color_o_bn) == 'B/N':
+                    #    return 'Equipo B/N o Color: ' + str(ultimo_contador_techra.x_studio_color_o_bn) + '</br>Contador B/N: ' + str(ultimo_contador_techra.contadorMono)
+                else:
+                    self.bnColor = ultimo_contador_odoo.x_studio_color_o_bn
+                    #if str(ultimo_contador_odoo.x_studio_color_o_bn) == 'Color':
+                    #    return 'Equipo B/N o Color: ' + str(ultimo_contador_odoo.x_studio_color_o_bn) + '</br>Contador B/N: ' + str(ultimo_contador_odoo.contadorMono) + '</br>Contador Color: ' + str(ultimo_contador_odoo.contadorColor)
+                    #if str(ultimo_contador_odoo.x_studio_color_o_bn) == 'B/N':
+                    #    return 'Equipo B/N o Color: ' + str(ultimo_contador_odoo.x_studio_color_o_bn) + '</br>Contador B/N: ' + str(ultimo_contador_odoo.contadorMono)
+            elif ultimo_contador_techra and not ultimo_contador_odoo:
+                self.bnColor = ultimo_contador_techra.x_studio_color_o_bn
+                #if str(ultimo_contador_techra.x_studio_color_o_bn) == 'Color':
+                #        return 'Equipo B/N o Color: ' + str(ultimo_contador_techra.x_studio_color_o_bn) + '</br>Contador B/N: ' + str(ultimo_contador_techra.contadorMono) + '</br>Contador Color: ' + str(ultimo_contador_techra.contadorColor)
+                #if str(ultimo_contador_techra.x_studio_color_o_bn) == 'B/N':
+                #    return 'Equipo B/N o Color: ' + str(ultimo_contador_techra.x_studio_color_o_bn) + '</br>Contador B/N: ' + str(ultimo_contador_techra.contadorMono)
+            elif ultimo_contador_odoo and not ultimo_contador_techra:
+                self.bnColor = ultimo_contador_odoo.x_studio_color_o_bn
+
+            """
             fuente = 'stock.production.lot'
             ultimoDcaStockProductionLot = self.env['dcas.dcas'].search([['fuente', '=', fuente],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
             if ultimoDcaStockProductionLot:
                 self.bnColor = ultimoDcaStockProductionLot.x_studio_color_o_bn
-      #for record in self:
-      #  for serie in record.ticket_id.x_studio_equipo_por_nmero_de_serie:
-      #      record.bnColor = str(serie.x_studio_color_bn)
+            """
 
     def _compute_actualizaContadorColorMesa(self):
         if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+            dominio_ultimo_contador = [('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '=', False)]
+            ultimo_contador_odoo = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'create_date desc', limit = 1)
+            dominio_ultimo_contador = [('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '!=', False), ('x_studio_fecha', '!=', False)]
+            ultimo_contador_techra = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'x_studio_fecha desc', limit = 1)
+            _logger.info('ultimo_contador_techra: ' + str(ultimo_contador_techra.x_studio_fecha) + ' ultimo_contador_odoo: ' + str(ultimo_contador_odoo.create_date))
+
+            if ultimo_contador_techra and ultimo_contador_odoo:
+                if ultimo_contador_techra.x_studio_fecha > ultimo_contador_odoo.create_date:
+                    self.contadorColorMesa = int(ultimo_contador_techra.contadorColor)
+                    #if str(ultimo_contador_techra.x_studio_color_o_bn) == 'Color':
+                    #    return 'Equipo B/N o Color: ' + str(ultimo_contador_techra.x_studio_color_o_bn) + '</br>Contador B/N: ' + str(ultimo_contador_techra.contadorMono) + '</br>Contador Color: ' + str(ultimo_contador_techra.contadorColor)
+                    #if str(ultimo_contador_techra.x_studio_color_o_bn) == 'B/N':
+                    #    return 'Equipo B/N o Color: ' + str(ultimo_contador_techra.x_studio_color_o_bn) + '</br>Contador B/N: ' + str(ultimo_contador_techra.contadorMono)
+                else:
+                    self.contadorColorMesa = int(ultimo_contador_odoo.contadorColor)
+                    #if str(ultimo_contador_odoo.x_studio_color_o_bn) == 'Color':
+                    #    return 'Equipo B/N o Color: ' + str(ultimo_contador_odoo.x_studio_color_o_bn) + '</br>Contador B/N: ' + str(ultimo_contador_odoo.contadorMono) + '</br>Contador Color: ' + str(ultimo_contador_odoo.contadorColor)
+                    #if str(ultimo_contador_odoo.x_studio_color_o_bn) == 'B/N':
+                    #    return 'Equipo B/N o Color: ' + str(ultimo_contador_odoo.x_studio_color_o_bn) + '</br>Contador B/N: ' + str(ultimo_contador_odoo.contadorMono)
+            elif ultimo_contador_techra and not ultimo_contador_odoo:
+                self.contadorColorMesa = int(ultimo_contador_techra.contadorColor)
+                #if str(ultimo_contador_techra.x_studio_color_o_bn) == 'Color':
+                #        return 'Equipo B/N o Color: ' + str(ultimo_contador_techra.x_studio_color_o_bn) + '</br>Contador B/N: ' + str(ultimo_contador_techra.contadorMono) + '</br>Contador Color: ' + str(ultimo_contador_techra.contadorColor)
+                #if str(ultimo_contador_techra.x_studio_color_o_bn) == 'B/N':
+                #    return 'Equipo B/N o Color: ' + str(ultimo_contador_techra.x_studio_color_o_bn) + '</br>Contador B/N: ' + str(ultimo_contador_techra.contadorMono)
+            elif ultimo_contador_odoo and not ultimo_contador_techra:
+                self.contadorColorMesa = int(ultimo_contador_odoo.contadorColor)
+
+            """
             fuente = 'stock.production.lot'
             ultimoDcaStockProductionLot = self.env['dcas.dcas'].search([['fuente', '=', fuente],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
             if ultimoDcaStockProductionLot:
                 self.contadorColorMesa = int(ultimoDcaStockProductionLot.contadorColor)
                 self.bnColor = ultimoDcaStockProductionLot.x_studio_color_o_bn
-        #for serie in self.ticket_id.x_studio_equipo_por_nmero_de_serie:
-        #    self.contadorColorMesa = int(serie.x_studio_contador_color_mesa)
+            """
     
     def modificarContadores(self):
         if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
             fuente = 'stock.production.lot'
-            ultimoDcaStockProductionLot = self.env['dcas.dcas'].search([['fuente', '=', fuente],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
-        #for c in self.ticket_id.x_studio_equipo_por_nmero_de_serie:                                       
+            #ultimoDcaStockProductionLot = self.env['dcas.dcas'].search([['fuente', '=', fuente],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)                             
             q = 'stock.production.lot'
             if self.bnColor == 'B/N':
                 if int(self.contadorBNActual) >= int(self.contadorBNMesa):
@@ -862,16 +949,14 @@ class helpdesk_contadores(TransientModel):
                                                         'x_studio_contador_mono_anterior_1':negrot,
                                                         'fuente': fuente
                                                     })                 
-                    self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.ticket_id.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario': 'Contador BN anterior: ' + str(negrot) + '\nContador BN capturado: ' + str(self.contadorBNActual)})
-                    self.ticket_id.write({'contadores_anteriores': '</br>Equipo BN o Color: ' + str(self.bnColor) + ' </br></br>Contador BN: ' + str(self.contadorBNActual) + '</br></br>Contador Color: ' + str(self.contadorColorMesa)
+                    self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.ticket_id.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario': 'Contador BN anterior: ' + str(negrot) + '\nContador BN capturado: ' + str(self.contadorBNActual), 'creadoPorSistema': True })
+                    
+                    self.ticket_id.write({'contadores_anteriores': 'Equipo B/N o Color: ' + str(self.bnColor) + '</br>Contador B/N: ' + str(self.contadorBNActual)
                                         , 'x_studio_contador_bn': int(negrot)
                                         , 'x_studio_contador_bn_a_capturar': int(self.contadorBNActual)
                                         , 'x_studio_contador_color': 0
-                                        , 'x_studio_contador_color_a_capturar': 0,
-                                        'creadoPorSistema': True
+                                        , 'x_studio_contador_color_a_capturar': 0
                                         })
-                    #self.ticket_id.write({'contadorBNWizard': self.contadorBNActual
-                    #                    })
                     self.ticket_id.obten_ulimo_diagnostico_fecha_usuario()
                     self.ticket_id.datos_ticket_2()
                     mensajeTitulo = "Contador capturado!!!"
@@ -893,11 +978,7 @@ class helpdesk_contadores(TransientModel):
                 else:
                     raise exceptions.ValidationError("Contador Monocromatico Menor")                                   
             if self.bnColor != 'B/N':
-                if int(self.contadorColorActual) >= int(self.contadorColorMesa) and int(self.contadorBNActual) >= int(self.contadorBNMesa):                      
-                    #if self.ticket_id.team_id.id == 8:
-                    #    negrot = c.x_studio_contador_bn
-                    #    colort = c.x_studio_contador_color
-                    #else:
+                if int(self.contadorColorActual) >= int(self.contadorColorMesa) and int(self.contadorBNActual) >= int(self.contadorBNMesa):
                     negrot = self.contadorBNMesa
                     colort = self.contadorColorMesa
                     rr=self.env['dcas.dcas'].create({
@@ -909,24 +990,13 @@ class helpdesk_contadores(TransientModel):
                                                         'x_studio_contador_mono_anterior_1': negrot,
                                                         'fuente': fuente
                                                   })
-                    #query = 'update dcas_dcas set \"x_studio_contador_mono_anterior_1\" = ' + str(negrot) + ', \"x_studio_contador_color_anterior\" = ' str(colort) + ' where id = ' rr.id + ';'
-                    #self.env.cr.execute(query)
-                    #self.env.cr.commit()
-                    #rr.write({
-                    #            'x_studio_contador_color_anterior': colort,
-                    #            'x_studio_contador_mono_anterior_1': negrot,
-                    #        })
-                    self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.ticket_id.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario': 'Contador BN anterior: ' + str(negrot) + '\nContador BN capturado: ' + str(self.contadorBNActual) + '\nContador color anterior: ' + str(colort) + '\nContador color capturado: ' + str(self.contadorColorActual)})
-                    self.ticket_id.write({'contadores_anteriores': '</br>Equipo BN o Color: ' + str(self.bnColor) + ' </br></br>Contador BN: ' + str(self.contadorBNActual) + '</br></br>Contador Color: ' + str(self.contadorColorActual)
+                    self.env['helpdesk.diagnostico'].create({'ticketRelacion':self.ticket_id.x_studio_id_ticket, 'estadoTicket': 'captura ', 'write_uid':  self.env.user.name, 'comentario': 'Contador BN anterior: ' + str(negrot) + '\nContador BN capturado: ' + str(self.contadorBNActual) + '\nContador color anterior: ' + str(colort) + '\nContador color capturado: ' + str(self.contadorColorActual), 'creadoPorSistema': True})
+                    self.ticket_id.write({'contadores_anteriores': 'Equipo B/N o Color: ' + str(self.bnColor) + '</br>Contador B/N: ' + str(self.contadorBNActual) + '</br>Contador Color: ' + str(self.contadorColorActual)
                                         , 'x_studio_contador_bn': int(negrot)
                                         , 'x_studio_contador_bn_a_capturar': int(self.contadorBNActual)
                                         , 'x_studio_contador_color': int(colort)
-                                        , 'x_studio_contador_color_a_capturar': int(self.contadorColorActual),
-                                        'creadoPorSistema': True
+                                        , 'x_studio_contador_color_a_capturar': int(self.contadorColorActual)
                                         })
-                    #self.ticket_id.write({'contadorBNWizard': self.contadorBNActual
-                    #                    , 'contadorColorWizard': self.contadorColorActual
-                    #                    })
                     self.ticket_id.obten_ulimo_diagnostico_fecha_usuario()
                     self.ticket_id.datos_ticket_2()
                     mensajeTitulo = "Contador capturado!!!"
@@ -5329,28 +5399,64 @@ class helpdesk_editar_contadores_mesa(TransientModel):
 
     def _compute_contador_bn_actual(self):
         for record in self:
-            fuente = 'stock.production.lot'
-            ultimoDcaStockProductionLot = self.env['dcas.dcas'].search([['fuente', '=', fuente],['serie', '=', record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
-            if ultimoDcaStockProductionLot:
-                record.contadorMonoActual = ultimoDcaStockProductionLot.contadorMono
+            dominio_ultimo_contador = [('serie', '=', record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '=', False), ('fuente', '!=', 'dcas.dcas')]
+            ultimo_contador_odoo = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'create_date desc', limit = 1)
+            dominio_ultimo_contador = [('serie', '=', record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '!=', False), ('x_studio_fecha', '!=', False), ('fuente', '!=', 'dcas.dcas')]
+            ultimo_contador_techra = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'x_studio_fecha desc', limit = 1)
+            _logger.info('ultimo_contador_techra: ' + str(ultimo_contador_techra.x_studio_fecha) + ' ultimo_contador_odoo: ' + str(ultimo_contador_odoo.create_date))
+
+
+            if ultimo_contador_techra.x_studio_fecha > ultimo_contador_odoo.create_date:
+                record.contadorMonoActual = ultimo_contador_techra.contadorMono
+            else:
+                record.contadorMonoActual = ultimo_contador_odoo.contadorMono
+
+
+            #fuente = 'stock.production.lot'
+            #ultimoDcaStockProductionLot = self.env['dcas.dcas'].search([['fuente', '=', fuente],['serie', '=', record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+            #if ultimoDcaStockProductionLot:
+            #    record.contadorMonoActual = ultimoDcaStockProductionLot.contadorMono
 
     def _compute_contador_color_actual(self):
         for record in self:
-            fuente = 'stock.production.lot'
-            ultimoDcaStockProductionLot = self.env['dcas.dcas'].search([['fuente', '=', fuente],['serie', '=', record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
-            if ultimoDcaStockProductionLot:
-                record.contadorColorActual = ultimoDcaStockProductionLot.contadorColor
+            dominio_ultimo_contador = [('serie', '=', record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '=', False), ('fuente', '!=', 'dcas.dcas')]
+            ultimo_contador_odoo = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'create_date desc', limit = 1)
+            dominio_ultimo_contador = [('serie', '=', record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '!=', False), ('x_studio_fecha', '!=', False), ('fuente', '!=', 'dcas.dcas')]
+            ultimo_contador_techra = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'x_studio_fecha desc', limit = 1)
+            _logger.info('ultimo_contador_techra: ' + str(ultimo_contador_techra.x_studio_fecha) + ' ultimo_contador_odoo: ' + str(ultimo_contador_odoo.create_date))
+
+            if ultimo_contador_techra.x_studio_fecha > ultimo_contador_odoo.create_date:
+                record.contadorColorActual = ultimo_contador_techra.contadorColor
+            else:
+                record.contadorColorActual = ultimo_contador_odoo.contadorColor
+
+            #fuente = 'stock.production.lot'
+            #ultimoDcaStockProductionLot = self.env['dcas.dcas'].search([['fuente', '=', fuente],['serie', '=', record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+            #if ultimoDcaStockProductionLot:
+            #    record.contadorColorActual = ultimoDcaStockProductionLot.contadorColor
 
     def _compute_textoInformativo(self):
-        q = 'stock.production.lot'
-        ultimoDcaStockProductionLot = self.env['dcas.dcas'].search([['fuente', '=', q],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
-        q = 'dcas.dcas'
-        ultimoDcaDcasDcas = self.env['dcas.dcas'].search([['fuente', '=', q],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
-        q = 'helpdesk.ticket'
-        ultimoDcaHelpdeskTicket = self.env['dcas.dcas'].search([['fuente', '=', q],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
-        q = 'tfs.tfs'
-        ultimoDcaTfsTfs = self.env['dcas.dcas'].search([['fuente', '=', q],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+        #q = 'stock.production.lot'
+        #ultimoDcaStockProductionLot = self.env['dcas.dcas'].search([['fuente', '=', q],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+        #q = 'dcas.dcas'
+        #ultimoDcaDcasDcas = self.env['dcas.dcas'].search([['fuente', '=', q],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+        #q = 'helpdesk.ticket'
+        #ultimoDcaHelpdeskTicket = self.env['dcas.dcas'].search([['fuente', '=', q],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+        #q = 'tfs.tfs'
+        #ultimoDcaTfsTfs = self.env['dcas.dcas'].search([['fuente', '=', q],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
         #self.textoInformativo = 'ultimoDcaStockProductionLot: ' + str(ultimoDcaStockProductionLot.id) + '\nultimoDcaDcasDcas: ' + str(ultimoDcaDcasDcas.id) + '\nultimoDcaHelpdeskTicket: ' + str(ultimoDcaHelpdeskTicket.id) + '\nultimoDcaTfsTfs: ' + str(ultimoDcaTfsTfs.id) + '\n\n'
+
+        dominio_ultimo_contador = [('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '=', False), ('fuente', '!=', 'dcas.dcas')]
+        ultimo_contador_odoo = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'create_date desc', limit = 1)
+        dominio_ultimo_contador = [('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '!=', False), ('x_studio_fecha', '!=', False), ('fuente', '!=', 'dcas.dcas')]
+        ultimo_contador_techra = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'x_studio_fecha desc', limit = 1)
+        _logger.info('ultimo_contador_techra: ' + str(ultimo_contador_techra.x_studio_fecha) + ' ultimo_contador_odoo: ' + str(ultimo_contador_odoo.create_date))
+
+        ultimoDcaStockProductionLot = False
+        if ultimo_contador_techra.x_studio_fecha > ultimo_contador_odoo.create_date:
+            ultimoDcaStockProductionLot = ultimo_contador_techra
+        else:
+            ultimoDcaStockProductionLot = ultimo_contador_odoo
 
         for c in self.ticket_id.x_studio_equipo_por_nmero_de_serie:
             comentarioDeReinicio = """
@@ -5542,10 +5648,226 @@ class helpdesk_editar_contadores_mesa(TransientModel):
 
 
     def editarContadores(self):
+        dominio_ultimo_contador = [('serie', '=', record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '=', False), ('fuente', '!=', 'dcas.dcas')]
+        ultimo_contador_odoo = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'create_date desc', limit = 1)
+        dominio_ultimo_contador = [('serie', '=', record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '!=', False), ('x_studio_fecha', '!=', False), ('fuente', '!=', 'dcas.dcas')]
+        ultimo_contador_techra = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'x_studio_fecha desc', limit = 1)
+        _logger.info('ultimo_contador_techra: ' + str(ultimo_contador_techra.x_studio_fecha) + ' ultimo_contador_odoo: ' + str(ultimo_contador_odoo.create_date))
+        
+        ultimoDcaStockProductionLot = False
+        if ultimo_contador_techra.x_studio_fecha > ultimo_contador_odoo.create_date:
+            ultimoDcaStockProductionLot = ultimo_contador_techra
+        else:
+            ultimoDcaStockProductionLot = ultimo_contador_odoo
+        #q = 'stock.production.lot'
+        vals = {
+            'x_studio_cliente': ultimoDcaStockProductionLot.x_studio_cliente,
+            'serie': self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id,
+            'x_studio_color_o_bn': ultimoDcaStockProductionLot.x_studio_color_o_bn,
+            'x_studio_cartuchonefro': ultimoDcaStockProductionLot.x_studio_cartuchonefro.id,
+            'x_studio_rendimiento_negro': ultimoDcaStockProductionLot.x_studio_rendimiento_negro,
+            'x_studio_cartucho_amarillo': ultimoDcaStockProductionLot.x_studio_cartucho_amarillo.id,
+            'x_studio_rendimientoa': ultimoDcaStockProductionLot.x_studio_rendimientoa,
+            'x_studio_cartucho_cian_1': ultimoDcaStockProductionLot.x_studio_cartucho_cian_1.id,
+            'x_studio_rendimientoc': ultimoDcaStockProductionLot.x_studio_rendimientoc,
+            'x_studio_cartucho_magenta': ultimoDcaStockProductionLot.x_studio_cartucho_magenta.id,
+            'x_studio_rendimientom': ultimoDcaStockProductionLot.x_studio_rendimientom,
+            'x_studio_fecha': ultimoDcaStockProductionLot.x_studio_fecha,
+            'x_studio_tiquete': self.ticket_id.id,
+            'x_studio_tickett': self.ticket_id.id,
+
+            'contadorColor': self.contadorColorActualizado,
+            'x_studio_contador_color_anterior': ultimoDcaStockProductionLot.x_studio_contador_color_anterior,
+            'contadorMono': self.contadorMonoActualizado,
+            'x_studio_contador_mono_anterior_1': ultimoDcaStockProductionLot.x_studio_contador_mono_anterior_1,
+
+            'paginasProcesadasBN': ultimoDcaStockProductionLot.paginasProcesadasBN,
+            'porcentajeNegro': ultimoDcaStockProductionLot.porcentajeNegro,
+            'porcentajeAmarillo': ultimoDcaStockProductionLot.porcentajeAmarillo,
+            'porcentajeCian': ultimoDcaStockProductionLot.porcentajeCian,
+            'porcentajeMagenta': ultimoDcaStockProductionLot.porcentajeMagenta,
+            'x_studio_rendimiento': ultimoDcaStockProductionLot.x_studio_rendimiento,
+            'x_studio_rendimiento_color': ultimoDcaStockProductionLot.x_studio_rendimiento_color,
+            'x_studio_toner_negro': ultimoDcaStockProductionLot.x_studio_toner_negro,
+            'x_studio_toner_cian': ultimoDcaStockProductionLot.x_studio_toner_cian,
+            'x_studio_toner_magenta': ultimoDcaStockProductionLot.x_studio_toner_magenta,
+            'x_studio_toner_amarillo': ultimoDcaStockProductionLot.x_studio_toner_amarillo,
+            'nivelCA': ultimoDcaStockProductionLot.nivelCA,
+            'nivelMA': ultimoDcaStockProductionLot.nivelMA,
+            'nivelNA': ultimoDcaStockProductionLot.nivelNA,
+            'nivelAA': ultimoDcaStockProductionLot.nivelAA,
+            'contadorAnteriorNegro': ultimoDcaStockProductionLot.contadorAnteriorNegro,
+            'contadorAnteriorAmarillo': ultimoDcaStockProductionLot.contadorAnteriorAmarillo,
+            'contadorAnteriorMagenta': ultimoDcaStockProductionLot.contadorAnteriorMagenta,
+            'contadorAnteriorCian': ultimoDcaStockProductionLot.contadorAnteriorCian,
+            'paginasProcesadasA': ultimoDcaStockProductionLot.paginasProcesadasA,
+            'paginasProcesadasC': ultimoDcaStockProductionLot.paginasProcesadasC,
+            'paginasProcesadasM': ultimoDcaStockProductionLot.paginasProcesadasM,
+            'renM': ultimoDcaStockProductionLot.renM,
+            'renA': ultimoDcaStockProductionLot.renA,
+            'renC': ultimoDcaStockProductionLot.renC,
+            'reinicioDeContador': True
+        }
+        vals_sin_dca_previo = {
+            'serie': self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id,
+            'x_studio_tiquete': self.ticket_id.id,
+            'x_studio_tickett': self.ticket_id.id,
+            #'fuente': q,
+            'contadorColor': self.contadorColorActualizado,
+            'x_studio_contador_color_anterior': 0,
+            'contadorMono': self.contadorMonoActualizado,
+            'x_studio_contador_mono_anterior_1': 0,
+            'reinicioDeContador': True
+        }
+        tipoEquipoTemp = str(self.tipoEquipo)
+        nombreSerieTemp = self.serieSeleccionada
+        idTicketTemp = str(self.ticket_id.id)
+        nombreUsuarioTemp = self.env.user.name
+        contadorAnteriorNegroTemp = str(0)
+        contadorAnteriorColorTemp = str(0)
+        #if str(self.tipoEquipo) == 'B/N':
+        comentarioDeReinicio = """ """
+        rr = ''
+        dcaFuente = ''
+        mesaFuente = ''
+        tfsFuente = ''
+        #Creando dca para mesa stock.production.lot
+        #ultimoDcaStockProductionLot = self.env['dcas.dcas'].search([['fuente', '=', q],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+        vals['fuente'] = 'stock.production.lot'
+        vals_sin_dca_previo['fuente'] = 'stock.production.lot'
+        if ultimoDcaStockProductionLot:
+            rr = self.env['dcas.dcas'].create(vals)
+            contadorAnteriorNegroTemp = str(0)
+            contadorAnteriorColorTemp = str(0)
+        else:
+            rr = self.env['dcas.dcas'].create(vals_sin_dca_previo)
+
+        fechaCreacionTemp = str(rr.create_date)
+        comentarioDeReinicio = self.comentarioDeReinicio(tipoEquipoTemp, nombreSerieTemp, idTicketTemp, fechaCreacionTemp, nombreUsuarioTemp, contadorAnteriorNegroTemp, contadorAnteriorColorTemp)
+        rr.write({
+            'comentarioDeReinicio': comentarioDeReinicio
+        })
+        
+        #Creando el dca de la fuente dcas.dcas
+        vals['fuente'] = 'dcas.dcas'
+        vals_sin_dca_previo['fuente'] = 'dcas.dcas'
+        #ultimoDcaDcasDcas = self.env['dcas.dcas'].search([['fuente', '=', q],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+        if ultimoDcaStockProductionLot:
+            dcaFuente = self.env['dcas.dcas'].create(vals)
+            contadorAnteriorNegroTemp = str(0)
+            contadorAnteriorColorTemp = str(0)
+        else:
+            dcaFuente = self.env['dcas.dcas'].create(vals_sin_dca_previo)
+
+        fechaCreacionTemp = str(dcaFuente.create_date)
+        comentarioDeReinicio = self.comentarioDeReinicio(tipoEquipoTemp, nombreSerieTemp, idTicketTemp, fechaCreacionTemp, nombreUsuarioTemp, contadorAnteriorNegroTemp, contadorAnteriorColorTemp)
+        dcaFuente.write({
+            'comentarioDeReinicio': comentarioDeReinicio
+        })
+
+        #Creando el dca de la fuente helpdesk.ticket
+        vals['fuente'] = 'helpdesk.ticket'
+        vals_sin_dca_previo['fuente'] = 'helpdesk.ticket'
+        #ultimoDcaHelpdeskTicket = self.env['dcas.dcas'].search([['fuente', '=', q],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+        if ultimoDcaStockProductionLot:
+            mesaFuente = self.env['dcas.dcas'].create(vals)
+            contadorAnteriorNegroTemp = str(0)
+            contadorAnteriorColorTemp = str(0)
+        else:
+            mesaFuente = self.env['dcas.dcas'].create(vals_sin_dca_previo)
+        
+        fechaCreacionTemp = str(mesaFuente.create_date)
+        
+        comentarioDeReinicio = self.comentarioDeReinicio(tipoEquipoTemp, nombreSerieTemp, idTicketTemp, fechaCreacionTemp, nombreUsuarioTemp, contadorAnteriorNegroTemp, contadorAnteriorColorTemp)
+        mesaFuente.write({
+            'comentarioDeReinicio': comentarioDeReinicio
+        })
+
+        #Creando el dca de la fuente tfs.tfs
+        vals['fuente'] = 'tfs.tfs'
+        vals_sin_dca_previo['fuente'] = 'tfs.tfs'
+        #ultimoDcaTfsTfs = self.env['dcas.dcas'].search([['fuente', '=', q],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+        if ultimoDcaTfsTfs:
+            tfsFuente = self.env['dcas.dcas'].create(vals)
+            contadorAnteriorNegroTemp = str(0)
+            contadorAnteriorColorTemp = str(0)
+        else:
+            tfsFuente = self.env['dcas.dcas'].create(vals_sin_dca_previo)
+
+        fechaCreacionTemp = str(tfsFuente.create_date)
+        comentarioDeReinicio = self.comentarioDeReinicio(tipoEquipoTemp, nombreSerieTemp, idTicketTemp, fechaCreacionTemp, nombreUsuarioTemp, contadorAnteriorNegroTemp, contadorAnteriorColorTemp)
+        tfsFuente.write({
+            'comentarioDeReinicio': comentarioDeReinicio
+        })
+        comentario = ''
+        contadores_anteriores = ''
+        if str(self.tipoEquipo) == 'B/N':
+            comentario = 'Reinicio de contadores.\nContador B/N anterior: ' + str(self.contadorMonoActual) + '\nContador B/N capturado: ' + str(self.contadorMonoActualizado)
+            contadores_anteriores = 'Equipo B/N o Color: ' + str(self.tipoEquipo) + '</br>Contador B/N: ' + str(self.contadorMonoActualizado)
+        elif str(self.tipoEquipo) == 'Color':
+            comentario = 'Reinicio de contadores.\nContador B/N anterior: ' + str(self.contadorMonoActual) + '\nContador B/N capturado: ' + str(self.contadorMonoActualizado) + '\nContador Color anterior: ' + str(self.contadorColorActual) + '\nContador Color capturado: ' + str(self.contadorColorActualizado)
+            contadores_anteriores = 'Equipo B/N o Color: ' + str(self.tipoEquipo) + '</br>Contador B/N: ' + str(self.contadorMonoActualizado) + '</br>Contador Color: ' + str(self.contadorColorActualizado)
+        if self.comentario:
+            comentario = comentario + self.comentario
+        self.env['helpdesk.diagnostico'].create({
+            'ticketRelacion':self.ticket_id.x_studio_id_ticket,
+            'estadoTicket': self.estado,
+            'evidencia': [(6, 0, self.evidencia.ids)],
+            'mostrarComentario': self.check,
+            'write_uid':  self.env.user.name,
+            'comentario': comentario,
+            'creadoPorSistema': True
+        })
+        self.ticket_id.write({
+            'contadores_anteriores': contadores_anteriores,
+            'x_studio_contador_bn': int(self.contadorMonoActual), 
+            'x_studio_contador_bn_a_capturar': int(self.contadorMonoActualizado), 
+            'x_studio_contador_color': int(self.contadorColorActual),
+            'x_studio_contador_color_a_capturar': int(self.contadorColorActualizado)
+        })
+        self.ticket_id.obten_ulimo_diagnostico_fecha_usuario()
+        mensajeTitulo = "Contador reiniciado!!!"
+        mensajeCuerpo = "Se reinicio el contador del equipo " + str(self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].name) + ".\n" + comentario
+        wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
+        view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+        return {
+                'name': _(mensajeTitulo),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'helpdesk.alerta',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'res_id': wiz.id,
+                'context': self.env.context,
+                }
+
+
+
+
+
+
+
         #for c in self.ticket_id.x_studio_equipo_por_nmero_de_serie:
         if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
-            fuente = 'stock.production.lot'
-            ultimoDcaStockProductionLot = self.env['dcas.dcas'].search([['fuente', '=', fuente],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+            #fuente = 'stock.production.lot'
+            #ultimoDcaStockProductionLot = self.env['dcas.dcas'].search([['fuente', '=', fuente],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+
+            dominio_ultimo_contador = [('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '=', False)]
+            ultimo_contador_odoo = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'create_date desc', limit = 1)
+            dominio_ultimo_contador = [('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '!=', False), ('x_studio_fecha', '!=', False)]
+            ultimo_contador_techra = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'x_studio_fecha desc', limit = 1)
+            _logger.info('ultimo_contador_techra: ' + str(ultimo_contador_techra.x_studio_fecha) + ' ultimo_contador_odoo: ' + str(ultimo_contador_odoo.create_date))
+            
+
+            ultimoDcaStockProductionLot = False
+            if ultimo_contador_techra.x_studio_fecha > ultimo_contador_odoo.create_date:
+                ultimoDcaStockProductionLot = ultimo_contador_techra
+            else:
+                ultimoDcaStockProductionLot = ultimo_contador_odoo
+                
+
 
             q = 'stock.production.lot'
             if self.tipoEquipo == 'B/N':
@@ -5574,7 +5896,7 @@ class helpdesk_editar_contadores_mesa(TransientModel):
                                                             'comentario': 'Reinicio de contadores.\n Contador BN anterior: ' + str(self.contadorMonoActual) + '\nContador BN capturado: ' + str(self.contadorMonoActualizado) + '\n\n' + self.comentario,
                                                             'creadoPorSistema': False
                                                         })
-                self.ticket_id.write({'contadores_anteriores': '</br>Equipo BN o Color: ' + str(self.tipoEquipo) + ' </br></br>Contador BN: ' + str(self.contadorMonoActualizado) + '</br></br>Contador Color: ' + str(self.contadorColorActualizado)
+                self.ticket_id.write({'contadores_anteriores': 'Equipo B/N o Color: ' + str(self.tipoEquipo) + '</br>Contador B/N: ' + str(self.contadorMonoActualizado) + '</br>Contador Color: ' + str(self.contadorColorActualizado)
                                     , 'x_studio_contador_bn': int(self.contadorMonoActual)
                                     , 'x_studio_contador_bn_a_capturar': int(self.contadorMonoActualizado)
                                     , 'x_studio_contador_color': 0
@@ -5651,6 +5973,205 @@ class helpdesk_editar_contadores_mesa(TransientModel):
                 #else:
                 #    raise exceptions.ValidationError("Error al capturar contador, el contador capturado debe ser mayor.")
 
+
+    def reiniciarContadores(self):
+        #for c in self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+        dominio_ultimo_contador = [('serie', '=', record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '=', False), ('fuente', '!=', 'dcas.dcas')]
+        ultimo_contador_odoo = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'create_date desc', limit = 1)
+        dominio_ultimo_contador = [('serie', '=', record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '!=', False), ('x_studio_fecha', '!=', False), ('fuente', '!=', 'dcas.dcas')]
+        ultimo_contador_techra = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'x_studio_fecha desc', limit = 1)
+        _logger.info('ultimo_contador_techra: ' + str(ultimo_contador_techra.x_studio_fecha) + ' ultimo_contador_odoo: ' + str(ultimo_contador_odoo.create_date))
+
+        ultimoDcaStockProductionLot = False
+
+        if ultimo_contador_techra.x_studio_fecha > ultimo_contador_odoo.create_date:
+            ultimoDcaStockProductionLot = ultimo_contador_techra
+        else:
+            ultimoDcaStockProductionLot = ultimo_contador_odoo
+        #q = 'stock.production.lot'
+        vals = {
+            'x_studio_cliente': ultimoDcaStockProductionLot.x_studio_cliente,
+            'serie': self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id,
+            'x_studio_color_o_bn': ultimoDcaStockProductionLot.x_studio_color_o_bn,
+            'x_studio_cartuchonefro': ultimoDcaStockProductionLot.x_studio_cartuchonefro.id,
+            'x_studio_rendimiento_negro': ultimoDcaStockProductionLot.x_studio_rendimiento_negro,
+            'x_studio_cartucho_amarillo': ultimoDcaStockProductionLot.x_studio_cartucho_amarillo.id,
+            'x_studio_rendimientoa': ultimoDcaStockProductionLot.x_studio_rendimientoa,
+            'x_studio_cartucho_cian_1': ultimoDcaStockProductionLot.x_studio_cartucho_cian_1.id,
+            'x_studio_rendimientoc': ultimoDcaStockProductionLot.x_studio_rendimientoc,
+            'x_studio_cartucho_magenta': ultimoDcaStockProductionLot.x_studio_cartucho_magenta.id,
+            'x_studio_rendimientom': ultimoDcaStockProductionLot.x_studio_rendimientom,
+            'x_studio_fecha': ultimoDcaStockProductionLot.x_studio_fecha,
+            'x_studio_tiquete': self.ticket_id.id,
+            'x_studio_tickett': self.ticket_id.id,
+
+            'contadorColor': self.contadorColorActualizado,
+            'x_studio_contador_color_anterior': ultimoDcaStockProductionLot.x_studio_contador_color_anterior,
+            'contadorMono': self.contadorMonoActualizado,
+            'x_studio_contador_mono_anterior_1': ultimoDcaStockProductionLot.x_studio_contador_mono_anterior_1,
+
+            'paginasProcesadasBN': ultimoDcaStockProductionLot.paginasProcesadasBN,
+            'porcentajeNegro': ultimoDcaStockProductionLot.porcentajeNegro,
+            'porcentajeAmarillo': ultimoDcaStockProductionLot.porcentajeAmarillo,
+            'porcentajeCian': ultimoDcaStockProductionLot.porcentajeCian,
+            'porcentajeMagenta': ultimoDcaStockProductionLot.porcentajeMagenta,
+            'x_studio_rendimiento': ultimoDcaStockProductionLot.x_studio_rendimiento,
+            'x_studio_rendimiento_color': ultimoDcaStockProductionLot.x_studio_rendimiento_color,
+            'x_studio_toner_negro': ultimoDcaStockProductionLot.x_studio_toner_negro,
+            'x_studio_toner_cian': ultimoDcaStockProductionLot.x_studio_toner_cian,
+            'x_studio_toner_magenta': ultimoDcaStockProductionLot.x_studio_toner_magenta,
+            'x_studio_toner_amarillo': ultimoDcaStockProductionLot.x_studio_toner_amarillo,
+            'nivelCA': ultimoDcaStockProductionLot.nivelCA,
+            'nivelMA': ultimoDcaStockProductionLot.nivelMA,
+            'nivelNA': ultimoDcaStockProductionLot.nivelNA,
+            'nivelAA': ultimoDcaStockProductionLot.nivelAA,
+            'contadorAnteriorNegro': ultimoDcaStockProductionLot.contadorAnteriorNegro,
+            'contadorAnteriorAmarillo': ultimoDcaStockProductionLot.contadorAnteriorAmarillo,
+            'contadorAnteriorMagenta': ultimoDcaStockProductionLot.contadorAnteriorMagenta,
+            'contadorAnteriorCian': ultimoDcaStockProductionLot.contadorAnteriorCian,
+            'paginasProcesadasA': ultimoDcaStockProductionLot.paginasProcesadasA,
+            'paginasProcesadasC': ultimoDcaStockProductionLot.paginasProcesadasC,
+            'paginasProcesadasM': ultimoDcaStockProductionLot.paginasProcesadasM,
+            'renM': ultimoDcaStockProductionLot.renM,
+            'renA': ultimoDcaStockProductionLot.renA,
+            'renC': ultimoDcaStockProductionLot.renC,
+            'reinicioDeContador': True
+        }
+        vals_sin_dca_previo = {
+            'serie': self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id,
+            'x_studio_tiquete': self.ticket_id.id,
+            'x_studio_tickett': self.ticket_id.id,
+            #'fuente': q,
+            'contadorColor': self.contadorColorActualizado,
+            'x_studio_contador_color_anterior': 0,
+            'contadorMono': self.contadorMonoActualizado,
+            'x_studio_contador_mono_anterior_1': 0,
+            'reinicioDeContador': True
+        }
+        tipoEquipoTemp = str(self.tipoEquipo)
+        nombreSerieTemp = self.serieSeleccionada
+        idTicketTemp = str(self.ticket_id.id)
+        nombreUsuarioTemp = self.env.user.name
+        contadorAnteriorNegroTemp = str(0)
+        contadorAnteriorColorTemp = str(0)
+        #if str(self.tipoEquipo) == 'B/N':
+        comentarioDeReinicio = """ """
+        rr = ''
+        dcaFuente = ''
+        mesaFuente = ''
+        tfsFuente = ''
+        #Creando dca para mesa stock.production.lot
+        #ultimoDcaStockProductionLot = self.env['dcas.dcas'].search([['fuente', '=', q],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+        vals['fuente'] = 'stock.production.lot'
+        vals_sin_dca_previo['fuente'] = 'stock.production.lot'
+        if ultimoDcaStockProductionLot:
+            rr = self.env['dcas.dcas'].create(vals)
+            contadorAnteriorNegroTemp = str(0)
+            contadorAnteriorColorTemp = str(0)
+        else:
+            rr = self.env['dcas.dcas'].create(vals_sin_dca_previo)
+
+        fechaCreacionTemp = str(rr.create_date)
+        comentarioDeReinicio = self.comentarioDeReinicio(tipoEquipoTemp, nombreSerieTemp, idTicketTemp, fechaCreacionTemp, nombreUsuarioTemp, contadorAnteriorNegroTemp, contadorAnteriorColorTemp)
+        rr.write({
+            'comentarioDeReinicio': comentarioDeReinicio
+        })
+        
+        #Creando el dca de la fuente dcas.dcas
+        vals['fuente'] = 'dcas.dcas'
+        vals_sin_dca_previo['fuente'] = 'dcas.dcas'
+        #ultimoDcaDcasDcas = self.env['dcas.dcas'].search([['fuente', '=', q],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+        if ultimoDcaStockProductionLot:
+            dcaFuente = self.env['dcas.dcas'].create(vals)
+            contadorAnteriorNegroTemp = str(0)
+            contadorAnteriorColorTemp = str(0)
+        else:
+            dcaFuente = self.env['dcas.dcas'].create(vals_sin_dca_previo)
+
+        fechaCreacionTemp = str(dcaFuente.create_date)
+        comentarioDeReinicio = self.comentarioDeReinicio(tipoEquipoTemp, nombreSerieTemp, idTicketTemp, fechaCreacionTemp, nombreUsuarioTemp, contadorAnteriorNegroTemp, contadorAnteriorColorTemp)
+        dcaFuente.write({
+            'comentarioDeReinicio': comentarioDeReinicio
+        })
+
+        #Creando el dca de la fuente helpdesk.ticket
+        vals['fuente'] = 'helpdesk.ticket'
+        vals_sin_dca_previo['fuente'] = 'helpdesk.ticket'
+        #ultimoDcaHelpdeskTicket = self.env['dcas.dcas'].search([['fuente', '=', q],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+        if ultimoDcaStockProductionLot:
+            mesaFuente = self.env['dcas.dcas'].create(vals)
+            contadorAnteriorNegroTemp = str(0)
+            contadorAnteriorColorTemp = str(0)
+        else:
+            mesaFuente = self.env['dcas.dcas'].create(vals_sin_dca_previo)
+        
+        fechaCreacionTemp = str(mesaFuente.create_date)
+        
+        comentarioDeReinicio = self.comentarioDeReinicio(tipoEquipoTemp, nombreSerieTemp, idTicketTemp, fechaCreacionTemp, nombreUsuarioTemp, contadorAnteriorNegroTemp, contadorAnteriorColorTemp)
+        mesaFuente.write({
+            'comentarioDeReinicio': comentarioDeReinicio
+        })
+
+        #Creando el dca de la fuente tfs.tfs
+        vals['fuente'] = 'tfs.tfs'
+        vals_sin_dca_previo['fuente'] = 'tfs.tfs'
+        #ultimoDcaTfsTfs = self.env['dcas.dcas'].search([['fuente', '=', q],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
+        if ultimoDcaTfsTfs:
+            tfsFuente = self.env['dcas.dcas'].create(vals)
+            contadorAnteriorNegroTemp = str(0)
+            contadorAnteriorColorTemp = str(0)
+        else:
+            tfsFuente = self.env['dcas.dcas'].create(vals_sin_dca_previo)
+
+        fechaCreacionTemp = str(tfsFuente.create_date)
+        comentarioDeReinicio = self.comentarioDeReinicio(tipoEquipoTemp, nombreSerieTemp, idTicketTemp, fechaCreacionTemp, nombreUsuarioTemp, contadorAnteriorNegroTemp, contadorAnteriorColorTemp)
+        tfsFuente.write({
+            'comentarioDeReinicio': comentarioDeReinicio
+        })
+        comentario = ''
+        contadores_anteriores = ''
+        if str(self.tipoEquipo) == 'B/N':
+            comentario = 'Reinicio de contadores.\nContador B/N anterior: ' + str(self.contadorMonoActual) + '\nContador B/N capturado: ' + str(self.contadorMonoActualizado)
+            contadores_anteriores = 'Equipo B/N o Color: ' + str(self.tipoEquipo) + '</br>Contador B/N: ' + str(self.contadorMonoActualizado)
+        elif str(self.tipoEquipo) == 'Color':
+            comentario = 'Reinicio de contadores.\nContador B/N anterior: ' + str(self.contadorMonoActual) + '\nContador B/N capturado: ' + str(self.contadorMonoActualizado) + '\nContador Color anterior: ' + str(self.contadorColorActual) + '\nContador Color capturado: ' + str(self.contadorColorActualizado)
+            contadores_anteriores = 'Equipo B/N o Color: ' + str(self.tipoEquipo) + '</br>Contador B/N: ' + str(self.contadorMonoActualizado) + '</br>Contador Color: ' + str(self.contadorColorActualizado)
+
+        if self.comentario:
+            comentario = comentario + self.comentario
+        self.env['helpdesk.diagnostico'].create({
+            'ticketRelacion':self.ticket_id.x_studio_id_ticket,
+            'estadoTicket': self.estado,
+            'evidencia': [(6, 0, self.evidencia.ids)],
+            'mostrarComentario': self.check,
+            'write_uid':  self.env.user.name,
+            'comentario': comentario,
+            'creadoPorSistema': True
+        })
+        self.ticket_id.write({
+            'contadores_anteriores': contadores_anteriores,
+            'x_studio_contador_bn': int(self.contadorMonoActual), 
+            'x_studio_contador_bn_a_capturar': int(self.contadorMonoActualizado), 
+            'x_studio_contador_color': int(self.contadorColorActual),
+            'x_studio_contador_color_a_capturar': int(self.contadorColorActualizado)
+        })
+        self.ticket_id.obten_ulimo_diagnostico_fecha_usuario()
+        mensajeTitulo = "Contador reiniciado!!!"
+        mensajeCuerpo = "Se reinicio el contador del equipo " + str(self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].name) + ".\n" + comentario
+        wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
+        view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+        return {
+                'name': _(mensajeTitulo),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'helpdesk.alerta',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'res_id': wiz.id,
+                'context': self.env.context,
+                }
 
 
 

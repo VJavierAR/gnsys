@@ -409,11 +409,35 @@ class helpdesk_update(models.Model):
     @api.model
     def contadoresAnteriores(self):
         if self.x_studio_equipo_por_nmero_de_serie and self.team_id != 8:
-            if str(self.x_studio_equipo_por_nmero_de_serie[0].x_studio_color_bn) == 'B/N':
-                return '</br> Equipo BN o Color: ' + str(self.x_studio_equipo_por_nmero_de_serie[0].x_studio_color_bn) + ' </br></br> Contador BN: ' + str(self.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_bn_mesa) + '</br></br> Contador Color: ' + str(self.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_color_mesa)
-            else:
-                return '</br> Equipo BN o Color: ' + str(self.x_studio_equipo_por_nmero_de_serie[0].x_studio_color_bn) + ' </br></br> Contador BN: ' + str(self.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_bn_mesa)
+            dominio_ultimo_contador = [('serie', '=', self.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '=', False)]
+            ultimo_contador_odoo = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'create_date desc', limit = 1)
+            dominio_ultimo_contador = [('serie', '=', self.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '!=', False), ('x_studio_fecha', '!=', False)]
+            ultimo_contador_techra = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'x_studio_fecha desc', limit = 1)
+            _logger.info('ultimo_contador_techra: ' + str(ultimo_contador_techra.x_studio_fecha) + ' ultimo_contador_odoo: ' + str(ultimo_contador_odoo.create_date))
 
+            if ultimo_contador_techra and ultimo_contador_odoo:
+                if ultimo_contador_techra.x_studio_fecha > ultimo_contador_odoo.create_date:
+                    if str(ultimo_contador_techra.x_studio_color_o_bn) == 'Color':
+                        return 'Equipo B/N o Color: ' + str(ultimo_contador_techra.x_studio_color_o_bn) + '</br>Contador B/N: ' + str(ultimo_contador_techra.contadorMono) + '</br>Contador Color: ' + str(ultimo_contador_techra.contadorColor)
+                    if str(ultimo_contador_techra.x_studio_color_o_bn) == 'B/N':
+                        return 'Equipo B/N o Color: ' + str(ultimo_contador_techra.x_studio_color_o_bn) + '</br>Contador B/N: ' + str(ultimo_contador_techra.contadorMono)
+                else:
+                    if str(ultimo_contador_odoo.x_studio_color_o_bn) == 'Color':
+                        return 'Equipo B/N o Color: ' + str(ultimo_contador_odoo.x_studio_color_o_bn) + '</br>Contador B/N: ' + str(ultimo_contador_odoo.contadorMono) + '</br>Contador Color: ' + str(ultimo_contador_odoo.contadorColor)
+                    if str(ultimo_contador_odoo.x_studio_color_o_bn) == 'B/N':
+                        return 'Equipo B/N o Color: ' + str(ultimo_contador_odoo.x_studio_color_o_bn) + '</br>Contador B/N: ' + str(ultimo_contador_odoo.contadorMono)
+            elif ultimo_contador_techra and not ultimo_contador_odoo:
+                if str(ultimo_contador_techra.x_studio_color_o_bn) == 'Color':
+                        return 'Equipo B/N o Color: ' + str(ultimo_contador_techra.x_studio_color_o_bn) + '</br>Contador B/N: ' + str(ultimo_contador_techra.contadorMono) + '</br>Contador Color: ' + str(ultimo_contador_techra.contadorColor)
+                if str(ultimo_contador_techra.x_studio_color_o_bn) == 'B/N':
+                    return 'Equipo B/N o Color: ' + str(ultimo_contador_techra.x_studio_color_o_bn) + '</br>Contador B/N: ' + str(ultimo_contador_techra.contadorMono)
+            elif ultimo_contador_odoo and not ultimo_contador_techra:
+                if str(ultimo_contador_odoo.x_studio_color_o_bn) == 'Color':
+                        return 'Equipo B/N o Color: ' + str(ultimo_contador_odoo.x_studio_color_o_bn) + '</br>Contador B/N: ' + str(ultimo_contador_odoo.contadorMono) + '</br>Contador Color: ' + str(ultimo_contador_odoo.contadorColor)
+                if str(ultimo_contador_odoo.x_studio_color_o_bn) == 'B/N':
+                    return 'Equipo B/N o Color: ' + str(ultimo_contador_odoo.x_studio_color_o_bn) + '</br>Contador B/N: ' + str(ultimo_contador_odoo.contadorMono)
+            else:
+                return 'Equipo sin contador'
 
 
     datos_ticket_info = fields.Text(string = 'Datos ticket')
@@ -488,7 +512,8 @@ class helpdesk_update(models.Model):
         if serie_modelo[0]:
             lista_datos.append(str(serie_modelo))
         if contadores_anteriores[0]:
-            lista_datos.append(str(contadores_anteriores).split('Equipo BN o Color:')[1].split('</br></br> Contador')[0]  )
+            if str('Equipo sin contador' in str(contadores_anteriores) )
+                lista_datos.append(str(contadores_anteriores).split('Equipo B/N o Color: ')[1].split('</br>Contador')[0]  )
             #lista_datos.append(str(contadores_anteriores.split('Equipo BN o Color:')[1].split('</br></br> Contador')[0]  ))
         if datos_cliente:
             lista_datos.append(str(datos_cliente))
@@ -601,7 +626,7 @@ class helpdesk_update(models.Model):
         if serie_modelo[0]:
             lista_datos.append(str(serie_modelo))
         if contadores_anteriores[0]:
-            lista_datos.append(str(contadores_anteriores).split('Equipo BN o Color:')[1].split('</br></br> Contador')[0]  )
+            lista_datos.append(str(contadores_anteriores).split('Equipo B/N o Color: ')[1].split('</br>Contador')[0]  )
             #lista_datos.append(str(contadores_anteriores.split('Equipo BN o Color:')[1].split('</br></br> Contador')[0]  ))
         if datos_cliente:
             lista_datos.append(str(datos_cliente))
@@ -703,7 +728,7 @@ class helpdesk_update(models.Model):
         if serie_modelo[0]:
             lista_datos.append(str(serie_modelo))
         if contadores_anteriores[0]:
-            lista_datos.append(str(contadores_anteriores).split('Equipo BN o Color:')[1].split('</br></br> Contador')[0]  )
+            lista_datos.append(str(contadores_anteriores).split('Equipo B/N o Color: ')[1].split('</br>Contador')[0]  )
             #lista_datos.append(str(contadores_anteriores.split('Equipo BN o Color:')[1].split('</br></br> Contador')[0]  ))
         if datos_cliente:
             lista_datos.append(str(datos_cliente))
@@ -777,7 +802,7 @@ class helpdesk_update(models.Model):
     def create(self, vals):
         vals['name'] = self.env['ir.sequence'].next_by_code('helpdesk_name')
         #vals['team_id'] = 8
-        _logger.info("Informacion 0.0: " + str(vals))
+        #_logger.info("Informacion 0.0: " + str(vals))
 
         ticket = super(helpdesk_update, self).create(vals)
 
@@ -818,10 +843,9 @@ class helpdesk_update(models.Model):
         #_logger.info("Informacion 3: " + str(ticket))
         if ticket.x_studio_equipo_por_nmero_de_serie:
             if (ticket.team_id.id != 8 and ticket.team_id.id != 13) and len(ticket.x_studio_equipo_por_nmero_de_serie) == 1:
-                #_logger.info("Informacion 4: " + str(ticket.x_studio_contadores))
-                #ticket.write({'x_studio_contadores': '</br> Equipo BN o Color: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_color_bn) + ' </br></br> Contador BN: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_bn_mesa) + '</br></br> Contador Color: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_color_mesa)})
-                ticket.write({'contadores_anteriores': '</br>Equipo BN o Color: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_color_bn) + ' </br></br> Contador BN: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_bn_mesa) + '</br></br> Contador Color: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_color_mesa)})
-
+                #ticket.write({'contadores_anteriores': '</br>Equipo BN o Color: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_color_bn) + ' </br></br> Contador BN: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_bn_mesa) + '</br></br> Contador Color: ' + str(ticket.x_studio_equipo_por_nmero_de_serie[0].x_studio_contador_color_mesa)})
+                regresa = ticket.contadoresAnteriores()
+                ticket.write({'contadores_anteriores': regresa})
         if ticket.x_studio_tipo_de_vale == 'Requerimiento' and ticket.team_id.id != 8 and ticket.team_id.id != 13:
             ticket.write({'team_id': 8})
 

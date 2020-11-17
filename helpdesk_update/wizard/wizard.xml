@@ -2066,7 +2066,7 @@
                     <field name='textoInformativo' force_save='1' readonly='1' widget='html' />
                 </group>
                 <footer>
-                    <button name="editarContadores" string="Editar contador" type="object" class="oe_highlight" />
+                    <!--<button name="editarContadores" string="Editar contador" type="object" class="oe_highlight" />-->
                     <button special="cancel" string="Cerrar" class="oe_highlight" />
                 </footer>
             </form>
