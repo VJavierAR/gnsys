@@ -512,7 +512,9 @@ class helpdesk_update(models.Model):
         if serie_modelo[0]:
             lista_datos.append(str(serie_modelo))
         if contadores_anteriores[0]:
-            if str('Equipo sin contador' in str(contadores_anteriores) )
+            if str('Equipo sin contador') in str(contadores_anteriores):
+                lista_datos.append(str(contadores_anteriores))
+            else:
                 lista_datos.append(str(contadores_anteriores).split('Equipo B/N o Color: ')[1].split('</br>Contador')[0]  )
             #lista_datos.append(str(contadores_anteriores.split('Equipo BN o Color:')[1].split('</br></br> Contador')[0]  ))
         if datos_cliente:
