@@ -512,10 +512,11 @@ class helpdesk_update(models.Model):
         if serie_modelo[0]:
             lista_datos.append(str(serie_modelo))
         if contadores_anteriores[0]:
-            if str('Equipo sin contador') in str(contadores_anteriores):
-                lista_datos.append(str(contadores_anteriores))
-            else:
-                lista_datos.append(str(contadores_anteriores).split('Equipo B/N o Color: ')[1].split('</br>Contador')[0]  )
+            lista_datos.append(str(contadores_anteriores))
+            #if str('Equipo sin contador') in str(contadores_anteriores):
+            #    lista_datos.append(str(contadores_anteriores))
+            #else:
+            #    lista_datos.append(str(contadores_anteriores).split('Equipo B/N o Color: ')[1].split('</br>Contador')[0]  )
             #lista_datos.append(str(contadores_anteriores.split('Equipo BN o Color:')[1].split('</br></br> Contador')[0]  ))
         if datos_cliente:
             lista_datos.append(str(datos_cliente))
@@ -628,7 +629,11 @@ class helpdesk_update(models.Model):
         if serie_modelo[0]:
             lista_datos.append(str(serie_modelo))
         if contadores_anteriores[0]:
-            lista_datos.append(str(contadores_anteriores).split('Equipo B/N o Color: ')[1].split('</br>Contador')[0]  )
+            lista_datos.append(str(contadores_anteriores))
+            #if str('Equipo sin contador') in str(contadores_anteriores):
+            #    lista_datos.append(str(contadores_anteriores))
+            #else:
+            #    lista_datos.append(str(contadores_anteriores).split('Equipo B/N o Color: ')[1].split('</br>Contador')[0]  )
             #lista_datos.append(str(contadores_anteriores.split('Equipo BN o Color:')[1].split('</br></br> Contador')[0]  ))
         if datos_cliente:
             lista_datos.append(str(datos_cliente))
@@ -730,7 +735,11 @@ class helpdesk_update(models.Model):
         if serie_modelo[0]:
             lista_datos.append(str(serie_modelo))
         if contadores_anteriores[0]:
-            lista_datos.append(str(contadores_anteriores).split('Equipo B/N o Color: ')[1].split('</br>Contador')[0]  )
+            lista_datos.append(str(contadores_anteriores))
+            #if str('Equipo sin contador') in str(contadores_anteriores):
+            #    lista_datos.append(str(contadores_anteriores))
+            #else:
+            #    lista_datos.append(str(contadores_anteriores).split('Equipo B/N o Color: ')[1].split('</br>Contador')[0]  )
             #lista_datos.append(str(contadores_anteriores.split('Equipo BN o Color:')[1].split('</br></br> Contador')[0]  ))
         if datos_cliente:
             lista_datos.append(str(datos_cliente))
@@ -5375,7 +5384,7 @@ class helpdesk_update(models.Model):
             _logger.info('3312: lista: ' + str(lista) )
             wiz.write({'accesorios': lista})
         """
-        vals_wiz['contadoresAnterioresText'] = self.contadores_anteriores
+        vals_wiz['contadoresAnterioresText'] = self.contadoresAnteriores()
         if productos:
             refaccionesEnCero = ''
             lista = [[5, 0, 0]]
@@ -7482,11 +7491,27 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
                     se_agregaron_refacciones = True
 
                     fuenteDca = 'stock.production.lot'
+
+
+
+                    dominio_ultimo_contador = [('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '=', False), ('fuente', '!=', 'dcas.dcas')]
+                    ultimo_contador_odoo = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'create_date desc', limit = 1)
+                    dominio_ultimo_contador = [('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '!=', False), ('x_studio_fecha', '!=', False), ('fuente', '!=', 'dcas.dcas')]
+                    ultimo_contador_techra = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'x_studio_fecha desc', limit = 1)
+                    _logger.info('ultimo_contador_techra: ' + str(ultimo_contador_techra.x_studio_fecha) + ' ultimo_contador_odoo: ' + str(ultimo_contador_odoo.create_date))
+
+                    dcaObj = False
+                    if ultimo_contador_techra.x_studio_fecha > ultimo_contador_odoo.create_date:
+                        dcaObj = ultimo_contador_techra
+                    else:
+                        dcaObj = ultimo_contador_odoo
+
+
                     #forma odoo
-                    dcaObj = self.env['dcas.dcas'].search([('x_studio_tickett', '=', ticket_id_wizard[0]),('fuente', '=', fuenteDca)], order = 'create_date desc', limit = 1)
+                    # = self.env['dcas.dcas'].search([('x_studio_tickett', '=', ticket_id_wizard[0]),('fuente', '=', fuenteDca)], order = 'create_date desc', limit = 1)
                     #forma techra
-                    if not dcaObj:
-                        dcaObj = self.env['dcas.dcas'].search([('serie', '=', serie_en_ticket[0].name),('fuente', '=', fuenteDca)], order = 'x_studio_fecha desc', limit = 1)
+                    #if not dcaObj:
+                    #    dcaObj = self.env['dcas.dcas'].search([('serie', '=', serie_en_ticket[0].name),('fuente', '=', fuenteDca)], order = 'x_studio_fecha desc', limit = 1)
                     _logger.info('aaaaaaaaaaa dcaObj: ' + str(dcaObj))
 
                     refaccionesTextTemp = 'Refacción y/o accesorio: ' + str(refac.productos.display_name) + '. Descripción: ' + str(refac.productos.description) + '.\n'
@@ -7632,11 +7657,26 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
                 filasRefacciones = """ """
                 #creando x_studio_historico_de_componentes
                 fuenteDca = 'stock.production.lot'
+
+
+                dominio_ultimo_contador = [('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '=', False), ('fuente', '!=', 'dcas.dcas')]
+                ultimo_contador_odoo = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'create_date desc', limit = 1)
+                dominio_ultimo_contador = [('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '!=', False), ('x_studio_fecha', '!=', False), ('fuente', '!=', 'dcas.dcas')]
+                ultimo_contador_techra = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'x_studio_fecha desc', limit = 1)
+                _logger.info('ultimo_contador_techra: ' + str(ultimo_contador_techra.x_studio_fecha) + ' ultimo_contador_odoo: ' + str(ultimo_contador_odoo.create_date))
+
+                dcaObj = False
+                if ultimo_contador_techra.x_studio_fecha > ultimo_contador_odoo.create_date:
+                    dcaObj = ultimo_contador_techra
+                else:
+                    dcaObj = ultimo_contador_odoo
+
+
                 #forma odoo
-                dcaObj = self.env['dcas.dcas'].search([('x_studio_tickett', '=', self.ticket_id.id),('fuente', '=', fuenteDca)], order = 'create_date desc', limit = 1)
+                #dcaObj = self.env['dcas.dcas'].search([('x_studio_tickett', '=', self.ticket_id.id),('fuente', '=', fuenteDca)], order = 'create_date desc', limit = 1)
                 #forma techra
-                if not dcaObj:
-                    dcaObj = self.env['dcas.dcas'].search([('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].name),('fuente', '=', fuenteDca)], order = 'x_studio_fecha desc', limit = 1)
+                #if not dcaObj:
+                #    dcaObj = self.env['dcas.dcas'].search([('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].name),('fuente', '=', fuenteDca)], order = 'x_studio_fecha desc', limit = 1)
                 _logger.info('aaaaaaaaaaa dcaObj: ' + str(dcaObj))
                 if dcaObj:
                     refaccionesTextTemp = ''
