@@ -180,14 +180,14 @@ class StockPickingMassAction(TransientModel):
                     if(picking.location_dest_id.id!=16):
                         ultimo=self.env['helpdesk.diagnostico'].search([['ticketRelacion','=',picking.sale_id.x_studio_field_bxHgp.id]],order='create_date desc',limit=1)
                         self.env['helpdesk.diagnostico'].create({ 'write_uid': self.env.user.name,'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id,'write_uid':self.env.user.id, 'estadoTicket' : "Entregado", 'comentario':str(comentario)+' Evidenciado'+' Hecho por'+self.env.user.name})
-                        if(picking.sale_id.x_studio_field_bxHgp.stage_id.id!=18 and picking.sale_id.x_studio_field_bxHgp.stage_id.id!=4):
+                        if(picking.sale_id.x_studio_field_bxHgp.stage_id.id!=18 and picking.sale_id.x_studio_field_bxHgp.stage_id.id!=4 and picking.sale_id.x_studio_field_bxHgp.stage_id.id!=3):
                             picking.sale_id.x_studio_field_bxHgp.write({'stage_id':104})
                         else:
                             ultimo.copy()
                     else:
                         ultimo=self.env['helpdesk.diagnostico'].search([['ticketRelacion','=',picking.sale_id.x_studio_field_bxHgp.id]],order='create_date desc',limit=1)
                         self.env['helpdesk.diagnostico'].create({ 'write_uid': self.env.user.name,'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id,'write_uid':self.env.user.id, 'estadoTicket' : "Entregado", 'comentario':str(comentario)+' Evidenciado'+' Hecho por'+self.env.user.name})    
-                        if(picking.sale_id.x_studio_field_bxHgp.stage_id.id!=18 and picking.sale_id.x_studio_field_bxHgp.stage_id.id!=4):
+                        if(picking.sale_id.x_studio_field_bxHgp.stage_id.id!=18 and picking.sale_id.x_studio_field_bxHgp.stage_id.id!=4 and picking.sale_id.x_studio_field_bxHgp.stage_id.id!=3):
                             picking.sale_id.x_studio_field_bxHgp.write({'stage_id':112})
                         else:
                             ultimo.copy()       
@@ -786,36 +786,46 @@ class TransferInterMoveTemp(TransientModel):
     modelo=fields.Char(related='producto.name',string='Modelo')
     noParte=fields.Char(related='producto.default_code',string='No. Parte')
     descripcion=fields.Text(related='producto.description',string='Descripción')
-    stoc=fields.Many2one('stock.quant',string='Existencia')
+    #stoc=fields.Many2one('stock.quant',string='Existencia')
     cantidad=fields.Integer('Demanda Inicial')
     almacen=fields.Many2one('stock.warehouse','Almacén Origen')
     ubicacion=fields.Many2one('stock.location','Ubicación')
-    disponible=fields.Float(related='stoc.quantity',string='Disponible')
+    disponible=fields.Float(string='Disponible')
     transfer=fields.Many2one('transferencia.interna')
     unidad=fields.Many2one('uom.uom',related='producto.uom_id')
     categoria=fields.Many2one('product.category')
     serie=fields.Many2one('stock.production.lot',store=True)
 
-
-    @api.onchange('producto')
-    def quant(self):
+    @api.depends('almacen','producto')
+    def almac(self):
         res={}
-        if(self.producto):
-            self.disponible=0
-            h=self.env['stock.quant'].search([['product_id','=',self.producto.id],['location_id','=',self.ubicacion.id],['quantity','>',0]])
-            if(len(h)>0 and self.producto.categ_id.id!=13):
-                self.stoc=h.id
-            if(len(h)==0 and self.producto.categ_id.id!=13):
-                d=self.env['stock.location'].search([['location_id','=',self.ubicacion.id]])
-                for di in d:
-                    i=self.env['stock.quant'].search([['product_id','=',self.producto.id],['location_id','=',di.id],['quantity','>',0]])
-                    if(len(i)>0):
-                        self.stoc=i.id
-            if(self.producto.categ_id.id==13):
-                self.disponible=len(h)
-                self.cantidad=1
-                res['domain']={'serie':[('id','in',h.mapped('lot_id.id'))]}
-                return res
+        for record in self:
+            if(record.almacen):
+                ex=self.env['stock.quant'].search([['location_id','=',record.almacen.lot_stock_id.id],['product_id','=',record.producto.id]]).sorted(key='quantity',reverse=True)
+                record.disponible=int(ex[0].quantity) if(len(ex)>0) else 0
+
+
+
+
+    # @api.onchange('producto')
+    # def quant(self):
+    #     res={}
+    #     if(self.producto):
+    #         self.disponible=0
+    #         h=self.env['stock.quant'].search([['product_id','=',self.producto.id],['location_id','=',self.ubicacion.id],['quantity','>',0]])
+    #         if(len(h)>0 and self.producto.categ_id.id!=13):
+    #             self.stoc=h.id
+    #         if(len(h)==0 and self.producto.categ_id.id!=13):
+    #             d=self.env['stock.location'].search([['location_id','=',self.ubicacion.id]])
+    #             for di in d:
+    #                 i=self.env['stock.quant'].search([['product_id','=',self.producto.id],['location_id','=',di.id],['quantity','>',0]])
+    #                 if(len(i)>0):
+    #                     self.stoc=i.id
+    #         if(self.producto.categ_id.id==13):
+    #             self.disponible=len(h)
+    #             self.cantidad=1
+    #             res['domain']={'serie':[('id','in',h.mapped('lot_id.id'))]}
+    #             return res
                 
 
 class PickingSerie(TransientModel):

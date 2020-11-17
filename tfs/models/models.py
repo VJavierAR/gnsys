@@ -28,7 +28,7 @@ class tfs(models.Model):
     inventario = fields.One2many(comodel='stock.quant',related='almacen.lot_stock_id.quant_ids', string="Quants")
     cliente = fields.Many2one('res.partner', store=True,string='Cliente')
     localidad=fields.Many2one('res.partner',store='True',string='Localidad')
-    serie=fields.Many2one('stock.production.lot',string='Numero de Serie',store='True')
+    serie=fields.Many2one('stock.production.lot',string='Numero de Serie',store='True',track_visibility='onchange')
     domi=fields.Integer()
     modelo=fields.Char(related='serie.product_id.name',string='Modelo')
     productoNegro=fields.Many2one('product.product',string='Toner Monocromatico')
@@ -60,7 +60,7 @@ class tfs(models.Model):
     actualporcentajeMagenta=fields.Integer(string='Actual Magenta')
     
     evidencias=fields.One2many('tfs.evidencia',string='Evidencias',inverse_name='tfs_id')
-    estado=fields.Selection([('borrador','Tfs autoriza'),('xValidar','Por Validar'),('Valido','Valido'),('Confirmado','Confirmado'),('Cancelado','Cancelado')],default='borrador')
+    estado=fields.Selection([('borrador','Tfs autoriza'),('xValidar','Por Validar'),('Valido','Valido'),('Confirmado','Confirmado'),('Cancelado','Cancelado')],default='borrador', track_visibility='onchange')
     colorBN=fields.Selection(related='serie.x_studio_color_bn')
     arreglo=fields.Char()
     direccion=fields.Char(widget="html")
@@ -211,7 +211,7 @@ class tfs(models.Model):
                         pickDestino.append(datos2)
                         rule.append(re.id)
                     if(len(quant)>0):
-                        if(quant.quantity<re.product_min_qty):
+                        if(quant.quantity<=re.product_min_qty):
                             if((re.product_max_qty-quant.quantity)>0):
                                 datos1={'product_id' : re.product_id.id, 'product_uom_qty' : re.product_max_qty-quant.quantity,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'location_id':41911,'location_dest_id':re.location_id.id}
                                 datos2={'product_id' : re.product_id.id, 'product_qty' : re.product_max_qty-quant.quantity,'name':re.product_id.description,'product_uom':re.product_id.uom_id.id,'price_unit': 0}
