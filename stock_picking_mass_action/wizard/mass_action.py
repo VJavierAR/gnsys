@@ -116,8 +116,9 @@ class StockPickingMassAction(TransientModel):
                         qu=self.env['stock.quant'].search([['location_id','=',move.location_id.id],['product_id','=',move.product_id.id],['lot_id','=',d.lot_id.id]])
                         if(qu1.id==False):
                             qu1=self.env['stock.quant'].create({'location_id':move.location_id.id,'product_id':move.product_id.id,'quantity':1,'lot_id':serie})
-                        self.env.cr.execute("update stock_quant set reserved_quantity=1 where id="+str(qu1.id)+";")            
-                        self.env.cr.execute("update stock_quant set reserved_quantity=0 where id="+str(qu.id)+";")
+                        self.env.cr.execute("update stock_quant set reserved_quantity=1 where id="+str(qu1.id)+";")
+                        if(qu.id):            
+                            self.env.cr.execute("update stock_quant set reserved_quantity=0 where id="+str(qu.id)+";")
                         self.env.cr.execute("update stock_move_line set lot_id="+str(serie)+"where id="+str(d.id)+";")
             return True
         else:
@@ -1531,3 +1532,32 @@ class assignacionAccesoriosLines(TransientModel):
     rel_id=fields.Many2one('lot.assign.accesorios')
     lot_id=fields.Many2one('stock.production.lot')
     accesorios=fields.Many2many('product.product')
+
+
+class entregaRefacciones(TransientModel):
+    _name='entrega.action'
+    _description='Entrega Refacciones'
+    pick=fields.Many2one('stock.picking')
+    lines=fields.One2many('entrega.refacciones.lines','rel_id')
+    tecnico=fields.Many2one('hr.employee')
+    
+    def confirmar(self):
+        self.pick.action_assign()
+        self.env['helpdesk.diagnostico'].create({ 'write_uid': self.env.user.name,'ticketRelacion' : self.pick.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id,'write_uid':self.env.user.id, 'estadoTicket' : "Entregado", 'comentario':' Entregado a '+self.tecnico.name+' Hecho por'+self.env.user.name})
+        for l in self.lines:
+            m=self.env['stock.move.line'].search([['move_id','=',l.move_id.id]])
+            m.write({'quantity_done':l.cantidadE})
+        wiz=self.env['stock.picking.mass.action'].create({'picking_ids':[(4,self.pick.id)],'confirm':True,'check_availability':True,'transfer':True})
+        wiz.mass_action()
+
+    
+    
+    
+class entregaRefaccionesLines(TransientModel):
+    _name='entrega.refacciones.lines'
+    _description='Entrega Refacciones Lines'
+    rel_id=fields.Many2one('entrega.action')
+    move_id=fields.Many2one('stock.move')
+    product_id=fields.Many2one('product.product')
+    cantidadS=fields.Float()
+    cantidadE=fields.Float()

@@ -1,5 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+            <record id="view_entrega_refaccion" model="ir.ui.view">
+        <field name="model">entrega.action</field>
+        <field name="arch" type="xml">
+            <form string="Entrega de refacciones">
+                <field name='tecnico'/>
+                <group>
+                    <field name='lines'>
+                        <tree>
+                            <field name='product_id' readonly='1'/>
+                            <field name='cantidadS' readonly='1'/>
+                            <field name='cantidadE'/>
+                        </tree>
+                    </field>
+                </group>
+
+                <footer>
+                    <button name="confirmar" string="Confirmar" type="object" class="oe_highlight"/>
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
     <record id="view_lot_assign_accesorios" model="ir.ui.view">
         <field name="model">lot.assign.accesorios</field>
         <field name="arch" type="xml">

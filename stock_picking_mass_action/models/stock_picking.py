@@ -33,6 +33,24 @@ class StockPicking(Model):
     mini=fields.Boolean()
     chofer=fields.Many2one('res.users')
     surtir=fields.Boolean(default=False)
+    
+    def entregaRefacciones(self):
+        wiz = self.env['entrega.action'].create({'pick':self.id,'create_uid':self.env.user.id,'write_uid':self.env.user.id})
+        for rrr in self.move_ids_without_package:
+            self.env['entrega.refacciones.lines'].create({'product_id':rrr.product_id.id,'cantidadS':rrr.product_uom_qty,'rel_id':wiz.id,'move_id':rrr.id})
+        view = self.env.ref('stock_picking_mass_action.view_entrega_refaccion')
+        return {
+            'name': _('Entrega Refacciones'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'entrega.action',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            'context': self.env.context,
+        }
 
     def validacionZero(self):
         if(self.x_studio_backorder_de==False):
