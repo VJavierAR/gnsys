@@ -7501,10 +7501,25 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
                     _logger.info('ultimo_contador_techra: ' + str(ultimo_contador_techra.x_studio_fecha) + ' ultimo_contador_odoo: ' + str(ultimo_contador_odoo.create_date))
 
                     dcaObj = False
-                    if ultimo_contador_techra.x_studio_fecha > ultimo_contador_odoo.create_date:
+
+                    if ultimo_contador_techra and ultimo_contador_odoo:
+                        if ultimo_contador_techra.x_studio_fecha > ultimo_contador_odoo.create_date:
+                            dcaObj = ultimo_contador_techra
+                        else:
+                            dcaObj = ultimo_contador_odoo
+                    elif ultimo_contador_techra and not ultimo_contador_odoo:
                         dcaObj = ultimo_contador_techra
-                    else:
+                    elif ultimo_contador_odoo and not ultimo_contador_techra:
                         dcaObj = ultimo_contador_odoo
+                    else:
+                        dcaObj = False
+
+
+
+                    #if ultimo_contador_techra.x_studio_fecha > ultimo_contador_odoo.create_date:
+                    #    dcaObj = ultimo_contador_techra
+                    #else:
+                    #    dcaObj = ultimo_contador_odoo
 
 
                     #forma odoo
@@ -7666,10 +7681,18 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
                 _logger.info('ultimo_contador_techra: ' + str(ultimo_contador_techra.x_studio_fecha) + ' ultimo_contador_odoo: ' + str(ultimo_contador_odoo.create_date))
 
                 dcaObj = False
-                if ultimo_contador_techra.x_studio_fecha > ultimo_contador_odoo.create_date:
+
+                if ultimo_contador_techra and ultimo_contador_odoo:
+                    if ultimo_contador_techra.x_studio_fecha > ultimo_contador_odoo.create_date:
+                        dcaObj = ultimo_contador_techra
+                    else:
+                        dcaObj = ultimo_contador_odoo
+                elif ultimo_contador_techra and not ultimo_contador_odoo:
                     dcaObj = ultimo_contador_techra
-                else:
+                elif ultimo_contador_odoo and not ultimo_contador_techra:
                     dcaObj = ultimo_contador_odoo
+                else:
+                    dcaObj = False
 
 
                 #forma odoo
