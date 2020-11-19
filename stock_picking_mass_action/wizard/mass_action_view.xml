@@ -1,5 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+<record id="view_lot_retiro" model="ir.ui.view">
+        <field name="model">lot.retiro</field>
+        <field name="arch" type="xml">
+            <form string="Ingreso de Equipos">
+                <group>
+                    <field name='lines'>
+                        <tree>
+                            <field name='serie' readonly='1'/>
+                            <field name="almacen" domain="[['x_studio_cliente','=',False]]"/>
+                            <field name="estado"  />
+                            <field name="contadorMono"  />
+                            <field name="contadorColor"  />
+                            <field name="nivelNegro" string="Nivel Negro" />
+                            <field name="nivelAmarillo" string="Nivel Amarillo" />
+                            <field name="nivelCian" string="Nivel Cian"  />
+                            <field name="nivelMagenta" string="Nivel Magenta"  />
+                        </tree>
+                    </field>
+                </group>
+
+                <footer>
+                    <button name="confirmar" string="Confirmar" type="object" class="oe_highlight"/>
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+
             <record id="view_entrega_refaccion" model="ir.ui.view">
         <field name="model">entrega.action</field>
         <field name="arch" type="xml">

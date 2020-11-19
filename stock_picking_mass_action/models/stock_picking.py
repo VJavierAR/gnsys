@@ -33,6 +33,28 @@ class StockPicking(Model):
     mini=fields.Boolean()
     chofer=fields.Many2one('res.users')
     surtir=fields.Boolean(default=False)
+
+    def ingresoEquiposRetiro(self):
+        wiz=self.env['lot.retiro'].create({'pick':self.id})
+        for rrr in self.move_ids_without_package:
+            ml=self.env['stock.move.line'].search([['move_id':rrr.id]])
+            if(ml.lot_id.id):
+                self.env['lot.retiro.lines'].create({'rel_id':wiz.id,'serie':ml.lot_id.id,'move_id':rrr.id,'move_line':ml.id})
+        view = self.env.ref('stock_picking_mass_action.view_lot_retiro')
+        return {
+            'name': _('Ingreso Series Almacen'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'lot.retiro',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wiz.id,
+            'context': self.env.context,
+        }        
+
+
     
     def entregaRefacciones(self):
         wiz = self.env['entrega.action'].create({'pick':self.id,'create_uid':self.env.user.id,'write_uid':self.env.user.id})

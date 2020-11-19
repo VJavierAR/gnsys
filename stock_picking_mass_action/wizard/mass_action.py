@@ -441,7 +441,14 @@ class StockCambio(TransientModel):
             f=f+"<td>"+str(s.serieOrigen.product_id.name)+"</td>"
             f=f+"<td>"+str(s.serieOrigen.name)+"</td>"
             f=f+"</tr>"
-            self.env['dcas.dcas'].create({'porcentajeNegro':s.nivelNegro,'porcentajeAmarillo':s.nivelAmarillo,'porcentajeCian':s.nivelCian,'porcentajeMagenta':s.nivelMagenta,'contadorColor':s.contadorColor,'x_studio_toner_negro':1,'x_studio_toner_amarillo':1,'x_studio_toner_cian':1,'x_studio_toner_magenta':1,'contadorMono':s.contadorMono,'serie':s.serieOrigen.id,'fuente':'stock.production.lot'})
+            da={'porcentajeNegro':s.nivelNegro,'porcentajeAmarillo':s.nivelAmarillo,'porcentajeCian':s.nivelCian,'porcentajeMagenta':s.nivelMagenta,'contadorColor':s.contadorColor,'x_studio_toner_negro':1,'x_studio_toner_amarillo':1,'x_studio_toner_cian':1,'x_studio_toner_magenta':1,'contadorMono':s.contadorMono,'serie':s.serieOrigen.id,'fuente':'stock.production.lot'}
+            self.env['dcas.dcas'].create(da)
+            da['fuente']='dcas.dcas'
+            self.env['dcas.dcas'].create(da)
+            da['fuente']='helpdesk.ticket'
+            self.env['dcas.dcas'].create(da)
+            da['fuente']='tfs.tfs'
+            self.env['dcas.dcas'].create(da)
         f=f+"</tbody></table>"
         if(self.pick.sale_id.x_studio_tipo_de_solicitud in ['Arrendamiento','Venta','Backup']):
             self.pick.sale_id.write({'x_studio_series_retiro':f,'state':'assign'})
@@ -1561,3 +1568,44 @@ class entregaRefaccionesLines(TransientModel):
     product_id=fields.Many2one('product.product')
     cantidadS=fields.Float()
     cantidadE=fields.Float()
+
+
+
+class assignacionAccesorios(TransientModel):
+    _name='lot.retiro'
+    _description='Retiro de series'
+    lineas=fields.One2many('lot.retiro.lines','rel_id')
+    pick=fields.Many2one('stock.picking')
+
+    def confirmar(self):
+        for line in  self.lineas:
+            line.move_id.write({'location_dest_id':line.almacen.lot_stock_id.id})
+            line.move_line.write({'location_dest_id':line.almacen.lot_stock_id.id})
+            line.serie.write({'x_studio_estado':line.estado})
+            da={'porcentajeNegro':line.nivelNegro,'porcentajeAmarillo':line.nivelAmarillo,'porcentajeCian':line.nivelCian,'porcentajeMagenta':line.nivelMagenta,'contadorColor':line.contadorColor,'x_studio_toner_negro':1,'x_studio_toner_amarillo':1,'x_studio_toner_cian':1,'x_studio_toner_magenta':1,'contadorMono':line.contadorMono,'serie':line.serie.id,'fuente':'stock.production.lot'}
+            self.env['dcas.dcas'].create(da)
+            da['fuente']='dcas.dcas'
+            self.env['dcas.dcas'].create(da)
+            da['fuente']='helpdesk.ticket'
+            self.env['dcas.dcas'].create(da)
+            da['fuente']='tfs.tfs'
+            self.env['dcas.dcas'].create(da)
+        wiz=self.env['stock.picking.mass.action'].create({'picking_ids':[(4,self.pick.id)],'confirm':True,'check_availability':True,'transfer':True})
+        wiz.mass_action()
+
+class assignacionAccesoriosLines(TransientModel):
+    _name='lot.retiro.lines'
+    _description='Lineas de retiro serie'
+    rel_id=fields.Many2one('lot.retiro')
+    serie=fields.Many2one('stock.production.lot')
+    estado=fields.Selection([["Obsoleto","Obsoleto"],["Usado","Usado"],["Hueso","Hueso"],["Para reparación","Para reparación"],["Nuevo","Nuevo"],["Buenas condiciones","Buenas condiciones"],["Excelentes condiciones","Excelentes condiciones"],["Back-up","Back-up"],["Dañado","Dañado"]])
+    nota=fields.Char()
+    contadorMono=fields.Integer()
+    contadorColor=fields.Integer()
+    nivelNegro=fields.Integer()
+    nivelAmarillo=fields.Integer()
+    nivelMagenta=fields.Integer()
+    nivelCian=fields.Integer()
+    almacen=fields.Many2one('stock.warehouse')
+    move_id=fields.Many2one('stock.move')
+    move_line=fields.Many2one('stock.move.line')
