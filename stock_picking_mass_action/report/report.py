@@ -520,14 +520,14 @@ class LotXlsx(models.AbstractModel):
     _inherit = 'report.report_xlsx.abstract'
 
 
-    def generate_xlsx_report(self, workbook, data=[], lots):
+    def generate_xlsx_report(self, workbook, data, lots):
         i=2
         d=[]
         #if(len(lots)==1 and lots.x_studio_arreglo!='/' and lots.x_studio_arreglo!=False):
         #    copia=lots
         #    lots=self.env['stock.production.lot'].browse(eval(lots.x_studio_arreglo))
         #    copia.write({'x_studio_arreglo':'/'})
-        if(data!=[] and len(lots)==1):
+        if(len(lots)==1):
             lots=self.env['stock.production.lot'].search(data)
         merge_format = workbook.add_format({'bold': 1,'border': 1,'align': 'center','valign': 'vcenter','fg_color': 'blue'})
         report_name = 'Base Instalada'
