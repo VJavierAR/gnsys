@@ -5,7 +5,7 @@
         <field name="arch" type="xml">
             <form string="Ingreso de Equipos">
                 <group>
-                    <field name='lines'>
+                    <field name='lineas'>
                         <tree>
                             <field name='serie' readonly='1'/>
                             <field name="almacen" domain="[['x_studio_cliente','=',False]]"/>
@@ -603,11 +603,11 @@
                                 <field name="producto2" string="Registro a Cambiar"  attrs="{'readonly':[['categoria','=',13]]}"/>
                                 <field name="almacen" domain="[['x_studio_cliente','=',False]]"/>
                                 <field name="existeciaAlmacen" readonly="1"/>                        
-                                <field name="estado"  attrs="{'invisible':[['tipo','!=',3]],'readonly':[['categoria','!=',13]]}"/>
-                                <field name="serieOrigen" string="Serie" attrs="{'invisible':[['tipo','!=',3]],'readonly':[['categoria','!=',13]]}"/>
-                                <field name="color"  attrs="{'invisible':[['tipo','!=',3]],'readonly':[['categoria','!=',13]]}"/>
-                                <field name="contadorMono"  attrs="{'invisible':[['tipo','!=',3]],'readonly':[['categoria','!=',13]]}"/>
-                                <field name="contadorColor"  attrs="{'invisible':[['tipo','!=',3]],'readonly':[['categoria','!=',13]]}"/>
+                                <field name="estado"  attrs="{'readonly':[['categoria','!=',13]]}"/>
+                                <field name="serieOrigen" string="Serie" attrs="{'readonly':[['categoria','!=',13]]}"/>
+                                <field name="color"  attrs="{'readonly':[['categoria','!=',13]]}"/>
+                                <field name="contadorMono"  attrs="{'readonly':[['categoria','!=',13]]}"/>
+                                <field name="contadorColor"  attrs="{'readonly':[['categoria','!=',13]]}"/>
                                 <field name="nivelNegro" string="Nivel Negro" />
                                 <field name="nivelAmarillo" string="Nivel Amarillo" attrs="{'invisible':[['color','=','B/N']]}"/>
                                 <field name="nivelCian" string="Nivel Cian"  attrs="{'invisible':[['color','=','B/N']]}"/>
