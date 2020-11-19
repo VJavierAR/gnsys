@@ -37,7 +37,7 @@ class StockPicking(Model):
     def ingresoEquiposRetiro(self):
         wiz=self.env['lot.retiro'].create({'pick':self.id})
         for rrr in self.move_ids_without_package:
-            ml=self.env['stock.move.line'].search([['move_id':rrr.id]])
+            ml=self.env['stock.move.line'].search([['move_id','=',rrr.id]])
             if(ml.lot_id.id):
                 self.env['lot.retiro.lines'].create({'rel_id':wiz.id,'serie':ml.lot_id.id,'move_id':rrr.id,'move_line':ml.id})
         view = self.env.ref('stock_picking_mass_action.view_lot_retiro')
