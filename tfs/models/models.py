@@ -382,3 +382,15 @@ class notificacion(models.Model):
     _description='tfs notificacion'
     name=fields.Char(string='Descripcion')
     tickets=fields.Many2many('helpdesk.ticket')
+
+class detonacionMini(models.Model):
+    _name='mini.detonacion'
+    _description='detonacion Mini Almacen'
+    almacen=fields.Many2one('stock.warehouse')
+    ticket=fields:Many2one('helpdesk.ticket')
+    
+    def detona(self):
+        t=self.env['tfs.tfs'].reglas(self.almacen.id)
+        if(t.id):
+            self.write({'ticket':t.id})
+
