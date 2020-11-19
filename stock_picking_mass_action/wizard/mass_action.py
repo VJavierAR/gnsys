@@ -1499,8 +1499,8 @@ class reporteBaseInslada(TransientModel):
 
     def reporte(self):
         s=self.env['stock.production.lot'].search([['servicio','!=',False]])
-        #s[0].write({'x_studio_arreglo':str(s.mapped('id'))})
-        return self.env.ref('stock_picking_mass_action.serie_xlsx').report_action(s[0],data=[['servicio','!=',False]])
+        s[0].write({'x_studio_arreglo':str(s.mapped('id'))})
+        return self.env.ref('stock_picking_mass_action.serie_xlsx').report_action(s[0])
 
 
 class assignacionAccesorios(TransientModel):
