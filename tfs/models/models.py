@@ -387,7 +387,7 @@ class detonacionMini(models.Model):
     _name='mini.detonacion'
     _description='detonacion Mini Almacen'
     almacen=fields.Many2one('stock.warehouse')
-    ticket=fields:Many2one('helpdesk.ticket')
+    ticket=fields.Many2one('helpdesk.ticket')
     
     def detona(self):
         t=self.env['tfs.tfs'].reglas(self.almacen.id)
