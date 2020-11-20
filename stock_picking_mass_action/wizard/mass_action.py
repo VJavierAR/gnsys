@@ -119,7 +119,10 @@ class StockPickingMassAction(TransientModel):
                         self.env.cr.execute("update stock_quant set reserved_quantity=1 where id="+str(qu1.id)+";")
                         if(qu.id):            
                             self.env.cr.execute("update stock_quant set reserved_quantity=0 where id="+str(qu.id)+";")
-                        self.env.cr.execute("update stock_move_line set lot_id="+str(serie)+"where id="+str(d.id)+";")
+                        if(d.id==False):
+                            self.pick_ids.action_assign()
+                        if(d.id):
+                            self.env.cr.execute("update stock_move_line set lot_id="+str(serie)+"where id="+str(d.id)+";")
             return True
         else:
             return True
@@ -138,9 +141,10 @@ class StockPickingMassAction(TransientModel):
         # draft_picking_lst.action_confirm()
         # pickings_to_check.action_assign()
         #quantities_done = sum(move_line.qty_done for move_line in assigned_picking_lst.mapped('move_line_ids').filtered(lambda m: m.state not in ('done', 'cancel')))
-        assigned_picking_lst = self.surtir()
         #retiro
         self.retiro_mass_action()
+        assigned_picking_lst = self.surtir()
+
         #reporte
         assigned_picking_lst2 = assigned_picking_lst.filtered(lambda x: self.check==1 or self.check==2)
         #concentrado
