@@ -582,7 +582,7 @@ class HelpDeskDetalleSerie(TransientModel):
                                     <td>""" + str(ticket.x_studio_ultima_nota) + """</td>
                                     <td>""" + str(ultimo_diagnostico_fecha) + """</td>
                                 </tr>
-                            """
+                            """ 
 
 
         #<th style="width:10%;">Contador B/N</th>
