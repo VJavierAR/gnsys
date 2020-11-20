@@ -82,6 +82,7 @@ class servicios_gnsys(models.Model):
     polizaServicios = fields.Boolean(string="Póliza de servicios",track_visibility='onchange') 
     fechaAplicacion=fields.Date()
     montoCambio=fields.Float()
+    bolsaCambio=fields.Float()
     
     @api.onchange('serviciosNombre')
     def cambiarNombre(self):
