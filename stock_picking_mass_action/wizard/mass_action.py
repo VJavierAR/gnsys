@@ -543,7 +543,7 @@ class StockCambioLine(TransientModel):
     almacen=fields.Many2one('stock.warehouse',string='Almacen')
     existencia1=fields.Integer(string='Existencia Nuevo')
     existencia2=fields.Integer(string='Existencia Usado')
-    existeciaAlmacen=fields.Integer(string='Existencia de Almacen seleccionado')
+    existeciaAlmacen=fields.Integer(string='Existencia de Almacen seleccionado',compute='almac')
     tipo=fields.Integer()
     move_id=fields.Many2one('stock.move')
 
@@ -594,7 +594,7 @@ class StockCambioLine(TransientModel):
     almacen=fields.Many2one('stock.warehouse',string='Almacen')
     existencia1=fields.Integer(string='Existencia Nuevo')
     existencia2=fields.Integer(string='Existencia Usado')
-    existeciaAlmacen=fields.Integer(string='Existencia de Almacen seleccionado')
+    existeciaAlmacen=fields.Integer(string='Existencia de Almacen seleccionado',compute='almac')
     tipo=fields.Integer()
     move_id=fields.Many2one('stock.move')
     
