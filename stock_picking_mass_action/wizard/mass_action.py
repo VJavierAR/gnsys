@@ -120,7 +120,7 @@ class StockPickingMassAction(TransientModel):
                         if(qu.id):            
                             self.env.cr.execute("update stock_quant set reserved_quantity=0 where id="+str(qu.id)+";")
                         if(d.id==False):
-                            self.pick_ids.action_assign()
+                            self.picking_ids.action_assign()
                         if(d.id):
                             self.env.cr.execute("update stock_move_line set lot_id="+str(serie)+"where id="+str(d.id)+";")
             return True
