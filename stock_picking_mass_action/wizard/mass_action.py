@@ -446,12 +446,12 @@ class StockCambio(TransientModel):
             f=f+"</tr>"
             da={'porcentajeNegro':s.nivelNegro,'porcentajeAmarillo':s.nivelAmarillo,'porcentajeCian':s.nivelCian,'porcentajeMagenta':s.nivelMagenta,'contadorColor':s.contadorColor,'x_studio_toner_negro':1,'x_studio_toner_amarillo':1,'x_studio_toner_cian':1,'x_studio_toner_magenta':1,'contadorMono':s.contadorMono,'serie':s.serieOrigen.id,'fuente':'stock.production.lot'}
             self.env['dcas.dcas'].create(da)
-            da['fuente']='dcas.dcas'
-            self.env['dcas.dcas'].create(da)
-            da['fuente']='helpdesk.ticket'
-            self.env['dcas.dcas'].create(da)
-            da['fuente']='tfs.tfs'
-            self.env['dcas.dcas'].create(da)
+            #da['fuente']='dcas.dcas'
+            #self.env['dcas.dcas'].create(da)
+            #da['fuente']='helpdesk.ticket'
+            #self.env['dcas.dcas'].create(da)
+            #da['fuente']='tfs.tfs'
+            #self.env['dcas.dcas'].create(da)
         f=f+"</tbody></table>"
         if(self.pick.sale_id.x_studio_tipo_de_solicitud in ['Arrendamiento','Venta','Backup']):
             self.pick.sale_id.write({'x_studio_series_retiro':f,'state':'assign'})
