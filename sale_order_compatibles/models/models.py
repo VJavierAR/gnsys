@@ -131,9 +131,9 @@ class sale_update(models.Model):
 	    _logger.info(str(pos[0].id))
 	    pdf=self.env.ref('stock_picking_mass_action.sale_xlsx').sudo().render_xlsx(data=pos[0],docids=pos[0].id)[0]
 	    reporte = base64.encodestring(pdf)
-	    mail['attachments']=[('report.solicitudes.report.xlsx',reporte)]
+	    at=self.env['ir.attachment'].create({'name':'Reporte Demostración y prestamos','datas':reporte})
+	    mail['attachment_ids']=[at.id]
 	    self.env['mail.mail'].create(mail).send()
-	    #at=self.env['ir.attachment'].create({'name':'Reporte Demostración y prestamos','datas':reporte})
 	    #mail.write({'attachment_ids':[(6,0,[at.id])]})
 	    #mail.send()
 
