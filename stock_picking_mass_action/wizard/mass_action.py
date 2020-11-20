@@ -1592,13 +1592,13 @@ class assignacionAccesorios(TransientModel):
             line.move_line.write({'location_dest_id':line.almacen.lot_stock_id.id})
             line.serie.write({'x_studio_estado':line.estado})
             da={'porcentajeNegro':line.nivelNegro,'porcentajeAmarillo':line.nivelAmarillo,'porcentajeCian':line.nivelCian,'porcentajeMagenta':line.nivelMagenta,'contadorColor':line.contadorColor,'x_studio_toner_negro':1,'x_studio_toner_amarillo':1,'x_studio_toner_cian':1,'x_studio_toner_magenta':1,'contadorMono':line.contadorMono,'serie':line.serie.id,'fuente':'stock.production.lot'}
-            self.env['dcas.dcas'].create(da)
-            da['fuente']='dcas.dcas'
-            self.env['dcas.dcas'].create(da)
-            da['fuente']='helpdesk.ticket'
-            self.env['dcas.dcas'].create(da)
-            da['fuente']='tfs.tfs'
-            self.env['dcas.dcas'].create(da)
+            c=self.env['dcas.dcas'].create(da)
+            a=c.copy()
+            b=c.copy()
+            d=c.copy()
+            a.write({'fuente':'dcas.dcas'})
+            b.write({'fuente':'helpdesk.ticket'})
+            d.write({'fuente':'tfs.tfs'})
         wiz=self.env['stock.picking.mass.action'].create({'picking_ids':[(4,self.pick.id)],'confirm':True,'check_availability':True,'transfer':True})
         wiz.mass_action()
 
