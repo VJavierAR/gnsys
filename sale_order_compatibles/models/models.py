@@ -128,7 +128,7 @@ class sale_update(models.Model):
 	    pos[0].write({'x_studio_arreglo':str(pos.mapped('id'))})
 	    template_id2=self.env['mail.template'].search([('id','=',79)], limit=1)
 	    mail=template_id2.generate_email(pos[0].id)
-	    _logger.info(str(len(pos[0].id)))
+	    _logger.info(str(pos[0].id))
 	    pdf=self.env.ref('stock_picking_mass_action.sale_xlsx').sudo().render_xlsx(data=pos[0],docids=pos[0].id)[0]
 	    reporte = base64.encodestring(pdf)
 	    mail['attachments']=[('report.solicitudes.report.xlsx',reporte)]
