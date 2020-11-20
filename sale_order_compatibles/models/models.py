@@ -121,19 +121,18 @@ class sale_update(models.Model):
         ('entregado', 'Entregado'),
         ('cancel', 'Cancelled'),
         ], string='Status', readonly=True, copy=False, index=True, track_visibility='onchange', track_sequence=3, default='draft')
-    
-    def Reporte(self):
-        fecha=datetime.datetime.now().date()
-        sa=model.search([['x_studio_tipo_de_solicitud','in',('Demostración','Préstamo')],['state','in',('sale','assign')]])
-        pos=sa.filtered(lambda x:x.validity_date>fecha)
-        pos[0].write({'x_studio_arreglo':str(pos.mapped('id'))})
-        template_id2=env['mail.template'].search([('id','=',79)], limit=1)
-        mail=template_id2.generate_email(pos[0].id)
-        pdf=self.env.ref('stock_picking_mass_action.sale_xlsx').sudo().render_xlsx(data=pos[0],docids=pos[0].id)[0]
-        reporte = base64.encodestring(pdf)
-        at=self.env['ir.attachment'].create({'datas':reporte})
-        mail.write({'attachment_ids':[(6,0,[at.id])]})
-        mail.send()
+	def Reporte(self):
+	    fecha=datetime.datetime.now().date()
+	    sa=model.search([['x_studio_tipo_de_solicitud','in',('Demostración','Préstamo')],['state','in',('sale','assign')]])
+	    pos=sa.filtered(lambda x:x.validity_date>fecha)
+	    pos[0].write({'x_studio_arreglo':str(pos.mapped('id'))})
+	    template_id2=env['mail.template'].search([('id','=',79)], limit=1)
+	    mail=template_id2.generate_email(pos[0].id)
+	    pdf=self.env.ref('stock_picking_mass_action.sale_xlsx').sudo().render_xlsx(data=pos[0],docids=pos[0].id)[0]
+	    reporte = base64.encodestring(pdf)
+	    at=self.env['ir.attachment'].create({'datas':reporte})
+	    mail.write({'attachment_ids':[(6,0,[at.id])]})
+	    mail.send()
 
 
 	@api.onchange('partner_id')
