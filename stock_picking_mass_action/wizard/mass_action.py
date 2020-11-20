@@ -445,7 +445,13 @@ class StockCambio(TransientModel):
             f=f+"<td>"+str(s.serieOrigen.name)+"</td>"
             f=f+"</tr>"
             da={'porcentajeNegro':s.nivelNegro,'porcentajeAmarillo':s.nivelAmarillo,'porcentajeCian':s.nivelCian,'porcentajeMagenta':s.nivelMagenta,'contadorColor':s.contadorColor,'x_studio_toner_negro':1,'x_studio_toner_amarillo':1,'x_studio_toner_cian':1,'x_studio_toner_magenta':1,'contadorMono':s.contadorMono,'serie':s.serieOrigen.id,'fuente':'stock.production.lot'}
-            self.env['dcas.dcas'].create(da)
+            c=self.env['dcas.dcas'].create(da)
+            a=c.copy()
+            b=c.copy()
+            d=c.copy()
+            a.write({'fuente':'dcas.dcas'})
+            b.write({'fuente':'helpdesk.ticket'})
+            d.write({'fuente':'tfs.tfs'})
             #da['fuente']='dcas.dcas'
             #self.env['dcas.dcas'].create(da)
             #da['fuente']='helpdesk.ticket'
