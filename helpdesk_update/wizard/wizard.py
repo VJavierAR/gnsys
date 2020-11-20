@@ -502,30 +502,30 @@ class HelpDeskDetalleSerie(TransientModel):
     def gener_tabla_tickets(self):
       serie_name = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].name #self.mapped('name')[0]
       serie_id = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id #self.mapped('id')[0]
-      _logger.info('serie_name: ' + str(serie_name) + ' serie_id: ' + str(serie_id))
+      #_logger.info('serie_name: ' + str(serie_name) + ' serie_id: ' + str(serie_id))
       if serie_id:
         query = 'select "helpdesk_ticket_id" from helpdesk_ticket_stock_production_lot_rel where "stock_production_lot_id" = ' + str(serie_id)
         self.env.cr.execute(query)
         resultadoQuery = self.env.cr.fetchall()
-        _logger.info('resultadoQuery: ' + str(resultadoQuery))
+        #_logger.info('resultadoQuery: ' + str(resultadoQuery))
         dominio_tickets_odoo = [('serie', '=', serie_id), ('fuente', '=', 'helpdesk.ticket'), ('x_studio_tickett', '!=', False)]
         tickets_toner = self.env['dcas.dcas'].search(dominio_tickets_odoo) #.x_studio_tickett
-        _logger.info('tickets_toner: ' + str(tickets_toner))
+        #_logger.info('tickets_toner: ' + str(tickets_toner))
         lista_tickets = []
         for id_ticket in resultadoQuery:
           lista_tickets.append(id_ticket[0])
         for id_ticket in tickets_toner:
           lista_tickets.append(id_ticket.x_studio_tickett)
-        _logger.info('lista_tickets: ' + str(lista_tickets))
+        #_logger.info('lista_tickets: ' + str(lista_tickets))
         dominio_tickets_odoo = [('id', 'in', lista_tickets), ('active', '=', True)]
         tickets_odoo = self.env['helpdesk.ticket'].search(dominio_tickets_odoo)
-        _logger.info('tickets_odoo: ' + str(tickets_odoo))
+        #_logger.info('tickets_odoo: ' + str(tickets_odoo))
 
         #tickets techra
         #dominio_tickets_techra = [(serie_name, 'in', 'numeroDeSerieTechra')]
         tickets_techra = self.env['helpdesk.ticket.techra'].search([('numeroDeSerieTechra', 'ilike', serie_name)])
         #tickets_techra = tickets_techra.filtered(lambda x: serie_name in x.numeroDeSerieTechra )
-        _logger.info('tickets_techra: ' + str(tickets_techra))
+        #_logger.info('tickets_techra: ' + str(tickets_techra))
 
         
 
@@ -585,8 +585,10 @@ class HelpDeskDetalleSerie(TransientModel):
                                 """ 
             else:
                 contadores = ''
-                if ticket.x_studio_equipo_por_nmero_de_serie_1:
-                    for serie in ticket.x_studio_equipo_por_nmero_de_serie_1:
+                series_toner = ticket.mapped('x_studio_equipo_por_nmero_de_serie_1')
+                #_logger.info('x_studio_equipo_por_nmero_de_serie_1: ' + str(series_toner))
+                if series_toner:
+                    for serie in series_toner:
                         numero_de_serie = serie.serie.name
                         if serie.x_studio_color_o_bn == 'Color':
                             #contadores = contadores + 'Serie: ' + numero_de_serie + 'Equipo B/N o Color: ' + str(serie.x_studio_color_o_bn) + '</br>Contador B/N anterior: ' + str(serie.x_studio_contador_mono_anterior_1) + '</br>Contador B/N actual: ' + str(serie.contadorMono) + '</br>Contador Color anterior: ' + str(serie.x_studio_contador_color_anterior) + '</br>Contador Color actual: ' + str(serie.contadorColor) + '</br>'
