@@ -106,6 +106,7 @@ class StockPickingMassAction(TransientModel):
                 
     def retiro_mass_action(self):
         tipo=self.picking_ids.mapped('sale_id.x_studio_tipo_de_solicitud')
+        c=0
         if('Retiro' in tipo):
             for pickis in self.picking_ids:
                 for move in pickis.move_ids_without_package:
@@ -120,9 +121,18 @@ class StockPickingMassAction(TransientModel):
                         if(qu.id):            
                             self.env.cr.execute("update stock_quant set reserved_quantity=0 where id="+str(qu.id)+";")
                         if(d.id==False):
-                            self.picking_ids.action_assign()
+                            c=c+1
                         if(d.id):
                             self.env.cr.execute("update stock_move_line set lot_id="+str(serie)+"where id="+str(d.id)+";")
+            if(c!=0):
+                self.picking_ids.action_assign()
+                for pickis in self.picking_ids:
+                    for move in pickis.move_ids_without_package:
+                        serie=move.sale_line_id.x_studio_field_9nQhR.id
+                        if(serie):
+                            d=self.env['stock.move.line'].search([['move_id','=',move.id]])
+                            if(d.id):
+                                self.env.cr.execute("update stock_move_line set lot_id="+str(serie)+"where id="+str(d.id)+";")
             return True
         else:
             return True
