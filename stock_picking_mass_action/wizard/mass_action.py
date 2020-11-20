@@ -242,7 +242,7 @@ class StockPickingMassAction(TransientModel):
         pickings_to_check.action_assign()
         assigned_picking_lst = self.picking_ids.filtered(lambda x: x.state == 'assigned').sorted(key=lambda r: r.scheduled_date)
         quantities_done = sum(move_line.qty_done for move_line in assigned_picking_lst.mapped('move_line_ids').filtered(lambda m: m.state not in ('done', 'cancel')))
-        self.retiro_mass_action()
+        #self.retiro_mass_action()
         if not quantities_done:
             q=self.env['stock.immediate.transfer'].create({'pick_ids':[(6,0,assigned_picking_lst.mapped('id'))]})
             q.process()
