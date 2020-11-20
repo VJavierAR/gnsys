@@ -531,6 +531,17 @@ class HelpDeskDetalleSerie(TransientModel):
 
         filas = """"""
         for ticket in tickets_techra:
+            contadores = ''
+            if ticket.series:
+                numero_de_serie = ''
+                for serie in ticket.series:
+                    numero_de_serie = serie.serie.name
+                    if serie.x_studio_color_o_bn == 'Color':
+                        contadores = contadores + 'Serie: ' + numero_de_serie + 'Equipo B/N o Color: ' + str(serie.x_studio_color_o_bn) + '</br>Contador B/N anterior: ' + str(serie.x_studio_contador_mono_anterior_1) + '</br>Contador B/N actual: ' + str(serie.contadorMono) + '</br>Contador Color anterior: ' + str(serie.x_studio_contador_color_anterior) + '</br>Contador Color actual: ' + str(serie.contadorColor) + '</br>'
+                    if serie.x_studio_color_o_bn == 'B/N':
+                        contadores = contadores + 'Serie: ' + numero_de_serie + 'Equipo B/N o Color: ' + str(serie.x_studio_color_o_bn) + '</br>Contador B/N anterior: ' + str(serie.x_studio_contador_mono_anterior_1) + '</br>Contador B/N actual: ' + str(serie.contadorMono) + '</br>'
+
+
             filas = filas + """
                             \n<tr>
                                 <td>""" + str(ticket.numTicketDeTechra) + """</td>
@@ -538,15 +549,24 @@ class HelpDeskDetalleSerie(TransientModel):
                                 <td>""" + str(ticket.numeroDeSerieTechra) + """</td>
                                 <td>""" + str(ticket.cliente_text) + """</td>
                                 <td>""" + str(ticket.areaDeAtencionTechra) + """</td>
+                                <td>""" + str(ticket.zona_de_domicilio) + """</td>
                                 <td>""" + str(ticket.localidad_text) + """</td>
                                 <td>""" + str(ticket.descripcionDelReporteTechra) + """</td>
                                 <td>""" + str(ticket.estadoTicketTechra) + """</td>
+
+                                <td>""" + str(contadores) + """</td>
                                 
                                 <td>""" + str(ticket.ultima_nota) + """</td>
                                 <td>""" + str(ticket.fecha_ultima_nota) + """</td>
                               </tr>
                           """
         for ticket in tickets_odoo:
+            ultimo_diagnostico_fecha = ''
+            if ticket.diagnosticos:
+                for registro in ticket.diagnosticos:
+                    if not registro.creadoPorSistema and registro.comentario != False:
+                        ultimo_diagnostico_fecha = str(registro.create_date)
+
             filas = filas + """
                                 \n<tr>
                                     <td>""" + str(ticket.id) + """</td>
@@ -554,95 +574,21 @@ class HelpDeskDetalleSerie(TransientModel):
                                     <td>""" + str(ticket.serie_y_modelo) + """</td>
                                     <td>""" + str(ticket.partner_id.name) + """</td>
                                     <td>""" + str(ticket.team_id.name) + """</td>
+                                    <td>""" + str(ticket.x_studio_field_6furK) + """</td>
                                     <td>""" + str(ticket.direccionLocalidadText) + """</td>
                                     <td>""" + str(ticket.primerDiagnosticoUsuario) + """</td>
                                     <td>""" + str(ticket.stage_id.name) + """</td>
-
+                                    <td>""" + str(ticket.contadores_anteriores) + """</td>
                                     <td>""" + str(ticket.x_studio_ultima_nota) + """</td>
-                                    <td>""" + str() + """</td>
+                                    <td>""" + str(ultimo_diagnostico_fecha) + """</td>
                                 </tr>
-                            """
+                            """ 
 
 
         #<th style="width:10%;">Contador B/N</th>
         #<th style="width:10%;">Contador color</th>
 
-        tabla = """
-          <!DOCTYPE html>
-          <html>
-          <head>
-          <meta name="viewport" content="width=device-width, initial-scale=1">
-          <style>
-          * {
-            box-sizing: border-box;
-          }
-
-          #myInput {
-            background-image: url('/css/searchicon.png');
-            background-position: 10px 10px;
-            background-repeat: no-repeat;
-            width: 100%;
-            font-size: 16px;
-            padding: 12px 20px 12px 40px;
-            border: 1px solid #ddd;
-            margin-bottom: 12px;
-          }
-
-          #myTable {
-            border-collapse: collapse;
-            width: 100%;
-            border: 1px solid #ddd;
-            font-size: 18px;
-          }
-
-          #myTable th, #myTable td {
-            text-align: left;
-            padding: 12px;
-          }
-
-          #myTable tr {
-            border-bottom: 1px solid #ddd;
-          }
-
-          #myTable tr.header, #myTable tr:hover {
-            background-color: #f1f1f1;
-          }
-          </style>
-          </head>
-          <body>
-
-            <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names..">
-
-            <table id="myTable">
-              <tr class="header">
-                <th style="width:10%;">Ticket</th>
-                <th style="width:10%;">Fecha</th>
-                <th style="width:10%;">No. Serie</th>
-                <th style="width:10%;">Cliente</th>
-                <th style="width:10%;">Área de atención</th>
-                <th style="width:10%;">Zona</th>
-                <th style="width:10%;">Unicación</th>
-                <th style="width:10%;">Falla</th>
-                <th style="width:10%;">último estatus ticket</th>
-                
-                <th style="width:10%;">última Nota</th>
-                <th style="width:10%;">Fecha nota</th>
-              </tr>
-              """ + filas + """
-            </table>
-            <script>
-              $(document).ready(function(){
-                $("#myInput").on("keyup", function() {
-                  var value = $(this).val().toLowerCase();
-                  $("#myTable tr").filter(function() {
-                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-                  });
-                });
-              });
-            </script>
-          </body>
-          </html>
-        """
+        
 
         tabla_2 = """
             <!DOCTYPE html>
@@ -681,11 +627,11 @@ class HelpDeskDetalleSerie(TransientModel):
                     <th class="col-md-3 col-xs-3">No. Serie</th>
                     <th class="col-md-3 col-xs-3">Cliente</th>
                     <th class="col-md-3 col-xs-3">Área de atención</th>
+                    <th class="col-md-3 col-xs-3">Zona</th>
                     <th class="col-md-3 col-xs-3">Ubicación</th>
                     <th class="col-md-3 col-xs-3">Falla</th>
                     <th class="col-md-3 col-xs-3">último estatus ticket</th>
-                    <!--<th class="col-md-3 col-xs-3">Contador B/N</th>
-                    <th class="col-md-3 col-xs-3">Contador color</th>-->
+                    <th class="col-md-3 col-xs-3">Contadores/th>
                     <th class="col-md-3 col-xs-3">última Nota</th>
                     <th class="col-md-3 col-xs-3">Fecha nota</th>
 
@@ -732,9 +678,6 @@ class HelpDeskDetalleSerie(TransientModel):
 
         """
 
-
-
-        _logger.info(tabla_2)
         self.html = tabla_2
 
 class HelpDeskAlerta(TransientModel):
