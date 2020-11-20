@@ -224,7 +224,9 @@ class StockPickingMassAction(TransientModel):
         if(locations[0] in almacenes):
             unresrved=self.env['stock.picking'].search(['&','&','&',['id','not in',self.picking_ids.mapped('id')],['location_id','in',locations],['state','=','assigned'],['surtir','=',False]])
             if(len(unresrved)>0 and 'outgoing' not in tipo):
+                _logger.info('entre en anular reserva')
                 unresrved.do_unreserve()
+
         draft_picking_lst = self.picking_ids.filtered(lambda x: x.state == 'draft').sorted(key=lambda r: r.scheduled_date)
         draft_picking_lst.action_confirm()
         pickings_to_check = self.picking_ids.filtered(lambda x: x.state not in ['draft','cancel','done',]).sorted(key=lambda r: r.scheduled_date)
