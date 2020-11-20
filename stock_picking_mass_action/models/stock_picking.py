@@ -437,7 +437,10 @@ class StockPicking(Model):
 
     def cambio_wizard(self):
         d=[]
-        wiz = self.env['cambio.toner'].create({'display_name':'h','pick':self.id,'tonerUorden':self.oculta})
+        if(13 in self.move_ids_without_package.mapped('product_id.categ_id.id')):
+            wiz = self.env['cambio.toner'].create({'display_name':'h','pick':self.id,'tonerUorden':self.oculta})
+        if(13 not in self.move_ids_without_package.mapped('product_id.categ_id.id')):
+            wiz = self.env['cambio.toner'].create({'display_name':'h','pick':self.id,'tonerUorden':False})
         for p in self.move_ids_without_package:
             data={'almacen':p.location_id.x_studio_field_JoD2k.id,'move_id':p.id,'rel_cambio':wiz.id,'producto1':p.product_id.id,'producto2':p.product_id.id,'cantidad2':p.product_uom_qty,'cantidad':p.product_uom_qty,'serie':p.x_studio_serie_destino.id,'tipo':self.picking_type_id.id}
             self.env['cambio.toner.line'].create(data)
