@@ -138,8 +138,8 @@ class StockPickingMassAction(TransientModel):
         # draft_picking_lst.action_confirm()
         # pickings_to_check.action_assign()
         #quantities_done = sum(move_line.qty_done for move_line in assigned_picking_lst.mapped('move_line_ids').filtered(lambda m: m.state not in ('done', 'cancel')))
-        #retiro
         assigned_picking_lst = self.surtir()
+        #retiro
         self.retiro_mass_action()
         #reporte
         assigned_picking_lst2 = assigned_picking_lst.filtered(lambda x: self.check==1 or self.check==2)
