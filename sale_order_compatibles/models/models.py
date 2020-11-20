@@ -168,7 +168,7 @@ class sale_update(models.Model):
 		      record['x_studio_field_69Boh']=record.serieRetiro2.servicio.id
 		      record['x_studio_field_LVAj5']=record.serieRetiro2.servicio.contrato.id
 	def preparaSolicitudValidacion(self):
-		if('Renta Global' in str(self.x_studio_field_69Boh.serviciosNombre)):
+		if('Renta global' in str(self.x_studio_field_69Boh.serviciosNombre) or 'Renta Global' in str(self.x_studio_field_69Boh.serviciosNombre)):
 			wiz = self.env['sale.agregado'].create({'sale':self.id})
 			view = self.env.ref('sale_order_compatibles.view_sale_agregados_form')
 			return {
