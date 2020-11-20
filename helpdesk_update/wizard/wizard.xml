@@ -315,8 +315,8 @@
                         
                     </group>
                     <group string="Contador actual">
-                        <field name="contadorBNActual" id='contadorBNActual'/>
-                        <field name="contadorColorActual" id='contadorColorActual' attrs='{"invisible": [["bnColor", "=", "B/N"]]}'/>
+                        <field name="contadorBNActual" id='contadorBNActual' widget="numeric_step" options="{'step': 1, 'min': 0}"/>
+                        <field name="contadorColorActual" id='contadorColorActual' attrs='{"invisible": [["bnColor", "=", "B/N"]]}' widget="numeric_step" options="{'step': 1, 'min': 0}"/>
                     </group>
                 </group>
                 <!--<group attrs="{'invisible': ['|', &quot;&amp;&quot;, &quot;&amp;&quot;, ('bnColor', '=', 'B/N'),('contadorBNActual', '=', 0)]}">-->
@@ -744,8 +744,11 @@
                 <group>
                     <notebook>
                         <page string = 'Tickets'>
-                            <field name='historicoTickets'>
-                                <tree default_order="create_date desc"><!--x_studio_fecha-->
+                            <field name='html' widget='html' />
+
+                            <!--
+                            <field name='historicoTickets' >
+                                <tree default_order="create_date desc" limit='10'>
                                     <field name='x_studio_tickett' attrs='{"domain": [["fuente","=","Equipo"]]}'/>
                                     <field name='create_date' />
                                     <field name='fuente' />
@@ -762,25 +765,13 @@
                                     <field name='hTicketUltimaNota' />
                                     <field name='hTicketFechaNota' />
 
-                                    <!--
-                                    <field name='x_studio_fecha' />
-                                    <field name='hTicketSerie' />
-                                    -->
-                                    
-                                    
-                                    
-                                    
-                                    <!--
-                                    <field name='x_studio_fecha' />
-                                    <field name='x_studio_field_no6Rb' />
-                                    <field name='x_studio_texto_anio' />
-                                    
-                                    <field name='' />
-                                    -->
                                 </tree>
                                 <form>
                                 </form>
                             </field>
+                            -->
+
+
                         </page>
                         <page string = 'Lecturas'>
                             <field name='lecturas' />

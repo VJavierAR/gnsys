@@ -475,9 +475,9 @@ class HelpDeskDetalleSerie(TransientModel):
         if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
             self.serie = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].name
 
-    def _compute_historico_tickets(self):
-        if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
-            self.historicoTickets = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_field_Yxv2m.ids
+    #def _compute_historico_tickets(self):
+    #    if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
+    #        self.historicoTickets = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_field_Yxv2m.ids
 
     def _compute_lecturas(self):
         if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
@@ -494,6 +494,245 @@ class HelpDeskDetalleSerie(TransientModel):
     def _compute_movimientos(self):
         if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
             self.movimientos = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_move_line.ids
+
+    
+    html = fields.Text(string = 'Tickets', compute = 'gener_tabla_tickets')
+
+    
+    def gener_tabla_tickets(self):
+      serie_name = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].name #self.mapped('name')[0]
+      serie_id = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id #self.mapped('id')[0]
+      _logger.info('serie_name: ' + str(serie_name) + ' serie_id: ' + str(serie_id))
+      if serie_id:
+        query = 'select "helpdesk_ticket_id" from helpdesk_ticket_stock_production_lot_rel where "stock_production_lot_id" = ' + str(serie_id)
+        self.env.cr.execute(query)
+        resultadoQuery = self.env.cr.fetchall()
+        _logger.info('resultadoQuery: ' + str(resultadoQuery))
+        dominio_tickets_odoo = [('serie', '=', serie_id), ('fuente', '=', 'helpdesk.ticket'), ('x_studio_tickett', '!=', False)]
+        tickets_toner = self.env['dcas.dcas'].search(dominio_tickets_odoo) #.x_studio_tickett
+        _logger.info('tickets_toner: ' + str(tickets_toner))
+        lista_tickets = []
+        for id_ticket in resultadoQuery:
+          lista_tickets.append(id_ticket[0])
+        for id_ticket in tickets_toner:
+          lista_tickets.append(id_ticket.x_studio_tickett)
+        _logger.info('lista_tickets: ' + str(lista_tickets))
+        dominio_tickets_odoo = [('id', 'in', lista_tickets), ('active', '=', True)]
+        tickets_odoo = self.env['helpdesk.ticket'].search(dominio_tickets_odoo)
+        _logger.info('tickets_odoo: ' + str(tickets_odoo))
+
+        #tickets techra
+        #dominio_tickets_techra = [(serie_name, 'in', 'numeroDeSerieTechra')]
+        tickets_techra = self.env['helpdesk.ticket.techra'].search([('numeroDeSerieTechra', 'ilike', serie_name)])
+        #tickets_techra = tickets_techra.filtered(lambda x: serie_name in x.numeroDeSerieTechra )
+        _logger.info('tickets_techra: ' + str(tickets_techra))
+
+        
+
+        filas = """"""
+        for ticket in tickets_techra:
+            filas = filas + """
+                            \n<tr>
+                                <td>""" + str(ticket.numTicketDeTechra) + """</td>
+                                <td>""" + str(ticket.creado_el) + """</td>
+                                <td>""" + str(ticket.numeroDeSerieTechra) + """</td>
+                                <td>""" + str(ticket.cliente_text) + """</td>
+                                <td>""" + str(ticket.areaDeAtencionTechra) + """</td>
+                                <td>""" + str(ticket.localidad_text) + """</td>
+                                <td>""" + str(ticket.descripcionDelReporteTechra) + """</td>
+                                <td>""" + str(ticket.estadoTicketTechra) + """</td>
+                                
+                                <td>""" + str(ticket.ultima_nota) + """</td>
+                                <td>""" + str(ticket.fecha_ultima_nota) + """</td>
+                              </tr>
+                          """
+        for ticket in tickets_odoo:
+            filas = filas + """
+                                \n<tr>
+                                    <td>""" + str(ticket.id) + """</td>
+                                    <td>""" + str(ticket.create_date) + """</td>
+                                    <td>""" + str(ticket.serie_y_modelo) + """</td>
+                                    <td>""" + str(ticket.partner_id.name) + """</td>
+                                    <td>""" + str(ticket.team_id.name) + """</td>
+                                    <td>""" + str(ticket.direccionLocalidadText) + """</td>
+                                    <td>""" + str(ticket.primerDiagnosticoUsuario) + """</td>
+                                    <td>""" + str(ticket.stage_id.name) + """</td>
+                                    
+                                    <td>""" + str(ticket.x_studio_ultima_nota) + """</td>
+                                    <td>""" + str() + """</td>
+                                </tr>
+                            """
+
+        tabla = """
+          <!DOCTYPE html>
+          <html>
+          <head>
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <style>
+          * {
+            box-sizing: border-box;
+          }
+
+          #myInput {
+            background-image: url('/css/searchicon.png');
+            background-position: 10px 10px;
+            background-repeat: no-repeat;
+            width: 100%;
+            font-size: 16px;
+            padding: 12px 20px 12px 40px;
+            border: 1px solid #ddd;
+            margin-bottom: 12px;
+          }
+
+          #myTable {
+            border-collapse: collapse;
+            width: 100%;
+            border: 1px solid #ddd;
+            font-size: 18px;
+          }
+
+          #myTable th, #myTable td {
+            text-align: left;
+            padding: 12px;
+          }
+
+          #myTable tr {
+            border-bottom: 1px solid #ddd;
+          }
+
+          #myTable tr.header, #myTable tr:hover {
+            background-color: #f1f1f1;
+          }
+          </style>
+          </head>
+          <body>
+
+            <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names..">
+
+            <table id="myTable">
+              <tr class="header">
+                <th style="width:10%;">Ticket</th>
+                <th style="width:10%;">Fecha</th>
+                <th style="width:10%;">No. Serie</th>
+                <th style="width:10%;">Cliente</th>
+                <th style="width:10%;">Área de atención</th>
+                <th style="width:10%;">Zona</th>
+                <th style="width:10%;">Unicación</th>
+                <th style="width:10%;">Falla</th>
+                <th style="width:10%;">último estatus ticket</th>
+                <!--<th style="width:10%;">Contador B/N</th>
+                <th style="width:10%;">Contador color</th>-->
+                <th style="width:10%;">última Nota</th>
+                <th style="width:10%;">Fecha nota</th>
+              </tr>
+              """ + filas + """
+            </table>
+            <script>
+              $(document).ready(function(){
+                $("#myInput").on("keyup", function() {
+                  var value = $(this).val().toLowerCase();
+                  $("#myTable tr").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                  });
+                });
+              });
+            </script>
+          </body>
+          </html>
+        """
+
+        tabla_2 = """
+            <!DOCTYPE html>
+            <html>
+            <head>
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <style>
+                body{
+                  padding:20px 20px;
+                }
+
+                .results tr[visible='false'],
+                .no-result{
+                  display:none;
+                }
+
+                .results tr[visible='true']{
+                  display:table-row;
+                }
+
+                .counter{
+                  padding:8px; 
+                  color:#ccc;
+                }
+              </style>
+
+              <div class="form-group pull-right">
+                  <input type="text" class="search form-control" placeholder="What you looking for?">
+              </div>
+              <span class="counter pull-right"></span>
+              <table class="table table-hover table-bordered results">
+                <thead>
+                  <tr>
+                    <th class="col-md-3 col-xs-3">Ticket</th>
+                    <th class="col-md-3 col-xs-3">Fecha</th>
+                    <th class="col-md-3 col-xs-3">No. Serie</th>
+                    <th class="col-md-3 col-xs-3">Cliente</th>
+                    <th class="col-md-3 col-xs-3">Área de atención</th>
+                    <th class="col-md-3 col-xs-3">Ubicación</th>
+                    <th class="col-md-3 col-xs-3">Falla</th>
+                    <th class="col-md-3 col-xs-3">último estatus ticket</th>
+                    <th class="col-md-3 col-xs-3">Contador B/N</th>
+                    <th class="col-md-3 col-xs-3">Contador color</th>
+                    <th class="col-md-3 col-xs-3">última Nota</th>
+                    <th class="col-md-3 col-xs-3">Fecha nota</th>
+
+                  </tr>
+                  <tr class="warning no-result">
+                    <td colspan="4"><i class="fa fa-warning"></i> No result</td>
+                  </tr>
+                </thead>
+                <tbody>
+                  """ + filas + """
+                </tbody>
+              </table>
+
+              <script>
+                $(document).ready(function() {
+                  $(".search").keyup(function () {
+                    var searchTerm = $(".search").val();
+                    var listItem = $('.results tbody').children('tr');
+                    var searchSplit = searchTerm.replace(/ /g, "'):containsi('")
+                    
+                  $.extend($.expr[':'], {'containsi': function(elem, i, match, array){
+                        return (elem.textContent || elem.innerText || '').toLowerCase().indexOf((match[3] || "").toLowerCase()) >= 0;
+                    }
+                  });
+                    
+                  $(".results tbody tr").not(":containsi('" + searchSplit + "')").each(function(e){
+                    $(this).attr('visible','false');
+                  });
+
+                  $(".results tbody tr:containsi('" + searchSplit + "')").each(function(e){
+                    $(this).attr('visible','true');
+                  });
+
+                  var jobCount = $('.results tbody tr[visible="true"]').length;
+                    $('.counter').text(jobCount + ' item');
+
+                  if(jobCount == '0') {$('.no-result').show();}
+                    else {$('.no-result').hide();}
+                      });
+                });
+              </script>
+              </body>
+              </html>
+
+        """
+
+
+
+        _logger.info(tabla_2)
+        self.html = tabla_2
 
 class HelpDeskAlerta(TransientModel):
     _name = 'helpdesk.alerta'

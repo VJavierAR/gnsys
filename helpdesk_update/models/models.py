@@ -6888,6 +6888,16 @@ class helpdesk_ticket_techra(models.Model):
                                 track_visibility = 'onchange'
                             )
 
+    creado_el = fields.Text(
+        string = 'Fecha'
+    )
+    ultima_nota = fields.Text(
+        string = 'Ultima nota'
+    )
+    fecha_ultima_nota = fields.Text(
+        string = 'Fecha nota'
+    )
+
     def identifica_repetidos(self):
         dominio_busqueda_ticket = [('numTicketDeTechra', '=', self.numTicketDeTechra), ('id', '!=', str(self.id)), ('es_repetido', '=', False)]
         serie_id = self.env['helpdesk.ticket.techra'].search(dominio_busqueda_ticket, limit = 1)
