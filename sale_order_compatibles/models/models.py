@@ -168,6 +168,8 @@ class sale_update(models.Model):
 		      record['x_studio_field_69Boh']=record.serieRetiro2.servicio.id
 		      record['x_studio_field_LVAj5']=record.serieRetiro2.servicio.contrato.id
 	def preparaSolicitudValidacion(self):
+		if(len(self.compatiblesLineas)==0):
+				raise UserError(_('No hay registros a procesar'))
 		if('Renta global' in str(self.x_studio_field_69Boh.serviciosNombre) or 'Renta Global' in str(self.x_studio_field_69Boh.serviciosNombre)):
 			wiz = self.env['sale.agregado'].create({'sale':self.id})
 			view = self.env.ref('sale_order_compatibles.view_sale_agregados_form')
@@ -212,12 +214,10 @@ class sale_update(models.Model):
 			template_id=self.env['mail.template'].search([('id','=',58)], limit=1)
 			template_id.send_mail(self.id, force_send=True)
 		if(self.x_studio_tipo_de_solicitud!="Venta" or self.x_studio_tipo_de_solicitud!="Venta directa"):
-			if(len(self.compatiblesLineas)==0):
-				raise UserError(_('No hay registros a procesar'))
-			else:
+			if(len(self.compatiblesLineas)>0):
 				template_id=self.env['mail.template'].search([('id','=',58)], limit=1)
 				template_id.send_mail(self.id, force_send=True)
-	
+
 	def desbloquea(self):
 		self.action_cancel()
 		self.action_draft()
