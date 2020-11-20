@@ -606,7 +606,7 @@ class HelpDeskDetalleSerie(TransientModel):
                                         <td>""" + str(ticket.direccionLocalidadText) + """</td>
                                         <td>""" + str(ticket.primerDiagnosticoUsuario) + """</td>
                                         <td>""" + str(ticket.stage_id.name) + """</td>
-                                        <td>""" + str(ticket.contadores) + """</td>
+                                        <td>""" + str(contadores) + """</td>
                                         <td>""" + str(ticket.x_studio_ultima_nota) + """</td>
                                         <td>""" + str(ultimo_diagnostico_fecha) + """</td>
                                     </tr>
