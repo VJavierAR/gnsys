@@ -1642,6 +1642,6 @@ class reporteClientes(TransientModel):
         if(len(self.clientes)!=0):
             c=self.env['res.partner'].search([['id','in',self.clientes.mapped('id')]])
         else:
-            c=self.env['res.partner'].search([])
+            c=self.env['res.partner'].search([['x_studio_activo_1','=',True],['type','!=','delivery']])
         c[0].write({'arreglo':str(c.mapped('id'))})
         return self.env.ref('stock_picking_mass_action.contacto_xlsx').report_action(c[0])
