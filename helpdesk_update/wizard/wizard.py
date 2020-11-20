@@ -566,23 +566,51 @@ class HelpDeskDetalleSerie(TransientModel):
                 for registro in ticket.diagnosticos:
                     if not registro.creadoPorSistema and registro.comentario != False:
                         ultimo_diagnostico_fecha = str(registro.create_date)
+            if ticket.x_studio_tipo_de_vale != 'Requerimiento':
+                filas = filas + """
+                                    \n<tr>
+                                        <td>""" + str(ticket.id) + """</td>
+                                        <td>""" + str(ticket.create_date) + """</td>
+                                        <td>""" + str(ticket.serie_y_modelo) + """</td>
+                                        <td>""" + str(ticket.partner_id.name) + """</td>
+                                        <td>""" + str(ticket.team_id.name) + """</td>
+                                        <td>""" + str(ticket.x_studio_field_6furK) + """</td>
+                                        <td>""" + str(ticket.direccionLocalidadText) + """</td>
+                                        <td>""" + str(ticket.primerDiagnosticoUsuario) + """</td>
+                                        <td>""" + str(ticket.stage_id.name) + """</td>
+                                        <td>""" + str(ticket.contadores_anteriores) + """</td>
+                                        <td>""" + str(ticket.x_studio_ultima_nota) + """</td>
+                                        <td>""" + str(ultimo_diagnostico_fecha) + """</td>
+                                    </tr>
+                                """ 
+            else:
+                contadores = ''
+                if ticket.x_studio_equipo_por_nmero_de_serie_1:
+                    for serie in ticket.x_studio_equipo_por_nmero_de_serie_1:
+                        numero_de_serie = serie.serie.name
+                        if serie.x_studio_color_o_bn == 'Color':
+                            #contadores = contadores + 'Serie: ' + numero_de_serie + 'Equipo B/N o Color: ' + str(serie.x_studio_color_o_bn) + '</br>Contador B/N anterior: ' + str(serie.x_studio_contador_mono_anterior_1) + '</br>Contador B/N actual: ' + str(serie.contadorMono) + '</br>Contador Color anterior: ' + str(serie.x_studio_contador_color_anterior) + '</br>Contador Color actual: ' + str(serie.contadorColor) + '</br>'
+                            contadores = contadores + 'Serie: ' + numero_de_serie + 'Equipo B/N o Color: ' + str(serie.x_studio_color_o_bn) + '</br>Contador B/N actual: ' + str(serie.contadorMono) + '</br>Contador Color actual: ' + str(serie.contadorColor) + '</br>'
+                        if serie.x_studio_color_o_bn == 'B/N':
+                            contadores = contadores + 'Serie: ' + numero_de_serie + 'Equipo B/N o Color: ' + str(serie.x_studio_color_o_bn) + '</br>Contador B/N actual: ' + str(serie.contadorMono) + '</br>'
 
-            filas = filas + """
-                                \n<tr>
-                                    <td>""" + str(ticket.id) + """</td>
-                                    <td>""" + str(ticket.create_date) + """</td>
-                                    <td>""" + str(ticket.serie_y_modelo) + """</td>
-                                    <td>""" + str(ticket.partner_id.name) + """</td>
-                                    <td>""" + str(ticket.team_id.name) + """</td>
-                                    <td>""" + str(ticket.x_studio_field_6furK) + """</td>
-                                    <td>""" + str(ticket.direccionLocalidadText) + """</td>
-                                    <td>""" + str(ticket.primerDiagnosticoUsuario) + """</td>
-                                    <td>""" + str(ticket.stage_id.name) + """</td>
-                                    <td>""" + str(ticket.contadores_anteriores) + """</td>
-                                    <td>""" + str(ticket.x_studio_ultima_nota) + """</td>
-                                    <td>""" + str(ultimo_diagnostico_fecha) + """</td>
-                                </tr>
-                            """ 
+
+                filas = filas + """
+                                    \n<tr>
+                                        <td>""" + str(ticket.id) + """</td>
+                                        <td>""" + str(ticket.create_date) + """</td>
+                                        <td>""" + str(ticket.serie_y_modelo) + """</td>
+                                        <td>""" + str(ticket.partner_id.name) + """</td>
+                                        <td>""" + str(ticket.team_id.name) + """</td>
+                                        <td>""" + str(ticket.x_studio_field_6furK) + """</td>
+                                        <td>""" + str(ticket.direccionLocalidadText) + """</td>
+                                        <td>""" + str(ticket.primerDiagnosticoUsuario) + """</td>
+                                        <td>""" + str(ticket.stage_id.name) + """</td>
+                                        <td>""" + str(ticket.contadores) + """</td>
+                                        <td>""" + str(ticket.x_studio_ultima_nota) + """</td>
+                                        <td>""" + str(ultimo_diagnostico_fecha) + """</td>
+                                    </tr>
+                                """ 
 
 
         #<th style="width:10%;">Contador B/N</th>
