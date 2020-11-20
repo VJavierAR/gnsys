@@ -6,7 +6,7 @@
             <form string="Ingreso de Equipos">
                 <group>
                     <field name='lineas'>
-                        <tree>
+                        <tree editable="bottom">
                             <field name='serie' readonly='1'/>
                             <field name="almacen" domain="[['x_studio_cliente','=',False]]"/>
                             <field name="estado"  />
@@ -37,7 +37,7 @@
                 <field name='tecnico'/>
                 <group>
                     <field name='lines'>
-                        <tree>
+                        <tree editable="bottom">
                             <field name='product_id' readonly='1'/>
                             <field name='cantidadS' readonly='1'/>
                             <field name='cantidadE'/>
