@@ -489,7 +489,7 @@ class ContactosXlsx(models.AbstractModel):
         d=[]
         if(len(contacto)==1 and contacto.arreglo!='/' and contacto.arreglo!=False):
             copia=contacto
-            ruta=self.env['res.partner'].browse(eval(contacto.arreglo))
+            contacto=self.env['res.partner'].browse(eval(contacto.arreglo))
             copia.write({'arreglo':'/'})
         merge_format = workbook.add_format({'bold': 1,'border': 1,'align': 'center','valign': 'vcenter','fg_color': 'blue'})
         report_name = 'Clientes'
