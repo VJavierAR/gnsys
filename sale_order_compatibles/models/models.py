@@ -123,7 +123,7 @@ class sale_update(models.Model):
         ], string='Status', readonly=True, copy=False, index=True, track_visibility='onchange', track_sequence=3, default='draft')
 	def Reporte(self):
 	    fecha=datetime.datetime.now().date()
-	    sa=model.search([['x_studio_tipo_de_solicitud','in',('Demostración','Préstamo')],['state','in',('sale','assign')]])
+	    sa=self.search([['x_studio_tipo_de_solicitud','in',('Demostración','Préstamo')],['state','in',('sale','assign')]])
 	    pos=sa.filtered(lambda x:x.validity_date>fecha)
 	    pos[0].write({'x_studio_arreglo':str(pos.mapped('id'))})
 	    template_id2=env['mail.template'].search([('id','=',79)], limit=1)
