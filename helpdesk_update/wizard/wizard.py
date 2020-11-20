@@ -661,7 +661,7 @@ class HelpDeskDetalleSerie(TransientModel):
                     <th class="col-md-3 col-xs-3">Ubicación</th>
                     <th class="col-md-3 col-xs-3">Falla</th>
                     <th class="col-md-3 col-xs-3">último estatus ticket</th>
-                    <th class="col-md-3 col-xs-3">Contadores/th>
+                    <th class="col-md-3 col-xs-3">Contadores</th>
                     <th class="col-md-3 col-xs-3">última Nota</th>
                     <th class="col-md-3 col-xs-3">Fecha nota</th>
 
