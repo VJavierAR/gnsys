@@ -557,11 +557,15 @@ class HelpDeskDetalleSerie(TransientModel):
                                     <td>""" + str(ticket.direccionLocalidadText) + """</td>
                                     <td>""" + str(ticket.primerDiagnosticoUsuario) + """</td>
                                     <td>""" + str(ticket.stage_id.name) + """</td>
-                                    
+
                                     <td>""" + str(ticket.x_studio_ultima_nota) + """</td>
                                     <td>""" + str() + """</td>
                                 </tr>
                             """
+
+
+        #<th style="width:10%;">Contador B/N</th>
+        #<th style="width:10%;">Contador color</th>
 
         tabla = """
           <!DOCTYPE html>
@@ -620,8 +624,7 @@ class HelpDeskDetalleSerie(TransientModel):
                 <th style="width:10%;">Unicación</th>
                 <th style="width:10%;">Falla</th>
                 <th style="width:10%;">último estatus ticket</th>
-                <!--<th style="width:10%;">Contador B/N</th>
-                <th style="width:10%;">Contador color</th>-->
+                
                 <th style="width:10%;">última Nota</th>
                 <th style="width:10%;">Fecha nota</th>
               </tr>
