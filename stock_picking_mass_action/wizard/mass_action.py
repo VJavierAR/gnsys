@@ -104,26 +104,15 @@ class StockPickingMassAction(TransientModel):
             if(s.picking_type_id.id==29302):
                 self.check=4
                 
-    def retiro_mass_action(self):
+    def retiro_mass_action(self,c):
         tipo=self.picking_ids.mapped('sale_id.x_studio_tipo_de_solicitud')
-        c=0
         if('Retiro' in tipo):
-            for pickis in self.picking_ids:
-                for move in pickis.move_ids_without_package:
-                    serie=move.sale_line_id.x_studio_field_9nQhR.id
-                    if(serie):
-                        d=self.env['stock.move.line'].search([['move_id','=',move.id]])
-                        qu1=self.env['stock.quant'].search([['location_id','=',move.location_id.id],['product_id','=',move.product_id.id],['lot_id','=',serie]])
-                        qu=self.env['stock.quant'].search([['location_id','=',move.location_id.id],['product_id','=',move.product_id.id],['lot_id','=',d.lot_id.id]])
-                        if(qu1.id==False):
-                            qu1=self.env['stock.quant'].create({'location_id':move.location_id.id,'product_id':move.product_id.id,'quantity':1,'lot_id':serie})
-                        self.env.cr.execute("update stock_quant set reserved_quantity=1 where id="+str(qu1.id)+";")
-                        if(qu.id):            
-                            self.env.cr.execute("update stock_quant set reserved_quantity=0 where id="+str(qu.id)+";")
-                        if(d.id==False):
-                            c=c+1
-                        if(d.id):
-                            self.env.cr.execute("update stock_move_line set lot_id="+str(serie)+"where id="+str(d.id)+";")
+            if(c=0):
+                for pickis in self.picking_ids:
+                    for move in pickis.move_ids_without_package:
+                        serie=move.sale_line_id.x_studio_field_9nQhR.id
+                        if(serie):
+                            qu1=self.env['stock.quant'].search([['location_id','=',move.location_id.id],['product_id','=',move.product_id.id],['lot_id','=',serie]])
             if(c!=0):
                 self.picking_ids.action_assign()
                 for pickis in self.picking_ids:
@@ -131,6 +120,14 @@ class StockPickingMassAction(TransientModel):
                         serie=move.sale_line_id.x_studio_field_9nQhR.id
                         if(serie):
                             d=self.env['stock.move.line'].search([['move_id','=',move.id]])
+                            qu=self.env['stock.quant'].search([['location_id','=',move.location_id.id],['product_id','=',move.product_id.id],['lot_id','=',d.lot_id.id]])
+                            if(qu1.id==False):
+                                qu1=self.env['stock.quant'].create({'location_id':move.location_id.id,'product_id':move.product_id.id,'quantity':1,'lot_id':serie})
+                            self.env.cr.execute("update stock_quant set reserved_quantity=1 where id="+str(qu1.id)+";")
+                            if(qu.id):            
+                                self.env.cr.execute("update stock_quant set reserved_quantity=0 where id="+str(qu.id)+";")
+                            if(d.id==False):
+                                c=c+1
                             if(d.id):
                                 self.env.cr.execute("update stock_move_line set lot_id="+str(serie)+"where id="+str(d.id)+";")
             return True
@@ -151,9 +148,10 @@ class StockPickingMassAction(TransientModel):
         # draft_picking_lst.action_confirm()
         # pickings_to_check.action_assign()
         #quantities_done = sum(move_line.qty_done for move_line in assigned_picking_lst.mapped('move_line_ids').filtered(lambda m: m.state not in ('done', 'cancel')))
+        self.retiro_mass_action(0)
         assigned_picking_lst = self.surtir()
         #retiro
-        self.retiro_mass_action()
+        self.retiro_mass_action(1)
         #reporte
         assigned_picking_lst2 = assigned_picking_lst.filtered(lambda x: self.check==1 or self.check==2)
         #concentrado
