@@ -1632,3 +1632,16 @@ class assignacionAccesoriosLines(TransientModel):
     almacen=fields.Many2one('stock.warehouse')
     move_id=fields.Many2one('stock.move')
     move_line=fields.Many2one('stock.move.line')
+
+class reporteClientes(TransientModel):
+    _name='clientes.reporte'
+    _description='Reporte clientes wizard'
+    clientes=fields.Many2many('res.partner')
+
+    def reporte(self):
+        if(len(self.clientes)!=0):
+            c=self.env['res.partner'].search([['id','in',self.clientes.mapped('id')]])
+        else:
+            c=self.env['res.partner'].search([])
+        c[0].write({'arreglo':c.mapped('id')})
+        return self.env.ref('stock_picking_mass_action.contacto_xlsx').report_action(c[0])

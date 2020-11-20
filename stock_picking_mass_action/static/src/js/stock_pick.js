@@ -40,6 +40,7 @@ odoo.define('invoice.action_button', function (require) {
                         this.$buttons.find('.oe_action_button_stock_rule').click(this.proxy('action_inter10')).hide();
                         break;
                       default:
+                        this.$buttons.find('.oe_action_button_res_partner').click(this.proxy('action_inter15'));
                         this.$buttons.find('.oe_action_button_lot_serial').click(this.proxy('action_inter14')); 
                         this.$buttons.find('.oe_action_button_helpdesk_detalle').hide();
                         this.$buttons.find('.oe_action_button_purchase_order').click(this.proxy('action_inter8')); 
@@ -58,6 +59,22 @@ odoo.define('invoice.action_button', function (require) {
                 
             }
         },
+                action_inter15: function (e) {
+            var self = this
+            var user = session.uid;
+            self.do_action({
+                name: _t('Reporte de clientes'),
+                type : 'ir.actions.act_window',
+                res_model: 'clientes.reporte',
+                view_type: 'form',
+                view_mode: 'form',
+                view_id: 'view_clientes_reporte',
+                views: [[false, 'form']],
+                target: 'new',
+            
+            });
+        }
+        ,
         action_inter14: function (e) {
             var self = this
             var user = session.uid;
