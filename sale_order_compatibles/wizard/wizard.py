@@ -21,9 +21,9 @@ class AgregadosOdisminucion(TransientModel):
 
 
     def agregar(self):
-    	if(self.sale.tipoSolicitud=="Retiro"):
-    		self.sale.x_studio_field_69Boh.write({'bolsaCambio':float(self.servicio.rentaMensual)-self.bolsa,'montoCambio':float(self.servicio.rentaMensual)-self.monto,'fechaAplicacion':self.periodo})
-    		sale.preparaSolicitud()
+    	if(self.sale.x_studio_tipo_de_solicitud=="Retiro"):
+    		self.sale.x_studio_field_69Boh.write({'bolsaCambio':float(self.sale.x_studio_field_69Boh.rentaMensual)-self.bolsa,'montoCambio':float(self.sale.x_studio_field_69Boh.rentaMensual)-self.monto,'fechaAplicacion':self.periodo})
+    		self.sale.preparaSolicitud()
     	else:
-    		self.sale.x_studio_field_69Boh.write({'bolsaCambio':float(self.servicio.rentaMensual)+self.bolsa,'montoCambio':float(self.servicio.rentaMensual)+self.monto,'fechaAplicacion':self.periodo})
-    		sale.preparaSolicitud()
+    		self.sale.x_studio_field_69Boh.write({'bolsaCambio':float(self.sale.x_studio_field_69Boh.rentaMensual)+self.bolsa,'montoCambio':float(self.sale.x_studio_field_69Boh.rentaMensual)+self.monto,'fechaAplicacion':self.periodo})
+    		self.sale.preparaSolicitud()
