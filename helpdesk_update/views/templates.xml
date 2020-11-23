@@ -4,6 +4,10 @@
             <xpath expr="." positio="inside">
                 <link rel="stylesheet" type="text/css" href="/helpdesk_update/static/src/css/helpdesk_update.css" />
                 <script type="text/javascript" src="/helpdesk_update/static/src/js/helpdesk_update.js"></script>
+
+                <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css">
+                <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+                
             </xpath>
         </template>
        <!-- 

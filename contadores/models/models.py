@@ -1674,7 +1674,96 @@ class lor(models.Model):
 
         """
 
-        self.html = tabla_2
+        tabla_3 = """
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <style>
+                </style>
+                <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css">
+                <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+            </head>
+            <body>
+                <div class='row'>
+                    <div class='col-sm-12'>
+                        <table id="table_id" class="display" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Ticket</th>
+                                    <th>Fecha</th>
+                                    <th>No. Serie</th>
+                                    <th>Cliente</th>
+                                    <th>Área de atención</th>
+                                    <th>Zona</th>
+                                    <th>Ubicación</th>
+                                    <th>Falla</th>
+                                    <th>último estatus ticket</th>
+                                    <th>Contadores</th>
+                                    <th>última Nota</th>
+                                    <th>Fecha nota</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                """ + filas + """
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>Ticket</th>
+                                    <th>Fecha</th>
+                                    <th>No. Serie</th>
+                                    <th>Cliente</th>
+                                    <th>Área de atención</th>
+                                    <th>Zona</th>
+                                    <th>Ubicación</th>
+                                    <th>Falla</th>
+                                    <th>último estatus ticket</th>
+                                    <th>Contadores</th>
+                                    <th>última Nota</th>
+                                    <th>Fecha nota</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+
+                <script>
+                    
+                    $(document).ready( function () {
+                        $('#table_id').DataTable( {
+                            "language": {
+                                "lengthMenu": "Mostrar _MENU_ registros por página",
+                                "zeroRecords": "Sin registros - perdón =(",
+                                "info": "Página _PAGE_ de _PAGES_",
+                                "infoEmpty": "No hay registros disponibles",
+                                "infoFiltered": "(Filtrado de _MAX_ registros)",
+                                "search": "Buscar",
+                                "Previous": "Anterior",
+                                "Next": "Siguiente"
+                            },
+                            "scrollX": true,
+                            scrollY:        '50vh',
+                            scrollCollapse: true,
+                            "columnDefs": [
+                                {
+                                    "targets": [ 2 ],
+                                    "visible": false,
+                                    "searchable": false
+                                },
+                                {
+                                    "targets": [ 3 ],
+                                    "visible": false
+                                }
+                            ]
+                        } );
+                    } );
+
+                </script>
+
+            </body>
+            </html>
+        """       
+
+        self.html = tabla_3
 
 
     
