@@ -569,7 +569,7 @@ class HelpDeskDetalleSerie(TransientModel):
             if ticket.x_studio_tipo_de_vale != 'Requerimiento':
                 filas = filas + """
                                     \n<tr>
-                                        <td>""" + str(ticket.id) + """</td>
+                                        <td><a href='https://gnsys-corp.odoo.com/web#id=""" + str(ticket.id) + """&model=helpdesk.ticket&view_type=form&menu_id=406' target='_blank'>""" + str(ticket.id) + """</a></td>
                                         <td>""" + str(ticket.create_date) + """</td>
                                         <td>""" + str(ticket.serie_y_modelo) + """</td>
                                         <td>""" + str(ticket.partner_id.name) + """</td>
@@ -581,6 +581,7 @@ class HelpDeskDetalleSerie(TransientModel):
                                         <td>""" + str(ticket.contadores_anteriores) + """</td>
                                         <td>""" + str(ticket.x_studio_ultima_nota) + """</td>
                                         <td>""" + str(ultimo_diagnostico_fecha) + """</td>
+                                        
                                     </tr>
                                 """ 
             else:
@@ -599,7 +600,7 @@ class HelpDeskDetalleSerie(TransientModel):
 
                 filas = filas + """
                                     \n<tr>
-                                        <td>""" + str(ticket.id) + """</td>
+                                        <td><a href='https://gnsys-corp.odoo.com/web#id=""" + str(ticket.id) + """&model=helpdesk.ticket&view_type=form&menu_id=406' target='_blank'>""" + str(ticket.id) + """</a></td>
                                         <td>""" + str(ticket.create_date) + """</td>
                                         <td>""" + str(ticket.serie_y_modelo) + """</td>
                                         <td>""" + str(ticket.partner_id.name) + """</td>
@@ -611,6 +612,7 @@ class HelpDeskDetalleSerie(TransientModel):
                                         <td>""" + str(contadores) + """</td>
                                         <td>""" + str(ticket.x_studio_ultima_nota) + """</td>
                                         <td>""" + str(ultimo_diagnostico_fecha) + """</td>
+                                        
                                     </tr>
                                 """ 
 
@@ -624,8 +626,6 @@ class HelpDeskDetalleSerie(TransientModel):
             <head>
                 <style>
                 </style>
-                <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css">
-                <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
             </head>
             <body>
                 <div class='row'>
@@ -673,7 +673,19 @@ class HelpDeskDetalleSerie(TransientModel):
                 <script>
                     
                     $(document).ready( function () {
-                        $('#table_id').DataTable( {
+                        var table = $('#table_id').DataTable( {
+                            dom: 'Bfrtip',
+                            lengthMenu: [
+                                [ 10, 25, 50, -1 ],
+                                [ '10 filas', '25 filas', '50 filas', 'Todas las filas' ]
+                            ],
+                            buttons: [
+                                'pageLength',
+                                'copyHtml5',
+                                'excelHtml5',
+                                'csvHtml5',
+                                'pdfHtml5'
+                            ],
                             "language": {
                                 "lengthMenu": "Mostrar _MENU_ registros por página",
                                 "zeroRecords": "Sin registros - perdón =(",
@@ -685,7 +697,7 @@ class HelpDeskDetalleSerie(TransientModel):
                                 "Next": "Siguiente"
                             },
                             "scrollX": true,
-                            scrollY:        '50vh',
+                            scrollY: '50vh',
                             scrollCollapse: true,
                             "columnDefs": [
                                 {
@@ -697,8 +709,14 @@ class HelpDeskDetalleSerie(TransientModel):
                                     "targets": [ 3 ],
                                     "visible": false
                                 }
-                            ]
+                            ],
+                            responsive: true,
+                            colReorder: true
                         } );
+
+                        
+                        
+
                     } );
 
                 </script>
@@ -706,95 +724,6 @@ class HelpDeskDetalleSerie(TransientModel):
             </body>
             </html>
         """        
-
-        tabla_2 = """
-            <!DOCTYPE html>
-            <html>
-            <head>
-            <meta name="viewport" content="width=device-width, initial-scale=1">
-            <style>
-                body{
-                  padding:20px 20px;
-                }
-
-                .results tr[visible='false'],
-                .no-result{
-                  display:none;
-                }
-
-                .results tr[visible='true']{
-                  display:table-row;
-                }
-
-                .counter{
-                  padding:8px; 
-                  color:#ccc;
-                }
-              </style>
-            </head>
-            <body>
-              <div class="form-group pull-right">
-                  <input type="text" class="search form-control" placeholder="What you looking for?">
-              </div>
-              <span class="counter pull-right"></span>
-              <table class="table table-hover table-bordered results">
-                <thead>
-                  <tr>
-                    <th class="col-md-3 col-xs-3">Ticket</th>
-                    <th class="col-md-3 col-xs-3">Fecha</th>
-                    <th class="col-md-3 col-xs-3">No. Serie</th>
-                    <th class="col-md-3 col-xs-3">Cliente</th>
-                    <th class="col-md-3 col-xs-3">Área de atención</th>
-                    <th class="col-md-3 col-xs-3">Zona</th>
-                    <th class="col-md-3 col-xs-3">Ubicación</th>
-                    <th class="col-md-3 col-xs-3">Falla</th>
-                    <th class="col-md-3 col-xs-3">último estatus ticket</th>
-                    <th class="col-md-3 col-xs-3">Contadores</th>
-                    <th class="col-md-3 col-xs-3">última Nota</th>
-                    <th class="col-md-3 col-xs-3">Fecha nota</th>
-
-                  </tr>
-                  <tr class="warning no-result">
-                    <td colspan="4"><i class="fa fa-warning"></i> No result</td>
-                  </tr>
-                </thead>
-                <tbody>
-                  """ + filas + """
-                </tbody>
-              </table>
-
-              <script>
-                $(document).ready(function() {
-                  $(".search").keyup(function () {
-                    var searchTerm = $(".search").val();
-                    var listItem = $('.results tbody').children('tr');
-                    var searchSplit = searchTerm.replace(/ /g, "'):containsi('")
-                    
-                  $.extend($.expr[':'], {'containsi': function(elem, i, match, array){
-                        return (elem.textContent || elem.innerText || '').toLowerCase().indexOf((match[3] || "").toLowerCase()) >= 0;
-                    }
-                  });
-                    
-                  $(".results tbody tr").not(":containsi('" + searchSplit + "')").each(function(e){
-                    $(this).attr('visible','false');
-                  });
-
-                  $(".results tbody tr:containsi('" + searchSplit + "')").each(function(e){
-                    $(this).attr('visible','true');
-                  });
-
-                  var jobCount = $('.results tbody tr[visible="true"]').length;
-                    $('.counter').text(jobCount + ' item');
-
-                  if(jobCount == '0') {$('.no-result').show();}
-                    else {$('.no-result').hide();}
-                      });
-                });
-              </script>
-            </body>
-            </html>
-
-        """
 
         self.html = tabla_3
 
@@ -1117,9 +1046,9 @@ class helpdesk_contadores(TransientModel):
     @api.depends('ticket_id')
     def _compute_contadorBNMesa(self):
         if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
-            dominio_ultimo_contador = [('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '=', False)]
+            dominio_ultimo_contador = [('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '=', False), ('fuente', '!=', 'dcas.dcas'), ('creado_por_tickets_techra', '!=', True)]
             ultimo_contador_odoo = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'create_date desc', limit = 1)
-            dominio_ultimo_contador = [('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '!=', False), ('x_studio_fecha', '!=', False)]
+            dominio_ultimo_contador = [('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '!=', False), ('x_studio_fecha', '!=', False), ('fuente', '!=', 'dcas.dcas'), ('creado_por_tickets_techra', '!=', True)]
             ultimo_contador_techra = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'x_studio_fecha desc', limit = 1)
             _logger.info('ultimo_contador_techra: ' + str(ultimo_contador_techra.x_studio_fecha) + ' ultimo_contador_odoo: ' + str(ultimo_contador_odoo.create_date))
 
@@ -1163,9 +1092,9 @@ class helpdesk_contadores(TransientModel):
 
     def _compute_actualizaColor(self):
         if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
-            dominio_ultimo_contador = [('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '=', False)]
+            dominio_ultimo_contador = [('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '=', False), ('fuente', '!=', 'dcas.dcas'), ('creado_por_tickets_techra', '!=', True)]
             ultimo_contador_odoo = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'create_date desc', limit = 1)
-            dominio_ultimo_contador = [('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '!=', False), ('x_studio_fecha', '!=', False)]
+            dominio_ultimo_contador = [('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '!=', False), ('x_studio_fecha', '!=', False), ('fuente', '!=', 'dcas.dcas'), ('creado_por_tickets_techra', '!=', True)]
             ultimo_contador_techra = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'x_studio_fecha desc', limit = 1)
             _logger.info('ultimo_contador_techra: ' + str(ultimo_contador_techra.x_studio_fecha) + ' ultimo_contador_odoo: ' + str(ultimo_contador_odoo.create_date))
 
@@ -1200,9 +1129,9 @@ class helpdesk_contadores(TransientModel):
 
     def _compute_actualizaContadorColorMesa(self):
         if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
-            dominio_ultimo_contador = [('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '=', False)]
+            dominio_ultimo_contador = [('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '=', False), ('fuente', '!=', 'dcas.dcas'), ('creado_por_tickets_techra', '!=', True)]
             ultimo_contador_odoo = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'create_date desc', limit = 1)
-            dominio_ultimo_contador = [('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '!=', False), ('x_studio_fecha', '!=', False)]
+            dominio_ultimo_contador = [('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '!=', False), ('x_studio_fecha', '!=', False), ('fuente', '!=', 'dcas.dcas'), ('creado_por_tickets_techra', '!=', True)]
             ultimo_contador_techra = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'x_studio_fecha desc', limit = 1)
             _logger.info('ultimo_contador_techra: ' + str(ultimo_contador_techra.x_studio_fecha) + ' ultimo_contador_odoo: ' + str(ultimo_contador_odoo.create_date))
 
@@ -5702,9 +5631,9 @@ class helpdesk_editar_contadores_mesa(TransientModel):
 
     def _compute_contador_bn_actual(self):
         for record in self:
-            dominio_ultimo_contador = [('serie', '=', record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '=', False), ('fuente', '!=', 'dcas.dcas')]
+            dominio_ultimo_contador = [('serie', '=', record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '=', False), ('fuente', '!=', 'dcas.dcas'), ('creado_por_tickets_techra', '!=', True)]
             ultimo_contador_odoo = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'create_date desc', limit = 1)
-            dominio_ultimo_contador = [('serie', '=', record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '!=', False), ('x_studio_fecha', '!=', False), ('fuente', '!=', 'dcas.dcas')]
+            dominio_ultimo_contador = [('serie', '=', record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '!=', False), ('x_studio_fecha', '!=', False), ('fuente', '!=', 'dcas.dcas'), ('creado_por_tickets_techra', '!=', True)]
             ultimo_contador_techra = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'x_studio_fecha desc', limit = 1)
             _logger.info('ultimo_contador_techra: ' + str(ultimo_contador_techra.x_studio_fecha) + ' ultimo_contador_odoo: ' + str(ultimo_contador_odoo.create_date))
 
@@ -5722,9 +5651,9 @@ class helpdesk_editar_contadores_mesa(TransientModel):
 
     def _compute_contador_color_actual(self):
         for record in self:
-            dominio_ultimo_contador = [('serie', '=', record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '=', False), ('fuente', '!=', 'dcas.dcas')]
+            dominio_ultimo_contador = [('serie', '=', record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '=', False), ('fuente', '!=', 'dcas.dcas'), ('creado_por_tickets_techra', '!=', True)]
             ultimo_contador_odoo = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'create_date desc', limit = 1)
-            dominio_ultimo_contador = [('serie', '=', record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '!=', False), ('x_studio_fecha', '!=', False), ('fuente', '!=', 'dcas.dcas')]
+            dominio_ultimo_contador = [('serie', '=', record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '!=', False), ('x_studio_fecha', '!=', False), ('fuente', '!=', 'dcas.dcas'), ('creado_por_tickets_techra', '!=', True)]
             ultimo_contador_techra = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'x_studio_fecha desc', limit = 1)
             _logger.info('ultimo_contador_techra: ' + str(ultimo_contador_techra.x_studio_fecha) + ' ultimo_contador_odoo: ' + str(ultimo_contador_odoo.create_date))
 
@@ -5749,9 +5678,9 @@ class helpdesk_editar_contadores_mesa(TransientModel):
         #ultimoDcaTfsTfs = self.env['dcas.dcas'].search([['fuente', '=', q],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
         #self.textoInformativo = 'ultimoDcaStockProductionLot: ' + str(ultimoDcaStockProductionLot.id) + '\nultimoDcaDcasDcas: ' + str(ultimoDcaDcasDcas.id) + '\nultimoDcaHelpdeskTicket: ' + str(ultimoDcaHelpdeskTicket.id) + '\nultimoDcaTfsTfs: ' + str(ultimoDcaTfsTfs.id) + '\n\n'
 
-        dominio_ultimo_contador = [('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '=', False), ('fuente', '!=', 'dcas.dcas')]
+        dominio_ultimo_contador = [('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '=', False), ('fuente', '!=', 'dcas.dcas'), ('creado_por_tickets_techra', '!=', True)]
         ultimo_contador_odoo = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'create_date desc', limit = 1)
-        dominio_ultimo_contador = [('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '!=', False), ('x_studio_fecha', '!=', False), ('fuente', '!=', 'dcas.dcas')]
+        dominio_ultimo_contador = [('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '!=', False), ('x_studio_fecha', '!=', False), ('fuente', '!=', 'dcas.dcas'), ('creado_por_tickets_techra', '!=', True)]
         ultimo_contador_techra = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'x_studio_fecha desc', limit = 1)
         _logger.info('ultimo_contador_techra: ' + str(ultimo_contador_techra.x_studio_fecha) + ' ultimo_contador_odoo: ' + str(ultimo_contador_odoo.create_date))
 
@@ -5951,9 +5880,9 @@ class helpdesk_editar_contadores_mesa(TransientModel):
 
 
     def editarContadores(self):
-        dominio_ultimo_contador = [('serie', '=', record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '=', False), ('fuente', '!=', 'dcas.dcas')]
+        dominio_ultimo_contador = [('serie', '=', record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '=', False), ('fuente', '!=', 'dcas.dcas'), ('creado_por_tickets_techra', '!=', True)]
         ultimo_contador_odoo = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'create_date desc', limit = 1)
-        dominio_ultimo_contador = [('serie', '=', record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '!=', False), ('x_studio_fecha', '!=', False), ('fuente', '!=', 'dcas.dcas')]
+        dominio_ultimo_contador = [('serie', '=', record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '!=', False), ('x_studio_fecha', '!=', False), ('fuente', '!=', 'dcas.dcas'), ('creado_por_tickets_techra', '!=', True)]
         ultimo_contador_techra = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'x_studio_fecha desc', limit = 1)
         _logger.info('ultimo_contador_techra: ' + str(ultimo_contador_techra.x_studio_fecha) + ' ultimo_contador_odoo: ' + str(ultimo_contador_odoo.create_date))
         
@@ -6157,9 +6086,9 @@ class helpdesk_editar_contadores_mesa(TransientModel):
             #fuente = 'stock.production.lot'
             #ultimoDcaStockProductionLot = self.env['dcas.dcas'].search([['fuente', '=', fuente],['serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id]], order='create_date desc', limit=1)
 
-            dominio_ultimo_contador = [('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '=', False)]
+            dominio_ultimo_contador = [('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '=', False), ('fuente', '!=', 'dcas.dcas'), ('creado_por_tickets_techra', '!=', True)]
             ultimo_contador_odoo = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'create_date desc', limit = 1)
-            dominio_ultimo_contador = [('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '!=', False), ('x_studio_fecha', '!=', False)]
+            dominio_ultimo_contador = [('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '!=', False), ('x_studio_fecha', '!=', False), ('fuente', '!=', 'dcas.dcas'), ('creado_por_tickets_techra', '!=', True)]
             ultimo_contador_techra = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'x_studio_fecha desc', limit = 1)
             _logger.info('ultimo_contador_techra: ' + str(ultimo_contador_techra.x_studio_fecha) + ' ultimo_contador_odoo: ' + str(ultimo_contador_odoo.create_date))
             
@@ -6279,9 +6208,9 @@ class helpdesk_editar_contadores_mesa(TransientModel):
 
     def reiniciarContadores(self):
         #for c in self.ticket_id.x_studio_equipo_por_nmero_de_serie:
-        dominio_ultimo_contador = [('serie', '=', record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '=', False), ('fuente', '!=', 'dcas.dcas')]
+        dominio_ultimo_contador = [('serie', '=', record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '=', False), ('fuente', '!=', 'dcas.dcas'), ('creado_por_tickets_techra', '!=', True)]
         ultimo_contador_odoo = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'create_date desc', limit = 1)
-        dominio_ultimo_contador = [('serie', '=', record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '!=', False), ('x_studio_fecha', '!=', False), ('fuente', '!=', 'dcas.dcas')]
+        dominio_ultimo_contador = [('serie', '=', record.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '!=', False), ('x_studio_fecha', '!=', False), ('fuente', '!=', 'dcas.dcas'), ('creado_por_tickets_techra', '!=', True)]
         ultimo_contador_techra = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'x_studio_fecha desc', limit = 1)
         _logger.info('ultimo_contador_techra: ' + str(ultimo_contador_techra.x_studio_fecha) + ' ultimo_contador_odoo: ' + str(ultimo_contador_odoo.create_date))
 
