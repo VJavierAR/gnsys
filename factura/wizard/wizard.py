@@ -255,7 +255,7 @@ class TestReport(TransientModel):
         i=1
         clientes_set=set()
         for cli in dir:
-            if  str(cli.partner_id.name)=='cliente prueba':
+            if  str(cli.partner_id.name)=='sin contacto':
                 clientes_set.add(cli.x_studio_cliente)
             else:    
                 clientes_set.add(cli.partner_id.name)
