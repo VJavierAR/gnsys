@@ -409,9 +409,9 @@ class helpdesk_update(models.Model):
     @api.model
     def contadoresAnteriores(self):
         if self.x_studio_equipo_por_nmero_de_serie and self.team_id != 8:
-            dominio_ultimo_contador = [('serie', '=', self.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '=', False)]
+            dominio_ultimo_contador = [('serie', '=', self.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '=', False), ('fuente', '!=', 'dcas.dcas'), ('creado_por_tickets_techra', '!=', True)]
             ultimo_contador_odoo = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'create_date desc', limit = 1)
-            dominio_ultimo_contador = [('serie', '=', self.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '!=', False), ('x_studio_fecha', '!=', False)]
+            dominio_ultimo_contador = [('serie', '=', self.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '!=', False), ('x_studio_fecha', '!=', False), ('fuente', '!=', 'dcas.dcas'), ('creado_por_tickets_techra', '!=', True)]
             ultimo_contador_techra = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'x_studio_fecha desc', limit = 1)
             _logger.info('ultimo_contador_techra: ' + str(ultimo_contador_techra.x_studio_fecha) + ' ultimo_contador_odoo: ' + str(ultimo_contador_odoo.create_date))
 
@@ -7504,9 +7504,9 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
 
 
 
-                    dominio_ultimo_contador = [('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '=', False), ('fuente', '!=', 'dcas.dcas')]
+                    dominio_ultimo_contador = [('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '=', False), ('fuente', '!=', 'dcas.dcas'), ('creado_por_tickets_techra', '!=', True)]
                     ultimo_contador_odoo = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'create_date desc', limit = 1)
-                    dominio_ultimo_contador = [('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '!=', False), ('x_studio_fecha', '!=', False), ('fuente', '!=', 'dcas.dcas')]
+                    dominio_ultimo_contador = [('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '!=', False), ('x_studio_fecha', '!=', False), ('fuente', '!=', 'dcas.dcas'), ('creado_por_tickets_techra', '!=', True)]
                     ultimo_contador_techra = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'x_studio_fecha desc', limit = 1)
                     _logger.info('ultimo_contador_techra: ' + str(ultimo_contador_techra.x_studio_fecha) + ' ultimo_contador_odoo: ' + str(ultimo_contador_odoo.create_date))
 
@@ -7684,9 +7684,9 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
                 fuenteDca = 'stock.production.lot'
 
 
-                dominio_ultimo_contador = [('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '=', False), ('fuente', '!=', 'dcas.dcas')]
+                dominio_ultimo_contador = [('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '=', False), ('fuente', '!=', 'dcas.dcas'), ('creado_por_tickets_techra', '!=', True)]
                 ultimo_contador_odoo = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'create_date desc', limit = 1)
-                dominio_ultimo_contador = [('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '!=', False), ('x_studio_fecha', '!=', False), ('fuente', '!=', 'dcas.dcas')]
+                dominio_ultimo_contador = [('serie', '=', self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '!=', False), ('x_studio_fecha', '!=', False), ('fuente', '!=', 'dcas.dcas'), ('creado_por_tickets_techra', '!=', True)]
                 ultimo_contador_techra = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'x_studio_fecha desc', limit = 1)
                 _logger.info('ultimo_contador_techra: ' + str(ultimo_contador_techra.x_studio_fecha) + ' ultimo_contador_odoo: ' + str(ultimo_contador_odoo.create_date))
 
