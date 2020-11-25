@@ -2171,20 +2171,16 @@ class CrearYValidarSolTonerMassAction(TransientModel):
         listaDeTicketsConSolicitud = []
         listaDeTicketsValidados = []
         listaDeTicketsSinPoroductos = []
-
         for ticket in self.ticket_ids:
-            
             if not ticket.x_studio_field_nO7Xg:
                 jalaSolicitudes = ''
                 if ticket.stage_id.id == 91 and ticket.x_studio_field_nO7Xg:
-                    _logger.info("ticket.stage_id.id = " + str(ticket.stage_id.id))
-                    _logger.info("ticket.x_studio_field_nO7Xg = " + str(ticket.x_studio_field_nO7Xg))
                     #self.stage_id.id = 93
                     
                     #query = "update helpdesk_ticket set stage_id = 93 where id = " + str(ticket.x_studio_id_ticket) + ";"
                     #ss = self.env.cr.execute(query)
                     break
-                if ticket.team_id.id == 8 or ticket.team_id.id == 13:
+                if ticket.team_id.id == 8 or ticket.team_id.id == 13 or ticket.team_id.id == 50 or ticket.team_id.id == 60:
                     x = 1 ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
                     if self.almacenes:
                         #if ticket.x_studio_almacen_1== 'Agricola':
