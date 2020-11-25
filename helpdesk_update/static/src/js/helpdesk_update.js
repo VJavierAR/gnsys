@@ -50,7 +50,11 @@ odoo.define('invoice.action_button_helpdesk', function (require) {
                         this.$buttons.find('.oe_action_button_helpdesk').hide();
                         this.$buttons.find('.o_list_button_add').hide();
                         this.$buttons.find('.oe_action_button_ticket_reporte').click(this.proxy('action_def_reporte'));
-                    } else {
+                    } else if (this.actionViews[0].viewID == 828) {
+                        console.log("Entre para vista de acount invoice")
+                        this.$buttons.find('.oe_action_button_ticket_reporte2').click(this.proxy('action_def_reporte_2'));
+                    }  
+                    else {
                         console.log("Entre porque no fue ninguna")
 			    		this.$buttons.find('.o_list_button_add').show();
 			    		this.$buttons.find('.oe_action_button_helpdesk').hide();
@@ -159,6 +163,33 @@ odoo.define('invoice.action_button_helpdesk', function (require) {
                     window.location
             	});
         },
+
+     action_def_reporte_2: function (e) {
+            var self = this
+            var user = session.uid;
+            self.do_action({
+                name: _t('Reporte'),
+                type : 'ir.actions.act_window',
+                res_model: 'account.reporte',
+                view_type: 'form',
+                view_mode: 'form',
+                view_id: 'view_report_form',
+                views: [[false, 'form']],
+                target: 'new',
+            }, {
+                on_reverse_breadcrumb: function () {
+                    self.update_control_panel({clear: true, hidden: true});
+                }
+            });
+            /*
+            rpc.query({
+                model: 'helpdesk.ticket',
+                method: 'cambio_wizard',
+                args: [[user],{'id':user}],
+            });
+            */
+        },
+        
 	});
 
     $('#contadorBNActual').on('change', function(e) {
