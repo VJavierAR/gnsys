@@ -311,7 +311,7 @@ class TestReport(TransientModel):
                             facturasG=facturasG+1
                             foliosG=str(fecha.number)+' '+foliosG
 
-               if int(dias.days)>90:
+                if int(dias.days)>90:
                     if str(fecha.partner_id.name)=='sin contacto':
                        if cuenta==fecha.x_studio_cliente:
                             facturasH=facturasH+1
