@@ -4345,21 +4345,21 @@ class helpdesk_update(models.Model):
 
 
     serie_y_modelo = fields.Text(string = 'Serie(s)')
-    @api.onchange('x_studio_equipo_por_nmero_de_serie, x_studio_equipo_por_nmero_de_serie_1')
+    @api.onchange('x_studio_equipo_por_nmero_de_serie', 'x_studio_equipo_por_nmero_de_serie_1')
     def actualiza_serie_texto(self):
-        dominio_busqueda_ticket = [('id', '=', self.id)]
-        obj_ticket = self.env['helpdesk.ticket'].search(dominio_busqueda_ticket)
-        series_toner = obj_ticket.mapped('x_studio_equipo_por_nmero_de_serie_1.serie.name')
-        serie_mesa = obj_ticket.mapped('x_studio_equipo_por_nmero_de_serie.name')
+        #dominio_busqueda_ticket = [('id', '=', self._origin.id)]
+        #obj_ticket = self.env['helpdesk.ticket'].search(dominio_busqueda_ticket)
+        series_toner = self.mapped('x_studio_equipo_por_nmero_de_serie_1.serie.name')
+        serie_mesa = self.mapped('x_studio_equipo_por_nmero_de_serie.name')
 
-        tipo_de_vale = obj_ticket.mapped('x_studio_tipo_de_vale')
+        tipo_de_vale = self.mapped('x_studio_tipo_de_vale')
 
         series_modelo_toner = []
-        series_modelo_toner_mapped = obj_ticket.mapped('x_studio_equipo_por_nmero_de_serie_1.serie')
+        series_modelo_toner_mapped = self.mapped('x_studio_equipo_por_nmero_de_serie_1')
         for modelo in series_modelo_toner_mapped:
-            series_modelo_toner.append(modelo.product_id.name)
+            series_modelo_toner.append(modelo.serie.product_id.name)
         serie_modelo_mesa = []
-        serie_modelo_mesa_mapped = obj_ticket.mapped('x_studio_equipo_por_nmero_de_serie')
+        serie_modelo_mesa_mapped = self.mapped('x_studio_equipo_por_nmero_de_serie')
         for modelo in serie_modelo_mesa_mapped:
             serie_modelo_mesa.append(modelo.product_id.name)
 
@@ -4391,7 +4391,7 @@ class helpdesk_update(models.Model):
                         </div>
                     </div>
                 """
-        obj_ticket.write({'serie_y_modelo': texto})
+        self.write({'serie_y_modelo': texto})
 
 
     def actualiza_serie_texto_2(self):
