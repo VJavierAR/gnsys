@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# -*- coding: utf-8 -*-
+import base64
 from odoo import models, fields, api,tools
 from odoo.tools.mimetypes import guess_mimetype
 import logging, ast
@@ -27,6 +27,20 @@ class ContactosCes(models.Model):
     fechaPendienteInactivo=fields.Date()
     arreglo=fields.Char()
     busqueda=fields.Char()
+
+    def Reporte(self):
+        fecha=datetime.datetime.now().date()
+        sa=self.search([['tipoCliente','=','PENDIENTE INACTIVO']])
+        pos=sa
+        pos[0].write({'arreglo':str(pos.mapped('id'))})
+        template_id2=self.env['mail.template'].search([('id','=',79)], limit=1)
+        mail=template_id2.generate_email(pos[0].id)
+        pdf=self.env.ref('stock_picking_mass_action.contacto_pendiente_xlsx').sudo().render_xlsx(data=pos[0],docids=pos[0].id)[0]
+        reporte = base64.encodestring(pdf)
+        at=self.env['ir.attachment'].create({'name':'Reporte Clientes Pendientes Inactivos','datas':reporte,'datas_fname':'Reporte Clientes Pendientes Inactivos'})
+        mail['subject']="Reporte de (Pendientes Inactivos)"
+        mail['attachment_ids']=[(6,0,[at.id])]
+        self.env['mail.mail'].create(mail).send()
 
     @api.onchange('tipoCliente')
     def pendienteInactivo(self):

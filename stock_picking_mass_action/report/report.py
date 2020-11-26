@@ -560,4 +560,35 @@ class LotXlsx(models.AbstractModel):
             i=i+1
         sheet.add_table('A2:X'+str(i),{'columns': [{'header': 'NombreCliente'},{'header': 'NombreGrupo'},{'header': 'RFCEmisor'},{'header':'Localidad'},{'header': 'NoSerie'},{'header': 'Modelo'},{'header': 'FechaIngresoCliente'},{'header': 'Tipo'},{'header': 'FechaInicioContrato'},{'header': 'FechaTerminoContrato'},{'header': 'Contrato'},{'header': 'Servicio'},{'header': 'EjecutivoCuenta'},{'header': 'EjecutivoAtencionCliente'},{'header': 'Calle'},{'header': 'No Int'},{'header': 'No Ext'},{'header': 'Colonia'},{'header': 'Delegación'},{'header': 'Ciudad'},{'header': 'Estado'},{'header': 'Zona'},{'header': 'Pais'},{'header': 'Codigo Postal'}]}) 
         workbook.close()
+
+class ContactoPendiente(models.AbstractModel):
+    _name = 'report.contacto.inactivo.report'
+    _inherit = 'report.report_xlsx.abstract'
+
+
+    def generate_xlsx_report(self, workbook, data, contacto):
+        i=2
+        d=[]
+        if(len(contacto)==1 and contacto.arreglo!='/' and contacto.arreglo!=False):
+            copia=contacto
+            contacto=self.env['res.partner'].browse(eval(contacto.arreglo))
+            copia.write({'arreglo':'/'})
+        merge_format = workbook.add_format({'bold': 1,'border': 1,'align': 'center','valign': 'vcenter','fg_color': 'blue'})
+        report_name = 'Contactos Pendiente Inactivo'
+        bold = workbook.add_format({'bold': True})
+        sheet = workbook.add_worksheet('Contactos Pendiente Inactivo')
+        sheet.merge_range('A1:E1', 'Contactos Pendiente Inactivo', merge_format)
+        for obj in contacto:
+            sheet.write(i, 0, obj.name if(obj.name) else '', bold)
+            sheet.write(i, 1, obj.fechaPendienteInactivo.strftime("%Y/%m/%d") if(obj.fechaPendienteInactivo) else '', bold)
+            sheet.write(i, 2, obj.x_studio_ejecutivo.name if(obj.x_studio_ejecutivo.id) else '', bold)
+            sheet.write(i, 3, obj.x_studio_vendedor.name if(obj.x_studio_vendedor.id) else '', bold)
+            facturas=self.env['account.invoice'].search([['origin','!=',False],['partner_id','=',obj.id]])
+            adeudo=0
+            for f in facturas:
+                adeudo=adeudo+f.residual_signed
+            sheet.write(i, 4, adeudo, bold)
+            i=i+1
+        sheet.add_table('A2:E'+str(i),{'columns': [{'header': 'Nombre Cliente'},{'header': 'Fecha'},{'header': 'Ejecutivo'},{'header':'Vendedor'},{'header':'Monto Adeudado'}]}) 
+        workbook.close()
   

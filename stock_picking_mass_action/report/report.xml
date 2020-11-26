@@ -63,5 +63,14 @@
             name="lot.report"
             file="Reporte de base instalada"
             attachment_use="False"/>
+        <report
+            id="contacto_pendiente_xlsx"
+            model="res.partner"
+            string="Reporte Clientes Pendiente Inactivo"
+            report_type="xlsx"
+            name="contacto.inactivo.report"
+            file="Reporte Clientes Pendiente Inactivo"
+            attachment_use="False"/>
+
     </data>
 </odoo>

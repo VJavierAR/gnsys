@@ -393,7 +393,7 @@ class detonacionMini(models.Model):
         t=self.env['tfs.tfs'].reglas(self.almacen.id)
         if(t.id):
             self.write({'ticket':t.id})
-            n=env['tfs.notificacion.ticket'].create({'name':'resurtido','tickets':[(6,0,t.id)]})
-            m=env['mail.template'].browse(60)
+            n=self.env['tfs.notificacion.ticket'].create({'name':'resurtido','tickets':[(6,0,t.id)]})
+            m=self.env['mail.template'].browse(60)
             m.send_mail(n.id, force_send=True)
 
