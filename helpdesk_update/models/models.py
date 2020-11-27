@@ -408,7 +408,7 @@ class helpdesk_update(models.Model):
 
     @api.model
     def contadoresAnteriores(self):
-        if self.x_studio_equipo_por_nmero_de_serie and self.team_id != 8:
+        if self.x_studio_equipo_por_nmero_de_serie and self.team_id.id != 8:
             dominio_ultimo_contador = [('serie', '=', self.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '=', False), ('fuente', '!=', 'dcas.dcas'), ('creado_por_tickets_techra', '!=', True)]
             ultimo_contador_odoo = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'create_date desc', limit = 1)
             dominio_ultimo_contador = [('serie', '=', self.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '!=', False), ('x_studio_fecha', '!=', False), ('fuente', '!=', 'dcas.dcas'), ('creado_por_tickets_techra', '!=', True)]
