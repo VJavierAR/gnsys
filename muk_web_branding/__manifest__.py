@@ -53,7 +53,7 @@
         "python": [],
         "bin": [],
     },
-    'auto_install': True,
+    'auto_install': False,
     "application": False,
     "installable": True,
     "uninstall_hook": "_uninstall_rebrand_system",
