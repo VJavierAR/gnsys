@@ -56,7 +56,7 @@
         "bin": [],
     },
     "application": False,
-    "installable": True,
+    "installable": False,
     "auto_install": False,
     "uninstall_hook": "_uninstall_reset_changes",
 }
