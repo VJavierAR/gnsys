@@ -1,2 +1,2 @@
 py3o.template
-py3o.formata
+py3o.formats
