@@ -4919,6 +4919,7 @@ class helpdesk_update(models.Model):
                             crear = False
                             break
                     if crear:
+                        """
                         idComponenteCreado = self.env['x_studio_historico_de_componentes'].create({
                                                                                                     'x_studio_cantidad': linea.product_uom_qty,
                                                                                                     'x_studio_field_MH4DO': linea.x_studio_field_9nQhR.id,
@@ -4930,6 +4931,7 @@ class helpdesk_update(models.Model):
                                                                                                     'x_studio_contador_bn': dcaObj.contadorMono if (dcaObj) else 0,
                                                                                                     'x_studio_creado_por_script': True
                                                                                                 })
+                        """
                         _logger.info('historico de componente creado idComponenteCreado: ' + str(idComponenteCreado.id))
             _logger.info('------Fin creacion de componente ticket ' + str(ticket.id) + ' ------ fin hora: '+ str( datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
         _logger.info('------ Fin actualizaHistorialComponentes ------ fin hora: ' + str( datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S") ))
@@ -5502,12 +5504,12 @@ class helpdesk_update(models.Model):
                         """
         #if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
             
-            componentes = self.env['x_studio_historico_de_componentes'].search([ '&', '|', ('x_ultimaCargaRefacciones', '=', True), ('x_studio_modelo', 'ilike', 'Refacción y/o accesorio:'), ('x_studio_field_MH4DO', '=', equipos[0].id) ])
+            #componentes = self.env['x_studio_historico_de_componentes'].search([ '&', '|', ('x_ultimaCargaRefacciones', '=', True), ('x_studio_modelo', 'ilike', 'Refacción y/o accesorio:'), ('x_studio_field_MH4DO', '=', equipos[0].id) ])
             #_logger.info('len:    ' + str(componentes))
            # query = """ selec id from x_studio_historico_de_componentes where "x_studio_modelo" = 'f' and  "x_ultimaCargaRefacciones" = 't' or """ 
             #_logger.info('**** componentes: ' + str(componentes))
             #self.historicoDeComponentes = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_histrico_de_componentes.ids
-            componentes = componentes.filtered(lambda componente:  componente.x_studio_field_MH4DO.name == str(equipos[0].name) and (componente.x_ultimaCargaRefacciones == True or 'Refacción y/o accesorio:' in componente.x_studio_modelo) )
+            #componentes = componentes.filtered(lambda componente:  componente.x_studio_field_MH4DO.name == str(equipos[0].name) and (componente.x_ultimaCargaRefacciones == True or 'Refacción y/o accesorio:' in componente.x_studio_modelo) )
             #lista_componentes = [(5, 0, 0)]
             lista_componentes = []
             if componentes:
@@ -6870,6 +6872,7 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
                     refaccionesNuevas.append(refac)
                     if dcaObj:
                         _logger.info('inicio: Se esta creando el historico de componente con dcaObj existente')
+                        """
                         self.env['x_studio_historico_de_componentes'].create({
                                                                                 'x_studio_cantidad': refaccion_no_presente_cantidad[0],
                                                                                 'x_studio_field_MH4DO': serie_en_ticket[0].id,
@@ -6890,7 +6893,7 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
                                                                                 'x_studio_modelo': refaccionesTextTemp
                                                                             })
                         _logger.info('fin: Se esta creando el historico de componente')
-
+                        """
                     filasRefacciones = filasRefacciones + """
                                                                 <tr>
                                                                     <td>""" + str(refac.productos.categ_id.name) + """</td>
@@ -7042,7 +7045,8 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
                     refaccionesTextTemp = ''
                     for refaccion in self.accesorios:
                         refaccionesTextTemp = 'Refacción y/o accesorio: ' + str(refaccion.productos.display_name) + '. Descripción: ' + str(refaccion.descripcion) + '.'
-                        self.env['x_studio_historico_de_componentes'].create({
+                        
+                        """self.env['x_studio_historico_de_componentes'].create({
                                                                                 'x_studio_cantidad': refaccion.cantidadPedida,
                                                                                 'x_studio_field_MH4DO': self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id,
                                                                                 'x_studio_ticket': str(self.ticket_id.id),
@@ -7053,12 +7057,12 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
                                                                             })
                         refaccionesNuevas.append(refaccion)
                         listaIdValidadas.append(refaccion.productos.id)
-                        filasRefacciones = filasRefacciones + """
+                        filasRefacciones = filasRefacciones + 
                                                                 <tr>
-                                                                    <td>""" + str(refaccion.productos.categ_id.name) + """</td>
-                                                                    <td>""" + str(refaccion.productos.default_code) + """</td>
-                                                                    <td>""" + str(refaccion.productos.name) + """</td>
-                                                                    <td>""" + str(refaccion.cantidadPedida) + """</td>
+                                                                    <td> + str(refaccion.productos.categ_id.name) + </td>
+                                                                    <td> + str(refaccion.productos.default_code) + </td>
+                                                                    <td>+ str(refaccion.productos.name) + </td>
+                                                                    <td> + str(refaccion.cantidadPedida) + </td>
                                                                 </tr>
                                                             """
                 else:
@@ -7066,6 +7070,7 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
                     refaccionesTextTemp = ''
                     for refaccion in self.accesorios:
                         refaccionesTextTemp = 'Refacción y/o accesorio: ' + str(refaccion.productos.display_name) + '. Descripción: ' + str(refaccion.descripcion) + '.'
+                        """
                         self.env['x_studio_historico_de_componentes'].create({
                                                                             'x_studio_cantidad': refaccion.cantidadPedida,
                                                                             'x_studio_field_MH4DO': self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].id,
@@ -7073,6 +7078,7 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
                                                                             'x_studio_fecha_de_entrega': datetime.datetime.now(),
                                                                             'x_studio_modelo': refaccionesTextTemp
                                                                         })
+                        """
                         refaccionesNuevas.append(refaccion)
                         listaIdValidadas.append(refaccion.productos.id)
                         filasRefacciones = filasRefacciones + """

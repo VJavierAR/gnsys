@@ -467,7 +467,7 @@ class HelpDeskDetalleSerie(TransientModel):
     historicoTickets = fields.One2many('dcas.dcas', 'serie', string = 'Historico de tickets', compute='_compute_historico_tickets')
     lecturas = fields.One2many('dcas.dcas', 'serie', string = 'Lecturas', compute='_compute_lecturas')
     toner = fields.One2many('dcas.dcas', 'serie', string = 'Tóner', compute='_compute_toner')
-    historicoDeComponentes = fields.One2many('x_studio_historico_de_componentes', 'x_studio_field_MH4DO', string = 'Historico de Componentes', compute='_compute_historico_de_componentes')
+    #historicoDeComponentes = fields.One2many('x_studio_historico_de_componentes', 'x_studio_field_MH4DO', string = 'Historico de Componentes', compute='_compute_historico_de_componentes')
     movimientos = fields.One2many('stock.move.line', 'lot_id', string = 'Movimientos', compute='_compute_movimientos')
     serie = fields.Text(string = "Serie", compute = '_compute_serie_nombre')
 
@@ -2815,7 +2815,7 @@ class HelpDeskDetalleSerieToner(TransientModel):
     historicoTickets = fields.One2many('dcas.dcas', 'serie', string = 'Historico de tickets', store = True)
     lecturas = fields.One2many('dcas.dcas', 'serie', string = 'Lecturas', store = True)
     toner = fields.One2many('dcas.dcas', 'serie', string = 'Tóner', store = True)
-    historicoDeComponentes = fields.One2many('x_studio_historico_de_componentes', 'x_studio_field_MH4DO', string = 'Historico de Componentes', store = True)
+    #historicoDeComponentes = fields.One2many('x_studio_historico_de_componentes', 'x_studio_field_MH4DO', string = 'Historico de Componentes', store = True)
     movimientos = fields.One2many('stock.move.line', 'lot_id', string = 'Movimientos', store = True)
     serie = fields.Text(string = "Serie", compute = '_compute_serie_nombre')
 
