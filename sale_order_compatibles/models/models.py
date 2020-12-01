@@ -110,7 +110,7 @@ class sale_update(models.Model):
 	compatiblesLineas = fields.One2many('sale_order_compatibles', 'saleOrder', string = 'nombre temp',copy=True)
 
 	serieRetiro2=fields.Many2one('stock.production.lot','Serie retiro')
-
+	tickets=fields.Many2many('helpdesk.ticket',widget='many2many_tags')
 	state = fields.Selection([
         ('draft', 'Borrador'),
         ('sent', 'Solicitud Enviada'),
