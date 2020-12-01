@@ -20,7 +20,7 @@
         <group name="gral">
             <group name="1">
                 <field name="serie" domain="[]" readonly="0" edit="0"/>
-                <field name="colorBN" invisible="1"/>
+                <!--<field name="colorBN" invisible="1"/>-->
                 <field name="productoNegro" domain="[['categ_id.name','=','Toner']]" />
                 <field name="productoCian" domain="[['categ_id.name','=','Toner']]" attrs="{'invisible': ['|',('colorBN','=','B/N'),('serie','=',False)]}"/>
                 <field name="productoAmarillo" domain="[['categ_id.name','=','Toner']]" attrs="{'invisible': ['|',('colorBN','=','B/N'),('serie','=',False)]}"/>
