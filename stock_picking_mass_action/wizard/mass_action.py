@@ -497,7 +497,7 @@ class StockCambioLine(TransientModel):
     tipo=fields.Integer()
     serieOrigen=fields.Many2one('stock.production.lot',domain="[('product_id.id','=',producto1)]")
     estado=fields.Selection([["Obsoleto","Obsoleto"],["Usado","Usado"],["Hueso","Hueso"],["Para reparación","Para reparación"],["Nuevo","Nuevo"],["Buenas condiciones","Buenas condiciones"],["Excelentes condiciones","Excelentes condiciones"],["Back-up","Back-up"],["Dañado","Dañado"]])
-    color=fields.Selection(related='producto1.x_studio_color_bn')
+    #color=fields.Selection(related='producto1.x_studio_color_bn')
     contadorMono=fields.Integer('Contador Monocromatico')
     contadorColor=fields.Integer('Contador Color')
     move_id=fields.Many2one('stock.move')
