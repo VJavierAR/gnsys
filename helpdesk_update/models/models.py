@@ -6456,13 +6456,13 @@ class helpdesk_confirmar_validar_refacciones(models.Model):
                                 compute='_compute_toner'
                             )
     """
-    historicoDeComponentes = fields.One2many(
-                                                'x_studio_historico_de_componentes',
-                                                'x_relacion_refacciones', 
-                                                string = 'Historico de Componentes',
+    #historicoDeComponentes = fields.One2many(
+                                               # 'x_studio_historico_de_componentes',
+                                             #   'x_relacion_refacciones', 
+                                              #  string = 'Historico de Componentes',
                                                 #domain = "[ '|', ('x_ultimaCargaRefacciones', '=', True), ('x_studio_modelo', 'like', 'Refacción y/o accesorio:') ]",
                                                 #compute='_compute_historico_de_componentes'
-                                            )
+                                           # )
     """
     movimientos = fields.One2many( 
                                     'stock.move.line', 
