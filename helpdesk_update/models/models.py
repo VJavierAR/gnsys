@@ -5897,7 +5897,7 @@ class helpdesk_crearToner(models.Model):
 
 
 
-    dca = fields.One2many('dcas.dcas', 'x_studio_tiquete', string = 'Serie', store = True)
+    #dca = fields.One2many('dcas.dcas', 'x_studio_tiquete', string = 'Serie', store = True)
     tipoReporte = fields.Selection(
                                         [('Falla','Falla'),('Incidencia','Incidencia'),('Reeincidencia','Reeincidencia'),('Prefunta','Pregunta'),('Requerimiento','Requerimiento'),('Solicitud de refacción','Solicitud de refacción'),('Conectividad','Conectividad'),('Reincidencias','Reincidencias'),('Instalación','Instalación'),('Mantenimiento Preventivo','Mantenimiento Preventivo'),('IMAC','IMAC'),('Proyecto','Proyecto'),('Retiro de equipo','Retiro de equipo'),('Cambio','Cambio'),('Servicio de Software','Servicio de Software'),('Resurtido de Almacen','Resurtido de Almacen'),('Supervisión','Supervisión'),('Demostración','Demostración'),('Toma de lectura','Toma de lectura')], 
                                         string = 'Tipo de reporte', 
