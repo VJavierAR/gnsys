@@ -208,7 +208,7 @@ class helpdesk_update(models.Model):
     x_studio_equipo_por_nmero_de_serie_1 = fields.One2many('dcas.dcas', 'x_studio_tiquete', store=True, track_visibility='onchange')
     #x_studio_equipo_por_nmero_de_serieRel = fields.Many2one('stock.production.lot', store=True)
     x_studio_empresas_relacionadas = fields.Many2one('res.partner', store=True, track_visibility='onchange', string='Localidad')
-    historialCuatro = fields.One2many('x_historial_helpdesk','x_id_ticket',string='historial de ticket estados',store=True,track_visibility='onchange')
+    #historialCuatro = fields.One2many('x_historial_helpdesk','x_id_ticket',string='historial de ticket estados',store=True,track_visibility='onchange')
     documentosTecnico = fields.Many2many('ir.attachment', string="Evidencias")
     stage_id = fields.Many2one('helpdesk.stage', string='Stage', ondelete='restrict', track_visibility='onchange',group_expand='_read_group_stage_ids',readonly=True,copy=False,index=True, domain="[('team_ids', '=', team_id)]")
     productos = fields.One2many('product.product','id',string='Solicitudes',store=True)
