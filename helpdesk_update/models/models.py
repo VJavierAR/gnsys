@@ -1054,7 +1054,7 @@ class helpdesk_update(models.Model):
 
     datosCliente = fields.Text(string="Cliente datos")
 
-"""    @api.depends('x_studio_equipo_por_nmero_de_serie','x_studio_equipo_por_nmero_de_serie_1', 'contactoInterno')
+""" @api.depends('x_studio_equipo_por_nmero_de_serie','x_studio_equipo_por_nmero_de_serie_1', 'contactoInterno')
     def _compute_datosCliente(self):
         for rec in self:
             
@@ -1125,7 +1125,7 @@ class helpdesk_update(models.Model):
 
     #numeroDeGuiaDistribucion = fields.Char(string='Número de guía generado por distribución', store=True)
     
-    """
+"""
     seriesDeEquipoPorNumeroDeSerie = fields.Selection(_compute_series,compute='_compute_series',string='Series agregadas', store=False)
     
     @api.depends('x_studio_equipo_por_nmero_de_serie')
@@ -1136,7 +1136,7 @@ class helpdesk_update(models.Model):
                 for serie in record.x_studio_equipo_por_nmero_de_serie:
                     listaDeSerie.append((str(serie.name),str(serie.name)))
         return listaDeSerie
-    """
+"""
 
 
     backorderActivo = fields.Boolean(string = '¿Tiene backorder?', compute = '_compute_backorderActivo')
