@@ -2524,13 +2524,13 @@ class HelpDeskDatosToner(TransientModel):
                                         compute = '_compute_diagnosticos' 
                                     )
     serie = fields.Text(string = "Serie", compute = '_compute_serie_nombre')
-    series = fields.One2many(
-                                'dcas.dcas',
-                                'x_studio_tiquete',
-                                string = 'Series',
+    #series = fields.One2many(
+     #                           'dcas.dcas',
+      #                          'x_studio_tiquete',
+       #                         string = 'Series',
                                 #store = True,
-                                compute = '_compute_series'
-                            )
+        #                        compute = '_compute_series'
+         #                   )
     corte = fields.Selection(
                                 [('1ero','1ero'),('2do','2do'),('3ro','3ro'),('4to','4to')], 
                                 string = 'Corte', 
