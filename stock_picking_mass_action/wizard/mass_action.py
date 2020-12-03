@@ -86,6 +86,7 @@ class StockPickingMassAction(TransientModel):
     )
     check=fields.Integer(compute='che')
     tecnicos=fields.One2many('mass.tecnico','mass_id')
+    evidencia=fields.Many2many('ir.attachment', string="Evidencias")
 
     @api.depends('picking_ids')
     def che(self):
@@ -175,13 +176,13 @@ class StockPickingMassAction(TransientModel):
                 if(self.check==3):
                     if picking._check_backorder() and picking.sale_id.x_studio_field_bxHgp.x_studio_tipo_de_vale=='Requerimiento':
                         picking.sale_id.x_studio_field_bxHgp.write({'stage_id':109})
-                        self.env['helpdesk.diagnostico'].create({'write_uid': self.env.user.name, 'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id,'write_uid':self.env.user.id, 'estadoTicket' : "Entregado", 'comentario':picking.x_studio_comentario_1+' Evidenciado'+' Hecho por'+self.env.user.name})                        
+                        self.env['helpdesk.diagnostico'].create({'write_uid': self.env.user.name, 'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id,'write_uid':self.env.user.id, 'estadoTicket' : "Entregado", 'comentario':picking.x_studio_comentario_1+' Evidenciado'+' Hecho por'+self.env.user.name,'evidencia':[(6,0,self.evidencia.ids)]})                        
                     if(picking.sale_id.x_studio_field_bxHgp.x_studio_tipo_de_vale!='Requerimiento') and (picking.sale_id.x_studio_field_bxHgp.stage_id.id!=18 and picking.sale_id.x_studio_field_bxHgp.stage_id.id!=4):
                         picking.sale_id.x_studio_field_bxHgp.write({'stage_id':13})
                         self.env['helpdesk.diagnostico'].create({ 'write_uid': self.env.user.name,'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id,'write_uid':self.env.user.id, 'estadoTicket' : "Entregado", 'comentario':picking.x_studio_comentario_1 if(picking.x_studio_comentario_1) else ''+' Evidenciado'+' Hecho por'+self.env.user.name})    
                     if(picking.sale_id.x_studio_field_bxHgp.x_studio_tipo_de_vale=='Requerimiento' and picking._check_backorder()==False):
                         picking.sale_id.x_studio_field_bxHgp.write({'stage_id':18})
-                        self.env['helpdesk.diagnostico'].create({ 'write_uid': self.env.user.name,'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id,'write_uid':self.env.user.id, 'estadoTicket' : "Entregado", 'comentario':picking.x_studio_comentario_1+' Evidenciado'+' Hecho por'+self.env.user.name})    
+                        self.env['helpdesk.diagnostico'].create({ 'write_uid': self.env.user.name,'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id,'write_uid':self.env.user.id, 'estadoTicket' : "Entregado", 'comentario':picking.x_studio_comentario_1+' Evidenciado'+' Hecho por'+self.env.user.name,'evidencia':[(6,0,self.evidencia.ids)]})    
                 if(self.check==4):
                     picking.sale_id.x_studio_field_bxHgp.write({'stage_id':94})
                     self.env['helpdesk.diagnostico'].create({ 'write_uid': self.env.user.name,'ticketRelacion' : picking.sale_id.x_studio_field_bxHgp.id, 'create_uid' : self.env.user.id,'write_uid':self.env.user.id, 'estadoTicket' : "Distribución", 'comentario':''+' Hecho por'+self.env.user.name}) 
@@ -670,16 +671,17 @@ class ComemtarioTicket(TransientModel):
         if(self.ruta!=False and self.pick.sale_id.id!=False):
             self.pick.x_studio_evidencia_a_ticket=self.evidencia
             self.pick.x_studio_comentario_1=self.comentario
-            self.env['helpdesk.diagnostico'].create({'write_uid': self.env.user.name,'ticketRelacion': self.pick.sale_id.x_studio_field_bxHgp.id
-                                        ,'comentario': self.comentario
-                                        ,'estadoTicket': self.pick.sale_id.x_studio_field_bxHgp.stage_id.name
-                                        ,'evidencia': [(6,0,self.evidencia.ids)]
-                                        ,'mostrarComentario': False
-                                        })
+            
+            #self.env['helpdesk.diagnostico'].create({'write_uid': self.env.user.name,'ticketRelacion': self.pick.sale_id.x_studio_field_bxHgp.id
+                                        #,'comentario': self.comentario
+                                        #,'estadoTicket': self.pick.sale_id.x_studio_field_bxHgp.stage_id.name
+                                        #,'evidencia': [(6,0,self.evidencia.ids)]
+                                        #,'mostrarComentario': False
+                                        #})
             if(len(self.evidencia)==0 and self.pick.ruta_id.tipo!="foraneo"):
                 raise UserError(_("Falta evidencia"))
             else:
-                wiz=self.env['stock.picking.mass.action'].create({'picking_ids':[(4,self.pick.id)],'confirm':True,'check_availability':True,'transfer':True})
+                wiz=self.env['stock.picking.mass.action'].create({'picking_ids':[(4,self.pick.id)],'evidencia':[(6,0,self.evidencia.ids)],'confirm':True,'check_availability':True,'transfer':True})
                 wiz.mass_action()
         if(self.ruta!=False and self.pick.sale_id.id==False):
             if(len(self.evidencia)==0 and self.pick.ruta_id.tipo!="foraneo"):
