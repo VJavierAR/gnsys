@@ -6,6 +6,7 @@ import datetime
 import xlsxwriter 
 import base64
 import csv
+import json
 from odoo.exceptions import UserError
 from odoo import exceptions, _
 from operator import concat
