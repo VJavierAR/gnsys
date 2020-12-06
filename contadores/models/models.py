@@ -1469,7 +1469,7 @@ class lor(models.Model):
                                 
                                 <td>""" + str(ticket.ultima_nota) + """</td>
                                 <td>""" + str(ticket.fecha_ultima_nota) + """</td>
-                                <td hidden="true">""" + str(json.dumps(data_ticke)) + """</td>
+                                <td>""" + str(json.dumps(data_ticke)) + """</td>
                               </tr>
                           """
         for ticket in tickets_odoo:
@@ -1505,7 +1505,7 @@ class lor(models.Model):
                                         <td>""" + str(ticket.contadores_anteriores) + """</td>
                                         <td>""" + str(ticket.x_studio_ultima_nota) + """</td>
                                         <td>""" + str(ultimo_diagnostico_fecha) + """</td>
-                                        <td hidden="true">""" + str(json.dumps(data_ticke)) + """</td>
+                                        <td>""" + str(json.dumps(data_ticke)) + """</td>
                                     </tr>
                                 """ 
             else:
@@ -1537,7 +1537,7 @@ class lor(models.Model):
                                         <td>""" + str(contadores) + """</td>
                                         <td>""" + str(ticket.x_studio_ultima_nota) + """</td>
                                         <td>""" + str(ultimo_diagnostico_fecha) + """</td>
-                                        <td hidden="true">""" + str(json.dumps(data_ticke)) + """</td>
+                                        <td>""" + str(json.dumps(data_ticke)) + """</td>
                                     </tr>
                                 """ 
 
@@ -1575,7 +1575,7 @@ class lor(models.Model):
                                     <th>Contadores</th>
                                     <th>última Nota</th>
                                     <th>Fecha nota</th>
-                                    <th hidden="true">DatosTicket</th>
+                                    <th>DatosTicket</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -1596,7 +1596,7 @@ class lor(models.Model):
                                     <th>Contadores</th>
                                     <th>última Nota</th>
                                     <th>Fecha nota</th>
-                                    <th hidden="true">DatosTicket</th>
+                                    <th>DatosTicket</th>
                                 </tr>
                             </tfoot>
                         </table>
@@ -1677,13 +1677,9 @@ class lor(models.Model):
                             scrollCollapse: true,
                             "columnDefs": [
                                 {
-                                    "targets": [ 2 ],
+                                    "targets": [ 13 ],
                                     "visible": false,
-                                    "searchable": false
-                                },
-                                {
-                                    "targets": [ 3 ],
-                                    "visible": false
+                                    "searchable": true
                                 }
                             ],
                             "columns": [
@@ -1758,17 +1754,6 @@ class lor(models.Model):
                                             "Previous": "Anterior",
                                             "Next": "Siguiente"
                                         },
-                                        "columnDefs": [
-                                            {
-                                                "targets": [ 2 ],
-                                                "visible": false,
-                                                "searchable": false
-                                            },
-                                            {
-                                                "targets": [ 3 ],
-                                                "visible": false
-                                            }
-                                        ],
                                         "columns": [
                                             { "data": "Creado_el" },
                                             { "data": "Estado_de_ticket" },
