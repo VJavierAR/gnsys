@@ -1692,7 +1692,7 @@ class lor(models.Model):
                             var idx = $.inArray( tr.attr('id'), detailRows );
                             
                             var data_ticket_c = JSON.parse( row.data().DatosTicket );
-
+                            console.log(data_ticket_c)
                             if ( data_ticket_c.diagnosticos.length > 0 ) {
 
                                 if ( row.child.isShown() ) {
@@ -1707,8 +1707,8 @@ class lor(models.Model):
                                     row.child( format( row.data() ) ).show();
                                     
 
-                                    
-                                    var table_diagnostico = $('#table_diagnostico').DataTable( {
+                                    //table_diagnostico
+                                    var table_diagnostico = $('table.display').DataTable( {
                                         dom: 'Bfrtip',
                                         lengthMenu: [
                                             [ 10, 25, 50, -1 ],
