@@ -1427,6 +1427,8 @@ class lor(models.Model):
 
         filas = """"""
         for ticket in tickets_techra:
+            data_ticke = {}
+
             contadores = ''
             if ticket.series:
                 numero_de_serie = ''
@@ -1437,9 +1439,21 @@ class lor(models.Model):
                     if serie.x_studio_color_o_bn == 'B/N':
                         contadores = contadores + 'Serie: ' + numero_de_serie + '</br>Equipo B/N o Color: ' + str(serie.x_studio_color_o_bn) + '</br>Contador B/N anterior: ' + str(serie.x_studio_contador_mono_anterior_1) + '</br>Contador B/N actual: ' + str(serie.contadorMono) + '</br>'
 
+            if ticket.diagnosticos:
+                diagnosticos_ticket = []
+                for registro in ticket.diagnosticos:
+                    info = {
+                        "create_date": str(registro.fechaDiagnosticoTechra),
+                        "estadoTicket": str(registro.estadoTicket),
+                        "comentario": str(registro.comentario),
+                        "encargado": str(registro.create_uid.name)
+                    }
+                    diagnosticos_ticket.append(info)
+                data_ticke["diagnosticos"] = diagnosticos_ticket
 
             filas = filas + """
                             \n<tr>
+                                <td></td>
                                 <td>""" + str(ticket.numTicketDeTechra) + """</td>
                                 <td>""" + str(ticket.creado_el) + """</td>
                                 <td>""" + str(ticket.numeroDeSerieTechra) + """</td>
@@ -1454,17 +1468,30 @@ class lor(models.Model):
                                 
                                 <td>""" + str(ticket.ultima_nota) + """</td>
                                 <td>""" + str(ticket.fecha_ultima_nota) + """</td>
+                                <td hidden="true">""" + str(json.dumps(data_ticke)) + """</td>
                               </tr>
                           """
         for ticket in tickets_odoo:
             ultimo_diagnostico_fecha = ''
+            data_ticke = {}
             if ticket.diagnosticos:
+                diagnosticos_ticket = []
                 for registro in ticket.diagnosticos:
                     if not registro.creadoPorSistema and registro.comentario != False:
                         ultimo_diagnostico_fecha = str(registro.create_date)
+                    info = {
+                        "create_date": str(registro.create_date),
+                        "estadoTicket": str(registro.estadoTicket),
+                        "comentario": str(registro.comentario),
+                        "encargado": str(registro.create_uid.name)
+                    }
+                    diagnosticos_ticket.append(info)
+                data_ticke["diagnosticos"] = diagnosticos_ticket
+
             if ticket.x_studio_tipo_de_vale != 'Requerimiento':
                 filas = filas + """
                                     \n<tr>
+                                        <td></td>
                                         <td><a href='https://gnsys-corp.odoo.com/web#id=""" + str(ticket.id) + """&model=helpdesk.ticket&view_type=form&menu_id=406' target='_blank'>""" + str(ticket.id) + """</a></td>
                                         <td>""" + str(ticket.create_date) + """</td>
                                         <td>""" + str(ticket.serie_y_modelo) + """</td>
@@ -1477,7 +1504,7 @@ class lor(models.Model):
                                         <td>""" + str(ticket.contadores_anteriores) + """</td>
                                         <td>""" + str(ticket.x_studio_ultima_nota) + """</td>
                                         <td>""" + str(ultimo_diagnostico_fecha) + """</td>
-                                        
+                                        <td hidden="true">""" + str(json.dumps(data_ticke)) + """</td>
                                     </tr>
                                 """ 
             else:
@@ -1496,6 +1523,7 @@ class lor(models.Model):
 
                 filas = filas + """
                                     \n<tr>
+                                        <td></td>
                                         <td><a href='https://gnsys-corp.odoo.com/web#id=""" + str(ticket.id) + """&model=helpdesk.ticket&view_type=form&menu_id=406' target='_blank'>""" + str(ticket.id) + """</a></td>
                                         <td>""" + str(ticket.create_date) + """</td>
                                         <td>""" + str(ticket.serie_y_modelo) + """</td>
@@ -1508,7 +1536,7 @@ class lor(models.Model):
                                         <td>""" + str(contadores) + """</td>
                                         <td>""" + str(ticket.x_studio_ultima_nota) + """</td>
                                         <td>""" + str(ultimo_diagnostico_fecha) + """</td>
-                                        
+                                        <td hidden="true">""" + str(json.dumps(data_ticke)) + """</td>
                                     </tr>
                                 """ 
 
@@ -1521,14 +1549,19 @@ class lor(models.Model):
             <html>
             <head>
                 <style>
+                    .modal-dialog {
+                        max-width: 90% !important;
+                    }
+
                 </style>
             </head>
             <body>
                 <div class='row'>
                     <div class='col-sm-12'>
-                        <table id="table_id" class="display" style="width:100%">
+                        <table id="table_id" class="table table-striped table-bordered" style="width:100%">
                             <thead>
                                 <tr>
+                                    <th></th>
                                     <th>Ticket</th>
                                     <th>Fecha</th>
                                     <th>No. Serie</th>
@@ -1541,6 +1574,7 @@ class lor(models.Model):
                                     <th>Contadores</th>
                                     <th>última Nota</th>
                                     <th>Fecha nota</th>
+                                    <th hidden="true">DatosTicket</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -1548,6 +1582,7 @@ class lor(models.Model):
                             </tbody>
                             <tfoot>
                                 <tr>
+                                    <th></th>
                                     <th>Ticket</th>
                                     <th>Fecha</th>
                                     <th>No. Serie</th>
@@ -1560,6 +1595,7 @@ class lor(models.Model):
                                     <th>Contadores</th>
                                     <th>última Nota</th>
                                     <th>Fecha nota</th>
+                                    <th hidden="true">DatosTicket</th>
                                 </tr>
                             </tfoot>
                         </table>
@@ -1568,6 +1604,22 @@ class lor(models.Model):
 
                 <script>
                     
+                    function format ( d ) {
+                        var data_ticket = JSON.parse( d.DatosTicket );
+                        console.log(data_ticket)
+                        var diagnosticos = data_ticket.diagnosticos
+
+                        var filas = ""
+
+                        for (i = 0; i < diagnosticos.length; i++) {
+                            filas += "<tr> <td>" + diagnosticos[i].create_date + "</td> <td>" + diagnosticos[i].estadoTicket + "</td> <td>" + diagnosticos[i].comentario + "</td> <td>" + diagnosticos[i].encargado + "</td> </tr>"
+                        }
+                        
+                        var tabla = "<table id='table_diagnostico' class='table table-striped table-bordered' style='width:100%'> <thead> <tr> <th>Creado_el</th><th>Estado_de_ticket</th><th>Diagnostico</th><th>Encargado</th> </tr> </thead> <tbody> " + filas + " </tbody> <tfoot> <tr> <th>Creado_el</th><th>Estado_de_ticket</th><th>Diagnostico</th><th>Encargado</th> </tr> </tfoot> </table> "
+                        
+                        return tabla;
+                    }
+
                     $(document).ready( function () {
                         var table = $('#table_id').DataTable( {
                             dom: 'Bfrtip',
@@ -1606,11 +1658,115 @@ class lor(models.Model):
                                     "visible": false
                                 }
                             ],
-                            responsive: true,
+                            "columns": [
+                                {
+                                    "class":          "details-control",
+                                    "orderable":      false,
+                                    "data":           null,
+                                    "defaultContent": '<i class="fa fa-info-circle" aria-hidden="false"> </ i>'
+                                },
+                                { "data": "Ticket" },
+                                { "data": "Fecha" },
+                                { "data": "No. Serie" },
+                                { "data": "Cliente" },
+                                { "data": "Área de atención" },
+                                { "data": "Zona" },
+                                { "data": "Ubicación" },
+                                { "data": "Falla" },
+                                { "data": "último estatus ticket" },
+                                { "data": "Contadores" },
+                                { "data": "última Nota" },
+                                { "data": "Fecha nota" },
+                                { "data": "DatosTicket" }
+                            ],
+                            "order": [[2, 'asc']],
                             colReorder: true
                         } );
 
-                        
+                        var detailRows = [];
+
+                        $('#table_id tbody').on( 'click', 'tr td.details-control', function () {
+                            var tr = $(this).closest('tr');
+                            var row = table.row( tr );
+                            var idx = $.inArray( tr.attr('id'), detailRows );
+                            
+                            var data_ticket_c = JSON.parse( row.data().DatosTicket );
+
+                            if ( data_ticket_c.diagnosticos.length > 0 ) {
+
+                                if ( row.child.isShown() ) {
+                                    tr.removeClass( 'details' );
+                                    row.child.hide();
+                         
+                                    // Remove from the 'open' array
+                                    detailRows.splice( idx, 1 );
+
+                                } else {
+                                    tr.addClass( 'details' );
+                                    row.child( format( row.data() ) ).show();
+                                    
+
+                                    
+                                    var table_diagnostico = $('#table_diagnostico').DataTable( {
+                                        dom: 'Bfrtip',
+                                        lengthMenu: [
+                                            [ 10, 25, 50, -1 ],
+                                            [ '10 filas', '25 filas', '50 filas', 'Todas las filas' ]
+                                        ],
+                                        buttons: [
+                                            'pageLength',
+                                            'copyHtml5',
+                                            'excelHtml5',
+                                            'csvHtml5',
+                                            'pdfHtml5'
+                                        ],
+                                        "language": {
+                                            "lengthMenu": "Mostrar _MENU_ registros por página",
+                                            "zeroRecords": "Sin registros - perdón =(",
+                                            "info": "Página _PAGE_ de _PAGES_",
+                                            "infoEmpty": "No hay registros disponibles",
+                                            "infoFiltered": "(Filtrado de _MAX_ registros)",
+                                            "search": "Buscar",
+                                            "Previous": "Anterior",
+                                            "Next": "Siguiente"
+                                        },
+                                        "scrollX": true,
+                                        scrollY: '50vh',
+                                        scrollCollapse: true,
+                                        "columnDefs": [
+                                            {
+                                                "targets": [ 2 ],
+                                                "visible": false,
+                                                "searchable": false
+                                            },
+                                            {
+                                                "targets": [ 3 ],
+                                                "visible": false
+                                            }
+                                        ],
+                                        "columns": [
+                                            { "data": "Creado_el" },
+                                            { "data": "Estado_de_ticket" },
+                                            { "data": "Diagnostico" },
+                                            { "data": "Encargado" }
+                                        ],
+                                        "order": [[0, 'asc']],
+                                        colReorder: true
+                                    } );
+
+
+
+
+
+                                    // Add to the 'open' array
+                                    if ( idx === -1 ) {
+                                        detailRows.push( tr.attr('id') );
+                                    }
+                                }
+                            } else {
+                                alert("No se cuentan con diagnosticos en el ticket seleccionado")
+                            }
+                        } );
                         
 
                     } );

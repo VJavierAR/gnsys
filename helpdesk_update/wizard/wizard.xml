@@ -745,42 +745,17 @@
                     <notebook>
                         <page string = 'Tickets'>
                             <field name='html' widget='html' />
-
-                            <!--
-                            <field name='historicoTickets' >
-                                <tree default_order="create_date desc" limit='10'>
-                                    <field name='x_studio_tickett' attrs='{"domain": [["fuente","=","Equipo"]]}'/>
-                                    <field name='create_date' />
-                                    <field name='fuente' />
-                                    <field name='x_studio_fecha_techra' />
-                                    <field name='serie' />
-                                    <field name='hTicketCliente' />
-                                    <field name='hTicketAreaDeAtencion' />
-                                    <field name='hTicketUbicacion' />
-                                    <field name='hTicketFalla' />
-                                    <field name='hTicketUltimaEtapaTicket' />
-                                    <field name='contadorMono' />
-                                    <field name='contadorColor' />
-                                    <field name='hTicketHojaDeEstado' />
-                                    <field name='hTicketUltimaNota' />
-                                    <field name='hTicketFechaNota' />
-
-                                </tree>
-                                <form>
-                                </form>
-                            </field>
-                            -->
-
-
                         </page>
+                        <!--
                         <page string = 'Lecturas'>
                             <field name='lecturas' />
                         </page>
+                        -->
                         <page string = 'Tóner'>
                             <field name='toner' />
                         </page>
                         <page string = 'Historico de componentes'>
-                            <field name='historicoDeComponentes' options="{'no_create': True}" readonly="1">
+                            <field name='historicoDeComponentes' options="{'no_create': True}" readonly="1" widget="section_and_note_one2many_custom">
                                 <tree>
                                     <field name="create_date" groups="studio_customization.solo_ve_administrado_cdc8f213-5aa2-4d44-bfab-99a7efd7f7ea"/>
                                     <field name="write_uid" groups="studio_customization.solo_ve_administrado_cdc8f213-5aa2-4d44-bfab-99a7efd7f7ea" attrs="{}"/>
@@ -819,8 +794,8 @@
                                 </form>
                             </field>
                         </page>
-                        <page string = 'Movimientos'>
-                            <field name='movimientos' />
+                        <page string = 'H.Clientes'>
+                            <field name='movimientos' widget="section_and_note_one2many_custom" />
                         </page>
                     </notebook>
                 </group>
