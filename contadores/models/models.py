@@ -1731,9 +1731,6 @@ class lor(models.Model):
                                             "Previous": "Anterior",
                                             "Next": "Siguiente"
                                         },
-                                        "scrollX": true,
-                                        scrollY: '50vh',
-                                        scrollCollapse: true,
                                         "columnDefs": [
                                             {
                                                 "targets": [ 2 ],
