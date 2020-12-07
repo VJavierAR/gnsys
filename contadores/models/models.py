@@ -1729,9 +1729,12 @@ class lor(models.Model):
                                     tr.addClass( 'details' );
                                     row.child( format( row.data() ) ).show();
                                     
+                                    console.log('row.child')
+                                    console.log(row.child)
 
                                     //table_diagnostico
-                                    var table_diagnostico = $('table.display').DataTable( {
+                                    //var table_diagnostico = $('table.display').DataTable( {
+                                    var table_diagnostico = row.child.DataTable( {
                                         dom: 'Bfrtip',
                                         lengthMenu: [
                                             [ 10, 25, 50, -1 ],
@@ -1760,7 +1763,7 @@ class lor(models.Model):
                                             { "data": "Diagnostico" },
                                             { "data": "Encargado" }
                                         ],
-                                        "order": [[0, 'asc']],
+                                        "order": [[0, 'desc']],
                                         colReorder: true
                                     } );
 
