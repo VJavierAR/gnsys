@@ -1644,7 +1644,7 @@ class lor(models.Model):
                             filas += "<tr> <td>" + diagnosticos[i].create_date + "</td> <td>" + diagnosticos[i].estadoTicket + "</td> <td>" + diagnosticos[i].comentario + "</td> <td>" + diagnosticos[i].encargado + "</td> </tr>"
                         }
                         
-                        var tabla = "<table id='table_diagnostico' " + id + " class='table table-striped table-bordered' style='width:100%'> <thead> <tr> <th>Creado_el</th><th>Estado_de_ticket</th><th>Diagnostico</th><th>Encargado</th> </tr> </thead> <tbody> " + filas + " </tbody> <tfoot> <tr> <th>Creado_el</th><th>Estado_de_ticket</th><th>Diagnostico</th><th>Encargado</th> </tr> </tfoot> </table> "
+                        var tabla = "<table id='table_diagnostico " + id + "' class='table table-striped table-bordered' style='width:100%'> <thead> <tr> <th>Creado_el</th><th>Estado_de_ticket</th><th>Diagnostico</th><th>Encargado</th> </tr> </thead> <tbody> " + filas + " </tbody> <tfoot> <tr> <th>Creado_el</th><th>Estado_de_ticket</th><th>Diagnostico</th><th>Encargado</th> </tr> </tfoot> </table> "
                         
                         return tabla;
                     }
