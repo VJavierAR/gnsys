@@ -534,8 +534,9 @@ class LotXlsx(models.AbstractModel):
         sheet.merge_range('A1:X1', 'Base Instalada', merge_format)
         for obj in lots:
             sheet.write(i, 0, obj.servicio.contrato.cliente.name if(obj.servicio) else '', bold)
-            sheet.write(i, 1, obj.servicio.contrato.x_studio_grupo if(obj.servicio) else '', bold)
-            sheet.write(i, 2, '', bold)
+            sheet.write(i, 1, obj.servicio.contrato.cliente.x_studio_grupo if(obj.servicio) else '', bold)
+            rfc=obj.servicio.contrato.cliente.razonSocial
+            sheet.write(i, 2, rfc if rfc else '', bold)
             sheet.write(i, 3, obj.x_studio_localidad_2.name if(obj.servicio) else '', bold)            
             sheet.write(i, 4, obj.name, bold)
             sheet.write(i, 5, obj.product_id.name, bold)
