@@ -1092,7 +1092,7 @@
         <field name="model">helpdesk.datos.toner</field>
         <field name="arch" type="xml">
             <form string="Detalle tóner">
-                <group class='text-center'>
+                <!--<group class='text-center'>
                     <h2>
                         <field name="serie" string='' readonly="1"/>
                     </h2>
@@ -1126,8 +1126,8 @@
                                         <group>
                                             <button name="editar_contadores_wizard" string="Editar contadores" type="object" class="oe_highlight" groups="studio_customization.reinicia contadores en toner" />
                                         </group>
-                                        <group>
-                                            <!--<button name="reiniciar_contadores_wizard" string="Reiniciar contadores" type="object" class="oe_highlight" />-->
+                                        <group>-->
+                                            <!--<button name="reiniciar_contadores_wizard" string="Reiniciar contadores" type="object" class="oe_highlight" />
                                         </group>
                                     </group>    
                                 </form>
@@ -1141,7 +1141,7 @@
                                 </group>
                             </group>
                             <group string='Backorder'>
-                            </group>
+                            </group>-->
                             <!--
                             <field name='backorder' readonly='1'>
                                 <tree>
@@ -1173,7 +1173,7 @@
                                     </group>
                                 </form>
                             </field>
-                            -->
+                            
                             <group string='Diagnosticos'>
                             </group>
                             <field name='diagnostico_id' readonly='1'>
@@ -1207,7 +1207,7 @@
                                         <group>
                                             <button name="noMostrarComentario" string="No mostrar comentario en reporte pdf" type="object" class="btn btn-danger" />
                                         </group>
-                                    </group>
+                                    </group>-->
                                 </form>
                             </field>
                         </page>
