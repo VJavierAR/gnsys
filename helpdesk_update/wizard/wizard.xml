@@ -1278,8 +1278,8 @@
                                 </group>
                             </group>
                         </page>
-                    </notebook>-->
-                </group>
+                    </notebook>
+                </group>-->
                 <footer>
                     <button special="cancel" string="Cerrar" class="oe_highlight" />
                 </footer>
