@@ -749,6 +749,7 @@ class HelpDeskDetalleSerie(TransientModel):
                     }
 
                     $(document).ready( function () {
+                        console.log("cargabndo todo")
                         var table = $('#table_id').DataTable( {
                             dom: 'Bfrtip',
                             lengthMenu: [
@@ -807,6 +808,7 @@ class HelpDeskDetalleSerie(TransientModel):
                             colReorder: true
                         } );
 
+                        console.log("cargo primera tabla de tickets")
                         var detailRows = [];
 
                         $('#table_id tbody').on( 'click', 'tr td.details-control', function () {
