@@ -397,7 +397,7 @@
         <field name="model">helpdesk.contacto.toner</field>
         <field name="arch" type="xml">
             <form string="Añadir contacto a localidad">
-                <group>
+                <!--<group>
                     <group>
                         <field name="tipoDeDireccion" invisible='1' force_save = "1"/>
                     </group>
@@ -439,7 +439,7 @@
                         <field name="notas" placeholder="Notas internas..."/>
                         <field name="direccionZona" attrs="{&quot;invisible&quot;: [[&quot;tipoDeDireccion&quot;,&quot;!=&quot;,&quot;delivery&quot;]]}"/>
                     </group>
-                </group>
+                </group>-->
 
 
 
@@ -460,13 +460,13 @@
 
 
 
-                <group>
-                    <group string='Buscar'>
+                <!--<group>
+                    <group string='Buscar'>-->
                         <!--<field name='serie' widget='many2many_tags' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" force_save = "1"/>-->
 
-                        <field name='dca'>
+                        <!--<field name='dca'>
                             <form>
-                                <!--
+                                
                                 <div>
                                   <h1>
                                     <span>
@@ -474,7 +474,7 @@
                                     </span>
                                   </h1>
                                 </div>
-                                -->
+                                
                                 <group name="1">
                                     <group name="a">
                                         <field name="x_studio_link" string="link" wiget="html" invisible='1'/>
@@ -558,7 +558,7 @@
                                 <field name="tablahtml" widget='html'/>
                             </tree>
                         </field>
-                    </group>
+                    </group>-->
                     <!--
                     <group string='Buscar por cliente y localidad'>
                         
