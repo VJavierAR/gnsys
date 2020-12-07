@@ -566,8 +566,8 @@
                         <field name='localidadRelacion' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain='[["parent_id.id","=",idCliente],["type","=","delivery"]]' force_save = "1"/>
                         <field name='contactoInterno' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain='[["parent_id.id", "=", idLocaliidad],["type", "=", "contact"]]' attrs='{"invisible": [["localidad","!=","CORPORATIVO"]]}' force_save = '1'/> 
                     </group>
-                    -->
-                </group>
+                    
+                </group>-->
 
                 <group>
                     <field name='textoTicketExistente' string='' widget='html' attrs="{'readonly': 1}"/>
