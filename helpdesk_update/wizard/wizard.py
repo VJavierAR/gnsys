@@ -568,7 +568,7 @@ class HelpDeskDetalleSerie(TransientModel):
                                 
                                 <td>""" + str(ticket.ultima_nota) + """</td>
                                 <td>""" + str(ticket.fecha_ultima_nota) + """</td>
-                                <td hidden="true">""" + str(json.dumps(data_ticke)) + """</td>
+                                <td>""" + str(json.dumps(data_ticke)) + """</td>
                               </tr>
                           """
         for ticket in tickets_odoo:
@@ -604,7 +604,7 @@ class HelpDeskDetalleSerie(TransientModel):
                                         <td>""" + str(ticket.contadores_anteriores) + """</td>
                                         <td>""" + str(ticket.x_studio_ultima_nota) + """</td>
                                         <td>""" + str(ultimo_diagnostico_fecha) + """</td>
-                                        <td hidden="true">""" + str(json.dumps(data_ticke)) + """</td>
+                                        <td>""" + str(json.dumps(data_ticke)) + """</td>
                                     </tr>
                                 """ 
             else:
@@ -636,7 +636,7 @@ class HelpDeskDetalleSerie(TransientModel):
                                         <td>""" + str(contadores) + """</td>
                                         <td>""" + str(ticket.x_studio_ultima_nota) + """</td>
                                         <td>""" + str(ultimo_diagnostico_fecha) + """</td>
-                                        <td hidden="true">""" + str(json.dumps(data_ticke)) + """</td>
+                                        <td>""" + str(json.dumps(data_ticke)) + """</td>
                                     </tr>
                                 """ 
 
