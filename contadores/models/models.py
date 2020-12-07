@@ -1704,7 +1704,7 @@ class lor(models.Model):
                                 { "data": "Fecha nota" },
                                 { "data": "DatosTicket" }
                             ],
-                            "order": [[2, 'asc']],
+                            "order": [[2, 'desc']],
                             colReorder: true
                         } );
 
@@ -1763,7 +1763,7 @@ class lor(models.Model):
                                             { "data": "Diagnostico" },
                                             { "data": "Encargado" }
                                         ],
-                                        "order": [[0, 'desc']],
+                                        "order": [[0, 'asc']],
                                         colReorder: true
                                     } );
 

@@ -674,7 +674,7 @@ class HelpDeskDetalleSerie(TransientModel):
                                     <th>Contadores</th>
                                     <th>última Nota</th>
                                     <th>Fecha nota</th>
-                                    <th hidden="true">DatosTicket</th>
+                                    <th>DatosTicket</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -695,7 +695,7 @@ class HelpDeskDetalleSerie(TransientModel):
                                     <th>Contadores</th>
                                     <th>última Nota</th>
                                     <th>Fecha nota</th>
-                                    <th hidden="true">DatosTicket</th>
+                                    <th>DatosTicket</th>
                                 </tr>
                             </tfoot>
                         </table>
@@ -704,7 +704,35 @@ class HelpDeskDetalleSerie(TransientModel):
 
                 <script>
                     
-                    function format ( d ) {
+                    var table_id = 1
+                    var hasOwnProperty = Object.prototype.hasOwnProperty;
+
+                    function isEmpty(obj) {
+
+                        // null and undefined are "empty"
+                        if (obj == null) return true;
+
+                        // Assume if it has a length property with a non-zero value
+                        // that that property is correct.
+                        if (obj.length > 0)    return false;
+                        if (obj.length === 0)  return true;
+
+                        // If it isn't an object at this point
+                        // it is empty, but it can't be anything *but* empty
+                        // Is it empty?  Depends on your application.
+                        if (typeof obj !== "object") return true;
+
+                        // Otherwise, does it have any properties of its own?
+                        // Note that this doesn't handle
+                        // toString and valueOf enumeration bugs in IE < 9
+                        for (var key in obj) {
+                            if (hasOwnProperty.call(obj, key)) return false;
+                        }
+
+                        return true;
+                    }
+
+                    function format ( d, id ) {
                         var data_ticket = JSON.parse( d.DatosTicket );
                         console.log(data_ticket)
                         var diagnosticos = data_ticket.diagnosticos
@@ -715,7 +743,7 @@ class HelpDeskDetalleSerie(TransientModel):
                             filas += "<tr> <td>" + diagnosticos[i].create_date + "</td> <td>" + diagnosticos[i].estadoTicket + "</td> <td>" + diagnosticos[i].comentario + "</td> <td>" + diagnosticos[i].encargado + "</td> </tr>"
                         }
                         
-                        var tabla = "<table id='table_diagnostico' class='table table-striped table-bordered' style='width:100%'> <thead> <tr> <th>Creado_el</th><th>Estado_de_ticket</th><th>Diagnostico</th><th>Encargado</th> </tr> </thead> <tbody> " + filas + " </tbody> <tfoot> <tr> <th>Creado_el</th><th>Estado_de_ticket</th><th>Diagnostico</th><th>Encargado</th> </tr> </tfoot> </table> "
+                        var tabla = "<table id='table_diagnostico_" + id + "' class='table table-striped table-bordered' style='width:100%'> <thead> <tr> <th>Creado_el</th><th>Estado_de_ticket</th><th>Diagnostico</th><th>Encargado</th> </tr> </thead> <tbody> " + filas + " </tbody> <tfoot> <tr> <th>Creado_el</th><th>Estado_de_ticket</th><th>Diagnostico</th><th>Encargado</th> </tr> </tfoot> </table> "
                         
                         return tabla;
                     }
@@ -749,13 +777,9 @@ class HelpDeskDetalleSerie(TransientModel):
                             scrollCollapse: true,
                             "columnDefs": [
                                 {
-                                    "targets": [ 2 ],
+                                    "targets": [ 13 ],
                                     "visible": false,
-                                    "searchable": false
-                                },
-                                {
-                                    "targets": [ 3 ],
-                                    "visible": false
+                                    "searchable": true
                                 }
                             ],
                             "columns": [
@@ -779,7 +803,7 @@ class HelpDeskDetalleSerie(TransientModel):
                                 { "data": "Fecha nota" },
                                 { "data": "DatosTicket" }
                             ],
-                            "order": [[2, 'asc']],
+                            "order": [[2, 'desc']],
                             colReorder: true
                         } );
 
@@ -791,8 +815,8 @@ class HelpDeskDetalleSerie(TransientModel):
                             var idx = $.inArray( tr.attr('id'), detailRows );
                             
                             var data_ticket_c = JSON.parse( row.data().DatosTicket );
-
-                            if ( data_ticket_c.diagnosticos.length > 0 ) {
+                            console.log(isEmpty(data_ticket_c))
+                            if ( !isEmpty( data_ticket_c ) ) {
 
                                 if ( row.child.isShown() ) {
                                     tr.removeClass( 'details' );
@@ -803,11 +827,13 @@ class HelpDeskDetalleSerie(TransientModel):
 
                                 } else {
                                     tr.addClass( 'details' );
-                                    row.child( format( row.data() ) ).show();
+                                    row.child( format( row.data(), table_id ) ).show();
                                     
 
-                                    
-                                    var table_diagnostico = $('#table_diagnostico').DataTable( {
+                                    //table_diagnostico
+                                    //var table_diagnostico = $('table.display').DataTable( {
+                                    //var table_diagnostico = row.child.DataTable( {
+                                    var table_diagnostico = $('#table_diagnostico_' + table_id).DataTable( {
                                         dom: 'Bfrtip',
                                         lengthMenu: [
                                             [ 10, 25, 50, -1 ],
@@ -830,20 +856,6 @@ class HelpDeskDetalleSerie(TransientModel):
                                             "Previous": "Anterior",
                                             "Next": "Siguiente"
                                         },
-                                        "scrollX": true,
-                                        scrollY: '50vh',
-                                        scrollCollapse: true,
-                                        "columnDefs": [
-                                            {
-                                                "targets": [ 2 ],
-                                                "visible": false,
-                                                "searchable": false
-                                            },
-                                            {
-                                                "targets": [ 3 ],
-                                                "visible": false
-                                            }
-                                        ],
                                         "columns": [
                                             { "data": "Creado_el" },
                                             { "data": "Estado_de_ticket" },
@@ -855,7 +867,7 @@ class HelpDeskDetalleSerie(TransientModel):
                                     } );
 
 
-
+                                    table_id += 1
 
 
                                     // Add to the 'open' array
