@@ -1605,6 +1605,7 @@ class lor(models.Model):
 
                 <script>
                     
+                    var table_id = 1
                     var hasOwnProperty = Object.prototype.hasOwnProperty;
 
                     function isEmpty(obj) {
@@ -1632,7 +1633,7 @@ class lor(models.Model):
                         return true;
                     }
 
-                    function format ( d ) {
+                    function format ( d, id ) {
                         var data_ticket = JSON.parse( d.DatosTicket );
                         console.log(data_ticket)
                         var diagnosticos = data_ticket.diagnosticos
@@ -1643,7 +1644,7 @@ class lor(models.Model):
                             filas += "<tr> <td>" + diagnosticos[i].create_date + "</td> <td>" + diagnosticos[i].estadoTicket + "</td> <td>" + diagnosticos[i].comentario + "</td> <td>" + diagnosticos[i].encargado + "</td> </tr>"
                         }
                         
-                        var tabla = "<table id='table_diagnostico' class='table table-striped table-bordered' style='width:100%'> <thead> <tr> <th>Creado_el</th><th>Estado_de_ticket</th><th>Diagnostico</th><th>Encargado</th> </tr> </thead> <tbody> " + filas + " </tbody> <tfoot> <tr> <th>Creado_el</th><th>Estado_de_ticket</th><th>Diagnostico</th><th>Encargado</th> </tr> </tfoot> </table> "
+                        var tabla = "<table id='table_diagnostico' " + id + " class='table table-striped table-bordered' style='width:100%'> <thead> <tr> <th>Creado_el</th><th>Estado_de_ticket</th><th>Diagnostico</th><th>Encargado</th> </tr> </thead> <tbody> " + filas + " </tbody> <tfoot> <tr> <th>Creado_el</th><th>Estado_de_ticket</th><th>Diagnostico</th><th>Encargado</th> </tr> </tfoot> </table> "
                         
                         return tabla;
                     }
@@ -1727,14 +1728,13 @@ class lor(models.Model):
 
                                 } else {
                                     tr.addClass( 'details' );
-                                    row.child( format( row.data() ) ).show();
+                                    row.child( format( row.data(), table_id ) ).show();
                                     
-                                    console.log('row.child')
-                                    console.log(row.child)
 
                                     //table_diagnostico
                                     //var table_diagnostico = $('table.display').DataTable( {
-                                    var table_diagnostico = row.child.DataTable( {
+                                    //var table_diagnostico = row.child.DataTable( {
+                                    var table_diagnostico = $('#table_diagnostico' + table_id).DataTable( {
                                         dom: 'Bfrtip',
                                         lengthMenu: [
                                             [ 10, 25, 50, -1 ],
@@ -1768,7 +1768,7 @@ class lor(models.Model):
                                     } );
 
 
-
+                                    table_id += 1
 
 
                                     // Add to the 'open' array
