@@ -1298,7 +1298,7 @@
         <field name="model">helpdesk.detalle.serie.toner</field>
         <field name="arch" type="xml">
             <form string="Detalle serie">
-                <group class='text-center'>
+                <!--<group class='text-center'>
                     <h2>
                         <field name="serie" string='' readonly="1"/>
                     </h2>
@@ -1316,8 +1316,8 @@
                     <notebook>
                         <page string = 'Tickets'>
                             <field name='historicoTickets' readonly="1" force_save='1' domain="[['fuente', '=', 'helpdesk.ticket']]">
-                                <tree default_order="create_date desc"><!--x_studio_fecha-->
-                                    <field name='x_studio_tickett' attrs='{"domain": [["fuente","=","Equipo"]]}'/>
+                                <tree default_order="create_date desc">--><!--x_studio_fecha-->
+                                    <!--<field name='x_studio_tickett' attrs='{"domain": [["fuente","=","Equipo"]]}'/>
                                     <field name='create_date' />
                                     <field name='fuente' invisible='1'/>
                                     <field name='x_studio_fecha_techra' />
@@ -1331,7 +1331,7 @@
                                     <field name='contadorColor' />
                                     <field name='hTicketHojaDeEstado' />
                                     <field name='hTicketUltimaNota' />
-                                    <field name='hTicketFechaNota' />
+                                    <field name='hTicketFechaNota' />-->
 
                                     <!--
                                     <field name='x_studio_fecha' />
@@ -1348,7 +1348,7 @@
                                     
                                     <field name='' />
                                     -->
-                                </tree>
+                                <!--</tree>
                                 <form>
                                 </form>
                             </field>
@@ -1366,7 +1366,7 @@
                             <field name='movimientos' readonly="1" force_save='1'/>
                         </page>
                     </notebook>
-                </group>
+                </group>-->
                 <footer>
                     <button special="cancel" string="Cerrar" class="oe_highlight" />
                 </footer>
