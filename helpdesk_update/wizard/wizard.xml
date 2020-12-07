@@ -1207,7 +1207,7 @@
                                         <group>
                                             <button name="noMostrarComentario" string="No mostrar comentario en reporte pdf" type="object" class="btn btn-danger" />
                                         </group>
-                                    </group>-->
+                                    </group>
                                 </form>
                             </field>
                         </page>
@@ -1278,7 +1278,7 @@
                                 </group>
                             </group>
                         </page>
-                    </notebook>
+                    </notebook>-->
                 </group>
                 <footer>
                     <button special="cancel" string="Cerrar" class="oe_highlight" />
