@@ -734,7 +734,7 @@ class HelpDeskDetalleSerie(TransientModel):
 
                     function format ( d, id ) {
                         var data_ticket = JSON.parse( d.DatosTicket );
-                        console.log(data_ticket)
+                        //console.log(data_ticket)
                         var diagnosticos = data_ticket.diagnosticos
 
                         var filas = ""
@@ -749,7 +749,7 @@ class HelpDeskDetalleSerie(TransientModel):
                     }
 
                     $(document).ready( function () {
-                        console.log("cargabndo todo")
+                        //console.log("cargabndo todo")
                         var table = $('#table_id').DataTable( {
                             dom: 'Bfrtip',
                             lengthMenu: [
@@ -808,7 +808,7 @@ class HelpDeskDetalleSerie(TransientModel):
                             colReorder: true
                         } );
 
-                        console.log("cargo primera tabla de tickets")
+                        //console.log("cargo primera tabla de tickets")
                         var detailRows = [];
 
                         $('#table_id tbody').on( 'click', 'tr td.details-control', function () {
@@ -817,7 +817,7 @@ class HelpDeskDetalleSerie(TransientModel):
                             var idx = $.inArray( tr.attr('id'), detailRows );
                             
                             var data_ticket_c = JSON.parse( row.data().DatosTicket );
-                            console.log(isEmpty(data_ticket_c))
+                            //console.log(isEmpty(data_ticket_c))
                             if ( !isEmpty( data_ticket_c ) ) {
 
                                 if ( row.child.isShown() ) {

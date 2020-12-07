@@ -1635,7 +1635,7 @@ class lor(models.Model):
 
                     function format ( d, id ) {
                         var data_ticket = JSON.parse( d.DatosTicket );
-                        console.log(data_ticket)
+                        //console.log(data_ticket)
                         var diagnosticos = data_ticket.diagnosticos
 
                         var filas = ""
@@ -1716,7 +1716,7 @@ class lor(models.Model):
                             var idx = $.inArray( tr.attr('id'), detailRows );
                             
                             var data_ticket_c = JSON.parse( row.data().DatosTicket );
-                            console.log(isEmpty(data_ticket_c))
+                            //console.log(isEmpty(data_ticket_c))
                             if ( !isEmpty( data_ticket_c ) ) {
 
                                 if ( row.child.isShown() ) {
