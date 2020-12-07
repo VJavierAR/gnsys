@@ -27,6 +27,10 @@ class ContactosCes(models.Model):
     fechaPendienteInactivo=fields.Date()
     arreglo=fields.Char()
     busqueda=fields.Char()
+    street=fields.Char(string='Calle',track_visibility='onchange')
+    street_number=fields.Char(string='Exterior',track_visibility='onchange')
+    street_number2=fields.Char(string='Interior',track_visibility='onchange')
+    contact_address = fields.Char(string='Complete Address')
 
     def Reporte(self):
         fecha=datetime.datetime.now().date()
