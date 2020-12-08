@@ -1510,7 +1510,7 @@ class cargadeGuias(TransientModel):
                             Tickets=str(row[3].value).replace('REF','').replace(' ','').replace('.0','').split('-')
                             for t in Tickets:
                                 tt=int(t)
-                                self.env.cr.execute("update helpdesk_ticket set x_studio_nmero_de_guia_1="+str(int(row[2].value))+"1 where id="+str(tt)+";")            
+                                self.env.cr.execute("update helpdesk_ticket set x_studio_nmero_de_guia_1="+str(int(row[2].value))+" where id="+str(tt)+";")            
                     i=i+1
             else:
                 raise UserError(_("Error en el formato del archivo"))
