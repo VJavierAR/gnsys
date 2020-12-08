@@ -1402,7 +1402,7 @@
                                   </h1>
                                 </div>
                                 -->
-                                <group name="1">
+                                <!--<group name="1">
                                     <group name="a">
                                         <field name="x_studio_link" string="link" wiget="html" invisible='1'/>
                                         <field name="grupo" invisible='1'/>
@@ -1485,7 +1485,7 @@
                                 <field name="tablahtml" widget='html'/>
                             </tree>
                         </field>
-                    </group>
+                    </group>-->
                     <!--
                     <group string='Buscar por cliente y localidad'>
                         
@@ -1494,7 +1494,7 @@
                         <field name='contactoInterno' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain='[["parent_id.id", "=", idLocaliidad],["type", "=", "contact"]]' attrs='{"invisible": [["localidad","!=","CORPORATIVO"]]}' force_save = '1'/> 
                     </group>
                     -->
-                </group>
+                <!--</group>
 
                 <group>
                     <field name='textoTicketExistente' string='' widget='html' attrs="{'readonly': 1}"/>
@@ -1506,11 +1506,11 @@
                         <group>
                             <group>
                                 <field name='tipoReporte' force_save='1' readonly='0' />
-                                <field name='corte' force_save='1' readonly='0' />
+                                <field name='corte' force_save='1' readonly='0' />-->
                                 <!--<field name='almacen' force_save='1' />-->
                                 <!--
                                 <field name='almacenes' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain="['&amp;', ('x_studio_cliente', '=', False), '|', ('id', '=', 1), ('id', '=', 18) ]" />
-                                -->
+                                --><!--
 
                                 <field name='almacenes' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain="['|', '|', ('id', '=', 1), ('id', '=', 18), ('id', '=', 17) ]" readonly='0' />
 
@@ -1543,9 +1543,9 @@
                             </group>
                         </group>
                         <group>
-                            <group>
+                            <group>-->
                                 <!--<button name="contacto_toner" string="Añadir contcto a localidad" icon="fa-user-plus"  type="object"  attrs='{"invisible": [["localidad","=", False]]}' groups=""/>-->
-                                <field name='mostrarAnadirContacto' force_save='1' readonly='0' invisible='0' />
+                               <!-- <field name='mostrarAnadirContacto' force_save='1' readonly='0' invisible='0' />
                             </group>
                         </group>
 
@@ -1562,7 +1562,7 @@
                                 <field name="notas" placeholder="Notas internas..." readonly='0'/>
                                 <button name="anadirContactoALocalidad" string="Añadir contcto a localidad" icon="fa-user-plus" type="object"  attrs='{"invisible": [["localidad","=", False]]}' groups="" readonly='0'/>
                             </group>
-                        </group>
+                        </group>-->
 
                         <!--
                         <group>
@@ -1571,7 +1571,7 @@
                             </group>
                         </group>
                         -->
-                        <group>
+                        <!--<group>
                             <group>
                                 <field name='telefonoContactoLocalidad' force_save='1' readonly='1'/>
                                 <field name='movilContactoLocalidad' force_save='1' readonly='1'/>
@@ -1606,7 +1606,7 @@
                     <group>
                         <field name='noCrearTicket' invisible='1' force_save='1' />
                     </group>
-                </group>
+                </group>-->
 
                 <footer>
                     <!--<button name="abrirTicket" string="Abrir ticket existente" type="object" class="oe_highlight" attrs="{'invisible': ['|',['ticket_id_existente','=', 0],['ticket_id_existente','=', False]]}"/>-->
