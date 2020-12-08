@@ -359,6 +359,13 @@ class HelpDeskCerrarConComentario(TransientModel):
 
     def cerrarTicketConComentario(self):
       ultimaEvidenciaTec = []
+      if self.ticket_id.x_studio_tipo_de_vale == 'Instalación':
+        self.ticket_id.write({
+            'instalado_el': datetime.datetime.now()
+        })
+        self.ticket_id.x_studio_equipo_por_nmero_de_serie.write({
+            'instalado_el': datetime.datetime.now()
+        })
       if self.ticket_id.diagnosticos:
         ultimaEvidenciaTec = self.ticket_id.diagnosticos[-1].evidencia.ids
         if self.evidencia:
@@ -961,6 +968,21 @@ class HelpDeskContacto(TransientModel):
     _description = 'HelpDesk Contacto'
     ticket_id = fields.Many2one("helpdesk.ticket")
     
+    idLocalidadAyuda = fields.Integer(
+                                        string = 'idLocalidadAyuda',
+                                        compute = '_compute_idLocalidadAyuda'
+                                    )
+
+    contactos = fields.Many2one("res.partner", 
+        string="Contactos disponibles", 
+        domain = "['&',('parent_id.id', '=', idLocalidadAyuda),('type', '=', 'contact')]"
+    )
+
+    editarContacto_check = fields.Boolean(
+        string = 'Editar contacto',
+        default = False
+    )
+
     tipoDeDireccion = fields.Selection([('contact','Contacto')
                                         ,('invoice','Dirección de facturación')
                                         ,('delivery','Dirección de envío')
@@ -993,26 +1015,52 @@ class HelpDeskContacto(TransientModel):
     direccionPais = fields.Many2one('res.country', store=True, string='País', default='156')
     direccionEstado = fields.Many2one('res.country.state', store=True, string='Estado', domain="[('country_id', '=?', direccionPais)]")
     
-    direccionZona = fields.Selection([('SUR','SUR')
-                                      ,('NORTE','NORTE')
-                                      ,('PONIENTE','PONIENTE')
-                                      ,('ORIENTE','ORIENTE')
-                                      ,('CENTRO','CENTRO')
-                                      ,('DISTRIBUIDOR','DISTRIBUIDOR')
-                                      ,('MONTERREY','MONTERREY')
-                                      ,('CUERNAVACA','CUERNAVACA')
-                                      ,('GUADALAJARA','GUADALAJARA')
-                                      ,('QUERETARO','QUERETARO')
-                                      ,('CANCUN','CANCUN')
-                                      ,('VERACRUZ','VERACRUZ')
-                                      ,('PUEBLA','PUEBLA')
-                                      ,('TOLUCA','TOLUCA')
-                                      ,('LEON','LEON')
-                                      ,('COMODIN','COMODIN')
-                                      ,('VILLAHERMOSA','VILLAHERMOSA')
-                                      ,('MERIDA','MERIDA')
-                                      ,('ALTAMIRA','ALTAMIRA')]
-                                      , string = 'Zona')
+    direccionZona = fields.Selection([
+        ('SUR','SUR'),
+        ('NORTE','NORTE'),
+        ('PONIENTE','PONIENTE'),
+        ('ORIENTE','ORIENTE'),
+        ('CENTRO','CENTRO'),
+        ('DISTRIBUIDOR','DISTRIBUIDOR'),
+        ('MONTERREY','MONTERREY'),
+        ('CUERNAVACA','CUERNAVACA'),
+        ('GUADALAJARA','GUADALAJARA'),
+        ('QUERETARO','QUERETARO'),
+        ('CANCUN','CANCUN'),
+        ('VERACRUZ','VERACRUZ'),
+        ('PUEBLA','PUEBLA'),
+        ('TOLUCA','TOLUCA'),
+        ('LEON','LEON'),
+        ('COMODIN','COMODIN'),
+        ('VILLAHERMOSA','VILLAHERMOSA'),
+        ('MERIDA','MERIDA'),
+        ('ALTAMIRA','ALTAMIRA'),
+        ('COMODIN','COMODIN'),
+        ('DF00','DF00'),
+        ('SAN LP','SAN LP'),
+        ('ESTADO DE MÉXICO','ESTADO DE MÉXICO'),
+        ('Foraneo Norte','Foraneo Norte'),
+        ('Foraneo Sur','Foraneo Sur')], string = 'Zona')
+
+    @api.depends('ticket_id')
+    def _compute_idLocalidadAyuda(self):
+        if self.ticket_id.x_studio_empresas_relacionadas:
+            self.idLocalidadAyuda = self.ticket_id.x_studio_empresas_relacionadas.id
+
+    @api.onchange('contactos')
+    def actualiza_informacion_contacto(self):
+        if self.contactos:
+            self.nombreDelContacto = self.contactos.name
+            self.correoElectronico = self.contactos.email
+            self.telefono = self.contactos.phone
+            self.movil = self.contactos.mobile
+            self.notas = self.contactos.comment
+        else:
+            self.nombreDelContacto = ''
+            self.correoElectronico = ''
+            self.telefono = ''
+            self.movil = ''
+            self.notas = ''
 
     
     def agregarContactoALocalidad(self):
@@ -1121,8 +1169,84 @@ class HelpDeskContacto(TransientModel):
                 'view_id': view.id,
                 'target': 'new',
                 'res_id': wiz.id,
-                'context': self.env.context,
-                }
+                'context': self.env.context
+        }
+
+
+
+    def editarContacto(self):
+        if self.contactos:
+            vals = {
+                'name': self.nombreDelContacto,
+                'email': self.correoElectronico,
+                'phone': self.telefono,
+                'mobile': self.movil,
+                'comment': self.notas
+            }
+            mensajeTitulo = 'Contacto actualizado'
+            mensajeCuerpo = 'Se actuaizo el contacto ' + str(self.nombreDelContacto) + ' con los siguientes datos:\n\nNombre: ' + str(self.nombreDelContacto) + '\nCorreo electrónico: ' + str(self.correoElectronico) + '\nTeléfono: ' + str(self.telefono) + '\nMóvil: ' + str(self.movil) + '\nNotas: ' + str(self.notas)
+            self.contactos.write(vals)
+            self.env['helpdesk.diagnostico'].sudo().with_env(self.env(user=self.env.user.id)).create({
+                'ticketRelacion': self.ticket_id.id,
+                'comentario': mensajeCuerpo + '\n\nActualización realizada por: ' + str(self.env.user.name),
+                'estadoTicket': self.ticket_id.stage_id.name,
+                'mostrarComentario': False,
+                'creadoPorSistema': True,
+                'write_uid':  self.env.user.name,
+                'create_uid': self.env.user.name
+            })
+            wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
+            view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+            return {
+                    'name': _(mensajeTitulo),
+                    'type': 'ir.actions.act_window',
+                    'view_type': 'form',
+                    'view_mode': 'form',
+                    'res_model': 'helpdesk.alerta',
+                    'views': [(view.id, 'form')],
+                    'view_id': view.id,
+                    'target': 'new',
+                    'res_id': wiz.id,
+                    'context': self.env.context
+            }
+        else:
+            raise exceptions.ValidationError('Favor de seleccionar el contacto que será editado.')
+
+    def archivarContacto(self):
+        if self.contactos:
+            vals = {
+                'active': False
+            }
+            self.contactos.write(vals)
+            mensajeTitulo = 'Contacto archivado'
+            mensajeCuerpo = 'Se archivo el contacto ' + str(self.nombreDelContacto) + ' que contaba con los siguientes datos:\n\nNombre: ' + str(self.nombreDelContacto) + '\nCorreo electrónico: ' + str(self.correoElectronico) + '\nTeléfono: ' + str(self.telefono) + '\nMóvil: ' + str(self.movil) + '\nNotas: ' + str(self.notas)
+            self.env['helpdesk.diagnostico'].sudo().with_env(self.env(user=self.env.user.id)).create({
+                'ticketRelacion': self.ticket_id.id,
+                'comentario': mensajeCuerpo + '\n\nActualización realizada por: ' + str(self.env.user.name),
+                'estadoTicket': self.ticket_id.stage_id.name,
+                'mostrarComentario': False,
+                'creadoPorSistema': True,
+                'write_uid':  self.env.user.name,
+                'create_uid': self.env.user.name
+            })
+            wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
+            view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+            return {
+                    'name': _(mensajeTitulo),
+                    'type': 'ir.actions.act_window',
+                    'view_type': 'form',
+                    'view_mode': 'form',
+                    'res_model': 'helpdesk.alerta',
+                    'views': [(view.id, 'form')],
+                    'view_id': view.id,
+                    'target': 'new',
+                    'res_id': wiz.id,
+                    'context': self.env.context
+            }
+        else:
+            raise exceptions.ValidationError('Favor de seleccionar el contacto que será archivado.')
+
+
 
 
 
@@ -6810,7 +6934,7 @@ class HelpDeskDatosMesa(TransientModel):
 class HelpDeskResueltoConComentario(TransientModel):
     _name = 'helpdesk.comentario.resuelto'
     _description = 'Mover al estado resuelto con un comentario.'
-    check = fields.Boolean(string = 'Mostrar en reporte', default = False,)
+    check = fields.Boolean(string = 'Mostrar en reporte', default = False)
     ticket_id = fields.Many2one("helpdesk.ticket")
     diagnostico_id = fields.One2many('helpdesk.diagnostico', 'ticketRelacion', string = 'Diagnostico', compute = '_compute_diagnosticos')
     estado = fields.Char('Estado previo a cerrar el ticket', compute = "_compute_estadoTicket")

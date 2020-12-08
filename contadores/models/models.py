@@ -1392,6 +1392,7 @@ class lor(models.Model):
     _inherit = 'stock.production.lot'
     dca=fields.One2many('dcas.dcas',inverse_name='serie')
 
+    instalado_el = fields.Datetime(string = 'Fecha de instalación', store=True)
     html = fields.Text(string = 'Tickets', compute = 'gener_tabla_tickets')
 
     

@@ -339,6 +339,18 @@
         <field name="model">helpdesk.contacto</field>
         <field name="arch" type="xml">
             <form string="Añadir contacto a localidad">
+
+                <group>
+                    <group>
+                        <field name="ticket_id" options='{"no_create_edit": True, "no_create": True, "no_open": True}' readonly='1' invisible='1' />
+                        <field name="idLocalidadAyuda" readonly='1' invisible='1' />
+                        <field name='editarContacto_check' />
+                    </group>
+                    <group>
+                        <field name="contactos" options='{"no_create_edit": True, "no_create": True, "no_open": True}' attrs="{'invisible': [ ('editarContacto_check', '=', False) ] }" />
+                    </group>
+                </group>
+
                 <group>
                     <group>
                         <field name="tipoDeDireccion" invisible='1' force_save = "1"/>
@@ -384,7 +396,14 @@
                 </group>
 
                 <footer>
-                    <button name="agregarContactoALocalidad" string="Agregar contacto a localidad" type="object" class="oe_highlight"/>
+                    <button name="agregarContactoALocalidad" string="Agregar contacto a localidad" type="object" class="oe_highlight" attrs="{'invisible': [ ('editarContacto_check', '=', True) ] }"/>
+
+                    <button name="editarContacto" string="Editar contacto" type="object" class="oe_highlight" attrs="{'invisible': [ ('editarContacto_check', '=', False) ] }" help="Editara el contacto con los datos capturados" />
+
+                    <!--
+                    <button name="archivarContacto" string="Archivar contacto" type="object" class="oe_highlight" attrs="{'invisible': [ ('editarContacto_check', '=', False) ] }" help="Archivara el contacto y ya no estara disponible para futuras selecciones"/>
+                    -->
+
                     <button string="Cancel" class="oe_link" special="cancel"/>
                 </footer>
             </form>

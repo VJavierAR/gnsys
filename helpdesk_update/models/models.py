@@ -181,7 +181,8 @@ class helpdesk_update(models.Model):
 
     resuelto_el = fields.Datetime(string = 'Resuelto el')
     cerrado_el = fields.Datetime(string = 'Cerrado_el')
-    
+    instalado_el = fields.Datetime(string = 'Fecha de instalación', store=True)
+
     ticketValidadoElDia = fields.Datetime(string = 'Fecha de validación de la solicitud')
 
     primerDiagnosticoUsuario = fields.Text(string = 'Primer diagnósticos', compute='_compute_primer_diagnostico')
