@@ -232,7 +232,7 @@ class StockPickingMassAction(TransientModel):
         locations=self.picking_ids.mapped('location_id.id')
         tipo=self.picking_ids.mapped('picking_type_id.code')
         if(locations[0] in almacenes):
-            unresrved=self.env['stock.picking'].search(['&','&','&',['id','not in',self.picking_ids.mapped('id')],['location_id','in',locations],['state','=','assigned'],['surtir','=',False]])
+            unresrved=self.env['stock.picking'].search(['&','&','&',['id','not in',self.picking_ids.mapped('id')],['location_id','in',locations],['state','=','assigned'],['surtir','=',False],['oculta','=',False]])
             if(len(unresrved)>0 and 'outgoing' not in tipo):
                 _logger.info('entre en anular reserva')
                 unresrved.do_unreserve()
