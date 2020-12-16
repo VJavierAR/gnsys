@@ -1781,7 +1781,7 @@ class helpdesk_crearconserie(TransientModel):
 
     
     
-    @api.onchange('serie')
+    @api.depends('serie')
     def cambia_serie(self):
         if self.serie:
             _my_object = self.env['helpdesk.crearconserie']
