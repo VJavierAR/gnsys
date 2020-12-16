@@ -19,6 +19,7 @@ class contactos(models.Model):
     mobile = fields.Char(string = 'Móvil', track_visibility = 'onchange')
     email = fields.Char(string = 'Correo electrónico', track_visibility = 'onchange')
     comment = fields.Text(string = 'Notas', track_visibility = 'onchange')
+    street_name = fields.Char(string = 'Calle', track_visibility = 'onchange', store = True)
 
 class zonaDistribuidor(models.Model):
 	_name='zona.distribuidor'
