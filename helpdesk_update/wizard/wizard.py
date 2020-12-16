@@ -1911,7 +1911,7 @@ class helpdesk_crearconserie(TransientModel):
                     self.idLocaliidad = loc.id
                     self.localidadRelacion = loc.id
 
-                    self.direccionCalleNombre = loc.street_name
+                    self.direccionCalleNombre = self.localidadRelacion.street_name #loc.street_name
                     self.direccionNumeroExterior = loc.street_number
                     self.direccionNumeroInterior = loc.street_number2
                     self.direccionColonia = loc.l10n_mx_edi_colony
