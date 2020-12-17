@@ -1872,6 +1872,20 @@ class helpdesk_update(models.Model):
     @api.onchange('team_id')
     def asignacion(self):
         _logger.info('self al iniciar funcion asignacion: ' + str(self._origin))
+
+        if self._origin.stage_id.id == 3:
+            comentarioGenerico = 'Se cambio de área de atención. Área de atención actual: ' + self.team_id.name + '. Seleccion realizada por ' + str(self.env.user.name) +'.'
+            estado = 'Resuelto'
+            self.creaDiagnosticoVistaLista(comentarioGenerico, estado)
+            self.datos_ticket_2()
+            mensajeTitulo = 'Cambio de área de atención!!!'
+            mensajeCuerpo = 'Se cambiará el área de atención, pero no se permite cambiar al estado de asignación una vez que el ticket esta en el estado Resuelto.'
+            mess = {
+                    'title': _(mensajeTitulo),
+                    'message' : mensajeCuerpo
+                }
+            return {'warning': mess}
+
         #for record in self:
         if self._origin.x_studio_id_ticket:
             estadoAntes = str(self._origin.stage_id.name)
@@ -2104,6 +2118,25 @@ class helpdesk_update(models.Model):
     
     @api.onchange('x_studio_tcnico')
     def cambioEstadoAtencion(self):
+        if self.stage_id.id == 3:
+            tecnicoActual = ''
+            if self.x_studio_tcnico.name:
+                tecnicoActual = str(self.x_studio_tcnico.name)
+            else:
+                tecnicoActual = 'Sin técnico asociado'
+            comentarioGenerico = 'Se cambio de técnico. Técnico actual: ' + tecnicoActual + '. Seleccion realizada por ' + str(self.env.user.name) +'.'
+            estado = 'Resuelto'
+            self.creaDiagnosticoVistaLista(comentarioGenerico, estado)
+            self.datos_ticket_2()
+            mensajeTitulo = 'Cambio de técnico!!!'
+            mensajeCuerpo = 'Se cambiará el técnico, pero no se permite cambiar al estado de atención una vez que el ticket esta en el estado Resuelto.'
+            mess = {
+                    'title': _(mensajeTitulo),
+                    'message' : mensajeCuerpo
+                }
+            return {'warning': mess}
+
+
         if self.x_studio_id_ticket:
             estadoAntes = str(self.stage_id.name)
             if (self.stage_id.name == 'Asignado' or self.stage_id.name == 'Resuelto' or self.stage_id.name == 'Cerrado'):
@@ -2171,6 +2204,24 @@ class helpdesk_update(models.Model):
     
     #@api.onchange('stage_id')
     def cambioCotizacion(self):
+        if self.stage_id.id == 3:
+            mensajeTitulo = 'Alerta!!!'
+            mensajeCuerpo = 'No se permite cambiar al estado "cotización" una vez que el ticket esta en el estado "resuelto".'
+            wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
+            view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+            return {
+                    'name': _(mensajeTitulo),
+                    'type': 'ir.actions.act_window',
+                    'view_type': 'form',
+                    'view_mode': 'form',
+                    'res_model': 'helpdesk.alerta',
+                    'views': [(view.id, 'form')],
+                    'view_id': view.id,
+                    'target': 'new',
+                    'res_id': wiz.id,
+                    'context': self.env.context,
+                    }
+
         estadoAntes = str(self.stage_id.name)
         #if self.stage_id.name == 'Cotización' and str(self.env.user.id) == str(self.x_studio_tcnico.user_id.id) and self.estadoCotizacion == False:
         #if str(self.env.user.id) == str(self.x_studio_tcnico.user_id.id) and self.estadoCotizacion == False:
@@ -2311,6 +2362,24 @@ class helpdesk_update(models.Model):
 
 
     def cambioEstadoSolicitudRefaccion(self):
+        if self.stage_id.id == 3:
+            mensajeTitulo = 'Alerta!!!'
+            mensajeCuerpo = 'No se permite cambiar al estado "Pendiente por autorizar solicitud" una vez que el ticket esta en el estado "Resuelto".'
+            wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
+            view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+            return {
+                    'name': _(mensajeTitulo),
+                    'type': 'ir.actions.act_window',
+                    'view_type': 'form',
+                    'view_mode': 'form',
+                    'res_model': 'helpdesk.alerta',
+                    'views': [(view.id, 'form')],
+                    'view_id': view.id,
+                    'target': 'new',
+                    'res_id': wiz.id,
+                    'context': self.env.context,
+                    }
+
         if self.stage_id.id == 18 or self.stage_id.id == 4:
             mensajeTitulo = 'Estado no valido'
             mensajeCuerpo = 'No es posible agregar productos al ticket ' + str(self.id) + ' en el estado ' + str(self.stage_id.name) + '\nNo se permite añadir refacciones y/o accesorios a un ticket Cerrado o Cancelado.'
