@@ -2171,6 +2171,51 @@ class helpdesk_update(models.Model):
                 return {'warning': mess}
     
     
+
+
+
+    def cambioEstadoAtencionAccion(self):
+        if self.x_studio_id_ticket:
+            estadoAntes = str(self.stage_id.name)
+            if (self.stage_id.name == 'Asignado' or self.stage_id.name == 'Resuelto' or self.stage_id.name == 'Cerrado'):
+                self.write({'stage_id': 13})
+                ultimaEvidenciaTec = []
+                ultimoComentario = ''
+                if self.diagnosticos:
+                    if self.diagnosticos[-1].evidencia.ids:
+                        ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
+                    ultimoComentario = self.diagnosticos[-1].comentario
+                tecnicoActual = ''
+                if self.x_studio_tcnico.name:
+                    tecnicoActual = str(self.x_studio_tcnico.name)
+                else:
+                    tecnicoActual = 'Sin técnico asociado'
+                comentarioGenerico = 'Cambio de estado al seleccionar botón atención o al cambiar de técnico. Técnico actual: ' + tecnicoActual + '. Se cambio al estado Atención. Seleccion realizada por ' + str(self.env.user.name) +'.'
+                
+                estado = 'Atención'
+                self.creaDiagnosticoVistaLista(comentarioGenerico, estado)
+                self.datos_ticket_2()
+                self.estadoAtencion = True
+                self.estadoResuelto = False
+                mensajeTitulo = 'Estado de ticket actualizado!!!'
+                mensajeCuerpo = 'Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Atención' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página."
+                wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
+                view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+                return {
+                        'name': _(mensajeTitulo),
+                        'type': 'ir.actions.act_window',
+                        'view_type': 'form',
+                        'view_mode': 'form',
+                        'res_model': 'helpdesk.alerta',
+                        'views': [(view.id, 'form')],
+                        'view_id': view.id,
+                        'target': 'new',
+                        'res_id': wiz.id,
+                        'context': self.env.context,
+                        }
+
+
+
     
     estadoResuelto = fields.Boolean(string="Paso por estado resuelto", default=False)
     
