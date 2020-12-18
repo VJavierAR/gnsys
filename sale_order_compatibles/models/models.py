@@ -155,18 +155,26 @@ class sale_update(models.Model):
 		for record in self:
 			if(record.x_studio_direccin_de_entrega.id):
 				record['partner_shipping_id']=record.x_studio_direccin_de_entrega.id
-	
+
 	@api.onchange('serieRetiro2')
 	def serieRetiro(self):
 		for record in self:
-		  if(record.serieRetiro2.id):
-		    if(record.serieRetiro2.x_studio_localidad_2.id):
-		      record['partner_id']=record.serieRetiro2.x_studio_localidad_2.parent_id.id
-		      record['partner_shipping_id']=record.serieRetiro2.x_studio_localidad_2.id
-		      record['x_studio_direccin_de_entrega']=record.serieRetiro2.x_studio_localidad_2.id			
-		      record['compatiblesLineas']=[{'serie':record.serieRetiro2.id,'cantidad':1,'tipo':record.x_studio_tipo_de_solicitud,'equipos':record.serieRetiro2.product_id.id}]
-		      record['x_studio_field_69Boh']=record.serieRetiro2.servicio.id
-		      record['x_studio_field_LVAj5']=record.serieRetiro2.servicio.contrato.id
+			if(record.serieRetiro2.id):
+				if(record.serieRetiro2.x_studio_localidad_2.id):
+					uno=self.env['helpdesk.ticket'].search([['x_studio_equipo_por_nmero_de_serie','=',record.serieRetiro2.id]])
+					dos=self.env['helpdesk.ticket'].search([['x_studio_equipo_por_nmero_de_serie_1.serie','=',record.serieRetiro2.id]])
+					one=uno.filtered(lambda x:x.stage_id.id not in [3,4,18])
+					two=dos.filtered(lambda x:x.stage_id.id not in [3,4,18])
+					if(len(one)!=0 or len(two)!=0):
+						tickets=one.mapped('id')+two.mapped('id')
+						raise UserError(_('Existen los siguientes tickets abiertos :'+str(tickets)))
+						#_logger.info(str(len(one))+str(len(two)))
+					record['partner_id']=record.serieRetiro2.x_studio_localidad_2.parent_id.id
+					record['partner_shipping_id']=record.serieRetiro2.x_studio_localidad_2.id
+					record['x_studio_direccin_de_entrega']=record.serieRetiro2.x_studio_localidad_2.id
+					record['compatiblesLineas']=[{'serie':record.serieRetiro2.id,'cantidad':1,'tipo':record.x_studio_tipo_de_solicitud,'equipos':record.serieRetiro2.product_id.id}]
+					record['x_studio_field_69Boh']=record.serieRetiro2.servicio.id
+					record['x_studio_field_LVAj5']=record.serieRetiro2.servicio.contrato.id
 	def preparaSolicitudValidacion(self):
 		if(len(self.compatiblesLineas)==0):
 				raise UserError(_('No hay registros a procesar'))
@@ -175,16 +183,16 @@ class sale_update(models.Model):
 			view = self.env.ref('sale_order_compatibles.view_sale_agregados_form')
 			return {
 				'name': _('Agregado'),
-                'type': 'ir.actions.act_window',
-                'view_type': 'form',
-                'view_mode': 'form',
-                'res_model': 'sale.agregado',
-                'views': [(view.id, 'form')],
-                'view_id': view.id,
-                'target': 'new',
-                'res_id': wiz.id,
-                'context': self.env.context,
-                	}
+				'type': 'ir.actions.act_window',
+				'view_type': 'form',
+				'view_mode': 'form',
+				'res_model': 'sale.agregado',
+				'views': [(view.id, 'form')],
+				'view_id': view.id,
+				'target': 'new',
+				'res_id': wiz.id,
+				'context': self.env.context,
+					}
 		else:
 			self.preparaSolicitud()
 
