@@ -42,6 +42,15 @@ EXTENSIONS = {
     for mime, (ext, handler, req) in FILE_TYPE_DICT.items()
 }
 
+class ReturnPickInherit(TransientModel):
+    _inherit ='stock.return.picking'
+    almacen=fields.Many2one('stock.warehouse')
+    
+    @api.onchange('almacen')
+    def loc(self):
+        for record in self:
+            record['location_id']=record.almacen.lot_stock_id.id
+
 class StockPickingMassAction(TransientModel):
     _name = 'stock.picking.mass.action'
     _description = 'Stock Picking Mass Action'

@@ -1,5 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
+
+<record id="view_form_stock_return_inherit" model="ir.ui.view">
+    <field name="name">Stock Return Inherit</field>
+    <field name="model">stock.return.picking</field>
+    <field name="inherit_id" ref="stock.view_stock_return_picking_form"/>
+    <field name="arch" type="xml">
+          <xpath expr="//field[@name='location_id']" position="after">
+            <field name="almacen" string="Almacen"/></xpath>
+    </field>
+</record>
+
+
+
+
 <record id="view_clientes_reporte" model="ir.ui.view">
         <field name="model">clientes.reporte</field>
         <field name="arch" type="xml">
