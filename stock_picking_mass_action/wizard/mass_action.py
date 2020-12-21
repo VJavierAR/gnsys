@@ -1302,9 +1302,12 @@ class SerieIngreso(TransientModel):
     def confirmar(self):
         for mv in self.lineas:
             mv.write({'location_dest_id':self.almacen.lot_stock_id.id})
-            mv.move_line.write({'location_dest_id':self.almacen.lot_stock_id.id,'lot_id':mv.serie.id,'qty_done':mv.cantidad})
-        if(len(self.lineas.mapped('serie.id'))==len(self.lineas)):
-            self.picking.action_done()
+            if(mv.producto.categ_id.id!=13):
+                mv.move_line.write({'location_dest_id':self.almacen.lot_stock_id.id,'qty_done':mv.cantidad})
+            if(mv.producto.categ_id.id==13 and mv.serie_name!=False):
+                mv.move_line.write({'location_dest_id':self.almacen.lot_stock_id.id,'lot_name':mv.serie_name,'qty_done':mv.cantidad})
+        #if(len(self.lineas.mapped('serie_name'))!=[]):
+        self.picking.action_done()
         self.picking.purchase_id.write({'recibido':'recibido'})
         self.env['stock.picking'].search([['state','=','assigned']]).action_assign()
         return self.env.ref('stock.action_report_picking').report_action(self.picking)
@@ -1317,9 +1320,10 @@ class SerieIngresoLine(TransientModel):
     producto=fields.Many2one('product.product','Modelo')
     cantidad=fields.Float('Cantidad')
     serie=fields.Many2one('stock.production.lot')
+    serie_name=fields.Char()
     serie_rel=fields.Many2one('serie.ingreso')
     move_line=fields.Many2one('stock.move.line')
-
+    categoria=fields.Integer()
 
 class AddCompatibles(TransientModel):
     _name='add.compatible'
