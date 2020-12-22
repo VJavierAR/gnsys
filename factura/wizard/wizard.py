@@ -272,9 +272,9 @@ class TestReport(TransientModel):
             facturasH=0
             foliosH=''
             
-            
+            hoy=date.today()
             for fecha in dir:
-                dias=date.today()-fecha.date_invoice
+                dias=hoy-fecha.date_invoice
                 if int(dias.days)<31:
                     if str(fecha.partner_id.name)=='sin contacto':
                        if cuenta==fecha.x_studio_cliente:
