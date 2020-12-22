@@ -274,6 +274,7 @@ class TestReport(TransientModel):
             
             hoy=date.today()
             for fecha in dir:
+                _logger.info("self inicio id query"+str(fecha.partner_id.name))
                 dias=hoy-fecha.date_invoice
                 if int(dias.days)<31:
                     if str(fecha.partner_id.name)=='sin contacto':
