@@ -5719,9 +5719,9 @@ class helpdesk_update(models.Model):
         res = {}
         for record in self:
             if record.partner_id.id:
-                hijos = self.env['res.partner'].search([['parent_id', '=', record.partner_id.id]])
+                hijos = self.env['res.partner'].search([['parent_id', '=', record.partner_id.id], ['x_studio_cobranza_o_facturacin', '=', False] ])
                 hijosarr = hijos.mapped('id')
-                nietos = self.env['res.partner'].search([['parent_id', 'in', hijosarr],['type', '=', 'contact']]).mapped('id')
+                nietos = self.env['res.partner'].search([['parent_id', 'in', hijosarr],['type', '=', 'contact'], ['x_studio_cobranza_o_facturacin', '=', False]]).mapped('id')
                 hijosF = hijos.filtered(lambda x: x.type == 'contact').mapped('id')
                 final = nietos + hijosF
                 res['domain'] = {
