@@ -430,6 +430,14 @@ class StockCambio(TransientModel):
                     if(d.almacen.id):
                         d.move_id.write({'location_id':d.almacen.lot_stock_id.id})
             self.pick.action_assign()
+            if(cantidades):
+                for d in data:
+                    _logger.info(len(d.move_id.move_line_ids))
+                    #ssss=self.env['stock.move'].search([['sale_line_id','=',d.move_id.sale_line_id.id],['state','!=','done'],['picking_id','in',self.pick.sale_id.mapped('picking_ids.id')]])    
+                    #if(cantidades==True):    
+                    #    ssss.write({'product_id':d.producto2.id})
+                    self.env['stock.move.line'].search([['move_id','=',d.move_id.id]]).write({'qty_done':d.cantidad2})
+
 
     def valida(self,equipos):
         for s in equipos:
