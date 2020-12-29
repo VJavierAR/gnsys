@@ -436,7 +436,12 @@ class StockCambio(TransientModel):
                     #ssss=self.env['stock.move'].search([['sale_line_id','=',d.move_id.sale_line_id.id],['state','!=','done'],['picking_id','in',self.pick.sale_id.mapped('picking_ids.id')]])    
                     #if(cantidades==True):    
                     #    ssss.write({'product_id':d.producto2.id})
-                    self.env['stock.move.line'].search([['move_id','=',d.move_id.id]]).write({'qty_done':d.cantidad2})
+                    if(d.existeciaAlmacen):
+                        self.env['stock.move.line'].search([['move_id','=',d.move_id.id]]).write({'qty_done':0})
+                    if(d.cantidad2>d.cantidad):
+                        self.env['stock.move.line'].search([['move_id','=',d.move_id.id]]).write({'qty_done':d.cantidad})
+                    else:
+                        self.env['stock.move.line'].search([['move_id','=',d.move_id.id]]).write({'qty_done':d.cantidad2})
 
 
     def valida(self,equipos):
