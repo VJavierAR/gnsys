@@ -241,7 +241,7 @@ class TestReport(TransientModel):
             i=1+i
         
         
-        
+        """
         worksheet = workbook.add_worksheet('atrasados')
         content = ["Cliente","0 a 30 dias", "Folio 0 a 30 dias","31 a 45 dias ", "Folio 31 a 45 dias","46 a 60 ", "Folio 46 a 60","61 a 90","Folio 61 a 90"," mayor a 90","Folios mayores a 90"]
         bold = workbook.add_format({'bold': True})
@@ -324,11 +324,11 @@ class TestReport(TransientModel):
                 
             #facturas=0
             
-            """
-            worksheet.write(i, 0, str(fecha.date_invoice))
-            dias=date.today()-fecha.date_invoice
-            worksheet.write(i, 1, str(dias.days))
-            """            
+            
+            #worksheet.write(i, 0, str(fecha.date_invoice))
+            #dias=date.today()-fecha.date_invoice
+            #worksheet.write(i, 1, str(dias.days))
+            
             worksheet.write(i, 0, cuenta)
             worksheet.write(i, 1, str(facturasT))
             worksheet.write(i, 2, foliosT)
@@ -343,7 +343,7 @@ class TestReport(TransientModel):
             i=i+1
         
         
-        
+        """
         workbook.close()
         data = open('Example23.xlsx', 'rb').read()
         
