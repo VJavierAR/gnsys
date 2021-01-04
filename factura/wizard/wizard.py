@@ -85,12 +85,13 @@ class TestReport(TransientModel):
     
     def alv(self):
         workbook = xlsxwriter.Workbook('Example23.xlsx')
-        dir=self.serie=self.env['account.invoice'].search([('type','=','out_invoice'),('date_invoice','!=',False)],order='create_date desc') 
+        dir=self.serie=self.env['account.invoice'].search([('type','=','out_invoice'),('date_invoice','!=',False),('state','!=','draft')],order='create_date desc') 
         
         worksheet = workbook.add_worksheet('Reporte Facturacion')
         content = ["Serie", "Folio","Folio Fiscal Factura", "Documento Origen", "Folio Techra","RFC CLiente", "RFC Empresa","Razon Social", "Cliente", "Fecha Factura", "Importe sin impuesto","IVA","Total","Total adeudado","Estado","Periodo","NC´s","REP","Retencion","Folio Fiscal Pago","Banco","Cuenta ordenate","Cuenta beneficiaria","Estado del pago","Ejecutivo","Vendedor","referencia","Fecha de pago"]
         bold = workbook.add_format({'bold': True})
         neg = workbook.add_format({'border': 2})
+        format6 = workbook.add_format({'num_format': 'yyyy-mm-dd'})
         i=0
         for item in content :           
             worksheet.write(0, i, item,neg)            
@@ -120,17 +121,17 @@ class TestReport(TransientModel):
             else:
                worksheet.write(i, 8, str(f.partner_id.name))
             
-            worksheet.write(i, 9, str(f.date_invoice))
-            worksheet.write(i, 10, str(f.amount_untaxed))
-            worksheet.write(i, 11, str(f.amount_tax))
-            worksheet.write(i, 12, str(f.amount_total))
-            worksheet.write(i, 13, str(f.residual))
+            worksheet.write(i, 9, f.date_invoice,format6)
+            worksheet.write(i, 10, f.amount_untaxed)
+            worksheet.write(i, 11, f.amount_tax)
+            worksheet.write(i, 12, f.amount_total)
+            worksheet.write(i, 13, f.residual)
             estado=dict(f._fields['state']._description_selection(self.env)).get(f.state)
             worksheet.write(i, 14, estado)
             try:
                 periodo=str(f.x_studio_periodo)
                 if periodo!='False':
-                   worksheet.write(i, 15, periodo)
+                   worksheet.write(i, 15, periodo.replace(' de ','/').upper())
                 else:
                    if f.x_studio_field_EFIxP:
                         if  "-" in f.x_studio_field_EFIxP.x_studio_peridotmp  :
@@ -160,9 +161,9 @@ class TestReport(TransientModel):
                               mes="NOVIEMBRE"
                           if mes =='12':
                               mes="DICIEMBRE"
-                          periodo=mes +" DE "+comple
+                          periodo=mes +"/"+comple
                         else:      
-                          periodo=str(f.x_studio_field_EFIxP.x_studio_peridotmp) 
+                          periodo=str(f.x_studio_field_EFIxP.x_studio_peridotmp.replace(' de ','/').upper()) 
                    worksheet.write(i, 15,periodo )
             except:
                 worksheet.write(i, 15, 'Error logico 2') 
