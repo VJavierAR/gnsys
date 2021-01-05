@@ -129,44 +129,48 @@ class TestReport(TransientModel):
             estado=dict(f._fields['state']._description_selection(self.env)).get(f.state)
             worksheet.write(i, 14, estado)
             try:
-                periodo=str(f.x_studio_periodo)
-                if periodo!='False':
-                   worksheet.write(i, 15, periodo.replace(' de ','/').upper())
-                else:
-                   if f.x_studio_field_EFIxP:
-                        if  "-" in f.x_studio_field_EFIxP.x_studio_peridotmp  :
-                          mes=f.x_studio_field_EFIxP.x_studio_peridotmp.split("-")[1]
-                          comple=f.x_studio_field_EFIxP.x_studio_peridotmp.split("-")[0]
-                          if mes =='01':
-                              mes="ENERO"
-                          if mes =='02':
-                              mes="FEBRERO"
-                          if mes =='03':
-                              mes="MARZO"
-                          if mes =='04':
-                              mes="ABRIL"
-                          if mes =='05':
-                              mes="MAYO"
-                          if mes =='06':
-                              mes="JUNIO"
-                          if mes =='07':
-                              mes="JULIO"
-                          if mes =='08':
-                              mes="AGOSTO"
-                          if mes =='09':
-                              mes="SEPTIEMBRE"
-                          if mes =='10':
-                              mes="OCTUBRE"
-                          if mes =='11':
-                              mes="NOVIEMBRE"
-                          if mes =='12':
-                              mes="DICIEMBRE"
-                          periodo=mes +"/"+comple
-                        else:      
-                          periodo=str(f.x_studio_field_EFIxP.x_studio_peridotmp.replace(' de ','/').upper()) 
-                   worksheet.write(i, 15,periodo )
+                if f.x_studio_importacion=='lunes-19-10-2020' or f.x_studio_importacion=='lunes05' or f.x_studio_importacion=='viernes-30-10-2020' or f.x_studio_importacion=='lunes' or f.x_studio_importacion=='prueba' or f.x_studio_importacion=='martesGRupo':
+                   worksheet.write(i, 15, f.x_studio_periodo.replace(' de ','/').upper())
+                else:   
+                  periodo=str(f.x_studio_periodo)
+                  if periodo!='False':
+                     worksheet.write(i, 15, periodo.replace(' de ','/').upper())
+                  else:
+                     if f.x_studio_field_EFIxP:
+                          if  "-" in f.x_studio_field_EFIxP.x_studio_peridotmp  :
+                            mes=f.x_studio_field_EFIxP.x_studio_peridotmp.split("-")[1]
+                            comple=f.x_studio_field_EFIxP.x_studio_peridotmp.split("-")[0]
+                            if mes =='01':
+                                mes="ENERO"
+                            if mes =='02':
+                                mes="FEBRERO"
+                            if mes =='03':
+                                mes="MARZO"
+                            if mes =='04':
+                                mes="ABRIL"
+                            if mes =='05':
+                                mes="MAYO"
+                            if mes =='06':
+                                mes="JUNIO"
+                            if mes =='07':
+                                mes="JULIO"
+                            if mes =='08':
+                                mes="AGOSTO"
+                            if mes =='09':
+                                mes="SEPTIEMBRE"
+                            if mes =='10':
+                                mes="OCTUBRE"
+                            if mes =='11':
+                                mes="NOVIEMBRE"
+                            if mes =='12':
+                                mes="DICIEMBRE"
+                            periodo=mes +"/"+comple
+                          else:      
+                            periodo=str(f.x_studio_field_EFIxP.x_studio_peridotmp.replace(' de ','/').upper()) 
+                     worksheet.write(i, 15,periodo )
+
             except:
-                worksheet.write(i, 15, 'Error logico 2') 
+                worksheet.write(i, 15, f.x_studio_periodo_1) 
             if f.x_studio_ncs:
                worksheet.write(i, 16, str(f.x_studio_ncs))
             else:
