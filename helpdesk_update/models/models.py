@@ -4913,22 +4913,51 @@ class helpdesk_update(models.Model):
         """
         if self.x_studio_tipo_de_vale == 'Requerimiento' and self.x_studio_equipo_por_nmero_de_serie_1:
             equipoSinServicio = False
-            mensajeCuerpo = 'Se creo un ticket de un equipo sin servicio.\nLos equipos que no tienen servicio son:\n\n'
+            mensajeCuerpo = 'No se puede agregar un equipo sin servicio.\nLos equipos que no tienen servicio son:\n\n'
             for equipo in self.x_studio_equipo_por_nmero_de_serie_1:
                 if not equipo.serie.servicio:
                     mensajeCuerpo = mensajeCuerpo + 'Equipo: ' + str(equipo.serie.product_id.name) + ' Serie: ' + str(equipo.serie.name) + '\n'
                     equipoSinServicio = True
+                    self.x_studio_equipo_por_nmero_de_serie_1 = ''
             if equipoSinServicio:
                 mensajeTitulo = 'Alerta ticket sin servicio creado'
                 todasLasAlertas = todasLasAlertas + '\n\n' + mensajeCuerpo
 
         if self.x_studio_tipo_de_vale != 'Requerimiento' and self.x_studio_equipo_por_nmero_de_serie:
             equipoSinServicio = False
-            mensajeCuerpo = 'Se creo un ticket de un equipo sin servicio.\nLos equipos que no tienen servicio son:\n\n'
+            mensajeCuerpo = 'No se puede agregar un equipo sin servicio.\nLos equipos que no tienen servicio son:\n\n'
             for equipo in self.x_studio_equipo_por_nmero_de_serie:
                 if not equipo.servicio:
                     mensajeCuerpo = mensajeCuerpo + 'Equipo: ' + str(equipo.product_id.name) + ' Serie: ' + str(equipo.name) + '\n'
                     equipoSinServicio = True
+                    self.x_studio_equipo_por_nmero_de_serie = ''
+            if equipoSinServicio:
+                mensajeTitulo = 'Alerta ticket sin servicio creado'
+                todasLasAlertas = todasLasAlertas + '\n\n' + mensajeCuerpo
+
+        """
+            Verificando que los equipos no sean de venta directa
+        """
+        if self.x_studio_tipo_de_vale == 'Requerimiento' and self.x_studio_equipo_por_nmero_de_serie_1:
+            equipoSinServicio = False
+            mensajeCuerpo = 'No se puede agregar un equipo de venta directa.\nLos equipos en venta directa son:\n\n'
+            for equipo in self.x_studio_equipo_por_nmero_de_serie_1:
+                if equipo.serie.servicio.x_studio_venta:
+                    mensajeCuerpo = mensajeCuerpo + 'Equipo: ' + str(equipo.serie.product_id.name) + ' Serie: ' + str(equipo.serie.name) + '\n'
+                    equipoSinServicio = True
+                    self.x_studio_equipo_por_nmero_de_serie_1 = ''
+            if equipoSinServicio:
+                mensajeTitulo = 'Alerta ticket sin servicio creado'
+                todasLasAlertas = todasLasAlertas + '\n\n' + mensajeCuerpo
+
+        if self.x_studio_tipo_de_vale != 'Requerimiento' and self.x_studio_equipo_por_nmero_de_serie:
+            equipoSinServicio = False
+            mensajeCuerpo = 'No se puede agregar un equipo de venta directa.\nLos equipos en venta directa son:\n\n'
+            for equipo in self.x_studio_equipo_por_nmero_de_serie:
+                if equipo.x_studio_venta:
+                    mensajeCuerpo = mensajeCuerpo + 'Equipo: ' + str(equipo.product_id.name) + ' Serie: ' + str(equipo.name) + '\n'
+                    equipoSinServicio = True
+                    self.x_studio_equipo_por_nmero_de_serie = ''
             if equipoSinServicio:
                 mensajeTitulo = 'Alerta ticket sin servicio creado'
                 todasLasAlertas = todasLasAlertas + '\n\n' + mensajeCuerpo

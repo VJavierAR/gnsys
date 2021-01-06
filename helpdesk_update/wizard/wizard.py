@@ -1799,11 +1799,29 @@ class helpdesk_crearconserie(TransientModel):
                 
                 textoHtmlSinServico = []
                 noTieneServicio = False
-                mensajeCuerpo = '<br/><h1>Se creara un ticket de un equipo sin servicio.</h1><br/><h1>Los equipos que no tienen servicio son:</h1>'
+                mensajeCuerpo = 'No se puede crear un ticket de un equipo sin servicio.\nLos equipos que no tienen servicio son:\n'
+                
                 for equipo in self.serie:
                   if not equipo.servicio:
-                    mensajeCuerpo = mensajeCuerpo + '<br/><h3>Equipo: ' + str(equipo.product_id.name) + ' Serie: ' + str(equipo.name) + '<h3/>'
+                    mensajeCuerpo = mensajeCuerpo + '\nEquipo: ' + str(equipo.product_id.name) + ' Serie: ' + str(equipo.name) + ''
                     noTieneServicio = True
+                    self.serie = ''
+                    mensajeTitulo = "Alerta!!!"
+                    warning = {'title': _(mensajeTitulo)
+                            , 'message': _(mensajeCuerpo),
+                    }
+                    return {'warning': warning}
+
+                  if equipo.x_studio_venta:
+                    mensajeCuerpo = 'No se puede crear un ticket de un equipo de tipo venta directa.\nLos equipos en venta directa son:\n'
+                    mensajeCuerpo = mensajeCuerpo + '\nEquipo: ' + str(equipo.product_id.name) + ' Serie: ' + str(equipo.name) + ''
+                    noTieneServicio = True
+                    self.serie = ''
+                    mensajeTitulo = "Alerta!!!"
+                    warning = {'title': _(mensajeTitulo)
+                            , 'message': _(mensajeCuerpo),
+                    }
+                    return {'warning': warning}
                 
                 if noTieneServicio:
                   textoHtmlSinServico.append(mensajeCuerpo)
