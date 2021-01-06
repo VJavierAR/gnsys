@@ -1802,7 +1802,7 @@ class helpdesk_crearconserie(TransientModel):
                 mensajeCuerpo = 'No se puede crear un ticket de un equipo sin servicio.\nLos equipos que no tienen servicio son:\n'
                 
                 for equipo in self.serie:
-                  if not equipo.servicio:
+                  if not equipo.servicio and str(equipo.x_studio_ultma_ubicacin) != "GN SYS CORPORATIVO S.A. DE C.V., TALLER":
                     mensajeCuerpo = mensajeCuerpo + '\nEquipo: ' + str(equipo.product_id.name) + ' Serie: ' + str(equipo.name) + ''
                     noTieneServicio = True
                     self.serie = ''

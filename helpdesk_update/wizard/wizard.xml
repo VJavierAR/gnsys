@@ -775,13 +775,13 @@
                         </page>
                         <page string = 'Historico de componentes'>
                             <field name='historicoDeComponentes' options="{'no_create': True}" readonly="1" >
-                                <tree>
+                                <tree default_order='x_ultimaCargaRefacciones desc'>
                                     <field name="create_date" groups="studio_customization.solo_ve_administrado_cdc8f213-5aa2-4d44-bfab-99a7efd7f7ea"/>
                                     <field name="write_uid" groups="studio_customization.solo_ve_administrado_cdc8f213-5aa2-4d44-bfab-99a7efd7f7ea" attrs="{}"/>
                                     <field name="write_date" groups="studio_customization.solo_ve_administrado_cdc8f213-5aa2-4d44-bfab-99a7efd7f7ea"/>
                                     <field name="create_uid"/>
                                     <field name="x_studio_creado_por_script" string="Creado por script" groups="studio_customization.solo_ve_administrado_cdc8f213-5aa2-4d44-bfab-99a7efd7f7ea"/>
-                                    <field name="x_ultimaCargaRefacciones"/>
+                                    <field name="x_ultimaCargaRefacciones" />
                                     <field name="x_studio_field_MH4DO"/>
                                     <field name="x_tipo"/>
                                     <field name="x_studio_modelo"/>

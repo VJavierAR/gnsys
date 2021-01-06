@@ -4942,7 +4942,7 @@ class helpdesk_update(models.Model):
             equipoSinServicio = False
             mensajeCuerpo = 'No se puede agregar un equipo de venta directa.\nLos equipos en venta directa son:\n\n'
             for equipo in self.x_studio_equipo_por_nmero_de_serie_1:
-                if equipo.serie.x_studio_venta and not equipo.serie.servicio:
+                if equipo.serie.x_studio_venta:
                     mensajeCuerpo = mensajeCuerpo + 'Equipo: ' + str(equipo.serie.product_id.name) + ' Serie: ' + str(equipo.serie.name) + '\n'
                     equipoSinServicio = True
                     self.x_studio_equipo_por_nmero_de_serie_1 = ''
@@ -4954,7 +4954,7 @@ class helpdesk_update(models.Model):
             equipoSinServicio = False
             mensajeCuerpo = 'No se puede agregar un equipo de venta directa.\nLos equipos en venta directa son:\n\n'
             for equipo in self.x_studio_equipo_por_nmero_de_serie:
-                if equipo.x_studio_venta and not equipo.servicio:
+                if equipo.x_studio_venta:
                     mensajeCuerpo = mensajeCuerpo + 'Equipo: ' + str(equipo.product_id.name) + ' Serie: ' + str(equipo.name) + '\n'
                     equipoSinServicio = True
                     self.x_studio_equipo_por_nmero_de_serie = ''
