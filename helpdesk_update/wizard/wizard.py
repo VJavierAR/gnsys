@@ -1812,7 +1812,7 @@ class helpdesk_crearconserie(TransientModel):
                     }
                     return {'warning': warning}
 
-                  if equipo.x_studio_venta:
+                  if equipo.x_studio_venta and not equipo.servicio:
                     mensajeCuerpo = 'No se puede crear un ticket de un equipo de tipo venta directa.\nLos equipos en venta directa son:\n'
                     mensajeCuerpo = mensajeCuerpo + '\nEquipo: ' + str(equipo.product_id.name) + ' Serie: ' + str(equipo.name) + ''
                     noTieneServicio = True
