@@ -111,11 +111,20 @@ class TestReport(TransientModel):
                worksheet.write(i, 4, str(f.x_studio_folio_techra))
             else:
                 worksheet.write(i, 4, '')
-            worksheet.write(i, 5, str(f.partner_id.vat))
+            
             worksheet.write(i, 6, str(f.company_id.vat))
             
-            rz=dict(f.partner_id._fields['razonSocial'].selection).get(f.partner_id.razonSocial)
-            worksheet.write(i, 7, rz)
+            if f.x_studio_importacion=='lunes-19-10-2020' or f.x_studio_importacion=='lunes05' or f.x_studio_importacion=='viernes-30-10-2020' or f.x_studio_importacion=='lunes' or f.x_studio_importacion=='prueba' or f.x_studio_importacion=='martesGRupo':
+              worksheet.write(i, 7, f.x_studio_razn_social_del_emisor)
+              worksheet.write(i, 5, f.x_studio_rfc)
+            else:  
+              rz=dict(f.partner_id._fields['razonSocial'].selection).get(f.partner_id.razonSocial)
+              worksheet.write(i, 7, rz)
+              worksheet.write(i, 5, str(f.partner_id.vat))
+            
+            
+            
+            
             if str(f.partner_id.name)=='sin contacto':
                worksheet.write(i, 8, f.x_studio_cliente)
             else:
