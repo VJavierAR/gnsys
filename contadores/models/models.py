@@ -1302,7 +1302,7 @@ class contadores(models.Model):
         
     
 
-    
+    """
     @api.multi
     def carga_contadores(self):
         #ssc=self.env['contadores.contadores'].search([('cliente', '=', self.cliente.id),('mes', '=', self.mes),('anio', '=', self.anio),('id', '!=', self.id)],limit=1)        
@@ -1469,7 +1469,230 @@ class contadores(models.Model):
             
             
 
-
+    """
+    @api.multi
+    def carga_contadores(self):
+        #ssc=self.env['contadores.contadores'].search([('cliente', '=', self.cliente.id),('mes', '=', self.mes),('anio', '=', self.anio),('id', '!=', self.id)],limit=1)        
+        """
+        if ssc:
+           self.sudo().unlink()                   
+           url="https://gnsys-corp.odoo.com/web?#id="+str(ssc.id)+"&action=1129&model=contadores.contadores&view_type=form&menu_id=406"
+           
+           return {'name'     : 'Go to website',
+                  'res_model': 'ir.actions.act_url',
+                  'type'     : 'ir.actions.act_url',
+                  'target'   : 'new',
+                  'url'      : url
+               }      
+        """
+        
+        if self.anio and not self.csvD:
+            perido=str(self.anio)+'-'+str(self.mes)
+            periodoAnterior=''
+            mesA=''
+            anioA=''
+            i=0
+            for f in valores:                
+                if f[0]==str(self.mes):                
+                   mesaA=str(valores[i-1][0])
+                i=i+1
+            anios=get_years()
+            i=0
+            if str(self.mes)=='01':
+               anioA=str(int(self.anio)-1)
+            else:    
+               anioA=str(self.anio)              
+            periodoAnterior= anioA+'-'+mesaA   
+            
+            
+            asdc=self.env['contrato'].search([('cliente','=',self.cliente.id)]).ids
+            asds=self.env['servicios'].search([('contrato','in',asdc)]).ids
+            asd=self.env['stock.production.lot'].search([('servicio','in',asds)])
+            
+            #raise exceptions.ValidationError("Nada que generar "+str(asd))                                     
+            
+            #raise Warning('notihng to show xD '+str(self.cliente.name))
+            #id=int(self.id)            
+            sc=self.env['contadores.contadores'].search([('id', '=', self.id)])
+            sc.write({'name' : str(self.cliente.name)+' '+str(periodoAnterior)+' a '+str(perido)})
+            i=1
+            for a in asd:
+                currentP=self.env['dcas.dcas'].search([('serie','=',a.id),('x_studio_field_no6Rb', '=', perido)],order='x_studio_fecha desc',limit=1)
+                currentPA=self.env['dcas.dcas'].search([('serie','=',a.id),('x_studio_field_no6Rb', '=', periodoAnterior)],order='x_studio_fecha desc',limit=1)
+                #raise exceptions.ValidationError("q onda xd"+str(self.id)+' id  '+str(id))                     
+                if not currentP:
+                   if a.servicio.id:
+                      rrs=self.env['dcas.dcas'].create({'contador_id': self.id
+                                                       , 'x_studio_producto': a.id
+                                                       , 'serie': a.id
+                                                       , 'x_studio_locacin':a.x_studio_locacion_recortada
+                                                       , 'x_studio_ubicacin':a.x_studio_centro_de_costos
+                                                       #, 'x_studio_periodo':str(self.anio)+ '-'+str(valores[int(self.mes)-1][1])                                                              
+                                                       , 'x_studio_fecha_texto_anio':str(valores[int(self.mes)-1][1])+' de '+ str(self.anio)
+                                                       ,'x_studio_field_no6Rb':str(self.anio)+'-'+str(self.mes)
+                                                       , 'contadorMono': currentP.contadorMono
+                                                       , 'x_studio_lectura_anterior_bn': currentPA.contadorMono
+                                                       #, 'paginasProcesadasBN': bnp                                                   
+                                                       , 'x_studio_periodo_anterior':str(valores[int(mesaA)-1][1])            + ' de '+ str(anioA)
+                                                       , 'contadorColor': currentP.contadorColor
+                                                       , 'x_studio_lectura_anterior_color': currentPA.contadorColor                                                             
+                                                       #, 'paginasProcesadasColor': colorp
+                                                       , 'x_studio_color_o_bn':a.x_studio_color_bn
+                                                       , 'x_studio_indice': i
+                                                       , 'x_studio_modelo':a.product_id.name
+                                                       , 'x_studio_servicio':a.servicio.id
+                                                       , 'x_studio_cliente':self.cliente.name 
+                                                       })
+                
+                else:
+                   if a.servicio.id :
+                      currentP.write({'contador_id': self.id
+                                                       , 'x_studio_producto': a.id
+                                                       , 'serie': a.id
+                                                       , 'x_studio_locacin':a.x_studio_locacion_recortada
+                                                       , 'x_studio_ubicacin':a.x_studio_centro_de_costos
+                                                       , 'x_studio_fecha_texto_anio':str(valores[int(self.mes)-1][1])+' de '+ str(self.anio)
+                                                       , 'x_studio_field_no6Rb':str(self.anio)+'-'+str(self.mes)
+                                                       #, 'x_studio_periodo':str(self.anio)+ '-'+str(valores[int(self.mes)-1][1])                                                              
+                                                       , 'contadorMono': currentP.contadorMono
+                                                       , 'x_studio_lectura_anterior_bn': currentPA.contadorMono
+                                                       #, 'paginasProcesadasBN': bnp                                                   
+                                                       , 'x_studio_periodo_anterior':str(valores[int(mesaA)-1][1])+ ' de '+   str(anioA)          
+                                                       , 'contadorColor': currentP.contadorColor
+                                                       , 'x_studio_lectura_anterior_color': currentPA.contadorColor                                                             
+                                                       #, 'paginasProcesadasColor': colorp
+                                                       , 'x_studio_color_o_bn':a.x_studio_color_bn
+                                                       , 'x_studio_indice': i
+                                                       , 'x_studio_modelo':a.product_id.name
+                                                       , 'x_studio_servicio':a.servicio.id
+                                                        , 'x_studio_descripcion': 'capturado'
+                                                       , 'x_studio_capturar':True
+                                                       #,'id' : currentP.id
+                                                       })
+                
+                i=1+i
+            retiros=self.env['sale.order'].search([('partner_id','=',self.cliente.id),('x_studio_tipo_de_solicitud', '=', 'Retiro'),('x_studio_cobrar_finiquito','=','True')])
+            
+            for re in retiros:
+                #raise exceptions.ValidationError("faltan usocfdi para crear factura ")
+                currentP=self.env['dcas.dcas'].search([('serie','=',re.serieRetiro2.id),('x_studio_field_no6Rb', '=', perido)],order='x_studio_fecha desc',limit=1)
+                currentPA=self.env['dcas.dcas'].search([('serie','=',re.serieRetiro2.id),('x_studio_field_no6Rb', '=', periodoAnterior)],order='x_studio_fecha desc',limit=1)
+                if not currentP:
+                   #raise exceptions.ValidationError("faltan usocfdi para crear factura si")
+                   if re.x_studio_field_69Boh.id:
+                      rrs=self.env['dcas.dcas'].create({'contador_id': self.id
+                                                       , 'x_studio_producto': re.serieRetiro2.id
+                                                       , 'serie': re.serieRetiro2.id
+                                                       , 'x_studio_locacin':re.partner_shipping_id.name
+                                                       , 'x_studio_ubicacin':re.serieRetiro2.x_studio_centro_de_costos
+                                                       #, 'x_studio_periodo':str(self.anio)+ '-'+str(valores[int(self.mes)-1][1])                                                              
+                                                       , 'x_studio_fecha_texto_anio':str(valores[int(self.mes)-1][1])+' de '+ str(self.anio)
+                                                       ,'x_studio_field_no6Rb':str(self.anio)+'-'+str(self.mes)
+                                                       , 'contadorMono': currentP.contadorMono
+                                                       , 'x_studio_lectura_anterior_bn': currentPA.contadorMono
+                                                       #, 'paginasProcesadasBN': bnp                                                   
+                                                       , 'x_studio_periodo_anterior':str(valores[int(mesaA)-1][1])            + ' de '+ str(anioA)
+                                                       , 'contadorColor': currentP.contadorColor
+                                                       , 'x_studio_lectura_anterior_color': currentPA.contadorColor                                                             
+                                                       #, 'paginasProcesadasColor': colorp
+                                                       , 'x_studio_color_o_bn':re.serieRetiro2.x_studio_color_bn
+                                                       #, 'x_studio_indice': i
+                                                       , 'x_studio_descripcion': 'Finiquito'
+                                                       , 'x_studio_modelo':re.serieRetiro2.product_id.name
+                                                       , 'x_studio_servicio':re.x_studio_field_69Boh.id
+                                                       , 'x_studio_cliente':self.cliente.name  
+                                                       })
+                
+                else:
+                    if re.x_studio_field_69Boh.id :
+                        #raise exceptions.ValidationError("faltan usocfdi para crear factura no")
+                        currentP.write({'contador_id': self.id
+                                                       , 'x_studio_producto': re.serieRetiro2.id
+                                                       , 'serie': re.serieRetiro2.id
+                                                       , 'x_studio_locacin':re.partner_shipping_id.name
+                                                       , 'x_studio_ubicacin':re.serieRetiro2.x_studio_centro_de_costos
+                                                       , 'x_studio_fecha_texto_anio':str(valores[int(self.mes)-1][1])+' de '+ str(self.anio)
+                                                       , 'x_studio_field_no6Rb':str(self.anio)+'-'+str(self.mes)
+                                                       #, 'x_studio_periodo':str(self.anio)+ '-'+str(valores[int(self.mes)-1][1])                                                              
+                                                       , 'contadorMono': currentP.contadorMono
+                                                       , 'x_studio_lectura_anterior_bn': currentPA.contadorMono
+                                                       #, 'paginasProcesadasBN': bnp                                                   
+                                                       , 'x_studio_periodo_anterior':str(valores[int(mesaA)-1][1])+ ' de '+   str(anioA)          
+                                                       , 'contadorColor': currentP.contadorColor
+                                                       , 'x_studio_lectura_anterior_color': currentPA.contadorColor                                                             
+                                                       #, 'paginasProcesadasColor': colorp
+                                                       , 'x_studio_color_o_bn':re.serieRetiro2.x_studio_color_bn
+                                                       , 'x_studio_indice': i
+                                                       , 'x_studio_modelo':re.serieRetiro2.product_id.name
+                                                       , 'x_studio_servicio':re.x_studio_field_69Boh.id
+                                                       , 'x_studio_descripcion': 'capturado Finiquito'
+                                                       , 'x_studio_capturar':True                                                                                               
+                                                       })
+                    
+        if self.csvD:           
+           with open("a1.csv","w") as f:
+                f.write(base64.b64decode(self.csvD).decode("utf-8"))
+           f.close()    
+           file = open("a1.csv", "r")
+           re = csv.reader(file)
+           lista=list(re)
+           j=0
+           abuscar=[]
+           sc=self.env['contadores.contadores'].search([('id', '=', self.id)])
+           sc.write({'name' : "Carga por dca "})  
+           for row in lista:                                            
+               if j>0 :                                      
+                   abuscar.append(row[3])
+               j=j+1
+           a=self.env['stock.production.lot'].search([('name','in',abuscar)])
+           series=[]
+           for t in a:                              
+                for row in lista:
+                    if t.name==row[3]:
+                        #date = row[1]
+                        #fecha = date.split('-')[0].split('/')
+                        mes=(self.mes)
+                        anio=str(self.anio)
+                        i=0
+                        for f in valores:                
+                            if f[0]==str(mes):                
+                               mesaA=str(valores[i-1][0])
+                            i=i+1
+                        anios=get_years()
+                        i=0                  
+                        if str(mes)=='01':
+                           anioA=str(int(anio)-1)
+                        else:    
+                           anioA=str(anio)                    
+                        periodoAnterior= anioA+'-'+mesaA
+                        i=0
+                        for f in valores:                
+                            if f[0]==str(mes):                
+                               mesaC=str(valores[i][0])
+                            i=i+1                  
+                        periodo= anio+'-'+mesaC                        
+                        if row[7]=='':
+                          bn=0
+                        else:
+                          bn=int(row[7])
+                        if row[8]=='':
+                          cc=0                    
+                        else:
+                          cc=int(row[8])                        
+                        series.append({'serie': t.id
+                                                 ,'contadorColor':cc
+                                                 ,'contadorMono':bn
+                                                 ,'fuente':'dcas.dcas'
+                                                 ,'x_studio_field_no6Rb':periodo
+                                                 ,'x_studio_fecha_texto_anio':str(valores[int(self.mes[1])-1][1])+' de '+str(self.anio)
+                                                 ,'x_studio_descripcion':'cvs'
+                                                 ,'x_studio_cliente':str(row[0])
+                                                })                            
+           self.env['dcas.dcas'].create(series)      
+                            
+        
+        
+        
     #@api.onchange('archivo')
     def onchange_archiv(self):
         f=open('1.txt','w')
