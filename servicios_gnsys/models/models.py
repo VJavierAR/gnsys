@@ -185,6 +185,12 @@ class contratos(models.Model):
     idal = fields.Binary(string="id apoderado legal")
     penalizaciones = fields.One2many('penalizaciones','contrato',string="Penalizaciones")
 
+    dividirLocalidades = fields.Boolean(string="Dividir Localidades", default=False)
+    dividirServicios = fields.Boolean(string="Dividir Servicios", default=False)
+    dividirExcedentes = fields.Boolean(string="Dividir Excedentes", default=False)
+    mostrarUbicaciones = fields.Boolean(string="Mostrar Ubicaciones", default=False)
+    
+    
     
     cliente = fields.Many2one('res.partner', string='Cliente')
     idtmpp = fields.Char(string="idTMPp")
