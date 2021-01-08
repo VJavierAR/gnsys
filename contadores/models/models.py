@@ -549,7 +549,182 @@ class contadores(models.Model):
                                  
             self.prefacturas=prefacturas    
     
+    @api.multi
+    def carga_contadores_fac_invo(self):
+        if self.x_studio_estado_capturas=='Listo':
+            prefacturas=''
+            id=0
+            for rs in self.x_studio_contratos:
+                rz=str(self.cliente.razonSocial)
+                dias=rs.diasCredito
+                metodoPago=rs.metodPago
+                formaPago=rs.formaDePago
+                uso=rs.usoCFDI
+                plazo=0
+                usoF=''
+                diario=0                                
+                mes=dict(self._fields['mes'].selection).get(self.mes)
+                anio=self.anio                                                                
+                if uso:
+                  usoF=dict(rs._fields['usoCFDI'].selection).get(uso).split(' ')[0]  
                 
+                
+                if rz=='0':                  
+                  id=3
+                  diario=33
+                if rz=='1':                  
+                  id=1    
+                  diario=1
+                if rz=='2':                  
+                  id=4     
+                  diario=53 
+                if rz=='3':                    
+                  id=2
+                  diario=43
+                
+                if dias==30:
+                  plazo=8 
+                if dias==45:
+                  plazo=10
+                if dias==60:
+                  plazo=11
+                if dias==90:
+                  plazo=12
+                
+                
+                if rs.x_studio_cobrar_contrato :
+
+                    if metodoPago==6 and dias <30:
+                      raise exceptions.ValidationError("faltan método de pago incorrecto o días de crédico incorrecto")
+                    if metodoPago==5:
+                        plazo=1
+
+                    if not metodoPago:
+                      raise exceptions.ValidationError("faltan método de pago."+metodoPago)
+
+
+                    if not self.cliente.vat or not len(str(self.cliente.vat))>11:
+                      raise exceptions.ValidationError("falta rfc para crear factura valor :"+str(fact.partner_id.vat))
+
+                    if not uso:
+                      raise exceptions.ValidationError("faltan usocfdi para crear factura "+str(uso))
+
+                    if not formaPago :
+                      raise exceptions.ValidationError("faltan forma de pago para crear factura ."+str(formaPago))                    
+                    
+                    prefacturas=''
+                    a=self.env['account.invoice'].create({'x_studio_captura':self.id,'partner_id':self.cliente.id,'month':self.mes,'year':self.anio,'x_studio_periodo_1':mes +' de '+str(anio) ,'company_id':id,'l10n_mx_edi_payment_method_id':formaPago,'payment_term_id':plazo,'l10n_mx_edi_usage':usoF,'journal_id':diario})
+                    self.env.cr.execute("insert into x_account_invoice_contrato_rel (account_invoice_id, contrato_id) values (" +str(a.id) + ", " +  str(rs.id) + ");")                        
+                    #https://gnsys-corp-stam-1742347.dev.odoo.com/web#id=str(a.id)&action=325&active_id=1&model=account.invoice&view_type=form&menu_id=370
+                    prefacturas="<a href='https://gnsys-corp-stam-1742347.dev.odoo.com/web#id="+str(a.id)+"&action=325&active_id=1&model=account.invoice&view_type=form&menu_id=370' target='_blank'>"+str(a.id)+"</a>"+' '+prefacturas                
+                    ss=self.env['servicios'].search([('contrato', '=',rs.id)])                    
+                    for sg in ss:                                        
+                        if sg.nombreAnte=='SERVICIO DE PCOUNTER' or sg.nombreAnte=='SERVICIO DE PCOUNTER1' or sg.nombreAnte=='ADMINISTRACION DE DOCUMENTOS CON PCOUNTER' or sg.nombreAnte=='SERVICIO DE MANTENIMIENTO DE PCOUNTER' or sg.nombreAnte=='SERVICIO DE MANTENIMIENTO PCOUNTER' or sg.nombreAnte=='RENTA DE LICENCIAMIENTO PCOUNTER':           
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
+                        if sg.nombreAnte=='SERVICIO DE TFS' or sg.nombreAnte=='OPERADOR TFS' or sg.nombreAnte=='TFS' or sg.nombreAnte=='SERVICIO DE TFS ' :                        
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
+                        if sg.nombreAnte=='SERVICIO DE MANTENIMIENTO':                        
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
+                        if sg.nombreAnte=='SOPORTE Y MANTENIMIENTO DE EQUIPOS':
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
+                        if sg.nombreAnte=='SERVICIO DE ADMINISTRADOR KM NET MANAGER':                        
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
+                        if sg.nombreAnte=='PAGINAS IMPRESAS EN BN':                        
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
+                        if sg.nombreAnte=='PAPEL 350,000 HOJAS':                        
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
+                        if sg.nombreAnte=='LECTORES DE PROXIMIDAD':                        
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")        
+                        if sg.nombreAnte=='RENTA MENSUAL DE LICENCIA  7 EMBEDED' or sg.nombreAnte=='RENTA MENSUAL DE LICENCIA  14 EMBEDED' or  sg.nombreAnte=='RENTA MENSUAL DE LICENCIA  2 EMBEDED':
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")        
+                    a.llamado_boton_factu()
+                
+                if rs.x_studio_cobrar_contrato and (rs.dividirServicios or rs.dividirLocalidades or rs.dividirExcedentes):
+                    _logger.info('tiempo 11 : paso')
+                    a.llamado_boton_factu()
+                    _logger.info('tiempo 11 : no paso')
+                    
+                    
+                    """
+                    #raise exceptions.ValidationError("Aquie entro  ." )               
+                    ss=self.env['servicios'].search([('contrato', '=',rs.id)])
+                    
+                    for sg in ss:                                        
+                        if sg.nombreAnte=='SERVICIO DE PCOUNTER' or sg.nombreAnte=='SERVICIO DE PCOUNTER1' or sg.nombreAnte=='ADMINISTRACION DE DOCUMENTOS CON PCOUNTER' or sg.nombreAnte=='SERVICIO DE MANTENIMIENTO DE PCOUNTER' or sg.nombreAnte=='SERVICIO DE MANTENIMIENTO PCOUNTER' or sg.nombreAnte=='RENTA DE LICENCIAMIENTO PCOUNTER':           
+                            a=self.env['account.invoice'].create({'x_studio_captura':self.id,'partner_id':self.cliente.id,'month':self.mes,'year':self.anio,'x_studio_periodo_1':mes +' de '+str(anio) ,'company_id':id,'l10n_mx_edi_payment_method_id':formaPago,'payment_term_id':plazo,'l10n_mx_edi_usage':usoF,'journal_id':diario})
+                            self.env.cr.execute("insert into x_account_invoice_contrato_rel (account_invoice_id, contrato_id) values (" +str(a.id) + ", " +  str(rs.id) + ");")                        
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
+                        if sg.nombreAnte=='SERVICIO DE TFS' or sg.nombreAnte=='OPERADOR TFS' or sg.nombreAnte=='TFS' or sg.nombreAnte=='SERVICIO DE TFS ' :                        
+                            a=self.env['account.invoice'].create({'x_studio_captura':self.id,'partner_id':self.cliente.id,'month':self.mes,'year':self.anio,'x_studio_periodo_1':mes +' de '+str(anio) ,'company_id':id,'l10n_mx_edi_payment_method_id':formaPago,'payment_term_id':plazo,'l10n_mx_edi_usage':usoF,'journal_id':diario})
+                            self.env.cr.execute("insert into x_account_invoice_contrato_rel (account_invoice_id, contrato_id) values (" +str(a.id) + ", " +  str(rs.id) + ");")                        
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")
+                            
+                        if sg.nombreAnte=='SERVICIO DE MANTENIMIENTO':                        
+                            a=self.env['account.invoice'].create({'x_studio_captura':self.id,'partner_id':self.cliente.id,'month':self.mes,'year':self.anio,'x_studio_periodo_1':mes +' de '+str(anio) ,'company_id':id,'l10n_mx_edi_payment_method_id':formaPago,'payment_term_id':plazo,'l10n_mx_edi_usage':usoF,'journal_id':diario})
+                            self.env.cr.execute("insert into x_account_invoice_contrato_rel (account_invoice_id, contrato_id) values (" +str(a.id) + ", " +  str(rs.id) + ");")                        
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
+                            
+                        if sg.nombreAnte=='SOPORTE Y MANTENIMIENTO DE EQUIPOS':
+                            a=self.env['account.invoice'].create({'x_studio_captura':self.id,'partner_id':self.cliente.id,'month':self.mes,'year':self.anio,'x_studio_periodo_1':mes +' de '+str(anio) ,'company_id':id,'l10n_mx_edi_payment_method_id':formaPago,'payment_term_id':plazo,'l10n_mx_edi_usage':usoF,'journal_id':diario})
+                            self.env.cr.execute("insert into x_account_invoice_contrato_rel (account_invoice_id, contrato_id) values (" +str(a.id) + ", " +  str(rs.id) + ");")                        
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
+                        if sg.nombreAnte=='SERVICIO DE ADMINISTRADOR KM NET MANAGER':                        
+                            a=self.env['account.invoice'].create({'x_studio_captura':self.id,'partner_id':self.cliente.id,'month':self.mes,'year':self.anio,'x_studio_periodo_1':mes +' de '+str(anio) ,'company_id':id,'l10n_mx_edi_payment_method_id':formaPago,'payment_term_id':plazo,'l10n_mx_edi_usage':usoF,'journal_id':diario})
+                            self.env.cr.execute("insert into x_account_invoice_contrato_rel (account_invoice_id, contrato_id) values (" +str(a.id) + ", " +  str(rs.id) + ");")                    
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
+                        if sg.nombreAnte=='PAGINAS IMPRESAS EN BN':                        
+                            a=self.env['account.invoice'].create({'x_studio_captura':self.id,'partner_id':self.cliente.id,'month':self.mes,'year':self.anio,'x_studio_periodo_1':mes +' de '+str(anio) ,'company_id':id,'l10n_mx_edi_payment_method_id':formaPago,'payment_term_id':plazo,'l10n_mx_edi_usage':usoF,'journal_id':diario})
+                            self.env.cr.execute("insert into x_account_invoice_contrato_rel (account_invoice_id, contrato_id) values (" +str(a.id) + ", " +  str(rs.id) + ");")                        
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
+                        if sg.nombreAnte=='PAPEL 350,000 HOJAS':                        
+                            a=self.env['account.invoice'].create({'x_studio_captura':self.id,'partner_id':self.cliente.id,'month':self.mes,'year':self.anio,'x_studio_periodo_1':mes +' de '+str(anio) ,'company_id':id,'l10n_mx_edi_payment_method_id':formaPago,'payment_term_id':plazo,'l10n_mx_edi_usage':usoF,'journal_id':diario})
+                            self.env.cr.execute("insert into x_account_invoice_contrato_rel (account_invoice_id, contrato_id) values (" +str(a.id) + ", " +  str(rs.id) + ");")                        
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
+                        if sg.nombreAnte=='LECTORES DE PROXIMIDAD':                        
+                            a=self.env['account.invoice'].create({'x_studio_captura':self.id,'partner_id':self.cliente.id,'month':self.mes,'year':self.anio,'x_studio_periodo_1':mes +' de '+str(anio) ,'company_id':id,'l10n_mx_edi_payment_method_id':formaPago,'payment_term_id':plazo,'l10n_mx_edi_usage':usoF,'journal_id':diario})
+                            self.env.cr.execute("insert into x_account_invoice_contrato_rel (account_invoice_id, contrato_id) values (" +str(a.id) + ", " +  str(rs.id) + ");")                        
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")        
+                        if sg.nombreAnte=='RENTA MENSUAL DE LICENCIA  7 EMBEDED' or sg.nombreAnte=='RENTA MENSUAL DE LICENCIA  14 EMBEDED' or  sg.nombreAnte=='RENTA MENSUAL DE LICENCIA  2 EMBEDED':  
+                            a=self.env['account.invoice'].create({'x_studio_captura':self.id,'partner_id':self.cliente.id,'month':self.mes,'year':self.anio,'x_studio_periodo_1':mes +' de '+str(anio) ,'company_id':id,'l10n_mx_edi_payment_method_id':formaPago,'payment_term_id':plazo,'l10n_mx_edi_usage':usoF,'journal_id':diario})
+                            self.env.cr.execute("insert into x_account_invoice_contrato_rel (account_invoice_id, contrato_id) values (" +str(a.id) + ", " +  str(rs.id) + ");")                        
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
+                        if sg.nombreAnte=='Costo por página procesada BN o color':  #desde aqui
+                            a=self.env['account.invoice'].create({'x_studio_captura':self.id,'partner_id':self.cliente.id,'month':self.mes,'year':self.anio,'x_studio_periodo_1':mes +' de '+str(anio) ,'company_id':id,'l10n_mx_edi_payment_method_id':formaPago,'payment_term_id':plazo,'l10n_mx_edi_usage':usoF,'journal_id':diario})
+                            self.env.cr.execute("insert into x_account_invoice_contrato_rel (account_invoice_id, contrato_id) values (" +str(a.id) + ", " +  str(rs.id) + ");")                        
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
+                        if sg.nombreAnte=='Renta base + costo de página procesada BN o color':  
+                            a=self.env['account.invoice'].create({'x_studio_captura':self.id,'partner_id':self.cliente.id,'month':self.mes,'year':self.anio,'x_studio_periodo_1':mes +' de '+str(anio) ,'company_id':id,'l10n_mx_edi_payment_method_id':formaPago,'payment_term_id':plazo,'l10n_mx_edi_usage':usoF,'journal_id':diario})
+                            self.env.cr.execute("insert into x_account_invoice_contrato_rel (account_invoice_id, contrato_id) values (" +str(a.id) + ", " +  str(rs.id) + ");")                        
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
+                        if sg.nombreAnte=='Renta base con ML incluidas BN o color + ML. excedentes' or sg.nombreAnte=='Renta base con páginas incluidas BN o color + pag. excedentes':  
+                            #raise exceptions.ValidationError("Aquie entro  ." +str(ss) )               
+                            a=self.env['account.invoice'].create({'x_studio_captura':self.id,'partner_id':self.cliente.id,'month':self.mes,'year':self.anio,'x_studio_periodo_1':mes +' de '+str(anio) ,'company_id':id,'l10n_mx_edi_payment_method_id':formaPago,'payment_term_id':plazo,'l10n_mx_edi_usage':usoF,'journal_id':diario})
+                            self.env.cr.execute("insert into x_account_invoice_contrato_rel (account_invoice_id, contrato_id) values (" +str(a.id) + ", " +  str(rs.id) + ");")                        
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
+                        if sg.nombreAnte=='Renta global con páginas incluidas BN o color + pag. Excedentes':  
+                            a=self.env['account.invoice'].create({'x_studio_captura':self.id,'partner_id':self.cliente.id,'month':self.mes,'year':self.anio,'x_studio_periodo_1':mes +' de '+str(anio) ,'company_id':id,'l10n_mx_edi_payment_method_id':formaPago,'payment_term_id':plazo,'l10n_mx_edi_usage':usoF,'journal_id':diario})
+                            self.env.cr.execute("insert into x_account_invoice_contrato_rel (account_invoice_id, contrato_id) values (" +str(a.id) + ", " +  str(rs.id) + ");")                        
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")        
+                        if sg.nombreAnte=='Renta global + costo de página procesada BN o color':  
+                            a=self.env['account.invoice'].create({'x_studio_captura':self.id,'partner_id':self.cliente.id,'month':self.mes,'year':self.anio,'x_studio_periodo_1':mes +' de '+str(anio) ,'company_id':id,'l10n_mx_edi_payment_method_id':formaPago,'payment_term_id':plazo,'l10n_mx_edi_usage':usoF,'journal_id':diario})
+                            self.env.cr.execute("insert into x_account_invoice_contrato_rel (account_invoice_id, contrato_id) values (" +str(a.id) + ", " +  str(rs.id) + ");")                        
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")            
+                    """#a.llamado_boton_factu()         
+                
+                    
+                    
+                    
+                    #raise exceptions.ValidationError("vamos a dividir xD")                    
+                    
+                    
+            
+            
+            
+            
+            
+            #self.env['sale.order'].llamado_boton()
+            self.prefacturas=prefacturas         
+            
     
     @api.multi
     def genera_excel(self):
