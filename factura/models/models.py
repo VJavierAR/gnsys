@@ -28,7 +28,7 @@ class factura(models.Model):
       year = fields.Selection(get_years(), string='Año',default=2020)
       #detalle =  fields.One2many('sale.order.detalle', 'account.Invoice', string='Detalle')
       zeros =  fields.One2many('zeros.lineas', 'accountInv', string='Zeros')
-      """
+      
       @api.multi
       def llamado_boton_factu(self):
         #raise exceptions.ValidationError( "no se puede dividir más solo tiene un servicio"+self.partner_id.name)    
@@ -533,7 +533,7 @@ class factura(models.Model):
     
     
       
-      """
+      
       
       def report_download(self):
         res = super(ReportController, self).report_download()       
