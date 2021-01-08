@@ -6,6 +6,7 @@ import logging, ast
 import sys
 import datetime
 import pytz
+_logger = logging.getLogger(__name__)
 """
 from odoo import http
 from odoo.addons.web.controllers.main import ReportController  # Import the class
