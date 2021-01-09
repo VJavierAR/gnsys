@@ -135,6 +135,10 @@ class TestReport(TransientModel):
             worksheet.write(i, 11, f.amount_tax)
             worksheet.write(i, 12, f.amount_total)
             worksheet.write(i, 13, f.residual)
+            
+            
+            
+            
             estado=dict(f._fields['state']._description_selection(self.env)).get(f.state)
             worksheet.write(i, 14, estado)
             try:
@@ -229,10 +233,15 @@ class TestReport(TransientModel):
             
             worksheet.write(i, 22, cuentaB)
             
-            if str(f.partner_id.name)=='sin contacto':
+            if f.x_studio_importacion=='lunes-19-10-2020' or f.x_studio_importacion=='lunes05' or f.x_studio_importacion=='viernes-30-10-2020' or f.x_studio_importacion=='lunes' or f.x_studio_importacion=='prueba' or f.x_studio_importacion=='martesGRupo':
                worksheet.write(i, 23, f.x_studio_folio_fiscal_pago_techra)
             else:
-               worksheet.write(i, 23, estopago)
+               if f.state=='paid': 
+                  worksheet.write(i, 23, pago)
+               if f.statr=='cancel':
+                  worksheet.write(i, 23, 'Cancelado')                   
+                
+                
             worksheet.write(i, 24, f.partner_id.x_studio_ejecutivo.name)
             worksheet.write(i, 25, f.partner_id.x_studio_vendedor.name)
             
