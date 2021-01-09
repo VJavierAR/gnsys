@@ -220,10 +220,10 @@ class TestReport(TransientModel):
                 if p.communication:
                    referencia+=str(p.communication)+'   '+referencia
                 
-            if str(f.partner_id.name)=='sin contacto':
-                worksheet.write(i, 8, f.x_studio_cliente)
-            else:
-                worksheet.write(i, 19, pago)
+            #if str(f.partner_id.name)=='sin contacto':
+            #    worksheet.write(i, 8, f.x_studio_cliente)
+            #else:
+            #    worksheet.write(i, 19, pago)
             if str(f.partner_id.name)=='sin contacto':
                worksheet.write(i, 20, f.x_studio_banco)
             else:
@@ -233,7 +233,7 @@ class TestReport(TransientModel):
             
             worksheet.write(i, 22, cuentaB)
             
-            if f.x_studio_importacion=='lunes-19-10-2020' or f.x_studio_importacion=='lunes05' or f.x_studio_importacion=='viernes-30-10-2020' or f.x_studio_importacion=='lunes' or f.x_studio_importacion=='prueba' or f.x_studio_importacion=='martesGRupo':
+            if (f.x_studio_importacion=='lunes-19-10-2020' or f.x_studio_importacion=='lunes05' or f.x_studio_importacion=='viernes-30-10-2020' or f.x_studio_importacion=='lunes' or f.x_studio_importacion=='prueba' or f.x_studio_importacion=='martesGRupo') and f.state=='open':
                worksheet.write(i, 23, f.x_studio_folio_fiscal_pago_techra)
             else:
                if f.state=='paid': 
