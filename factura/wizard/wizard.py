@@ -240,6 +240,8 @@ class TestReport(TransientModel):
                   worksheet.write(i, 23, pago)
                if f.state=='cancel':
                   worksheet.write(i, 23, 'Cancelado')                   
+               if f.state=='open':
+                  worksheet.write(i, 23, estado)                        
                 
                 
             worksheet.write(i, 24, f.partner_id.x_studio_ejecutivo.name)
