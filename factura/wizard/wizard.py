@@ -140,9 +140,9 @@ class TestReport(TransientModel):
             
             
             estado=dict(f._fields['state']._description_selection(self.env)).get(f.state)
-            worksheet.write(i, 14, estado)
+            #worksheet.write(i, 14, estado)
             try:
-                if f.x_studio_importacion=='lunes-19-10-2020' or f.x_studio_importacion=='lunes05' or f.x_studio_importacion=='viernes-30-10-2020' or f.x_studio_importacion=='lunes' or f.x_studio_importacion=='prueba' or f.x_studio_importacion=='martesGRupo':
+                if (f.x_studio_importacion=='lunes-19-10-2020' or f.x_studio_importacion=='lunes05' or f.x_studio_importacion=='viernes-30-10-2020' or f.x_studio_importacion=='lunes' or f.x_studio_importacion=='prueba' or f.x_studio_importacion=='martesGRupo') and f.state=='open':
                    worksheet.write(i, 15, f.x_studio_periodo_1.replace(' de ','/').upper())
                 else:   
                   periodo=str(f.x_studio_periodo)
@@ -238,7 +238,7 @@ class TestReport(TransientModel):
             else:
                if f.state=='paid': 
                   worksheet.write(i, 23, pago)
-               if f.statr=='cancel':
+               if f.state=='cancel':
                   worksheet.write(i, 23, 'Cancelado')                   
                 
                 
