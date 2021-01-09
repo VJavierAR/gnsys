@@ -85,7 +85,7 @@ class TestReport(TransientModel):
     
     def alv(self):
         workbook = xlsxwriter.Workbook('Example23.xlsx')
-        dir=self.serie=self.env['account.invoice'].search([('type','=','out_invoice'),('date_invoice','!=',False),('state','!=','draft')],order='create_date desc') 
+        dir=self.serie=self.env['account.invoice'].search([('type','=','out_invoice'),('date_invoice','!=',False),('state','!=','draft')],order='create_date desc',limit=100) 
         
         worksheet = workbook.add_worksheet('Reporte Facturacion')
         content = ["Serie", "Folio","Folio Fiscal Factura", "Documento Origen", "Folio Techra","RFC CLiente", "RFC Empresa","Razon Social", "Cliente", "Fecha Factura", "Importe sin impuesto","IVA","Total","Total adeudado","Estado","Periodo","NC´s","REP","Retencion","Folio Fiscal Pago","Banco","Cuenta ordenate","Cuenta beneficiaria","Estado del pago","Ejecutivo","Vendedor","referencia","Fecha de pago"]
