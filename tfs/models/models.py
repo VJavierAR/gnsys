@@ -219,7 +219,7 @@ class tfs(models.Model):
                                 pickDestino.append(datos2)
                                 rule.append(re.id)
             if(len(pickOrigen)>0):
-                c=self.env['res.partner'].search([['name','=',al.name],['parent_id','=',1]])
+                c=al.x_studio_field_E0H1Z
                 ticket=self.env['helpdesk.ticket'].create({'x_studio_tipo_de_vale':'Resurtido de Almacen','partner_id':c.id,'team_id':8})
                 sale = self.env['sale.order'].create({'partner_id' : c.id, 'origin' : "Ticket: " + str(ticket.id), 'x_studio_tipo_de_solicitud' : 'Venta', 'partner_shipping_id' : c.id , 'warehouse_id' : 1 , 'team_id' : 1, 'x_studio_field_bxHgp': ticket.id})
                 destino=self.env['stock.picking.type'].search([['name','=','Receipts'],['warehouse_id','=',al.id]])
