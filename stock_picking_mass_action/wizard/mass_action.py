@@ -469,16 +469,19 @@ class StockCambio(TransientModel):
                     self.env.cr.execute("update stock_move_line set lot_id="+str(s.serieOrigen.id)+"where id="+str(d.id)+";")            
                 s.move_id.sale_line_id.write({'x_studio_field_9nQhR':s.serieOrigen.id})
                 if(self.pick.sale_id.x_studio_tipo_de_solicitud=='Retiro'):
-                    s.serieOrigen.write({'servicio':False,'x_studio_cliente':1,'x_studio_localidad_2':self.pick.sale_id.warehouse_id.x_studio_field_E0H1Z.id})
+                    s.serieOrigen.write({'x_studio_demo':False,'servicio':False,'x_studio_cliente':1,'x_studio_localidad_2':self.pick.sale_id.warehouse_id.x_studio_field_E0H1Z.id})
                     self.env['cliente.h'].create({'localidad':self.pick.sale_id.partner_shipping_id.id,'solicitud':self.pick.sale_id.id,'contrato':self.pick.sale_id.x_studio_field_LVAj5.id,'servicio':self.pick.sale_id.x_studio_field_69Boh.id,'origen':self.pick.sale_id.partner_shipping_id.name,'destino':self.pick.sale_id.warehouse_id.name,'fecha':fecha,'serie':s.serieOrigen.id})
                 if(self.pick.sale_id.x_studio_tipo_de_solicitud=='Backup'):
-                    s.serieOrigen.write({'x_studio_estado':'Back-up','servicio':self.pick.sale_id.x_studio_field_69Boh.id,'x_studio_cliente':self.pick.sale_id.partner_id.id,'x_studio_localidad_2':self.pick.sale_id.partner_shipping_id.id})
+                    s.serieOrigen.write({'x_studio_demo':False,'x_studio_estado':'Back-up','servicio':self.pick.sale_id.x_studio_field_69Boh.id,'x_studio_cliente':self.pick.sale_id.partner_id.id,'x_studio_localidad_2':self.pick.sale_id.partner_shipping_id.id})
                     self.env['cliente.h'].create({'localidad':self.pick.sale_id.partner_shipping_id.id,'solicitud':self.pick.sale_id.id,'contrato':self.pick.sale_id.x_studio_field_LVAj5.id,'servicio':self.pick.sale_id.x_studio_field_69Boh.id,'origen':self.pick.sale_id.warehouse_id.name,'destino':self.pick.sale_id.partner_shipping_id.name,'fecha':fecha,'serie':s.serieOrigen.id})
                 if(self.pick.sale_id.x_studio_tipo_de_solicitud=='Venta' or self.pick.sale_id.x_studio_tipo_de_solicitud=="Venta directa"):
-                    s.serieOrigen.write({'x_studio_venta':True,'servicio':self.pick.sale_id.x_studio_field_69Boh.id,'x_studio_cliente':self.pick.sale_id.partner_id.id,'x_studio_localidad_2':self.pick.sale_id.partner_shipping_id.id})
+                    s.serieOrigen.write({'x_studio_demo':False,'x_studio_venta':True,'servicio':self.pick.sale_id.x_studio_field_69Boh.id,'x_studio_cliente':self.pick.sale_id.partner_id.id,'x_studio_localidad_2':self.pick.sale_id.partner_shipping_id.id})
                     self.env['cliente.h'].create({'localidad':self.pick.sale_id.partner_shipping_id.id,'solicitud':self.pick.sale_id.id,'contrato':self.pick.sale_id.x_studio_field_LVAj5.id,'servicio':self.pick.sale_id.x_studio_field_69Boh.id,'origen':self.pick.sale_id.warehouse_id.name,'destino':self.pick.sale_id.partner_shipping_id.name,'fecha':fecha,'serie':s.serieOrigen.id})                    
+                if(self.pick.sale_id.x_studio_tipo_de_solicitud=='Demostración'):
+                    s.serieOrigen.write({'x_studio_demo':True,'x_studio_estado':'','servicio':self.pick.sale_id.x_studio_field_69Boh.id,'x_studio_cliente':self.pick.sale_id.partner_id.id,'x_studio_localidad_2':self.pick.sale_id.partner_shipping_id.id})
+                    self.env['cliente.h'].create({'localidad':self.pick.sale_id.partner_shipping_id.id,'solicitud':self.pick.sale_id.id,'contrato':self.pick.sale_id.x_studio_field_LVAj5.id,'servicio':self.pick.sale_id.x_studio_field_69Boh.id,'origen':self.pick.sale_id.warehouse_id.name,'destino':self.pick.sale_id.partner_shipping_id.name,'fecha':fecha,'serie':s.serieOrigen.id})
                 else:
-                    s.serieOrigen.write({'servicio':self.pick.sale_id.x_studio_field_69Boh.id,'x_studio_cliente':self.pick.sale_id.partner_id.id,'x_studio_localidad_2':self.pick.sale_id.partner_shipping_id.id})
+                    s.serieOrigen.write({'x_studio_demo':False,'servicio':self.pick.sale_id.x_studio_field_69Boh.id,'x_studio_cliente':self.pick.sale_id.partner_id.id,'x_studio_localidad_2':self.pick.sale_id.partner_shipping_id.id})
                     self.env['cliente.h'].create({'localidad':self.pick.sale_id.partner_shipping_id.id,'solicitud':self.pick.sale_id.id,'contrato':self.pick.sale_id.x_studio_field_LVAj5.id,'servicio':self.pick.sale_id.x_studio_field_69Boh.id,'origen':self.pick.sale_id.warehouse_id.name,'destino':self.pick.sale_id.partner_shipping_id.name,'fecha':fecha,'serie':s.serieOrigen.id})
                 f=f+"<tr>"
                 f=f+"<td>"+str(s.serieOrigen.product_id.name)+"</td>"
