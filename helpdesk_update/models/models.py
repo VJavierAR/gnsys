@@ -4963,6 +4963,36 @@ class helpdesk_update(models.Model):
                 todasLasAlertas = todasLasAlertas + '\n\n' + mensajeCuerpo
 
 
+        """
+            Verificando que los equipos no sean demos
+        """
+        if self.x_studio_tipo_de_vale == 'Requerimiento' and self.x_studio_equipo_por_nmero_de_serie_1:
+            equipoSinServicio = False
+            mensajeCuerpo = 'No se puede agregar un equipo que esta en demostración.\nLos equipos en demostración son:\n\n'
+            for equipo in self.x_studio_equipo_por_nmero_de_serie_1:
+                if equipo.serie.x_studio_demo:
+                    mensajeCuerpo = mensajeCuerpo + 'Equipo: ' + str(equipo.serie.product_id.name) + ' Serie: ' + str(equipo.serie.name) + '\n'
+                    equipoSinServicio = True
+                    #self.x_studio_equipo_por_nmero_de_serie_1 = ''
+            if equipoSinServicio:
+                mensajeTitulo = 'Alerta ticket sin servicio creado'
+                todasLasAlertas = todasLasAlertas + '\n\n' + mensajeCuerpo
+
+        if self.x_studio_tipo_de_vale != 'Requerimiento' and self.x_studio_equipo_por_nmero_de_serie:
+            equipoSinServicio = False
+            mensajeCuerpo = 'No se puede agregar un equipo que esta en demostración.\nLos equipos en demostración son:\n\n'
+            for equipo in self.x_studio_equipo_por_nmero_de_serie:
+                if equipo.x_studio_demo:
+                    mensajeCuerpo = mensajeCuerpo + 'Equipo: ' + str(equipo.product_id.name) + ' Serie: ' + str(equipo.name) + '\n'
+                    equipoSinServicio = True
+                    #self.x_studio_equipo_por_nmero_de_serie = ''
+            if equipoSinServicio:
+                mensajeTitulo = 'Alerta ticket sin servicio creado'
+                todasLasAlertas = todasLasAlertas + '\n\n' + mensajeCuerpo
+
+
+
+
         if todasLasAlertas:
             mensajeTitulo = 'Alertas generadas durante la asignación del equipo !!!'
             warning = {
