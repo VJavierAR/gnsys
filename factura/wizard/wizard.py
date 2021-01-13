@@ -88,7 +88,7 @@ class TestReport(TransientModel):
         dir=self.serie=self.env['account.invoice'].search([('type','!=','in_invoice'),('type','!=','in_refund'),('date_invoice','!=',False),('state','!=','draft')],order='create_date desc') 
         
         worksheet = workbook.add_worksheet('Reporte Facturacion')
-        content = ["Serie", "Folio","Folio Fiscal Factura", "Documento Origen", "Folio Techra","RFC CLiente", "RFC Empresa","Razon Social", "Cliente", "Fecha Factura", "Importe sin impuesto","IVA","Total","Total adeudado","Estado","Periodo","NC´s","REP","Retencion","Folio Fiscal Pago","Banco","Cuenta ordenate","Cuenta beneficiaria","Estado del pago","Ejecutivo","Vendedor","referencia","Fecha de pago"]
+        content = ["Serie", "Folio","Folio Fiscal Factura", "Documento Origen", "Folio Techra","RFC CLiente", "RFC Empresa","Razon Social", "Cliente", "Fecha Factura", "Importe sin impuesto","IVA","Total","Total adeudado","Tipo","Periodo","NC´s","REP","Retencion","Folio Fiscal Pago","Banco","Cuenta ordenate","Cuenta beneficiaria","Estado del pago","Ejecutivo","Vendedor","referencia","Fecha de pago"]
         bold = workbook.add_format({'bold': True})
         neg = workbook.add_format({'border': 2})
         format6 = workbook.add_format({'num_format': 'yyyy-mm-dd'})
@@ -140,7 +140,7 @@ class TestReport(TransientModel):
             
             
             estado=dict(f._fields['state']._description_selection(self.env)).get(f.state)
-            #worksheet.write(i, 14, estado)
+            worksheet.write(i, 14, f.type)
             try:
                 if (f.x_studio_importacion=='lunes-19-10-2020' or f.x_studio_importacion=='lunes05' or f.x_studio_importacion=='viernes-30-10-2020' or f.x_studio_importacion=='lunes' or f.x_studio_importacion=='prueba' or f.x_studio_importacion=='martesGRupo') and f.state=='open':
                    worksheet.write(i, 15, f.x_studio_periodo_1.replace(' de ','/').upper())
