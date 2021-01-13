@@ -4968,10 +4968,10 @@ class helpdesk_update(models.Model):
         """
         if self.x_studio_tipo_de_vale == 'Requerimiento' and self.x_studio_equipo_por_nmero_de_serie_1:
             equipoSinServicio = False
-            mensajeCuerpo = 'Se agregará un equipo que esta en \033[1mdemostración\033[0m.\nLos equipos en demostración son:\n\n'
+            mensajeCuerpo = 'Se agregará un equipo que esta en demostración.\nLos equipos en demostración son:\n\n'
             for equipo in self.x_studio_equipo_por_nmero_de_serie_1:
                 if equipo.serie.x_studio_demo:
-                    mensajeCuerpo = mensajeCuerpo + 'Equipo: \033[1m' + str(equipo.serie.product_id.name) + '\033[0m Serie: \033[1m' + str(equipo.serie.name) + '\033[0m\n'
+                    mensajeCuerpo = mensajeCuerpo + 'Equipo: ' + str(equipo.serie.product_id.name) + ' Serie: ' + str(equipo.serie.name) + '\n'
                     equipoSinServicio = True
                     #self.x_studio_equipo_por_nmero_de_serie_1 = ''
             if equipoSinServicio:
@@ -4980,10 +4980,10 @@ class helpdesk_update(models.Model):
 
         if self.x_studio_tipo_de_vale != 'Requerimiento' and self.x_studio_equipo_por_nmero_de_serie:
             equipoSinServicio = False
-            mensajeCuerpo = 'Se agregará un equipo que esta en \033[1mdemostración\033[0m.\nLos equipos en demostración son:\n\n'
+            mensajeCuerpo = 'Se agregará un equipo que esta en demostración.\nLos equipos en demostración son:\n\n'
             for equipo in self.x_studio_equipo_por_nmero_de_serie:
                 if equipo.x_studio_demo:
-                    mensajeCuerpo = mensajeCuerpo + 'Equipo: \033[1m' + str(equipo.product_id.name) + '\033[0m Serie: \033[1m' + str(equipo.name) + '\033[0m\n'
+                    mensajeCuerpo = mensajeCuerpo + 'Equipo: ' + str(equipo.product_id.name) + ' Serie: ' + str(equipo.name) + '\n'
                     equipoSinServicio = True
                     #self.x_studio_equipo_por_nmero_de_serie = ''
             if equipoSinServicio:
