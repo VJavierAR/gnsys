@@ -351,7 +351,7 @@ class sale_update(models.Model):
 			s=self.order_line.mapped('product_id.uom_id.name')
 			if('Unidad de servicio' in s):
 				ti=self.env['helpdesk.ticket'].create({'x_studio_field_nO7Xg':self.id,'x_studio_tipo_de_vale':'Falla','partner_id':self.partner_id.id,'x_studio_empresas_relacionadas':self.partner_shipping_id.id,'team_id':9,'diagnosticos':[(0,0,{'estadoTicket':'Abierto','comentario':self.note})],'stage_id':89,'name':'Servicio tecnico '})
-				self.write({'tickets':[(6,0,ti.id)]})
+				self.write({'tickets':[(6,0,[ti.id])]})
 			self.action_confirm()
 		if(self.x_studio_tipo_de_solicitud == "Cambio"):
 			self.cambio()
