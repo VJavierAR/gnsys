@@ -134,9 +134,9 @@ class TestReport(TransientModel):
             worksheet.write(i, 10, f.amount_untaxed)
             worksheet.write(i, 11, f.amount_tax)
             worksheet.write(i, 12, f.amount_total)
-            if f.type=='out_refund':
+            if f.type=='out_refund' and f.x_studio_importacion=='pruebaNota':
                worksheet.write(i, 13, 0.0)
-            if f.type=='out_invoice':
+            else:
                worksheet.write(i, 13, f.residual)
             
             
