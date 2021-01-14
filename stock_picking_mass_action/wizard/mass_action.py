@@ -749,13 +749,14 @@ class TransferInter(TransientModel):
                         self.lines=[{'producto':p.id,'cantidad':int(row[2].value)}]
                     i=i+1
                     
-                for ori in pickOrigen:
+                """for ori in pickOrigen:
                     ticket.x_studio_productos=[(4,ori['product_id'])]
                     sl=self.env['sale.order.line'].create({'order_id' : sale.id,'product_id':ori['product_id'],'product_uom_qty':ori['product_uom_qty'], 'price_unit': 0})
                 for des in pickDestino:
                     des['date_planned']=datetime.datetime.now()
                     des['order_id']=compra.id
                     self.env['purchase.order.line'].create(des)
+                """
     def confirmar(self):
         pick_dest=[]
         pick_origin=[]
