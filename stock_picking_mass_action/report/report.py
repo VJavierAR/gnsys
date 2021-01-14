@@ -205,6 +205,7 @@ class SolicitudesXlsx(models.AbstractModel):
                     sheet.write(i, 14, obj.x_studio_usuario_creacion_1, bold)
                     #sheet.write(i, 15, 'Asignado' if(obj.x_studio_asignado) else 'No Asignado', bold)
                     sheet.write(i, 15, str(obj.note) if(obj.note) else '', bold)
+                    sheet.write(i, 16, obj.validity_date.strftime("%Y/%m/%d") if(obj.validity_date) else '', bold)
                     i=i+1
             else:
                 sheet.write(i, 0, obj.name.replace('SO',''), bold)
@@ -228,8 +229,9 @@ class SolicitudesXlsx(models.AbstractModel):
                 sheet.write(i, 14, obj.x_studio_usuario_creacion_1, bold)
                 #sheet.write(i, 15, 'Asignado' if(obj.x_studio_asignado) else 'No Asignado', bold)
                 sheet.write(i, 15, str(obj.note) if(obj.note) else '', bold)
+                sheet.write(i, 16, obj.validity_date.strftime("%Y/%m/%d") if(obj.validity_date) else '', bold)
                 i=i+1
-        sheet.add_table('A2:P'+str(i),{'columns': [{'header': 'Numero de solicitud'},{'header': 'Fecha'},{'header': 'Cliente'},{'header':'Localidades'},{'header': 'Almacen'},{'header': 'Estado'},{'header': 'Modelo'},{'header': 'No. De serie'},{'header': 'Accesorio'},{'header': 'Toner'},{'header': 'Número de equipos'},{'header': 'Número de componentes'},{'header': 'Tipo'},{'header': 'Status'},{'header': 'Usuario Creación'},{'header': 'Comentarios'}]}) 
+        sheet.add_table('A2:P'+str(i),{'columns': [{'header': 'Numero de solicitud'},{'header': 'Fecha'},{'header': 'Cliente'},{'header':'Localidades'},{'header': 'Almacen'},{'header': 'Estado'},{'header': 'Modelo'},{'header': 'No. De serie'},{'header': 'Accesorio'},{'header': 'Toner'},{'header': 'Número de equipos'},{'header': 'Número de componentes'},{'header': 'Tipo'},{'header': 'Status'},{'header': 'Usuario Creación'},{'header': 'Comentarios'},{'header': 'Validez'}]}) 
         #sheet.add_table('A2:Q'+str(i),{'columns': [{'header': 'Numero de solicitud'},{'header': 'Fecha'},{'header': 'Cliente'},{'header':'Localidades'},{'header': 'Almacen'},{'header': 'Estado'},{'header': 'Modelo'},{'header': 'No. De serie'},{'header': 'Accesorio'},{'header': 'Toner'},{'header': 'Número de equipos'},{'header': 'Número de componentes'},{'header': 'Tipo'},{'header': 'Status'},{'header': 'Usuario Creación'},{'header': 'Asignado'},{'header': 'Comentarios'}]}) 
         workbook.close()
 
