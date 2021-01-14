@@ -230,7 +230,11 @@ class sale_update(models.Model):
 		self.action_cancel()
 		self.action_draft()
 		picks=self.env['stock.picking'].search([['sale_id','=',self.id]])
-		picks.unlink()
+		for pi in picks:
+			if(pi.origin!=self.name):
+				pi.write({'active':False})
+			else:
+				pi.unlink()
 
 	def componentes(self):
 		if(len(self.order_line)>0):
