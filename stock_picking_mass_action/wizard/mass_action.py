@@ -1683,7 +1683,7 @@ class reporteClientes(TransientModel):
 class pickingDesasignar(TransientModel):
     _name='picking.desasignar'
     _description='desasignar series'
-    solicitud=fields.One2many('sale.order')
+    solicitud=fields.Many2one('sale.order')
 
     def confirm(self):
         p=self.solicitud.picking_ids.mapped('state')
@@ -1713,15 +1713,16 @@ class pickingDesasignar(TransientModel):
 
     @api.onchange('solicitud')
     def validacion(self):
-        p=self.solicitud.picking_ids.mapped('state')
-        if('done' in p):
-            mensajeCuerpo='Solicitud con Movimientos de almacen al confirmar se generara una devolucion al almacen'
-            mensajeTitulo = "Alerta!!!"
-            warning = {'title': _(mensajeTitulo)
-                    , 'message': _(mensajeCuerpo),
-            }
-            return {'warning': warning}
-        else:
-            raise UserError(_("Solicitud sin Movimientos de almacen"))
+        if(self.solicitud.id):
+            p=self.solicitud.picking_ids.mapped('state')
+            if('done' in p):
+                mensajeCuerpo='Solicitud con Movimientos de almacen al confirmar se generara una devolucion al almacen'
+                mensajeTitulo = "Alerta!!!"
+                warning = {'title': _(mensajeTitulo)
+                        , 'message': _(mensajeCuerpo),
+                }
+                return {'warning': warning}
+            else:
+                raise UserError(_("Solicitud sin Movimientos de almacen"))
 
 
