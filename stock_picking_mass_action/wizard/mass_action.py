@@ -747,16 +747,15 @@ class TransferInter(TransientModel):
                         code=str(row[1].value).split('0',1)[0].replace('.0','') if(str(row[1].value)[0]=='0') else str(row[1].value).replace('.0','')
                         p=self.env['product.product'].search([['default_code','=',code]])
                         self.lines=[{'producto':p.id,'cantidad':int(row[2].value)}]
-                    i=i+1
-                    
-                """for ori in pickOrigen:
-                    ticket.x_studio_productos=[(4,ori['product_id'])]
-                    sl=self.env['sale.order.line'].create({'order_id' : sale.id,'product_id':ori['product_id'],'product_uom_qty':ori['product_uom_qty'], 'price_unit': 0})
-                for des in pickDestino:
-                    des['date_planned']=datetime.datetime.now()
-                    des['order_id']=compra.id
-                    self.env['purchase.order.line'].create(des)
-                """
+                    i=i+1  
+                # for ori in pickOrigen:
+                #     ticket.x_studio_productos=[(4,ori['product_id'])]
+                #     sl=self.env['sale.order.line'].create({'order_id' : sale.id,'product_id':ori['product_id'],'product_uom_qty':ori['product_uom_qty'], 'price_unit': 0})
+                # for des in pickDestino:
+                #     des['date_planned']=datetime.datetime.now()
+                #     des['order_id']=compra.id
+                #     self.env['purchase.order.line'].create(des)
+
     def confirmar(self):
         pick_dest=[]
         pick_origin=[]
