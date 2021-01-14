@@ -764,10 +764,10 @@ class TransferInter(TransientModel):
         pick_origin3=[]
         compra=None
         orden=None
-        cliente=self.env['res.partner'].search([['name','=',self.almacenDestino.name],['parent_id','=',1]])
+        #cliente=self.env['res.partner'].search([['name','=',self.almacenDestino.name],['parent_id','=',1]])
+        cliente=self.almacenDestino.x_studio_field_E0H1Z
         if(self.almacenOrigen.id==False):
             self.almacenOrigen=self.almacenPadre.id
-
         if(self.almacenDestino.x_studio_almacn_padre):
             if('Foraneo' in self.almacenDestino.x_studio_almacn_padre.name):
                 destino=self.env['stock.picking.type'].search([['name','=','Receipts'],['warehouse_id','=',self.almacenDestino.id]])
@@ -851,7 +851,7 @@ class TransferInterMoveTemp(TransientModel):
     cantidad=fields.Integer('Demanda Inicial')
     almacen=fields.Many2one('stock.warehouse','Almacén Origen')
     ubicacion=fields.Many2one('stock.location','Ubicación')
-    disponible=fields.Float(string='Disponible')
+    disponible=fields.Float(compute='almac',string='Disponible')
     transfer=fields.Many2one('transferencia.interna')
     unidad=fields.Many2one('uom.uom',related='producto.uom_id')
     categoria=fields.Many2one('product.category')
