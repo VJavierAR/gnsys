@@ -134,9 +134,10 @@ class TestReport(TransientModel):
             worksheet.write(i, 10, f.amount_untaxed)
             worksheet.write(i, 11, f.amount_tax)
             worksheet.write(i, 12, f.amount_total)
-            worksheet.write(i, 13, f.residual)
-            
-            
+            if f.type=='out_refund':
+               worksheet.write(i, 13, 0.0)
+            if f.type=='out_invoice':
+               worksheet.write(i, 13, f.residual)
             
             
             estado=dict(f._fields['state']._description_selection(self.env)).get(f.state)
