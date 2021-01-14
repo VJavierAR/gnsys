@@ -140,7 +140,11 @@ class TestReport(TransientModel):
             
             
             estado=dict(f._fields['state']._description_selection(self.env)).get(f.state)
-            worksheet.write(i, 14, f.type)
+            if f.type=='out_refund':
+                tipoD='Nota de crédito'
+            if f.type=='out_invoice':
+                tipoD='Factura'   
+            worksheet.write(i, 14, tipoD)
             try:
                 if (f.x_studio_importacion=='pruebaNota' or f.x_studio_importacion=='lunes-19-10-2020' or f.x_studio_importacion=='lunes05' or f.x_studio_importacion=='viernes-30-10-2020' or f.x_studio_importacion=='lunes' or f.x_studio_importacion=='prueba' or f.x_studio_importacion=='martesGRupo') and f.state=='open':
                    worksheet.write(i, 15, f.x_studio_periodo_1.replace(' de ','/').upper())
