@@ -625,7 +625,7 @@
                                 <field name="existeciaAlmacen" readonly="1"/>                        
                                 <field name="estado"  attrs="{'readonly':[['categoria','!=',13]]}"/>
                                 <field name="serieOrigen" string="Serie" attrs="{'readonly':[['categoria','!=',13]]}"/>
-                                <field name="color"  attrs="{'readonly':[['categoria','!=',13]]}"/>
+                                <!--<field name="color"  attrs="{'readonly':[['categoria','!=',13]]}"/>-->
                                 <field name="contadorMono"  attrs="{'readonly':[['categoria','!=',13]]}"/>
                                 <field name="contadorColor"  attrs="{'readonly':[['categoria','!=',13]]}"/>
                                 <field name="nivelNegro" string="Nivel Negro" />
