@@ -257,8 +257,12 @@ class TestReport(TransientModel):
             else:
                worksheet.write(i, 26, referencia)
             
-            if str(f.partner_id.name)=='sin contacto':
-               worksheet.write(i, 27, f.x_studio_fecha_de_pago)
+            if (f.x_studio_importacion=='pruebaNota' or f.x_studio_importacion=='lunes-19-10-2020' or f.x_studio_importacion=='lunes05' or f.x_studio_importacion=='viernes-30-10-2020' or f.x_studio_importacion=='lunes' or f.x_studio_importacion=='prueba' or f.x_studio_importacion=='martesGRupo') and f.state=='open'::
+               dater=''     
+               dft=f.x_studio_fecha_de_pago
+               if dft:
+                  datesr=datetime.datetime.strptime(dft, '%a %b %d %H:%M:%S CDT %Y')     
+               worksheet.write(i, 27, dater,format6)
             else:
                worksheet.write(i, 27, fechapago)
             
