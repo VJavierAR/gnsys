@@ -261,7 +261,10 @@ class TestReport(TransientModel):
                dater=''     
                dft=f.x_studio_fecha_de_pago
                if dft:
-                  datesr=datetime.datetime.strptime(dft, '%a %b %d %H:%M:%S CDT %Y')     
+                  if 'CST' in dft:
+                      datesr=datetime.datetime.strptime(dft, '%a %b %d %H:%M:%S CST %Y')
+                  if 'CDT' in dft:  
+                      datesr=datetime.datetime.strptime(dft, '%a %b %d %H:%M:%S CDT %Y')
                worksheet.write(i, 27, dater,format6)
             else:
                worksheet.write(i, 27, fechapago)
