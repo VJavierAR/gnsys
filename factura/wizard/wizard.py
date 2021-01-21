@@ -88,7 +88,7 @@ class TestReport(TransientModel):
         dir=self.serie=self.env['account.invoice'].search([('type','!=','in_invoice'),('type','!=','in_refund'),('date_invoice','!=',False),('state','!=','draft')],order='create_date desc') 
         
         worksheet = workbook.add_worksheet('Reporte Facturacion')
-        content = ["Serie", "Folio","Folio Fiscal Factura", "Documento Origen", "Folio Techra","RFC CLiente", "RFC Empresa","Razon Social", "Cliente", "Fecha Factura", "Importe sin impuesto","IVA","Total","Total adeudado","Tipo","Periodo","NC´s","REP","Retencion","Folio Fiscal Pago","Banco","Cuenta ordenate","Cuenta beneficiaria","Estado del pago","Ejecutivo","Vendedor","referencia","Fecha de pago"]
+        content = ["Serie", "Folio","Folio Fiscal Factura", "Documento Origen", "Folio Techra","RFC CLiente", "RFC Empresa","Razon Social", "Cliente", "Fecha Factura", "Importe sin impuesto","IVA","Total","Total adeudado","Tipo","Periodo","NC´s","REP","Retencion","Folio Fiscal Pago","Banco","Cuenta ordenate","Cuenta beneficiaria","Estado del pago","Ejecutivo","Vendedor","referencia","Fecha de pago","Nota","Pagos","Fecha Captura","Fecha Comentario","observaciones","Usuariocxc","Estado"]
         bold = workbook.add_format({'bold': True})
         neg = workbook.add_format({'border': 2})
         format6 = workbook.add_format({'num_format': 'yyyy-mm-dd'})
@@ -260,12 +260,30 @@ class TestReport(TransientModel):
             if (f.x_studio_importacion=='pruebaNota' or f.x_studio_importacion=='lunes-19-10-2020' or f.x_studio_importacion=='lunes05' or f.x_studio_importacion=='viernes-30-10-2020' or f.x_studio_importacion=='lunes' or f.x_studio_importacion=='prueba' or f.x_studio_importacion=='martesGRupo') and f.state=='open':
                dater=''     
                dft=f.x_studio_fecha_de_pago
+                
                if dft:
                   if 'CST' in dft:
                       datesr=datetime.datetime.strptime(dft, '%a %b %d %H:%M:%S CST %Y')
                   if 'CDT' in dft:  
                       datesr=datetime.datetime.strptime(dft, '%a %b %d %H:%M:%S CDT %Y')
                worksheet.write(i, 27, dater,format6)
+               worksheet.write(i, 28, f.x_studio_nota)
+               worksheet.write(i, 29, f.x_studio_pagos)
+               dfy=f.x_studio_fecha_captura
+               if dft:
+                  if 'CST' in dfy:
+                      datesrC=datetime.datetime.strptime(dfy, '%a %b %d %H:%M:%S CST %Y')
+                  if 'CDT' in dfy:  
+                      datesrC=datetime.datetime.strptime(dfy, '%a %b %d %H:%M:%S CDT %Y')
+                  worksheet.write(i, 30, dater,format6)
+            
+               worksheet.write(i, 31, f.x_studio_fecha_comentario)
+               worksheet.write(i, 32, f.x_studio_oboservaciones)
+               worksheet.write(i, 32, f.x_studio_estadohtml)
+                
+            
+            
+            
             else:
                worksheet.write(i, 27, fechapago)
             
