@@ -270,7 +270,7 @@ class TestReport(TransientModel):
                worksheet.write(i, 28, f.x_studio_nota)
                worksheet.write(i, 29, f.x_studio_pagos)
                dfy=f.x_studio_fecha_captura
-               if dft:
+               if dfy:
                   if 'CST' in dfy:
                       datesrC=datetime.datetime.strptime(dfy, '%a %b %d %H:%M:%S CST %Y')
                   if 'CDT' in dfy:  
@@ -279,13 +279,18 @@ class TestReport(TransientModel):
             
                worksheet.write(i, 31, f.x_studio_fecha_comentario)
                worksheet.write(i, 32, f.x_studio_oboservaciones)
-               worksheet.write(i, 32, f.x_studio_estadohtml)
-                
-            
-            
-            
+               worksheet.write(i, 33, f.x_studio_usuario_cxc)
+               
+               if f.type=='out_refund':
+                  if f.x_studio_folio_fiscal_pago_techra=='Cancelado':
+                     worksheet.write(i, 34, 'C')
+                  else:  
+                     worksheet.write(i, 34,'NDC')
+               else:
+                  worksheet.write(i, 34, f.x_studio_estadohtml)                                    
             else:
                worksheet.write(i, 27, fechapago)
+               worksheet.write(i, 34, estado)
             
             
             
