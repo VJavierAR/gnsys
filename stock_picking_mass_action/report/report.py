@@ -436,7 +436,7 @@ class TicketsXlsx(models.AbstractModel):
                     i=i+1
             except:
                 _logger.info("Error en el ticket: " + str(obj.id))
-        sheet.add_table('A2:X'+str(i),{'style': 'Table Style Medium 9','columns': [{'header': 'Almacen'},{'header': 'Ticket'},{'header': 'Tipo de Reporte'},{'header': 'Fecha'},{'header':'Dias de atraso'},{'header': 'Cliente'},{'header': 'Localidad'},{'header': 'Serie'},{'header': 'Modelo'},{'header': 'Productos'},{'header': 'Area de Atención'},{'header': 'Zona'},{'header': 'Estado'},{'header':'Ticket abierto por'},{'header':'Nota inicial'},{'header': 'Ultima nota'},{'header': 'Fecha nota'},{'header': 'Resuelto el'},{'header': 'Tecnico'},{'header': 'Dirección'},{'header': 'No. Ticket cliente'},{'header':'Guia'},{'header':'Cerrado el'},{'header':'Ejecutivo'},{'header':'No Parte Surtidos'}]})
+        sheet.add_table('A2:Y'+str(i),{'style': 'Table Style Medium 9','columns': [{'header': 'Almacen'},{'header': 'Ticket'},{'header': 'Tipo de Reporte'},{'header': 'Fecha'},{'header':'Dias de atraso'},{'header': 'Cliente'},{'header': 'Localidad'},{'header': 'Serie'},{'header': 'Modelo'},{'header': 'Productos'},{'header': 'Area de Atención'},{'header': 'Zona'},{'header': 'Estado'},{'header':'Ticket abierto por'},{'header':'Nota inicial'},{'header': 'Ultima nota'},{'header': 'Fecha nota'},{'header': 'Resuelto el'},{'header': 'Tecnico'},{'header': 'Dirección'},{'header': 'No. Ticket cliente'},{'header':'Guia'},{'header':'Cerrado el'},{'header':'Ejecutivo'},{'header':'No Parte Surtidos'}]})
         workbook.close()
 
 class ComprasXlsx(models.AbstractModel):
