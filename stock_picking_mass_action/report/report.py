@@ -257,8 +257,8 @@ class TicketsXlsx(models.AbstractModel):
                 pick=self.env['stock.picking'].search([['sale_id','=',obj.x_studio_field_nO7Xg.id],['location_id','=',obj.x_studio_field_nO7Xg.warehouse_id.lot_stock_id.id],['active','=',False]])
                 if(pick.id==False):
                     pick=self.env['stock.picking'].search([['sale_id','=',obj.x_studio_field_nO7Xg.id],['location_id','=',obj.x_studio_field_nO7Xg.warehouse_id.lot_stock_id.id]])
-            t=[]
                 for pi in pick:
+                    t=[]
                     t=pi.mapped('move_ids_without_package.product_id.default_code')
                     code=code+t
             try:
