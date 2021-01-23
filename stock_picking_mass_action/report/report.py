@@ -259,15 +259,15 @@ class TicketsXlsx(models.AbstractModel):
                     pick1=self.env['stock.picking'].search([['sale_id','=',obj.x_studio_field_nO7Xg.id],['location_id','=',obj.x_studio_field_nO7Xg.warehouse_id.lot_stock_id.id],['active','=',False]])
                     pick2=self.env['stock.picking'].search([['sale_id','=',obj.x_studio_field_nO7Xg.id],['location_id','=',obj.x_studio_field_nO7Xg.warehouse_id.lot_stock_id.id]])
                     if(len(pick1)>1):
-                        code=code+pick.mapped('move_ids_without_package.product_id.default_code')
-                    if(len(pick1)==1):
-                        if(pick.id):
-                            code=code+pick.mapped('move_ids_without_package.product_id.default_code')
-                    if(len(pick2)>1):
-                        code=code+pick.mapped('move_ids_without_package.product_id.default_code')
-                    if(len(pick2)==1):
-                        if(pick.id):
-                            code=code+pick.mapped('move_ids_without_package.product_id.default_code')
+                    code=code+pick1.mapped('move_ids_without_package.product_id.default_code')
+                    #if(len(pick1)==1):
+                       # if(pick.id):
+                    code=code+pick2.mapped('move_ids_without_package.product_id.default_code')
+                    #if(len(pick2)>1):
+                        #code=code+pick.mapped('move_ids_without_package.product_id.default_code')
+                    #if(len(pick2)==1):
+                        #if(pick.id):
+                            #code=code+pick.mapped('move_ids_without_package.product_id.default_code')
 
 
                     #if(len(pick)>1):
