@@ -253,16 +253,28 @@ class TicketsXlsx(models.AbstractModel):
         sheet.merge_range('A1:X1', 'Tickets', merge_format)
         for obj in ticket:
             try:
+                pickings=[]
                 code=[]
                 if(obj.x_studio_field_nO7Xg.id):
-                    pick=self.env['stock.picking'].search([['sale_id','=',obj.x_studio_field_nO7Xg.id],['location_id','=',obj.x_studio_field_nO7Xg.warehouse_id.lot_stock_id.id],['active','=',False]])
-                    if(pick.id==False):
-                        pick=self.env['stock.picking'].search([['sale_id','=',obj.x_studio_field_nO7Xg.id],['location_id','=',obj.x_studio_field_nO7Xg.warehouse_id.lot_stock_id.id]])
+                    pick1=self.env['stock.picking'].search([['sale_id','=',obj.x_studio_field_nO7Xg.id],['location_id','=',obj.x_studio_field_nO7Xg.warehouse_id.lot_stock_id.id],['active','=',False]])
+                    pick2=self.env['stock.picking'].search([['sale_id','=',obj.x_studio_field_nO7Xg.id],['location_id','=',obj.x_studio_field_nO7Xg.warehouse_id.lot_stock_id.id]])
+                    if(len(pick1)>1):
+                        code=code+pick.mapped('move_ids_without_package.product_id.default_code')
+                    if(len(pick1)==1):
+                        if(pick.id):
+                            code=code+pick.mapped('move_ids_without_package.product_id.default_code')
+                    if(len(pick2)>1):
+                        code=code+pick.mapped('move_ids_without_package.product_id.default_code')
+                    if(len(pick2)==1):
+                        if(pick.id):
+                            code=code+pick.mapped('move_ids_without_package.product_id.default_code')
+
+
                     #if(len(pick)>1):
-                    for pi in pick:
-                        t=[]
-                        t=pi.mapped('move_ids_without_package.product_id.default_code')
-                        code=code+t
+                    # for pi in pick:
+                    #     t=[]
+                    #     t=pi.mapped('move_ids_without_package.product_id.default_code')
+                    #     code=code+t
                     # if(len(pick)==1):
                     #     if(pick.id):
                     #         code=pi.mapped('move_ids_without_package.product_id.default_code')
