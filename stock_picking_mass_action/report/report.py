@@ -258,14 +258,14 @@ class TicketsXlsx(models.AbstractModel):
                     pick=self.env['stock.picking'].search([['sale_id','=',obj.x_studio_field_nO7Xg.id],['location_id','=',obj.x_studio_field_nO7Xg.warehouse_id.lot_stock_id.id],['active','=',False]])
                     if(pick.id==False):
                         pick=self.env['stock.picking'].search([['sale_id','=',obj.x_studio_field_nO7Xg.id],['location_id','=',obj.x_studio_field_nO7Xg.warehouse_id.lot_stock_id.id]])
-                    if(len(pick)>1):
-                        for pi in pick:
-                            t=[]
-                            t=pi.mapped('move_ids_without_package.product_id.default_code')
-                            code=code+t
-                    if(len(pick)==1):
-                        if(pick.id):
-                            code=pi.mapped('move_ids_without_package.product_id.default_code')
+                    #if(len(pick)>1):
+                    for pi in pick:
+                        t=[]
+                        t=pi.mapped('move_ids_without_package.product_id.default_code')
+                        code=code+t
+                    # if(len(pick)==1):
+                    #     if(pick.id):
+                    #         code=pi.mapped('move_ids_without_package.product_id.default_code')
                 tipo=''
                 if obj.x_studio_equipo_por_nmero_de_serie_1:
                     tipo='Toner'
