@@ -370,7 +370,7 @@ class HelpDeskCerrarConComentario(TransientModel):
         ultimaEvidenciaTec = self.ticket_id.diagnosticos[-1].evidencia.ids
         if self.evidencia:
           ultimaEvidenciaTec += self.evidencia.ids
-      if self.ticket_id.stage_id.name == 'Distribución' or self.ticket_id.stage_id.name == 'En Ruta' or self.ticket_id.stage_id.name == 'Resuelto' or self.ticket_id.stage_id.name == 'Abierto' or self.ticket_id.stage_id.name == 'Asignado' or self.ticket_id.stage_id.name == 'Atención' and self.ticket_id.estadoCerrado == False:
+      if self.ticket_id.stage_id.name == 'Distribución' or self.ticket_id.stage_id.name == 'En Ruta' or self.ticket_id.stage_id.name == 'Resuelto' or self.ticket_id.stage_id.name == 'Abierto' or self.ticket_id.stage_id.name == 'Asignado' or self.ticket_id.stage_id.name == 'Atención' or self.ticket_id.stage_id.name == 'Listo para entregar' and self.ticket_id.estadoCerrado == False:
         comentario_generico = 'Se cambio al estado Cerrado, acción realizada por ' + str(self.env.user.name) + '. \n'
         if self.comentario:
             comentario_generico = comentario_generico + 'Comentario: ' + self.comentario
@@ -4452,6 +4452,14 @@ class HelpdeskTicketReporte(TransientModel):
                                 'helpdesk.team',
                                 string = 'Área de atención'
                             )
+    tipoDeReporte = fields.Selection(
+        [
+            ('reporteSinContadores','Reporte sin contadores'),
+            ('reporteConContadores','Reporte con contadores')
+        ], 
+        default = 'reporteSinContadores', 
+        string = 'Backlog con contadores'
+    )
     mostrarCerrados = fields.Boolean(
                                         string = 'Mostrar cerrados',
                                         default = False
@@ -4813,7 +4821,10 @@ class HelpdeskTicketReporte(TransientModel):
             d[0].write({
                             'x_studio_arreglo': str(d.mapped('id'))
                         })
-            return self.env.ref('stock_picking_mass_action.ticket_xlsx').report_action(d[0])
+            if self.tipoDeReporte == 'reporteSinContadores':
+                return self.env.ref('stock_picking_mass_action.ticket_xlsx').report_action(d[0])
+            if self.tipoDeReporte == 'reporteConContadores':
+                return self.env.ref('stock_picking_mass_action.ticketContadores_xlsx').report_action(d[0])
         if len(d) == 0:
             raise UserError(_("No hay registros para la selecion actual"))
 

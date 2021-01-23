@@ -1911,6 +1911,7 @@
                         <field name="fechaFinal" required="1"/>
                     </group>
                     <group string='Selección'>
+                        <field name='tipoDeReporte' />
                         <field name='mostrarCerrados' />
                         <field name='mostrarCancelados' />
                         <field name='clienteRelacion' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain='[["x_studio_activo_1", "=", True]]' widget="many2many_tags" />

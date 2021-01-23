@@ -250,7 +250,7 @@ class TicketsXlsx(models.AbstractModel):
         report_name = 'Tickets'
         bold = workbook.add_format({'bold': True})
         sheet = workbook.add_worksheet('Tickets')
-        sheet.merge_range('A1:X1', 'Tickets', merge_format)
+        sheet.merge_range('A1:Y1', 'Tickets', merge_format)
         for obj in ticket:
             try:
                 pickings=[]
@@ -454,6 +454,245 @@ class TicketsXlsx(models.AbstractModel):
                 _logger.info("Error en el ticket: " + str(obj.id))
         sheet.add_table('A2:Y'+str(i),{'style': 'Table Style Medium 9','columns': [{'header': 'Almacen'},{'header': 'Ticket'},{'header': 'Tipo de Reporte'},{'header': 'Fecha'},{'header':'Dias de atraso'},{'header': 'Cliente'},{'header': 'Localidad'},{'header': 'Serie'},{'header': 'Modelo'},{'header': 'Productos'},{'header': 'Area de Atención'},{'header': 'Zona'},{'header': 'Estado'},{'header':'Ticket abierto por'},{'header':'Nota inicial'},{'header': 'Ultima nota'},{'header': 'Fecha nota'},{'header': 'Resuelto el'},{'header': 'Tecnico'},{'header': 'Dirección'},{'header': 'No. Ticket cliente'},{'header':'Guia'},{'header':'Cerrado el'},{'header':'Ejecutivo'},{'header':'No Parte Surtidos'}]})
         workbook.close()
+
+class TicketsContadoresXlsx(models.AbstractModel):
+    _name = 'report.ticketscontadores.report' 
+    _inherit = 'report.report_xlsx.abstract'
+
+    def generate_xlsx_report(self, workbook, data, ticket):
+        i=2
+        d=[]
+        if(len(ticket)==1 and ticket.x_studio_arreglo!='/' and ticket.x_studio_arreglo!=False):
+            copia=ticket
+            ticket=self.env['helpdesk.ticket'].browse(eval(ticket.x_studio_arreglo)).sorted(key='create_date',reverse=True) 
+            copia.write({'x_studio_arreglo':'/'})
+        merge_format = workbook.add_format({'bold': 1,'border': 1,'align': 'center','valign': 'vcenter','fg_color': 'blue'})
+        report_name = 'Tickets'
+        bold = workbook.add_format({'bold': True})
+        celdaContadoresFormato = workbook.add_format({'bold': True, 'bg_color': '#DAF7A6'})
+        sheet = workbook.add_worksheet('Tickets')
+        sheet.merge_range('A1:Z1', 'Tickets', merge_format)
+        for obj in ticket:
+            try:
+                tipo=''
+                if obj.x_studio_equipo_por_nmero_de_serie_1:
+                    tipo='Toner'
+                if(obj.x_studio_tipo_de_vale==False):
+                    tipo=''
+                if(len(obj.x_studio_equipo_por_nmero_de_serie_1)==1 or len(obj.x_studio_equipo_por_nmero_de_serie)==1):
+                    sheet.write(i, 0, obj.x_studio_field_nO7Xg.warehouse_id.name if(obj.x_studio_field_nO7Xg) else '', bold)
+                    sheet.write(i, 1, obj.id, bold)
+                    sheet.write(i, 2, obj.x_studio_tipo_de_vale if(obj.x_studio_tipo_de_vale) else '', bold)
+                    #sheet.write(i, 3, obj.create_date.strftime("%Y/%m/%d, %H:%M:%S"), bold)
+                    sheet.write(i, 3, pytz.utc.localize(obj.create_date, is_dst=None).astimezone(pytz.timezone('America/Mexico_City')).strftime("%Y/%m/%d %H:%M:%S"), bold)
+                    sheet.write(i, 4, obj.days_difference, bold)
+                    sheet.write(i, 5, obj.partner_id.name if(obj.partner_id) else '', bold)
+                    sheet.write(i, 6, obj.x_studio_empresas_relacionadas.name if(obj.x_studio_empresas_relacionadas) else '', bold)
+                    if obj.x_studio_equipo_por_nmero_de_serie_1:
+                        sheet.write(i, 7, str(obj.x_studio_equipo_por_nmero_de_serie_1[0].serie.name) if(obj.team_id.id==8 or obj.x_studio_tipo_de_vale == 'Requerimiento') else str(obj.x_studio_equipo_por_nmero_de_serie.name), bold)
+                        sheet.write(i, 8, str(obj.x_studio_equipo_por_nmero_de_serie_1[0].serie.product_id.name) if(obj.team_id.id==8 or obj.x_studio_tipo_de_vale == 'Requerimiento') else str(obj.x_studio_equipo_por_nmero_de_serie.product_id.name), bold)
+                        sheet.write(i, 9, str(obj.x_studio_equipo_por_nmero_de_serie_1[0].contadorMono) if(obj.x_studio_equipo_por_nmero_de_serie_1[0].contadorMono) else 'Sin contador', bold)
+                        sheet.write(i, 10, str(obj.x_studio_equipo_por_nmero_de_serie_1[0].contadorColor) if(obj.x_studio_equipo_por_nmero_de_serie_1[0].contadorColor) else 'Sin contador', bold)
+                    elif obj.x_studio_equipo_por_nmero_de_serie:
+                        sheet.write(i, 7, str(obj.x_studio_equipo_por_nmero_de_serie.name), bold)
+                        sheet.write(i, 8, str(obj.x_studio_equipo_por_nmero_de_serie.product_id.name), bold)
+                        if 'Equipo sin contador' in obj.contadores_anteriores:
+                            sheet.write(i, 9, 'Sin contador', bold)
+                            sheet.write(i, 10, 'Sin contador', bold)
+                        elif 'Equipo B/N o Color: B/N' in obj.contadores_anteriores:
+                            sheet.write(i, 9, obj.contadores_anteriores.split('Equipo B/N o Color: B/N</br>Contador B/N: ')[1], bold)
+                            sheet.write(i, 10, 'Sin contador', bold)
+                        elif 'Equipo B/N o Color: Color' in obj.contadores_anteriores:
+                            sheet.write(i, 9, obj.contadores_anteriores.split("Equipo B/N o Color: Color</br>Contador B/N: ")[1].split("</br>Contador Color: ")[0], bold)
+                            sheet.write(i, 10, obj.contadores_anteriores.split("Equipo B/N o Color: Color</br>Contador B/N: ")[1].split("</br>Contador Color: ")[1], bold)
+                        else:
+                            sheet.write(i, 9, '', bold)
+                            sheet.write(i, 10, '', bold)
+                    else:
+                        sheet.write(i, 7, '', bold)
+                        sheet.write(i, 8, '', bold)
+                    #sheet.write(i, 7, str(obj.x_studio_equipo_por_nmero_de_serie_1[0].serie.name) if(obj.team_id.id==8 or obj.x_studio_tipo_de_vale == 'Requerimiento') else str(obj.x_studio_equipo_por_nmero_de_serie.name), bold)
+                    #sheet.write(i, 8, str(obj.x_studio_equipo_por_nmero_de_serie_1[0].serie.product_id.name) if(obj.team_id.id==8 or obj.x_studio_tipo_de_vale == 'Requerimiento') else str(obj.x_studio_equipo_por_nmero_de_serie.product_id.name), bold)
+                    p=[]
+                    if(len(obj.x_studio_equipo_por_nmero_de_serie_1)==1):
+                        if(obj.x_studio_equipo_por_nmero_de_serie_1.x_studio_cartuchonefro):
+                            p.append(obj.x_studio_equipo_por_nmero_de_serie_1.x_studio_cartuchonefro.name)
+                        if(obj.x_studio_equipo_por_nmero_de_serie_1.x_studio_cartucho_amarillo):
+                            p.append(obj.x_studio_equipo_por_nmero_de_serie_1.x_studio_cartucho_amarillo.name)
+                        if(obj.x_studio_equipo_por_nmero_de_serie_1.x_studio_cartucho_cian_1):
+                            p.append(obj.x_studio_equipo_por_nmero_de_serie_1.x_studio_cartucho_cian_1.name)
+                        if(obj.x_studio_equipo_por_nmero_de_serie_1.x_studio_cartucho_magenta):
+                            p.append(obj.x_studio_equipo_por_nmero_de_serie_1.x_studio_cartucho_magenta.name)
+                    sheet.write(i, 11, str(obj.x_studio_productos.mapped('name')).replace('[\'','').replace('\']','').replace('\'','') if(len(obj.x_studio_equipo_por_nmero_de_serie)==1) else str(p).replace('[\'','').replace('\']','').replace('\'',''), bold)
+                    sheet.write(i, 12, obj.team_id.name if(obj.team_id) else "", bold)
+                    sheet.write(i, 13,obj.x_studio_empresas_relacionadas.state_id.name if(obj.x_studio_empresas_relacionadas and obj.x_studio_empresas_relacionadas.state_id) else '' , bold)
+                    sheet.write(i, 14, obj.stage_id.name if(obj.stage_id.id) else '', bold)
+
+                    sheet.write(i, 15, str(obj.abiertoPor) if(obj.abiertoPor) else '', bold)
+                    sheet.write(i, 16, str(obj.primerDiagnosticoUsuario) if(obj.primerDiagnosticoUsuario) else '', bold)
+
+                    sheet.write(i, 17, obj.x_studio_ultima_nota if(obj.x_studio_ultima_nota) else '', bold)
+                    sheet.write(i, 18, pytz.utc.localize(obj.ultimoDiagnosticoFecha, is_dst=None).astimezone(pytz.timezone('America/Mexico_City')).strftime("%Y/%m/%d %H:%M:%S") if (obj.ultimoDiagnosticoFecha) else '', bold)
+                    sheet.write(i, 19, pytz.utc.localize(obj.resuelto_el, is_dst=None).astimezone(pytz.timezone('America/Mexico_City')).strftime("%Y/%m/%d %H:%M:%S") if (obj.resuelto_el) else '', bold)
+                    sheet.write(i, 20, obj.x_studio_tecnico if(obj.x_studio_tecnico) else obj.write_uid.name, bold)
+                    if obj.x_studio_empresas_relacionadas:
+                        sheet.write(i, 21, str(str(obj.x_studio_empresas_relacionadas.street_name)+" No. Ext. "+str(obj.x_studio_empresas_relacionadas.street_number)+" No. Int. "+str(obj.x_studio_empresas_relacionadas.street_number2)+" ,COL. "+str(obj.x_studio_empresas_relacionadas.l10n_mx_edi_colony)+" "+str(obj.x_studio_empresas_relacionadas.city)+" México, "+str(obj.x_studio_empresas_relacionadas.state_id.name)+"C.P "+str(obj.x_studio_empresas_relacionadas.zip)), bold)
+                    else:
+                        sheet.write(i, 21, '', bold)
+                    sheet.write(i, 22, obj.x_studio_nmero_de_ticket_cliente if(obj.x_studio_nmero_de_ticket_cliente) else '', bold)
+                    sheet.write(i, 23, obj.x_studio_nmero_de_guia_1 if(obj.x_studio_nmero_de_guia_1) else '', bold)
+                    sheet.write(i, 24, pytz.utc.localize(obj.cerrado_el, is_dst=None).astimezone(pytz.timezone('America/Mexico_City')).strftime("%Y/%m/%d %H:%M:%S") if (obj.cerrado_el) else '', bold)
+                    sheet.write(i, 25, obj.partner_id.x_studio_ejecutivo.name if (obj.partner_id.x_studio_ejecutivo) else '', bold)
+                    i=i+1
+                if(len(obj.x_studio_equipo_por_nmero_de_serie_1)>1 or len(obj.x_studio_equipo_por_nmero_de_serie)>1):
+                    series=None
+                    a=False
+                    if(len(obj.x_studio_equipo_por_nmero_de_serie_1)>1):
+                        series=obj.x_studio_equipo_por_nmero_de_serie_1
+                        a=True
+                    if(len(obj.x_studio_equipo_por_nmero_de_serie)>1):
+                        series=obj.x_studio_equipo_por_nmero_de_serie
+                    p=[]
+                    for s in series:
+                        if(a):
+                            if(s.x_studio_cartuchonefro):
+                                p.append(s.x_studio_cartuchonefro.name)
+                            if(s.x_studio_cartucho_amarillo):
+                                p.append(s.x_studio_cartucho_amarillo.name)
+                            if(s.x_studio_cartucho_cian_1):
+                                p.append(s.x_studio_cartucho_cian_1.name)
+                            if(s.x_studio_cartucho_magenta):
+                                p.append(s.x_studio_cartucho_magenta.name)
+                    if(series!=None):
+                        sheet.write(i, 0, obj.x_studio_field_nO7Xg.warehouse_id.name if(obj.x_studio_field_nO7Xg) else '', bold)
+                        sheet.write(i, 1, obj.id, bold)
+                        sheet.write(i, 2, obj.x_studio_tipo_de_vale if(obj.x_studio_tipo_de_vale) else '', bold)
+                        sheet.write(i, 3, pytz.utc.localize(obj.create_date, is_dst=None).astimezone(pytz.timezone('America/Mexico_City')).strftime("%Y/%m/%d %H:%M:%S"), bold)
+                        sheet.write(i, 4, obj.days_difference, bold)
+                        sheet.write(i, 5, obj.partner_id.name if(obj.partner_id) else '', bold)
+                        sheet.write(i, 6, obj.x_studio_empresas_relacionadas.name if(obj.x_studio_empresas_relacionadas) else '', bold)
+                        sheet.write(i, 7, str(series.mapped('serie.name')) if(a) else str(series.mapped('name')), bold)
+                        sheet.write(i, 8, str(series.mapped('serie.product_id.name')) if(a) else str(series.mapped('name')), bold)
+                        
+
+                        sheet.write(i, 11, str(p) if(a) else str(obj.x_studio_productos.mapped('name')), bold)
+                        sheet.write(i, 12, obj.team_id.name if(obj.team_id) else "", bold)
+                        sheet.write(i, 13,obj.x_studio_empresas_relacionadas.state_id.name if(obj.x_studio_empresas_relacionadas and obj.x_studio_empresas_relacionadas.state_id) else '' , bold)
+                        sheet.write(i, 14, obj.stage_id.name if(obj.stage_id.id) else '', bold)
+
+                        sheet.write(i, 15, str(obj.abiertoPor) if(obj.abiertoPor) else '', bold)
+                        sheet.write(i, 16, str(obj.primerDiagnosticoUsuario) if(obj.primerDiagnosticoUsuario) else '', bold)
+
+                        sheet.write(i, 17, obj.x_studio_ultima_nota if(obj.x_studio_ultima_nota) else '', bold)
+                        sheet.write(i, 18, pytz.utc.localize(obj.ultimoDiagnosticoFecha, is_dst=None).astimezone(pytz.timezone('America/Mexico_City')).strftime("%Y/%m/%d %H:%M:%S") if (obj.ultimoDiagnosticoFecha) else '', bold)
+                        sheet.write(i, 19, pytz.utc.localize(obj.resuelto_el, is_dst=None).astimezone(pytz.timezone('America/Mexico_City')).strftime("%Y/%m/%d %H:%M:%S") if (obj.resuelto_el) else '', bold)
+                        sheet.write(i, 20, obj.x_studio_tecnico if(obj.x_studio_tecnico) else obj.write_uid.name, bold)
+                        if obj.x_studio_empresas_relacionadas:
+                            sheet.write(i, 21, str(str(obj.x_studio_empresas_relacionadas.street_name)+" No. Ext. "+str(obj.x_studio_empresas_relacionadas.street_number)+" No. Int. "+str(obj.x_studio_empresas_relacionadas.street_number2)+" ,COL. "+str(obj.x_studio_empresas_relacionadas.l10n_mx_edi_colony)+" "+str(obj.x_studio_empresas_relacionadas.city)+" México, "+str(obj.x_studio_empresas_relacionadas.state_id.name)+"C.P "+str(obj.x_studio_empresas_relacionadas.zip)), bold)
+                        else:
+                            sheet.write(i, 21, '', bold)
+                        sheet.write(i, 22, obj.x_studio_nmero_de_ticket_cliente if(obj.x_studio_nmero_de_ticket_cliente) else '', bold)
+                        sheet.write(i, 23, obj.x_studio_nmero_de_guia_1 if(obj.x_studio_nmero_de_guia_1) else '', bold)
+                        sheet.write(i, 24, pytz.utc.localize(obj.cerrado_el, is_dst=None).astimezone(pytz.timezone('America/Mexico_City')).strftime("%Y/%m/%d %H:%M:%S") if (obj.cerrado_el) else '', bold)
+                        sheet.write(i, 25, obj.partner_id.x_studio_ejecutivo.name if (obj.partner_id.x_studio_ejecutivo) else '', bold)
+
+                        for serie in series:
+                            i=i+1
+                            sheet.write(i, 7, str(serie.serie.name) if(a) else str(serie.name), celdaContadoresFormato)
+                            sheet.write(i, 8, str(serie.serie.product_id.name) if(a) else str(serie.name), celdaContadoresFormato)
+
+                            if a:
+                                sheet.write(i, 9, str(serie.contadorMono) if(serie.contadorMono) else 'Sin contador', celdaContadoresFormato)
+                                sheet.write(i, 10, str(serie.contadorColor) if(serie.contadorColor) else 'Sin contador', celdaContadoresFormato)
+                            """
+                            else:
+                                if 'Equipo sin contador' in obj.contadores_anteriores:
+                                    sheet.write(i, 9, 'Sin contador', bold)
+                                    sheet.write(i, 10, 'Sin contador', bold)
+                                elif 'Equipo B/N o Color: B/N' in obj.contadores_anteriores:
+                                    sheet.write(i, 9, obj.contadores_anteriores.split('Equipo B/N o Color: B/N</br>Contador B/N: ')[1], bold)
+                                    sheet.write(i, 10, 'Sin contador', bold)
+                                elif 'Equipo B/N o Color: Color' in obj.contadores_anteriores:
+                                    sheet.write(i, 9, obj.contadores_anteriores.split("Equipo B/N o Color: Color</br>Contador B/N: ")[1].split("</br>Contador Color: ")[0], bold)
+                                    sheet.write(i, 10, obj.contadores_anteriores.split("Equipo B/N o Color: Color</br>Contador B/N: ")[1].split("</br>Contador Color: ")[1], bold)
+                                else:
+                                    sheet.write(i, 9, '', bold)
+                                    sheet.write(i, 10, '', bold)
+                            """
+
+                        i=i+1
+                    else:
+                        sheet.write(i, 0, obj.x_studio_field_nO7Xg.warehouse_id.name if(obj.x_studio_field_nO7Xg) else '', bold)
+                        sheet.write(i, 1, obj.id, bold)
+                        sheet.write(i, 2, obj.x_studio_tipo_de_vale if(obj.x_studio_tipo_de_vale) else '', bold)
+                        sheet.write(i, 3, pytz.utc.localize(obj.create_date, is_dst=None).astimezone(pytz.timezone('America/Mexico_City')).strftime("%Y/%m/%d %H:%M:%S"), bold)
+                        sheet.write(i, 4, obj.days_difference, bold)
+                        sheet.write(i, 5, obj.partner_id.name if(obj.partner_id) else '', bold)
+                        sheet.write(i, 6, obj.x_studio_empresas_relacionadas.name if(obj.x_studio_empresas_relacionadas) else '', bold)
+                        sheet.write(i, 7, '', bold)
+                        sheet.write(i, 8, '', bold)
+                        sheet.write(i, 9, '', bold)
+                        sheet.write(i, 10, '', bold)
+                        sheet.write(i, 11, '', bold)
+                        sheet.write(i, 12, obj.team_id.name if(obj.team_id) else '', bold)
+                        sheet.write(i, 13, obj.x_studio_empresas_relacionadas.state_id.name if(obj.x_studio_empresas_relacionadas and obj.x_studio_empresas_relacionadas.state_id) else '' , bold)
+                        sheet.write(i, 14, obj.stage_id.name if(obj.stage_id) else '', bold)
+
+                        sheet.write(i, 15, str(obj.abiertoPor) if(obj.abiertoPor) else '', bold)
+                        sheet.write(i, 16, str(obj.primerDiagnosticoUsuario) if(obj.primerDiagnosticoUsuario) else '', bold)
+
+                        sheet.write(i, 17, obj.x_studio_ultima_nota if(obj.x_studio_ultima_nota) else '', bold)
+                        sheet.write(i, 18, pytz.utc.localize(obj.ultimoDiagnosticoFecha, is_dst=None).astimezone(pytz.timezone('America/Mexico_City')).strftime("%Y/%m/%d %H:%M:%S") if (obj.ultimoDiagnosticoFecha) else '', bold)
+                        sheet.write(i, 19, pytz.utc.localize(obj.resuelto_el, is_dst=None).astimezone(pytz.timezone('America/Mexico_City')).strftime("%Y/%m/%d %H:%M:%S") if (obj.resuelto_el) else '', bold)
+                        sheet.write(i, 20, obj.x_studio_tecnico if(obj.x_studio_tecnico) else obj.write_uid.name, bold)
+                        if obj.x_studio_empresas_relacionadas:
+                            sheet.write(i, 21, str(str(obj.x_studio_empresas_relacionadas.street_name)+" No. Ext. "+str(obj.x_studio_empresas_relacionadas.street_number)+" No. Int. "+str(obj.x_studio_empresas_relacionadas.street_number2)+" ,COL. "+str(obj.x_studio_empresas_relacionadas.l10n_mx_edi_colony)+" "+str(obj.x_studio_empresas_relacionadas.city)+" México, "+str(obj.x_studio_empresas_relacionadas.state_id.name)+"C.P "+str(obj.x_studio_empresas_relacionadas.zip)), bold)
+                        else:
+                            sheet.write(i, 21, '', bold)
+                        sheet.write(i, 22, obj.x_studio_nmero_de_ticket_cliente if(obj.x_studio_nmero_de_ticket_cliente) else '', bold)
+                        sheet.write(i, 23, obj.x_studio_nmero_de_guia_1 if(obj.x_studio_nmero_de_guia_1) else '', bold)
+                        sheet.write(i, 24, pytz.utc.localize(obj.cerrado_el, is_dst=None).astimezone(pytz.timezone('America/Mexico_City')).strftime("%Y/%m/%d %H:%M:%S") if (obj.cerrado_el) else '', bold)
+                        sheet.write(i, 25, obj.partner_id.x_studio_ejecutivo.name if (obj.partner_id.x_studio_ejecutivo) else '', bold)
+                        i=i+1
+                if(len(obj.x_studio_equipo_por_nmero_de_serie_1) == 0 and len(obj.x_studio_equipo_por_nmero_de_serie) == 0):
+                    sheet.write(i, 0, obj.x_studio_field_nO7Xg.warehouse_id.name if(obj.x_studio_field_nO7Xg) else '', bold)
+                    sheet.write(i, 1, obj.id, bold)
+                    sheet.write(i, 2, obj.x_studio_tipo_de_vale if(obj.x_studio_tipo_de_vale) else '', bold)
+                    sheet.write(i, 3, pytz.utc.localize(obj.create_date, is_dst=None).astimezone(pytz.timezone('America/Mexico_City')).strftime("%Y/%m/%d %H:%M:%S"), bold)
+                    sheet.write(i, 4, obj.days_difference, bold)
+                    sheet.write(i, 5, obj.partner_id.name if(obj.partner_id) else '', bold)
+                    sheet.write(i, 6, obj.x_studio_empresas_relacionadas.name if(obj.x_studio_empresas_relacionadas) else '', bold)
+                    sheet.write(i, 7, '', bold)
+                    sheet.write(i, 8, '', bold)
+                    sheet.write(i, 9, '', bold)
+                    sheet.write(i, 10, '', bold)
+
+                    sheet.write(i, 11, '', bold)
+                    sheet.write(i, 12, obj.team_id.name if(obj.team_id) else '', bold)
+                    sheet.write(i, 13, obj.x_studio_empresas_relacionadas.state_id.name if(obj.x_studio_empresas_relacionadas and obj.x_studio_empresas_relacionadas.state_id) else '' , bold)
+                    sheet.write(i, 14, obj.stage_id.name if(obj.stage_id) else '', bold)
+
+                    sheet.write(i, 15, str(obj.abiertoPor) if(obj.abiertoPor) else '', bold)
+                    sheet.write(i, 16, str(obj.primerDiagnosticoUsuario) if(obj.primerDiagnosticoUsuario) else '', bold)
+                    
+                    sheet.write(i, 17, obj.x_studio_ultima_nota if(obj.x_studio_ultima_nota) else '', bold)
+                    sheet.write(i, 18, pytz.utc.localize(obj.ultimoDiagnosticoFecha, is_dst=None).astimezone(pytz.timezone('America/Mexico_City')).strftime("%Y/%m/%d %H:%M:%S") if (obj.ultimoDiagnosticoFecha) else '', bold)
+                    sheet.write(i, 19, pytz.utc.localize(obj.resuelto_el, is_dst=None).astimezone(pytz.timezone('America/Mexico_City')).strftime("%Y/%m/%d %H:%M:%S") if (obj.resuelto_el) else '', bold)
+                    sheet.write(i, 20, obj.x_studio_tecnico if(obj.x_studio_tecnico) else obj.write_uid.name, bold)
+                    if obj.x_studio_empresas_relacionadas:
+                        sheet.write(i, 21, str(str(obj.x_studio_empresas_relacionadas.street_name)+" No. Ext. "+str(obj.x_studio_empresas_relacionadas.street_number)+" No. Int. "+str(obj.x_studio_empresas_relacionadas.street_number2)+" ,COL. "+str(obj.x_studio_empresas_relacionadas.l10n_mx_edi_colony)+" "+str(obj.x_studio_empresas_relacionadas.city)+" México, "+str(obj.x_studio_empresas_relacionadas.state_id.name)+"C.P "+str(obj.x_studio_empresas_relacionadas.zip)), bold)
+                    else:
+                        sheet.write(i, 21, '', bold)
+                    sheet.write(i, 22, obj.x_studio_nmero_de_ticket_cliente if(obj.x_studio_nmero_de_ticket_cliente) else '', bold)
+                    sheet.write(i, 23, obj.x_studio_nmero_de_guia_1 if(obj.x_studio_nmero_de_guia_1) else '', bold)
+                    sheet.write(i, 24, pytz.utc.localize(obj.cerrado_el, is_dst=None).astimezone(pytz.timezone('America/Mexico_City')).strftime("%Y/%m/%d %H:%M:%S") if (obj.cerrado_el) else '', bold)
+                    sheet.write(i, 25, obj.partner_id.x_studio_ejecutivo.name if (obj.partner_id.x_studio_ejecutivo) else '', bold)
+                    i=i+1
+            except:
+                _logger.info("Error en el ticket: " + str(obj.id))
+        sheet.add_table('A2:Z'+str(i),{'style': 'Table Style Medium 9','columns': [{'header': 'Almacen'},{'header': 'Ticket'},{'header': 'Tipo de Reporte'},{'header': 'Fecha'},{'header':'Dias de atraso'},{'header': 'Cliente'},{'header': 'Localidad'},{'header': 'Serie'},{'header': 'Modelo'},{'header': 'Contador monocromático'},{'header': 'Contador color'},{'header': 'Productos'},{'header': 'Area de Atención'},{'header': 'Zona'},{'header': 'Estado'},{'header':'Ticket abierto por'},{'header':'Nota inicial'},{'header': 'Ultima nota'},{'header': 'Fecha nota'},{'header': 'Resuelto el'},{'header': 'Tecnico'},{'header': 'Dirección'},{'header': 'No. Ticket cliente'},{'header':'Guia'},{'header':'Cerrado el'},{'header':'Ejecutivo'}]})
+        workbook.close()
+
 
 class ComprasXlsx(models.AbstractModel):
     _name = 'report.compras.report'
