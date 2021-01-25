@@ -594,6 +594,7 @@ class TicketsContadoresXlsx(models.AbstractModel):
                             if(s.x_studio_cartucho_magenta):
                                 p.append(s.x_studio_cartucho_magenta.name)
                     if(series!=None):
+                        """
                         sheet.write(i, 0, obj.x_studio_field_nO7Xg.warehouse_id.name if(obj.x_studio_field_nO7Xg) else '', bold)
                         sheet.write(i, 1, obj.id, bold)
                         sheet.write(i, 2, obj.x_studio_tipo_de_vale if(obj.x_studio_tipo_de_vale) else '', bold)
@@ -626,6 +627,7 @@ class TicketsContadoresXlsx(models.AbstractModel):
                         sheet.write(i, 24, pytz.utc.localize(obj.cerrado_el, is_dst=None).astimezone(pytz.timezone('America/Mexico_City')).strftime("%Y/%m/%d %H:%M:%S") if (obj.cerrado_el) else '', bold)
                         sheet.write(i, 25, obj.partner_id.x_studio_ejecutivo.name if (obj.partner_id.x_studio_ejecutivo) else '', bold)
                         sheet.write(i, 26, str(code) if (code!=[]) else '', bold)
+                        """
                         for serie in series:
                             i=i+1
                             sheet.write(i, 0, obj.x_studio_field_nO7Xg.warehouse_id.name if(obj.x_studio_field_nO7Xg) else '', celdaContadoresFormato)
