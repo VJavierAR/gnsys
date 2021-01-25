@@ -572,7 +572,7 @@ class TicketsContadoresXlsx(models.AbstractModel):
                     sheet.write(i, 23, obj.x_studio_nmero_de_guia_1 if(obj.x_studio_nmero_de_guia_1) else '', bold)
                     sheet.write(i, 24, pytz.utc.localize(obj.cerrado_el, is_dst=None).astimezone(pytz.timezone('America/Mexico_City')).strftime("%Y/%m/%d %H:%M:%S") if (obj.cerrado_el) else '', bold)
                     sheet.write(i, 25, obj.partner_id.x_studio_ejecutivo.name if (obj.partner_id.x_studio_ejecutivo) else '', bold)
-                    sheet.write(i, 26, str(code) if (code!=[]) else '', celdaContadoresFormato)
+                    sheet.write(i, 26, str(code) if (code!=[]) else '', bold)
                     i=i+1
                 if(len(obj.x_studio_equipo_por_nmero_de_serie_1)>1 or len(obj.x_studio_equipo_por_nmero_de_serie)>1):
                     series=None
@@ -723,7 +723,7 @@ class TicketsContadoresXlsx(models.AbstractModel):
                         sheet.write(i, 23, obj.x_studio_nmero_de_guia_1 if(obj.x_studio_nmero_de_guia_1) else '', bold)
                         sheet.write(i, 24, pytz.utc.localize(obj.cerrado_el, is_dst=None).astimezone(pytz.timezone('America/Mexico_City')).strftime("%Y/%m/%d %H:%M:%S") if (obj.cerrado_el) else '', bold)
                         sheet.write(i, 25, obj.partner_id.x_studio_ejecutivo.name if (obj.partner_id.x_studio_ejecutivo) else '', bold)
-                        sheet.write(i, 26, str(code) if (code!=[]) else '', celdaContadoresFormato)
+                        sheet.write(i, 26, str(code) if (code!=[]) else '', bold)
                         i=i+1
                 if(len(obj.x_studio_equipo_por_nmero_de_serie_1) == 0 and len(obj.x_studio_equipo_por_nmero_de_serie) == 0):
                     sheet.write(i, 0, obj.x_studio_field_nO7Xg.warehouse_id.name if(obj.x_studio_field_nO7Xg) else '', bold)
@@ -758,7 +758,7 @@ class TicketsContadoresXlsx(models.AbstractModel):
                     sheet.write(i, 23, obj.x_studio_nmero_de_guia_1 if(obj.x_studio_nmero_de_guia_1) else '', bold)
                     sheet.write(i, 24, pytz.utc.localize(obj.cerrado_el, is_dst=None).astimezone(pytz.timezone('America/Mexico_City')).strftime("%Y/%m/%d %H:%M:%S") if (obj.cerrado_el) else '', bold)
                     sheet.write(i, 25, obj.partner_id.x_studio_ejecutivo.name if (obj.partner_id.x_studio_ejecutivo) else '', bold)
-                    sheet.write(i, 26, str(code) if (code!=[]) else '', celdaContadoresFormato)
+                    sheet.write(i, 26, str(code) if (code!=[]) else '', bold)
                     i=i+1
             except:
                 _logger.info("Error en el ticket: " + str(obj.id))
