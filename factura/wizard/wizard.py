@@ -136,7 +136,9 @@ class TestReport(TransientModel):
             worksheet.write(i, 12, f.amount_total)
             if f.type=='out_refund' and f.x_studio_importacion=='pruebaNota':
                worksheet.write(i, 13, 0.0)
-            else:
+            if (f.x_studio_importacion=='pruebaNota' or f.x_studio_importacion=='lunes-19-10-2020' or f.x_studio_importacion=='lunes05' or f.x_studio_importacion=='viernes-30-10-2020' or f.x_studio_importacion=='lunes' or f.x_studio_importacion=='prueba' or f.x_studio_importacion=='martesGRupo') and f.state=='open':
+               worksheet.write(i, 13, float(f.x_studio_importe_por_pagar)) 
+            if not f.x_studio_folio_techra:
                worksheet.write(i, 13, f.residual)
             
             
