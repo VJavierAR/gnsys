@@ -262,7 +262,7 @@ class TicketsXlsx(models.AbstractModel):
                     picksTicket = todosPicks.filtered(lambda pick:  pick.sale_id.id == obj.x_studio_field_nO7Xg.id and pick.location_id.id == obj.x_studio_field_nO7Xg.warehouse_id.lot_stock_id.id and (pick.active == False or pick.active == True))
                     _logger.info("picksTicket: " + str(picksTicket))
                     #if(len(pick1)>1):
-                    code=pick1.mapped('move_ids_without_package.product_id.default_code')+pick2.mapped('move_ids_without_package.product_id.default_code')
+                    #code=pick1.mapped('move_ids_without_package.product_id.default_code')+pick2.mapped('move_ids_without_package.product_id.default_code')
                     code = picksTicket.mapped('move_ids_without_package.product_id.default_code')
                     #if(len(pick1)==1):
                        # if(pick.id):
