@@ -572,7 +572,7 @@ class TicketsContadoresXlsx(models.AbstractModel):
                     sheet.write(i, 23, obj.x_studio_nmero_de_guia_1 if(obj.x_studio_nmero_de_guia_1) else '', bold)
                     sheet.write(i, 24, pytz.utc.localize(obj.cerrado_el, is_dst=None).astimezone(pytz.timezone('America/Mexico_City')).strftime("%Y/%m/%d %H:%M:%S") if (obj.cerrado_el) else '', bold)
                     sheet.write(i, 25, obj.partner_id.x_studio_ejecutivo.name if (obj.partner_id.x_studio_ejecutivo) else '', bold)
-                    sheet.write(i, 26, str(code) if (code!=[]) else '', bold)
+                    sheet.write(i, 26, str(code) if (code!=[]) else '', celdaContadoresFormato)
                     i=i+1
                 if(len(obj.x_studio_equipo_por_nmero_de_serie_1)>1 or len(obj.x_studio_equipo_por_nmero_de_serie)>1):
                     series=None
@@ -642,8 +642,17 @@ class TicketsContadoresXlsx(models.AbstractModel):
                             if a:
                                 sheet.write(i, 9, str(serie.contadorMono) if(serie.contadorMono) else 'Sin contador', celdaContadoresFormato)
                                 sheet.write(i, 10, str(serie.contadorColor) if(serie.contadorColor) else 'Sin contador', celdaContadoresFormato)
+                                cartuchos = []
+                                if serie.x_studio_cartuchonefro:
+                                    cartuchos.append(serie.x_studio_cartuchonefro.name)
+                                if serie.x_studio_cartucho_amarillo:
+                                    cartuchos.append(serie.x_studio_cartucho_amarillo.name)
+                                if serie.x_studio_cartucho_cian_1:
+                                    cartuchos.append(serie.x_studio_cartucho_cian_1.name)
+                                if serie.x_studio_cartucho_magenta:
+                                    cartuchos.append(serie.x_studio_cartucho_magenta.name)
+                                sheet.write(i, 11, str(cartuchos) if(cartuchos != []) else 'Sin cartuchos', celdaContadoresFormato)
 
-                            sheet.write(i, 11, str(p) if(a) else str(obj.x_studio_productos.mapped('name')), celdaContadoresFormato)
                             sheet.write(i, 12, obj.team_id.name if(obj.team_id) else "", celdaContadoresFormato)
                             sheet.write(i, 13,obj.x_studio_empresas_relacionadas.state_id.name if(obj.x_studio_empresas_relacionadas and obj.x_studio_empresas_relacionadas.state_id) else '' , celdaContadoresFormato)
                             sheet.write(i, 14, obj.stage_id.name if(obj.stage_id.id) else '', celdaContadoresFormato)
@@ -663,7 +672,7 @@ class TicketsContadoresXlsx(models.AbstractModel):
                             sheet.write(i, 23, obj.x_studio_nmero_de_guia_1 if(obj.x_studio_nmero_de_guia_1) else '', celdaContadoresFormato)
                             sheet.write(i, 24, pytz.utc.localize(obj.cerrado_el, is_dst=None).astimezone(pytz.timezone('America/Mexico_City')).strftime("%Y/%m/%d %H:%M:%S") if (obj.cerrado_el) else '', celdaContadoresFormato)
                             sheet.write(i, 25, obj.partner_id.x_studio_ejecutivo.name if (obj.partner_id.x_studio_ejecutivo) else '', celdaContadoresFormato)
-                            sheet.write(i, 26, str(code) if (code!=[]) else '', bold)
+                            sheet.write(i, 26, str(code) if (code!=[]) else '', celdaContadoresFormato)
 
                             """
                             else:
@@ -714,7 +723,7 @@ class TicketsContadoresXlsx(models.AbstractModel):
                         sheet.write(i, 23, obj.x_studio_nmero_de_guia_1 if(obj.x_studio_nmero_de_guia_1) else '', bold)
                         sheet.write(i, 24, pytz.utc.localize(obj.cerrado_el, is_dst=None).astimezone(pytz.timezone('America/Mexico_City')).strftime("%Y/%m/%d %H:%M:%S") if (obj.cerrado_el) else '', bold)
                         sheet.write(i, 25, obj.partner_id.x_studio_ejecutivo.name if (obj.partner_id.x_studio_ejecutivo) else '', bold)
-                        sheet.write(i, 26, str(code) if (code!=[]) else '', bold)
+                        sheet.write(i, 26, str(code) if (code!=[]) else '', celdaContadoresFormato)
                         i=i+1
                 if(len(obj.x_studio_equipo_por_nmero_de_serie_1) == 0 and len(obj.x_studio_equipo_por_nmero_de_serie) == 0):
                     sheet.write(i, 0, obj.x_studio_field_nO7Xg.warehouse_id.name if(obj.x_studio_field_nO7Xg) else '', bold)
@@ -749,7 +758,7 @@ class TicketsContadoresXlsx(models.AbstractModel):
                     sheet.write(i, 23, obj.x_studio_nmero_de_guia_1 if(obj.x_studio_nmero_de_guia_1) else '', bold)
                     sheet.write(i, 24, pytz.utc.localize(obj.cerrado_el, is_dst=None).astimezone(pytz.timezone('America/Mexico_City')).strftime("%Y/%m/%d %H:%M:%S") if (obj.cerrado_el) else '', bold)
                     sheet.write(i, 25, obj.partner_id.x_studio_ejecutivo.name if (obj.partner_id.x_studio_ejecutivo) else '', bold)
-                    sheet.write(i, 26, str(code) if (code!=[]) else '', bold)
+                    sheet.write(i, 26, str(code) if (code!=[]) else '', celdaContadoresFormato)
                     i=i+1
             except:
                 _logger.info("Error en el ticket: " + str(obj.id))
