@@ -498,9 +498,11 @@ class TicketsContadoresXlsx(models.AbstractModel):
         bold = workbook.add_format({'bold': True})
         celdaContadoresFormato = workbook.add_format({'bold': True, 'bg_color': '#DAF7A6'})
         sheet = workbook.add_worksheet('Tickets')
-        sheet.merge_range('A1:Z1', 'Tickets', merge_format)
+        sheet.merge_range('A1:AA1', 'Tickets', merge_format)
         for obj in ticket:
             try:
+                todosPicks=self.env['stock.move'].search([['origin','=',obj.x_studio_field_nO7Xg.name],['location_id','=',obj.x_studio_field_nO7Xg.warehouse_id.lot_stock_id.id]])
+                code=todosPicks.mapped('product_id.default_code')
                 tipo=''
                 if obj.x_studio_equipo_por_nmero_de_serie_1:
                     tipo='Toner'
@@ -570,6 +572,7 @@ class TicketsContadoresXlsx(models.AbstractModel):
                     sheet.write(i, 23, obj.x_studio_nmero_de_guia_1 if(obj.x_studio_nmero_de_guia_1) else '', bold)
                     sheet.write(i, 24, pytz.utc.localize(obj.cerrado_el, is_dst=None).astimezone(pytz.timezone('America/Mexico_City')).strftime("%Y/%m/%d %H:%M:%S") if (obj.cerrado_el) else '', bold)
                     sheet.write(i, 25, obj.partner_id.x_studio_ejecutivo.name if (obj.partner_id.x_studio_ejecutivo) else '', bold)
+                    sheet.write(i, 26, str(code) if (code!=[]) else '', bold)
                     i=i+1
                 if(len(obj.x_studio_equipo_por_nmero_de_serie_1)>1 or len(obj.x_studio_equipo_por_nmero_de_serie)>1):
                     series=None
@@ -622,7 +625,7 @@ class TicketsContadoresXlsx(models.AbstractModel):
                         sheet.write(i, 23, obj.x_studio_nmero_de_guia_1 if(obj.x_studio_nmero_de_guia_1) else '', bold)
                         sheet.write(i, 24, pytz.utc.localize(obj.cerrado_el, is_dst=None).astimezone(pytz.timezone('America/Mexico_City')).strftime("%Y/%m/%d %H:%M:%S") if (obj.cerrado_el) else '', bold)
                         sheet.write(i, 25, obj.partner_id.x_studio_ejecutivo.name if (obj.partner_id.x_studio_ejecutivo) else '', bold)
-
+                        sheet.write(i, 26, str(code) if (code!=[]) else '', bold)
                         for serie in series:
                             i=i+1
                             sheet.write(i, 0, obj.x_studio_field_nO7Xg.warehouse_id.name if(obj.x_studio_field_nO7Xg) else '', celdaContadoresFormato)
@@ -660,6 +663,8 @@ class TicketsContadoresXlsx(models.AbstractModel):
                             sheet.write(i, 23, obj.x_studio_nmero_de_guia_1 if(obj.x_studio_nmero_de_guia_1) else '', celdaContadoresFormato)
                             sheet.write(i, 24, pytz.utc.localize(obj.cerrado_el, is_dst=None).astimezone(pytz.timezone('America/Mexico_City')).strftime("%Y/%m/%d %H:%M:%S") if (obj.cerrado_el) else '', celdaContadoresFormato)
                             sheet.write(i, 25, obj.partner_id.x_studio_ejecutivo.name if (obj.partner_id.x_studio_ejecutivo) else '', celdaContadoresFormato)
+                            sheet.write(i, 26, str(code) if (code!=[]) else '', bold)
+
                             """
                             else:
                                 if 'Equipo sin contador' in obj.contadores_anteriores:
@@ -709,6 +714,7 @@ class TicketsContadoresXlsx(models.AbstractModel):
                         sheet.write(i, 23, obj.x_studio_nmero_de_guia_1 if(obj.x_studio_nmero_de_guia_1) else '', bold)
                         sheet.write(i, 24, pytz.utc.localize(obj.cerrado_el, is_dst=None).astimezone(pytz.timezone('America/Mexico_City')).strftime("%Y/%m/%d %H:%M:%S") if (obj.cerrado_el) else '', bold)
                         sheet.write(i, 25, obj.partner_id.x_studio_ejecutivo.name if (obj.partner_id.x_studio_ejecutivo) else '', bold)
+                        sheet.write(i, 26, str(code) if (code!=[]) else '', bold)
                         i=i+1
                 if(len(obj.x_studio_equipo_por_nmero_de_serie_1) == 0 and len(obj.x_studio_equipo_por_nmero_de_serie) == 0):
                     sheet.write(i, 0, obj.x_studio_field_nO7Xg.warehouse_id.name if(obj.x_studio_field_nO7Xg) else '', bold)
@@ -743,10 +749,11 @@ class TicketsContadoresXlsx(models.AbstractModel):
                     sheet.write(i, 23, obj.x_studio_nmero_de_guia_1 if(obj.x_studio_nmero_de_guia_1) else '', bold)
                     sheet.write(i, 24, pytz.utc.localize(obj.cerrado_el, is_dst=None).astimezone(pytz.timezone('America/Mexico_City')).strftime("%Y/%m/%d %H:%M:%S") if (obj.cerrado_el) else '', bold)
                     sheet.write(i, 25, obj.partner_id.x_studio_ejecutivo.name if (obj.partner_id.x_studio_ejecutivo) else '', bold)
+                    sheet.write(i, 26, str(code) if (code!=[]) else '', bold)
                     i=i+1
             except:
                 _logger.info("Error en el ticket: " + str(obj.id))
-        sheet.add_table('A2:Z'+str(i),{'style': 'Table Style Medium 9','columns': [{'header': 'Almacen'},{'header': 'Ticket'},{'header': 'Tipo de Reporte'},{'header': 'Fecha'},{'header':'Dias de atraso'},{'header': 'Cliente'},{'header': 'Localidad'},{'header': 'Serie'},{'header': 'Modelo'},{'header': 'Contador monocromático'},{'header': 'Contador color'},{'header': 'Productos'},{'header': 'Area de Atención'},{'header': 'Zona'},{'header': 'Estado'},{'header':'Ticket abierto por'},{'header':'Nota inicial'},{'header': 'Ultima nota'},{'header': 'Fecha nota'},{'header': 'Resuelto el'},{'header': 'Tecnico'},{'header': 'Dirección'},{'header': 'No. Ticket cliente'},{'header':'Guia'},{'header':'Cerrado el'},{'header':'Ejecutivo'}]})
+        sheet.add_table('A2:AA'+str(i),{'style': 'Table Style Medium 9','columns': [{'header': 'Almacen'},{'header': 'Ticket'},{'header': 'Tipo de Reporte'},{'header': 'Fecha'},{'header':'Dias de atraso'},{'header': 'Cliente'},{'header': 'Localidad'},{'header': 'Serie'},{'header': 'Modelo'},{'header': 'Contador monocromático'},{'header': 'Contador color'},{'header': 'Productos'},{'header': 'Area de Atención'},{'header': 'Zona'},{'header': 'Estado'},{'header':'Ticket abierto por'},{'header':'Nota inicial'},{'header': 'Ultima nota'},{'header': 'Fecha nota'},{'header': 'Resuelto el'},{'header': 'Tecnico'},{'header': 'Dirección'},{'header': 'No. Ticket cliente'},{'header':'Guia'},{'header':'Cerrado el'},{'header':'Ejecutivo'},{'header':'No Parte Entregada'}]})
         workbook.close()
 
 
