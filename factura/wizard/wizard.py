@@ -88,10 +88,10 @@ class TestReport(TransientModel):
         dir=self.serie=self.env['account.invoice'].search([('type','!=','in_invoice'),('type','!=','in_refund'),('date_invoice','!=',False),('state','!=','draft')],order='create_date desc') 
         
         worksheet = workbook.add_worksheet('Reporte Facturacion')
-        content = ["Serie", "Folio","Folio Fiscal Factura", "Documento Origen", "Folio Techra","RFC CLiente", "RFC Empresa","Razon Social", "Cliente", "Fecha Factura", "Importe sin impuesto","IVA","Total","Total adeudado","Tipo","Periodo","NC´s","REP","Retencion","Folio Fiscal Pago","Banco","Cuenta ordenate","Cuenta beneficiaria","Estado del pago","Ejecutivo","Vendedor","referencia","Fecha de pago","Nota","Pagos","Fecha Captura","Fecha Comentario","observaciones","Usuariocxc","Estado"]
+        content = ["Serie", "Folio","Folio Fiscal Factura", "Documento Origen", "Folio Techra","RFC CLiente", "RFC Empresa","Razon Social", "Cliente", "Fecha Factura", "Importe sin impuesto","IVA","Total","Total adeudado","Tipo","Periodo","NC´s","REP","Retencion","Folio Fiscal Pago","Banco","Cuenta ordenate","Cuenta beneficiaria","Estado del pago","Ejecutivo","Vendedor","referencia","Fecha de pago","Pagos","Fecha Captura","Fecha Comentario","observaciones","Usuariocxc","Estado"]
         bold = workbook.add_format({'bold': True})
-        neg = workbook.add_format({'border': 2})
-        format6 = workbook.add_format({'num_format': 'yyyy-mm-dd'})
+        neg = workbook.add_format({'border': 2})dd-mm-aa
+        format6 = workbook.add_format({'num_format': 'dd-mm-yy'})
         i=0
         for item in content :           
             worksheet.write(0, i, item,neg)            
@@ -191,10 +191,15 @@ class TestReport(TransientModel):
 
             except:
                 worksheet.write(i, 15, f.x_studio_periodo_1) 
+            
+            
             if f.x_studio_ncs:
                worksheet.write(i, 16, str(f.x_studio_ncs))
+            """
             else:
                worksheet.write(i, 16, '')
+            """
+            
             if str(f.x_studio_rep)!='False':
                worksheet.write(i, 17, str(f.x_studio_rep))
             else:
@@ -269,30 +274,30 @@ class TestReport(TransientModel):
                   if 'CDT' in dft:  
                       datesr=datetime.datetime.strptime(dft, '%a %b %d %H:%M:%S CDT %Y')
                worksheet.write(i, 27, dater,format6)
-               worksheet.write(i, 28, f.x_studio_nota)
-               worksheet.write(i, 29, f.x_studio_pagos)
+               worksheet.write(i, 16, f.x_studio_nota)
+               worksheet.write(i, 28, f.x_studio_pagos)
                dfy=f.x_studio_fecha_captura
                if dfy:
                   if 'CST' in dfy:
                       datesrC=datetime.datetime.strptime(dfy, '%a %b %d %H:%M:%S CST %Y')
                   if 'CDT' in dfy:  
                       datesrC=datetime.datetime.strptime(dfy, '%a %b %d %H:%M:%S CDT %Y')
-                  worksheet.write(i, 30, dater,format6)
+                  worksheet.write(i, 29, dater,format6)
             
-               worksheet.write(i, 31, f.x_studio_fecha_comentario)
-               worksheet.write(i, 32, f.x_studio_oboservaciones)
-               worksheet.write(i, 33, f.x_studio_usuario_cxc)
+               worksheet.write(i, 30, f.x_studio_fecha_comentario)
+               worksheet.write(i, 31, f.x_studio_oboservaciones)
+               worksheet.write(i, 32, f.x_studio_usuario_cxc)
                
                if f.type=='out_refund':
                   if f.x_studio_folio_fiscal_pago_techra=='Cancelado':
-                     worksheet.write(i, 34, 'C')
+                     worksheet.write(i, 33, 'C')
                   else:  
-                     worksheet.write(i, 34,'NDC')
+                     worksheet.write(i, 33,'NDC')
                else:
-                  worksheet.write(i, 34, f.x_studio_estadohtml)                                    
+                  worksheet.write(i, 33, f.x_studio_estadohtml)                                    
             else:
                worksheet.write(i, 27, fechapago)
-               worksheet.write(i, 34, estado)
+               worksheet.write(i, 33, estado)
             
             
             
