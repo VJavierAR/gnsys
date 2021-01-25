@@ -266,7 +266,8 @@ class TicketsXlsx(models.AbstractModel):
                 pickings=[]
                 code=[]
                 if(obj.x_studio_field_nO7Xg.id):
-                    todosPicks.filtered(lambda x:x.origin==obj.x_studio_field_nO7Xg.name and x.location_id.id== obj.x_studio_field_nO7Xg.warehouse_id.lot_stock_id.id)
+                    todosPicks=self.env['stock.move'].search([['origin','=',obj.x_studio_field_nO7Xg.name],['location_id','=',obj.x_studio_field_nO7Xg.warehouse_id.lot_stock_id.id]])
+                    #todosPicks.filtered(lambda x:x.origin==obj.x_studio_field_nO7Xg.name and x.location_id.id== obj.x_studio_field_nO7Xg.warehouse_id.lot_stock_id.id)
                     #pick1=obj.x_studio_field_nO7Xg.picking_ids.filtered(lambda pick:  pick.sale_id.id == obj.x_studio_field_nO7Xg.id and pick.location_id.id == obj.x_studio_field_nO7Xg.warehouse_id.lot_stock_id.id and pick.active == False)
                     #pick2=obj.x_studio_field_nO7Xg.picking_ids.filtered(lambda pick:  pick.sale_id.id == obj.x_studio_field_nO7Xg.id and pick.location_id.id == obj.x_studio_field_nO7Xg.warehouse_id.lot_stock_id.id and pick.active == True)
                     #pick1=self.env['stock.picking'].search([['sale_id','=',obj.x_studio_field_nO7Xg.id],['location_id','=',obj.x_studio_field_nO7Xg.warehouse_id.lot_stock_id.id],['active','=',False]])
