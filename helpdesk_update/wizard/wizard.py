@@ -4458,7 +4458,7 @@ class HelpdeskTicketReporte(TransientModel):
             ('reporteConContadores','Reporte con contadores')
         ], 
         default = 'reporteSinContadores', 
-        string = 'Backlog con contadores'
+        string = 'Tipo de reporte (backlog)'
     )
     mostrarCerrados = fields.Boolean(
                                         string = 'Mostrar cerrados',
