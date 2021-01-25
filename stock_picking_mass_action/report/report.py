@@ -251,19 +251,36 @@ class TicketsXlsx(models.AbstractModel):
         bold = workbook.add_format({'bold': True})
         sheet = workbook.add_worksheet('Tickets')
         sheet.merge_range('A1:Y1', 'Tickets', merge_format)
-        todosPicks = self.env['stock.picking'].search([])
+
+
+        #################
+        # Nueva forma   #
+        #################
+        #todosPicks = self.env['stock.picking'].search([])
+        #####################
+        # Fin Nueva forma   #
+        #####################
+
         for obj in ticket:
             try:
                 pickings=[]
                 code=[]
                 if(obj.x_studio_field_nO7Xg.id):
-                    #pick1=self.env['stock.picking'].search([['sale_id','=',obj.x_studio_field_nO7Xg.id],['location_id','=',obj.x_studio_field_nO7Xg.warehouse_id.lot_stock_id.id],['active','=',False]])
-                    #pick2=self.env['stock.picking'].search([['sale_id','=',obj.x_studio_field_nO7Xg.id],['location_id','=',obj.x_studio_field_nO7Xg.warehouse_id.lot_stock_id.id]])
-                    picksTicket = todosPicks.filtered(lambda pick:  pick.sale_id.id == obj.x_studio_field_nO7Xg.id and pick.location_id.id == obj.x_studio_field_nO7Xg.warehouse_id.lot_stock_id.id and (pick.active == False or pick.active == True))
-                    _logger.info("picksTicket: " + str(picksTicket))
+                    pick1=self.env['stock.picking'].search([['sale_id','=',obj.x_studio_field_nO7Xg.id],['location_id','=',obj.x_studio_field_nO7Xg.warehouse_id.lot_stock_id.id],['active','=',False]])
+                    pick2=self.env['stock.picking'].search([['sale_id','=',obj.x_studio_field_nO7Xg.id],['location_id','=',obj.x_studio_field_nO7Xg.warehouse_id.lot_stock_id.id]])
                     #if(len(pick1)>1):
-                    #code=pick1.mapped('move_ids_without_package.product_id.default_code')+pick2.mapped('move_ids_without_package.product_id.default_code')
-                    code = picksTicket.mapped('move_ids_without_package.product_id.default_code')
+                    code=pick1.mapped('move_ids_without_package.product_id.default_code')+pick2.mapped('move_ids_without_package.product_id.default_code')
+                    
+
+                    #################
+                    # Nueva forma   #
+                    #################
+                    #picksTicket = todosPicks.filtered(lambda pick:  pick.sale_id.id == obj.x_studio_field_nO7Xg.id and pick.location_id.id == obj.x_studio_field_nO7Xg.warehouse_id.lot_stock_id.id and (pick.active == False or pick.active == True))
+                    #code = picksTicket.mapped('move_ids_without_package.product_id.default_code')
+                    #####################
+                    # Fin Nueva forma   #
+                    #####################
+
                     #if(len(pick1)==1):
                        # if(pick.id):
 #
