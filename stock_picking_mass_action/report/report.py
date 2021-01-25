@@ -258,8 +258,11 @@ class TicketsXlsx(models.AbstractModel):
                 if(obj.x_studio_field_nO7Xg.id):
                     pick1=self.env['stock.picking'].search([['sale_id','=',obj.x_studio_field_nO7Xg.id],['location_id','=',obj.x_studio_field_nO7Xg.warehouse_id.lot_stock_id.id],['active','=',False]])
                     pick2=self.env['stock.picking'].search([['sale_id','=',obj.x_studio_field_nO7Xg.id],['location_id','=',obj.x_studio_field_nO7Xg.warehouse_id.lot_stock_id.id]])
+                    _logger.info("pick1: " + str(pick1))
+                    _logger.info("pick2: " + str(pick2))
                     #if(len(pick1)>1):
                     code=pick1.mapped('move_ids_without_package.product_id.default_code')+pick2.mapped('move_ids_without_package.product_id.default_code')
+                    _logger.info("code: " + str(code))
                     #if(len(pick1)==1):
                        # if(pick.id):
 #
