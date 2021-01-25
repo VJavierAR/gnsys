@@ -619,12 +619,41 @@ class TicketsContadoresXlsx(models.AbstractModel):
 
                         for serie in series:
                             i=i+1
+                            sheet.write(i, 0, obj.x_studio_field_nO7Xg.warehouse_id.name if(obj.x_studio_field_nO7Xg) else '', celdaContadoresFormato)
+                            sheet.write(i, 1, obj.id, celdaContadoresFormato)
+                            sheet.write(i, 2, obj.x_studio_tipo_de_vale if(obj.x_studio_tipo_de_vale) else '', celdaContadoresFormato)
+                            sheet.write(i, 3, pytz.utc.localize(obj.create_date, is_dst=None).astimezone(pytz.timezone('America/Mexico_City')).strftime("%Y/%m/%d %H:%M:%S"), celdaContadoresFormato)
+                            sheet.write(i, 4, obj.days_difference, celdaContadoresFormato)
+                            sheet.write(i, 5, obj.partner_id.name if(obj.partner_id) else '', celdaContadoresFormato)
+                            sheet.write(i, 6, obj.x_studio_empresas_relacionadas.name if(obj.x_studio_empresas_relacionadas) else '', celdaContadoresFormato)
+                            
                             sheet.write(i, 7, str(serie.serie.name) if(a) else str(serie.name), celdaContadoresFormato)
                             sheet.write(i, 8, str(serie.serie.product_id.name) if(a) else str(serie.name), celdaContadoresFormato)
 
                             if a:
                                 sheet.write(i, 9, str(serie.contadorMono) if(serie.contadorMono) else 'Sin contador', celdaContadoresFormato)
                                 sheet.write(i, 10, str(serie.contadorColor) if(serie.contadorColor) else 'Sin contador', celdaContadoresFormato)
+
+                            sheet.write(i, 11, str(p) if(a) else str(obj.x_studio_productos.mapped('name')), celdaContadoresFormato)
+                            sheet.write(i, 12, obj.team_id.name if(obj.team_id) else "", celdaContadoresFormato)
+                            sheet.write(i, 13,obj.x_studio_empresas_relacionadas.state_id.name if(obj.x_studio_empresas_relacionadas and obj.x_studio_empresas_relacionadas.state_id) else '' , celdaContadoresFormato)
+                            sheet.write(i, 14, obj.stage_id.name if(obj.stage_id.id) else '', celdaContadoresFormato)
+
+                            sheet.write(i, 15, str(obj.abiertoPor) if(obj.abiertoPor) else '', celdaContadoresFormato)
+                            sheet.write(i, 16, str(obj.primerDiagnosticoUsuario) if(obj.primerDiagnosticoUsuario) else '', celdaContadoresFormato)
+
+                            sheet.write(i, 17, obj.x_studio_ultima_nota if(obj.x_studio_ultima_nota) else '', celdaContadoresFormato)
+                            sheet.write(i, 18, pytz.utc.localize(obj.ultimoDiagnosticoFecha, is_dst=None).astimezone(pytz.timezone('America/Mexico_City')).strftime("%Y/%m/%d %H:%M:%S") if (obj.ultimoDiagnosticoFecha) else '', celdaContadoresFormato)
+                            sheet.write(i, 19, pytz.utc.localize(obj.resuelto_el, is_dst=None).astimezone(pytz.timezone('America/Mexico_City')).strftime("%Y/%m/%d %H:%M:%S") if (obj.resuelto_el) else '', celdaContadoresFormato)
+                            sheet.write(i, 20, obj.x_studio_tecnico if(obj.x_studio_tecnico) else obj.write_uid.name, celdaContadoresFormato)
+                            if obj.x_studio_empresas_relacionadas:
+                                sheet.write(i, 21, str(str(obj.x_studio_empresas_relacionadas.street_name)+" No. Ext. "+str(obj.x_studio_empresas_relacionadas.street_number)+" No. Int. "+str(obj.x_studio_empresas_relacionadas.street_number2)+" ,COL. "+str(obj.x_studio_empresas_relacionadas.l10n_mx_edi_colony)+" "+str(obj.x_studio_empresas_relacionadas.city)+" México, "+str(obj.x_studio_empresas_relacionadas.state_id.name)+"C.P "+str(obj.x_studio_empresas_relacionadas.zip)), celdaContadoresFormato)
+                            else:
+                                sheet.write(i, 21, '', celdaContadoresFormato)
+                            sheet.write(i, 22, obj.x_studio_nmero_de_ticket_cliente if(obj.x_studio_nmero_de_ticket_cliente) else '', celdaContadoresFormato)
+                            sheet.write(i, 23, obj.x_studio_nmero_de_guia_1 if(obj.x_studio_nmero_de_guia_1) else '', celdaContadoresFormato)
+                            sheet.write(i, 24, pytz.utc.localize(obj.cerrado_el, is_dst=None).astimezone(pytz.timezone('America/Mexico_City')).strftime("%Y/%m/%d %H:%M:%S") if (obj.cerrado_el) else '', celdaContadoresFormato)
+                            sheet.write(i, 25, obj.partner_id.x_studio_ejecutivo.name if (obj.partner_id.x_studio_ejecutivo) else '', celdaContadoresFormato)
                             """
                             else:
                                 if 'Equipo sin contador' in obj.contadores_anteriores:
