@@ -266,9 +266,9 @@ class TicketsXlsx(models.AbstractModel):
                 pickings=[]
                 code=[]
                 if(obj.x_studio_field_nO7Xg.id):
-                    pick1=obj.x_studio_field_nO7Xg.picking_ids.filtered(lambda pick:  pick.sale_id.id == obj.x_studio_field_nO7Xg.id and pick.location_id.id == obj.x_studio_field_nO7Xg.warehouse_id.lot_stock_id.id and pick.active == False)
+                    #pick1=obj.x_studio_field_nO7Xg.picking_ids.filtered(lambda pick:  pick.sale_id.id == obj.x_studio_field_nO7Xg.id and pick.location_id.id == obj.x_studio_field_nO7Xg.warehouse_id.lot_stock_id.id and pick.active == False)
                     pick2=obj.x_studio_field_nO7Xg.picking_ids.filtered(lambda pick:  pick.sale_id.id == obj.x_studio_field_nO7Xg.id and pick.location_id.id == obj.x_studio_field_nO7Xg.warehouse_id.lot_stock_id.id and pick.active == True)
-                    #pick1=self.env['stock.picking'].search([['sale_id','=',obj.x_studio_field_nO7Xg.id],['location_id','=',obj.x_studio_field_nO7Xg.warehouse_id.lot_stock_id.id],['active','=',False]])
+                    pick1=self.env['stock.picking'].search([['sale_id','=',obj.x_studio_field_nO7Xg.id],['location_id','=',obj.x_studio_field_nO7Xg.warehouse_id.lot_stock_id.id],['active','=',False]])
                     #pick2=self.env['stock.picking'].search([['sale_id','=',obj.x_studio_field_nO7Xg.id],['location_id','=',obj.x_studio_field_nO7Xg.warehouse_id.lot_stock_id.id]])
                     #if(len(pick1)>1):
                     code=pick1.mapped('move_ids_without_package.product_id.default_code')+pick2.mapped('move_ids_without_package.product_id.default_code')
