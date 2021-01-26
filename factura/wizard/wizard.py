@@ -287,6 +287,8 @@ class TestReport(TransientModel):
                worksheet.write(i, 30, f.x_studio_fecha_comentario)
                worksheet.write(i, 31, f.x_studio_oboservaciones)
                worksheet.write(i, 32, f.x_studio_usuario_cxc)
+               worksheet.write(i, 24, f.x_studio_ejecutivo_atc)
+               worksheet.write(i, 25, f.x_studio_ejecutivo_de_cuenta)
                
                if f.type=='out_refund':
                   if f.x_studio_folio_fiscal_pago_techra=='Cancelado':
@@ -297,6 +299,12 @@ class TestReport(TransientModel):
                   worksheet.write(i, 33, f.x_studio_estadohtml)                                    
             else:
                worksheet.write(i, 27, fechapago)
+               if estado=='Pagado':
+                  estado='P'
+               if estado=='Abierto':
+                  estado='NP'
+               if estado=='Cancelado':
+                  estado='C'
                worksheet.write(i, 33, estado)
             
             
