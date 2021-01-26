@@ -244,7 +244,7 @@ class TestReport(TransientModel):
             worksheet.write(i, 21, cuentaO)
             
             worksheet.write(i, 22, cuentaB)
-            pago=
+            
             if (f.x_studio_importacion=='pruebaNota' or f.x_studio_importacion=='lunes-19-10-2020' or f.x_studio_importacion=='lunes05' or f.x_studio_importacion=='viernes-30-10-2020' or f.x_studio_importacion=='lunes' or f.x_studio_importacion=='prueba' or f.x_studio_importacion=='martesGRupo') and f.state=='open':
                worksheet.write(i, 23, f.x_studio_folio_fiscal_pago_techra)
             else:
