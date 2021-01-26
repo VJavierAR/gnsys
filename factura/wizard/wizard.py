@@ -90,7 +90,7 @@ class TestReport(TransientModel):
         worksheet = workbook.add_worksheet('Reporte Facturacion')
         content = ["Serie", "Folio","Folio Fiscal Factura", "Documento Origen", "Folio Techra","RFC CLiente", "RFC Empresa","Razon Social", "Cliente", "Fecha Factura", "Importe sin impuesto","IVA","Total","Total adeudado","Tipo","Periodo","NC´s","REP","Retencion","Folio Fiscal Pago","Banco","Cuenta ordenate","Cuenta beneficiaria","Estado del pago","Ejecutivo","Vendedor","referencia","Fecha de pago","Pagos","Fecha Captura","Fecha Comentario","observaciones","Usuariocxc","Estado"]
         bold = workbook.add_format({'bold': True})
-        neg = workbook.add_format({'border': 2})dd-mm-aa
+        neg = workbook.add_format({'border': 2})
         format6 = workbook.add_format({'num_format': 'dd-mm-yy'})
         i=0
         for item in content :           
