@@ -244,7 +244,7 @@ class TestReport(TransientModel):
             worksheet.write(i, 21, cuentaO)
             
             worksheet.write(i, 22, cuentaB)
-            
+            pago=
             if (f.x_studio_importacion=='pruebaNota' or f.x_studio_importacion=='lunes-19-10-2020' or f.x_studio_importacion=='lunes05' or f.x_studio_importacion=='viernes-30-10-2020' or f.x_studio_importacion=='lunes' or f.x_studio_importacion=='prueba' or f.x_studio_importacion=='martesGRupo') and f.state=='open':
                worksheet.write(i, 23, f.x_studio_folio_fiscal_pago_techra)
             else:
@@ -283,10 +283,12 @@ class TestReport(TransientModel):
                   if 'CDT' in dfy:  
                       datesrC=datetime.datetime.strptime(dfy, '%a %b %d %H:%M:%S CDT %Y')
                   worksheet.write(i, 29, datesrC,format6)
-            
-               worksheet.write(i, 30, f.x_studio_fecha_comentario)
-               worksheet.write(i, 31, f.x_studio_oboservaciones)
-               worksheet.write(i, 32, f.x_studio_usuario_cxc)
+               if f.x_studio_fecha_comentario:
+                  worksheet.write(i, 30, f.x_studio_fecha_comentario)
+               if f.x_studio_oboservaciones:
+                  worksheet.write(i, 31, f.x_studio_oboservaciones)
+               if f.f.x_studio_usuario_cxc:
+                  worksheet.write(i, 32, f.x_studio_usuario_cxc)
                worksheet.write(i, 24, f.x_studio_ejecutivo_atc)
                worksheet.write(i, 25, f.x_studio_ejecutivo_de_cuenta)
                
