@@ -282,7 +282,7 @@ class TestReport(TransientModel):
                       datesrC=datetime.datetime.strptime(dfy, '%a %b %d %H:%M:%S CST %Y')
                   if 'CDT' in dfy:  
                       datesrC=datetime.datetime.strptime(dfy, '%a %b %d %H:%M:%S CDT %Y')
-                  worksheet.write(i, 29, dater,format6)
+                  worksheet.write(i, 29, datesrC,format6)
             
                worksheet.write(i, 30, f.x_studio_fecha_comentario)
                worksheet.write(i, 31, f.x_studio_oboservaciones)
