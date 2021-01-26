@@ -287,7 +287,7 @@ class TestReport(TransientModel):
                   worksheet.write(i, 30, f.x_studio_fecha_comentario)
                if f.x_studio_oboservaciones:
                   worksheet.write(i, 31, f.x_studio_oboservaciones)
-               if f.f.x_studio_usuario_cxc:
+               if f.x_studio_usuario_cxc:
                   worksheet.write(i, 32, f.x_studio_usuario_cxc)
                worksheet.write(i, 24, f.x_studio_ejecutivo_atc)
                worksheet.write(i, 25, f.x_studio_ejecutivo_de_cuenta)
