@@ -102,7 +102,11 @@ class TestReport(TransientModel):
         for f in dir:
             worksheet.write(i, 0, str(f.x_studio_serie))
             worksheet.write(i, 1, f.x_studio_folio_1)
-            worksheet.write(i, 2, str(f.x_studio_folio))
+            if str(f.x_studio_folio)=='No tiene timbre':
+               worksheet.write(i, 2, str(f.x_studio_uuidtechra))
+            else:
+               worksheet.write(i, 2, str(f.x_studio_folio))
+            
             if f.origin:
                worksheet.write(i, 3, str(f.origin))
             else:
