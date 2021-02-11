@@ -1,6 +1,8 @@
 from odoo import models
 import base64
 from odoo import api, fields, models, _, SUPERUSER_ID
+import hashlib 
+
 
 class ResUser(models.Model):
     _inherit = "res.users"
@@ -16,10 +18,24 @@ class SecondUser(models.Model):
     @api.model
     def create(self, vals):
         password=vals['password']
-        password_bytes = password.encode('ascii')
+        result = hashlib.md5(password.encode('ascii'))
+        r=str(result.hexdigest())
+        password_bytes = r.encode('ascii')
         base64_bytes = base64.b64encode(password_bytes)
         base64_message = base64_bytes.decode('ascii')
         vals['password'] = base64_message
         result = super(SecondUser, self).create(vals)
         return result
-		
+
+
+    @api.multi
+    def write(self, vals):
+        password=vals['password']
+        result = hashlib.md5(password.encode('ascii'))
+        r=str(result.hexdigest())
+        password_bytes = r.encode('ascii')
+        base64_bytes = base64.b64encode(password_bytes)
+        base64_message = base64_bytes.decode('ascii')
+        vals['password'] = base64_message
+        result = super(SecondUser, self).write(vals)
+        return result
