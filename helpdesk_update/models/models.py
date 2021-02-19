@@ -181,7 +181,8 @@ class helpdesk_update(models.Model):
 
     resuelto_el = fields.Datetime(string = 'Resuelto el')
     cerrado_el = fields.Datetime(string = 'Cerrado_el')
-    
+    instalado_el = fields.Datetime(string = 'Fecha de instalación', store=True)
+
     ticketValidadoElDia = fields.Datetime(string = 'Fecha de validación de la solicitud')
 
     primerDiagnosticoUsuario = fields.Text(string = 'Primer diagnósticos', compute='_compute_primer_diagnostico')
@@ -408,7 +409,7 @@ class helpdesk_update(models.Model):
 
     @api.model
     def contadoresAnteriores(self):
-        if self.x_studio_equipo_por_nmero_de_serie and self.team_id != 8:
+        if self.x_studio_equipo_por_nmero_de_serie and self.team_id.id != 8:
             dominio_ultimo_contador = [('serie', '=', self.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '=', False), ('fuente', '!=', 'dcas.dcas'), ('creado_por_tickets_techra', '!=', True)]
             ultimo_contador_odoo = self.env['dcas.dcas'].search(dominio_ultimo_contador, order = 'create_date desc', limit = 1)
             dominio_ultimo_contador = [('serie', '=', self.x_studio_equipo_por_nmero_de_serie[0].id), ('x_studio_robot', '!=', False), ('x_studio_fecha', '!=', False), ('fuente', '!=', 'dcas.dcas'), ('creado_por_tickets_techra', '!=', True)]
@@ -1871,6 +1872,20 @@ class helpdesk_update(models.Model):
     @api.onchange('team_id')
     def asignacion(self):
         _logger.info('self al iniciar funcion asignacion: ' + str(self._origin))
+
+        if self._origin.stage_id.id == 3:
+            comentarioGenerico = 'Se cambio de área de atención. Área de atención actual: ' + self.team_id.name + '. Seleccion realizada por ' + str(self.env.user.name) +'.'
+            estado = 'Resuelto'
+            self.creaDiagnosticoVistaLista(comentarioGenerico, estado)
+            self.datos_ticket_2()
+            mensajeTitulo = 'Cambio de área de atención!!!'
+            mensajeCuerpo = 'Se cambiará el área de atención, pero no se permite cambiar al estado de asignación una vez que el ticket esta en el estado Resuelto.'
+            mess = {
+                    'title': _(mensajeTitulo),
+                    'message' : mensajeCuerpo
+                }
+            return {'warning': mess}
+
         #for record in self:
         if self._origin.x_studio_id_ticket:
             estadoAntes = str(self._origin.stage_id.name)
@@ -2103,6 +2118,25 @@ class helpdesk_update(models.Model):
     
     @api.onchange('x_studio_tcnico')
     def cambioEstadoAtencion(self):
+        if self.stage_id.id == 3:
+            tecnicoActual = ''
+            if self.x_studio_tcnico.name:
+                tecnicoActual = str(self.x_studio_tcnico.name)
+            else:
+                tecnicoActual = 'Sin técnico asociado'
+            comentarioGenerico = 'Se cambio de técnico. Técnico actual: ' + tecnicoActual + '. Seleccion realizada por ' + str(self.env.user.name) +'.'
+            estado = 'Resuelto'
+            self.creaDiagnosticoVistaLista(comentarioGenerico, estado)
+            self.datos_ticket_2()
+            mensajeTitulo = 'Cambio de técnico!!!'
+            mensajeCuerpo = 'Se cambiará el técnico, pero no se permite cambiar al estado de atención una vez que el ticket esta en el estado Resuelto.'
+            mess = {
+                    'title': _(mensajeTitulo),
+                    'message' : mensajeCuerpo
+                }
+            return {'warning': mess}
+
+
         if self.x_studio_id_ticket:
             estadoAntes = str(self.stage_id.name)
             if (self.stage_id.name == 'Asignado' or self.stage_id.name == 'Resuelto' or self.stage_id.name == 'Cerrado'):
@@ -2137,6 +2171,51 @@ class helpdesk_update(models.Model):
                 return {'warning': mess}
     
     
+
+
+
+    def cambioEstadoAtencionAccion(self):
+        if self.x_studio_id_ticket:
+            estadoAntes = str(self.stage_id.name)
+            if (self.stage_id.name == 'Asignado' or self.stage_id.name == 'Resuelto' or self.stage_id.name == 'Cerrado'):
+                self.write({'stage_id': 13})
+                ultimaEvidenciaTec = []
+                ultimoComentario = ''
+                if self.diagnosticos:
+                    if self.diagnosticos[-1].evidencia.ids:
+                        ultimaEvidenciaTec = self.diagnosticos[-1].evidencia.ids
+                    ultimoComentario = self.diagnosticos[-1].comentario
+                tecnicoActual = ''
+                if self.x_studio_tcnico.name:
+                    tecnicoActual = str(self.x_studio_tcnico.name)
+                else:
+                    tecnicoActual = 'Sin técnico asociado'
+                comentarioGenerico = 'Cambio de estado al seleccionar botón atención o al cambiar de técnico. Técnico actual: ' + tecnicoActual + '. Se cambio al estado Atención. Seleccion realizada por ' + str(self.env.user.name) +'.'
+                
+                estado = 'Atención'
+                self.creaDiagnosticoVistaLista(comentarioGenerico, estado)
+                self.datos_ticket_2()
+                self.estadoAtencion = True
+                self.estadoResuelto = False
+                mensajeTitulo = 'Estado de ticket actualizado!!!'
+                mensajeCuerpo = 'Se cambio el estado del ticket. \nEstado anterior: ' + estadoAntes + ' Estado actual: Atención' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página."
+                wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
+                view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+                return {
+                        'name': _(mensajeTitulo),
+                        'type': 'ir.actions.act_window',
+                        'view_type': 'form',
+                        'view_mode': 'form',
+                        'res_model': 'helpdesk.alerta',
+                        'views': [(view.id, 'form')],
+                        'view_id': view.id,
+                        'target': 'new',
+                        'res_id': wiz.id,
+                        'context': self.env.context,
+                        }
+
+
+
     
     estadoResuelto = fields.Boolean(string="Paso por estado resuelto", default=False)
     
@@ -2170,6 +2249,24 @@ class helpdesk_update(models.Model):
     
     #@api.onchange('stage_id')
     def cambioCotizacion(self):
+        if self.stage_id.id == 3:
+            mensajeTitulo = 'Alerta!!!'
+            mensajeCuerpo = 'No se permite cambiar al estado "cotización" una vez que el ticket esta en el estado "resuelto".'
+            wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
+            view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+            return {
+                    'name': _(mensajeTitulo),
+                    'type': 'ir.actions.act_window',
+                    'view_type': 'form',
+                    'view_mode': 'form',
+                    'res_model': 'helpdesk.alerta',
+                    'views': [(view.id, 'form')],
+                    'view_id': view.id,
+                    'target': 'new',
+                    'res_id': wiz.id,
+                    'context': self.env.context,
+                    }
+
         estadoAntes = str(self.stage_id.name)
         #if self.stage_id.name == 'Cotización' and str(self.env.user.id) == str(self.x_studio_tcnico.user_id.id) and self.estadoCotizacion == False:
         #if str(self.env.user.id) == str(self.x_studio_tcnico.user_id.id) and self.estadoCotizacion == False:
@@ -2310,6 +2407,24 @@ class helpdesk_update(models.Model):
 
 
     def cambioEstadoSolicitudRefaccion(self):
+        if self.stage_id.id == 3:
+            mensajeTitulo = 'Alerta!!!'
+            mensajeCuerpo = 'No se permite cambiar al estado "Pendiente por autorizar solicitud" una vez que el ticket esta en el estado "Resuelto".'
+            wiz = self.env['helpdesk.alerta'].create({'mensaje': mensajeCuerpo})
+            view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+            return {
+                    'name': _(mensajeTitulo),
+                    'type': 'ir.actions.act_window',
+                    'view_type': 'form',
+                    'view_mode': 'form',
+                    'res_model': 'helpdesk.alerta',
+                    'views': [(view.id, 'form')],
+                    'view_id': view.id,
+                    'target': 'new',
+                    'res_id': wiz.id,
+                    'context': self.env.context,
+                    }
+
         if self.stage_id.id == 18 or self.stage_id.id == 4:
             mensajeTitulo = 'Estado no valido'
             mensajeCuerpo = 'No es posible agregar productos al ticket ' + str(self.id) + ' en el estado ' + str(self.stage_id.name) + '\nNo se permite añadir refacciones y/o accesorios a un ticket Cerrado o Cancelado.'
@@ -4345,21 +4460,21 @@ class helpdesk_update(models.Model):
 
 
     serie_y_modelo = fields.Text(string = 'Serie(s)')
-    @api.onchange('x_studio_equipo_por_nmero_de_serie, x_studio_equipo_por_nmero_de_serie_1')
+    @api.onchange('x_studio_equipo_por_nmero_de_serie', 'x_studio_equipo_por_nmero_de_serie_1')
     def actualiza_serie_texto(self):
-        dominio_busqueda_ticket = [('id', '=', self.id)]
-        obj_ticket = self.env['helpdesk.ticket'].search(dominio_busqueda_ticket)
-        series_toner = obj_ticket.mapped('x_studio_equipo_por_nmero_de_serie_1.serie.name')
-        serie_mesa = obj_ticket.mapped('x_studio_equipo_por_nmero_de_serie.name')
+        #dominio_busqueda_ticket = [('id', '=', self._origin.id)]
+        #obj_ticket = self.env['helpdesk.ticket'].search(dominio_busqueda_ticket)
+        series_toner = self.mapped('x_studio_equipo_por_nmero_de_serie_1.serie.name')
+        serie_mesa = self.mapped('x_studio_equipo_por_nmero_de_serie.name')
 
-        tipo_de_vale = obj_ticket.mapped('x_studio_tipo_de_vale')
+        tipo_de_vale = self.mapped('x_studio_tipo_de_vale')
 
         series_modelo_toner = []
-        series_modelo_toner_mapped = obj_ticket.mapped('x_studio_equipo_por_nmero_de_serie_1.serie')
+        series_modelo_toner_mapped = self.mapped('x_studio_equipo_por_nmero_de_serie_1')
         for modelo in series_modelo_toner_mapped:
-            series_modelo_toner.append(modelo.product_id.name)
+            series_modelo_toner.append(modelo.serie.product_id.name)
         serie_modelo_mesa = []
-        serie_modelo_mesa_mapped = obj_ticket.mapped('x_studio_equipo_por_nmero_de_serie')
+        serie_modelo_mesa_mapped = self.mapped('x_studio_equipo_por_nmero_de_serie')
         for modelo in serie_modelo_mesa_mapped:
             serie_modelo_mesa.append(modelo.product_id.name)
 
@@ -4391,7 +4506,7 @@ class helpdesk_update(models.Model):
                         </div>
                     </div>
                 """
-        obj_ticket.write({'serie_y_modelo': texto})
+        self.write({'serie_y_modelo': texto})
 
 
     def actualiza_serie_texto_2(self):
@@ -4798,25 +4913,84 @@ class helpdesk_update(models.Model):
         """
         if self.x_studio_tipo_de_vale == 'Requerimiento' and self.x_studio_equipo_por_nmero_de_serie_1:
             equipoSinServicio = False
-            mensajeCuerpo = 'Se creo un ticket de un equipo sin servicio.\nLos equipos que no tienen servicio son:\n\n'
+            mensajeCuerpo = 'No se puede agregar un equipo sin servicio.\nLos equipos que no tienen servicio son:\n\n'
             for equipo in self.x_studio_equipo_por_nmero_de_serie_1:
                 if not equipo.serie.servicio:
                     mensajeCuerpo = mensajeCuerpo + 'Equipo: ' + str(equipo.serie.product_id.name) + ' Serie: ' + str(equipo.serie.name) + '\n'
                     equipoSinServicio = True
+                    self.x_studio_equipo_por_nmero_de_serie_1 = ''
             if equipoSinServicio:
                 mensajeTitulo = 'Alerta ticket sin servicio creado'
                 todasLasAlertas = todasLasAlertas + '\n\n' + mensajeCuerpo
 
         if self.x_studio_tipo_de_vale != 'Requerimiento' and self.x_studio_equipo_por_nmero_de_serie:
             equipoSinServicio = False
-            mensajeCuerpo = 'Se creo un ticket de un equipo sin servicio.\nLos equipos que no tienen servicio son:\n\n'
+            mensajeCuerpo = 'No se puede agregar un equipo sin servicio.\nLos equipos que no tienen servicio son:\n\n'
             for equipo in self.x_studio_equipo_por_nmero_de_serie:
                 if not equipo.servicio:
                     mensajeCuerpo = mensajeCuerpo + 'Equipo: ' + str(equipo.product_id.name) + ' Serie: ' + str(equipo.name) + '\n'
                     equipoSinServicio = True
+                    self.x_studio_equipo_por_nmero_de_serie = ''
             if equipoSinServicio:
                 mensajeTitulo = 'Alerta ticket sin servicio creado'
                 todasLasAlertas = todasLasAlertas + '\n\n' + mensajeCuerpo
+
+        """
+            Verificando que los equipos no sean de venta directa
+        """
+        if self.x_studio_tipo_de_vale == 'Requerimiento' and self.x_studio_equipo_por_nmero_de_serie_1:
+            equipoSinServicio = False
+            mensajeCuerpo = 'No se puede agregar un equipo de venta directa.\nLos equipos en venta directa son:\n\n'
+            for equipo in self.x_studio_equipo_por_nmero_de_serie_1:
+                if equipo.serie.x_studio_venta:
+                    mensajeCuerpo = mensajeCuerpo + 'Equipo: ' + str(equipo.serie.product_id.name) + ' Serie: ' + str(equipo.serie.name) + '\n'
+                    equipoSinServicio = True
+                    self.x_studio_equipo_por_nmero_de_serie_1 = ''
+            if equipoSinServicio:
+                mensajeTitulo = 'Alerta ticket sin servicio creado'
+                todasLasAlertas = todasLasAlertas + '\n\n' + mensajeCuerpo
+
+        if self.x_studio_tipo_de_vale != 'Requerimiento' and self.x_studio_equipo_por_nmero_de_serie:
+            equipoSinServicio = False
+            mensajeCuerpo = 'No se puede agregar un equipo de venta directa.\nLos equipos en venta directa son:\n\n'
+            for equipo in self.x_studio_equipo_por_nmero_de_serie:
+                if equipo.x_studio_venta:
+                    mensajeCuerpo = mensajeCuerpo + 'Equipo: ' + str(equipo.product_id.name) + ' Serie: ' + str(equipo.name) + '\n'
+                    equipoSinServicio = True
+                    self.x_studio_equipo_por_nmero_de_serie = ''
+            if equipoSinServicio:
+                mensajeTitulo = 'Alerta ticket sin servicio creado'
+                todasLasAlertas = todasLasAlertas + '\n\n' + mensajeCuerpo
+
+
+        """
+            Verificando que los equipos no sean demos
+        """
+        if self.x_studio_tipo_de_vale == 'Requerimiento' and self.x_studio_equipo_por_nmero_de_serie_1:
+            equipoSinServicio = False
+            mensajeCuerpo = 'Se agregará un equipo que esta en demostración.\nLos equipos en demostración son:\n\n'
+            for equipo in self.x_studio_equipo_por_nmero_de_serie_1:
+                if equipo.serie.x_studio_demo:
+                    mensajeCuerpo = mensajeCuerpo + 'Equipo: ' + str(equipo.serie.product_id.name) + ' Serie: ' + str(equipo.serie.name) + '\n'
+                    equipoSinServicio = True
+                    #self.x_studio_equipo_por_nmero_de_serie_1 = ''
+            if equipoSinServicio:
+                mensajeTitulo = 'Alerta ticket sin servicio creado'
+                todasLasAlertas = todasLasAlertas + '\n\n' + mensajeCuerpo
+
+        if self.x_studio_tipo_de_vale != 'Requerimiento' and self.x_studio_equipo_por_nmero_de_serie:
+            equipoSinServicio = False
+            mensajeCuerpo = 'Se agregará un equipo que esta en demostración.\nLos equipos en demostración son:\n\n'
+            for equipo in self.x_studio_equipo_por_nmero_de_serie:
+                if equipo.x_studio_demo:
+                    mensajeCuerpo = mensajeCuerpo + 'Equipo: ' + str(equipo.product_id.name) + ' Serie: ' + str(equipo.name) + '\n'
+                    equipoSinServicio = True
+                    #self.x_studio_equipo_por_nmero_de_serie = ''
+            if equipoSinServicio:
+                mensajeTitulo = 'Alerta ticket sin servicio creado'
+                todasLasAlertas = todasLasAlertas + '\n\n' + mensajeCuerpo
+
+
 
 
         if todasLasAlertas:
@@ -5604,9 +5778,9 @@ class helpdesk_update(models.Model):
         res = {}
         for record in self:
             if record.partner_id.id:
-                hijos = self.env['res.partner'].search([['parent_id', '=', record.partner_id.id]])
+                hijos = self.env['res.partner'].search([['parent_id', '=', record.partner_id.id], ['x_studio_cobranza_o_facturacin', '=', False] ])
                 hijosarr = hijos.mapped('id')
-                nietos = self.env['res.partner'].search([['parent_id', 'in', hijosarr],['type', '=', 'contact']]).mapped('id')
+                nietos = self.env['res.partner'].search([['parent_id', 'in', hijosarr],['type', '=', 'contact'], ['x_studio_cobranza_o_facturacin', '=', False]]).mapped('id')
                 hijosF = hijos.filtered(lambda x: x.type == 'contact').mapped('id')
                 final = nietos + hijosF
                 res['domain'] = {

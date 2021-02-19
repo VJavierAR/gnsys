@@ -4,6 +4,7 @@ import logging, ast
 import datetime, time
 import pytz
 import base64
+import json
 
 _logger = logging.getLogger(__name__)
 from odoo.exceptions import UserError
@@ -358,11 +359,18 @@ class HelpDeskCerrarConComentario(TransientModel):
 
     def cerrarTicketConComentario(self):
       ultimaEvidenciaTec = []
+      if self.ticket_id.x_studio_tipo_de_vale == 'Instalación':
+        self.ticket_id.write({
+            'instalado_el': datetime.datetime.now()
+        })
+        self.ticket_id.x_studio_equipo_por_nmero_de_serie.write({
+            'instalado_el': datetime.datetime.now()
+        })
       if self.ticket_id.diagnosticos:
         ultimaEvidenciaTec = self.ticket_id.diagnosticos[-1].evidencia.ids
         if self.evidencia:
           ultimaEvidenciaTec += self.evidencia.ids
-      if self.ticket_id.stage_id.name == 'Distribución' or self.ticket_id.stage_id.name == 'En Ruta' or self.ticket_id.stage_id.name == 'Resuelto' or self.ticket_id.stage_id.name == 'Abierto' or self.ticket_id.stage_id.name == 'Asignado' or self.ticket_id.stage_id.name == 'Atención' and self.ticket_id.estadoCerrado == False:
+      if self.ticket_id.stage_id.name == 'Distribución' or self.ticket_id.stage_id.name == 'En Ruta' or self.ticket_id.stage_id.name == 'Resuelto' or self.ticket_id.stage_id.name == 'Abierto' or self.ticket_id.stage_id.name == 'Asignado' or self.ticket_id.stage_id.name == 'Atención' or self.ticket_id.stage_id.name == 'Listo para entregar' and self.ticket_id.estadoCerrado == False:
         comentario_generico = 'Se cambio al estado Cerrado, acción realizada por ' + str(self.env.user.name) + '. \n'
         if self.comentario:
             comentario_generico = comentario_generico + 'Comentario: ' + self.comentario
@@ -464,8 +472,7 @@ class HelpDeskDetalleSerie(TransientModel):
     _name = 'helpdesk.detalle.serie'
     _description = 'HelpDesk Detalle Serie'
     ticket_id = fields.Many2one("helpdesk.ticket")
-    historicoTickets = fields.One2many('dcas.dcas', 'serie', string = 'Historico de tickets', compute='_compute_historico_tickets')
-    lecturas = fields.One2many('dcas.dcas', 'serie', string = 'Lecturas', compute='_compute_lecturas')
+    #lecturas = fields.One2many('dcas.dcas', 'serie', string = 'Lecturas', compute='_compute_lecturas')
     toner = fields.One2many('dcas.dcas', 'serie', string = 'Tóner', compute='_compute_toner')
     historicoDeComponentes = fields.One2many('x_studio_historico_de_componentes', 'x_studio_field_MH4DO', string = 'Historico de Componentes', compute='_compute_historico_de_componentes')
     movimientos = fields.One2many('stock.move.line', 'lot_id', string = 'Movimientos', compute='_compute_movimientos')
@@ -474,15 +481,11 @@ class HelpDeskDetalleSerie(TransientModel):
     def _compute_serie_nombre(self):
         if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
             self.serie = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].name
-
-    #def _compute_historico_tickets(self):
-    #    if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
-    #        self.historicoTickets = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_field_Yxv2m.ids
-
+    """
     def _compute_lecturas(self):
         if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
             self.lecturas = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_field_PYss4.ids
-
+    """
     def _compute_toner(self):
         if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
             self.toner = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_toner_1.ids
@@ -493,7 +496,7 @@ class HelpDeskDetalleSerie(TransientModel):
 
     def _compute_movimientos(self):
         if self.ticket_id.x_studio_equipo_por_nmero_de_serie:
-            self.movimientos = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].x_studio_move_line.ids
+            self.movimientos = self.ticket_id.x_studio_equipo_por_nmero_de_serie[0].clientes.ids
 
     
     html = fields.Text(string = 'Tickets', compute = 'gener_tabla_tickets')
@@ -531,6 +534,8 @@ class HelpDeskDetalleSerie(TransientModel):
 
         filas = """"""
         for ticket in tickets_techra:
+            data_ticke = {}
+
             contadores = ''
             if ticket.series:
                 numero_de_serie = ''
@@ -541,9 +546,21 @@ class HelpDeskDetalleSerie(TransientModel):
                     if serie.x_studio_color_o_bn == 'B/N':
                         contadores = contadores + 'Serie: ' + numero_de_serie + '</br>Equipo B/N o Color: ' + str(serie.x_studio_color_o_bn) + '</br>Contador B/N anterior: ' + str(serie.x_studio_contador_mono_anterior_1) + '</br>Contador B/N actual: ' + str(serie.contadorMono) + '</br>'
 
+            if ticket.diagnosticos:
+                diagnosticos_ticket = []
+                for registro in ticket.diagnosticos:
+                    info = {
+                        "create_date": str(registro.fechaDiagnosticoTechra),
+                        "estadoTicket": str(registro.estadoTicket),
+                        "comentario": str(registro.comentario),
+                        "encargado": str(registro.create_uid.name)
+                    }
+                    diagnosticos_ticket.append(info)
+                data_ticke["diagnosticos"] = diagnosticos_ticket
 
             filas = filas + """
                             \n<tr>
+                                <td></td>
                                 <td>""" + str(ticket.numTicketDeTechra) + """</td>
                                 <td>""" + str(ticket.creado_el) + """</td>
                                 <td>""" + str(ticket.numeroDeSerieTechra) + """</td>
@@ -558,17 +575,30 @@ class HelpDeskDetalleSerie(TransientModel):
                                 
                                 <td>""" + str(ticket.ultima_nota) + """</td>
                                 <td>""" + str(ticket.fecha_ultima_nota) + """</td>
+                                <td>""" + str(json.dumps(data_ticke)) + """</td>
                               </tr>
                           """
         for ticket in tickets_odoo:
             ultimo_diagnostico_fecha = ''
+            data_ticke = {}
             if ticket.diagnosticos:
+                diagnosticos_ticket = []
                 for registro in ticket.diagnosticos:
                     if not registro.creadoPorSistema and registro.comentario != False:
                         ultimo_diagnostico_fecha = str(registro.create_date)
+                    info = {
+                        "create_date": str(registro.create_date),
+                        "estadoTicket": str(registro.estadoTicket),
+                        "comentario": str(registro.comentario),
+                        "encargado": str(registro.create_uid.name)
+                    }
+                    diagnosticos_ticket.append(info)
+                data_ticke["diagnosticos"] = diagnosticos_ticket
+
             if ticket.x_studio_tipo_de_vale != 'Requerimiento':
                 filas = filas + """
                                     \n<tr>
+                                        <td></td>
                                         <td><a href='https://gnsys-corp.odoo.com/web#id=""" + str(ticket.id) + """&model=helpdesk.ticket&view_type=form&menu_id=406' target='_blank'>""" + str(ticket.id) + """</a></td>
                                         <td>""" + str(ticket.create_date) + """</td>
                                         <td>""" + str(ticket.serie_y_modelo) + """</td>
@@ -581,7 +611,7 @@ class HelpDeskDetalleSerie(TransientModel):
                                         <td>""" + str(ticket.contadores_anteriores) + """</td>
                                         <td>""" + str(ticket.x_studio_ultima_nota) + """</td>
                                         <td>""" + str(ultimo_diagnostico_fecha) + """</td>
-                                        
+                                        <td>""" + str(json.dumps(data_ticke)) + """</td>
                                     </tr>
                                 """ 
             else:
@@ -600,6 +630,7 @@ class HelpDeskDetalleSerie(TransientModel):
 
                 filas = filas + """
                                     \n<tr>
+                                        <td></td>
                                         <td><a href='https://gnsys-corp.odoo.com/web#id=""" + str(ticket.id) + """&model=helpdesk.ticket&view_type=form&menu_id=406' target='_blank'>""" + str(ticket.id) + """</a></td>
                                         <td>""" + str(ticket.create_date) + """</td>
                                         <td>""" + str(ticket.serie_y_modelo) + """</td>
@@ -612,7 +643,7 @@ class HelpDeskDetalleSerie(TransientModel):
                                         <td>""" + str(contadores) + """</td>
                                         <td>""" + str(ticket.x_studio_ultima_nota) + """</td>
                                         <td>""" + str(ultimo_diagnostico_fecha) + """</td>
-                                        
+                                        <td>""" + str(json.dumps(data_ticke)) + """</td>
                                     </tr>
                                 """ 
 
@@ -625,14 +656,19 @@ class HelpDeskDetalleSerie(TransientModel):
             <html>
             <head>
                 <style>
+                    .modal-dialog {
+                        max-width: 90% !important;
+                    }
+
                 </style>
             </head>
             <body>
                 <div class='row'>
                     <div class='col-sm-12'>
-                        <table id="table_id" class="display" style="width:100%">
+                        <table id="table_id" class="table table-striped table-bordered" style="width:100%">
                             <thead>
                                 <tr>
+                                    <th></th>
                                     <th>Ticket</th>
                                     <th>Fecha</th>
                                     <th>No. Serie</th>
@@ -645,6 +681,7 @@ class HelpDeskDetalleSerie(TransientModel):
                                     <th>Contadores</th>
                                     <th>última Nota</th>
                                     <th>Fecha nota</th>
+                                    <th>DatosTicket</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -652,6 +689,7 @@ class HelpDeskDetalleSerie(TransientModel):
                             </tbody>
                             <tfoot>
                                 <tr>
+                                    <th></th>
                                     <th>Ticket</th>
                                     <th>Fecha</th>
                                     <th>No. Serie</th>
@@ -664,6 +702,7 @@ class HelpDeskDetalleSerie(TransientModel):
                                     <th>Contadores</th>
                                     <th>última Nota</th>
                                     <th>Fecha nota</th>
+                                    <th>DatosTicket</th>
                                 </tr>
                             </tfoot>
                         </table>
@@ -672,7 +711,52 @@ class HelpDeskDetalleSerie(TransientModel):
 
                 <script>
                     
+                    var table_id = 1
+                    var hasOwnProperty = Object.prototype.hasOwnProperty;
+
+                    function isEmpty(obj) {
+
+                        // null and undefined are "empty"
+                        if (obj == null) return true;
+
+                        // Assume if it has a length property with a non-zero value
+                        // that that property is correct.
+                        if (obj.length > 0)    return false;
+                        if (obj.length === 0)  return true;
+
+                        // If it isn't an object at this point
+                        // it is empty, but it can't be anything *but* empty
+                        // Is it empty?  Depends on your application.
+                        if (typeof obj !== "object") return true;
+
+                        // Otherwise, does it have any properties of its own?
+                        // Note that this doesn't handle
+                        // toString and valueOf enumeration bugs in IE < 9
+                        for (var key in obj) {
+                            if (hasOwnProperty.call(obj, key)) return false;
+                        }
+
+                        return true;
+                    }
+
+                    function format ( d, id ) {
+                        var data_ticket = JSON.parse( d.DatosTicket );
+                        //console.log(data_ticket)
+                        var diagnosticos = data_ticket.diagnosticos
+
+                        var filas = ""
+
+                        for (i = 0; i < diagnosticos.length; i++) {
+                            filas += "<tr> <td>" + diagnosticos[i].create_date + "</td> <td>" + diagnosticos[i].estadoTicket + "</td> <td>" + diagnosticos[i].comentario + "</td> <td>" + diagnosticos[i].encargado + "</td> </tr>"
+                        }
+                        
+                        var tabla = "<table id='table_diagnostico_" + id + "' class='table table-striped table-bordered' style='width:100%'> <thead> <tr> <th>Creado_el</th><th>Estado_de_ticket</th><th>Diagnostico</th><th>Encargado</th> </tr> </thead> <tbody> " + filas + " </tbody> <tfoot> <tr> <th>Creado_el</th><th>Estado_de_ticket</th><th>Diagnostico</th><th>Encargado</th> </tr> </tfoot> </table> "
+                        
+                        return tabla;
+                    }
+
                     $(document).ready( function () {
+                        //console.log("cargabndo todo")
                         var table = $('#table_id').DataTable( {
                             dom: 'Bfrtip',
                             lengthMenu: [
@@ -701,20 +785,109 @@ class HelpDeskDetalleSerie(TransientModel):
                             scrollCollapse: true,
                             "columnDefs": [
                                 {
-                                    "targets": [ 2 ],
+                                    "targets": [ 13 ],
                                     "visible": false,
-                                    "searchable": false
-                                },
-                                {
-                                    "targets": [ 3 ],
-                                    "visible": false
+                                    "searchable": true
                                 }
                             ],
-                            responsive: true,
+                            "columns": [
+                                {
+                                    "class":          "details-control",
+                                    "orderable":      false,
+                                    "data":           null,
+                                    "defaultContent": '<i class="fa fa-info-circle" aria-hidden="false"> </ i>'
+                                },
+                                { "data": "Ticket" },
+                                { "data": "Fecha" },
+                                { "data": "No. Serie" },
+                                { "data": "Cliente" },
+                                { "data": "Área de atención" },
+                                { "data": "Zona" },
+                                { "data": "Ubicación" },
+                                { "data": "Falla" },
+                                { "data": "último estatus ticket" },
+                                { "data": "Contadores" },
+                                { "data": "última Nota" },
+                                { "data": "Fecha nota" },
+                                { "data": "DatosTicket" }
+                            ],
+                            "order": [[2, 'desc']],
                             colReorder: true
                         } );
 
-                        
+                        //console.log("cargo primera tabla de tickets")
+                        var detailRows = [];
+
+                        $('#table_id tbody').on( 'click', 'tr td.details-control', function () {
+                            var tr = $(this).closest('tr');
+                            var row = table.row( tr );
+                            var idx = $.inArray( tr.attr('id'), detailRows );
+                            
+                            var data_ticket_c = JSON.parse( row.data().DatosTicket );
+                            //console.log(isEmpty(data_ticket_c))
+                            if ( !isEmpty( data_ticket_c ) ) {
+
+                                if ( row.child.isShown() ) {
+                                    tr.removeClass( 'details' );
+                                    row.child.hide();
+                         
+                                    // Remove from the 'open' array
+                                    detailRows.splice( idx, 1 );
+
+                                } else {
+                                    tr.addClass( 'details' );
+                                    row.child( format( row.data(), table_id ) ).show();
+                                    
+
+                                    //table_diagnostico
+                                    //var table_diagnostico = $('table.display').DataTable( {
+                                    //var table_diagnostico = row.child.DataTable( {
+                                    var table_diagnostico = $('#table_diagnostico_' + table_id).DataTable( {
+                                        dom: 'Bfrtip',
+                                        lengthMenu: [
+                                            [ 10, 25, 50, -1 ],
+                                            [ '10 filas', '25 filas', '50 filas', 'Todas las filas' ]
+                                        ],
+                                        buttons: [
+                                            'pageLength',
+                                            'copyHtml5',
+                                            'excelHtml5',
+                                            'csvHtml5',
+                                            'pdfHtml5'
+                                        ],
+                                        "language": {
+                                            "lengthMenu": "Mostrar _MENU_ registros por página",
+                                            "zeroRecords": "Sin registros - perdón =(",
+                                            "info": "Página _PAGE_ de _PAGES_",
+                                            "infoEmpty": "No hay registros disponibles",
+                                            "infoFiltered": "(Filtrado de _MAX_ registros)",
+                                            "search": "Buscar",
+                                            "Previous": "Anterior",
+                                            "Next": "Siguiente"
+                                        },
+                                        "columns": [
+                                            { "data": "Creado_el" },
+                                            { "data": "Estado_de_ticket" },
+                                            { "data": "Diagnostico" },
+                                            { "data": "Encargado" }
+                                        ],
+                                        "order": [[0, 'asc']],
+                                        colReorder: true
+                                    } );
+
+
+                                    table_id += 1
+
+
+                                    // Add to the 'open' array
+                                    if ( idx === -1 ) {
+                                        detailRows.push( tr.attr('id') );
+                                    }
+                                }
+                            } else {
+                                alert("No se cuentan con diagnosticos en el ticket seleccionado")
+                            }
+                        } );
                         
 
                     } );
@@ -795,6 +968,21 @@ class HelpDeskContacto(TransientModel):
     _description = 'HelpDesk Contacto'
     ticket_id = fields.Many2one("helpdesk.ticket")
     
+    idLocalidadAyuda = fields.Integer(
+                                        string = 'idLocalidadAyuda',
+                                        compute = '_compute_idLocalidadAyuda'
+                                    )
+
+    contactos = fields.Many2one("res.partner", 
+        string="Contactos disponibles", 
+        domain = "['&',('parent_id.id', '=', idLocalidadAyuda),('type', '=', 'contact')]"
+    )
+
+    editarContacto_check = fields.Boolean(
+        string = 'Editar contacto',
+        default = False
+    )
+
     tipoDeDireccion = fields.Selection([('contact','Contacto')
                                         ,('invoice','Dirección de facturación')
                                         ,('delivery','Dirección de envío')
@@ -827,26 +1015,52 @@ class HelpDeskContacto(TransientModel):
     direccionPais = fields.Many2one('res.country', store=True, string='País', default='156')
     direccionEstado = fields.Many2one('res.country.state', store=True, string='Estado', domain="[('country_id', '=?', direccionPais)]")
     
-    direccionZona = fields.Selection([('SUR','SUR')
-                                      ,('NORTE','NORTE')
-                                      ,('PONIENTE','PONIENTE')
-                                      ,('ORIENTE','ORIENTE')
-                                      ,('CENTRO','CENTRO')
-                                      ,('DISTRIBUIDOR','DISTRIBUIDOR')
-                                      ,('MONTERREY','MONTERREY')
-                                      ,('CUERNAVACA','CUERNAVACA')
-                                      ,('GUADALAJARA','GUADALAJARA')
-                                      ,('QUERETARO','QUERETARO')
-                                      ,('CANCUN','CANCUN')
-                                      ,('VERACRUZ','VERACRUZ')
-                                      ,('PUEBLA','PUEBLA')
-                                      ,('TOLUCA','TOLUCA')
-                                      ,('LEON','LEON')
-                                      ,('COMODIN','COMODIN')
-                                      ,('VILLAHERMOSA','VILLAHERMOSA')
-                                      ,('MERIDA','MERIDA')
-                                      ,('ALTAMIRA','ALTAMIRA')]
-                                      , string = 'Zona')
+    direccionZona = fields.Selection([
+        ('SUR','SUR'),
+        ('NORTE','NORTE'),
+        ('PONIENTE','PONIENTE'),
+        ('ORIENTE','ORIENTE'),
+        ('CENTRO','CENTRO'),
+        ('DISTRIBUIDOR','DISTRIBUIDOR'),
+        ('MONTERREY','MONTERREY'),
+        ('CUERNAVACA','CUERNAVACA'),
+        ('GUADALAJARA','GUADALAJARA'),
+        ('QUERETARO','QUERETARO'),
+        ('CANCUN','CANCUN'),
+        ('VERACRUZ','VERACRUZ'),
+        ('PUEBLA','PUEBLA'),
+        ('TOLUCA','TOLUCA'),
+        ('LEON','LEON'),
+        ('COMODIN','COMODIN'),
+        ('VILLAHERMOSA','VILLAHERMOSA'),
+        ('MERIDA','MERIDA'),
+        ('ALTAMIRA','ALTAMIRA'),
+        ('COMODIN','COMODIN'),
+        ('DF00','DF00'),
+        ('SAN LP','SAN LP'),
+        ('ESTADO DE MÉXICO','ESTADO DE MÉXICO'),
+        ('Foraneo Norte','Foraneo Norte'),
+        ('Foraneo Sur','Foraneo Sur')], string = 'Zona')
+
+    @api.depends('ticket_id')
+    def _compute_idLocalidadAyuda(self):
+        if self.ticket_id.x_studio_empresas_relacionadas:
+            self.idLocalidadAyuda = self.ticket_id.x_studio_empresas_relacionadas.id
+
+    @api.onchange('contactos')
+    def actualiza_informacion_contacto(self):
+        if self.contactos:
+            self.nombreDelContacto = self.contactos.name
+            self.correoElectronico = self.contactos.email
+            self.telefono = self.contactos.phone
+            self.movil = self.contactos.mobile
+            self.notas = self.contactos.comment
+        else:
+            self.nombreDelContacto = ''
+            self.correoElectronico = ''
+            self.telefono = ''
+            self.movil = ''
+            self.notas = ''
 
     
     def agregarContactoALocalidad(self):
@@ -955,8 +1169,84 @@ class HelpDeskContacto(TransientModel):
                 'view_id': view.id,
                 'target': 'new',
                 'res_id': wiz.id,
-                'context': self.env.context,
-                }
+                'context': self.env.context
+        }
+
+
+
+    def editarContacto(self):
+        if self.contactos:
+            vals = {
+                'name': self.nombreDelContacto,
+                'email': self.correoElectronico,
+                'phone': self.telefono,
+                'mobile': self.movil,
+                'comment': self.notas
+            }
+            mensajeTitulo = 'Contacto actualizado'
+            mensajeCuerpo = 'Se actuaizo el contacto ' + str(self.nombreDelContacto) + ' con los siguientes datos:\n\nNombre: ' + str(self.nombreDelContacto) + '\nCorreo electrónico: ' + str(self.correoElectronico) + '\nTeléfono: ' + str(self.telefono) + '\nMóvil: ' + str(self.movil) + '\nNotas: ' + str(self.notas)
+            self.contactos.write(vals)
+            self.env['helpdesk.diagnostico'].sudo().with_env(self.env(user=self.env.user.id)).create({
+                'ticketRelacion': self.ticket_id.id,
+                'comentario': mensajeCuerpo + '\n\nActualización realizada por: ' + str(self.env.user.name),
+                'estadoTicket': self.ticket_id.stage_id.name,
+                'mostrarComentario': False,
+                'creadoPorSistema': True,
+                'write_uid':  self.env.user.name,
+                'create_uid': self.env.user.name
+            })
+            wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
+            view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+            return {
+                    'name': _(mensajeTitulo),
+                    'type': 'ir.actions.act_window',
+                    'view_type': 'form',
+                    'view_mode': 'form',
+                    'res_model': 'helpdesk.alerta',
+                    'views': [(view.id, 'form')],
+                    'view_id': view.id,
+                    'target': 'new',
+                    'res_id': wiz.id,
+                    'context': self.env.context
+            }
+        else:
+            raise exceptions.ValidationError('Favor de seleccionar el contacto que será editado.')
+
+    def archivarContacto(self):
+        if self.contactos:
+            vals = {
+                'active': False
+            }
+            self.contactos.write(vals)
+            mensajeTitulo = 'Contacto archivado'
+            mensajeCuerpo = 'Se archivo el contacto ' + str(self.nombreDelContacto) + ' que contaba con los siguientes datos:\n\nNombre: ' + str(self.nombreDelContacto) + '\nCorreo electrónico: ' + str(self.correoElectronico) + '\nTeléfono: ' + str(self.telefono) + '\nMóvil: ' + str(self.movil) + '\nNotas: ' + str(self.notas)
+            self.env['helpdesk.diagnostico'].sudo().with_env(self.env(user=self.env.user.id)).create({
+                'ticketRelacion': self.ticket_id.id,
+                'comentario': mensajeCuerpo + '\n\nActualización realizada por: ' + str(self.env.user.name),
+                'estadoTicket': self.ticket_id.stage_id.name,
+                'mostrarComentario': False,
+                'creadoPorSistema': True,
+                'write_uid':  self.env.user.name,
+                'create_uid': self.env.user.name
+            })
+            wiz = self.env['helpdesk.alerta'].create({'ticket_id': self.ticket_id.id, 'mensaje': mensajeCuerpo})
+            view = self.env.ref('helpdesk_update.view_helpdesk_alerta')
+            return {
+                    'name': _(mensajeTitulo),
+                    'type': 'ir.actions.act_window',
+                    'view_type': 'form',
+                    'view_mode': 'form',
+                    'res_model': 'helpdesk.alerta',
+                    'views': [(view.id, 'form')],
+                    'view_id': view.id,
+                    'target': 'new',
+                    'res_id': wiz.id,
+                    'context': self.env.context
+            }
+        else:
+            raise exceptions.ValidationError('Favor de seleccionar el contacto que será archivado.')
+
+
 
 
 
@@ -1490,7 +1780,7 @@ class helpdesk_crearconserie(TransientModel):
 
 
     
-
+    
     @api.onchange('serie')
     def cambia_serie(self):
         if self.serie:
@@ -1509,11 +1799,29 @@ class helpdesk_crearconserie(TransientModel):
                 
                 textoHtmlSinServico = []
                 noTieneServicio = False
-                mensajeCuerpo = '<br/><h1>Se creara un ticket de un equipo sin servicio.</h1><br/><h1>Los equipos que no tienen servicio son:</h1>'
+                mensajeCuerpo = 'No se puede crear un ticket de un equipo sin servicio.\nLos equipos que no tienen servicio son:\n'
+                
                 for equipo in self.serie:
-                  if not equipo.servicio:
-                    mensajeCuerpo = mensajeCuerpo + '<br/><h3>Equipo: ' + str(equipo.product_id.name) + ' Serie: ' + str(equipo.name) + '<h3/>'
+                  if not equipo.servicio and str(equipo.x_studio_ultma_ubicacin) != "GN SYS CORPORATIVO S.A. DE C.V., TALLER":
+                    mensajeCuerpo = mensajeCuerpo + '\nEquipo: ' + str(equipo.product_id.name) + ' Serie: ' + str(equipo.name) + ''
                     noTieneServicio = True
+                    self.serie = ''
+                    mensajeTitulo = "Alerta!!!"
+                    warning = {'title': _(mensajeTitulo)
+                            , 'message': _(mensajeCuerpo),
+                    }
+                    return {'warning': warning}
+
+                  if equipo.x_studio_venta and not equipo.servicio:
+                    mensajeCuerpo = 'No se puede crear un ticket de un equipo de tipo venta directa.\nLos equipos en venta directa son:\n'
+                    mensajeCuerpo = mensajeCuerpo + '\nEquipo: ' + str(equipo.product_id.name) + ' Serie: ' + str(equipo.name) + ''
+                    noTieneServicio = True
+                    self.serie = ''
+                    mensajeTitulo = "Alerta!!!"
+                    warning = {'title': _(mensajeTitulo)
+                            , 'message': _(mensajeCuerpo),
+                    }
+                    return {'warning': warning}
                 
                 if noTieneServicio:
                   textoHtmlSinServico.append(mensajeCuerpo)
@@ -1593,15 +1901,15 @@ class helpdesk_crearconserie(TransientModel):
                 else:
                   self.ticket_id_existente = 0
                   self.textoTicketExistente = ''
-                _logger.info("test serie: " + str(self.serie))
-                _logger.info("test serie: " + str(self.serie[0]))
-                _logger.info("test serie: " + str(self.serie[0].x_studio_move_line))
+                #_logger.info("test serie: " + str(self.serie))
+                #_logger.info("test serie: " + str(self.serie[0]))
+                #_logger.info("test serie: " + str(self.serie[0].x_studio_move_line))
                 #self.serie.reverse()
                 #listaMovimientos = []
                 #for movimiento in self.serie[0].x_studio_move_line:
                 #    listaMovimeintos.append(movimiento.id)
                 #listaMovimeintos.reverse()
-                _logger.info("test serie reverse: " + str(self.serie[0].x_studio_move_line))
+                #_logger.info("test serie reverse: " + str(self.serie[0].x_studio_move_line))
 
                 #if self.serie[0].x_studio_move_line:
                 if self.serie[0].x_studio_localidad_2 and self.serie[0].x_studio_cliente:
@@ -1610,6 +1918,8 @@ class helpdesk_crearconserie(TransientModel):
                     loc = self.serie[0].x_studio_localidad_2
                     #_logger.info("test dato: " + str(moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id))
                     #_logger.info("test dato: " + str(moveLineOrdenado[0].location_dest_id.x_studio_field_JoD2k.x_studio_field_E0H1Z.parent_id.name))
+                    _logger.info("test loc: " + str(loc))
+                    _logger.info("test loc.street_name: " + str(loc.street_name))
                     _logger.info("test moveLineOrdenado: " + str(moveLineOrdenado))
                     self.cliente = moveLineOrdenado.name
                     self.idCliente = moveLineOrdenado.id
@@ -2171,20 +2481,16 @@ class CrearYValidarSolTonerMassAction(TransientModel):
         listaDeTicketsConSolicitud = []
         listaDeTicketsValidados = []
         listaDeTicketsSinPoroductos = []
-
         for ticket in self.ticket_ids:
-            
             if not ticket.x_studio_field_nO7Xg:
                 jalaSolicitudes = ''
                 if ticket.stage_id.id == 91 and ticket.x_studio_field_nO7Xg:
-                    _logger.info("ticket.stage_id.id = " + str(ticket.stage_id.id))
-                    _logger.info("ticket.x_studio_field_nO7Xg = " + str(ticket.x_studio_field_nO7Xg))
                     #self.stage_id.id = 93
                     
                     #query = "update helpdesk_ticket set stage_id = 93 where id = " + str(ticket.x_studio_id_ticket) + ";"
                     #ss = self.env.cr.execute(query)
                     break
-                if ticket.team_id.id == 8 or ticket.team_id.id == 13:
+                if ticket.team_id.id == 8 or ticket.team_id.id == 13 or ticket.team_id.id == 50 or ticket.team_id.id == 60:
                     x = 1 ##Id GENESIS AGRICOLA REFACCIONES  stock.warehouse
                     if self.almacenes:
                         #if ticket.x_studio_almacen_1== 'Agricola':
@@ -4146,6 +4452,14 @@ class HelpdeskTicketReporte(TransientModel):
                                 'helpdesk.team',
                                 string = 'Área de atención'
                             )
+    tipoDeReporte = fields.Selection(
+        [
+            ('reporteSinContadores','Reporte sin contadores'),
+            ('reporteConContadores','Reporte con contadores')
+        ], 
+        default = 'reporteSinContadores', 
+        string = 'Tipo de reporte (backlog)'
+    )
     mostrarCerrados = fields.Boolean(
                                         string = 'Mostrar cerrados',
                                         default = False
@@ -4507,7 +4821,10 @@ class HelpdeskTicketReporte(TransientModel):
             d[0].write({
                             'x_studio_arreglo': str(d.mapped('id'))
                         })
-            return self.env.ref('stock_picking_mass_action.ticket_xlsx').report_action(d[0])
+            if self.tipoDeReporte == 'reporteSinContadores':
+                return self.env.ref('stock_picking_mass_action.ticket_xlsx').report_action(d[0])
+            if self.tipoDeReporte == 'reporteConContadores':
+                return self.env.ref('stock_picking_mass_action.ticketContadores_xlsx').report_action(d[0])
         if len(d) == 0:
             raise UserError(_("No hay registros para la selecion actual"))
 
@@ -6648,7 +6965,7 @@ class HelpDeskDatosMesa(TransientModel):
 class HelpDeskResueltoConComentario(TransientModel):
     _name = 'helpdesk.comentario.resuelto'
     _description = 'Mover al estado resuelto con un comentario.'
-    check = fields.Boolean(string = 'Mostrar en reporte', default = False,)
+    check = fields.Boolean(string = 'Mostrar en reporte', default = False)
     ticket_id = fields.Many2one("helpdesk.ticket")
     diagnostico_id = fields.One2many('helpdesk.diagnostico', 'ticketRelacion', string = 'Diagnostico', compute = '_compute_diagnosticos')
     estado = fields.Char('Estado previo a cerrar el ticket', compute = "_compute_estadoTicket")
