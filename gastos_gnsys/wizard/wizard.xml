@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_gastos_pagos_reporte" model="ir.ui.view">
+        <field name="model">gasto.pago.reporte</field>
+        <field name="arch" type="xml">
+            <form string="Reporte de pagos">
+                <group>
+                    <group string='Periodo de tiempo'>
+                        <field name="fechaInicial" required="1" />
+                        <field name="fechaFinal" required="1" />
+                    </group>
+
+                </group>
+                <group>
+                    <group string='Periodo de tiempo'>
+                        <field name="devoluciones">
+                            <tree editable="top">
+                                <field name="quienesReciben" readonly="1" />
+
+                                <field name="fecha" readonly="1" />
+                                <field name="formaDePago" readonly="1" />
+                                <field name="banco" readonly="1" />
+                                <field name="claveInterbancaria" readonly="1" />
+                                <field name="montodeNoDucibleI" sum="xd2" readonly="1" />
+                                <field name="fechaTransf" readonly="0" />
+                                <field name="montodeDucibleI" readonly="1" sum="xd1" />
+                                <field name="fechaTransfDeducible" />
+                                <field name="evidencia" readonly="0" />
+                                <field name="fechaLimite" readonly="1" />
+                                <field name="montoEntregado" sum="xd3" readonly="1" />
+                            </tree>
+                        </field>
+                    </group>
+
+                </group>
+
+                <footer>
+                    <button name="report" string="Generar reporte" type="object" class="oe_highlight" />
+                    <button string="Cerrar ventana" class="oe_link" special="cancel" />
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
