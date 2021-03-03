@@ -32,6 +32,7 @@ class dcas(models.Model):
     _description ='DCAS'
     _inherit = ['mail.thread', 'mail.activity.mixin']    
     name = fields.Char()
+    active = fields.Boolean(string = 'Active', default = True)
     dispositivo = fields.Char()
     ultimoInforme=fields.Datetime('Ultimo Informe')
     respaldo=fields.Boolean(string='Respaldo')
