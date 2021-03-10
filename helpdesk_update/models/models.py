@@ -2476,7 +2476,36 @@ class helpdesk_update(models.Model):
                     'context': self.env.context,
                     }
             
-            
+    def cambioEstadoSolicitudRefaccionApp(self):
+        if self.stage_id.id == 3:
+            mensajeTitulo = 'Alerta!!!'
+            mensajeCuerpo = 'No se permite cambiar al estado "Pendiente por autorizar solicitud" una vez que el ticket esta en el estado "Resuelto".'
+            return 1
+
+        if self.stage_id.id == 18 or self.stage_id.id == 4:
+            mensajeTitulo = 'Estado no valido'
+            mensajeCuerpo = 'No es posible agregar productos al ticket ' + str(self.id) + ' en el estado ' + str(self.stage_id.name) + '\nNo se permite añadir refacciones y/o accesorios a un ticket Cerrado o Cancelado.'
+            return 2
+
+        else:
+            estadoAntes = str(self.stage_id.name)
+            query = "update helpdesk_ticket set stage_id = 91 where id = " + str(self.x_studio_id_ticket) + ";"
+            ss = self.env.cr.execute(query)
+            self.estadoSolicitudDeRefaccion = True
+            comentarioGenerico = 'Cambio de ' + estadoAntes +' a solicitud de refacción. Cambio generado por ' + str(self.env.user.name) + '.\nEl día ' + str(datetime.datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S")) + '.\n\n'
+            self.env['helpdesk.diagnostico'].sudo().with_env(self.env(user=self.env.user.id)).create({
+                                                                'ticketRelacion': self.id,
+                                                                'comentario': comentarioGenerico,
+                                                                'estadoTicket': 'Pendiente por autorizar solicitud',
+                                                                'mostrarComentario': True,
+                                                                'write_uid':  self.env.user.id,
+                                                                'create_uid':  self.env.user.id,
+                                                                'creadoPorSistema': True
+                                                            })
+            self.obten_ulimo_diagnostico_fecha_usuario()
+            mensajeTitulo = 'Estado de ticket actualizado!!!'
+            mensajeCuerpo = 'Se cambio el estado del ticket ' + str(self.x_studio_id_ticket) +'. \nEstado anterior: ' + estadoAntes + ' Estado actual:  Pendiente por autorizar solicitud' + ". \n\nNota: Si desea ver el cambio, favor de guardar el ticket. En caso de que el cambio no sea apreciado, favor de refrescar o recargar la página."
+            return 3
     
     estadoSolicitudDeRefaccion = fields.Boolean(string="Paso por estado solicitud de refaccion", default=False)
     
