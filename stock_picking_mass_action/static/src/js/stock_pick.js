@@ -39,6 +39,8 @@ odoo.define('invoice.action_button', function (require) {
                         this.$buttons.find('.o_list_button_add').hide();
                         this.$buttons.find('.oe_action_button_stock_rule').click(this.proxy('action_inter10')).hide();
                         break;
+                      case 3605:
+                        this.$buttons.find('.oe_action_button_picking_unassigned').click(this.proxy('action_inter16'));
                       default:
                         this.$buttons.find('.oe_action_button_res_partner').click(this.proxy('action_inter15'));
                         this.$buttons.find('.oe_action_button_lot_serial').click(this.proxy('action_inter14')); 
@@ -59,7 +61,23 @@ odoo.define('invoice.action_button', function (require) {
                 
             }
         },
-                action_inter15: function (e) {
+        action_inter16: function (e) {
+            var self = this
+            var user = session.uid;
+            self.do_action({
+                name: _t('Desasignar'),
+                type : 'ir.actions.act_window',
+                res_model: 'picking.desasignar',
+                view_type: 'form',
+                view_mode: 'form',
+                view_id: 'view_picking_desasignar',
+                views: [[false, 'form']],
+                target: 'new',
+            
+            });
+        }
+        ,
+            action_inter15: function (e) {
             var self = this
             var user = session.uid;
             self.do_action({

@@ -32,6 +32,14 @@
             file="Reporte de Tickets"
             attachment_use="False"/>
         <report
+            id="ticketContadores_xlsx" 
+            model="helpdesk.ticket"
+            string="Reporte de Tickets con contadores"
+            report_type="xlsx"
+            name="ticketscontadores.report"
+            file="Reporte de Tickets"
+            attachment_use="False"/>
+        <report
             id="contacto_xlsx"
             model="res.partner"
             string="Reporte Clientes"
@@ -63,5 +71,14 @@
             name="lot.report"
             file="Reporte de base instalada"
             attachment_use="False"/>
+        <report
+            id="contacto_pendiente_xlsx"
+            model="res.partner"
+            string="Reporte Clientes Pendiente Inactivo"
+            report_type="xlsx"
+            name="contacto.inactivo.report"
+            file="Reporte Clientes Pendiente Inactivo"
+            attachment_use="False"/>
+
     </data>
 </odoo>

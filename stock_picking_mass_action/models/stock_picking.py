@@ -34,6 +34,34 @@ class StockPicking(Model):
     chofer=fields.Many2one('res.users')
     surtir=fields.Boolean(default=False)
 
+    @api.multi
+    def devolucionT(self):
+        self.ensure_one()
+        action_id = self.env.ref('stock.act_stock_return_picking')
+        if(self.sale_id.id):
+            pi=self.sale_id.picking_ids.filtered(lambda x:x.date_done!=False and x.state=='done').sorted(key='date_done', reverse=True)
+            if(pi!=[]):
+                w=self.env['stock.return.picking'].create({'picking_id':pi[0].id,'location_id':12})
+                view=self.env.ref('stock.view_stock_return_picking_form')
+                for m in self.move_ids_without_package:
+                    self.env['stock.return.picking.line'].create({'wizard_id':w.id,'product_id':m.product_id.id,'move_id':m.id,'quantity':m.product_uom_qty})
+
+            #_logger.info(str(pi.mapped('id')))
+        return {
+                'name': _('Ingreso Series Almacen'),
+                'type': 'ir.actions.act_window',
+                'res_model': 'stock.return.picking',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_id':w.id,
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target':'new'
+            }
+
+
+
+
     def ingresoEquiposRetiro(self):
         wiz=self.env['lot.retiro'].create({'pick':self.id})
         for rrr in self.move_ids_without_package:
@@ -540,7 +568,10 @@ class StockPicking(Model):
         view = self.env.ref('stock_picking_mass_action.view_serie_ingreso')
         ml=self.env['stock.move.line'].search([['picking_id','=',self.id]])
         for r in ml:
-            self.env['serie.ingreso.line'].create({'move_line':r.id,'producto':r.product_id.id,'serie_rel':wiz.id,'cantidad':int(1)})
+            if(r.product_id.categ_id.id!=13):
+                self.env['serie.ingreso.line'].create({'move_line':r.id,'producto':r.product_id.id,'serie_rel':wiz.id,'cantidad':int(r.product_uom_qty)})
+            if(r.product_id.categ_id.id==13):    
+                self.env['serie.ingreso.line'].create({'move_line':r.id,'producto':r.product_id.id,'serie_rel':wiz.id,'cantidad':int(1),'categoria':13})
         return {
             'name': _('Ingreso Equipos'),
             'type': 'ir.actions.act_window',
