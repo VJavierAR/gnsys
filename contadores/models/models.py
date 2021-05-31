@@ -6,6 +6,7 @@ import datetime
 import xlsxwriter 
 import base64
 import csv
+import json
 from odoo.exceptions import UserError
 from odoo import exceptions, _
 from operator import concat
@@ -31,6 +32,7 @@ class dcas(models.Model):
     _description ='DCAS'
     _inherit = ['mail.thread', 'mail.activity.mixin']    
     name = fields.Char()
+    active = fields.Boolean(string = 'Active', default = True)
     dispositivo = fields.Char()
     ultimoInforme=fields.Datetime('Ultimo Informe')
     respaldo=fields.Boolean(string='Respaldo')
@@ -548,7 +550,182 @@ class contadores(models.Model):
                                  
             self.prefacturas=prefacturas    
     
+    @api.multi
+    def carga_contadores_fac_invo(self):
+        if self.x_studio_estado_capturas=='Listo':
+            prefacturas=''
+            id=0
+            for rs in self.x_studio_contratos:
+                rz=str(self.cliente.razonSocial)
+                dias=rs.diasCredito
+                metodoPago=rs.metodPago
+                formaPago=rs.formaDePago
+                uso=rs.usoCFDI
+                plazo=0
+                usoF=''
+                diario=0                                
+                mes=dict(self._fields['mes'].selection).get(self.mes)
+                anio=self.anio                                                                
+                if uso:
+                  usoF=dict(rs._fields['usoCFDI'].selection).get(uso).split(' ')[0]  
                 
+                
+                if rz=='0':                  
+                  id=3
+                  diario=33
+                if rz=='1':                  
+                  id=1    
+                  diario=1
+                if rz=='2':                  
+                  id=4     
+                  diario=53 
+                if rz=='3':                    
+                  id=2
+                  diario=43
+                
+                if dias==30:
+                  plazo=8 
+                if dias==45:
+                  plazo=10
+                if dias==60:
+                  plazo=11
+                if dias==90:
+                  plazo=12
+                
+                
+                if rs.x_studio_cobrar_contrato :
+
+                    if metodoPago==6 and dias <30:
+                      raise exceptions.ValidationError("faltan método de pago incorrecto o días de crédico incorrecto")
+                    if metodoPago==5:
+                        plazo=1
+
+                    if not metodoPago:
+                      raise exceptions.ValidationError("faltan método de pago."+metodoPago)
+
+
+                    if not self.cliente.vat or not len(str(self.cliente.vat))>11:
+                      raise exceptions.ValidationError("falta rfc para crear factura valor :"+str(fact.partner_id.vat))
+
+                    if not uso:
+                      raise exceptions.ValidationError("faltan usocfdi para crear factura "+str(uso))
+
+                    if not formaPago :
+                      raise exceptions.ValidationError("faltan forma de pago para crear factura ."+str(formaPago))                    
+                    
+                    prefacturas=''
+                    a=self.env['account.invoice'].create({'x_studio_captura':self.id,'partner_id':self.cliente.id,'month':self.mes,'year':self.anio,'x_studio_periodo_1':mes +' de '+str(anio) ,'company_id':id,'l10n_mx_edi_payment_method_id':formaPago,'payment_term_id':plazo,'l10n_mx_edi_usage':usoF,'journal_id':diario})
+                    self.env.cr.execute("insert into x_account_invoice_contrato_rel (account_invoice_id, contrato_id) values (" +str(a.id) + ", " +  str(rs.id) + ");")                        
+                    #https://gnsys-corp-stam-1742347.dev.odoo.com/web#id=str(a.id)&action=325&active_id=1&model=account.invoice&view_type=form&menu_id=370
+                    prefacturas="<a href='https://gnsys-corp-stam-1742347.dev.odoo.com/web#id="+str(a.id)+"&action=325&active_id=1&model=account.invoice&view_type=form&menu_id=370' target='_blank'>"+str(a.id)+"</a>"+' '+prefacturas                
+                    ss=self.env['servicios'].search([('contrato', '=',rs.id)])                    
+                    for sg in ss:                                        
+                        if sg.nombreAnte=='SERVICIO DE PCOUNTER' or sg.nombreAnte=='SERVICIO DE PCOUNTER1' or sg.nombreAnte=='ADMINISTRACION DE DOCUMENTOS CON PCOUNTER' or sg.nombreAnte=='SERVICIO DE MANTENIMIENTO DE PCOUNTER' or sg.nombreAnte=='SERVICIO DE MANTENIMIENTO PCOUNTER' or sg.nombreAnte=='RENTA DE LICENCIAMIENTO PCOUNTER':           
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
+                        if sg.nombreAnte=='SERVICIO DE TFS' or sg.nombreAnte=='OPERADOR TFS' or sg.nombreAnte=='TFS' or sg.nombreAnte=='SERVICIO DE TFS ' :                        
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
+                        if sg.nombreAnte=='SERVICIO DE MANTENIMIENTO':                        
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
+                        if sg.nombreAnte=='SOPORTE Y MANTENIMIENTO DE EQUIPOS':
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
+                        if sg.nombreAnte=='SERVICIO DE ADMINISTRADOR KM NET MANAGER':                        
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
+                        if sg.nombreAnte=='PAGINAS IMPRESAS EN BN':                        
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
+                        if sg.nombreAnte=='PAPEL 350,000 HOJAS':                        
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
+                        if sg.nombreAnte=='LECTORES DE PROXIMIDAD':                        
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")        
+                        if sg.nombreAnte=='RENTA MENSUAL DE LICENCIA  7 EMBEDED' or sg.nombreAnte=='RENTA MENSUAL DE LICENCIA  14 EMBEDED' or  sg.nombreAnte=='RENTA MENSUAL DE LICENCIA  2 EMBEDED':
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")        
+                    a.llamado_boton_factu()
+                
+                if rs.x_studio_cobrar_contrato and (rs.dividirServicios or rs.dividirLocalidades or rs.dividirExcedentes):
+                    _logger.info('tiempo 11 : paso')
+                    a.llamado_boton_factu()
+                    _logger.info('tiempo 11 : no paso')
+                    
+                    
+                    """
+                    #raise exceptions.ValidationError("Aquie entro  ." )               
+                    ss=self.env['servicios'].search([('contrato', '=',rs.id)])
+                    
+                    for sg in ss:                                        
+                        if sg.nombreAnte=='SERVICIO DE PCOUNTER' or sg.nombreAnte=='SERVICIO DE PCOUNTER1' or sg.nombreAnte=='ADMINISTRACION DE DOCUMENTOS CON PCOUNTER' or sg.nombreAnte=='SERVICIO DE MANTENIMIENTO DE PCOUNTER' or sg.nombreAnte=='SERVICIO DE MANTENIMIENTO PCOUNTER' or sg.nombreAnte=='RENTA DE LICENCIAMIENTO PCOUNTER':           
+                            a=self.env['account.invoice'].create({'x_studio_captura':self.id,'partner_id':self.cliente.id,'month':self.mes,'year':self.anio,'x_studio_periodo_1':mes +' de '+str(anio) ,'company_id':id,'l10n_mx_edi_payment_method_id':formaPago,'payment_term_id':plazo,'l10n_mx_edi_usage':usoF,'journal_id':diario})
+                            self.env.cr.execute("insert into x_account_invoice_contrato_rel (account_invoice_id, contrato_id) values (" +str(a.id) + ", " +  str(rs.id) + ");")                        
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
+                        if sg.nombreAnte=='SERVICIO DE TFS' or sg.nombreAnte=='OPERADOR TFS' or sg.nombreAnte=='TFS' or sg.nombreAnte=='SERVICIO DE TFS ' :                        
+                            a=self.env['account.invoice'].create({'x_studio_captura':self.id,'partner_id':self.cliente.id,'month':self.mes,'year':self.anio,'x_studio_periodo_1':mes +' de '+str(anio) ,'company_id':id,'l10n_mx_edi_payment_method_id':formaPago,'payment_term_id':plazo,'l10n_mx_edi_usage':usoF,'journal_id':diario})
+                            self.env.cr.execute("insert into x_account_invoice_contrato_rel (account_invoice_id, contrato_id) values (" +str(a.id) + ", " +  str(rs.id) + ");")                        
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")
+                            
+                        if sg.nombreAnte=='SERVICIO DE MANTENIMIENTO':                        
+                            a=self.env['account.invoice'].create({'x_studio_captura':self.id,'partner_id':self.cliente.id,'month':self.mes,'year':self.anio,'x_studio_periodo_1':mes +' de '+str(anio) ,'company_id':id,'l10n_mx_edi_payment_method_id':formaPago,'payment_term_id':plazo,'l10n_mx_edi_usage':usoF,'journal_id':diario})
+                            self.env.cr.execute("insert into x_account_invoice_contrato_rel (account_invoice_id, contrato_id) values (" +str(a.id) + ", " +  str(rs.id) + ");")                        
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
+                            
+                        if sg.nombreAnte=='SOPORTE Y MANTENIMIENTO DE EQUIPOS':
+                            a=self.env['account.invoice'].create({'x_studio_captura':self.id,'partner_id':self.cliente.id,'month':self.mes,'year':self.anio,'x_studio_periodo_1':mes +' de '+str(anio) ,'company_id':id,'l10n_mx_edi_payment_method_id':formaPago,'payment_term_id':plazo,'l10n_mx_edi_usage':usoF,'journal_id':diario})
+                            self.env.cr.execute("insert into x_account_invoice_contrato_rel (account_invoice_id, contrato_id) values (" +str(a.id) + ", " +  str(rs.id) + ");")                        
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
+                        if sg.nombreAnte=='SERVICIO DE ADMINISTRADOR KM NET MANAGER':                        
+                            a=self.env['account.invoice'].create({'x_studio_captura':self.id,'partner_id':self.cliente.id,'month':self.mes,'year':self.anio,'x_studio_periodo_1':mes +' de '+str(anio) ,'company_id':id,'l10n_mx_edi_payment_method_id':formaPago,'payment_term_id':plazo,'l10n_mx_edi_usage':usoF,'journal_id':diario})
+                            self.env.cr.execute("insert into x_account_invoice_contrato_rel (account_invoice_id, contrato_id) values (" +str(a.id) + ", " +  str(rs.id) + ");")                    
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
+                        if sg.nombreAnte=='PAGINAS IMPRESAS EN BN':                        
+                            a=self.env['account.invoice'].create({'x_studio_captura':self.id,'partner_id':self.cliente.id,'month':self.mes,'year':self.anio,'x_studio_periodo_1':mes +' de '+str(anio) ,'company_id':id,'l10n_mx_edi_payment_method_id':formaPago,'payment_term_id':plazo,'l10n_mx_edi_usage':usoF,'journal_id':diario})
+                            self.env.cr.execute("insert into x_account_invoice_contrato_rel (account_invoice_id, contrato_id) values (" +str(a.id) + ", " +  str(rs.id) + ");")                        
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
+                        if sg.nombreAnte=='PAPEL 350,000 HOJAS':                        
+                            a=self.env['account.invoice'].create({'x_studio_captura':self.id,'partner_id':self.cliente.id,'month':self.mes,'year':self.anio,'x_studio_periodo_1':mes +' de '+str(anio) ,'company_id':id,'l10n_mx_edi_payment_method_id':formaPago,'payment_term_id':plazo,'l10n_mx_edi_usage':usoF,'journal_id':diario})
+                            self.env.cr.execute("insert into x_account_invoice_contrato_rel (account_invoice_id, contrato_id) values (" +str(a.id) + ", " +  str(rs.id) + ");")                        
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
+                        if sg.nombreAnte=='LECTORES DE PROXIMIDAD':                        
+                            a=self.env['account.invoice'].create({'x_studio_captura':self.id,'partner_id':self.cliente.id,'month':self.mes,'year':self.anio,'x_studio_periodo_1':mes +' de '+str(anio) ,'company_id':id,'l10n_mx_edi_payment_method_id':formaPago,'payment_term_id':plazo,'l10n_mx_edi_usage':usoF,'journal_id':diario})
+                            self.env.cr.execute("insert into x_account_invoice_contrato_rel (account_invoice_id, contrato_id) values (" +str(a.id) + ", " +  str(rs.id) + ");")                        
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")        
+                        if sg.nombreAnte=='RENTA MENSUAL DE LICENCIA  7 EMBEDED' or sg.nombreAnte=='RENTA MENSUAL DE LICENCIA  14 EMBEDED' or  sg.nombreAnte=='RENTA MENSUAL DE LICENCIA  2 EMBEDED':  
+                            a=self.env['account.invoice'].create({'x_studio_captura':self.id,'partner_id':self.cliente.id,'month':self.mes,'year':self.anio,'x_studio_periodo_1':mes +' de '+str(anio) ,'company_id':id,'l10n_mx_edi_payment_method_id':formaPago,'payment_term_id':plazo,'l10n_mx_edi_usage':usoF,'journal_id':diario})
+                            self.env.cr.execute("insert into x_account_invoice_contrato_rel (account_invoice_id, contrato_id) values (" +str(a.id) + ", " +  str(rs.id) + ");")                        
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
+                        if sg.nombreAnte=='Costo por página procesada BN o color':  #desde aqui
+                            a=self.env['account.invoice'].create({'x_studio_captura':self.id,'partner_id':self.cliente.id,'month':self.mes,'year':self.anio,'x_studio_periodo_1':mes +' de '+str(anio) ,'company_id':id,'l10n_mx_edi_payment_method_id':formaPago,'payment_term_id':plazo,'l10n_mx_edi_usage':usoF,'journal_id':diario})
+                            self.env.cr.execute("insert into x_account_invoice_contrato_rel (account_invoice_id, contrato_id) values (" +str(a.id) + ", " +  str(rs.id) + ");")                        
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
+                        if sg.nombreAnte=='Renta base + costo de página procesada BN o color':  
+                            a=self.env['account.invoice'].create({'x_studio_captura':self.id,'partner_id':self.cliente.id,'month':self.mes,'year':self.anio,'x_studio_periodo_1':mes +' de '+str(anio) ,'company_id':id,'l10n_mx_edi_payment_method_id':formaPago,'payment_term_id':plazo,'l10n_mx_edi_usage':usoF,'journal_id':diario})
+                            self.env.cr.execute("insert into x_account_invoice_contrato_rel (account_invoice_id, contrato_id) values (" +str(a.id) + ", " +  str(rs.id) + ");")                        
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
+                        if sg.nombreAnte=='Renta base con ML incluidas BN o color + ML. excedentes' or sg.nombreAnte=='Renta base con páginas incluidas BN o color + pag. excedentes':  
+                            #raise exceptions.ValidationError("Aquie entro  ." +str(ss) )               
+                            a=self.env['account.invoice'].create({'x_studio_captura':self.id,'partner_id':self.cliente.id,'month':self.mes,'year':self.anio,'x_studio_periodo_1':mes +' de '+str(anio) ,'company_id':id,'l10n_mx_edi_payment_method_id':formaPago,'payment_term_id':plazo,'l10n_mx_edi_usage':usoF,'journal_id':diario})
+                            self.env.cr.execute("insert into x_account_invoice_contrato_rel (account_invoice_id, contrato_id) values (" +str(a.id) + ", " +  str(rs.id) + ");")                        
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")    
+                        if sg.nombreAnte=='Renta global con páginas incluidas BN o color + pag. Excedentes':  
+                            a=self.env['account.invoice'].create({'x_studio_captura':self.id,'partner_id':self.cliente.id,'month':self.mes,'year':self.anio,'x_studio_periodo_1':mes +' de '+str(anio) ,'company_id':id,'l10n_mx_edi_payment_method_id':formaPago,'payment_term_id':plazo,'l10n_mx_edi_usage':usoF,'journal_id':diario})
+                            self.env.cr.execute("insert into x_account_invoice_contrato_rel (account_invoice_id, contrato_id) values (" +str(a.id) + ", " +  str(rs.id) + ");")                        
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")        
+                        if sg.nombreAnte=='Renta global + costo de página procesada BN o color':  
+                            a=self.env['account.invoice'].create({'x_studio_captura':self.id,'partner_id':self.cliente.id,'month':self.mes,'year':self.anio,'x_studio_periodo_1':mes +' de '+str(anio) ,'company_id':id,'l10n_mx_edi_payment_method_id':formaPago,'payment_term_id':plazo,'l10n_mx_edi_usage':usoF,'journal_id':diario})
+                            self.env.cr.execute("insert into x_account_invoice_contrato_rel (account_invoice_id, contrato_id) values (" +str(a.id) + ", " +  str(rs.id) + ");")                        
+                            self.env.cr.execute("insert into x_account_invoice_servicios_rel (account_invoice_id, servicios_id) values (" +str(a.id) + ", " +  str(sg.id) + ");")            
+                    """#a.llamado_boton_factu()         
+                
+                    
+                    
+                    
+                    #raise exceptions.ValidationError("vamos a dividir xD")                    
+                    
+                    
+            
+            
+            
+            
+            
+            #self.env['sale.order'].llamado_boton()
+            self.prefacturas=prefacturas         
+            
     
     @api.multi
     def genera_excel(self):
@@ -1126,22 +1303,11 @@ class contadores(models.Model):
         
     
 
-    
+    """
     @api.multi
     def carga_contadores(self):
         #ssc=self.env['contadores.contadores'].search([('cliente', '=', self.cliente.id),('mes', '=', self.mes),('anio', '=', self.anio),('id', '!=', self.id)],limit=1)        
-        """
-        if ssc:
-           self.sudo().unlink()                   
-           url="https://gnsys-corp.odoo.com/web?#id="+str(ssc.id)+"&action=1129&model=contadores.contadores&view_type=form&menu_id=406"
-           
-           return {'name'     : 'Go to website',
-                  'res_model': 'ir.actions.act_url',
-                  'type'     : 'ir.actions.act_url',
-                  'target'   : 'new',
-                  'url'      : url
-               }      
-        """
+       
         
         if self.anio and not self.csvD:
             perido=str(self.anio)+'-'+str(self.mes)
@@ -1293,7 +1459,230 @@ class contadores(models.Model):
             
             
 
-
+    """
+    @api.multi
+    def carga_contadores(self):
+        #ssc=self.env['contadores.contadores'].search([('cliente', '=', self.cliente.id),('mes', '=', self.mes),('anio', '=', self.anio),('id', '!=', self.id)],limit=1)        
+        """
+        if ssc:
+           self.sudo().unlink()                   
+           url="https://gnsys-corp.odoo.com/web?#id="+str(ssc.id)+"&action=1129&model=contadores.contadores&view_type=form&menu_id=406"
+           
+           return {'name'     : 'Go to website',
+                  'res_model': 'ir.actions.act_url',
+                  'type'     : 'ir.actions.act_url',
+                  'target'   : 'new',
+                  'url'      : url
+               }      
+        """
+        
+        if self.anio and not self.csvD:
+            perido=str(self.anio)+'-'+str(self.mes)
+            periodoAnterior=''
+            mesA=''
+            anioA=''
+            i=0
+            for f in valores:                
+                if f[0]==str(self.mes):                
+                   mesaA=str(valores[i-1][0])
+                i=i+1
+            anios=get_years()
+            i=0
+            if str(self.mes)=='01':
+               anioA=str(int(self.anio)-1)
+            else:    
+               anioA=str(self.anio)              
+            periodoAnterior= anioA+'-'+mesaA   
+            
+            
+            asdc=self.env['contrato'].search([('cliente','=',self.cliente.id)]).ids
+            asds=self.env['servicios'].search([('contrato','in',asdc)]).ids
+            asd=self.env['stock.production.lot'].search([('servicio','in',asds)])
+            
+            #raise exceptions.ValidationError("Nada que generar "+str(asd))                                     
+            
+            #raise Warning('notihng to show xD '+str(self.cliente.name))
+            #id=int(self.id)            
+            sc=self.env['contadores.contadores'].search([('id', '=', self.id)])
+            sc.write({'name' : str(self.cliente.name)+' '+str(periodoAnterior)+' a '+str(perido)})
+            i=1
+            for a in asd:
+                currentP=self.env['dcas.dcas'].search([('serie','=',a.id),('x_studio_field_no6Rb', '=', perido)],order='x_studio_fecha desc',limit=1)
+                currentPA=self.env['dcas.dcas'].search([('serie','=',a.id),('x_studio_field_no6Rb', '=', periodoAnterior)],order='x_studio_fecha desc',limit=1)
+                #raise exceptions.ValidationError("q onda xd"+str(self.id)+' id  '+str(id))                     
+                if not currentP:
+                   if a.servicio.id:
+                      rrs=self.env['dcas.dcas'].create({'contador_id': self.id
+                                                       , 'x_studio_producto': a.id
+                                                       , 'serie': a.id
+                                                       , 'x_studio_locacin':a.x_studio_locacion_recortada
+                                                       , 'x_studio_ubicacin':a.x_studio_centro_de_costos
+                                                       #, 'x_studio_periodo':str(self.anio)+ '-'+str(valores[int(self.mes)-1][1])                                                              
+                                                       , 'x_studio_fecha_texto_anio':str(valores[int(self.mes)-1][1])+' de '+ str(self.anio)
+                                                       ,'x_studio_field_no6Rb':str(self.anio)+'-'+str(self.mes)
+                                                       , 'contadorMono': currentP.contadorMono
+                                                       , 'x_studio_lectura_anterior_bn': currentPA.contadorMono
+                                                       #, 'paginasProcesadasBN': bnp                                                   
+                                                       , 'x_studio_periodo_anterior':str(valores[int(mesaA)-1][1])            + ' de '+ str(anioA)
+                                                       , 'contadorColor': currentP.contadorColor
+                                                       , 'x_studio_lectura_anterior_color': currentPA.contadorColor                                                             
+                                                       #, 'paginasProcesadasColor': colorp
+                                                       , 'x_studio_color_o_bn':a.x_studio_color_bn
+                                                       , 'x_studio_indice': i
+                                                       , 'x_studio_modelo':a.product_id.name
+                                                       , 'x_studio_servicio':a.servicio.id
+                                                       , 'x_studio_cliente':self.cliente.name 
+                                                       })
+                
+                else:
+                   if a.servicio.id :
+                      currentP.write({'contador_id': self.id
+                                                       , 'x_studio_producto': a.id
+                                                       , 'serie': a.id
+                                                       , 'x_studio_locacin':a.x_studio_locacion_recortada
+                                                       , 'x_studio_ubicacin':a.x_studio_centro_de_costos
+                                                       , 'x_studio_fecha_texto_anio':str(valores[int(self.mes)-1][1])+' de '+ str(self.anio)
+                                                       , 'x_studio_field_no6Rb':str(self.anio)+'-'+str(self.mes)
+                                                       #, 'x_studio_periodo':str(self.anio)+ '-'+str(valores[int(self.mes)-1][1])                                                              
+                                                       , 'contadorMono': currentP.contadorMono
+                                                       , 'x_studio_lectura_anterior_bn': currentPA.contadorMono
+                                                       #, 'paginasProcesadasBN': bnp                                                   
+                                                       , 'x_studio_periodo_anterior':str(valores[int(mesaA)-1][1])+ ' de '+   str(anioA)          
+                                                       , 'contadorColor': currentP.contadorColor
+                                                       , 'x_studio_lectura_anterior_color': currentPA.contadorColor                                                             
+                                                       #, 'paginasProcesadasColor': colorp
+                                                       , 'x_studio_color_o_bn':a.x_studio_color_bn
+                                                       , 'x_studio_indice': i
+                                                       , 'x_studio_modelo':a.product_id.name
+                                                       , 'x_studio_servicio':a.servicio.id
+                                                        , 'x_studio_descripcion': 'capturado'
+                                                       , 'x_studio_capturar':True
+                                                       #,'id' : currentP.id
+                                                       })
+                
+                i=1+i
+            retiros=self.env['sale.order'].search([('partner_id','=',self.cliente.id),('x_studio_tipo_de_solicitud', '=', 'Retiro'),('x_studio_cobrar_finiquito','=','True')])
+            
+            for re in retiros:
+                #raise exceptions.ValidationError("faltan usocfdi para crear factura ")
+                currentP=self.env['dcas.dcas'].search([('serie','=',re.serieRetiro2.id),('x_studio_field_no6Rb', '=', perido)],order='x_studio_fecha desc',limit=1)
+                currentPA=self.env['dcas.dcas'].search([('serie','=',re.serieRetiro2.id),('x_studio_field_no6Rb', '=', periodoAnterior)],order='x_studio_fecha desc',limit=1)
+                if not currentP:
+                   #raise exceptions.ValidationError("faltan usocfdi para crear factura si")
+                   if re.x_studio_field_69Boh.id:
+                      rrs=self.env['dcas.dcas'].create({'contador_id': self.id
+                                                       , 'x_studio_producto': re.serieRetiro2.id
+                                                       , 'serie': re.serieRetiro2.id
+                                                       , 'x_studio_locacin':re.partner_shipping_id.name
+                                                       , 'x_studio_ubicacin':re.serieRetiro2.x_studio_centro_de_costos
+                                                       #, 'x_studio_periodo':str(self.anio)+ '-'+str(valores[int(self.mes)-1][1])                                                              
+                                                       , 'x_studio_fecha_texto_anio':str(valores[int(self.mes)-1][1])+' de '+ str(self.anio)
+                                                       ,'x_studio_field_no6Rb':str(self.anio)+'-'+str(self.mes)
+                                                       , 'contadorMono': currentP.contadorMono
+                                                       , 'x_studio_lectura_anterior_bn': currentPA.contadorMono
+                                                       #, 'paginasProcesadasBN': bnp                                                   
+                                                       , 'x_studio_periodo_anterior':str(valores[int(mesaA)-1][1])            + ' de '+ str(anioA)
+                                                       , 'contadorColor': currentP.contadorColor
+                                                       , 'x_studio_lectura_anterior_color': currentPA.contadorColor                                                             
+                                                       #, 'paginasProcesadasColor': colorp
+                                                       , 'x_studio_color_o_bn':re.serieRetiro2.x_studio_color_bn
+                                                       #, 'x_studio_indice': i
+                                                       , 'x_studio_descripcion': 'Finiquito'
+                                                       , 'x_studio_modelo':re.serieRetiro2.product_id.name
+                                                       , 'x_studio_servicio':re.x_studio_field_69Boh.id
+                                                       , 'x_studio_cliente':self.cliente.name  
+                                                       })
+                
+                else:
+                    if re.x_studio_field_69Boh.id :
+                        #raise exceptions.ValidationError("faltan usocfdi para crear factura no")
+                        currentP.write({'contador_id': self.id
+                                                       , 'x_studio_producto': re.serieRetiro2.id
+                                                       , 'serie': re.serieRetiro2.id
+                                                       , 'x_studio_locacin':re.partner_shipping_id.name
+                                                       , 'x_studio_ubicacin':re.serieRetiro2.x_studio_centro_de_costos
+                                                       , 'x_studio_fecha_texto_anio':str(valores[int(self.mes)-1][1])+' de '+ str(self.anio)
+                                                       , 'x_studio_field_no6Rb':str(self.anio)+'-'+str(self.mes)
+                                                       #, 'x_studio_periodo':str(self.anio)+ '-'+str(valores[int(self.mes)-1][1])                                                              
+                                                       , 'contadorMono': currentP.contadorMono
+                                                       , 'x_studio_lectura_anterior_bn': currentPA.contadorMono
+                                                       #, 'paginasProcesadasBN': bnp                                                   
+                                                       , 'x_studio_periodo_anterior':str(valores[int(mesaA)-1][1])+ ' de '+   str(anioA)          
+                                                       , 'contadorColor': currentP.contadorColor
+                                                       , 'x_studio_lectura_anterior_color': currentPA.contadorColor                                                             
+                                                       #, 'paginasProcesadasColor': colorp
+                                                       , 'x_studio_color_o_bn':re.serieRetiro2.x_studio_color_bn
+                                                       , 'x_studio_indice': i
+                                                       , 'x_studio_modelo':re.serieRetiro2.product_id.name
+                                                       , 'x_studio_servicio':re.x_studio_field_69Boh.id
+                                                       , 'x_studio_descripcion': 'capturado Finiquito'
+                                                       , 'x_studio_capturar':True                                                                                               
+                                                       })
+                    
+        if self.csvD:           
+           with open("a1.csv","w") as f:
+                f.write(base64.b64decode(self.csvD).decode("utf-8"))
+           f.close()    
+           file = open("a1.csv", "r")
+           re = csv.reader(file)
+           lista=list(re)
+           j=0
+           abuscar=[]
+           sc=self.env['contadores.contadores'].search([('id', '=', self.id)])
+           sc.write({'name' : "Carga por dca "})  
+           for row in lista:                                            
+               if j>0 :                                      
+                   abuscar.append(row[3])
+               j=j+1
+           a=self.env['stock.production.lot'].search([('name','in',abuscar)])
+           series=[]
+           for t in a:                              
+                for row in lista:
+                    if t.name==row[3]:
+                        #date = row[1]
+                        #fecha = date.split('-')[0].split('/')
+                        mes=(self.mes)
+                        anio=str(self.anio)
+                        i=0
+                        for f in valores:                
+                            if f[0]==str(mes):                
+                               mesaA=str(valores[i-1][0])
+                            i=i+1
+                        anios=get_years()
+                        i=0                  
+                        if str(mes)=='01':
+                           anioA=str(int(anio)-1)
+                        else:    
+                           anioA=str(anio)                    
+                        periodoAnterior= anioA+'-'+mesaA
+                        i=0
+                        for f in valores:                
+                            if f[0]==str(mes):                
+                               mesaC=str(valores[i][0])
+                            i=i+1                  
+                        periodo= anio+'-'+mesaC                        
+                        if row[7]=='':
+                          bn=0
+                        else:
+                          bn=int(row[7])
+                        if row[8]=='':
+                          cc=0                    
+                        else:
+                          cc=int(row[8])                        
+                        series.append({'serie': t.id
+                                                 ,'contadorColor':cc
+                                                 ,'contadorMono':bn
+                                                 ,'fuente':'dcas.dcas'
+                                                 ,'x_studio_field_no6Rb':periodo
+                                                 ,'x_studio_fecha_texto_anio':str(valores[int(self.mes[1])-1][1])+' de '+str(self.anio)
+                                                 ,'x_studio_descripcion':'cvs'
+                                                 ,'x_studio_cliente':str(row[0])
+                                                })                            
+           self.env['dcas.dcas'].create(series)      
+                            
+        
+        
+        
     #@api.onchange('archivo')
     def onchange_archiv(self):
         f=open('1.txt','w')
@@ -1391,6 +1780,7 @@ class lor(models.Model):
     _inherit = 'stock.production.lot'
     dca=fields.One2many('dcas.dcas',inverse_name='serie')
 
+    instalado_el = fields.Datetime(string = 'Fecha de instalación', store=True)
     html = fields.Text(string = 'Tickets', compute = 'gener_tabla_tickets')
 
     
@@ -1427,6 +1817,8 @@ class lor(models.Model):
 
         filas = """"""
         for ticket in tickets_techra:
+            data_ticke = {}
+
             contadores = ''
             if ticket.series:
                 numero_de_serie = ''
@@ -1437,9 +1829,21 @@ class lor(models.Model):
                     if serie.x_studio_color_o_bn == 'B/N':
                         contadores = contadores + 'Serie: ' + numero_de_serie + '</br>Equipo B/N o Color: ' + str(serie.x_studio_color_o_bn) + '</br>Contador B/N anterior: ' + str(serie.x_studio_contador_mono_anterior_1) + '</br>Contador B/N actual: ' + str(serie.contadorMono) + '</br>'
 
+            if ticket.diagnosticos:
+                diagnosticos_ticket = []
+                for registro in ticket.diagnosticos:
+                    info = {
+                        "create_date": str(registro.fechaDiagnosticoTechra),
+                        "estadoTicket": str(registro.estadoTicket),
+                        "comentario": str(registro.comentario),
+                        "encargado": str(registro.create_uid.name)
+                    }
+                    diagnosticos_ticket.append(info)
+                data_ticke["diagnosticos"] = diagnosticos_ticket
 
             filas = filas + """
                             \n<tr>
+                                <td></td>
                                 <td>""" + str(ticket.numTicketDeTechra) + """</td>
                                 <td>""" + str(ticket.creado_el) + """</td>
                                 <td>""" + str(ticket.numeroDeSerieTechra) + """</td>
@@ -1454,17 +1858,30 @@ class lor(models.Model):
                                 
                                 <td>""" + str(ticket.ultima_nota) + """</td>
                                 <td>""" + str(ticket.fecha_ultima_nota) + """</td>
+                                <td>""" + str(json.dumps(data_ticke)) + """</td>
                               </tr>
                           """
         for ticket in tickets_odoo:
             ultimo_diagnostico_fecha = ''
+            data_ticke = {}
             if ticket.diagnosticos:
+                diagnosticos_ticket = []
                 for registro in ticket.diagnosticos:
                     if not registro.creadoPorSistema and registro.comentario != False:
                         ultimo_diagnostico_fecha = str(registro.create_date)
+                    info = {
+                        "create_date": str(registro.create_date),
+                        "estadoTicket": str(registro.estadoTicket),
+                        "comentario": str(registro.comentario),
+                        "encargado": str(registro.create_uid.name)
+                    }
+                    diagnosticos_ticket.append(info)
+                data_ticke["diagnosticos"] = diagnosticos_ticket
+
             if ticket.x_studio_tipo_de_vale != 'Requerimiento':
                 filas = filas + """
                                     \n<tr>
+                                        <td></td>
                                         <td><a href='https://gnsys-corp.odoo.com/web#id=""" + str(ticket.id) + """&model=helpdesk.ticket&view_type=form&menu_id=406' target='_blank'>""" + str(ticket.id) + """</a></td>
                                         <td>""" + str(ticket.create_date) + """</td>
                                         <td>""" + str(ticket.serie_y_modelo) + """</td>
@@ -1477,7 +1894,7 @@ class lor(models.Model):
                                         <td>""" + str(ticket.contadores_anteriores) + """</td>
                                         <td>""" + str(ticket.x_studio_ultima_nota) + """</td>
                                         <td>""" + str(ultimo_diagnostico_fecha) + """</td>
-                                        
+                                        <td>""" + str(json.dumps(data_ticke)) + """</td>
                                     </tr>
                                 """ 
             else:
@@ -1496,6 +1913,7 @@ class lor(models.Model):
 
                 filas = filas + """
                                     \n<tr>
+                                        <td></td>
                                         <td><a href='https://gnsys-corp.odoo.com/web#id=""" + str(ticket.id) + """&model=helpdesk.ticket&view_type=form&menu_id=406' target='_blank'>""" + str(ticket.id) + """</a></td>
                                         <td>""" + str(ticket.create_date) + """</td>
                                         <td>""" + str(ticket.serie_y_modelo) + """</td>
@@ -1508,7 +1926,7 @@ class lor(models.Model):
                                         <td>""" + str(contadores) + """</td>
                                         <td>""" + str(ticket.x_studio_ultima_nota) + """</td>
                                         <td>""" + str(ultimo_diagnostico_fecha) + """</td>
-                                        
+                                        <td>""" + str(json.dumps(data_ticke)) + """</td>
                                     </tr>
                                 """ 
 
@@ -1521,14 +1939,19 @@ class lor(models.Model):
             <html>
             <head>
                 <style>
+                    .modal-dialog {
+                        max-width: 90% !important;
+                    }
+
                 </style>
             </head>
             <body>
                 <div class='row'>
                     <div class='col-sm-12'>
-                        <table id="table_id" class="display" style="width:100%">
+                        <table id="table_id" class="table table-striped table-bordered" style="width:100%">
                             <thead>
                                 <tr>
+                                    <th></th>
                                     <th>Ticket</th>
                                     <th>Fecha</th>
                                     <th>No. Serie</th>
@@ -1541,6 +1964,7 @@ class lor(models.Model):
                                     <th>Contadores</th>
                                     <th>última Nota</th>
                                     <th>Fecha nota</th>
+                                    <th>DatosTicket</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -1548,6 +1972,7 @@ class lor(models.Model):
                             </tbody>
                             <tfoot>
                                 <tr>
+                                    <th></th>
                                     <th>Ticket</th>
                                     <th>Fecha</th>
                                     <th>No. Serie</th>
@@ -1560,6 +1985,7 @@ class lor(models.Model):
                                     <th>Contadores</th>
                                     <th>última Nota</th>
                                     <th>Fecha nota</th>
+                                    <th>DatosTicket</th>
                                 </tr>
                             </tfoot>
                         </table>
@@ -1568,6 +1994,50 @@ class lor(models.Model):
 
                 <script>
                     
+                    var table_id = 1
+                    var hasOwnProperty = Object.prototype.hasOwnProperty;
+
+                    function isEmpty(obj) {
+
+                        // null and undefined are "empty"
+                        if (obj == null) return true;
+
+                        // Assume if it has a length property with a non-zero value
+                        // that that property is correct.
+                        if (obj.length > 0)    return false;
+                        if (obj.length === 0)  return true;
+
+                        // If it isn't an object at this point
+                        // it is empty, but it can't be anything *but* empty
+                        // Is it empty?  Depends on your application.
+                        if (typeof obj !== "object") return true;
+
+                        // Otherwise, does it have any properties of its own?
+                        // Note that this doesn't handle
+                        // toString and valueOf enumeration bugs in IE < 9
+                        for (var key in obj) {
+                            if (hasOwnProperty.call(obj, key)) return false;
+                        }
+
+                        return true;
+                    }
+
+                    function format ( d, id ) {
+                        var data_ticket = JSON.parse( d.DatosTicket );
+                        //console.log(data_ticket)
+                        var diagnosticos = data_ticket.diagnosticos
+
+                        var filas = ""
+
+                        for (i = 0; i < diagnosticos.length; i++) {
+                            filas += "<tr> <td>" + diagnosticos[i].create_date + "</td> <td>" + diagnosticos[i].estadoTicket + "</td> <td>" + diagnosticos[i].comentario + "</td> <td>" + diagnosticos[i].encargado + "</td> </tr>"
+                        }
+                        
+                        var tabla = "<table id='table_diagnostico_" + id + "' class='table table-striped table-bordered' style='width:100%'> <thead> <tr> <th>Creado_el</th><th>Estado_de_ticket</th><th>Diagnostico</th><th>Encargado</th> </tr> </thead> <tbody> " + filas + " </tbody> <tfoot> <tr> <th>Creado_el</th><th>Estado_de_ticket</th><th>Diagnostico</th><th>Encargado</th> </tr> </tfoot> </table> "
+                        
+                        return tabla;
+                    }
+
                     $(document).ready( function () {
                         var table = $('#table_id').DataTable( {
                             dom: 'Bfrtip',
@@ -1597,20 +2067,108 @@ class lor(models.Model):
                             scrollCollapse: true,
                             "columnDefs": [
                                 {
-                                    "targets": [ 2 ],
+                                    "targets": [ 13 ],
                                     "visible": false,
-                                    "searchable": false
-                                },
-                                {
-                                    "targets": [ 3 ],
-                                    "visible": false
+                                    "searchable": true
                                 }
                             ],
-                            responsive: true,
+                            "columns": [
+                                {
+                                    "class":          "details-control",
+                                    "orderable":      false,
+                                    "data":           null,
+                                    "defaultContent": '<i class="fa fa-info-circle" aria-hidden="false"> </ i>'
+                                },
+                                { "data": "Ticket" },
+                                { "data": "Fecha" },
+                                { "data": "No. Serie" },
+                                { "data": "Cliente" },
+                                { "data": "Área de atención" },
+                                { "data": "Zona" },
+                                { "data": "Ubicación" },
+                                { "data": "Falla" },
+                                { "data": "último estatus ticket" },
+                                { "data": "Contadores" },
+                                { "data": "última Nota" },
+                                { "data": "Fecha nota" },
+                                { "data": "DatosTicket" }
+                            ],
+                            "order": [[2, 'desc']],
                             colReorder: true
                         } );
 
-                        
+                        var detailRows = [];
+
+                        $('#table_id tbody').on( 'click', 'tr td.details-control', function () {
+                            var tr = $(this).closest('tr');
+                            var row = table.row( tr );
+                            var idx = $.inArray( tr.attr('id'), detailRows );
+                            
+                            var data_ticket_c = JSON.parse( row.data().DatosTicket );
+                            //console.log(isEmpty(data_ticket_c))
+                            if ( !isEmpty( data_ticket_c ) ) {
+
+                                if ( row.child.isShown() ) {
+                                    tr.removeClass( 'details' );
+                                    row.child.hide();
+                         
+                                    // Remove from the 'open' array
+                                    detailRows.splice( idx, 1 );
+
+                                } else {
+                                    tr.addClass( 'details' );
+                                    row.child( format( row.data(), table_id ) ).show();
+                                    
+
+                                    //table_diagnostico
+                                    //var table_diagnostico = $('table.display').DataTable( {
+                                    //var table_diagnostico = row.child.DataTable( {
+                                    var table_diagnostico = $('#table_diagnostico_' + table_id).DataTable( {
+                                        dom: 'Bfrtip',
+                                        lengthMenu: [
+                                            [ 10, 25, 50, -1 ],
+                                            [ '10 filas', '25 filas', '50 filas', 'Todas las filas' ]
+                                        ],
+                                        buttons: [
+                                            'pageLength',
+                                            'copyHtml5',
+                                            'excelHtml5',
+                                            'csvHtml5',
+                                            'pdfHtml5'
+                                        ],
+                                        "language": {
+                                            "lengthMenu": "Mostrar _MENU_ registros por página",
+                                            "zeroRecords": "Sin registros - perdón =(",
+                                            "info": "Página _PAGE_ de _PAGES_",
+                                            "infoEmpty": "No hay registros disponibles",
+                                            "infoFiltered": "(Filtrado de _MAX_ registros)",
+                                            "search": "Buscar",
+                                            "Previous": "Anterior",
+                                            "Next": "Siguiente"
+                                        },
+                                        "columns": [
+                                            { "data": "Creado_el" },
+                                            { "data": "Estado_de_ticket" },
+                                            { "data": "Diagnostico" },
+                                            { "data": "Encargado" }
+                                        ],
+                                        "order": [[0, 'asc']],
+                                        colReorder: true
+                                    } );
+
+
+                                    table_id += 1
+
+
+                                    // Add to the 'open' array
+                                    if ( idx === -1 ) {
+                                        detailRows.push( tr.attr('id') );
+                                    }
+                                }
+                            } else {
+                                alert("No se cuentan con diagnosticos en el ticket seleccionado")
+                            }
+                        } );
                         
 
                     } );

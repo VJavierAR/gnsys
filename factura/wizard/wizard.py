@@ -85,12 +85,13 @@ class TestReport(TransientModel):
     
     def alv(self):
         workbook = xlsxwriter.Workbook('Example23.xlsx')
-        dir=self.serie=self.env['account.invoice'].search([('type','=','out_invoice')],order='create_date desc',limit=200) 
+        dir=self.serie=self.env['account.invoice'].search([('type','!=','in_invoice'),('type','!=','in_refund'),('date_invoice','!=',False),('state','!=','draft')],order='create_date desc') 
         
         worksheet = workbook.add_worksheet('Reporte Facturacion')
-        content = ["Serie", "Folio","Folio Fiscal Factura", "Documento Origen", "Folio Techra","RFC CLiente", "RFC Empresa","Razon Social", "Cliente", "Fecha Factura", "Importe sin impuesto","IVA","Total","Total adeudado","Estado","Periodo","NC´s","REP","Retencion","Folio Fiscal Pago","Banco","Cuenta ordenate","Cuenta beneficiaria","Estado del pago","Ejecutivo","Vendedor","referencia","Fecha de pago"]
+        content = ["Serie", "Folio","Folio Fiscal Factura", "Documento Origen", "Folio Techra","RFC CLiente", "RFC Empresa","Razon Social", "Cliente", "Fecha Factura", "Importe sin impuesto","IVA","Total","Total adeudado","Tipo","Periodo","NC´s","REP","Retencion","Folio Fiscal Pago","Banco","Cuenta ordenate","Cuenta beneficiaria","Estado del pago","Ejecutivo","Vendedor","referencia","Fecha de pago","Pagos","Fecha Captura","Fecha Comentario","observaciones","Usuariocxc","Estado"]
         bold = workbook.add_format({'bold': True})
         neg = workbook.add_format({'border': 2})
+        format6 = workbook.add_format({'num_format': 'dd-mm-yy'})
         i=0
         for item in content :           
             worksheet.write(0, i, item,neg)            
@@ -100,8 +101,12 @@ class TestReport(TransientModel):
         i=1
         for f in dir:
             worksheet.write(i, 0, str(f.x_studio_serie))
-            worksheet.write(i, 1, str(f.x_studio_folio_1))
-            worksheet.write(i, 2, str(f.x_studio_folio))
+            worksheet.write(i, 1, f.x_studio_folio_1)
+            if str(f.x_studio_folio)=='No tiene timbre':
+               worksheet.write(i, 2, str(f.x_studio_uuidtechra))
+            else:
+               worksheet.write(i, 2, str(f.x_studio_folio))
+            
             if f.origin:
                worksheet.write(i, 3, str(f.origin))
             else:
@@ -110,66 +115,95 @@ class TestReport(TransientModel):
                worksheet.write(i, 4, str(f.x_studio_folio_techra))
             else:
                 worksheet.write(i, 4, '')
-            worksheet.write(i, 5, str(f.partner_id.vat))
+            
             worksheet.write(i, 6, str(f.company_id.vat))
             
-            rz=dict(f.partner_id._fields['razonSocial'].selection).get(f.partner_id.razonSocial)
-            worksheet.write(i, 7, rz)
+            if f.x_studio_importacion=='pruebaNota' or f.x_studio_importacion=='lunes-19-10-2020' or f.x_studio_importacion=='lunes05' or f.x_studio_importacion=='viernes-30-10-2020' or f.x_studio_importacion=='lunes' or f.x_studio_importacion=='prueba' or f.x_studio_importacion=='martesGRupo':
+              worksheet.write(i, 7, f.x_studio_razn_social_del_emisor)
+              worksheet.write(i, 5, f.x_studio_rfc)
+            else:  
+              rz=dict(f.partner_id._fields['razonSocial'].selection).get(f.partner_id.razonSocial)
+              worksheet.write(i, 7, rz)
+              worksheet.write(i, 5, str(f.partner_id.vat))
+            
+            
+            
+            
             if str(f.partner_id.name)=='sin contacto':
                worksheet.write(i, 8, f.x_studio_cliente)
             else:
                worksheet.write(i, 8, str(f.partner_id.name))
             
-            worksheet.write(i, 9, str(f.date_invoice))
-            worksheet.write(i, 10, str(f.amount_untaxed))
-            worksheet.write(i, 11, str(f.amount_tax))
-            worksheet.write(i, 12, str(f.amount_total))
-            worksheet.write(i, 13, str(f.residual))
+            worksheet.write(i, 9, f.date_invoice,format6)
+            worksheet.write(i, 10, f.amount_untaxed)
+            worksheet.write(i, 11, f.amount_tax)
+            worksheet.write(i, 12, f.amount_total)
+            if f.type=='out_refund' and f.x_studio_importacion=='pruebaNota':
+               worksheet.write(i, 13, 0.0)
+            if (f.x_studio_importacion=='pruebaNota' or f.x_studio_importacion=='lunes-19-10-2020' or f.x_studio_importacion=='lunes05' or f.x_studio_importacion=='viernes-30-10-2020' or f.x_studio_importacion=='lunes' or f.x_studio_importacion=='prueba' or f.x_studio_importacion=='martesGRupo') and f.state=='open':
+               worksheet.write(i, 13, float(f.x_studio_importe_por_pagar)) 
+            if not f.x_studio_folio_techra and not f.type=='out_refund' :
+               worksheet.write(i, 13, f.residual)
+            
+            
             estado=dict(f._fields['state']._description_selection(self.env)).get(f.state)
-            worksheet.write(i, 14, estado)
+            if f.type=='out_refund':
+                tipoD='Nota de crédito'
+            if f.type=='out_invoice':
+                tipoD='Factura'   
+            worksheet.write(i, 14, tipoD)
             try:
-                periodo=str(f.x_studio_periodo)
-                if periodo!='False':
-                   worksheet.write(i, 15, periodo)
-                else:
-                   if f.x_studio_field_EFIxP:
-                        if  "-" in f.x_studio_field_EFIxP.x_studio_peridotmp  :
-                          mes=f.x_studio_field_EFIxP.x_studio_peridotmp.split("-")[1]
-                          comple=f.x_studio_field_EFIxP.x_studio_peridotmp.split("-")[0]
-                          if mes =='01':
-                              mes="ENERO"
-                          if mes =='02':
-                              mes="FEBRERO"
-                          if mes =='03':
-                              mes="MARZO"
-                          if mes =='04':
-                              mes="ABRIL"
-                          if mes =='05':
-                              mes="MAYO"
-                          if mes =='06':
-                              mes="JUNIO"
-                          if mes =='07':
-                              mes="JULIO"
-                          if mes =='08':
-                              mes="AGOSTO"
-                          if mes =='09':
-                              mes="SEPTIEMBRE"
-                          if mes =='10':
-                              mes="OCTUBRE"
-                          if mes =='11':
-                              mes="NOVIEMBRE"
-                          if mes =='12':
-                              mes="DICIEMBRE"
-                          periodo=mes +" DE "+comple
-                        else:      
-                          periodo=str(f.x_studio_field_EFIxP.x_studio_peridotmp) 
-                   worksheet.write(i, 15,periodo )
+                if (f.x_studio_importacion=='pruebaNota' or f.x_studio_importacion=='lunes-19-10-2020' or f.x_studio_importacion=='lunes05' or f.x_studio_importacion=='viernes-30-10-2020' or f.x_studio_importacion=='lunes' or f.x_studio_importacion=='prueba' or f.x_studio_importacion=='martesGRupo') and f.state=='open':
+                   worksheet.write(i, 15, f.x_studio_periodo_1.replace(' de ','/').upper())
+                else:   
+                  periodo=str(f.x_studio_periodo)
+                  if periodo!='False':
+                     worksheet.write(i, 15, periodo.replace(' de ','/').upper())
+                  else:
+                     if f.x_studio_field_EFIxP:
+                          if  "-" in f.x_studio_field_EFIxP.x_studio_peridotmp  :
+                            mes=f.x_studio_field_EFIxP.x_studio_peridotmp.split("-")[1]
+                            comple=f.x_studio_field_EFIxP.x_studio_peridotmp.split("-")[0]
+                            if mes =='01':
+                                mes="ENERO"
+                            if mes =='02':
+                                mes="FEBRERO"
+                            if mes =='03':
+                                mes="MARZO"
+                            if mes =='04':
+                                mes="ABRIL"
+                            if mes =='05':
+                                mes="MAYO"
+                            if mes =='06':
+                                mes="JUNIO"
+                            if mes =='07':
+                                mes="JULIO"
+                            if mes =='08':
+                                mes="AGOSTO"
+                            if mes =='09':
+                                mes="SEPTIEMBRE"
+                            if mes =='10':
+                                mes="OCTUBRE"
+                            if mes =='11':
+                                mes="NOVIEMBRE"
+                            if mes =='12':
+                                mes="DICIEMBRE"
+                            periodo=mes +"/"+comple
+                          else:      
+                            periodo=str(f.x_studio_field_EFIxP.x_studio_peridotmp.replace(' de ','/').upper()) 
+                     worksheet.write(i, 15,periodo )
+
             except:
-                worksheet.write(i, 15, 'Error logico 2') 
+                worksheet.write(i, 15, f.x_studio_periodo_1) 
+            
+            
             if f.x_studio_ncs:
                worksheet.write(i, 16, str(f.x_studio_ncs))
+            """
             else:
                worksheet.write(i, 16, '')
+            """
+            
             if str(f.x_studio_rep)!='False':
                worksheet.write(i, 17, str(f.x_studio_rep))
             else:
@@ -202,10 +236,10 @@ class TestReport(TransientModel):
                 if p.communication:
                    referencia+=str(p.communication)+'   '+referencia
                 
-            if str(f.partner_id.name)=='sin contacto':
-                worksheet.write(i, 8, f.x_studio_cliente)
-            else:
-                worksheet.write(i, 19, pago)
+            #if str(f.partner_id.name)=='sin contacto':
+            #    worksheet.write(i, 8, f.x_studio_cliente)
+            #else:
+            #    worksheet.write(i, 19, pago)
             if str(f.partner_id.name)=='sin contacto':
                worksheet.write(i, 20, f.x_studio_banco)
             else:
@@ -215,10 +249,17 @@ class TestReport(TransientModel):
             
             worksheet.write(i, 22, cuentaB)
             
-            if str(f.partner_id.name)=='sin contacto':
+            if (f.x_studio_importacion=='pruebaNota' or f.x_studio_importacion=='lunes-19-10-2020' or f.x_studio_importacion=='lunes05' or f.x_studio_importacion=='viernes-30-10-2020' or f.x_studio_importacion=='lunes' or f.x_studio_importacion=='prueba' or f.x_studio_importacion=='martesGRupo') and f.state=='open':
                worksheet.write(i, 23, f.x_studio_folio_fiscal_pago_techra)
             else:
-               worksheet.write(i, 23, estopago)
+               if f.state=='paid': 
+                  worksheet.write(i, 23, pago)
+               if f.state=='cancel':
+                  worksheet.write(i, 23, 'Cancelado')                   
+               if f.state=='open':
+                  worksheet.write(i, 23, estado)                        
+                
+                
             worksheet.write(i, 24, f.partner_id.x_studio_ejecutivo.name)
             worksheet.write(i, 25, f.partner_id.x_studio_vendedor.name)
             
@@ -227,10 +268,50 @@ class TestReport(TransientModel):
             else:
                worksheet.write(i, 26, referencia)
             
-            if str(f.partner_id.name)=='sin contacto':
-               worksheet.write(i, 27, f.x_studio_fecha_de_pago)
+            if (f.x_studio_importacion=='pruebaNota' or f.x_studio_importacion=='lunes-19-10-2020' or f.x_studio_importacion=='lunes05' or f.x_studio_importacion=='viernes-30-10-2020' or f.x_studio_importacion=='lunes' or f.x_studio_importacion=='prueba' or f.x_studio_importacion=='martesGRupo') and f.state=='open':
+               dater=''     
+               dft=f.x_studio_fecha_de_pago
+                
+               if dft:
+                  if 'CST' in dft:
+                      datesr=datetime.datetime.strptime(dft, '%a %b %d %H:%M:%S CST %Y')
+                  if 'CDT' in dft:  
+                      datesr=datetime.datetime.strptime(dft, '%a %b %d %H:%M:%S CDT %Y')
+               worksheet.write(i, 27, dater,format6)
+               worksheet.write(i, 16, f.x_studio_nota)
+               worksheet.write(i, 28, f.x_studio_pagos)
+               dfy=f.x_studio_fecha_captura
+               if dfy:
+                  if 'CST' in dfy:
+                      datesrC=datetime.datetime.strptime(dfy, '%a %b %d %H:%M:%S CST %Y')
+                  if 'CDT' in dfy:  
+                      datesrC=datetime.datetime.strptime(dfy, '%a %b %d %H:%M:%S CDT %Y')
+                  worksheet.write(i, 29, datesrC,format6)
+               if f.x_studio_fecha_comentario:
+                  worksheet.write(i, 30, f.x_studio_fecha_comentario)
+               if f.x_studio_oboservaciones:
+                  worksheet.write(i, 31, f.x_studio_oboservaciones)
+               if f.x_studio_usuario_cxc:
+                  worksheet.write(i, 32, f.x_studio_usuario_cxc)
+               worksheet.write(i, 24, f.x_studio_ejecutivo_atc)
+               worksheet.write(i, 25, f.x_studio_ejecutivo_de_cuenta)
+               
+               if f.type=='out_refund':
+                  if f.x_studio_folio_fiscal_pago_techra=='Cancelado':
+                     worksheet.write(i, 33, 'C')
+                  else:  
+                     worksheet.write(i, 33,'NDC')
+               else:
+                  worksheet.write(i, 33, f.x_studio_estadohtml)                                    
             else:
                worksheet.write(i, 27, fechapago)
+               if estado=='Pagado':
+                  estado='P'
+               if estado=='Abierto':
+                  estado='NP'
+               if estado=='Cancelado':
+                  estado='C'
+               worksheet.write(i, 33, estado)
             
             
             
@@ -241,7 +322,7 @@ class TestReport(TransientModel):
             i=1+i
         
         
-        
+        """
         worksheet = workbook.add_worksheet('atrasados')
         content = ["Cliente","0 a 30 dias", "Folio 0 a 30 dias","31 a 45 dias ", "Folio 31 a 45 dias","46 a 60 ", "Folio 46 a 60","61 a 90","Folio 61 a 90"," mayor a 90","Folios mayores a 90"]
         bold = workbook.add_format({'bold': True})
@@ -272,9 +353,10 @@ class TestReport(TransientModel):
             facturasH=0
             foliosH=''
             
-            
+            hoy=date.today()
             for fecha in dir:
-                dias=date.today()-fecha.date_invoice
+                #_logger.info("id lol"+str(fecha.id))
+                dias=hoy-fecha.date_invoice
                 if int(dias.days)<31:
                     if str(fecha.partner_id.name)=='sin contacto':
                        if cuenta==fecha.x_studio_cliente:
@@ -323,11 +405,11 @@ class TestReport(TransientModel):
                 
             #facturas=0
             
-            """
-            worksheet.write(i, 0, str(fecha.date_invoice))
-            dias=date.today()-fecha.date_invoice
-            worksheet.write(i, 1, str(dias.days))
-            """            
+            
+            #worksheet.write(i, 0, str(fecha.date_invoice))
+            #dias=date.today()-fecha.date_invoice
+            #worksheet.write(i, 1, str(dias.days))
+            
             worksheet.write(i, 0, cuenta)
             worksheet.write(i, 1, str(facturasT))
             worksheet.write(i, 2, foliosT)
@@ -342,7 +424,7 @@ class TestReport(TransientModel):
             i=i+1
         
         
-        
+        """
         workbook.close()
         data = open('Example23.xlsx', 'rb').read()
         

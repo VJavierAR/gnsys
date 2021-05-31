@@ -466,6 +466,7 @@ class detalle(models.Model):
       _description = 'Detalle Orden'
      
       saleOrder = fields.Many2one('sale.order', string='Pedido de venta')
+      accountInvoice = fields.Many2one('account.invoice', string='Factura')
      
       serieEquipo = fields.Text(string="Serie")
       producto = fields.Text(string="Producto")
@@ -482,7 +483,8 @@ class detalle(models.Model):
      
       periodo = fields.Text(string="Periodo")
       servicio=fields.Integer(string='Servicio')
-    
+      estado=   fields.Text(string="Estado")
+      color=fields.Text(string="Color")
      
      
       @api.multi

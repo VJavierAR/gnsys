@@ -219,7 +219,7 @@ class tfs(models.Model):
                                 pickDestino.append(datos2)
                                 rule.append(re.id)
             if(len(pickOrigen)>0):
-                c=self.env['res.partner'].search([['name','=',al.name],['parent_id','=',1]])
+                c=al.x_studio_field_E0H1Z
                 ticket=self.env['helpdesk.ticket'].create({'x_studio_tipo_de_vale':'Resurtido de Almacen','partner_id':c.id,'team_id':8})
                 sale = self.env['sale.order'].create({'partner_id' : c.id, 'origin' : "Ticket: " + str(ticket.id), 'x_studio_tipo_de_solicitud' : 'Venta', 'partner_shipping_id' : c.id , 'warehouse_id' : 1 , 'team_id' : 1, 'x_studio_field_bxHgp': ticket.id})
                 destino=self.env['stock.picking.type'].search([['name','=','Receipts'],['warehouse_id','=',al.id]])
@@ -295,9 +295,15 @@ class tfs(models.Model):
     
     @api.model
     def create(self, vals):
-        vals['name'] = self.env['ir.sequence'].next_by_code('tfs')
-        result = super(tfs, self).create(vals)
-        return result
+        validacion=False
+        if (vals['productoNegro'] or vals['productoAmarillo'] or vals['productoCian'] or vals['productoMagenta']):
+            validacion=True
+        if(validacion):    
+            vals['name'] = self.env['ir.sequence'].next_by_code('tfs')
+            result = super(tfs, self).create(vals)
+            return result
+        if (validacion==False):
+            raise exceptions.UserError("No hay ningun toner seleccionado")
     
     def canc(self):
         self.write({'estado':'Cancelado'})
@@ -349,26 +355,32 @@ class tfs(models.Model):
                     prod=alm.lot_stock_id.quant_ids.mapped('product_id.id')
                 if(record.colorBN=="B/N"):
                     data=record.serie.product_id.x_studio_toner_compatible.filtered(lambda x: 'Toner' in x.categ_id.name and x.id in prod).mapped('id')
-                    res['domain'] = {'productoNegro': [('id', 'in', data)]}
-                    dc=self.env['dcas.dcas'].search([['serie','=',record.serie.id],['fuente','=','tfs.tfs'],['x_studio_toner_negro','=',1]]).sorted(key='create_date',reverse=True)
-                    record['contadorMono'] =dc[0].id if(len(dc)>0) else self.env['dcas.dcas'].search([['serie','=',record.serie.id]]).sorted(key='create_date',reverse=True)[0].id
-
+                    if(data==[]):
+                        raise exceptions.UserError("Contactese con el administrador la serie sellecionada no esta asociada a un almacen" )
+                    if(data!=[]):
+                        res['domain'] = {'productoNegro': [('id', 'in', data)]}
+                        dc=self.env['dcas.dcas'].search([['serie','=',record.serie.id],['fuente','=','tfs.tfs'],['x_studio_toner_negro','=',1]]).sorted(key='create_date',reverse=True)
+                        record['contadorMono'] =dc[0].id if(len(dc)>0) else self.env['dcas.dcas'].search([['serie','=',record.serie.id]]).sorted(key='create_date',reverse=True)[0].id
                 if(record.colorBN=="Color"):
                     negro=record.serie.product_id.x_studio_toner_compatible.filtered(lambda x: 'Toner' in x.categ_id.name and x.x_studio_color=='Negro' and x.id in prod).mapped('id')
                     cian=record.serie.product_id.x_studio_toner_compatible.filtered(lambda x: 'Toner' in x.categ_id.name and x.x_studio_color=='Cian' and x.id in prod).mapped('id')
                     amarillo=record.serie.product_id.x_studio_toner_compatible.filtered(lambda x: 'Toner' in x.categ_id.name and x.x_studio_color=='Amarillo' and x.id in prod).mapped('id')
-                    magenta=record.serie.product_id.x_studio_toner_compatible.filtered(lambda x: 'Toner' in x.categ_id.name and x.x_studio_color=='Magenta' and x.id in prod).mapped('id')                    
-                    res['domain'] = {'productoNegro': [('id', 'in', negro)],'productoCian': [('id', 'in', cian)],'productoAmarillo': [('id', 'in', amarillo)],'productoMagenta': [('id', 'in', magenta)]}
-                    dc=self.env['dcas.dcas'].search([['serie','=',record.serie.id],['fuente','=','tfs.tfs'],['x_studio_toner_negro','=',1]]).sorted(key='create_date',reverse=True)
-                    dc1=self.env['dcas.dcas'].search([['serie','=',record.serie.id],['fuente','=','tfs.tfs'],['x_studio_toner_amarillo','=',1]]).sorted(key='create_date',reverse=True)
-                    dc2=self.env['dcas.dcas'].search([['serie','=',record.serie.id],['fuente','=','tfs.tfs'],['x_studio_toner_cian','=',1]]).sorted(key='create_date',reverse=True)
-                    dc3=self.env['dcas.dcas'].search([['serie','=',record.serie.id],['fuente','=','tfs.tfs'],['x_studio_toner_magenta','=',1]]).sorted(key='create_date',reverse=True)
-                    record['contadorMono'] =dc[0].id if(len(dc)>0) else self.env['dcas.dcas'].search([['serie','=',record.serie.id]]).sorted(key='create_date',reverse=True)[0].id
-                    record['contadorAmarillo'] =dc1[0].id if(len(dc1)>0) else self.env['dcas.dcas'].search([['serie','=',record.serie.id]]).sorted(key='create_date',reverse=True)[0].id
-                    record['contadorCian'] =dc2[0].id if(len(dc2)>0) else self.env['dcas.dcas'].search([['serie','=',record.serie.id]]).sorted(key='create_date',reverse=True)[0].id
-                    record['contadorMagenta'] =dc3[0].id if(len(dc3)>0) else self.env['dcas.dcas'].search([['serie','=',record.serie.id]]).sorted(key='create_date',reverse=True)[0].id
+                    magenta=record.serie.product_id.x_studio_toner_compatible.filtered(lambda x: 'Toner' in x.categ_id.name and x.x_studio_color=='Magenta' and x.id in prod).mapped('id')
+                    data=negro+cian+amarillo+magenta
+                    if(data==[]):
+                        raise exceptions.UserError("Contactese con el administrador la serie sellecionada no esta asociada a un almacen" )
+                    if(data!=[]):
+                        res['domain'] = {'productoNegro': [('id', 'in', negro)],'productoCian': [('id', 'in', cian)],'productoAmarillo': [('id', 'in', amarillo)],'productoMagenta': [('id', 'in', magenta)]}
+                        dc=self.env['dcas.dcas'].search([['serie','=',record.serie.id],['fuente','=','tfs.tfs'],['x_studio_toner_negro','=',1]]).sorted(key='create_date',reverse=True)
+                        dc1=self.env['dcas.dcas'].search([['serie','=',record.serie.id],['fuente','=','tfs.tfs'],['x_studio_toner_amarillo','=',1]]).sorted(key='create_date',reverse=True)
+                        dc2=self.env['dcas.dcas'].search([['serie','=',record.serie.id],['fuente','=','tfs.tfs'],['x_studio_toner_cian','=',1]]).sorted(key='create_date',reverse=True)
+                        dc3=self.env['dcas.dcas'].search([['serie','=',record.serie.id],['fuente','=','tfs.tfs'],['x_studio_toner_magenta','=',1]]).sorted(key='create_date',reverse=True)
+                        record['contadorMono'] =dc[0].id if(len(dc)>0) else self.env['dcas.dcas'].search([['serie','=',record.serie.id]]).sorted(key='create_date',reverse=True)[0].id
+                        record['contadorAmarillo'] =dc1[0].id if(len(dc1)>0) else self.env['dcas.dcas'].search([['serie','=',record.serie.id]]).sorted(key='create_date',reverse=True)[0].id
+                        record['contadorCian'] =dc2[0].id if(len(dc2)>0) else self.env['dcas.dcas'].search([['serie','=',record.serie.id]]).sorted(key='create_date',reverse=True)[0].id
+                        record['contadorMagenta'] =dc3[0].id if(len(dc3)>0) else self.env['dcas.dcas'].search([['serie','=',record.serie.id]]).sorted(key='create_date',reverse=True)[0].id
         return res
-
+        
 class evidencias(models.Model):
     _name='tfs.evidencia'
     _description='tfs evidencia'
@@ -391,9 +403,9 @@ class detonacionMini(models.Model):
     
     def detona(self):
         t=self.env['tfs.tfs'].reglas(self.almacen.id)
-        if(t.id):
+        if(t):
             self.write({'ticket':t.id})
-            n=env['tfs.notificacion.ticket'].create({'name':'resurtido','tickets':[(6,0,t.id)]})
-            m=env['mail.template'].browse(60)
+            n=self.env['tfs.notificacion.ticket'].create({'name':'resurtido','tickets':[(6,0,[t.id])]})
+            m=self.env['mail.template'].browse(60)
             m.send_mail(n.id, force_send=True)
 
