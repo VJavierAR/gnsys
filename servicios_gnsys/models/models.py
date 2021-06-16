@@ -18,7 +18,7 @@ class servicios_gnsys(models.Model):
     _name = 'servicios'
     _inherit = 'mail.thread'
     _description = 'Servicios GNSYS'
-    active=Boolean(default=True)
+    active=fields.Boolean(default=True)
     name=fields.Char('Nombre')
     productos = fields.One2many('product.product', 'servicio', string="Productos")
     fechaDeInicioDeServicio = fields.Datetime(string = 'Fecha de inicio de servicio',track_visibility='onchange')
@@ -175,7 +175,7 @@ class equipo_series(models.Model):
 class contratos(models.Model):
     _name = "contrato"
     _description = 'Contratos GNSYS'
-    active=Boolean(default=True)
+    active=fields.Boolean(default=True)
     name = fields.Char(string="Nombre")
     servicio = fields.One2many('servicios', 'contrato',string="Servicio")
     ci = fields.Binary(string="carta de intención")
