@@ -146,7 +146,7 @@ class servicios_gnsys(models.Model):
     @api.onchange('contrato')
     def cambiarRFC(self):
         if self.contrato:
-            self.rfcCliente = self.contrato.rfcCliente
+            self.rfcCliente = self.contrato.cliente.vat
 #    for record in self:       
     #         if record.contrato:
     #             _logger.info("-------Logger de OSWALDO "+str(record.contrato.name))
