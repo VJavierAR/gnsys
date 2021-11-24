@@ -169,9 +169,6 @@ class equipo_series(models.Model):
     servicio = fields.Many2one('servicios', string="Servicio serie")
 
 
-
-
-
 class contratos(models.Model):
     _name = "contrato"
     _description = 'Contratos GNSYS'
@@ -184,6 +181,17 @@ class contratos(models.Model):
     cs = fields.Binary(string="constancia del sat")
     idal = fields.Binary(string="id apoderado legal")
     penalizaciones = fields.One2many('penalizaciones','contrato',string="Penalizaciones")
+    anexos = fields.One2many('anexos','contrato',string="Anexos")
+    
+    
+    bnaCuatro = fields.Integer(string="BN A4")
+    colaraCuatro = fields.Integer(string="Color A4")
+    bnaTres = fields.Integer(string="BN A3")
+    colaraTres = fields.Integer(string="Color A3")
+    plotter = fields.Integer(string="Plotter")
+    produccion = fields.Integer(string="Produdcción")
+    scanner = fields.Integer(string="Scanner")
+    
 
     dividirLocalidades = fields.Boolean(string="Dividir Localidades", default=False)
     dividirServicios = fields.Boolean(string="Dividir Servicios", default=False)
@@ -419,3 +427,15 @@ class penalizaciones(models.Model):
             if self.plazoIni >30 and self.plazoFinal<=35:                
                 self.porcentaje=0.15
                 self.meses=0
+
+class anexos(models.Model):
+    _name = "anexos"
+    _description = 'Anexos'
+    bnaCuatro = fields.Integer(string="BN A4")
+    colaraCuatro = fields.Integer(string="Color A4")
+    bnaTres = fields.Integer(string="BN A3")
+    colaraTres = fields.Integer(string="Color A3")
+    plotter = fields.Integer(string="Plotter")
+    produccion = fields.Integer(string="Produdcción")
+    scanner = fields.Integer(string="Scanner")
+    contrato = fields.Many2one('contrato', string="Contrato")
