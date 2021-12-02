@@ -304,6 +304,13 @@ class contratos(models.Model):
             self.vendedor = self.cliente.x_studio_vendedor
             self.rfcCliente = self.cliente.vat
 
+            
+            
+    @api.onchange('cliente')        
+    def cambiaRFC(self):
+        if self.cliente:
+            self.x_studio_ejecutivo=str(self.cliente.x_studio_ejecutivo.name)
+            
     @api.onchange('fechaDeFinDeContrato')
     @api.multi
     def expiracionServicios(self):
