@@ -142,11 +142,13 @@ class servicios_gnsys(models.Model):
                     }
                 return {'warning': mess}
     
-    rfcCliente = fields.Text(string="RFC Cliente",track_visibility='onchange') 
-    @api.onchange('contrato')
-    def cambiarRFC(self):
-        if self.contrato:
-            self.rfcCliente = str(self.contrato.cliente.vat)
+    rfcCliente = fields.Text(string="RFC Cliente",track_visibility='onchange')
+    
+    
+    
+    
+    
+    
 #    for record in self:       
     #         if record.contrato:
     #             _logger.info("-------Logger de OSWALDO "+str(record.contrato.name))
