@@ -6,6 +6,7 @@ from odoo.exceptions import UserError
 from odoo import exceptions, _
 import logging, ast
 import datetime, time
+from dateutil.relativedelta import relativedelta  
 _logger = logging.getLogger(__name__)
 
 def get_plazo():
@@ -320,6 +321,25 @@ class contratos(models.Model):
     #                     for servicio in record.servicio: 
     #                         servicio.servActivo = False
         #La siguiente funcion verifica que si la fecha de fin de servicio este se desactiva 
+    
+    #Actualiza la fecha final de contrato en funcion de la fecha inical del contrato y
+    #la duracion en meses
+    @api.onchange('FechaInicioContrato')
+    @api.depends('vigenciaDelContrato')
+    def update_fecha_final_contrato(self):
+        if self.fechaDeFinDeContrato and self.vigenciaDelContrato:
+            for contrato in self :
+                if contrato.vigenciaDelContrato == 'INDEFINIDO':
+                    contrato.fechaDeFinDeContrato =''
+                elif contrato.vigenciaDelContrato != 'OTRO' and isinstance(int(contrato.vigenciaDelContrato),int):
+                    contrato.fechaDeFinDeContrato = contrato.fechaDeInicioDeContrato + relativedelta(months=int(contrato.vigenciaDelContrato))
+                elif contrato.vigenciaDelContrato == 'OTRO':
+                    contrato.fechaDeFinDeContrato = ''
+
+    @api.onchange('vigenciaDelContrato')
+    def ejecuta_calcular_vigencia_fecha_final(self):
+        self.update_fecha_final_contrato()
+                
     #fechaDeInicioDeContrato
     #fechaDeFinDeContrato
     @api.onchange('fechaDeFinDeContrato')
