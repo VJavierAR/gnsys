@@ -299,24 +299,23 @@ class factura(models.Model):
 
                                      if k.x_studio_color_o_bn=='B/N':
                                          if bnp>0: 
-                                            inv = self.env['account.invoice.line'].create({'x_studio_id_servicio':m.id,'invoice_id': self.id,'x_studio_id_servicio':m.id,'account_id':cuenta,'name':'(82121500) PAGINAS IMPRESAS NEGRO','x_studio_serie':k.serie.name,'product_id':pbn,'quantity':bnp,'price_unit':m.clickExcedenteBN,'uom_id' : 22 })                                         
+                                            inv = self.env['account.invoice.line'].create({'x_studio_id_servicio':m.id,'invoice_id': self.id,'x_studio_id_servicio':m.id,'account_id':cuenta,'name':'(82121500) PAGINAS IMPRESAS NEGRO','x_studio_serie':k.serie.name,'product_id':pbn,'quantity':bnp,'price_unit':m.clickExcedenteBN})                                         
                                             inv.write({ 'invoice_line_tax_ids' : [ (6, 0 , [2] ) ] })                                         
                                          else:
-                                            self.env['zeros.lineas'].create({'accountInv': self.id,'idServicio':m.id,'unidad':'ZP','cantidad':0.0,'precioUnitario':m.clickExcedenteBN,'serie':k.serie.name,'descripcion':'(82121500) PAGINAS IMPRESAS NEGRO','uom_id' : 22 })
+                                            self.env['zeros.lineas'].create({'accountInv': self.id,'idServicio':m.id,'unidad':'ZP','cantidad':0.0,'precioUnitario':m.clickExcedenteBN,'serie':k.serie.name,'descripcion':'(82121500) PAGINAS IMPRESAS NEGRO'})
 
                                      if k.x_studio_color_o_bn=='Color':
                                          if colorp>0: 
-                                            inv=self.env['account.invoice.line'].create({'invoice_id': self.id,'x_studio_id_servicio':m.id,'account_id':cuenta,'name':'(82121500) PAGINAS IMPRESAS COLOR','x_studio_serie':k.serie.name,'product_id':pcolor,'quantity':colorp,'price_unit':m.clickExcedenteColor,'uom_id' : 22 })                                               
-                                            inv.write( { 'invoice_line_tax_ids' : [ (6, 0 , [2] ) ] })  
-                                            
+                                            inv=self.env['account.invoice.line'].create({'invoice_id': self.id,'x_studio_id_servicio':m.id,'account_id':cuenta,'name':'(82121500) PAGINAS IMPRESAS COLOR','x_studio_serie':k.serie.name,'product_id':pcolor,'quantity':colorp,'price_unit':m.clickExcedenteColor})                                               
+                                            inv.write( { 'invoice_line_tax_ids' : [ (6, 0 , [2] ) ] })    
                                          else:
-                                            self.env['zeros.lineas'].create({'accountInv': self.id,'idServicio':m.id,'unidad':'ZP','cantidad':0.0,'precioUnitario':m.clickExcedenteColor,'serie':k.serie.name,'descripcion':'(82121500) PAGINAS IMPRESAS COLOR','uom_id' : 22 })   
+                                            self.env['zeros.lineas'].create({'accountInv': self.id,'idServicio':m.id,'unidad':'ZP','cantidad':0.0,'precioUnitario':m.clickExcedenteColor,'serie':k.serie.name,'descripcion':'(82121500) PAGINAS IMPRESAS COLOR'})   
 
                                          if bnp>0:
-                                            invc=self.env['account.invoice.line'].create({'invoice_id': self.id,'x_studio_id_servicio':m.id,'account_id':cuenta,'name':'(82121500) PAGINAS IMPRESAS NEGRO','x_studio_serie':k.serie.name,'product_id':pbn,'quantity':bnp,'price_unit':m.clickExcedenteBN,'uom_id' : 22 })                                                      
+                                            invc=self.env['account.invoice.line'].create({'invoice_id': self.id,'x_studio_id_servicio':m.id,'account_id':cuenta,'name':'(82121500) PAGINAS IMPRESAS NEGRO','x_studio_serie':k.serie.name,'product_id':pbn,'quantity':bnp,'price_unit':m.clickExcedenteBN})                                                      
                                             invc.write( { 'invoice_line_tax_ids' : [ (6, 0 , [2] ) ] }) 
                                          else:
-                                            self.env['zeros.lineas'].create({'accountInv': self.id,'idServicio':m.id,'unidad':'ZP','cantidad':0.0,'precioUnitario':m.clickExcedenteBN,'serie':k.serie.name,'descripcion':'(82121500) PAGINAS IMPRESAS NEGRO','uom_id' : 22 })   
+                                            self.env['zeros.lineas'].create({'accountInv': self.id,'idServicio':m.id,'unidad':'ZP','cantidad':0.0,'precioUnitario':m.clickExcedenteBN,'serie':k.serie.name,'descripcion':'(82121500) PAGINAS IMPRESAS NEGRO'})   
                 #factura = self.id          
                 #self.compute_taxes()                                                                                                                                              
 

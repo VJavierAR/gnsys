@@ -6,7 +6,6 @@ from odoo.exceptions import UserError
 from odoo import exceptions, _
 import logging, ast
 import datetime, time
-from dateutil.relativedelta import relativedelta  
 _logger = logging.getLogger(__name__)
 
 def get_plazo():
@@ -19,7 +18,7 @@ class servicios_gnsys(models.Model):
     _name = 'servicios'
     _inherit = 'mail.thread'
     _description = 'Servicios GNSYS'
-    active=fields.Boolean(default=True)
+    
     name=fields.Char('Nombre')
     productos = fields.One2many('product.product', 'servicio', string="Productos")
     fechaDeInicioDeServicio = fields.Datetime(string = 'Fecha de inicio de servicio',track_visibility='onchange')
@@ -143,11 +142,13 @@ class servicios_gnsys(models.Model):
                     }
                 return {'warning': mess}
     
-    rfcCliente = fields.Text(string="RFC Cliente",track_visibility='onchange') 
-    @api.onchange('contrato')
-    def cambiarRFC(self):
-        if self.contrato:
-            self.rfcCliente = self.contrato.rfcCliente
+    rfcCliente = fields.Text(string="RFC Cliente",track_visibility='onchange')
+    
+    
+    
+    
+    
+    
 #    for record in self:       
     #         if record.contrato:
     #             _logger.info("-------Logger de OSWALDO "+str(record.contrato.name))
@@ -170,13 +171,10 @@ class equipo_series(models.Model):
     servicio = fields.Many2one('servicios', string="Servicio serie")
 
 
-
-
-
 class contratos(models.Model):
     _name = "contrato"
     _description = 'Contratos GNSYS'
-    active=fields.Boolean(default=True)
+    
     name = fields.Char(string="Nombre")
     servicio = fields.One2many('servicios', 'contrato',string="Servicio")
     ci = fields.Binary(string="carta de intención")
@@ -185,6 +183,17 @@ class contratos(models.Model):
     cs = fields.Binary(string="constancia del sat")
     idal = fields.Binary(string="id apoderado legal")
     penalizaciones = fields.One2many('penalizaciones','contrato',string="Penalizaciones")
+    anexos = fields.One2many('anexos','contrato',string="Anexos")
+    
+    
+    bnaCuatro = fields.Integer(string="BN A4")
+    colaraCuatro = fields.Integer(string="Color A4")
+    bnaTres = fields.Integer(string="BN A3")
+    colaraTres = fields.Integer(string="Color A3")
+    plotter = fields.Integer(string="Plotter")
+    produccion = fields.Integer(string="Produdcción")
+    scanner = fields.Integer(string="Scanner")
+    
 
     dividirLocalidades = fields.Boolean(string="Dividir Localidades", default=False)
     dividirServicios = fields.Boolean(string="Dividir Servicios", default=False)
@@ -202,7 +211,7 @@ class contratos(models.Model):
     vendedor = fields.Many2one('hr.employee', string="Vendedor")
     
     tipoDeContrato = fields.Selection([('ARRENDAMIENTO','Arrendamiento'),('DEMOSTRACION','Demostración'),('OTRO','Otro')], default='ARRENDAMIENTO', string="Tipo de contrato")
-    vigenciaDelContrato = fields.Selection([('INDEFINIDO','Indefinido'),('12','12'),('18','18'),('24','24'),('36','36'),('OTRO','Otro')], default='12', string="Vigencia del contrato (meses)")
+    vigenciaDelContrato = fields.Selection([('INDEFINIDO','Indefinido'),('12','12'),('18','18'),('24','24'),('36','36'),('OTRO','Otro')], default='12', string="Vigencia en meses del contrato")
     fechaDeInicioDeContrato = fields.Datetime(string = 'Fecha de inicio de contrato',track_visibility='onchange')
     fechaDeFinDeContrato = fields.Datetime(string = 'Fecha de finalización de contrato',track_visibility='onchange')
     fechaDeFirmaDeContrato = fields.Datetime(string = 'Fecha firma de contrato',track_visibility='onchange')
@@ -295,6 +304,13 @@ class contratos(models.Model):
             self.vendedor = self.cliente.x_studio_vendedor
             self.rfcCliente = self.cliente.vat
 
+            
+            
+    @api.onchange('cliente')        
+    def cambiaRFC(self):
+        if self.cliente:
+            self.x_studio_ejecutivo=str(self.cliente.x_studio_ejecutivo.name)
+            
     @api.onchange('fechaDeFinDeContrato')
     @api.multi
     def expiracionServicios(self):
@@ -321,25 +337,6 @@ class contratos(models.Model):
     #                     for servicio in record.servicio: 
     #                         servicio.servActivo = False
         #La siguiente funcion verifica que si la fecha de fin de servicio este se desactiva 
-    
-    #Actualiza la fecha final de contrato en funcion de la fecha inical del contrato y
-    #la duracion en meses
-    @api.onchange('FechaInicioContrato')
-    @api.depends('vigenciaDelContrato')
-    def update_fecha_final_contrato(self):
-        if self.fechaDeFinDeContrato and self.vigenciaDelContrato:
-            for contrato in self :
-                if contrato.vigenciaDelContrato == 'INDEFINIDO':
-                    contrato.fechaDeFinDeContrato =''
-                elif contrato.vigenciaDelContrato != 'OTRO' and isinstance(int(contrato.vigenciaDelContrato),int):
-                    contrato.fechaDeFinDeContrato = contrato.fechaDeInicioDeContrato + relativedelta(months=int(contrato.vigenciaDelContrato))
-                elif contrato.vigenciaDelContrato == 'OTRO':
-                    contrato.fechaDeFinDeContrato = ''
-
-    @api.onchange('vigenciaDelContrato')
-    def ejecuta_calcular_vigencia_fecha_final(self):
-        self.update_fecha_final_contrato()
-                
     #fechaDeInicioDeContrato
     #fechaDeFinDeContrato
     @api.onchange('fechaDeFinDeContrato')
@@ -439,3 +436,15 @@ class penalizaciones(models.Model):
             if self.plazoIni >30 and self.plazoFinal<=35:                
                 self.porcentaje=0.15
                 self.meses=0
+
+class anexos(models.Model):
+    _name = "anexos"
+    _description = 'Anexos'
+    bnaCuatro = fields.Integer(string="BN A4")
+    colaraCuatro = fields.Integer(string="Color A4")
+    bnaTres = fields.Integer(string="BN A3")
+    colaraTres = fields.Integer(string="Color A3")
+    plotter = fields.Integer(string="Plotter")
+    produccion = fields.Integer(string="Produdcción")
+    scanner = fields.Integer(string="Scanner")
+    contrato = fields.Many2one('contrato', string="Contrato")
