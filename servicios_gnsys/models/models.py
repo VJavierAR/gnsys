@@ -342,7 +342,7 @@ class contratos(models.Model):
     @api.onchange('FechaInicioContrato')
     @api.depends('vigenciaDelContrato')
     def update_fecha_final_contrato(self):
-        if self.fechaDeFinDeContrato and self.vigenciaDelContrato:
+        if self.FechaInicioContrato and self.vigenciaDelContrato:
             for contrato in self :
                 if contrato.vigenciaDelContrato == 'INDEFINIDO':
                     contrato.fechaDeFinDeContrato =''
