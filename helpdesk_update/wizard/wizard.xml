@@ -1048,7 +1048,8 @@
                         <!--
                         <field name='almacenes' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain="['&amp;', ('x_studio_cliente', '=', False), '|', ('id', '=', 1), ('id', '=', 18) ]" />
                         -->
-                        <field name='almacenes' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain="['|', '|', ('id', '=', 1), ('id', '=', 18), ('id', '=', 17) ]" />
+                        <!--field name='almacenes' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" domain="['|', '|', ('id', '=', 1), ('id', '=', 18), ('id', '=', 17) ]" /-->
+                        <field name='almacenes' options="{'no_create_edit': True, 'no_create': True, 'no_open': True}"/>
                     </group>
                 </group>
 
