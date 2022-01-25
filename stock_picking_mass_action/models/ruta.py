@@ -45,7 +45,7 @@ class CreacionRuta(Model):
                     if (o.sale_id.x_studio_field_bxHgp.stage_id.id!=18 and o.sale_id.x_studio_field_bxHgp.stage_id.id!=4):
                         o.sale_id.x_studio_field_bxHgp.write({'stage_id':108})
                     if(o.sale_id.x_studio_requiere_instalacin_1==True and o.sale_id.x_studio_field_bxHgp.id==False):
-                        series=o.sale_id.mapped('order_line.x_studio_field_9nQhR')
+                        series=o.sale_id.mapped('picking_ids.move_lines.move_line_ids.lot_id')
                         tickets=[]
                         for s in series:
                             ti=self.env['helpdesk.ticket'].create({'x_studio_field_nO7Xg':o.sale_id.id,'x_studio_tipo_de_vale':'Instalación','partner_id':o.partner_id.parent_id.id,'x_studio_empresas_relacionadas':o.partner_id.id,'team_id':9,'diagnosticos':[(0,0,{'estadoTicket':'Abierto','comentario':'Instalacion de Equipo '+s.name})],'stage_id':89,'name':'Instalaccion '+'Serie: '+s.name,'x_studio_equipo_por_nmero_de_serie':[(6,0,[s.id])]})
