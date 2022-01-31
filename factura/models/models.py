@@ -89,6 +89,7 @@ class factura(models.Model):
                cuenta=12175 
                         
           #list = ast.literal_eval(r.x_studio_contratosid)  
+          cuenta=30
           ff=self.env['servicios'].search([('contrato.id', 'in',self.x_studio_contrato_1.ids)])                                            
           f=len(ff)
           if f>0:
