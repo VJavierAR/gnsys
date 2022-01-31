@@ -522,6 +522,7 @@ class contadores(models.Model):
                   id=4                  
                 if rz=='3':                    
                   id=2
+                id=1
                 if rs.x_studio_cobrar_contrato:
                     a=self.env['sale.order'].create({'partner_id':self.cliente.id,'x_studio_factura':'si','month':self.mes,'year':self.anio,'company_id':id})
                     self.env.cr.execute("insert into x_contrato_sale_order_rel (sale_order_id, contrato_id) values (" +str(a.id) + ", " +  str(rs.id) + ");")    
@@ -582,7 +583,8 @@ class contadores(models.Model):
                 if rz=='3':                    
                   id=2
                   diario=43
-                
+                diario=1
+                id=1
                 if dias==30:
                   plazo=8 
                 if dias==45:
